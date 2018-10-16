@@ -275,15 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorieren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">DAS GERÄT IST NICHT LÄNGER SICHER
-Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen! Lösche dieses Wallet unverzüglich und stelle es auf einem sicheren Gerät wieder her.</string>
+  <string name="JailbreakWarnings.messageWithBalance">DAS GERÄT IST NICHT LÄNGER SICHER\nJede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen! Lösche dieses Wallet unverzüglich und stelle es auf einem sicheren Gerät wieder her.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">DAS GERÄT IST NICHT LÄNGER SICHER
-Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen. Bitte setze Bread ausschließlich auf Geräten ohne Jailbreak ein.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">DAS GERÄT IST NICHT LÄNGER SICHER\nJede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen. Bitte setze Bread ausschließlich auf Geräten ohne Jailbreak ein.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ACHTUNG</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Löschen</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Standortdienste sind deaktiviert</string>
   <!-- No permissions for location services -->
@@ -474,8 +470,6 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <string name="Search.sent">gesendet</string>
   <!-- Face ID button title -->
   <string name="SecurityCenter.faceIdTitle">Face ID</string>
-  <!-- Security Center Info -->
-  <string name="SecurityCenter.info">Aktiviere alle Sicherheitsfunktionen für maximalen Schutz.</string>
   <!-- Paper Key button description -->
   <string name="SecurityCenter.paperKeyDescription">Die einzige Möglichkeit, wie du auf deine Bitcoins zugreifen kannst, falls du dein Smartphone verlierst oder wechselst.</string>
   <!-- Paper Key button title -->
@@ -484,8 +478,6 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <string name="SecurityCenter.pinDescription">Schütze dein Bread vor nicht autorisierten Benutzern.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6-stellige PIN</string>
-  <!-- Security Center Title -->
-  <string name="SecurityCenter.title">Sicherheits-Center</string>
   <!-- Touch ID button description -->
   <string name="SecurityCenter.touchIdDescription">Eine praktische Möglichkeit, dein Bread zu entsperren und Geld bis zu einer festlegbaren Höchstgrenze zu versenden.</string>
   <!-- Touch ID button title -->
@@ -617,9 +609,7 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Offlineschlüssel erneut notieren</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Dein Offlineschlüssel ist die einzige Möglichkeit, dein Bread wiederherzustellen, falls du dein Smartphone verlierst, austauscht, es gestohlen wird oder kaputtgeht.
-
-Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein Stück Papier notieren kannst, das es sicher aufzubewahren gilt.</string>
+  <string name="StartPaperPhrase.body">Dein Offlineschlüssel ist die einzige Möglichkeit, dein Bread wiederherzustellen, falls du dein Smartphone verlierst, austauscht, es gestohlen wird oder kaputtgeht.\n\nHierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein Stück Papier notieren kannst, das es sicher aufzubewahren gilt.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Offlineschlüssel notieren</string>
   <!-- Argument is date -->
@@ -739,7 +729,7 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <!-- Amount section header -->
   <string name="TransactionDetails.amountHeader">Betrag</string>
   <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-  <string name="TransactionDetails.amountWhenReceived">%1$s beim Senden, jetzt %2$s</string>
+  <string name="TransactionDetails.amountWhenReceived">%1$s zum Zeitpunkt des Empfangs, %2$s jetzt</string>
   <!-- Block height label -->
   <string name="TransactionDetails.blockHeightLabel">Bestätigt im Block</string>
   <!-- Memo section header -->
@@ -828,8 +818,6 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <string name="UnlockScreen.resetPin">PIN zurücksetzen</string>
   <!-- Scan button title -->
   <string name="UnlockScreen.scan">Scannen</string>
-  <!-- Unlock Screen sub-header -->
-  <string name="UnlockScreen.subheader">PIN eingeben</string>
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Sensor berühren</string>
   <!-- TouchID prompt text -->
@@ -840,8 +828,6 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <string name="UnlockScreen.touchIdText">Mit Touch ID entsperren</string>
   <!-- Device authentication title -->
   <string name="UnlockScreen.touchIdTitle.android">Authentifizierung erforderlich</string>
-  <!-- Wallet unlocked message -->
-  <string name="UnlockScreen.unlocked">Wallet entsperrt</string>
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Merke dir diese PIN. Falls du sie vergisst, kannst du nicht mehr auf deine Bitcoins zugreifen.</string>
   <!-- PIN creation info. -->
@@ -887,9 +873,7 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <!-- Updating webview message -->
   <string name="Webview.updating">Aktualisierung läuft …</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet heißt jetzt Bread und hat ein brandneues Erscheinungsbild sowie einige neue Funktionen.
-
-Wenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten Bildschirm oben rechts zu finden ist.</string>
+  <string name="Welcome.body">Breadwallet heißt jetzt Bread und hat ein brandneues Erscheinungsbild sowie einige neue Funktionen.\n\nWenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten Bildschirm oben rechts zu finden ist.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Willkommen bei Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -927,7 +911,7 @@ Wenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten
   <!-- Menu button on the home screen toolbar -->
   <string name="HomeScreen.menu">Menü</string>
   <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Bitcoin kaufen</string>
+  <string name="HomeScreen.buy">Kaufen</string>
   <!-- (Tap here to) trade (your assets for other assets) -->
   <string name="HomeScreen.trade">Handeln</string>
   <!-- (press here to) scan (a) QR code -->
@@ -936,260 +920,6 @@ Wenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten
   <string name="SyncingView.failed">Synchronisation fehlgeschlagen</string>
   <!-- "eg. Synced through <Jan 12, 2015> -->
   <string name="SyncingView.syncedThrough">Synchronsiert durch %1$s</string>
-  <string name="account.oauth.button.continue_email">Link an E-Mail-Adresse schicken</string>
-  <string name="account.oauth.button.done">OK!</string>
-  <string name="account.oauth.instructions.continue">Gut, schauen Sie in Ihr E-Mail-Postfach und folgen den Anweisungen. Sobald Sie fertig sind, klicken Sie erneut auf \"Einloggen\", dann sollte alles in Ordnung sein!</string>
-  <string name="account.oauth.label.start">Es scheint, als würden Sie versuchen, sich auf einem bestehenden Account einzuloggen. Wir werden Ihnen eine E-Mail schicken. Öffnen Sie den darin enthaltenen Link, loggen sich ein, autorisieren uns und fahren unten fort. </string>
-  <string name="account.oauth.error.fail">Anmeldung fehlgeschlagen</string>
-  <string name="datetime.duration.day">Tag</string>
-  <string name="datetime.duration.week">Woche</string>
-  <string name="datetime.duration.month">Monat</string>
-  <!-- Account error message -->
-  <string name="exchange.account_picker.error.empty">Keine Accounts gefunden.</string>
-  <string name="exchange.label.empty_list">Leider sind in Ihrer Region zur Zeit keine Dienste verfügbar.</string>
-  <!-- Get started with Glidera -->
-  <string name="exchange.glidera.label.get_started">Legen Sie los mit {serviceName}</string>
-  <!-- Glidera message - choose bank -->
-  <string name="exchange.glidera.label.select_bank">Wählen Sie Ihre Bank</string>
-  <!-- Agree to Glidera terms of service -->
-  <string name="exchange.glidera.label.tos_agree">Indem Sie unten klicken, stimmen Sie den {serviceName}-Nutzungsbedingungen zu.</string>
-  <!-- Glidera message - trying to do too many purchases at the same time -->
-  <string name="exchange.glidera.notice.after_first_transfer">Es kann sein, dass Sie warten müssen, bis Ihr aktueller Kauf gelöscht wird, bevor Sie einen weiteren Kauf tätigen können.</string>
-  <!-- Glidera message - trying to do too many purchases at the same time -->
-  <string name="exchange.glidera.notice.before_first_transfer">Sie werden solange nicht erneut kaufen können, bis Ihr erster Kauf gelöscht worden ist.</string>
-  <!-- Glidera message - your order is in process -->
-  <string name="exchange.glidera.notice.details_waiting">Ihre persönlichen Angaben werden überprüft. Dies kann ein paar Tage dauern.</string>
-  <!-- Glidera message - your order is in process -->
-  <string name="exchange.glidera.notice.id_verification_waiting">Ihre Papiere werden überprüft. Dies kann ein paar Tage dauern.</string>
-  <!-- Glidera message - you’re registered with Glidera -->
-  <string name="exchange.glidera.notice.registered">Sie sind bei {service} registriert.</string>
-  <string name="exchange.glidera.title.account_details">Einzelheiten zum Account</string>
-  <string name="exchange.glidera.title.bank_login">Bank-Login</string>
-  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
-  <string name="exchange.glidera.title.id_verification">Passfoto</string>
-  <!-- Glidera message - connect a bank account -->
-  <string name="exchange.glidera.title.link_account">Account verlinken</string>
-  <string name="exchange.glidera.title.preferences">Account-Präferenzen</string>
-  <string name="exchange.glidera.title.registration">Registrierung</string>
-  <string name="exchange.glidera.notice.settings_trouble">Gibt es Probleme mit den obigen Einstellungen?</string>
-  <!-- Glidera message - tap to go directly to their website -->
-  <string name="exchange.glidera.notice.visit_directly">Tippen Sie unten, um direkt zu {serviceName} gehen.</string>
-  <!-- Glidera message - tap to out their settings -->
-  <string name="exchange.glidera.button.open_settings">Die Glidera-Einstellungen öffnen</string>
-  <string name="exchange.cash.button.buy">Bitcoin kaufen</string>
-  <!-- Check the status of your order -->
-  <string name="exchange.cash.button.status">Status überprüfen</string>
-  <!-- Order details - how much, exchange rate -->
-  <string name="exchange.crypto.memo">Verkauft für {toAmount}{toCurrency}, zu einem Kurs von {rate}{toCurrency}/{fromCurrency}</string>
-  <string name="exchange.error.max_order">Höchstbestellwert: {amount}</string>
-  <string name="exchange.error.min_order">Mindestbestellwert: {amount}</string>
-  <string name="exchange.geo.button.check_again">Erneut prüfen</string>
-  <string name="exchange.geo.button.enable">Standortdienste aktivieren?</string>
-  <string name="exchange.geo.error.enable_in_settings">Sie müssen Zugriff auf den Standort Ihres Telefons gewähren. Bitte gehen Sie in die Systemeinstellungen und aktivieren \"Standortdienste\".</string>
-  <string name="exchange.history.label.btc_price">Bitcoin-Kurs beim Kauf:</string>
-  <string name="exchange.history.label.price">{currency}-Kurs beim Kauf:</string>
-  <string name="exchange.history.label.delivery_date_label">Lieferdatum:</string>
-  <string name="exchange.history.label.identifier">Kennung:</string>
-  <string name="exchange.history.label.service_label">Dienst:</string>
-  <string name="exchange.history.label.state.complete">Abgeschlossen</string>
-  <string name="exchange.history.label.state.processing">Verfügbar am:</string>
-  <string name="exchange.history.label.status_label">Status:</string>
-  <string name="exchange.history.label.status.complete">Abgeschlossen</string>
-  <string name="exchange.history.label.status.failed">Fehlgeschlagen</string>
-  <string name="exchange.history.label.status.processing">Wird abgewickelt</string>
-  <string name="exchange.history.label.total">Gesamter bezahlter Preis:</string>
-  <string name="exchange.history.title">Umtauschverlauf</string>
-  <string name="exchange.label.provider">Durch {name} bereitgestellte Dienste:</string>
-  <string name="exchange.label.daily_and_monthly_limits">Ihr Limit liegt bei {daily} pro Tag und {monthly} pro Monat.</string>
-  <string name="exchange.label.daily_limit">Sie können heute bis zu {daily} kaufen.</string>
-  <string name="exchange.label.delivered">Lieferung</string>
-  <string name="exchange.label.empty_history">Keine Überweisungen. Kaufen Sie ein paar Coins!</string>
-  <string name="exchange.label.fees">Gebühren</string>
-  <string name="exchange.label.limit.daily">Täglicher Verbrauch: {consumed} von {amount}.</string>
-  <string name="exchange.label.limit.weekly">Wöchentlicher Verbrauch: {consumed} von {amount}.</string>
-  <string name="exchange.label.limits">Limits</string>
-  <string name="exchange.label.link.purchase">Kaufen</string>
-  <string name="exchange.label.loading_limits">Ihre Limits werden geladen...</string>
-  <!-- Order limit exceeded -->
-  <string name="exchange.label.zero_limits">Sie haben Ihr Limit für Käufe erreicht. Bitte versuchen Sie es später noch einmal.</string>
-  <!-- Cannot buy yet, order in progress or ID verification required -->
-  <string name="exchange.label.zero_limits_and_no_history">Sie haben noch keine Erlaubnis, Bitcoins zu kaufen. Prüfen Sie den Tab \"Einstellungen\" und schreiben an {email}.</string>
-  <string name="exchange.unsupported.title">Wird zur Zeit nicht unterstützt.</string>
-  <string name="exchange.unsupported.paragraph.buy">Der Kauf dieses Postens wird noch nicht unterstützt. Wir ergänzen stets Unterstützung für weitere Posten, also schauen Sie später noch einmal vorbei!</string>
-  <string name="exchange.unsupported.paragraph.sell">Der Kauf dieses Postens wird zur Zeit nicht unterstützt. Wir ergänzen stets Unterstützung für weitere Posten, also schauen Sie später noch einmal vorbei!</string>
-  <string name="empty.title">Keine Posten.</string>
-  <string name="empty.paragraph.buy">Sie haben keine Posten, um zu handeln. Fangen Sie an, indem Sie ein paar Bitcoins kaufen!</string>
-  <string name="exchange.libx.label.refreshing_token">Wird neu geladen...</string>
-  <string name="exchange.libx.label.show_token">LibX-Token: {token}</string>
-  <string name="exchange.libx.label.token_expires">Läuft ab um: {time}</string>
-  <string name="exchange.libx.label.token_fees">Gebühren: {amount}</string>
-  <string name="exchange.libx.label.token_rate">Satz: {amount}</string>
-  <string name="exchange.libx.label.token_sent">Geschickt: {amount}</string>
-  <string name="exchange.libx.label.token_status">Status:</string>
-  <string name="exchange.libx.notice.pin_done">Großartig! Sie sind fertig.</string>
-  <string name="exchange.libx.notice.redeem_another">Weitere PIN einlösen</string>
-  <string name="exchange.libx.title.pin">LibertyX: PIN einlösen</string>
-  <string name="exchange.libx.title.status">LibertyX: Status</string>
-  <string name="exchange.libx.title.token">LibertyX: Ein Token erstellen</string>
-  <string name="exchange.slogans.bank">Verknüpfen Sie Ihr Bankkonto, um Bitcoins über den preisgekrönten Brokerage-Dienst, dem die bekanntesten Wallet-Anbieter der Welt vertrauen, kaufen und verkaufen zu können.</string>
-  <string name="exchange.title.bank">Bankkonto</string>
-  <string name="exchange.title.buy_bitcoin">Bitcoins kaufen</string>
-  <string name="exchange.title.buy_currency">{currency} kaufen</string>
-  <string name="exchange.title.buy_amount_in">{amount} {currency} kaufen</string>
-  <string name="exchange.title.buy_amount">{amount} kaufen</string>
-  <string name="exchange.title.buy_service">Wählen Sie eine Zahlungsmethode.</string>
-  <string name="exchange.title.trade">{from} gegen {to} eintauschen</string>
-  <string name="exchange.title.sell_bitcoin">Bitcoins verkaufen</string>
-  <string name="exchange.title.sell_currency">{currency} verkaufen</string>
-  <string name="exchange.title.sell_amount_in">{currency} eintauschen gegen:</string>
-  <string name="exchange.title.sell_amount">{amount} verkaufen</string>
-  <string name="exchange.title.sell_service">Wogegen möchten Sie {currency} eintauschen?</string>
-  <string name="exchange.title.cash">Bargeld</string>
-  <string name="exchange.title.credit">Kreditkarte</string>
-  <string name="exchange.title.history">Verlauf</string>
-  <string name="exchange.title.settings">Einstellungen</string>
-  <string name="exchange.title.exchange">Wechseln von Kryptowährungen</string>
-  <string name="exchange.title.confirm_buy">Kauf bestätigen</string>
-  <string name="exchange.title.confirm_trade">Handel bestätigen</string>
-  <string name="exchange.label.in_currency">von {currency}</string>
-  <string name="exchange.title.choose">Wie möchten Sie bezahlen?</string>
-  <!-- Over the available order limit -->
-  <string name="exchange.source.title.maximum">Höchstwert ist überschritten</string>
-  <string name="exchange.source.paragraph.maximum">Sie können mit Ihrem {source}-Guthaben bis zu {maximum} kaufen. Möchten Sie Ihren Kaufbetrag auf {maximum} mindern?</string>
-  <!-- Under the available order limit -->
-  <string name="exchange.source.title.minimum">Betrag unterschreitet Mindestbetrag</string>
-  <string name="exchange.source.paragraph.minimum">Sie müssen über {source} mindestens {minimum} kaufen. Möchten Sie Ihren Kaufbetrag auf {minimum} erhöhen?</string>
-  <string name="exchange.source.title.insufficient">Guthaben reicht nicht aus</string>
-  <string name="exchange.source.paragraph.insufficient">Sie besitzen nicht ausreichend {source}, um den Mindesterwerb von {minimum} abzudecken. Kaufen Sie mehr {source} oder nutzen eine andere Zahlungsmethode.</string>
-  <string name="exchange.source.title.toolow">Kontostand ist zu niedrig</string>
-  <!-- Over the available order limit -->
-  <string name="exchange.destination.title.maximum">Höchstbetrag überschritten</string>
-  <string name="exchange.destination.paragraph.maximum">Sie können bis zu {maximum} für {destination} verkaufen. Möchten Sie Ihren Verkaufsbetrag auf {maximum} mindern?</string>
-  <string name="exchange.destination.title.minimum">Verkaufsbetrag unterschreitet Mindestbetrag</string>
-  <string name="exchange.destination.paragraph.minimum">Sie müssen mindestens {minimum} für {destination} verkaufen. Möchten Sie Ihren Verkaufsbetrag auf {minimum} erhöhen?</string>
-  <string name="exchange.destination.title.insufficient">Guthaben reicht nicht aus</string>
-  <string name="exchange.destination.paragraph.insufficient">Sie besitzen nicht ausreichend {destination}, um den Mindestbetrag von {minimum} abzudecken. Kaufen Sie mehr {source} oder nutzen eine andere Zahlungsmethode.</string>
-  <string name="exchange.destination.title.toolow">Kontostand ist zu niedrig</string>
-  <string name="field.address.placeholder.line_1">Adresse...</string>
-  <!-- Second address line (apartment number for example) -->
-  <string name="field.address.placeholder.line_2">Zeile 2...</string>
-  <!-- Third address line (apartment number for example) -->
-  <string name="field.address.placeholder.line_3">Zeile 3...</string>
-  <!-- Service error -->
-  <string name="field.bitid.label.error">Bit-ID-Fehler:</string>
-  <string name="field.bitid.label.retry">Versuchen Sie das Formular erneut abzuschicken.</string>
-  <string name="field.countrystate.label.country">Land:</string>
-  <!-- State or Province within a country -->
-  <string name="field.countrystate.label.state">Bundesland/Kanton:</string>
-  <string name="field.image.button.retake">Nochmals aufnehmen</string>
-  <string name="field.image.button.take">Bild aufnehmen</string>
-  <string name="field.verified_email.confirm">Bestätigen</string>
-  <!-- Send email verification again -->
-  <string name="field.verified_email.reverify">Erneut senden</string>
-  <string name="field.verified_email.verify">E-Mail-Bestätigungscode schicken</string>
-  <string name="field.verified_phone.confirm">Bestätigen</string>
-  <!-- Send phone verification again -->
-  <string name="field.verified_phone.resend">Erneut senden</string>
-  <string name="field.verified_phone.send">Telefon-Bestätigungscode schicken</string>
-  <string name="general.button.buy">Kaufen</string>
-  <string name="general.button.cancel">Abbrechen</string>
-  <string name="general.button.enable">Einschalten</string>
-  <string name="general.button.next">Weiter</string>
-  <string name="general.button.ok">OK</string>
-  <string name="general.button.proceed">Fortfahren</string>
-  <string name="general.button.refresh">Neu laden</string>
-  <string name="general.button.retry">Erneut versuchen</string>
-  <string name="general.button.submit">Abschicken</string>
-  <string name="general.button.history">Verlauf</string>
-  <string name="general.button.back">Zurück</string>
-  <string name="general.error.timed_out">Anfrage ist abgelaufen</string>
-  <string name="general.error.touchid_error">Touch-ID-Fehler: Versuchen Sie es erneut</string>
-  <string name="general.error.params_error">Parameterfehler</string>
-  <string name="general.error.fee_error">Fehler bei der Gebührenberechnung</string>
-  <string name="general.error.tx_error">Überweisungsfehler (niedriger Kontostand?)</string>
-  <string name="general.error.network">Verbindungsfehler</string>
-  <string name="general.error.network_message">Ein unbekannter Fehler ist aufgetreten.</string>
-  <string name="general.label.confirmation_code">Bestätigungscode</string>
-  <string name="general.label.email">E-Mail</string>
-  <string name="general.label.error">Fehler:</string>
-  <string name="general.label.phone">Telefon</string>
-  <string name="general.label.unknown_error">Unbekannter Fehler</string>
-  <string name="general.label.min">Mindestwert</string>
-  <string name="general.label.max">Höchstwert</string>
-  <string name="general.label.estimate">Schätzung</string>
-  <string name="general.label.zero">Null</string>
-  <string name="general.label.default">Voreinstellung</string>
-  <string name="general.loader.label.empty_state">Dieser Bereich ist absichtlich unausgefüllt.</string>
-  <string name="general.loader.label.loading">{noun} wird geladen</string>
-  <string name="general.placeholder.confirmation_code">Bestätigungscode</string>
-  <string name="general.placeholder.email">E-Mail</string>
-  <string name="general.placeholder.phone">Telefon</string>
-  <string name="general.placeholder.pin">PIN</string>
-  <string name="general.status.loading">Wird geladen...</string>
-  <string name="buy.title">Was möchten Sie kaufen?</string>
-  <string name="buy.transaction.destination.per">pro</string>
-  <string name="buy.confirm_quote.title">Kaufen</string>
-  <string name="sell.confirm_quote.title">Verkaufen</string>
-  <string name="buy.quote.payment_method">Zahlungsmethode</string>
-  <string name="buy.quote.delivery">Lieferung</string>
-  <string name="buy.quote.price">Preis</string>
-  <string name="buy.quote.subtotal">Zwischensumme</string>
-  <string name="buy.quote.fee">Gebühr</string>
-  <string name="buy.quote.total">Gesamter Zahlbetrag</string>
-  <string name="sell.quote.total">Kaufbetrag</string>
-  <string name="trade.title">Handeln Sie Ihre:</string>
-  <string name="trade.confirm_quote.trade">Handeln</string>
-  <string name="trade.confirm_quote.for">Für</string>
-  <!-- Support search no results -->
-  <string name="support.label.no_search_results">Keine Ergebnisse</string>
-  <!-- Support search results see more -->
-  <string name="support.label.see_more">Mehr sehen</string>
-  <!-- Support search see fewer -->
-  <string name="support.label.see_fewer">Weniger sehen</string>
-  <!-- Support section, see articles on a subject -->
-  <string name="support.label.see_articles">Artikel ansehen</string>
-  <!-- Support search article not found -->
-  <string name="support.error.article_not_found">Artikel wurde nicht gefunden</string>
-  <!-- Support footer email link -->
-  <string name="support.footer.email_us">Schreiben Sie uns eine E-Mail</string>
-  <!-- Support section footer -->
-  <string name="support.footer.privacy_policy">Datenschutzrichtlinien</string>
-  <!-- Support section footer -->
-  <string name="support.footer.rights">Alle Rechte vorbehalten.</string>
-  <!-- Support search footer -->
-  <string name="support.footer.tos">Nutzungsbedingungen</string>
-  <!-- Support section title -->
-  <string name="support.label.browse_topics">Themen durchsuchen</string>
-  <!-- Support section title -->
-  <string name="support.label.faq">Häufig gestellte Fragen</string>
-  <!-- Support button label -->
-  <string name="support.title">Kundendienst</string>
-  <!-- Push notifications are disabled alert title" -->
-  <string name="PushNotifications.disabled">Benachrichtigungen sind abgeschaltet</string>
-  <!-- Push notifications settings instructions -->
-  <string name="PushNotifications.enableInstructions">Schalten Sie in den Einstellungen Benachrichtigungen ein, um Alarmierungen zu empfangen.</string>
-  <!-- Approve link wallet button label -->
-  <string name="LinkWallet.approve">Genehmigen</string>
-  <!-- Decline link wallet button label -->
-  <string name="LinkWallet.decline">Ablehnen</string>
-  <!-- Link Wallet view title -->
-  <string name="LinkWallet.title">Wallet verknüpfen</string>
-  <!-- Link Wallet view title above domain list -->
-  <string name="LinkWallet.domainTitle">Beachten Sie: Interagieren Sie mit dieser App NUR DANN, wenn Sie auf einer der folgenden Domains sind:</string>
-  <!-- Link Wallet view title above permissions list -->
-  <string name="LinkWallet.permissionsTitle">Diese App wird können:</string>
-  <!-- Link Wallet view dislaimer footer -->
-  <string name="LinkWallet.disclaimer">Externe Apps können ohne Genehmigung von diesem Gerät kein Geld senden.</string>
-  <!-- Link wallet logo footer text -->
-  <string name="LinkWallet.logoFooter">Sichere Kasse</string>
-  <!-- Payment confirmation view title -->
-  <string name="PaymentConfirmation.title">Bestätigung</string>
-  <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">%1$s schicken, um %2$s zu kaufen</string>
-  <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">%1$s Kontoinformationen anfordern</string>
-  <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">%1$s Smart Contract Forderung</string>
-  <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">%1$s Kontoinformationen anfordern</string>
+  <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+  <string name="TransactionDetails.amountWhenSent">%1$s beim Senden, jetzt %2$s</string>
 </resources>
