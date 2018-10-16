@@ -18,11 +18,11 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
-import com.breadwallet.wallet.wallets.ela.response.transaction.TransactionRes;
-import com.breadwallet.wallet.wallets.ela.response.transaction.UTXOInputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
+import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -88,8 +88,6 @@ public class BRApiManager {
     public static final String HEADER_TESTFLIGHT = "X-Testflight";
     public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
     public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
-
-    private static final String ELA_SERVIER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
 
     private BRApiManager() {
         handler = new Handler();
@@ -303,112 +301,6 @@ public class BRApiManager {
             e.printStackTrace();
         }
         return jsonArray;
-    }
-
-    @WorkerThread
-    public static String getElaBalance(Context app, String address){
-        String url = ELA_SERVIER_URL+"/api/1/balance/"+address;
-        String result = urlGET(app, url);
-        String balance = null;
-        try {
-            JSONObject object = new JSONObject(result);
-            balance = object.getString("result");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return balance;
-    }
-
-
-    public static String createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
-        String transactionJson = null;
-        try {
-            String url = ELA_SERVIER_URL+"/api/1/createTx";
-
-            CreateTx tx = new CreateTx();
-            tx.inputs.add(inputAddress);
-
-            Outputs outputs = new Outputs();
-            outputs.addr = outputsAddress;
-            outputs.amt = amount;
-
-            tx.outputs.add(outputs);
-
-            String json = new Gson().toJson(tx);
-            String result = urlPost(url, json);
-
-            JSONObject jsonObject = new JSONObject(result);
-            String tranactions = jsonObject.getString("result");
-            TransactionRes res = new Gson().fromJson(tranactions, TransactionRes.class);
-            List<UTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
-            for(int i=0; i<inputs.size(); i++){
-                UTXOInputs utxoInputs = inputs.get(i);
-                utxoInputs.privateKey  = WalletElaManager.getPrivateKey();
-            }
-
-            transactionJson =new Gson().toJson(res);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return transactionJson;
-    }
-
-    //TODO test
-    private static String getCreateTx(){
-        return "{\n" +
-                "\t\"result\": {\n" +
-                "\t\t\"Transactions\": [{\n" +
-                "\t\t\t\"UTXOInputs\": [{\n" +
-                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\",\n" +
-                "\t\t\t\t\"txid\": \"1d88dad1c8bfc2d58b37d3d022e38f18d2a80148468e448ece3a3c230ced9bcc\",\n" +
-                "\t\t\t\t\"index\": 0\n" +
-                "\t\t\t}],\n" +
-                "\t\t\t\"Fee\": 100.0,\n" +
-                "\t\t\t\"Outputs\": [{\n" +
-                "\t\t\t\t\"amount\": 10000,\n" +
-                "\t\t\t\t\"address\": \"ETyWPmg5aNais2iNrt2zGVjxJ3EVbuzVYo\"\n" +
-                "\t\t\t}, {\n" +
-                "\t\t\t\t\"amount\": 99989900,\n" +
-                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\"\n" +
-                "\t\t\t}]\n" +
-                "\t\t}]\n" +
-                "\t},\n" +
-                "\t\"status\": 200\n" +
-                "}";
-    }
-
-
-    public static byte[] sendElaRawTx(final String transaction){
-
-        String result = null;
-        try {
-            String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
-            String rawTransaction = Utility.generateRawTransaction(transaction);
-            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
-            String tmp = urlPost(url, json);
-            JSONObject jsonObject = new JSONObject(tmp);
-            result = jsonObject.getString("result");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result.getBytes();
-    }
-
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public static String urlPost(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        Response response = APIClient.elaClient.newCall(request).execute();
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
     }
 
     @WorkerThread

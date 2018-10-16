@@ -420,8 +420,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     @Override
     public void setCachedBalance(final Context app, BigDecimal balance) {
-        //TODO test
-//        BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal(12).multiply(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS)));
         BRSharedPrefs.putCachedBalance(app, getIso(), balance);
     }
 

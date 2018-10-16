@@ -46,9 +46,7 @@ public class CryptoTransaction {
 
     public BigDecimal getTxSize() {
         if (mCoreTx != null) return new BigDecimal(mCoreTx.getSize());
-        else if (mEtherTx != null) return BigDecimal.ZERO;
-        else if(mElaTx != null) return BigDecimal.ZERO;
-        else return null;
+        else return BigDecimal.ZERO;
     }
 
     public BigDecimal getTxStandardFee() {

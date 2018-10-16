@@ -1,6 +1,6 @@
-package com.breadwallet.wallet.wallets.ela.response.transaction;
+package com.breadwallet.wallet.wallets.ela.response.create;
 
-public class UTXOInputs {
+public class ElaUTXOInputs {
     public String address;
     public String txid;
     public int index;

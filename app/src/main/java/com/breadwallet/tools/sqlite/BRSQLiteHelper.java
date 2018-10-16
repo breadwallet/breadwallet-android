@@ -57,6 +57,41 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 15;
 
+
+    /**
+     * ELA transaction table
+     */
+
+    public static final String ELA_TX_TABLE_NAME = "elaTransactionTable";
+    public static final String ELA_COLUMN_ID = "_id";
+    public static final String ELA_COLUMN_ISRECEIVED ="isReceived";//0 false,1 true
+    public static final String ELA_COLUMN_TIMESTAMP ="timeStamp";
+    public static final String ELA_COLUMN_BLOCKHEIGHT ="blockHeight";
+    public static final String ELA_COLUMN_HASH ="hash";
+    public static final String ELA_COLUMN_TXREVERSED ="txReversed";
+    public static final String ELA_COLUMN_FEE ="fee";
+    public static final String ELA_COLUMN_TO ="toAddress";
+    public static final String ELA_COLUMN_FROM ="fromAddress";
+    public static final String ELA_COLUMN_BALANCEAFTERTX ="balanceAfterTx";
+    public static final String ELA_COLUMN_TXSIZE ="txSize";
+    public static final String ELA_COLUMN_AMOUNT ="amount";
+    public static final String ELA_COLUMN_ISVALID ="isValid";
+
+    private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
+            ELA_COLUMN_ID + " integer primary key autoincrement, " +
+            ELA_COLUMN_ISRECEIVED + " integer, " +
+            ELA_COLUMN_TIMESTAMP + " text DEFAULT '0' , " +
+            ELA_COLUMN_BLOCKHEIGHT + " interger, " +
+            ELA_COLUMN_HASH + " blob, " +
+            ELA_COLUMN_TXREVERSED+ " text DEFAULT 'ELA' , " +
+            ELA_COLUMN_FEE + " integer, " +
+            ELA_COLUMN_TO + " text, " +
+            ELA_COLUMN_FROM + " text, " +
+            ELA_COLUMN_BALANCEAFTERTX + " integer, " +
+            ELA_COLUMN_TXSIZE + " integer, " +
+            ELA_COLUMN_AMOUNT + " integer, " +
+            ELA_COLUMN_ISVALID +" integer);";
+
     /**
      * MerkleBlock table
      */
@@ -138,6 +173,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(ELA_TX_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);

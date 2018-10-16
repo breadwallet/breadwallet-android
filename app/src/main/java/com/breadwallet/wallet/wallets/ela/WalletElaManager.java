@@ -1,10 +1,8 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
-import android.security.keystore.UserNotAuthenticatedException;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
@@ -13,7 +11,6 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -29,9 +26,12 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
 import com.elastos.jni.Utility;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
@@ -45,7 +45,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     private static final String NAME = "Elastos";
     private static final String ELA_ADDRESS_PREFIX = "E";
 
-    private final BigDecimal ONE_ELA = new BigDecimal(ONE_ELA_IN_SALA);
+    private static final BigDecimal ONE_ELA = new BigDecimal(ONE_ELA_IN_SALA);
 
     private static WalletElaManager mInstance;
 
@@ -97,9 +97,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static String getPrivateKey(){
         if(mPrivateKey == null){
             try {
-//                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
-                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
+//                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+//                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -131,8 +131,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         String raw = tx.getElaTx();
-        byte[] ret = BRApiManager.sendElaRawTx(raw);
-        return ret;
+        String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw);
+        ElaDataSource.getInstance(mContext).getTransactionTx(mRwTxid);
+        return mRwTxid.getBytes();
     }
 
     @Override
@@ -172,12 +173,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public double getSyncProgress(long startHeight) {
-        return 0;
+        return 1.0;
     }
 
     @Override
     public double getConnectStatus() {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -205,22 +206,21 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new CryptoTransaction[0];
     }
 
+    private static final BigDecimal ELA_FEE = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
+
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
-        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
-        return fee;
+        return ELA_FEE;
     }
 
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
-        return fee;
+        return ELA_FEE;
     }
 
     @Override
     public BigDecimal getFeeForTransactionSize(BigDecimal size) {
-        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
-        return fee;
+        return ELA_FEE;
     }
 
     @Override
@@ -263,24 +263,28 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String balance = BRApiManager.getElaBalance(mContext, getAddress());
+                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
                 final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
                 BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
-                //TODO mock api
-//                try {
-//                    Thread.sleep(10*1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal("12").multiply(ONE_ELA));
-
             }
         }).start();
     }
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        return null;
+        List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
+        List<TxUiHolder> uiTxs = new ArrayList<>();
+        if(transactionEntities==null || transactionEntities.size()<=0) return uiTxs;
+        for(ElaTransactionEntity entity : transactionEntities){
+            TxUiHolder txUiHolder = new TxUiHolder(null, entity.isReceived,
+                    entity.timeStamp, entity.blockHeight, entity.hash, entity.txReversed, ELA_FEE,
+                    entity.toAddress, entity.fromAddress, /*entity.balanceAfterTx*/new BigDecimal("7000000000").divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE)
+                    , entity.txSize, new BigDecimal(Long.toString(entity.amount)).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE), entity.isValid);
+            uiTxs.add(txUiHolder);
+        }
+
+//        mWalletManagerHelper.onTxListModified("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+        return uiTxs;
     }
 
     @Override
@@ -332,7 +336,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
 
-        String tx = BRApiManager.createElaTx(getAddress(), address, amount.intValue(), "");
+        String tx = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
         return new CryptoTransaction(tx);
     }
 
