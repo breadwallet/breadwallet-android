@@ -39,6 +39,7 @@ android {
 
     packagingOptions {
         pickFirst 'protobuf.meta'
+        exclude 'META-INF/proguard/androidx-annotations.pro' // todo update when WorkManager alpha10 became available
     }
 
     externalNativeBuild {
@@ -205,6 +206,7 @@ dependencies {
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+    implementation ("android.arch.work:work-runtime:1.0.0-alpha09") { exclude group: 'com.google.guava', module: 'listenablefuture' }
     implementation 'com.android.support.test:runner:1.0.2'
     implementation 'com.android.support.test:rules:1.0.2'
     implementation 'junit:junit:4.12'

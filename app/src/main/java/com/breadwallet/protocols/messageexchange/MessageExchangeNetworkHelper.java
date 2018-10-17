@@ -1,18 +1,11 @@
 package com.breadwallet.protocols.messageexchange;
 
-import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -24,8 +17,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -55,7 +46,7 @@ import okhttp3.RequestBody;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public final class MessageExchangeNetworkHelper implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
+public final class MessageExchangeNetworkHelper {
 
     private static final String TAG = MessageExchangeNetworkHelper.class.getSimpleName();
 
@@ -96,36 +87,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     public static final String CAPABILITIES = "capabilities";
     public static final String SCOPES = "scopes";
 
-    private static final int POLL_PERIOD_SECONDS = 2;
-    private static final int POLL_AFTER_BACKGROUND_PERIOD_SECONDS = 30;
-
-    private static Timer mPollTimer;
-
-    private static TimerTask mPollTimerTask;
-
-    private static Handler mPollHandler;
-
-    private static MessageExchangeNetworkHelper mInstance;
-    private static Handler mDelayHandler;
-    private static Runnable mDelayStopPollingRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (BreadApp.isInBackground()) {
-                stopInboxPolling();
-            }
-        }
-    };
-
     private MessageExchangeNetworkHelper() {
-        mPollHandler = new Handler(Looper.getMainLooper());
-        mDelayHandler = new Handler(Looper.getMainLooper());
-    }
-
-    public static MessageExchangeNetworkHelper getInstance() {
-        if (mInstance == null) {
-            mInstance = new MessageExchangeNetworkHelper();
-        }
-        return mInstance;
     }
 
     // TODO if 100 entries received, then fetch again.
@@ -304,46 +266,6 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         return null;
     }
 
-    public static void startInboxPolling() {
-        Log.d(TAG, "startInboxPolling: ");
-        //set a new Timer
-        if (mPollTimer != null) {
-            return;
-        }
-        mPollTimer = new Timer();
-        //initialize the TimerTask's job
-        initializeTimerTask(BreadApp.getBreadContext());
-
-        mPollTimer.schedule(mPollTimerTask, 0, DateUtils.SECOND_IN_MILLIS * POLL_PERIOD_SECONDS);
-    }
-
-    private static void initializeTimerTask(final Context context) {
-        mPollTimerTask = new TimerTask() {
-            public void run() {
-                //use a handler to run a toast that shows the current timestamp
-                mPollHandler.post(new Runnable() {
-                    public void run() {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                MessageExchangeService.enqueueWork(context, MessageExchangeService.createIntent(context, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
-                            }
-                        });
-                    }
-                });
-            }
-        };
-    }
-
-    public static void stopInboxPolling() {
-        Log.d(TAG, "stopInboxPolling: ");
-        //stop the timer, if it's not already null
-        if (mPollTimer != null) {
-            mPollTimer.cancel();
-            mPollTimer = null;
-        }
-    }
-
     private static void logError(ErrorObject errorObject, String tag, APIClient.BRResponse response) {
         if (errorObject != null) {
             Log.e(TAG, tag + ": " + errorObject.mMessage);
@@ -370,19 +292,6 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         } catch (Exception ignored) {
         }
         return null;
-    }
-
-    @Override
-    public void onLifeCycle(Lifecycle.Event event) {
-        switch (event) {
-            case ON_STOP:
-                mDelayHandler.postDelayed(mDelayStopPollingRunnable, DateUtils.SECOND_IN_MILLIS * POLL_AFTER_BACKGROUND_PERIOD_SECONDS);
-                break;
-            case ON_START:
-                mDelayHandler.removeCallbacks(mDelayStopPollingRunnable);
-                startInboxPolling();
-                break;
-        }
     }
 
     static class ErrorObject {
