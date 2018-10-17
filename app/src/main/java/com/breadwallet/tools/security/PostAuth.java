@@ -92,7 +92,7 @@ public class PostAuth {
     public void onCreateWalletAuth(final Activity activity, boolean authAsked) {
         boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
         if (success) {
-            BreadApp.initialize();
+            BreadApp.initialize(false);
 
             Intent intent = new Intent(activity, WriteDownActivity.class);
             intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
@@ -183,7 +183,7 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
-                    BreadApp.initialize();
+                    BreadApp.initialize(false);
 
                     Intent intent = new Intent(activity, InputPinActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
