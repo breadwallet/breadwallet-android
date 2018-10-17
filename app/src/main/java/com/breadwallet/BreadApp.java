@@ -17,7 +17,8 @@ import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
+import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
+import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -160,14 +161,16 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        initialize();
+        initialize(true);
     }
 
     /**
      * Initializes the application.  Only put things in here that need to happen after the user has created or
      * recovered the BRD wallet.
+     *
+     * @param isApplicationOnCreate True if initialize is called from application onCreate.
      */
-    public static void initialize() {
+    public static void initialize(boolean isApplicationOnCreate) {
         if (bRDWalletExists()) {
             // Initialize the wallet id (also called rewards id).
             initializeWalletId();
@@ -176,8 +179,11 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
             ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
 
-            // TODO: fix this (MessageExchangeNetworkHelper should not be a ApplicationLifecycleListener.)
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
+            // Initialize message exchange inbox polling.
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver());
+            if (!isApplicationOnCreate) {
+                InboxPollingWorker.initialize();
+            }
 
             // Initialize the Firebase Messaging Service.
             BRDFirebaseMessagingService.initialize(mInstance);
