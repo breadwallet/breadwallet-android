@@ -8,9 +8,9 @@ import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -27,7 +27,6 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
-import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
 import com.elastos.jni.Utility;
 
 import java.math.BigDecimal;
@@ -38,7 +37,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public class WalletElaManager extends BRCoreWalletManager implements BaseWalletManager {
 
-    public static final int ONE_ELA_IN_SALA = 100000000; // 1 ela in sala, 100 millions
+    public static final String ONE_ELA_IN_SALA = "100000000"; // 1 ela in sala, 100 millions
     public static final String MAX_ELA = "10000"; //Max amount in ela
     public static final String ELA_SYMBOL = "ELA";
     private static final String SCHEME = "elastos";
@@ -130,9 +129,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
-        String raw = tx.getElaTx();
-        String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw);
-        ElaDataSource.getInstance(mContext).getTransactionTx(mRwTxid);
+        BRElaTransaction raw = tx.getElaTx();
+        String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+        ElaDataSource.getInstance(mContext).getHistoryTx(mRwTxid);
+        TxManager.getInstance().updateTxList(mContext);
         return mRwTxid.getBytes();
     }
 
@@ -274,16 +274,26 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public List<TxUiHolder> getTxUiHolders(Context app) {
         List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
-        if(transactionEntities==null || transactionEntities.size()<=0) return uiTxs;
-        for(ElaTransactionEntity entity : transactionEntities){
-            TxUiHolder txUiHolder = new TxUiHolder(null, entity.isReceived,
-                    entity.timeStamp, entity.blockHeight, entity.hash, entity.txReversed, ELA_FEE,
-                    entity.toAddress, entity.fromAddress, /*entity.balanceAfterTx*/new BigDecimal("7000000000").divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE)
-                    , entity.txSize, new BigDecimal(Long.toString(entity.amount)).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE), entity.isValid);
-            uiTxs.add(txUiHolder);
+        try{
+            for(ElaTransactionEntity entity : transactionEntities){
+                TxUiHolder txUiHolder = new TxUiHolder(null,
+                        entity.isReceived,
+                        entity.timeStamp,
+                        entity.blockHeight,
+                        entity.hash,
+                        entity.txReversed,
+                        ELA_FEE,
+                        entity.toAddress,
+                        entity.fromAddress,
+                        new BigDecimal(String.valueOf(entity.balanceAfterTx))
+                        , entity.txSize,
+                        new BigDecimal(String.valueOf(entity.amount))
+                        , entity.isValid);
+                uiTxs.add(txUiHolder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-//        mWalletManagerHelper.onTxListModified("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
         return uiTxs;
     }
 
@@ -336,8 +346,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
 
-        String tx = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
-        return new CryptoTransaction(tx);
+        BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
+        return new CryptoTransaction(brElaTransaction);
     }
 
     @Override

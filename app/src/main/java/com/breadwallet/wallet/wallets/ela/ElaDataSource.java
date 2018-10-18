@@ -16,6 +16,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
@@ -110,6 +111,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             database.endTransaction();
             closeDatabase();
             e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
         }
 
     }
@@ -168,10 +172,10 @@ public class ElaDataSource implements BRDataSourceInterface {
         return balance;
     }
 
-    public void getTransactionTx(String txId){
+    public void getHistoryTx(String txId){
         try {
             String url = ELA_SERVIER_URL+"/api/1/tx/"+txId;
-            String result = /*urlGET(app, url)*/getHistoryTx();
+            String result = urlGET(url)/*getHistoryTx()*/;
             JSONObject object = new JSONObject(result);
             String tmp = object.getString("result");
             HistoryTx historyTx = new Gson().fromJson(tmp, HistoryTx.class);
@@ -197,8 +201,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
 
-    public String createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
-        String transactionJson = null;
+    public BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
+        BRElaTransaction brElaTransaction = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/createTx";
 
@@ -212,7 +216,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             tx.outputs.add(outputs);
 
             String json = new Gson().toJson(tx);
-            String result = /*urlPost(url, json)*/getCreateTx();
+            String result = urlPost(url, json)/*getCreateTx()*/;
 
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
@@ -223,12 +227,16 @@ public class ElaDataSource implements BRDataSourceInterface {
                 utxoInputs.privateKey  = WalletElaManager.getPrivateKey();
             }
 
-            transactionJson =new Gson().toJson(res);
+            String transactionJson =new Gson().toJson(res);
+
+            brElaTransaction = new BRElaTransaction();
+            brElaTransaction.setTx(transactionJson);
+            brElaTransaction.setTxId(inputs.get(0).txid);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return transactionJson;
+        return brElaTransaction;
     }
 
 
@@ -237,9 +245,9 @@ public class ElaDataSource implements BRDataSourceInterface {
         String result = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
-//            String rawTransaction = Utility.generateRawTransaction(transaction);
-//            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
-            String tmp = /*urlPost(url, json)*/getRawTx();
+            String rawTransaction = Utility.generateRawTransaction(transaction);
+            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
+            String tmp = urlPost(url, json)/*getRawTx()*/;
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             Log.i("rawTx", "result:"+result);
@@ -307,24 +315,31 @@ public class ElaDataSource implements BRDataSourceInterface {
     //TODO test
     private String getCreateTx(){
         return "{\n" +
-                "\t\"result\": {\n" +
-                "\t\t\"ElaTransactions\": [{\n" +
-                "\t\t\t\"ElaUTXOInputs\": [{\n" +
-                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\",\n" +
-                "\t\t\t\t\"txid\": \"1d88dad1c8bfc2d58b37d3d022e38f18d2a80148468e448ece3a3c230ced9bcc\",\n" +
-                "\t\t\t\t\"index\": 0\n" +
-                "\t\t\t}],\n" +
-                "\t\t\t\"Fee\": 100.0,\n" +
-                "\t\t\t\"ElaOutputs\": [{\n" +
-                "\t\t\t\t\"amount\": 10000,\n" +
-                "\t\t\t\t\"address\": \"ETyWPmg5aNais2iNrt2zGVjxJ3EVbuzVYo\"\n" +
-                "\t\t\t}, {\n" +
-                "\t\t\t\t\"amount\": 99989900,\n" +
-                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\"\n" +
-                "\t\t\t}]\n" +
-                "\t\t}]\n" +
-                "\t},\n" +
-                "\t\"status\": 200\n" +
+                "    \"result\": {\n" +
+                "        \"Transactions\": [\n" +
+                "            {\n" +
+                "                \"UTXOInputs\": [\n" +
+                "                    {\n" +
+                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\",\n" +
+                "                        \"txid\": \"fa9bcb8b2f3a3a1e627284ad8425faf70fa64146b88a3aceac538af8bfeffd91\",\n" +
+                "                        \"index\": 1\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"Fee\": 100,\n" +
+                "                \"Outputs\": [\n" +
+                "                    {\n" +
+                "                        \"amount\": 1000,\n" +
+                "                        \"address\": \"EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"amount\": 99997800,\n" +
+                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\"\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"status\": 200\n" +
                 "}";
     }
 
