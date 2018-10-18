@@ -163,7 +163,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="3dp"
                     android:layout_weight="1"
-                    android:text="@string/Crowdsale.decline"
+                    android:text="@string/LinkWallet.decline"
                     app:buttonType="8"
                     app:isBreadButton="true" />
 
@@ -175,7 +175,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@id/negative_button"
                     android:layout_weight="1"
-                    android:text="@string/BitID.approve"
+                    android:text="@string/LinkWallet.approve"
                     app:buttonType="9"
                     app:isBreadButton="true" />
 

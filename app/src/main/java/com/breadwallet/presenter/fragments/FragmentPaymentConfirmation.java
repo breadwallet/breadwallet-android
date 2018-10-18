@@ -69,7 +69,6 @@ public class FragmentPaymentConfirmation extends Fragment {
                 icoName.setText(metaData.getTokenName());
             }
 
-            positiveButton.setText(getResources().getString(R.string.Button_buy));
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -77,7 +76,6 @@ public class FragmentPaymentConfirmation extends Fragment {
                 }
             });
 
-            negativeButton.setText(getResources().getString(R.string.Button_cancel));
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
