@@ -907,8 +907,8 @@ public final class MessageExchangeService extends JobIntentService {
     private void addNewTokenToTokenList(String txHash, RequestMetaData requestMetaData) {
 
         if (requestMetaData != null) {
-            if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getCurrencyCode())) {
-                WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getCurrencyCode());
+            if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getTokenSymbol())) {
+                WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getTokenSymbol());
                 TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
 
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
