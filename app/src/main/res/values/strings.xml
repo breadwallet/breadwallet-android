@@ -924,6 +924,10 @@
   <string name="TransactionDetails.amountWhenSent">%1$s when sent, %2$s now</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">Approve</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">Decline</string>
   <!-- Link Wallet view title -->
   <string name="LinkWallet.title">Link Wallet</string>
   <!-- Link Wallet view title above domain list -->
