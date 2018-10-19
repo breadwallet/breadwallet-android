@@ -27,14 +27,13 @@ import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
@@ -68,7 +67,7 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends ModalDialogFragment implements OnBalanceChangedListener {
+public class FragmentReceive extends ModalDialogFragment implements BalanceUpdateListener {
     private static final String TAG = FragmentReceive.class.getName();
 
     public TextView mTitle;
@@ -148,7 +147,6 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
 
         return rootView;
     }
-
 
     private void setListeners() {
         mShareEmailButton.setOnClickListener(new View.OnClickListener() {

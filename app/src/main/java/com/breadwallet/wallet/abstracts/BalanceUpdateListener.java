@@ -26,7 +26,7 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface OnBalanceChangedListener {
+public interface BalanceUpdateListener {
 
-    void onBalanceChanged(BigDecimal newBalance);
+    abstract void onBalanceChanged(BigDecimal newBalance);
 }
