@@ -395,10 +395,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     }
 
     @Override
-    public void refreshCachedBalance(final Context app) {
+    public void refreshCachedBalance(final Context context) {
         final BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-
+        onBalanceChanged(context, balance);
     }
 
 
@@ -1185,9 +1184,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event,
                                   Status status,
                                   String errorDescription) {
-        Context app = BreadApp.getBreadContext();
+        Context context = BreadApp.getBreadContext();
 
-        if (app != null) {
+        if (context != null) {
             String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
@@ -1195,7 +1194,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     break;
                 case BALANCE_UPDATED:
                     if (status == Status.SUCCESS) {
-                        notifyBalanceWasUpdated(wallet, iso);
+                        WalletsMaster.getInstance(context).refreshBalances(context);
                         printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     } else {
                         BRReportsManager.reportBug(new IllegalArgumentException("BALANCE_UPDATED: Failed to update balance: status:"
@@ -1206,7 +1205,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     printInfo("New Gas Limit: ...", iso, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso()), iso, event.name());
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(context, getIso()), iso, event.name());
                     break;
                 case DELETED:
                     BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
@@ -1343,51 +1342,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             }
         });
 
-    }
-
-    /**
-     * refresh current wallet's balance by code
-     *
-     * @param code - wallet code for which the balance was updated
-     */
-    private void notifyBalanceWasUpdated(BREthereumWallet wallet, String code) {
-        if (Utils.isNullOrEmpty(code)) {
-            BRReportsManager.reportBug(new NullPointerException("Invalid code: " + code));
-            return;
-        }
-        final Context context = BreadApp.getBreadContext();
-
-        if (getIso().equalsIgnoreCase(code)) {
-            //ETH wallet balance was updated
-            final BigDecimal balance = new BigDecimal(wallet.getBalance(getUnit()));
-            setCachedBalance(context, balance);
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    onBalanceChanged(balance); //this, Eth wallet.
-                }
-            });
-
-        } else {
-            //ERC20 wallet balance was updated
-            final BigDecimal balance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)); //use TOKEN_DECIMAL
-            final String iso = wallet.getToken().getSymbol();
-            if (context != null) {
-                final BaseWalletManager wm = WalletsMaster.getInstance(context).getWalletByIso(context, iso); //the token wallet being updated.
-                if (wm != null) {
-                    wm.setCachedBalance(context, balance);
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            wm.onBalanceChanged(balance);
-                        }
-                    });
-                } else {
-                    BRReportsManager.reportBug(new NullPointerException("Could not find wallet with code: " + code));
-                }
-
-            }
-        }
     }
 
     public long getBlockHeight(){
