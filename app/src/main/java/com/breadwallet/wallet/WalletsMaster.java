@@ -183,9 +183,10 @@ public class WalletsMaster {
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
         if (languageCode == null) languageCode = "en";
-        list = Bip39Reader.bip39List(ctx, languageCode);
+        list = Bip39Reader.bip39List(ctx, /*languageCode*/"en");
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);//128bit
+        String seedTest = new String(randomSeed);
         if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
             return false;

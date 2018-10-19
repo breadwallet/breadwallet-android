@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.ela.response.history;
+package com.breadwallet.wallet.wallets.ela.response.tx;
 
 public class Vout {
     public int outputlock;

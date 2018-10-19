@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreTransaction;
@@ -11,6 +12,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -27,6 +29,8 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.response.utxo.Utxo;
+import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoEntity;
 import com.elastos.jni.Utility;
 
 import java.math.BigDecimal;
@@ -99,6 +103,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                 mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
 //                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
 //                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+                Log.i("test", "test");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -131,9 +136,23 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         BRElaTransaction raw = tx.getElaTx();
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
-        ElaDataSource.getInstance(mContext).getHistoryTx(mRwTxid);
+        UtxoEntity utxoEntity = ElaDataSource.getInstance(mContext).getUtxos(mAddress);
+        List txIds = getTxids(utxoEntity);
+        ElaDataSource.getInstance(mContext).getTransactionsByTxids(txIds);
         TxManager.getInstance().updateTxList(mContext);
         return mRwTxid.getBytes();
+    }
+
+    private List getTxids(UtxoEntity utxoEntity){
+        List<String> result = new ArrayList();
+        List<Utxo> utxo = utxoEntity.Utxo;
+        if(utxo==null || utxo.size()<=0) return null;
+        result.clear();
+        for(int i=0; i<utxo.size(); i++){
+            result.add(utxo.get(i).Txid);
+        }
+
+        return result;
     }
 
     @Override

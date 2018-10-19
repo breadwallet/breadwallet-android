@@ -1,8 +1,8 @@
-package com.breadwallet.wallet.wallets.ela.response.history;
+package com.breadwallet.wallet.wallets.ela.response.tx;
 
 import java.util.List;
 
-public class HistoryTx {
+public class TransactionEntity {
     public int vsize;
     public int locktime;
     public String txid;
@@ -12,12 +12,12 @@ public class HistoryTx {
     public List<Vout> vout;
     public String blockhash;
     public int size;
-    public int blocktime;
-    public Payload payload;
+    public long blocktime;
     public List<Vin> vin;
     public int payloadversion;
     public List<Attributes> attributes;
     public long time;
     public List<Programs> programs;
     public String hash;
+
 }

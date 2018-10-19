@@ -1281,14 +1281,14 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     getWalletManagerHelper().onTxListModified(transaction.getHash());
                     break;
                 case REMOVED:
-                    printInfo("Transaction removed: ", iso, event.name());
+                    printInfo("TransactionEntity removed: ", iso, event.name());
                     getWalletManagerHelper().onTxListModified(transaction.getHash());
                     break;
                 case CREATED:
-                    printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity created: " + transaction.getAmount(), iso, event.name());
                     break;
                 case SIGNED:
-                    printInfo("Transaction signed: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity signed: " + transaction.getAmount(), iso, event.name());
                     break;
                 case SUBMITTED:
                     if (mWatchedTransaction != null) {
@@ -1307,19 +1307,19 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                         Log.e(TAG, "handleTransactionEvent: tx is null");
                     }
                     Log.e(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
-                    printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity submitted: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCKED:
-                    printInfo("Transaction blocked: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity blocked: " + transaction.getAmount(), iso, event.name());
                     break;
                 case ERRORED:
-                    printInfo("Transaction error: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity error: " + transaction.getAmount(), iso, event.name());
                     break;
                 case GAS_ESTIMATE_UPDATED:
-                    printInfo("Transaction gas estimate updated: " + transaction.getAmount(), iso, event.name());
+                    printInfo("TransactionEntity gas estimate updated: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCK_CONFIRMATIONS_UPDATED:
-                    printInfo("Transaction confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
+                    printInfo("TransactionEntity confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
                     break;
             }
         }

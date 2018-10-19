@@ -1016,7 +1016,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        BRDialog.showSimpleDialog(ctx, "Transaction failed!", hash);
+                        BRDialog.showSimpleDialog(ctx, "TransactionEntity failed!", hash);
                     }
                 });
             TransactionStorageManager.removeTransaction(ctx, getIso(), hash);

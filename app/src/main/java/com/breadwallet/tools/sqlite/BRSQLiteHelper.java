@@ -109,7 +109,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             MB_HEIGHT + " integer);";
 
     /**
-     * Transaction table
+     * TransactionEntity table
      */
 
     public static final String TX_TABLE_NAME_OLD = "transactionTable";

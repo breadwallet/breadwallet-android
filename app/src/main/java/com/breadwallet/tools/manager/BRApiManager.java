@@ -15,21 +15,12 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.breadwallet.wallet.wallets.ela.request.CreateTx;
-import com.breadwallet.wallet.wallets.ela.request.Outputs;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
-import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
-import com.elastos.jni.Utility;
-import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,10 +34,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import okhttp3.MediaType;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * BreadWallet

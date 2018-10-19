@@ -16,10 +16,12 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
-import com.breadwallet.wallet.wallets.ela.response.history.HistoryTx;
+import com.breadwallet.wallet.wallets.ela.response.tx.TransactionEntity;
+import com.breadwallet.wallet.wallets.ela.response.tx.TransactionRes;
+import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoEntity;
+import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoRes;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
@@ -172,32 +174,54 @@ public class ElaDataSource implements BRDataSourceInterface {
         return balance;
     }
 
-    public void getHistoryTx(String txId){
-        try {
-            String url = ELA_SERVIER_URL+"/api/1/tx/"+txId;
-            String result = urlGET(url)/*getHistoryTx()*/;
-            JSONObject object = new JSONObject(result);
-            String tmp = object.getString("result");
-            HistoryTx historyTx = new Gson().fromJson(tmp, HistoryTx.class);
 
-            ElaTransactionEntity transactionEntity = new ElaTransactionEntity();
-            transactionEntity.amount = historyTx.payload.CrossChainAmounts.get(0);
-            transactionEntity.balanceAfterTx = 1;
-            transactionEntity.blockHeight = 0;
-            transactionEntity.fee = 100;
-            transactionEntity.fromAddress = historyTx.payload.CrossChainAddresses.get(0);
-            transactionEntity.toAddress = historyTx.vout.get(0).address;
-            transactionEntity.hash = historyTx.hash.getBytes();
-            transactionEntity.isValid = true;
-            transactionEntity.timeStamp = historyTx.time;
-            transactionEntity.txReversed = historyTx.txid;
-            transactionEntity.isReceived = false;
-            transactionEntity.txSize = historyTx.size;
-
-            putTransaction(transactionEntity);
+    public UtxoEntity getUtxos(String address){
+        UtxoRes utxoEntity = null;
+        try{
+            String url = ELA_SERVIER_URL+"/api/1/utxos/"+address;
+            String result = urlGET(url);
+            utxoEntity = new Gson().fromJson(result, UtxoRes.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (utxoEntity==null || utxoEntity.result==null || utxoEntity.result.size()<=0) return null;
+        return utxoEntity.result.get(0);
+
+    }
+
+    public TransactionEntity getTransactionsByTxids(List<String> txIds){
+        TransactionEntity transaction = null;
+        try{
+            String url = ELA_SERVIER_URL+"/api/1/tx";
+
+            String json = new Gson().toJson(txIds);
+            String result = urlPost(url, json);
+            TransactionRes transactionRes = new Gson().fromJson(result, TransactionRes.class);
+
+
+            if(transactionRes==null || transactionRes.result==null || transactionRes.result.size()<=0) return null;
+            TransactionEntity transactionEntity = transactionRes.result.get(0);
+            //test
+            ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+            elaTransactionEntity.toAddress = "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG";
+            elaTransactionEntity.fromAddress = "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG";
+            elaTransactionEntity.amount = 1000000000;
+            elaTransactionEntity.txSize = 289;
+            elaTransactionEntity.hash = new byte[128];
+            elaTransactionEntity.blockHeight = 1024;
+            elaTransactionEntity.timeStamp = 1539919032;
+            elaTransactionEntity.txReversed = "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8";
+            elaTransactionEntity.balanceAfterTx = 10000000000L;
+            elaTransactionEntity.fee = 100;
+            elaTransactionEntity.isValid = true;
+            elaTransactionEntity.isReceived = true;
+            putTransaction(elaTransactionEntity);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return transaction;
     }
 
 
@@ -343,6 +367,113 @@ public class ElaDataSource implements BRDataSourceInterface {
                 "}";
     }
 
+    private String getTranactions(){
+        return "{\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"vsize\": 288,\n" +
+                "            \"locktime\": 0,\n" +
+                "            \"txid\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\",\n" +
+                "            \"confirmations\": 13,\n" +
+                "            \"type\": 2,\n" +
+                "            \"version\": 0,\n" +
+                "            \"vout\": [\n" +
+                "                {\n" +
+                "                    \"outputlock\": 0,\n" +
+                "                    \"address\": \"8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG\",\n" +
+                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
+                "                    \"value\": \"1\",\n" +
+                "                    \"n\": 0\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"outputlock\": 0,\n" +
+                "                    \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
+                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
+                "                    \"value\": \"977.89999500\",\n" +
+                "                    \"n\": 1\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"blockhash\": \"75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612\",\n" +
+                "            \"size\": 288,\n" +
+                "            \"blocktime\": 1539919032,\n" +
+                "            \"vin\": [\n" +
+                "                {\n" +
+                "                    \"sequence\": 0,\n" +
+                "                    \"txid\": \"f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54\",\n" +
+                "                    \"vout\": 1\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"payloadversion\": 0,\n" +
+                "            \"attributes\": [\n" +
+                "                {\n" +
+                "                    \"data\": \"e6b58be8af95\",\n" +
+                "                    \"usage\": 129\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"time\": 1539919032,\n" +
+                "            \"programs\": [\n" +
+                "                {\n" +
+                "                    \"code\": \"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac\",\n" +
+                "                    \"parameter\": \"403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"hash\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\"\n" +
+                "        },\n" +
+                "        \"Unknown Transaction\",\n" +
+                "        {\n" +
+                "            \"vsize\": 288,\n" +
+                "            \"locktime\": 0,\n" +
+                "            \"txid\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\",\n" +
+                "            \"confirmations\": 13,\n" +
+                "            \"type\": 2,\n" +
+                "            \"version\": 0,\n" +
+                "            \"vout\": [\n" +
+                "                {\n" +
+                "                    \"outputlock\": 0,\n" +
+                "                    \"address\": \"8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG\",\n" +
+                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
+                "                    \"value\": \"1\",\n" +
+                "                    \"n\": 0\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"outputlock\": 0,\n" +
+                "                    \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
+                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
+                "                    \"value\": \"977.89999500\",\n" +
+                "                    \"n\": 1\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"blockhash\": \"75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612\",\n" +
+                "            \"size\": 288,\n" +
+                "            \"blocktime\": 1539919032,\n" +
+                "            \"vin\": [\n" +
+                "                {\n" +
+                "                    \"sequence\": 0,\n" +
+                "                    \"txid\": \"f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54\",\n" +
+                "                    \"vout\": 1\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"payloadversion\": 0,\n" +
+                "            \"attributes\": [\n" +
+                "                {\n" +
+                "                    \"data\": \"e6b58be8af95\",\n" +
+                "                    \"usage\": 129\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"time\": 1539919032,\n" +
+                "            \"programs\": [\n" +
+                "                {\n" +
+                "                    \"code\": \"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac\",\n" +
+                "                    \"parameter\": \"403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"hash\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"status\": 200\n" +
+                "}";
+    }
+
     private String getRawTx(){
         return "{\n" +
                 "    \"result\": \"1f4432635bcf8c347f2bc20b7906c8c6c195f51beb3426e5f8d6a9e4cc073cf3\",\n" +
@@ -350,71 +481,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 "}";
     }
 
-    private String getHistoryTx(){
-        return "  {\n" +
-                "    \"result\":{\n" +
-                "        \"vsize\":346,\n" +
-                "        \"locktime\":0,\n" +
-                "        \"txid\":\"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab\",\n" +
-                "        \"confirmations\":6756,\n" +
-                "        \"type\":8,\n" +
-                "        \"version\":0,\n" +
-                "        \"vout\":[\n" +
-                "            {\n" +
-                "                \"outputlock\":0,\n" +
-                "                \"address\":\"XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU\",\n" +
-                "                \"assetid\":\"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                \"value\":\"0.10010000\",\n" +
-                "                \"n\":0\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"outputlock\":0,\n" +
-                "                \"address\":\"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
-                "                \"assetid\":\"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                \"value\":\"0.50249300\",\n" +
-                "                \"n\":1\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"blockhash\":\"4021e5c0ace86221016d3aa2b114adbd84bb03692bb6ddc6034794260834c570\",\n" +
-                "        \"size\":346,\n" +
-                "        \"blocktime\":1538279155,\n" +
-                "        \"payload\":{\n" +
-                "            \"CrossChainAddresses\":[\n" +
-                "                \"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv\"\n" +
-                "            ],\n" +
-                "            \"OutputIndexes\":[\n" +
-                "                0\n" +
-                "            ],\n" +
-                "            \"CrossChainAmounts\":[\n" +
-                "                10000000\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        \"vin\":[\n" +
-                "            {\n" +
-                "                \"sequence\":0,\n" +
-                "                \"txid\":\"ba7bd41aae0a1371d9689ad04508f0754bb4a5333386411bccbdec718ce61625\",\n" +
-                "                \"vout\":1\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"payloadversion\":0,\n" +
-                "        \"attributes\":[\n" +
-                "            {\n" +
-                "                \"data\":\"32323432343239353130383035363838303230\",\n" +
-                "                \"usage\":0\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"time\":1538279155,\n" +
-                "        \"programs\":[\n" +
-                "            {\n" +
-                "                \"code\":\"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac\",\n" +
-                "                \"parameter\":\"40cf6b8a18c861fcad1c23816221cc40a0d2e7d43065c070e66905ff7d6c634068542dd2a9b0bbb24de6a5a547b57767f908fc384cd6dc06298de11ebc3338aa79\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"hash\":\"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab\"\n" +
-                "    },\n" +
-                "    \"status\":200\n" +
-                "}";
-    }
+
 
     @Override
     public SQLiteDatabase openDatabase() {
