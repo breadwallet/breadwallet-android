@@ -10,12 +10,10 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
@@ -25,10 +23,10 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -76,6 +74,7 @@ public class WalletsMaster {
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
     private TokenListMetaData mTokenListMetaData;
+    private List<BalanceUpdateListener> mBalancesUpdateListeners = new ArrayList<>();
 
     private WalletsMaster(Context app) {
     }
@@ -166,8 +165,9 @@ public class WalletsMaster {
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
             BigDecimal fiatBalance = wallet.getFiatBalance(app);
-            if (fiatBalance != null)
+            if (fiatBalance != null) {
                 totalBalance = totalBalance.add(fiatBalance);
+            }
         }
         return totalBalance;
     }
@@ -312,11 +312,12 @@ public class WalletsMaster {
     }
 
     public void refreshBalances(Context app) {
-        long start = System.currentTimeMillis();
-
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
             wallet.refreshCachedBalance(app);
+        }
+        for (BalanceUpdateListener balanceUpdateListener : mBalancesUpdateListeners) {
+            balanceUpdateListener.onBalanceChanged(null);
         }
     }
 
@@ -410,6 +411,16 @@ public class WalletsMaster {
             }
         }
         return false;
+    }
+
+    public void addBalanceUpdateListener(BalanceUpdateListener balanceUpdateListener) {
+        if (!mBalancesUpdateListeners.contains(balanceUpdateListener)) {
+            mBalancesUpdateListeners.add(balanceUpdateListener);
+        }
+    }
+
+    public void removeBalanceUpdateListener(BalanceUpdateListener onBalancesUpdated) {
+        mBalancesUpdateListeners.remove(onBalancesUpdated);
     }
 
 }

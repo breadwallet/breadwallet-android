@@ -1,7 +1,10 @@
 package com.breadwallet.wallet.wallets;
 
 
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import android.content.Context;
+
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 //import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
@@ -16,29 +19,25 @@ public class WalletManagerHelper {
     //Show this number of decimal places in transaction info.
     public static final int MAX_DECIMAL_PLACES_FOR_UI = 5;
 
-    private List<OnBalanceChangedListener> mOnBalanceChangedListeners = new ArrayList<>();
+    private List<BalanceUpdateListener> mOnBalanceChangedListeners = new ArrayList<>();
     //    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> mSyncListeners = new ArrayList<>();
     private List<OnTxListModified> mOntxListModifiedListeners = new ArrayList<>();
 
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
+    public void addBalanceChangedListener(BalanceUpdateListener listener) {
         if (listener != null && !mOnBalanceChangedListeners.contains(listener)) {
             mOnBalanceChangedListeners.add(listener);
         }
     }
 
-    public void onBalanceChanged(BigDecimal balance) {
-        for (OnBalanceChangedListener listener : mOnBalanceChangedListeners) {
+    public void onBalanceChanged(Context context, String currencyCode, BigDecimal balance) {
+        BRSharedPrefs.putCachedBalance(context, currencyCode, balance);
+        for (BalanceUpdateListener listener : mOnBalanceChangedListeners) {
             if (listener != null) {
                 listener.onBalanceChanged(balance);
             }
         }
     }
-
-//    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener listener) {
-//        if (listener != null && !mOnTxStatusUpdatedListeners.contains(listener))
-//            mOnTxStatusUpdatedListeners.add(listener);
-//    }
 
     public void addSyncListener(SyncListener listener) {
         if (listener != null && !mSyncListeners.contains(listener)) {

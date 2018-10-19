@@ -10,7 +10,6 @@ import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -63,11 +62,9 @@ public interface BaseWalletManager {
         //sign and publish the tx using the seed
     byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed);
 
-    void addBalanceChangedListener(OnBalanceChangedListener list);
+    void addBalanceChangedListener(BalanceUpdateListener list);
 
-    void onBalanceChanged(BigDecimal balance);
-
-//    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
+    void onBalanceChanged(Context context, BigDecimal balance);
 
     void addSyncListener(SyncListener listener);
 
@@ -200,11 +197,6 @@ public interface BaseWalletManager {
     void syncStopped(String error);
 
     boolean networkIsReachable();
-
-    /**
-     * @param balance - the balance to be saved in the smallest unit.(e.g. satoshis, wei)
-     */
-    void setCachedBalance(Context app, BigDecimal balance);
 
     //return the maximum amount for this currency
     BigDecimal getMaxAmount(Context app);

@@ -3,14 +3,13 @@ package com.breadwallet.wallet.wallets.ethereum;
 import android.content.Context;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
@@ -57,13 +56,13 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     }
 
     @Override
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
+    public void addBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
 
     @Override
-    public void onBalanceChanged(BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(balance);
+    public void onBalanceChanged(Context context, BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(context, getIso(), balance);
     }
 
     // TODO not used by ETH, ERC20
@@ -79,11 +78,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     @Override
     public void addTxListModifiedListener(OnTxListModified listener) {
         mWalletManagerHelper.addTxListModifiedListener(listener);
-    }
-
-    @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
     }
 
     //TODO Not used by ETH, ERC20

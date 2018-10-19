@@ -51,7 +51,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -419,11 +419,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public void setCachedBalance(final Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-    }
-
-    @Override
     public void refreshAddress(Context app) {
         BRCoreAddress address = getWallet().getReceiveAddress();
         if (Utils.isNullOrEmpty(address.stringify())) {
@@ -433,9 +428,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public void refreshCachedBalance(Context app) {
+    public void refreshCachedBalance(Context context) {
         BigDecimal balance = new BigDecimal(getWallet().getBalance());
-        setCachedBalance(app, balance);
+        onBalanceChanged(context, balance);
     }
 
     @Override
@@ -813,19 +808,14 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
+    public void addBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
 
     @Override
-    public void onBalanceChanged(BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(balance);
+    public void onBalanceChanged(Context context, BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(context, getIso(), balance);
     }
-
-//    @Override
-//    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener listener) {
-//        mWalletManagerHelper.addTxStatusUpdatedListener(listener);
-//    }
 
     @Override
     public void addSyncListener(SyncListener listener) {
@@ -854,12 +844,15 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         mWalletManagerHelper.onTxListModified(hash);
     }
 
+    /**
+     * Core callback for balance updates.
+     * @param balance
+     */
     public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
-        final Context app = BreadApp.getBreadContext();
-        setCachedBalance(app, new BigDecimal(balance));
-        onBalanceChanged(new BigDecimal(balance));
-        refreshAddress(app);
+        final Context context = BreadApp.getBreadContext();
+        onBalanceChanged(context, new BigDecimal(balance));
+        refreshAddress(context);
     }
 
     public void txStatusUpdate() {
