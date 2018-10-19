@@ -123,19 +123,17 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
-        if (address == null) {
-            if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH"))
-            return null;
-        }
-        if (mTokenWallets.containsKey(address)) {
-            return mTokenWallets.get(address);
-        }
+        if (address != null) {
+            if (mTokenWallets.containsKey(address)) {
+                return mTokenWallets.get(address);
+            }
 
-        BREthereumToken token = walletEthManager.node.lookupToken(address);
-        if (token != null) {
-            return getTokenWallet(walletEthManager, token);
-        } else
-            BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso + ":" + address));
+            BREthereumToken token = walletEthManager.node.lookupToken(address);
+            if (token != null) {
+                return getTokenWallet(walletEthManager, token);
+            } else
+                BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso + ":" + address));
+        }
         return null;
     }
 
