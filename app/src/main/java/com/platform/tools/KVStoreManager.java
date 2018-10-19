@@ -218,7 +218,7 @@ public class KVStoreManager {
     }
 
     public static void putPairingMetadata(Context app, PairingMetaData pairingData) {
-        Log.e(TAG, "putPairingMetadata: hexPubkey: " + pairingData.getPublicKeyHex());
+        Log.d(TAG, "putPairingMetadata: hexPubkey: " + pairingData.getPublicKeyHex());
         byte[] rawPubKey = BRCoreKey.decodeHex(pairingData.getPublicKeyHex());
         String base64PubKey = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
 

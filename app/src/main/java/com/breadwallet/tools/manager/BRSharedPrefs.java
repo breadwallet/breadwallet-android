@@ -555,7 +555,6 @@ public class BRSharedPrefs {
     }
 
     public static void putBundleHash(Context context, String bundleName, String bundleHash) {
-        Log.e(TAG, "putBundleHash: " + bundleHash);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(BUNDLE_HASH_PREFIX + bundleName, bundleHash);
@@ -566,6 +565,5 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BUNDLE_HASH_PREFIX + bundleName, null);
     }
-
 
 }
