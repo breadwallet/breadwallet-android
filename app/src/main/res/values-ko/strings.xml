@@ -1,925 +1,925 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <!-- App name -->
-  <string name="About.appName.android">Bread</string>
-  <!-- About screen blog label -->
-  <string name="About.blog">블로그</string>
-  <!-- About screen footer -->
-  <string name="About.footer">글로벌 Bread 팀 제작. 버전 %1$s</string>
-  <!-- Privay Policy button label -->
-  <string name="About.privacy">개인정보 보호정책</string>
-  <!-- About screen reddit label -->
-  <string name="About.reddit">레딧</string>
-  <!-- Terms of Use button label -->
-  <string name="About.terms">이용 약관</string>
-  <!-- About screen title -->
-  <string name="About.title">관련 사항</string>
-  <!-- About screen twitter label -->
-  <string name="About.twitter">트위터</string>
-  <!-- About screen wallet ID label -->
-  <string name="About.walletID">BRD Rewards ID</string>
-  <!-- Close modal button accessibility label -->
-  <string name="AccessibilityLabels.close">닫기</string>
-  <!-- Support center accessibiliy label -->
-  <string name="AccessibilityLabels.faq">고객지원 센터</string>
-  <!-- Account balance -->
-  <string name="Account.balance">잔액</string>
-  <!-- $10000 per BTC -->
-  <string name="Account.exchangeRate">%2$s 당 %1$s</string>
-  <!-- Loading Wallet Message -->
-  <string name="Account.loadingMessage">지갑 로딩</string>
-  <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">나의 Bread</string>
-  <!-- Third party keyboard warning -->
-  <string name="Alert.customKeyboard.android">제3자가 제공한 키보드를 사용하고 계신 것 같습니다, 귀하의 입력을 기록하고 귀하의 페이퍼 키가 도난 당할 수 있습니다. 추가적인 보호를 위해 기본 안드로이드 키보드로 전환해 주세요.</string>
-  <!-- Error alert title -->
-  <string name="Alert.error">오류</string>
-  <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">귀하의 안드로이드 OS 키스토어에 문제가 있습니다, support@breadwallet.com로 연락해 주세요</string>
-  <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">귀하의 안드로이드 잠금 화면이 꺼져서 귀하의 암호화 된 데이터가 최근 무효화 되었습니다.</string>
-  <!-- Keystore error title -->
-  <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
-  <!-- No internet alert message -->
-  <string name="Alert.noInternet">인터넷이 연결되지 않았습니다. 연결을 확인하시고 다시 시도해 주세요.</string>
-  <!-- Warning alert title -->
-  <string name="Alert.warning">경고</string>
-  <!-- 'the addresses were copied'' Alert title -->
-  <string name="Alerts.copiedAddressesHeader">주소들 복사됨</string>
-  <!-- Addresses Copied Alert sub header -->
-  <string name="Alerts.copiedAddressesSubheader">모든 지갑 주소들이 성공적으로 복사됨.</string>
-  <!-- Alert Header Label (the paper key was set) -->
-  <string name="Alerts.paperKeySet">종이 열쇠 준비</string>
-  <!-- Alert Subheader label (playfully positive) -->
-  <string name="Alerts.paperKeySetSubheader">굉장해요!</string>
-  <!-- Alert Header label (the PIN was set) -->
-  <string name="Alerts.pinSet">PIN 준비</string>
-  <!-- Send failure alert header label (the send failed to happen) -->
-  <string name="Alerts.sendFailure">보내기 실패함</string>
-  <!-- Send success alert header label (confirmation that the send happened) -->
-  <string name="Alerts.sendSuccess">보내기 확인</string>
-  <!-- Send success alert subheader label (e.g. the money was sent) -->
-  <string name="Alerts.sendSuccessSubheader">돈을 보냈어요!</string>
-  <!-- Fingerprint was recognized by the scanner -->
-  <string name="Alerts.touchIdSucceeded.android">지문 인식됨</string>
-  <!-- Tell the user where they can enable permissions to access device storage. -->
-  <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
-  <!-- The "home" screen is the name of the top level menu for the app. -->
-  <string name="Android.BCH.welcome.message">홈 화면을 통해 월렛에 있는 모든 BCH에 액세스할 수 있습니다.</string>
-  <!-- Warning about using apps that can alter the screen -->
-  <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
-  <!-- An app that alters the screen ("screen-altering app") has been detected. -->
-  <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
-  <!-- JSON Serialization error message -->
-  <string name="ApiClient.jsonError">JSON 직렬화 오류</string>
-  <!-- Wallet not ready error message -->
-  <string name="ApiClient.notReady">지갑 준비 안됨</string>
-  <!-- API Token error message -->
-  <string name="ApiClient.tokenError">API 토큰을 가져올 수 없습니다</string>
-  <!-- Send BCH view body. -->
-  <string name="BCH.body">아래의 목적지 BCH 주소를 입력하세요. 분기 시점(%1$s)에 귀하의 월렛에 있는 모든 BCH를 보냅니다.</string>
-  <!-- Confirm sending <$5.00> to <address>? -->
-  <string name="BCH.confirmationMessage">%1$s를 %2$s(으)로 보내기를 확인</string>
-  <!-- Confirmation alert title -->
-  <string name="BCH.confirmationTitle">확정</string>
-  <!-- Generic bch erorr message -->
-  <string name="BCH.genericError">귀하의 계정에는 BCH가 없거나, 분기 이후에 BCH를 받으셨습니다.</string>
-  <!-- Transaction ID copied message -->
-  <string name="BCH.hashCopiedMessage">Transaction ID 복사됨</string>
-  <!-- No address error message -->
-  <string name="BCH.noAddressError">주소를 입력해 주세요</string>
-  <!-- Attempted to scan unsupported qr code error message. -->
-  <string name="BCH.paymentProtocolError">Payment Protocol Request는 BCH 트랜잭션에서 지원되지 않습니다</string>
-  <!-- BCH successfully sent alert message -->
-  <string name="BCH.successMessage">BCH를 성공적으로 보냈습니다.</string>
-  <!-- Widthdraw BCH view title -->
-  <string name="BCH.title">BCH 인출</string>
-  <!-- Tx Hash button header -->
-  <string name="BCH.txHashHeader">BCH Transaction ID</string>
-  <!-- Approve button label -->
-  <string name="BitID.approve">승인</string>
-  <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s(이)가 귀하의 비트코인 월렛 이용에 대한 인증을 요청하고 있습니다.</string>
-  <!-- Deny button label -->
-  <string name="BitID.deny">거부</string>
-  <!-- BitID error alert title -->
-  <string name="BitID.error">인증 오류</string>
-  <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
-  <string name="BitID.errorMessage">서비스 측에 확인해 주세요. 다시 시도해야 할 수도 있습니다.</string>
-  <!-- BitID success alert title -->
-  <string name="BitID.success">성공적으로 인증됨</string>
-  <!-- BitID Authentication Request alert view title -->
-  <string name="BitID.title">BitID 인증 요청</string>
-  <!-- As in "(tap here to) buy (bitcoin)" -->
-  <string name="Button.buy">구매하기</string>
-  <!-- Cancel button label -->
-  <string name="Button.cancel">취소</string>
-  <!-- prompt continue button -->
-  <string name="Button.continueAction">계획하기</string>
-  <!-- prompt dismiss button -->
-  <string name="Button.dismiss">해제</string>
-  <!-- Button to return to the "home" screen (the home screen is the top menu). -->
-  <string name="Button.Home">홈</string>
-  <!-- Ignore button label -->
-  <string name="Button.ignore">무시</string>
-  <!-- menu button -->
-  <string name="Button.menu">메뉴</string>
-  <!-- No button -->
-  <string name="Button.no">아니오</string>
-  <!-- OK button label -->
-  <string name="Button.ok">오케이</string>
-  <!-- receive button -->
-  <string name="Button.receive">받기</string>
-  <!-- Click this button to sell an asset -->
-  <string name="Button.sell">팔기</string>
-  <!-- send button -->
-  <string name="Button.send">보내기</string>
-  <!-- Settings button label -->
-  <string name="Button.settings">설정</string>
-  <!-- Settings button label -->
-  <string name="Button.submit">전송</string>
-  <!-- Yes button -->
-  <string name="Button.yes">예</string>
-  <!-- Camera plugin instruction -->
-  <string name="CameraPlugin.centerInstruction">박스안에 귀하의 ID를 중앙에 두세요</string>
-  <!-- Amount to Send: ($1.00) -->
-  <string name="Confirmation.amountLabel">보낼 금액:</string>
-  <!-- Network Fee: ($1.00) -->
-  <string name="Confirmation.feeLabel">네트워크 수수료:</string>
-  <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
-  <string name="Confirmation.processingTime">처리 시간: 이 거래는 %1$s에 완료될 것으로 예상됩니다.</string>
-  <!-- Label for "send" button on final confirmation screen -->
-  <string name="Confirmation.send">보내기</string>
-  <!-- Confirmation Screen title -->
-  <string name="Confirmation.title">확정</string>
-  <!-- To: (address) -->
-  <string name="Confirmation.to">수취인</string>
-  <!-- Total Cost: ($5.00) -->
-  <string name="Confirmation.totalLabel">총 금액:</string>
-  <!-- Confirm paper phrase error message -->
-  <string name="ConfirmPaperPhrase.error">입력하신 단어가 귀하의 페이퍼 키와 일치하지 않습니다. 다시 시도하십시오.</string>
-  <!-- Confirm paper phrase view label. -->
-  <string name="ConfirmPaperPhrase.label">모든 것이 정확하게 적혀 있는지 확인하기 위해, 귀하의 종이 열쇠로부터 다음의 단어들을 입력해 주세요.</string>
-  <!-- Word label eg. Word #1, Word #2 -->
-  <string name="ConfirmPaperPhrase.word">단어 #%1$s</string>
-  <!-- Agree to legal terms button -->
-  <string name="Crowdsale.agree">동의하기</string>
-  <!-- As in "(tap here to) buy (some) tokens" -->
-  <string name="Crowdsale.buyButton">토큰 구매하기</string>
-  <!-- Decline to legal terms button -->
-  <string name="Crowdsale.decline">거부하기</string>
-  <!-- Resume Idnetify verification button -->
-  <string name="Crowdsale.resume">인증 다시 하기</string>
-  <!-- Retry Identity verification button -->
-  <string name="Crowdsale.retry">다시 시도하기</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
-  <!-- Exchange rate label -->
-  <string name="DefaultCurrency.rateLabel">환율</string>
-  <!-- The wallet is disabled. -->
-  <string name="Disabled.title">월렛이 비활성화됨</string>
-  <!-- Email unavailable alert title -->
-  <string name="ErrorMessages.emailUnavailableMessage">이 장치는 iOS 메일 앱으로 이메일을 전송하도록 설정되지 않았습니다.</string>
-  <!-- Email unavailable alert title -->
-  <string name="ErrorMessages.emailUnavailableTitle">이메일 사용불가</string>
-  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 Bread가 인증될 수 없습니다. [Please tap here for more information.]</string>
-  <!-- Messaging unavailable alert title -->
-  <string name="ErrorMessages.messagingUnavailableMessage">이 장치는 메시지를 보내도록 설정되지 않았습니다.</string>
-  <!-- Messaging unavailable alert title -->
-  <string name="ErrorMessages.messagingUnavailableTitle">메시지 사용불가</string>
-  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
-  <string name="ErrorMessages.touchIdFailed.android">지문 인식되지 않음. 다시 시도해 주세요.</string>
-  <!-- You can customize your Face ID Spending Limit from the [menu] -->
-  <string name="FaceIDSettings.customizeText">%1$s에서 페이스 ID 지출 한도를 사용자 설정할 수 있습니다.</string>
-  <!-- Face Id screen label -->
-  <string name="FaceIDSettings.label">얼굴을 사용하여 브레드의 잠금을 해제하고 설정 한도까지 돈을 보내세요.</string>
-  <!-- Title of the screen for setting the Face ID Spending Limit -->
-  <string name="FaceIDSettings.linkText">페이스 ID 지출 한도 화면</string>
-  <!-- Setting to turn on Face ID for BRD -->
-  <string name="FaceIDSettings.switchLabel">브레드에 페이스 ID 사용하기</string>
-  <!-- Face ID settings view title -->
-  <string name="FaceIDSettings.title">페이스 ID</string>
-  <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
-  <string name="FaceIDSettings.unavailableAlertMessage">이 장치에 페이스 ID를 설정하지 않았습니다. 설정 -&gt; 페이스 ID 및 패스코드로 가서 지금 설정하세요.</string>
-  <!-- Face ID unavailable alert title -->
-  <string name="FaceIDSettings.unavailableAlertTitle">페이스 ID가 설정되지 않음</string>
-  <!-- Face Id spending limit screen title -->
-  <string name="FaceIDSpendingLimit.title">페이스 ID 지출 한도</string>
-  <!-- Economy fee -->
-  <string name="FeeSelector.economy">경제</string>
-  <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1~24시간</string>
-  <!-- Warning message for economy fee -->
-  <string name="FeeSelector.economyWarning">이 옵션은 시간에 민감한 거래에는 추천하지 않습니다.</string>
-  <!-- E.g. Estimated delivery: 10-60 minutes -->
-  <string name="FeeSelector.estimatedDeliver">예상 배송 시간: %1$s</string>
-  <!-- [This transaction will complete in] 2-5 minutes -->
-  <string name="FeeSelector.ethTime">2-5분</string>
-  <!-- Regular fee -->
-  <string name="FeeSelector.regular">일반</string>
-  <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10~60분</string>
-  <!-- Fee Selector title -->
-  <string name="FeeSelector.title">처리 속도</string>
-  <!-- This is the section that allows administration of the user's wallet -->
-  <string name="HomeScreen.admin">관리</string>
-  <!-- This section lists the users wallets -->
-  <string name="HomeScreen.portfolio">지갑</string>
-  <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
-  <string name="HomeScreen.totalAssets">총 자산</string>
-  <!-- Checking private key balance progress view text -->
-  <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
-  <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s 를 보낼까요? 비트코인 네트워크가 %2$s의 수수료를 받게 됩니다.</string>
-  <!-- Duplicate key error message -->
-  <string name="Import.Error.duplicate">이 개인 열쇠가 이미 귀하의 지갑에 있습니다.</string>
-  <!-- empty private key error message -->
-  <string name="Import.Error.empty">이 개인 열쇠는 비어 있습니다.</string>
-  <!-- High fees error message -->
-  <string name="Import.Error.highFees">이 개인 열쇠에서 사용할 수 있는 자금보다 거래 수수료가 더 많이 듭니다.</string>
-  <!-- Not a valid private key error message -->
-  <string name="Import.Error.notValid">유효하지 않은 개인 열쇠입니다</string>
-  <!-- Import signing error message -->
-  <string name="Import.Error.signing">서명 거래 오류</string>
-  <!-- [Redeem] the funds stored on this private key. -->
-  <string name="Import.importButton">교환</string>
-  <!-- Importing wallet progress view label -->
-  <string name="Import.importing">개인 키 교환 중</string>
-  <!-- Caption for graphics -->
-  <string name="Import.leftCaption">개인 키</string>
-  <!-- Import wallet intro screen message -->
-  <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 Bread로 모든 돈을 이전하세요.</string>
-  <!-- Enter password alert view title -->
-  <string name="Import.password">이 개인 열쇠는 비밀번호로 보호됩니다.</string>
-  <!-- password textfield placeholder -->
-  <string name="Import.passwordPlaceholder">비밀번호</string>
-  <!-- Caption for graphics -->
-  <string name="Import.rightCaption">귀하의 Bread 지갑</string>
-  <!-- Scan Private key button label -->
-  <string name="Import.scan">개인 열쇠 스캔</string>
-  <!-- Import wallet success alert title -->
-  <string name="Import.success">성공</string>
-  <!-- Successfully imported wallet message body -->
-  <string name="Import.SuccessBody">개인 키가 성공적으로 교환되었습니다.</string>
-  <!-- Import Wallet screen title -->
-  <string name="Import.title">개인 키 교환</string>
-  <!-- Unlocking Private key activity view message. -->
-  <string name="Import.unlockingActivity">열쇠 풀기</string>
-  <!-- Import wallet intro warning message -->
-  <string name="Import.warning">개인 키 교환은 거래 내역 또는 기타 세부 내용을 가져오지 않습니다.</string>
-  <!-- Wrong password alert message -->
-  <string name="Import.wrongPassword">잘못된 비밀번호. 다시 시도해 주세요.</string>
-  <!-- Close app button -->
-  <string name="JailbreakWarnings.close">닫기</string>
-  <!-- Ignore jailbreak warning button -->
-  <string name="JailbreakWarnings.ignore">무시</string>
-  <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
-  <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
-  <!-- Jailbreak warning title -->
-  <string name="JailbreakWarnings.title">경고</string>
-  <!-- Location services disabled error -->
-  <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
-  <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread가 위치 서비스 접속 권한이 없습니다.</string>
-  <!-- Wallet creation date prefix -->
-  <string name="ManageWallet.creationDatePrefix">귀하께서는 %1$s 에 지갑을 만들었습니다</string>
-  <!-- Manage wallet description text -->
-  <string name="ManageWallet.description">귀하의 지갑 이름은 귀하 계정의 거래 기록에서만 나타나며 다른 사람은 볼 수 없습니다.</string>
-  <!-- Change Wallet name textfield label -->
-  <string name="ManageWallet.textFeildLabel">지갑 이름</string>
-  <!-- Manage wallet modal title -->
-  <string name="ManageWallet.title">지갑 관리</string>
-  <!-- "Add [a] Wallet [to the home screen]" -->
-  <string name="MenuButton.addWallet">지갑 추가</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.lock">지갑 잠그기</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.security">보안 센터</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.settings">설정</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.support">고객지원</string>
-  <!-- button label -->
-  <string name="MenuViewController.createButton">새 지갑 만들기</string>
-  <!-- Menu modal title -->
-  <string name="MenuViewController.modalTitle">메뉴</string>
-  <!-- button label -->
-  <string name="MenuViewController.recoverButton">지갑 복구하기</string>
-  <!-- Switch to automatic mode button label -->
-  <string name="NodeSelector.automaticButton">자동 모드로 전환</string>
-  <!-- Node is connected label -->
-  <string name="NodeSelector.connected">연결됨</string>
-  <!-- Node is connecting label -->
-  <string name="NodeSelector.connecting">연결 중</string>
-  <!-- Enter node ip address view body -->
-  <string name="NodeSelector.enterBody">노드 IP 주소와 포트를 입력하십시오(선택)</string>
-  <!-- Enter Node ip address view title -->
-  <string name="NodeSelector.enterTitle">노드를 입력하십시오</string>
-  <!-- Switch to manual mode button label -->
-  <string name="NodeSelector.manualButton">수동 모드로 전환</string>
-  <!-- Node address label -->
-  <string name="NodeSelector.nodeLabel">현재 주요 모드</string>
-  <!-- Node is not connected label -->
-  <string name="NodeSelector.notConnected">연결되지 않음</string>
-  <!-- Node status label -->
-  <string name="NodeSelector.statusLabel">노드 연결 상태</string>
-  <!-- Node Selector view title -->
-  <string name="NodeSelector.title">비트코인 노드</string>
-  <!-- Bad Payment request alert title -->
-  <string name="PaymentProtocol.Errors.badPaymentRequest">틀린 결제 요청</string>
-  <!-- Error opening payment protocol file message -->
-  <string name="PaymentProtocol.Errors.corruptedDocument">지원되지 않거나 망가진 문서</string>
-  <!-- Missing certificate payment protocol error message -->
-  <string name="PaymentProtocol.Errors.missingCertificate">빠진 증명서</string>
-  <!-- Request expired payment protocol error message -->
-  <string name="PaymentProtocol.Errors.requestExpired">요청 만료됨</string>
-  <!-- Payment too small alert title -->
-  <string name="PaymentProtocol.Errors.smallOutputError">결제를 할 수 없습니다</string>
-  <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">비트코인 결제는 %1$s 보다 작을 수 없습니다.</string>
-  <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">비트코인 거래 출력들은 %1$s보다 작을 수 없습니다.</string>
-  <!-- Unsupported signature type payment protocol error message -->
-  <string name="PaymentProtocol.Errors.unsupportedSignatureType">지원되지 않는 서명 형태</string>
-  <!-- Untrusted certificate payment protocol error message -->
-  <string name="PaymentProtocol.Errors.untrustedCertificate">신용할 수 없는 증명서</string>
-  <!-- Enable face ID prompt body -->
-  <string name="Prompts.FaceId.body">페이스 ID를 사용하시려면 계속하기를 탭하세요</string>
-  <!-- Enable face ID prompt title -->
-  <string name="Prompts.FaceId.title">페이스 ID 사용하기</string>
-  <!-- No passcode set warning body -->
-  <string name="Prompts.NoPasscode.body">지갑을 지키려면 장치 비밀번호가 필요합니다. 설정으로 가셔서 비밀번호를 켜십시오.</string>
-  <!-- No Passcode set warning title -->
-  <string name="Prompts.NoPasscode.title">기기 비밀번호 설정</string>
-  <!-- Instruction how to enable device encryption -->
-  <string name="Prompts.NoScreenLock.body.android">귀하의 지갑을 보호하시려면 장치 화면 잠금이 필요합니다. 계속하시려면 \"설정\" &gt; \"보안\" &gt; \"화면 잠금\"가셔서 켜 주세요.</string>
-  <!-- Device encryption prompt title -->
-  <string name="Prompts.NoScreenLock.title.android">화면 잠금 꺼짐</string>
-  <!-- Warning about paper key. -->
-  <string name="Prompts.PaperKey.body">귀하의 종이 열쇠는 귀하의 핸드폰일 잃어버리거나 바꿀 경우에 대비해 저장되어야만 합니다. 계속하시려면 여기를 탭 하세요.</string>
-  <!-- An action is required (You must do this action). -->
-  <string name="Prompts.PaperKey.title">조치 필요함</string>
-  <!-- Transaction rejected prompt body -->
-  <string name="Prompts.RecommendRescan.body">귀하의 지갑이 동기화 되어 있지 않을 수 있습니다. 블록체인을 재스캔하면 대부분 고쳐집니다.</string>
-  <!-- Transaction rejected prompt title -->
-  <string name="Prompts.RecommendRescan.title">거래 거절됨</string>
-  <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Bread가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
-  <!-- Share data prompt title -->
-  <string name="Prompts.ShareData.title">익명 데이터 공유</string>
-  <!-- Enable touch ID prompt body -->
-  <string name="Prompts.TouchId.body">Touch ID를 켜시려면 여기를 탭하세요</string>
-  <!-- Enable Fingerprint prompt body -->
-  <string name="Prompts.TouchId.body.android">지문 본인확인을 켜시려면 여기를 탭 하세요</string>
-  <!-- Enable touch ID prompt title -->
-  <string name="Prompts.TouchId.title">Touch ID 켜</string>
-  <!-- Enable Fingerprint prompt title -->
-  <string name="Prompts.TouchId.title.android">지문 본인확인 켜기</string>
-  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
-  <string name="Prompts.TouchId.usePin.android">PIN</string>
-  <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">6자리 PIN을 사용하도록 브레드가 업그레이드되었습니다. 업그레이드하려면 여기를 탭하세요.</string>
-  <!-- Upgrade PIN prompt title. -->
-  <string name="Prompts.UpgradePin.title">PIN 업그레이드</string>
-  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">알림을 켜두시면, 향후 브레드의 특별 메시지를 수신할 수 있습니다.</string>
-  <!-- Push notifications toggle switch label -->
-  <string name="PushNotifications.label">푸시 알림</string>
-  <!-- Push notifications are off label -->
-  <string name="PushNotifications.off">Off</string>
-  <!-- Push notifications are on label -->
-  <string name="PushNotifications.on">On</string>
-  <!-- Push notifications settings view title label -->
-  <string name="PushNotifications.title">알림</string>
-  <!-- Address copied message. -->
-  <string name="Receive.copied">클립보드에 복사되었습니다.</string>
-  <!-- Share via email button label -->
-  <string name="Receive.emailButton">이메일</string>
-  <!-- Request button label -->
-  <string name="Receive.request">금액 요청</string>
-  <!-- Share button label -->
-  <string name="Receive.share">공유</string>
-  <!-- Share via text message (SMS) -->
-  <string name="Receive.textButton">문자 메시지</string>
-  <!-- Receive modal title -->
-  <string name="Receive.title">수신</string>
-  <!-- Done button text -->
-  <string name="RecoverWallet.done">완료</string>
-  <!-- Recover wallet header -->
-  <string name="RecoverWallet.header">지갑 복구하기</string>
-  <!-- Reset PIN with paper key: header -->
-  <string name="RecoverWallet.header_reset_pin">PIN 재설정</string>
-  <!-- Enter paper key instruction -->
-  <string name="RecoverWallet.instruction">페이퍼 키 입력</string>
-  <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">페이퍼 키를 사용해 브레드를 복구해 주세요.</string>
-  <!-- Invalid paper key message -->
-  <string name="RecoverWallet.invalid">올바르지 않은 페이퍼 키를 입력하셨습니다. 각 단어를 재확인한 후 다시 시도해 주세요.</string>
-  <!-- Previous button accessibility label -->
-  <string name="RecoverWallet.leftArrow">왼쪽 화살표</string>
-  <!-- Next button label -->
-  <string name="RecoverWallet.next">다음</string>
-  <!-- Reset PIN with paper key: more information button. -->
-  <string name="RecoverWallet.reset_pin_more_info">자세한 내용을 보려면 여기를 탭하세요.</string>
-  <!-- Next button accessibility label -->
-  <string name="RecoverWallet.rightArrow">오른쪽 화살표</string>
-  <!-- Recover wallet sub-header -->
-  <string name="RecoverWallet.subheader">복구하려는 지갑의 페이퍼 키를 입력해 주세요.</string>
-  <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheader_reset_pin">PIN을 재설정하려면, 페이퍼 키의 단어들을 아래 상자에 입력해 주세요.</string>
-  <!-- No amount entered error message. -->
-  <string name="RequestAnAmount.noAmount">먼저 금액을 입력해 주세요.</string>
-  <!-- Request a specific amount of bitcoin -->
-  <string name="RequestAnAmount.title">금액 요청</string>
-  <!-- Alert action button label -->
-  <string name="ReScan.alertAction">동기화</string>
-  <!-- Alert message body -->
-  <string name="ReScan.alertMessage">동기화 중에는 송금할 수 없습니다.</string>
-  <!-- Alert message title -->
-  <string name="ReScan.alertTitle">블록체인과 동기화하겠습니까?</string>
-  <!-- extimated time -->
-  <string name="ReScan.body1">20-45분</string>
-  <!-- Syncing explanation -->
-  <string name="ReScan.body2">거래가 비트코인 네트워크에는 완료된 것으로 표시되지만, 브레드에는 표시되지 않는 경우.</string>
-  <!-- Syncing explanation -->
-  <string name="ReScan.body3">거래가 거절되었음을 알리는 오류 메시지가 반복적으로 나타납니다.</string>
-  <!-- Start Sync button label -->
-  <string name="ReScan.buttonTitle">동기화 시작</string>
-  <!-- Sync blockchain view footer -->
-  <string name="ReScan.footer">블록체인과 동기화하는 동안에는 송금할 수 없습니다.</string>
-  <!-- Sync Blockchain view header -->
-  <string name="ReScan.header">블록체인 동기화</string>
-  <!-- Subheader label -->
-  <string name="ReScan.subheader1">예상 시간</string>
-  <!-- Subheader label -->
-  <string name="ReScan.subheader2">동기화는 언제 해야 합니까?</string>
-  <!-- Scan bitcoin address camera flash toggle -->
-  <string name="Scanner.flashButtonLabel">카메라 플래시</string>
-  <!-- Complete filter label -->
-  <string name="Search.complete">완료</string>
-  <!-- Pending filter label -->
-  <string name="Search.pending">대기 중</string>
-  <!-- Received filter label -->
-  <string name="Search.received">수신</string>
-  <!-- [Click here to] search -->
-  <string name="Search.search">검색</string>
-  <!-- Sent filter label -->
-  <string name="Search.sent">송금</string>
-  <!-- Face ID button title -->
-  <string name="SecurityCenter.faceIdTitle">페이스 ID</string>
-  <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">전화를 분실하거나 업그레이드하는 경우, 비트코인에 액세스할 수 있는 유일한 방법입니다.</string>
-  <!-- Paper Key button title -->
-  <string name="SecurityCenter.paperKeyTitle">페이퍼 키</string>
-  <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">허가받지 않은 사용자로부터 브레드를 보호하세요.</string>
-  <!-- PIN button title -->
-  <string name="SecurityCenter.pinTitle">6자리 PIN</string>
-  <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">편리하게 브레드의 잠금을 해제하고 최대한도까지 송금해 보세요.</string>
-  <!-- Touch ID button title -->
-  <string name="SecurityCenter.touchIdTitle">터치 ID</string>
-  <!-- Security center fingerprint authentication button -->
-  <string name="SecurityCenter.touchIdTitle.android">지문 본인확인</string>
-  <!-- Send money amount label -->
-  <string name="Send.amountLabel">금액</string>
-  <!-- Balance: $4.00 -->
-  <string name="Send.balance">잔액: %1$s</string>
-  <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"Bread\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
-  <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread의 카메라 접속이 허용되지 않았습니다</string>
-  <!-- Camera not allowed message -->
-  <string name="Send.cameraunavailableMessage">설정에서 카메라 액세스를 허가해 주세요.</string>
-  <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">브레드는 카메라 액세스를 허용하지 않습니다.</string>
-  <!-- Warning when sending to self. -->
-  <string name="Send.containsAddress">여러분의 주소를 입력해 주세요. 본인에게 전송할 수 없습니다.</string>
-  <!-- Could not create transaction alert title -->
-  <string name="Send.creatTransactionError">전송할 수 없습니다.</string>
-  <!-- Description for sending money label -->
-  <string name="Send.descriptionLabel">메모</string>
-  <!-- Emtpy pasteboard error message -->
-  <string name="Send.emptyPasteboard">클립보드가 비어 있습니다</string>
-  <!-- "(you) can't send (to your)self" -->
-  <string name="Send.ethSendSelf">자신에게는 보낼 수 없습니다.</string>
-  <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">네트워크 비용: %1$s</string>
-  <!-- Payee identity not certified alert title. -->
-  <string name="Send.identityNotCertified">인증되지 않은 수취인입니다.</string>
-  <!-- Insufficient funds error -->
-  <string name="Send.insufficientFunds">자금 부족</string>
-  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
-  <string name="Send.insufficientGasMessage">이 종류의 토큰을 전송하려면 지갑에 최소 %1$s가 있어야 합니다. 지금 이더리움 지갑으로 가시겠습니까?</string>
-  <!-- Your ethereum balance is insufficient to complete this action. -->
-  <string name="Send.insufficientGasTitle">이더리움 잔액이 부족합니다</string>
-  <!-- e.g. The destination is not a valid (bitcoin) address. -->
-  <string name="Send.invalidAddressMessage">해당 수취인 주소는 %1$s에서 유효하지 않은 주소입니다.</string>
-  <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 %1$s 주소를 가지고 있지 않습니다</string>
-  <!-- Invalid address alert title -->
-  <string name="Send.invalidAddressTitle">유효하지 않은 주소입니다</string>
-  <!-- Is rescanning error message -->
-  <string name="Send.isRescanning">전체 재검색 중에는 송금이 비활성화됩니다.</string>
-  <!-- Warning when the user is trying to send bitcoin cash to a legacy bitcoin address (possible, but probably not what the user wants to do) -->
-  <string name="Send.legacyAddressWarning">경고: 이것은 레거시 비트코인 주소입니다. 비트코인 캐시를 보내시겠습니까?</string>
-  <!-- We are loading the request (now) -->
-  <string name="Send.loadingRequest">요청 불러오는 중</string>
-  <!-- Transaction fee could not be be caluculated error. -->
-  <string name="Send.nilFeeError">거래 수수료를 지급하기에 자금이 부족합니다</string>
-  <!-- Empty address alert message -->
-  <string name="Send.noAddress">수신인의 주소를 입력하세요.</string>
-  <!-- Emtpy amount alert message -->
-  <string name="Send.noAmount">송금액을 입력하세요</string>
-  <!-- No Fees error -->
-  <string name="Send.noFeesError">네트워크 수수료 조건을 다운로드 중입니다. 다시 시도하십시오.</string>
-  <!-- Paste button label -->
-  <string name="Send.pasteLabel">붙여넣기</string>
-  <!-- Could not publish transaction alert title -->
-  <string name="Send.publishTransactionError">전송할 수 없습니다.</string>
-  <!-- Could not load remote request error message -->
-  <string name="Send.remoteRequestError">결제 요청을 불러올 수 없었습니다</string>
-  <!-- Scan button label -->
-  <string name="Send.scanLabel">스캔</string>
-  <!-- Send button label (the action, "press here to send") -->
-  <string name="Send.sendLabel">보내기</string>
-  <!-- Send screen title (as in "this is the screen for sending money") -->
-  <string name="Send.title">보내기</string>
-  <!-- Send money to label -->
-  <string name="Send.toLabel">수취인</string>
-  <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">비트코인 주소는 일회용입니다.</string>
-  <!-- Adress already used alert message - second part -->
-  <string name="Send.UsedAddress.secondLIne">주소를 재사용할 경우 귀하와 받는 사람 모두의 개인 정보 보호가 약해지며, 받는 사람이 직접 주소를 관리하지 않을 경우 분실을 초래할 수 있습니다.</string>
-  <!-- Adress already used alert title -->
-  <string name="Send.UsedAddress.title">이미 사용중인 주소입니다</string>
-  <!-- About label -->
-  <string name="Settings.about">관련 사항</string>
-  <!-- Advanced settings header -->
-  <string name="Settings.advanced">고급</string>
-  <!-- Advanced Settings title -->
-  <string name="Settings.advancedTitle">고급 설정</string>
-  <!-- i.e. the currency which will be displayed -->
-  <string name="Settings.currency">통화 보기</string>
-  <!-- e.g. "USD Settings" (settings for how USD is handled) -->
-  <string name="Settings.currencyPageTitle">%1$s 설정</string>
-  <!-- Section title for a collection of different settings screens, one for each currency -->
-  <string name="Settings.currencySettings">통화 설정</string>
-  <!-- Join Early access label -->
-  <string name="Settings.earlyAccess">초기 버전을 사용해 보세요</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">브레드를 사용하고 있으신가요?</string>
-  <!-- Face ID spending limit label -->
-  <string name="Settings.faceIdLimit">페이스 ID 지출 한도</string>
-  <!-- Redeem the funds stored on this private key. -->
-  <string name="Settings.importTitle">개인 키 교환</string>
-  <!-- Manage settings section header -->
-  <string name="Settings.manage">관리</string>
-  <!-- Notifications label -->
-  <string name="Settings.notifications">알림</string>
-  <!-- Preferences settings section header -->
-  <string name="Settings.preferences">환경 설정</string>
-  <!-- Tap here to reset the list of currencies to the default settings. -->
-  <string name="Settings.resetCurrencies">기본 통화로 초기화</string>
-  <!-- Leave review button label -->
-  <string name="Settings.review">후기를 남겨주세요</string>
-  <!-- Share anonymous data label -->
-  <string name="Settings.shareData">익명 데이터 공유</string>
-  <!-- Sync blockchain label -->
-  <string name="Settings.sync">블록체인 동기화</string>
-  <!-- Settings title -->
-  <string name="Settings.title">설정</string>
-  <!-- Touch ID spending limit label -->
-  <string name="Settings.touchIdLimit">Touch ID 지출 한도</string>
-  <!-- The fingerprint spending limit -->
-  <string name="Settings.touchIdLimit.android">지문 본인확인 사용 한계</string>
-  <!-- Wallet Settings section header -->
-  <string name="Settings.wallet">지갑</string>
-  <!-- Unlink/delete your wallet from the current device. -->
-  <string name="Settings.wipe">이 기기에서 연결 해제</string>
-  <!-- Share data view body -->
-  <string name="ShareData.body">브레드 기능 향상을 위해 여러분의 익명 데이터를 공유해 주세요. 금융 정보는 포함되지 않습니다. 여러분의 금융 관련 개인정보는 안전하게 보호됩니다.</string>
-  <!-- Share data header -->
-  <string name="ShareData.header">데이터를 공유하시겠습니까?</string>
-  <!-- Share data switch label. -->
-  <string name="ShareData.toggleLabel">익명 데이터를 공유하시겠습니까?</string>
-  <!-- button label -->
-  <string name="StartPaperPhrase.againButtonTitle">페이퍼 키를 다시 쓰기</string>
-  <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
-  <!-- button label -->
-  <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
-  <!-- Argument is date -->
-  <string name="StartPaperPhrase.date">%1$s에 마지막으로 페이퍼 키를 작성하셨습니다.</string>
-  <!-- button label -->
-  <string name="StartViewController.createButton">새 지갑 생성하기</string>
-  <!-- Start view message -->
-  <string name="StartViewController.message">비트코인을 사용하는 가장 안정되고 안전한 방법.</string>
-  <!-- Recover your wallet from a backup -->
-  <string name="StartViewController.recoverButton">지갑 복구하기</string>
-  <!-- Syncing view connectiong state header text -->
-  <string name="SyncingView.connecting">연결 중</string>
-  <!-- Syncing view header text -->
-  <string name="SyncingView.header">동기화 중</string>
-  <!-- Retry button label -->
-  <string name="SyncingView.retry">다시 시도</string>
-  <!-- Syncing view syncing state header text -->
-  <string name="SyncingView.syncing">동기화 중</string>
-  <!-- 6 d (6 days) -->
-  <string name="TimeSince.days">%1$s 일</string>
-  <!-- 6 h (6 hours) -->
-  <string name="TimeSince.hours">%1$s 시</string>
-  <!-- 6 m (6 minutes) -->
-  <string name="TimeSince.minutes">%1$s 분</string>
-  <!-- 6 s (6 seconds) -->
-  <string name="TimeSince.seconds">%1$s 초</string>
-  <!-- Add [this item to the list] -->
-  <string name="TokenList.add">추가</string>
-  <!-- Add Wallets  [to your home screen] -->
-  <string name="TokenList.addTitle">지갑 추가</string>
-  <!-- Hide [this token from view] -->
-  <string name="TokenList.hide">숨기기</string>
-  <!-- [click here to] Manage [your] Wallets -->
-  <string name="TokenList.manageTitle">지갑 관리</string>
-  <!-- Remove [this item from the list] -->
-  <string name="TokenList.remove">삭제</string>
-  <!-- Show [this item on your home screen] -->
-  <string name="TokenList.show">보기</string>
-  <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
-  <string name="TouchIdSettings.customizeText">%1$s에서 ???????????.</string>
-  <!-- Fingerprint enabling description body -->
-  <string name="TouchIdSettings.customizeText.android">지문 본인확인 시간 제한 화면에서 귀하의 지문 본인확인 사용 한계를 설정하실 수 있습니다</string>
-  <!-- Instruction for the fingerprint setup -->
-  <string name="TouchIdSettings.disabledWarning.body.android">귀하께서는 이 장치에 지문 본인확인 기능을 켜지 않으셨습니다. 설정 -&gt; 보안으로 가셔서 지문 본인확인을 설정하세요.</string>
-  <!-- Fingerprint Is Not Setup -->
-  <string name="TouchIdSettings.disabledWarning.title.android">지문 본인확인이 켜지지 않음</string>
-  <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">지문을 사용하여 브레드의 보안을 해제하고 설정된 금액으로 송금할 수 있습니다.</string>
-  <!-- Link Text (see TouchIdSettings.customizeText) -->
-  <string name="TouchIdSettings.linkText">터치 ID 지불 한도 화면</string>
-  <!-- Spending Limit: b100,000 ($100) -->
-  <string name="TouchIdSettings.spendingLimit">지불 한도: %1$s (%2$s)</string>
-  <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">브레드에서</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
-  <string name="TouchIdSettings.switchLabel.android">지문 본인확인 켜기</string>
-  <!-- Touch ID settings view title -->
-  <string name="TouchIdSettings.title">터치 ID</string>
-  <!-- Fingerprint authentication label -->
-  <string name="TouchIdSettings.title.android">지문 본인확인</string>
-  <!-- Touch ID unavailable alert message -->
-  <string name="TouchIdSettings.unavailableAlertMessage">이 기기에서 Touch ID가 설정되어 있지 않습니다. 지금 설정 -&gt; Touch ID 및 암호로 이동하여 설정해 주세요.</string>
-  <!-- Touch ID unavailable alert title -->
-  <string name="TouchIdSettings.unavailableAlertTitle">Touch ID가 설정되지 않음</string>
-  <!-- Always require passcode option -->
-  <string name="TouchIdSpendingLimit">항상 비밀번호 요구</string>
-  <!-- Touch ID spending limit screen body -->
-  <string name="TouchIdSpendingLimit.body">지출 한도를 넘는 트랜잭션을 보내실 경우, 그리고 마지막으로 6자리 PIN 코드를 입력하시고 48시간이 경과한 경우에는 6자리 PIN 코드를 입력하셔야 합니다.</string>
-  <!-- Touch Id spending limit screen title -->
-  <string name="TouchIdSpendingLimit.title">Touch ID 지출 한도</string>
-  <!-- name of spending limit when using fingerprint authorization -->
-  <string name="TouchIdSpendingLimit.title.android">지문 본인확인 사용 한계</string>
-  <!-- Availability status text -->
-  <string name="Transaction.available">지출 가능</string>
-  <!-- Transaction complete label -->
-  <string name="Transaction.complete">완료</string>
-  <!-- Transaction is confirming status text -->
-  <string name="Transaction.confirming">진행 중</string>
-  <!-- eg. Ending balance: $50.00 -->
-  <string name="Transaction.ending">기말 잔액: %1$s</string>
-  <!-- Exchange rate on date header -->
-  <string name="Transaction.exchangeOnDayReceived">받을 때의 환율:</string>
-  <!-- Exchange rate on date header -->
-  <string name="Transaction.exchangeOnDaySent">보낼 때의 환율:</string>
-  <!-- Transaction failed status text -->
-  <string name="Transaction.failed">실패했습니다</string>
-  <!-- (b600 fee) -->
-  <string name="Transaction.fee">(%1$s 수수료)</string>
-  <!-- Invalid transaction -->
-  <string name="Transaction.invalid">무효</string>
-  <!-- Timestamp label for event that just happened -->
-  <string name="Transaction.justNow">지금 바로</string>
-  <!-- Transaction is pending status text -->
-  <string name="Transaction.pending">보류 중</string>
-  <!-- Receive status text: 'In progress: 20%' -->
-  <string name="Transaction.receivedStatus">진행 중: %1$s</string>
-  <!-- Send status text: 'In progress: 20%' -->
-  <string name="Transaction.sendingStatus">진행 중: %1$s</string>
-  <!-- sending to <address> -->
-  <string name="Transaction.sendingTo">%1$s으로 보내기</string>
-  <!-- sent to <address> -->
-  <string name="Transaction.sentTo">%1$s으로 전송되었습니다</string>
-  <!-- eg. Starting balance: $50.00 -->
-  <string name="Transaction.starting">기초 잔액: %1$s</string>
-  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
-  <string name="Transaction.tokenTransfer">토큰 송금 수수료: %1$s</string>
-  <!-- Waiting to be confirmed string -->
-  <string name="Transaction.waiting">확인 대기 중. 일부 판매자는 트랜잭션을 완료하기 위해 확인을 요구합니다. 예상 소요 시간: 1~2시간.</string>
-  <!-- e.g. I received money from an account. -->
-  <string name="TransactionDetails.account">계정</string>
-  <!-- Address received from header -->
-  <string name="TransactionDetails.addressFromHeader">시작</string>
-  <!-- Address sent to header -->
-  <string name="TransactionDetails.addressToHeader">끝</string>
-  <!-- e.g. "(this was received) via (address #1)" via = by way of -->
-  <string name="TransactionDetails.addressViaHeader">수단</string>
-  <!-- Amount section header -->
-  <string name="TransactionDetails.amountHeader">금액</string>
-  <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-  <string name="TransactionDetails.amountWhenReceived">받았을 때 %1$s, 지금은 %2$s</string>
-  <!-- Block height label -->
-  <string name="TransactionDetails.blockHeightLabel">차단 확인</string>
-  <!-- Memo section header -->
-  <string name="TransactionDetails.commentsHeader">메모</string>
-  <!-- Memo field placeholder -->
-  <string name="TransactionDetails.commentsPlaceholder">메모 추가...</string>
-  <!-- Timestamp section header for complete tx -->
-  <string name="TransactionDetails.completeTimestampHeader">완료</string>
-  <!-- Empty transaction list message. -->
-  <string name="TransactionDetails.emptyMessage">귀하의 트랜잭션이 여기에 표시됩니다.</string>
-  <!-- e.g. the users balance after the transaction was compeleted -->
-  <string name="TransactionDetails.endingBalanceHeader">거래 후 잔액</string>
-  <!-- Exchange rate section header -->
-  <string name="TransactionDetails.exchangeRateHeader">환율</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.feeHeader">비용 합계</string>
-  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
-  <string name="TransactionDetails.from">%1$s에서</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.gasLimitHeader">Gas Limit</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.gasPriceHeader">Gas Price</string>
-  <!-- Label showing the transaction was started (initialized) -->
-  <string name="TransactionDetails.initializedTimestampHeader">초기화됨</string>
-  <!-- More button title -->
-  <string name="TransactionDetails.more">그 이상...</string>
-  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
-  <string name="TransactionDetails.moved">%1$s 이동함</string>
-  <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
-  <!-- eg. Confirmed in Block: Not Confirmed -->
-  <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
-  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
-  <string name="TransactionDetails.received">%1$s 받음</string>
-  <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
-  <!-- received from <address> -->
-  <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
-  <!-- received via <address> -->
-  <string name="TransactionDetails.receivedVia">%1$s으로 수취 됨</string>
-  <!-- receiving from <address> -->
-  <string name="TransactionDetails.receivingFrom">%1$s(으)로부터 받는 중</string>
-  <!-- receiving via <address> -->
-  <string name="TransactionDetails.receivingVia">%1$s으로 수취 중</string>
-  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
-  <string name="TransactionDetails.sent">%1$s 보냄</string>
-  <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
-  <!-- Show Details button -->
-  <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
-  <!-- The balance the user started with before the transaction completed -->
-  <string name="TransactionDetails.startingBalanceHeader">시작 잔액</string>
-  <!-- Status section header -->
-  <string name="TransactionDetails.statusHeader">상태</string>
-  <!-- Transaction Details Title -->
-  <string name="TransactionDetails.title">트랜잭션 세부 정보</string>
-  <!-- Hide Details button -->
-  <string name="TransactionDetails.titleFailed">세부 정보 숨기기</string>
-  <!-- Transaction Details Title - Internal -->
-  <string name="TransactionDetails.titleInternal">내부</string>
-  <!-- Transaction Details Title - Received -->
-  <string name="TransactionDetails.titleReceived">수취 받음</string>
-  <!-- Transaction Details Title - Receiving -->
-  <string name="TransactionDetails.titleReceiving">수취 중</string>
-  <!-- Transaction Details Title - Sending -->
-  <string name="TransactionDetails.titleSending">전송 중</string>
-  <!-- Transaction Details Title - Sent -->
-  <string name="TransactionDetails.titleSent">전송됨</string>
-  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
-  <string name="TransactionDetails.to">%1$s에게</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.totalHeader">합계</string>
-  <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
-  <!-- (this transaction was) Received at this address: -->
-  <string name="TransactionDirection.address">이 주소에서 받음</string>
-  <!-- (this transaction was) Sent to this address: -->
-  <string name="TransactionDirection.to">이 주소로 보냄</string>
-  <!-- Disabled until date -->
-  <string name="UnlockScreen.disabled">다음 기간까지 비활성화됨: %1$s</string>
-  <!-- Unlock with FaceID accessibility label -->
-  <string name="UnlockScreen.faceIdText">페이스 ID로 잠금 해제</string>
-  <!-- My Address button title -->
-  <string name="UnlockScreen.myAddress">내 주소</string>
-  <!-- Reset PIN with Paper Key button label. -->
-  <string name="UnlockScreen.resetPin">PIN 재설정</string>
-  <!-- Scan button title -->
-  <string name="UnlockScreen.scan">스캔</string>
-  <!-- Instruction to touch the sensor for fingerprint authentication -->
-  <string name="UnlockScreen.touchIdInstructions.android">터치 센서</string>
-  <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Bread의 잠금을 해제하세요.</string>
-  <!-- Device authentication body -->
-  <string name="UnlockScreen.touchIdPrompt.android">계속하시려면 귀하의 안드로이드 장치 잠금을 해제해 주세요.</string>
-  <!-- Unlock with TouchID accessibility label -->
-  <string name="UnlockScreen.touchIdText">Touch ID로 잠금 해제</string>
-  <!-- Device authentication title -->
-  <string name="UnlockScreen.touchIdTitle.android">본인확인 필요</string>
-  <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 비트코인을 사용할 수 없게 됩니다.</string>
-  <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 Bread의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.createTitle">PIN 설정</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.createTitleConfirm">PIN 코드를 다시 입력</string>
-  <!-- Enter current PIN instruction -->
-  <string name="UpdatePin.enterCurrent">현재의 PIN 코드를 입력하세요.</string>
-  <!-- Enter new PIN instruction -->
-  <string name="UpdatePin.enterNew">새 PIN 코드를 입력하세요.</string>
-  <!-- Re-Enter new PIN instruction -->
-  <string name="UpdatePin.reEnterNew">새 PIN 코드를 다시 입력하세요.</string>
-  <!-- Update PIN failure error message. -->
-  <string name="UpdatePin.setPinError">죄송합니다, PIN 코드를 업데이트하지 못했습니다.</string>
-  <!-- Update PIN failure alert view title -->
-  <string name="UpdatePin.setPinErrorTitle">PIN 코드 업데이트 오류</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.updateTitle">PIN 코드 업데이트</string>
-  <!-- Authorize to copy wallet addresses alert message -->
-  <string name="URLHandling.addressaddressListAlertMessage">월렛 주소를 클립 보드에 복사할까요?</string>
-  <!-- Authorize to copy wallet address PIN view prompt. -->
-  <string name="URLHandling.addressList">월렛 주소를 클립 보드에 복사할 수 있는 권한을 부여</string>
-  <!-- Authorize to copy wallet address alert title -->
-  <string name="URLHandling.addressListAlertTitle">월렛 주소 복사하기</string>
-  <!-- Copy wallet addresses alert button label -->
-  <string name="URLHandling.copy">복사</string>
-  <!-- Verify PIN for transaction view body -->
-  <string name="VerifyPin.authorize">PIN을 입력하여 이 거래를 승인하십시오.</string>
-  <!-- Verify PIN view body -->
-  <string name="VerifyPin.continueBody">계속하려면 PIN 코드를 입력해 주세요.</string>
-  <!-- Verify PIN view title -->
-  <string name="VerifyPin.title">PIN 코드 입력 필수</string>
-  <!-- Authorize transaction with touch id message -->
-  <string name="VerifyPin.touchIdMessage">이 거래 승인</string>
-  <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 Bread 앱을 열어 주세요.</string>
-  <!-- Dismiss button label -->
-  <string name="Webview.dismiss">무시</string>
-  <!-- Webview loading error message -->
-  <string name="Webview.errorMessage">콘텐츠를 로드하는 중에 오류가 발생했습니다. 다시 시도해 주세요.</string>
-  <!-- Updating webview message -->
-  <string name="Webview.updating">업데이트 중...</string>
-  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
-  <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Bread에 환영합니다!</string>
-  <!-- Wipe wallet alert message -->
-  <string name="WipeWallet.alertMessage">정말 이 월렛을 삭제할까요?</string>
-  <!-- Wipe wallet alert title -->
-  <string name="WipeWallet.alertTitle">월렛을 초기화할까요?</string>
-  <!-- Failed wipe wallet alert message -->
-  <string name="WipeWallet.failedMessage">월렛 초기화가 실패함.</string>
-  <!-- Failed wipe wallet alert title -->
-  <string name="WipeWallet.failedTitle">실패함</string>
-  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-  <string name="WipeWallet.instruction">새 지갑을 시작하거나 기존 지갑을 복구하려면, 먼저 현재 설치된 지갑의 연결을 해제해야 합니다. 계속하려면, 현재 지갑의 종이 키를 입력하세요.</string>
-  <!-- Instructions for unlinking the wallet -->
-  <string name="WipeWallet.startMessage">지갑의 연결을 해제하여 이 기기에서 제거하세요. 이 지갑의 연결이 해제되면, 새로운 지갑을 시작하거나 이 기기에 다른 지갑을 복구할 수 있습니다.</string>
-  <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">이장치에서 현재 Bread 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
-  <!-- Unlink this wallet from this device. -->
-  <string name="WipeWallet.title">지갑 연결 해제</string>
-  <!-- Wipe wallet button title -->
-  <string name="WipeWallet.wipe">초기화</string>
-  <!-- Wiping activity message -->
-  <string name="WipeWallet.wiping">초기화 중...</string>
-  <!-- Paper key instructions. -->
-  <string name="WritePaperPhrase.instruction">각 단어를 순서대로 적어 놓고, 안전한 곳에 보관하세요.</string>
-  <!-- button label -->
-  <string name="WritePaperPhrase.next">다음</string>
-  <!-- button label -->
-  <string name="WritePaperPhrase.previous">이전</string>
-  <!-- 1 of 3 -->
-  <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">기타</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">지갑 관리</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">메뉴</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">사다</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">교환</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">QR코드 스캔</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">동기화 실패</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
-  <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-  <string name="TransactionDetails.amountWhenSent">전송 시 %1$s, 현재 %2$s</string>
+    <!-- App name -->
+    <string name="About.appName.android">Bread</string>
+    <!-- About screen blog label -->
+    <string name="About.blog">블로그</string>
+    <!-- About screen footer -->
+    <string name="About.footer">글로벌 Bread 팀 제작. 버전 %1$s</string>
+    <!-- Privay Policy button label -->
+    <string name="About.privacy">개인정보 보호정책</string>
+    <!-- About screen reddit label -->
+    <string name="About.reddit">레딧</string>
+    <!-- Terms of Use button label -->
+    <string name="About.terms">이용 약관</string>
+    <!-- About screen title -->
+    <string name="About.title">관련 사항</string>
+    <!-- About screen twitter label -->
+    <string name="About.twitter">트위터</string>
+    <!-- About screen wallet ID label -->
+    <string name="About.walletID">BRD Rewards ID</string>
+    <!-- Close modal button accessibility label -->
+    <string name="AccessibilityLabels.close">닫기</string>
+    <!-- Support center accessibiliy label -->
+    <string name="AccessibilityLabels.faq">고객지원 센터</string>
+    <!-- Account balance -->
+    <string name="Account.balance">잔액</string>
+    <!-- $10000 per BTC -->
+    <string name="Account.exchangeRate">%2$s 당 %1$s</string>
+    <!-- Loading Wallet Message -->
+    <string name="Account.loadingMessage">지갑 로딩</string>
+    <!-- Default wallet name -->
+    <string name="AccountHeader.defaultWalletName">나의 Bread</string>
+    <!-- Third party keyboard warning -->
+    <string name="Alert.customKeyboard.android">제3자가 제공한 키보드를 사용하고 계신 것 같습니다, 귀하의 입력을 기록하고 귀하의 페이퍼 키가 도난 당할 수 있습니다. 추가적인 보호를 위해 기본 안드로이드 키보드로 전환해 주세요.</string>
+    <!-- Error alert title -->
+    <string name="Alert.error">오류</string>
+    <!-- Keystore error -->
+    <string name="Alert.keystore.generic.android">귀하의 안드로이드 OS 키스토어에 문제가 있습니다, support@breadwallet.com로 연락해 주세요</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">귀하의 안드로이드 잠금 화면이 꺼져서 귀하의 암호화 된 데이터가 최근 무효화 되었습니다.</string>
+    <!-- Keystore error title -->
+    <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
+    <!-- No internet alert message -->
+    <string name="Alert.noInternet">인터넷이 연결되지 않았습니다. 연결을 확인하시고 다시 시도해 주세요.</string>
+    <!-- Warning alert title -->
+    <string name="Alert.warning">경고</string>
+    <!-- 'the addresses were copied'' Alert title -->
+    <string name="Alerts.copiedAddressesHeader">주소들 복사됨</string>
+    <!-- Addresses Copied Alert sub header -->
+    <string name="Alerts.copiedAddressesSubheader">모든 지갑 주소들이 성공적으로 복사됨.</string>
+    <!-- Alert Header Label (the paper key was set) -->
+    <string name="Alerts.paperKeySet">종이 열쇠 준비</string>
+    <!-- Alert Subheader label (playfully positive) -->
+    <string name="Alerts.paperKeySetSubheader">굉장해요!</string>
+    <!-- Alert Header label (the PIN was set) -->
+    <string name="Alerts.pinSet">PIN 준비</string>
+    <!-- Send failure alert header label (the send failed to happen) -->
+    <string name="Alerts.sendFailure">보내기 실패함</string>
+    <!-- Send success alert header label (confirmation that the send happened) -->
+    <string name="Alerts.sendSuccess">보내기 확인</string>
+    <!-- Send success alert subheader label (e.g. the money was sent) -->
+    <string name="Alerts.sendSuccessSubheader">돈을 보냈어요!</string>
+    <!-- Fingerprint was recognized by the scanner -->
+    <string name="Alerts.touchIdSucceeded.android">지문 인식됨</string>
+    <!-- Tell the user where they can enable permissions to access device storage. -->
+    <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
+    <!-- The "home" screen is the name of the top level menu for the app. -->
+    <string name="Android.BCH.welcome.message">홈 화면을 통해 월렛에 있는 모든 BCH에 액세스할 수 있습니다.</string>
+    <!-- Warning about using apps that can alter the screen -->
+    <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
+    <!-- An app that alters the screen ("screen-altering app") has been detected. -->
+    <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
+    <!-- JSON Serialization error message -->
+    <string name="ApiClient.jsonError">JSON 직렬화 오류</string>
+    <!-- Wallet not ready error message -->
+    <string name="ApiClient.notReady">지갑 준비 안됨</string>
+    <!-- API Token error message -->
+    <string name="ApiClient.tokenError">API 토큰을 가져올 수 없습니다</string>
+    <!-- Send BCH view body. -->
+    <string name="BCH.body">아래의 목적지 BCH 주소를 입력하세요. 분기 시점(%1$s)에 귀하의 월렛에 있는 모든 BCH를 보냅니다.</string>
+    <!-- Confirm sending <$5.00> to <address>? -->
+    <string name="BCH.confirmationMessage">%1$s를 %2$s(으)로 보내기를 확인</string>
+    <!-- Confirmation alert title -->
+    <string name="BCH.confirmationTitle">확정</string>
+    <!-- Generic bch erorr message -->
+    <string name="BCH.genericError">귀하의 계정에는 BCH가 없거나, 분기 이후에 BCH를 받으셨습니다.</string>
+    <!-- Transaction ID copied message -->
+    <string name="BCH.hashCopiedMessage">Transaction ID 복사됨</string>
+    <!-- No address error message -->
+    <string name="BCH.noAddressError">주소를 입력해 주세요</string>
+    <!-- Attempted to scan unsupported qr code error message. -->
+    <string name="BCH.paymentProtocolError">Payment Protocol Request는 BCH 트랜잭션에서 지원되지 않습니다</string>
+    <!-- BCH successfully sent alert message -->
+    <string name="BCH.successMessage">BCH를 성공적으로 보냈습니다.</string>
+    <!-- Widthdraw BCH view title -->
+    <string name="BCH.title">BCH 인출</string>
+    <!-- Tx Hash button header -->
+    <string name="BCH.txHashHeader">BCH Transaction ID</string>
+    <!-- Approve button label -->
+    <string name="BitID.approve">승인</string>
+    <!-- <sitename> is requesting authentication using your bitcoin wallet -->
+    <string name="BitID.authenticationRequest">%1$s(이)가 귀하의 비트코인 월렛 이용에 대한 인증을 요청하고 있습니다.</string>
+    <!-- Deny button label -->
+    <string name="BitID.deny">거부</string>
+    <!-- BitID error alert title -->
+    <string name="BitID.error">인증 오류</string>
+    <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
+    <string name="BitID.errorMessage">서비스 측에 확인해 주세요. 다시 시도해야 할 수도 있습니다.</string>
+    <!-- BitID success alert title -->
+    <string name="BitID.success">성공적으로 인증됨</string>
+    <!-- BitID Authentication Request alert view title -->
+    <string name="BitID.title">BitID 인증 요청</string>
+    <!-- As in "(tap here to) buy (bitcoin)" -->
+    <string name="Button.buy">구매하기</string>
+    <!-- Cancel button label -->
+    <string name="Button.cancel">취소</string>
+    <!-- prompt continue button -->
+    <string name="Button.continueAction">계획하기</string>
+    <!-- prompt dismiss button -->
+    <string name="Button.dismiss">해제</string>
+    <!-- Button to return to the "home" screen (the home screen is the top menu). -->
+    <string name="Button.Home">홈</string>
+    <!-- Ignore button label -->
+    <string name="Button.ignore">무시</string>
+    <!-- menu button -->
+    <string name="Button.menu">메뉴</string>
+    <!-- No button -->
+    <string name="Button.no">아니오</string>
+    <!-- OK button label -->
+    <string name="Button.ok">오케이</string>
+    <!-- receive button -->
+    <string name="Button.receive">받기</string>
+    <!-- Click this button to sell an asset -->
+    <string name="Button.sell">팔기</string>
+    <!-- send button -->
+    <string name="Button.send">보내기</string>
+    <!-- Settings button label -->
+    <string name="Button.settings">설정</string>
+    <!-- Settings button label -->
+    <string name="Button.submit">전송</string>
+    <!-- Yes button -->
+    <string name="Button.yes">예</string>
+    <!-- Camera plugin instruction -->
+    <string name="CameraPlugin.centerInstruction">박스안에 귀하의 ID를 중앙에 두세요</string>
+    <!-- Amount to Send: ($1.00) -->
+    <string name="Confirmation.amountLabel">보낼 금액:</string>
+    <!-- Network Fee: ($1.00) -->
+    <string name="Confirmation.feeLabel">네트워크 수수료:</string>
+    <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
+    <string name="Confirmation.processingTime">처리 시간: 이 거래는 %1$s에 완료될 것으로 예상됩니다.</string>
+    <!-- Label for "send" button on final confirmation screen -->
+    <string name="Confirmation.send">보내기</string>
+    <!-- Confirmation Screen title -->
+    <string name="Confirmation.title">확정</string>
+    <!-- To: (address) -->
+    <string name="Confirmation.to">수취인</string>
+    <!-- Total Cost: ($5.00) -->
+    <string name="Confirmation.totalLabel">총 금액:</string>
+    <!-- Confirm paper phrase error message -->
+    <string name="ConfirmPaperPhrase.error">입력하신 단어가 귀하의 페이퍼 키와 일치하지 않습니다. 다시 시도하십시오.</string>
+    <!-- Confirm paper phrase view label. -->
+    <string name="ConfirmPaperPhrase.label">모든 것이 정확하게 적혀 있는지 확인하기 위해, 귀하의 종이 열쇠로부터 다음의 단어들을 입력해 주세요.</string>
+    <!-- Word label eg. Word #1, Word #2 -->
+    <string name="ConfirmPaperPhrase.word">단어 #%1$s</string>
+    <!-- Agree to legal terms button -->
+    <string name="Crowdsale.agree">동의하기</string>
+    <!-- As in "(tap here to) buy (some) tokens" -->
+    <string name="Crowdsale.buyButton">토큰 구매하기</string>
+    <!-- Decline to legal terms button -->
+    <string name="Crowdsale.decline">거부하기</string>
+    <!-- Resume Idnetify verification button -->
+    <string name="Crowdsale.resume">인증 다시 하기</string>
+    <!-- Retry Identity verification button -->
+    <string name="Crowdsale.retry">다시 시도하기</string>
+    <!-- Bitcoin denomination picker label -->
+    <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
+    <!-- Exchange rate label -->
+    <string name="DefaultCurrency.rateLabel">환율</string>
+    <!-- The wallet is disabled. -->
+    <string name="Disabled.title">월렛이 비활성화됨</string>
+    <!-- Email unavailable alert title -->
+    <string name="ErrorMessages.emailUnavailableMessage">이 장치는 iOS 메일 앱으로 이메일을 전송하도록 설정되지 않았습니다.</string>
+    <!-- Email unavailable alert title -->
+    <string name="ErrorMessages.emailUnavailableTitle">이메일 사용불가</string>
+    <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+    <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 Bread가 인증될 수 없습니다. [Please tap here for more information.]</string>
+    <!-- Messaging unavailable alert title -->
+    <string name="ErrorMessages.messagingUnavailableMessage">이 장치는 메시지를 보내도록 설정되지 않았습니다.</string>
+    <!-- Messaging unavailable alert title -->
+    <string name="ErrorMessages.messagingUnavailableTitle">메시지 사용불가</string>
+    <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+    <string name="ErrorMessages.touchIdFailed.android">지문 인식되지 않음. 다시 시도해 주세요.</string>
+    <!-- You can customize your Face ID Spending Limit from the [menu] -->
+    <string name="FaceIDSettings.customizeText">%1$s에서 페이스 ID 지출 한도를 사용자 설정할 수 있습니다.</string>
+    <!-- Face Id screen label -->
+    <string name="FaceIDSettings.label">얼굴을 사용하여 브레드의 잠금을 해제하고 설정 한도까지 돈을 보내세요.</string>
+    <!-- Title of the screen for setting the Face ID Spending Limit -->
+    <string name="FaceIDSettings.linkText">페이스 ID 지출 한도 화면</string>
+    <!-- Setting to turn on Face ID for BRD -->
+    <string name="FaceIDSettings.switchLabel">브레드에 페이스 ID 사용하기</string>
+    <!-- Face ID settings view title -->
+    <string name="FaceIDSettings.title">페이스 ID</string>
+    <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
+    <string name="FaceIDSettings.unavailableAlertMessage">이 장치에 페이스 ID를 설정하지 않았습니다. 설정 -&gt; 페이스 ID 및 패스코드로 가서 지금 설정하세요.</string>
+    <!-- Face ID unavailable alert title -->
+    <string name="FaceIDSettings.unavailableAlertTitle">페이스 ID가 설정되지 않음</string>
+    <!-- Face Id spending limit screen title -->
+    <string name="FaceIDSpendingLimit.title">페이스 ID 지출 한도</string>
+    <!-- Economy fee -->
+    <string name="FeeSelector.economy">경제</string>
+    <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
+    <string name="FeeSelector.economyTime">1~24시간</string>
+    <!-- Warning message for economy fee -->
+    <string name="FeeSelector.economyWarning">이 옵션은 시간에 민감한 거래에는 추천하지 않습니다.</string>
+    <!-- E.g. Estimated delivery: 10-60 minutes -->
+    <string name="FeeSelector.estimatedDeliver">예상 배송 시간: %1$s</string>
+    <!-- [This transaction will complete in] 2-5 minutes -->
+    <string name="FeeSelector.ethTime">2-5분</string>
+    <!-- Regular fee -->
+    <string name="FeeSelector.regular">일반</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
+    <string name="FeeSelector.regularTime">10~60분</string>
+    <!-- Fee Selector title -->
+    <string name="FeeSelector.title">처리 속도</string>
+    <!-- This is the section that allows administration of the user's wallet -->
+    <string name="HomeScreen.admin">관리</string>
+    <!-- This section lists the users wallets -->
+    <string name="HomeScreen.portfolio">지갑</string>
+    <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
+    <string name="HomeScreen.totalAssets">총 자산</string>
+    <!-- Checking private key balance progress view text -->
+    <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
+    <!-- Sweep private key confirmation message -->
+    <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s 를 보낼까요? 비트코인 네트워크가 %2$s의 수수료를 받게 됩니다.</string>
+    <!-- Duplicate key error message -->
+    <string name="Import.Error.duplicate">이 개인 열쇠가 이미 귀하의 지갑에 있습니다.</string>
+    <!-- empty private key error message -->
+    <string name="Import.Error.empty">이 개인 열쇠는 비어 있습니다.</string>
+    <!-- High fees error message -->
+    <string name="Import.Error.highFees">이 개인 열쇠에서 사용할 수 있는 자금보다 거래 수수료가 더 많이 듭니다.</string>
+    <!-- Not a valid private key error message -->
+    <string name="Import.Error.notValid">유효하지 않은 개인 열쇠입니다</string>
+    <!-- Import signing error message -->
+    <string name="Import.Error.signing">서명 거래 오류</string>
+    <!-- [Redeem] the funds stored on this private key. -->
+    <string name="Import.importButton">교환</string>
+    <!-- Importing wallet progress view label -->
+    <string name="Import.importing">개인 키 교환 중</string>
+    <!-- Caption for graphics -->
+    <string name="Import.leftCaption">개인 키</string>
+    <!-- Import wallet intro screen message -->
+    <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 Bread로 모든 돈을 이전하세요.</string>
+    <!-- Enter password alert view title -->
+    <string name="Import.password">이 개인 열쇠는 비밀번호로 보호됩니다.</string>
+    <!-- password textfield placeholder -->
+    <string name="Import.passwordPlaceholder">비밀번호</string>
+    <!-- Caption for graphics -->
+    <string name="Import.rightCaption">귀하의 Bread 지갑</string>
+    <!-- Scan Private key button label -->
+    <string name="Import.scan">개인 열쇠 스캔</string>
+    <!-- Import wallet success alert title -->
+    <string name="Import.success">성공</string>
+    <!-- Successfully imported wallet message body -->
+    <string name="Import.SuccessBody">개인 키가 성공적으로 교환되었습니다.</string>
+    <!-- Import Wallet screen title -->
+    <string name="Import.title">개인 키 교환</string>
+    <!-- Unlocking Private key activity view message. -->
+    <string name="Import.unlockingActivity">열쇠 풀기</string>
+    <!-- Import wallet intro warning message -->
+    <string name="Import.warning">개인 키 교환은 거래 내역 또는 기타 세부 내용을 가져오지 않습니다.</string>
+    <!-- Wrong password alert message -->
+    <string name="Import.wrongPassword">잘못된 비밀번호. 다시 시도해 주세요.</string>
+    <!-- Close app button -->
+    <string name="JailbreakWarnings.close">닫기</string>
+    <!-- Ignore jailbreak warning button -->
+    <string name="JailbreakWarnings.ignore">무시</string>
+    <!-- Jailbreak warning message -->
+    <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+    <!-- Jailbreak warning message -->
+    <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+    <!-- Jailbreak warning title -->
+    <string name="JailbreakWarnings.title">경고</string>
+    <!-- Location services disabled error -->
+    <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
+    <!-- No permissions for location services -->
+    <string name="LocationPlugin.notAuthorized">Bread가 위치 서비스 접속 권한이 없습니다.</string>
+    <!-- Wallet creation date prefix -->
+    <string name="ManageWallet.creationDatePrefix">귀하께서는 %1$s 에 지갑을 만들었습니다</string>
+    <!-- Manage wallet description text -->
+    <string name="ManageWallet.description">귀하의 지갑 이름은 귀하 계정의 거래 기록에서만 나타나며 다른 사람은 볼 수 없습니다.</string>
+    <!-- Change Wallet name textfield label -->
+    <string name="ManageWallet.textFeildLabel">지갑 이름</string>
+    <!-- Manage wallet modal title -->
+    <string name="ManageWallet.title">지갑 관리</string>
+    <!-- "Add [a] Wallet [to the home screen]" -->
+    <string name="MenuButton.addWallet">지갑 추가</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.lock">지갑 잠그기</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.security">보안 센터</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.settings">설정</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.support">고객지원</string>
+    <!-- button label -->
+    <string name="MenuViewController.createButton">새 지갑 만들기</string>
+    <!-- Menu modal title -->
+    <string name="MenuViewController.modalTitle">메뉴</string>
+    <!-- button label -->
+    <string name="MenuViewController.recoverButton">지갑 복구하기</string>
+    <!-- Switch to automatic mode button label -->
+    <string name="NodeSelector.automaticButton">자동 모드로 전환</string>
+    <!-- Node is connected label -->
+    <string name="NodeSelector.connected">연결됨</string>
+    <!-- Node is connecting label -->
+    <string name="NodeSelector.connecting">연결 중</string>
+    <!-- Enter node ip address view body -->
+    <string name="NodeSelector.enterBody">노드 IP 주소와 포트를 입력하십시오(선택)</string>
+    <!-- Enter Node ip address view title -->
+    <string name="NodeSelector.enterTitle">노드를 입력하십시오</string>
+    <!-- Switch to manual mode button label -->
+    <string name="NodeSelector.manualButton">수동 모드로 전환</string>
+    <!-- Node address label -->
+    <string name="NodeSelector.nodeLabel">현재 주요 모드</string>
+    <!-- Node is not connected label -->
+    <string name="NodeSelector.notConnected">연결되지 않음</string>
+    <!-- Node status label -->
+    <string name="NodeSelector.statusLabel">노드 연결 상태</string>
+    <!-- Node Selector view title -->
+    <string name="NodeSelector.title">비트코인 노드</string>
+    <!-- Bad Payment request alert title -->
+    <string name="PaymentProtocol.Errors.badPaymentRequest">틀린 결제 요청</string>
+    <!-- Error opening payment protocol file message -->
+    <string name="PaymentProtocol.Errors.corruptedDocument">지원되지 않거나 망가진 문서</string>
+    <!-- Missing certificate payment protocol error message -->
+    <string name="PaymentProtocol.Errors.missingCertificate">빠진 증명서</string>
+    <!-- Request expired payment protocol error message -->
+    <string name="PaymentProtocol.Errors.requestExpired">요청 만료됨</string>
+    <!-- Payment too small alert title -->
+    <string name="PaymentProtocol.Errors.smallOutputError">결제를 할 수 없습니다</string>
+    <!-- Amount too small error message -->
+    <string name="PaymentProtocol.Errors.smallPayment">비트코인 결제는 %1$s 보다 작을 수 없습니다.</string>
+    <!-- Output too small error message. -->
+    <string name="PaymentProtocol.Errors.smallTransaction">비트코인 거래 출력들은 %1$s보다 작을 수 없습니다.</string>
+    <!-- Unsupported signature type payment protocol error message -->
+    <string name="PaymentProtocol.Errors.unsupportedSignatureType">지원되지 않는 서명 형태</string>
+    <!-- Untrusted certificate payment protocol error message -->
+    <string name="PaymentProtocol.Errors.untrustedCertificate">신용할 수 없는 증명서</string>
+    <!-- Enable face ID prompt body -->
+    <string name="Prompts.FaceId.body">페이스 ID를 사용하시려면 계속하기를 탭하세요</string>
+    <!-- Enable face ID prompt title -->
+    <string name="Prompts.FaceId.title">페이스 ID 사용하기</string>
+    <!-- No passcode set warning body -->
+    <string name="Prompts.NoPasscode.body">지갑을 지키려면 장치 비밀번호가 필요합니다. 설정으로 가셔서 비밀번호를 켜십시오.</string>
+    <!-- No Passcode set warning title -->
+    <string name="Prompts.NoPasscode.title">기기 비밀번호 설정</string>
+    <!-- Instruction how to enable device encryption -->
+    <string name="Prompts.NoScreenLock.body.android">귀하의 지갑을 보호하시려면 장치 화면 잠금이 필요합니다. 계속하시려면 \"설정\" &gt; \"보안\" &gt; \"화면 잠금\"가셔서 켜 주세요.</string>
+    <!-- Device encryption prompt title -->
+    <string name="Prompts.NoScreenLock.title.android">화면 잠금 꺼짐</string>
+    <!-- Warning about paper key. -->
+    <string name="Prompts.PaperKey.body">귀하의 종이 열쇠는 귀하의 핸드폰일 잃어버리거나 바꿀 경우에 대비해 저장되어야만 합니다. 계속하시려면 여기를 탭 하세요.</string>
+    <!-- An action is required (You must do this action). -->
+    <string name="Prompts.PaperKey.title">조치 필요함</string>
+    <!-- Transaction rejected prompt body -->
+    <string name="Prompts.RecommendRescan.body">귀하의 지갑이 동기화 되어 있지 않을 수 있습니다. 블록체인을 재스캔하면 대부분 고쳐집니다.</string>
+    <!-- Transaction rejected prompt title -->
+    <string name="Prompts.RecommendRescan.title">거래 거절됨</string>
+    <!-- Share data prompt body -->
+    <string name="Prompts.ShareData.body">Bread가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
+    <!-- Share data prompt title -->
+    <string name="Prompts.ShareData.title">익명 데이터 공유</string>
+    <!-- Enable touch ID prompt body -->
+    <string name="Prompts.TouchId.body">Touch ID를 켜시려면 여기를 탭하세요</string>
+    <!-- Enable Fingerprint prompt body -->
+    <string name="Prompts.TouchId.body.android">지문 본인확인을 켜시려면 여기를 탭 하세요</string>
+    <!-- Enable touch ID prompt title -->
+    <string name="Prompts.TouchId.title">Touch ID 켜</string>
+    <!-- Enable Fingerprint prompt title -->
+    <string name="Prompts.TouchId.title.android">지문 본인확인 켜기</string>
+    <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+    <string name="Prompts.TouchId.usePin.android">PIN</string>
+    <!-- Upgrade PIN prompt body. -->
+    <string name="Prompts.UpgradePin.body">6자리 PIN을 사용하도록 브레드가 업그레이드되었습니다. 업그레이드하려면 여기를 탭하세요.</string>
+    <!-- Upgrade PIN prompt title. -->
+    <string name="Prompts.UpgradePin.title">PIN 업그레이드</string>
+    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+    <string name="PushNotifications.body">알림을 켜두시면, 향후 브레드의 특별 메시지를 수신할 수 있습니다.</string>
+    <!-- Push notifications toggle switch label -->
+    <string name="PushNotifications.label">푸시 알림</string>
+    <!-- Push notifications are off label -->
+    <string name="PushNotifications.off">Off</string>
+    <!-- Push notifications are on label -->
+    <string name="PushNotifications.on">On</string>
+    <!-- Push notifications settings view title label -->
+    <string name="PushNotifications.title">알림</string>
+    <!-- Address copied message. -->
+    <string name="Receive.copied">클립보드에 복사되었습니다.</string>
+    <!-- Share via email button label -->
+    <string name="Receive.emailButton">이메일</string>
+    <!-- Request button label -->
+    <string name="Receive.request">금액 요청</string>
+    <!-- Share button label -->
+    <string name="Receive.share">공유</string>
+    <!-- Share via text message (SMS) -->
+    <string name="Receive.textButton">문자 메시지</string>
+    <!-- Receive modal title -->
+    <string name="Receive.title">수신</string>
+    <!-- Done button text -->
+    <string name="RecoverWallet.done">완료</string>
+    <!-- Recover wallet header -->
+    <string name="RecoverWallet.header">지갑 복구하기</string>
+    <!-- Reset PIN with paper key: header -->
+    <string name="RecoverWallet.header_reset_pin">PIN 재설정</string>
+    <!-- Enter paper key instruction -->
+    <string name="RecoverWallet.instruction">페이퍼 키 입력</string>
+    <!-- Recover wallet intro -->
+    <string name="RecoverWallet.intro">페이퍼 키를 사용해 브레드를 복구해 주세요.</string>
+    <!-- Invalid paper key message -->
+    <string name="RecoverWallet.invalid">올바르지 않은 페이퍼 키를 입력하셨습니다. 각 단어를 재확인한 후 다시 시도해 주세요.</string>
+    <!-- Previous button accessibility label -->
+    <string name="RecoverWallet.leftArrow">왼쪽 화살표</string>
+    <!-- Next button label -->
+    <string name="RecoverWallet.next">다음</string>
+    <!-- Reset PIN with paper key: more information button. -->
+    <string name="RecoverWallet.reset_pin_more_info">자세한 내용을 보려면 여기를 탭하세요.</string>
+    <!-- Next button accessibility label -->
+    <string name="RecoverWallet.rightArrow">오른쪽 화살표</string>
+    <!-- Recover wallet sub-header -->
+    <string name="RecoverWallet.subheader">복구하려는 지갑의 페이퍼 키를 입력해 주세요.</string>
+    <!-- Reset PIN with paper key: sub-header -->
+    <string name="RecoverWallet.subheader_reset_pin">PIN을 재설정하려면, 페이퍼 키의 단어들을 아래 상자에 입력해 주세요.</string>
+    <!-- No amount entered error message. -->
+    <string name="RequestAnAmount.noAmount">먼저 금액을 입력해 주세요.</string>
+    <!-- Request a specific amount of bitcoin -->
+    <string name="RequestAnAmount.title">금액 요청</string>
+    <!-- Alert action button label -->
+    <string name="ReScan.alertAction">동기화</string>
+    <!-- Alert message body -->
+    <string name="ReScan.alertMessage">동기화 중에는 송금할 수 없습니다.</string>
+    <!-- Alert message title -->
+    <string name="ReScan.alertTitle">블록체인과 동기화하겠습니까?</string>
+    <!-- extimated time -->
+    <string name="ReScan.body1">20-45분</string>
+    <!-- Syncing explanation -->
+    <string name="ReScan.body2">거래가 비트코인 네트워크에는 완료된 것으로 표시되지만, 브레드에는 표시되지 않는 경우.</string>
+    <!-- Syncing explanation -->
+    <string name="ReScan.body3">거래가 거절되었음을 알리는 오류 메시지가 반복적으로 나타납니다.</string>
+    <!-- Start Sync button label -->
+    <string name="ReScan.buttonTitle">동기화 시작</string>
+    <!-- Sync blockchain view footer -->
+    <string name="ReScan.footer">블록체인과 동기화하는 동안에는 송금할 수 없습니다.</string>
+    <!-- Sync Blockchain view header -->
+    <string name="ReScan.header">블록체인 동기화</string>
+    <!-- Subheader label -->
+    <string name="ReScan.subheader1">예상 시간</string>
+    <!-- Subheader label -->
+    <string name="ReScan.subheader2">동기화는 언제 해야 합니까?</string>
+    <!-- Scan bitcoin address camera flash toggle -->
+    <string name="Scanner.flashButtonLabel">카메라 플래시</string>
+    <!-- Complete filter label -->
+    <string name="Search.complete">완료</string>
+    <!-- Pending filter label -->
+    <string name="Search.pending">대기 중</string>
+    <!-- Received filter label -->
+    <string name="Search.received">수신</string>
+    <!-- [Click here to] search -->
+    <string name="Search.search">검색</string>
+    <!-- Sent filter label -->
+    <string name="Search.sent">송금</string>
+    <!-- Face ID button title -->
+    <string name="SecurityCenter.faceIdTitle">페이스 ID</string>
+    <!-- Paper Key button description -->
+    <string name="SecurityCenter.paperKeyDescription">전화를 분실하거나 업그레이드하는 경우, 비트코인에 액세스할 수 있는 유일한 방법입니다.</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle">페이퍼 키</string>
+    <!-- PIN button description -->
+    <string name="SecurityCenter.pinDescription">허가받지 않은 사용자로부터 브레드를 보호하세요.</string>
+    <!-- PIN button title -->
+    <string name="SecurityCenter.pinTitle">6자리 PIN</string>
+    <!-- Touch ID button description -->
+    <string name="SecurityCenter.touchIdDescription">편리하게 브레드의 잠금을 해제하고 최대한도까지 송금해 보세요.</string>
+    <!-- Touch ID button title -->
+    <string name="SecurityCenter.touchIdTitle">터치 ID</string>
+    <!-- Security center fingerprint authentication button -->
+    <string name="SecurityCenter.touchIdTitle.android">지문 본인확인</string>
+    <!-- Send money amount label -->
+    <string name="Send.amountLabel">금액</string>
+    <!-- Balance: $4.00 -->
+    <string name="Send.balance">잔액: %1$s</string>
+    <!-- Instructions how to allow the camera access for the app -->
+    <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"Bread\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
+    <!-- Permission required to access camera -->
+    <string name="Send.cameraUnavailabeTitle.android">Bread의 카메라 접속이 허용되지 않았습니다</string>
+    <!-- Camera not allowed message -->
+    <string name="Send.cameraunavailableMessage">설정에서 카메라 액세스를 허가해 주세요.</string>
+    <!-- Camera not allowed alert title -->
+    <string name="Send.cameraUnavailableTitle">브레드는 카메라 액세스를 허용하지 않습니다.</string>
+    <!-- Warning when sending to self. -->
+    <string name="Send.containsAddress">여러분의 주소를 입력해 주세요. 본인에게 전송할 수 없습니다.</string>
+    <!-- Could not create transaction alert title -->
+    <string name="Send.creatTransactionError">전송할 수 없습니다.</string>
+    <!-- Description for sending money label -->
+    <string name="Send.descriptionLabel">메모</string>
+    <!-- Emtpy pasteboard error message -->
+    <string name="Send.emptyPasteboard">클립보드가 비어 있습니다</string>
+    <!-- "(you) can't send (to your)self" -->
+    <string name="Send.ethSendSelf">자신에게는 보낼 수 없습니다.</string>
+    <!-- Network Fee: $0.01 -->
+    <string name="Send.fee">네트워크 비용: %1$s</string>
+    <!-- Payee identity not certified alert title. -->
+    <string name="Send.identityNotCertified">인증되지 않은 수취인입니다.</string>
+    <!-- Insufficient funds error -->
+    <string name="Send.insufficientFunds">자금 부족</string>
+    <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+    <string name="Send.insufficientGasMessage">이 종류의 토큰을 전송하려면 지갑에 최소 %1$s가 있어야 합니다. 지금 이더리움 지갑으로 가시겠습니까?</string>
+    <!-- Your ethereum balance is insufficient to complete this action. -->
+    <string name="Send.insufficientGasTitle">이더리움 잔액이 부족합니다</string>
+    <!-- e.g. The destination is not a valid (bitcoin) address. -->
+    <string name="Send.invalidAddressMessage">해당 수취인 주소는 %1$s에서 유효하지 않은 주소입니다.</string>
+    <!-- Invalid address on pasteboard message -->
+    <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 %1$s 주소를 가지고 있지 않습니다</string>
+    <!-- Invalid address alert title -->
+    <string name="Send.invalidAddressTitle">유효하지 않은 주소입니다</string>
+    <!-- Is rescanning error message -->
+    <string name="Send.isRescanning">전체 재검색 중에는 송금이 비활성화됩니다.</string>
+    <!-- Warning when the user is trying to send bitcoin cash to a legacy bitcoin address (possible, but probably not what the user wants to do) -->
+    <string name="Send.legacyAddressWarning">경고: 이것은 레거시 비트코인 주소입니다. 비트코인 캐시를 보내시겠습니까?</string>
+    <!-- We are loading the request (now) -->
+    <string name="Send.loadingRequest">요청 불러오는 중</string>
+    <!-- Transaction fee could not be be caluculated error. -->
+    <string name="Send.nilFeeError">거래 수수료를 지급하기에 자금이 부족합니다</string>
+    <!-- Empty address alert message -->
+    <string name="Send.noAddress">수신인의 주소를 입력하세요.</string>
+    <!-- Emtpy amount alert message -->
+    <string name="Send.noAmount">송금액을 입력하세요</string>
+    <!-- No Fees error -->
+    <string name="Send.noFeesError">네트워크 수수료 조건을 다운로드 중입니다. 다시 시도하십시오.</string>
+    <!-- Paste button label -->
+    <string name="Send.pasteLabel">붙여넣기</string>
+    <!-- Could not publish transaction alert title -->
+    <string name="Send.publishTransactionError">전송할 수 없습니다.</string>
+    <!-- Could not load remote request error message -->
+    <string name="Send.remoteRequestError">결제 요청을 불러올 수 없었습니다</string>
+    <!-- Scan button label -->
+    <string name="Send.scanLabel">스캔</string>
+    <!-- Send button label (the action, "press here to send") -->
+    <string name="Send.sendLabel">보내기</string>
+    <!-- Send screen title (as in "this is the screen for sending money") -->
+    <string name="Send.title">보내기</string>
+    <!-- Send money to label -->
+    <string name="Send.toLabel">수취인</string>
+    <!-- Adress already used alert message - first part -->
+    <string name="Send.UsedAddress.firstLine">비트코인 주소는 일회용입니다.</string>
+    <!-- Adress already used alert message - second part -->
+    <string name="Send.UsedAddress.secondLIne">주소를 재사용할 경우 귀하와 받는 사람 모두의 개인 정보 보호가 약해지며, 받는 사람이 직접 주소를 관리하지 않을 경우 분실을 초래할 수 있습니다.</string>
+    <!-- Adress already used alert title -->
+    <string name="Send.UsedAddress.title">이미 사용중인 주소입니다</string>
+    <!-- About label -->
+    <string name="Settings.about">관련 사항</string>
+    <!-- Advanced settings header -->
+    <string name="Settings.advanced">고급</string>
+    <!-- Advanced Settings title -->
+    <string name="Settings.advancedTitle">고급 설정</string>
+    <!-- i.e. the currency which will be displayed -->
+    <string name="Settings.currency">통화 보기</string>
+    <!-- e.g. "USD Settings" (settings for how USD is handled) -->
+    <string name="Settings.currencyPageTitle">%1$s 설정</string>
+    <!-- Section title for a collection of different settings screens, one for each currency -->
+    <string name="Settings.currencySettings">통화 설정</string>
+    <!-- Join Early access label -->
+    <string name="Settings.earlyAccess">초기 버전을 사용해 보세요</string>
+    <!-- Are you enjoying bread alert message body -->
+    <string name="Settings.enjoying">브레드를 사용하고 있으신가요?</string>
+    <!-- Face ID spending limit label -->
+    <string name="Settings.faceIdLimit">페이스 ID 지출 한도</string>
+    <!-- Redeem the funds stored on this private key. -->
+    <string name="Settings.importTitle">개인 키 교환</string>
+    <!-- Manage settings section header -->
+    <string name="Settings.manage">관리</string>
+    <!-- Notifications label -->
+    <string name="Settings.notifications">알림</string>
+    <!-- Preferences settings section header -->
+    <string name="Settings.preferences">환경 설정</string>
+    <!-- Tap here to reset the list of currencies to the default settings. -->
+    <string name="Settings.resetCurrencies">기본 통화로 초기화</string>
+    <!-- Leave review button label -->
+    <string name="Settings.review">후기를 남겨주세요</string>
+    <!-- Share anonymous data label -->
+    <string name="Settings.shareData">익명 데이터 공유</string>
+    <!-- Sync blockchain label -->
+    <string name="Settings.sync">블록체인 동기화</string>
+    <!-- Settings title -->
+    <string name="Settings.title">설정</string>
+    <!-- Touch ID spending limit label -->
+    <string name="Settings.touchIdLimit">Touch ID 지출 한도</string>
+    <!-- The fingerprint spending limit -->
+    <string name="Settings.touchIdLimit.android">지문 본인확인 사용 한계</string>
+    <!-- Wallet Settings section header -->
+    <string name="Settings.wallet">지갑</string>
+    <!-- Unlink/delete your wallet from the current device. -->
+    <string name="Settings.wipe">이 기기에서 연결 해제</string>
+    <!-- Share data view body -->
+    <string name="ShareData.body">브레드 기능 향상을 위해 여러분의 익명 데이터를 공유해 주세요. 금융 정보는 포함되지 않습니다. 여러분의 금융 관련 개인정보는 안전하게 보호됩니다.</string>
+    <!-- Share data header -->
+    <string name="ShareData.header">데이터를 공유하시겠습니까?</string>
+    <!-- Share data switch label. -->
+    <string name="ShareData.toggleLabel">익명 데이터를 공유하시겠습니까?</string>
+    <!-- button label -->
+    <string name="StartPaperPhrase.againButtonTitle">페이퍼 키를 다시 쓰기</string>
+    <!-- Paper key explanation text. -->
+    <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
+    <!-- button label -->
+    <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
+    <!-- Argument is date -->
+    <string name="StartPaperPhrase.date">%1$s에 마지막으로 페이퍼 키를 작성하셨습니다.</string>
+    <!-- button label -->
+    <string name="StartViewController.createButton">새 지갑 생성하기</string>
+    <!-- Start view message -->
+    <string name="StartViewController.message">비트코인을 사용하는 가장 안정되고 안전한 방법.</string>
+    <!-- Recover your wallet from a backup -->
+    <string name="StartViewController.recoverButton">지갑 복구하기</string>
+    <!-- Syncing view connectiong state header text -->
+    <string name="SyncingView.connecting">연결 중</string>
+    <!-- Syncing view header text -->
+    <string name="SyncingView.header">동기화 중</string>
+    <!-- Retry button label -->
+    <string name="SyncingView.retry">다시 시도</string>
+    <!-- Syncing view syncing state header text -->
+    <string name="SyncingView.syncing">동기화 중</string>
+    <!-- 6 d (6 days) -->
+    <string name="TimeSince.days">%1$s 일</string>
+    <!-- 6 h (6 hours) -->
+    <string name="TimeSince.hours">%1$s 시</string>
+    <!-- 6 m (6 minutes) -->
+    <string name="TimeSince.minutes">%1$s 분</string>
+    <!-- 6 s (6 seconds) -->
+    <string name="TimeSince.seconds">%1$s 초</string>
+    <!-- Add [this item to the list] -->
+    <string name="TokenList.add">추가</string>
+    <!-- Add Wallets    [to your home screen] -->
+    <string name="TokenList.addTitle">지갑 추가</string>
+    <!-- Hide [this token from view] -->
+    <string name="TokenList.hide">숨기기</string>
+    <!-- [click here to] Manage [your] Wallets -->
+    <string name="TokenList.manageTitle">지갑 관리</string>
+    <!-- Remove [this item from the list] -->
+    <string name="TokenList.remove">삭제</string>
+    <!-- Show [this item on your home screen] -->
+    <string name="TokenList.show">보기</string>
+    <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
+    <string name="TouchIdSettings.customizeText">%1$s에서 ???????????.</string>
+    <!-- Fingerprint enabling description body -->
+    <string name="TouchIdSettings.customizeText.android">지문 본인확인 시간 제한 화면에서 귀하의 지문 본인확인 사용 한계를 설정하실 수 있습니다</string>
+    <!-- Instruction for the fingerprint setup -->
+    <string name="TouchIdSettings.disabledWarning.body.android">귀하께서는 이 장치에 지문 본인확인 기능을 켜지 않으셨습니다. 설정 -&gt; 보안으로 가셔서 지문 본인확인을 설정하세요.</string>
+    <!-- Fingerprint Is Not Setup -->
+    <string name="TouchIdSettings.disabledWarning.title.android">지문 본인확인이 켜지지 않음</string>
+    <!-- Touch Id screen label -->
+    <string name="TouchIdSettings.label">지문을 사용하여 브레드의 보안을 해제하고 설정된 금액으로 송금할 수 있습니다.</string>
+    <!-- Link Text (see TouchIdSettings.customizeText) -->
+    <string name="TouchIdSettings.linkText">터치 ID 지불 한도 화면</string>
+    <!-- Spending Limit: b100,000 ($100) -->
+    <string name="TouchIdSettings.spendingLimit">지불 한도: %1$s (%2$s)</string>
+    <!-- Touch id switch label. -->
+    <string name="TouchIdSettings.switchLabel">브레드에서</string>
+    <!-- Enable fingerprint for this wallet called Bread -->
+    <string name="TouchIdSettings.switchLabel.android">지문 본인확인 켜기</string>
+    <!-- Touch ID settings view title -->
+    <string name="TouchIdSettings.title">터치 ID</string>
+    <!-- Fingerprint authentication label -->
+    <string name="TouchIdSettings.title.android">지문 본인확인</string>
+    <!-- Touch ID unavailable alert message -->
+    <string name="TouchIdSettings.unavailableAlertMessage">이 기기에서 Touch ID가 설정되어 있지 않습니다. 지금 설정 -&gt; Touch ID 및 암호로 이동하여 설정해 주세요.</string>
+    <!-- Touch ID unavailable alert title -->
+    <string name="TouchIdSettings.unavailableAlertTitle">Touch ID가 설정되지 않음</string>
+    <!-- Always require passcode option -->
+    <string name="TouchIdSpendingLimit">항상 비밀번호 요구</string>
+    <!-- Touch ID spending limit screen body -->
+    <string name="TouchIdSpendingLimit.body">지출 한도를 넘는 트랜잭션을 보내실 경우, 그리고 마지막으로 6자리 PIN 코드를 입력하시고 48시간이 경과한 경우에는 6자리 PIN 코드를 입력하셔야 합니다.</string>
+    <!-- Touch Id spending limit screen title -->
+    <string name="TouchIdSpendingLimit.title">Touch ID 지출 한도</string>
+    <!-- name of spending limit when using fingerprint authorization -->
+    <string name="TouchIdSpendingLimit.title.android">지문 본인확인 사용 한계</string>
+    <!-- Availability status text -->
+    <string name="Transaction.available">지출 가능</string>
+    <!-- Transaction complete label -->
+    <string name="Transaction.complete">완료</string>
+    <!-- Transaction is confirming status text -->
+    <string name="Transaction.confirming">진행 중</string>
+    <!-- eg. Ending balance: $50.00 -->
+    <string name="Transaction.ending">기말 잔액: %1$s</string>
+    <!-- Exchange rate on date header -->
+    <string name="Transaction.exchangeOnDayReceived">받을 때의 환율:</string>
+    <!-- Exchange rate on date header -->
+    <string name="Transaction.exchangeOnDaySent">보낼 때의 환율:</string>
+    <!-- Transaction failed status text -->
+    <string name="Transaction.failed">실패했습니다</string>
+    <!-- (b600 fee) -->
+    <string name="Transaction.fee">(%1$s 수수료)</string>
+    <!-- Invalid transaction -->
+    <string name="Transaction.invalid">무효</string>
+    <!-- Timestamp label for event that just happened -->
+    <string name="Transaction.justNow">지금 바로</string>
+    <!-- Transaction is pending status text -->
+    <string name="Transaction.pending">보류 중</string>
+    <!-- Receive status text: 'In progress: 20%' -->
+    <string name="Transaction.receivedStatus">진행 중: %1$s</string>
+    <!-- Send status text: 'In progress: 20%' -->
+    <string name="Transaction.sendingStatus">진행 중: %1$s</string>
+    <!-- sending to <address> -->
+    <string name="Transaction.sendingTo">%1$s으로 보내기</string>
+    <!-- sent to <address> -->
+    <string name="Transaction.sentTo">%1$s으로 전송되었습니다</string>
+    <!-- eg. Starting balance: $50.00 -->
+    <string name="Transaction.starting">기초 잔액: %1$s</string>
+    <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+    <string name="Transaction.tokenTransfer">토큰 송금 수수료: %1$s</string>
+    <!-- Waiting to be confirmed string -->
+    <string name="Transaction.waiting">확인 대기 중. 일부 판매자는 트랜잭션을 완료하기 위해 확인을 요구합니다. 예상 소요 시간: 1~2시간.</string>
+    <!-- e.g. I received money from an account. -->
+    <string name="TransactionDetails.account">계정</string>
+    <!-- Address received from header -->
+    <string name="TransactionDetails.addressFromHeader">시작</string>
+    <!-- Address sent to header -->
+    <string name="TransactionDetails.addressToHeader">끝</string>
+    <!-- e.g. "(this was received) via (address #1)" via = by way of -->
+    <string name="TransactionDetails.addressViaHeader">수단</string>
+    <!-- Amount section header -->
+    <string name="TransactionDetails.amountHeader">금액</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenReceived">받았을 때 %1$s, 지금은 %2$s</string>
+    <!-- Block height label -->
+    <string name="TransactionDetails.blockHeightLabel">차단 확인</string>
+    <!-- Memo section header -->
+    <string name="TransactionDetails.commentsHeader">메모</string>
+    <!-- Memo field placeholder -->
+    <string name="TransactionDetails.commentsPlaceholder">메모 추가...</string>
+    <!-- Timestamp section header for complete tx -->
+    <string name="TransactionDetails.completeTimestampHeader">완료</string>
+    <!-- Empty transaction list message. -->
+    <string name="TransactionDetails.emptyMessage">귀하의 트랜잭션이 여기에 표시됩니다.</string>
+    <!-- e.g. the users balance after the transaction was compeleted -->
+    <string name="TransactionDetails.endingBalanceHeader">거래 후 잔액</string>
+    <!-- Exchange rate section header -->
+    <string name="TransactionDetails.exchangeRateHeader">환율</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.feeHeader">비용 합계</string>
+    <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+    <string name="TransactionDetails.from">%1$s에서</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.gasLimitHeader">Gas Limit</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.gasPriceHeader">Gas Price</string>
+    <!-- Label showing the transaction was started (initialized) -->
+    <string name="TransactionDetails.initializedTimestampHeader">초기화됨</string>
+    <!-- More button title -->
+    <string name="TransactionDetails.more">그 이상...</string>
+    <!-- Moved $5.00 (as in "I moved $5 to another location") -->
+    <string name="TransactionDetails.moved">%1$s 이동함</string>
+    <!-- Moved $5.00 -->
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
+    <!-- eg. Confirmed in Block: Not Confirmed -->
+    <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
+    <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
+    <string name="TransactionDetails.received">%1$s 받음</string>
+    <!-- Received $5.00 -->
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
+    <!-- received from <address> -->
+    <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
+    <!-- received via <address> -->
+    <string name="TransactionDetails.receivedVia">%1$s으로 수취 됨</string>
+    <!-- receiving from <address> -->
+    <string name="TransactionDetails.receivingFrom">%1$s(으)로부터 받는 중</string>
+    <!-- receiving via <address> -->
+    <string name="TransactionDetails.receivingVia">%1$s으로 수취 중</string>
+    <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
+    <string name="TransactionDetails.sent">%1$s 보냄</string>
+    <!-- Sent $5.00 -->
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
+    <!-- Show Details button -->
+    <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
+    <!-- The balance the user started with before the transaction completed -->
+    <string name="TransactionDetails.startingBalanceHeader">시작 잔액</string>
+    <!-- Status section header -->
+    <string name="TransactionDetails.statusHeader">상태</string>
+    <!-- Transaction Details Title -->
+    <string name="TransactionDetails.title">트랜잭션 세부 정보</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.titleFailed">세부 정보 숨기기</string>
+    <!-- Transaction Details Title - Internal -->
+    <string name="TransactionDetails.titleInternal">내부</string>
+    <!-- Transaction Details Title - Received -->
+    <string name="TransactionDetails.titleReceived">수취 받음</string>
+    <!-- Transaction Details Title - Receiving -->
+    <string name="TransactionDetails.titleReceiving">수취 중</string>
+    <!-- Transaction Details Title - Sending -->
+    <string name="TransactionDetails.titleSending">전송 중</string>
+    <!-- Transaction Details Title - Sent -->
+    <string name="TransactionDetails.titleSent">전송됨</string>
+    <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+    <string name="TransactionDetails.to">%1$s에게</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.totalHeader">합계</string>
+    <!-- Transaction ID header -->
+    <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
+    <!-- (this transaction was) Received at this address: -->
+    <string name="TransactionDirection.address">이 주소에서 받음</string>
+    <!-- (this transaction was) Sent to this address: -->
+    <string name="TransactionDirection.to">이 주소로 보냄</string>
+    <!-- Disabled until date -->
+    <string name="UnlockScreen.disabled">다음 기간까지 비활성화됨: %1$s</string>
+    <!-- Unlock with FaceID accessibility label -->
+    <string name="UnlockScreen.faceIdText">페이스 ID로 잠금 해제</string>
+    <!-- My Address button title -->
+    <string name="UnlockScreen.myAddress">내 주소</string>
+    <!-- Reset PIN with Paper Key button label. -->
+    <string name="UnlockScreen.resetPin">PIN 재설정</string>
+    <!-- Scan button title -->
+    <string name="UnlockScreen.scan">스캔</string>
+    <!-- Instruction to touch the sensor for fingerprint authentication -->
+    <string name="UnlockScreen.touchIdInstructions.android">터치 센서</string>
+    <!-- TouchID prompt text -->
+    <string name="UnlockScreen.touchIdPrompt">Bread의 잠금을 해제하세요.</string>
+    <!-- Device authentication body -->
+    <string name="UnlockScreen.touchIdPrompt.android">계속하시려면 귀하의 안드로이드 장치 잠금을 해제해 주세요.</string>
+    <!-- Unlock with TouchID accessibility label -->
+    <string name="UnlockScreen.touchIdText">Touch ID로 잠금 해제</string>
+    <!-- Device authentication title -->
+    <string name="UnlockScreen.touchIdTitle.android">본인확인 필요</string>
+    <!-- Update PIN caption text -->
+    <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 비트코인을 사용할 수 없게 됩니다.</string>
+    <!-- PIN creation info. -->
+    <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 Bread의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.createTitle">PIN 설정</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.createTitleConfirm">PIN 코드를 다시 입력</string>
+    <!-- Enter current PIN instruction -->
+    <string name="UpdatePin.enterCurrent">현재의 PIN 코드를 입력하세요.</string>
+    <!-- Enter new PIN instruction -->
+    <string name="UpdatePin.enterNew">새 PIN 코드를 입력하세요.</string>
+    <!-- Re-Enter new PIN instruction -->
+    <string name="UpdatePin.reEnterNew">새 PIN 코드를 다시 입력하세요.</string>
+    <!-- Update PIN failure error message. -->
+    <string name="UpdatePin.setPinError">죄송합니다, PIN 코드를 업데이트하지 못했습니다.</string>
+    <!-- Update PIN failure alert view title -->
+    <string name="UpdatePin.setPinErrorTitle">PIN 코드 업데이트 오류</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.updateTitle">PIN 코드 업데이트</string>
+    <!-- Authorize to copy wallet addresses alert message -->
+    <string name="URLHandling.addressaddressListAlertMessage">월렛 주소를 클립 보드에 복사할까요?</string>
+    <!-- Authorize to copy wallet address PIN view prompt. -->
+    <string name="URLHandling.addressList">월렛 주소를 클립 보드에 복사할 수 있는 권한을 부여</string>
+    <!-- Authorize to copy wallet address alert title -->
+    <string name="URLHandling.addressListAlertTitle">월렛 주소 복사하기</string>
+    <!-- Copy wallet addresses alert button label -->
+    <string name="URLHandling.copy">복사</string>
+    <!-- Verify PIN for transaction view body -->
+    <string name="VerifyPin.authorize">PIN을 입력하여 이 거래를 승인하십시오.</string>
+    <!-- Verify PIN view body -->
+    <string name="VerifyPin.continueBody">계속하려면 PIN 코드를 입력해 주세요.</string>
+    <!-- Verify PIN view title -->
+    <string name="VerifyPin.title">PIN 코드 입력 필수</string>
+    <!-- Authorize transaction with touch id message -->
+    <string name="VerifyPin.touchIdMessage">이 거래 승인</string>
+    <!-- 'No wallet' warning for watch app -->
+    <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 Bread 앱을 열어 주세요.</string>
+    <!-- Dismiss button label -->
+    <string name="Webview.dismiss">무시</string>
+    <!-- Webview loading error message -->
+    <string name="Webview.errorMessage">콘텐츠를 로드하는 중에 오류가 발생했습니다. 다시 시도해 주세요.</string>
+    <!-- Updating webview message -->
+    <string name="Webview.updating">업데이트 중...</string>
+    <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+    <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+    <!-- Top title of welcome screen -->
+    <string name="Welcome.title">Bread에 환영합니다!</string>
+    <!-- Wipe wallet alert message -->
+    <string name="WipeWallet.alertMessage">정말 이 월렛을 삭제할까요?</string>
+    <!-- Wipe wallet alert title -->
+    <string name="WipeWallet.alertTitle">월렛을 초기화할까요?</string>
+    <!-- Failed wipe wallet alert message -->
+    <string name="WipeWallet.failedMessage">월렛 초기화가 실패함.</string>
+    <!-- Failed wipe wallet alert title -->
+    <string name="WipeWallet.failedTitle">실패함</string>
+    <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
+    <string name="WipeWallet.instruction">새 지갑을 시작하거나 기존 지갑을 복구하려면, 먼저 현재 설치된 지갑의 연결을 해제해야 합니다. 계속하려면, 현재 지갑의 종이 키를 입력하세요.</string>
+    <!-- Instructions for unlinking the wallet -->
+    <string name="WipeWallet.startMessage">지갑의 연결을 해제하여 이 기기에서 제거하세요. 이 지갑의 연결이 해제되면, 새로운 지갑을 시작하거나 이 기기에 다른 지갑을 복구할 수 있습니다.</string>
+    <!-- Start wipe wallet view warning -->
+    <string name="WipeWallet.startWarning">이장치에서 현재 Bread 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
+    <!-- Unlink this wallet from this device. -->
+    <string name="WipeWallet.title">지갑 연결 해제</string>
+    <!-- Wipe wallet button title -->
+    <string name="WipeWallet.wipe">초기화</string>
+    <!-- Wiping activity message -->
+    <string name="WipeWallet.wiping">초기화 중...</string>
+    <!-- Paper key instructions. -->
+    <string name="WritePaperPhrase.instruction">각 단어를 순서대로 적어 놓고, 안전한 곳에 보관하세요.</string>
+    <!-- button label -->
+    <string name="WritePaperPhrase.next">다음</string>
+    <!-- button label -->
+    <string name="WritePaperPhrase.previous">이전</string>
+    <!-- 1 of 3 -->
+    <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">기타</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">지갑 관리</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">메뉴</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">사다</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">교환</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">QR코드 스캔</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">동기화 실패</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">전송 시 %1$s, 현재 %2$s</string>
 </resources>
