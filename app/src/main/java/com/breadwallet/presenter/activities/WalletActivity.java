@@ -45,7 +45,7 @@ import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
@@ -65,7 +65,7 @@ import java.text.SimpleDateFormat;
  */
 
 public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener,
-        OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, OnBalanceChangedListener {
+        OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, BalanceUpdateListener {
     private static final String TAG = WalletActivity.class.getName();
 
     public static final String EXTRA_CRYPTO_REQUEST = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST";

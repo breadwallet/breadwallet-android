@@ -46,12 +46,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private final Context mContext;
     private ArrayList<WalletItem> mWalletItems;
     private WalletItem mCurrentWalletSyncing;
-    private boolean mObesrverIsStarting;
+    private boolean mObserverIsStarting;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
 
     private static final int VIEW_TYPE_WALLET = 0;
     private static final int VIEW_TYPE_ADD_WALLET = 1;
-    public static final String IMAGE_RESOURCE_ID_PREFIX = "white_";
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
@@ -156,10 +155,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public void startObserving() {
-        if (mObesrverIsStarting) {
+        if (mObserverIsStarting) {
             return;
         }
-        mObesrverIsStarting = true;
+        mObserverIsStarting = true;
 
         SyncService.registerSyncNotificationBroadcastReceiver(mContext.getApplicationContext(), mSyncNotificationBroadcastReceiver);
 
@@ -184,7 +183,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     mCurrentWalletSyncing.walletManager.connect(mContext);
                     SyncService.startService(mContext, walletIso);
                 } finally {
-                    mObesrverIsStarting = false;
+                    mObserverIsStarting = false;
                 }
 
             }
@@ -198,15 +197,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             return false;
         }
         if (syncProgress > SyncService.PROGRESS_START && syncProgress < SyncService.PROGRESS_FINISH) {
-//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
             StringBuffer labelText = new StringBuffer(mContext.getString(R.string.SyncingView_syncing));
             labelText.append(' ')
                     .append(NumberFormat.getPercentInstance().format(syncProgress));
 
             mCurrentWalletSyncing.updateData(true, labelText.toString());
         } else if (syncProgress == SyncService.PROGRESS_FINISH) {
-//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (100%)");
-
             //Done should not be seen but if it is because of a bug or something, then let if be a decent explanation
             mCurrentWalletSyncing.updateData(false);
 

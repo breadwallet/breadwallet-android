@@ -31,6 +31,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged, BalanceUpdateListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -54,7 +55,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private WalletListAdapter mAdapter;
     private BaseTextView mFiatTotal;
     private PromptManager.PromptItem mCurrentPrompt;
-    public BRNotificationBar mNotificationBar;
+    private BRNotificationBar mNotificationBar;
 
     private BaseTextView mPromptTitle;
     private BaseTextView mPromptDescription;
@@ -70,7 +71,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Log.e(TAG, "onCreate: 1");
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -94,14 +94,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 UiUtils.startWebActivity(HomeActivity.this, url);
             }
         });
-
         mTradeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UiUtils.startWebActivity(HomeActivity.this, HTTPServer.URL_TRADE);
             }
         });
-
         mMenuLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,14 +109,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
-
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
-
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
-
                 if (mAdapter.getItemViewType(position) == 0) {
                     BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso());
                     Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
@@ -128,13 +123,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     Intent intent = new Intent(HomeActivity.this, AddWalletsActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
                 }
             }
 
             @Override
             public void onLongItemClick(View view, int position) {
-
             }
         }));
 
@@ -145,19 +138,18 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 hidePrompt();
             }
         });
-
         mPromptContinue.setColor(Color.parseColor("#4b77f3"));
         mPromptContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(HomeActivity.this, mCurrentPrompt);
-                if (info.listener != null)
+                if (info.listener != null) {
                     info.listener.onClick(mPromptContinue);
-                else
+                } else {
                     Log.e(TAG, "Continue :" + info.title + " (FAILED)");
+                }
             }
         });
-
     }
 
     public void hidePrompt() {
@@ -171,14 +163,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if (mCurrentPrompt != null)
             BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");
         mCurrentPrompt = null;
-
     }
 
     private void showNextPromptIfNeeded() {
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(this);
         if (toShow != null) {
             mCurrentPrompt = toShow;
-//            Log.d(TAG, "showNextPrompt: " + toShow);
             PromptManager.PromptInfo promptInfo = PromptManager.getInstance().promptInfo(this, toShow);
             mPromptCard.setVisibility(View.VISIBLE);
             mPromptTitle.setText(promptInfo.title);
@@ -193,21 +183,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onResume() {
         super.onResume();
-        long start = System.currentTimeMillis();
-
         showNextPromptIfNeeded();
-
+        WalletsMaster.getInstance(this).addBalanceUpdateListener(this);
         populateWallets();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mAdapter.startObserving();
             }
         }, DateUtils.SECOND_IN_MILLIS / 2);
-
         InternetManager.registerConnectionReceiver(this, this);
-
         updateUi();
         RatesDataSource.getInstance(this).addOnDataChangedListener(this);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -218,7 +203,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this).refreshAddress(HomeActivity.this);
             }
         });
-
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
     }
 
@@ -234,6 +218,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onPause();
         InternetManager.unregisterConnectionReceiver(this, this);
         mAdapter.stopObserving();
+        WalletsMaster.getInstance(this).removeBalanceUpdateListener(this);
     }
 
     private void updateUi() {
@@ -253,7 +238,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                         mAdapter.notifyDataSetChanged();
                     }
                 });
-
             }
         });
     }
@@ -274,7 +258,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 mNotificationBar.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     public void closeNotificationBar() {
@@ -283,6 +266,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Override
     public void onChanged() {
+        updateUi();
+    }
+
+    @Override
+    public void onBalanceChanged(BigDecimal balance) {
         updateUi();
     }
 }
