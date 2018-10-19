@@ -1,925 +1,925 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <!-- App name -->
-  <string name="About.appName.android">Bread</string>
-  <!-- About screen blog label -->
-  <string name="About.blog">Blog</string>
-  <!-- About screen footer -->
-  <string name="About.footer">Lavet af det globale Bread hold. Version %1$s</string>
-  <!-- Privay Policy button label -->
-  <string name="About.privacy">Privatlivspolitik</string>
-  <!-- About screen reddit label -->
-  <string name="About.reddit">Reddit</string>
-  <!-- Terms of Use button label -->
-  <string name="About.terms">Brugsbetingelser</string>
-  <!-- About screen title -->
-  <string name="About.title">Om</string>
-  <!-- About screen twitter label -->
-  <string name="About.twitter">Twitter</string>
-  <!-- About screen wallet ID label -->
-  <string name="About.walletID">BRD Rewards ID</string>
-  <!-- Close modal button accessibility label -->
-  <string name="AccessibilityLabels.close">Luk</string>
-  <!-- Support center accessibiliy label -->
-  <string name="AccessibilityLabels.faq">Supportcenter</string>
-  <!-- Account balance -->
-  <string name="Account.balance">Saldo</string>
-  <!-- $10000 per BTC -->
-  <string name="Account.exchangeRate">%1$s per %2$s</string>
-  <!-- Loading Wallet Message -->
-  <string name="Account.loadingMessage">Indlæser pung</string>
-  <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">Mit Bread</string>
-  <!-- Third party keyboard warning -->
-  <string name="Alert.customKeyboard.android">Det ser ud til at du bruger et tastatur fra en tredjepart, som kan optage det du skriver og stjæle din Paper Key. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
-  <!-- Error alert title -->
-  <string name="Alert.error">Fejl</string>
-  <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">Der er et problem med din Android OS keystore, kontakt venligst support@breadwallet.com</string>
-  <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Dine Bread-krypterede data blev for nyligt ugyldiggjort, eftersom din Android skærmlås blev deaktiveret.</string>
-  <!-- Keystore error title -->
-  <string name="Alert.keystore.title.android">Android KeyStore fejl</string>
-  <!-- No internet alert message -->
-  <string name="Alert.noInternet">Ingen internetforbindelse fundet. Tjek din forbindelse og prøv igen.</string>
-  <!-- Warning alert title -->
-  <string name="Alert.warning">Advarsel</string>
-  <!-- 'the addresses were copied'' Alert title -->
-  <string name="Alerts.copiedAddressesHeader">Adresser kopieret</string>
-  <!-- Addresses Copied Alert sub header -->
-  <string name="Alerts.copiedAddressesSubheader">Alle pungens adresser er kopieret.</string>
-  <!-- Alert Header Label (the paper key was set) -->
-  <string name="Alerts.paperKeySet">Paper key indstillet</string>
-  <!-- Alert Subheader label (playfully positive) -->
-  <string name="Alerts.paperKeySetSubheader">Fedt!</string>
-  <!-- Alert Header label (the PIN was set) -->
-  <string name="Alerts.pinSet">PIN indstillet</string>
-  <!-- Send failure alert header label (the send failed to happen) -->
-  <string name="Alerts.sendFailure">Afsendelse mislykkedes</string>
-  <!-- Send success alert header label (confirmation that the send happened) -->
-  <string name="Alerts.sendSuccess">Send bekræftelse</string>
-  <!-- Send success alert subheader label (e.g. the money was sent) -->
-  <string name="Alerts.sendSuccessSubheader">Pengene blev sendt!</string>
-  <!-- Fingerprint was recognized by the scanner -->
-  <string name="Alerts.touchIdSucceeded.android">Fingeraftryk genkendt</string>
-  <!-- Tell the user where they can enable permissions to access device storage. -->
-  <string name="Android.allowFileSystemAccess">Aktiver lagringstilladelse i din enheds indstillinger: \"Indstillinger\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Tilladelser\".</string>
-  <!-- The "home" screen is the name of the top level menu for the app. -->
-  <string name="Android.BCH.welcome.message">Du kan få adgang til enhver BCH i din pung via hjemskærmen.</string>
-  <!-- Warning about using apps that can alter the screen -->
-  <string name="Android.screenAlteringMessage">BRD fungerer ikke korrekt medmindre apps der ændrer skærmbilledet (så som Twilight) er deaktiveret.</string>
-  <!-- An app that alters the screen ("screen-altering app") has been detected. -->
-  <string name="Android.screenAlteringTitle">Der er fundet en app der ændrer skærmbilledet</string>
-  <!-- JSON Serialization error message -->
-  <string name="ApiClient.jsonError">JSON serialiseringsfejl</string>
-  <!-- Wallet not ready error message -->
-  <string name="ApiClient.notReady">Pung ikke klar</string>
-  <!-- API Token error message -->
-  <string name="ApiClient.tokenError">Kunne ikke hente API-nøgle</string>
-  <!-- Send BCH view body. -->
-  <string name="BCH.body">Indtast en BCH destinationsadresse nedenfor. Alle BCH i din wallet ved fork-tidspunktet (%1$s) vil blive afsendt.</string>
-  <!-- Confirm sending <$5.00> to <address>? -->
-  <string name="BCH.confirmationMessage">Bekræft afsendelse af %1$s til %2$s</string>
-  <!-- Confirmation alert title -->
-  <string name="BCH.confirmationTitle">Bekræftelse</string>
-  <!-- Generic bch erorr message -->
-  <string name="BCH.genericError">Din konto indeholder ikke nogle BCH eller du modtog BCH efter fork.</string>
-  <!-- Transaction ID copied message -->
-  <string name="BCH.hashCopiedMessage">Transaktions-ID kopieret</string>
-  <!-- No address error message -->
-  <string name="BCH.noAddressError">Indtast venligst en adresse</string>
-  <!-- Attempted to scan unsupported qr code error message. -->
-  <string name="BCH.paymentProtocolError">Betalingsprotokolanmodninger er ikke understøttet for BCH-transaktioner</string>
-  <!-- BCH successfully sent alert message -->
-  <string name="BCH.successMessage">BCH blev afsendt uden problemer.</string>
-  <!-- Widthdraw BCH view title -->
-  <string name="BCH.title">Tilbagetræk BCH</string>
-  <!-- Tx Hash button header -->
-  <string name="BCH.txHashHeader">BCH transaktions-ID</string>
-  <!-- Approve button label -->
-  <string name="BitID.approve">Godkend</string>
-  <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s anmoder om godkendelse ved hjælp af din bitcoin-wallet</string>
-  <!-- Deny button label -->
-  <string name="BitID.deny">Afvis</string>
-  <!-- BitID error alert title -->
-  <string name="BitID.error">Godkendelsesfejl</string>
-  <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
-  <string name="BitID.errorMessage">Tjek venligst tjenesten. Det kan være nødvendigt at prøve igen.</string>
-  <!-- BitID success alert title -->
-  <string name="BitID.success">Godkendt uden problemer</string>
-  <!-- BitID Authentication Request alert view title -->
-  <string name="BitID.title">BitID godkendelsesanmodning</string>
-  <!-- As in "(tap here to) buy (bitcoin)" -->
-  <string name="Button.buy">Køb</string>
-  <!-- Cancel button label -->
-  <string name="Button.cancel">Annuller</string>
-  <!-- prompt continue button -->
-  <string name="Button.continueAction">Fortsæt</string>
-  <!-- prompt dismiss button -->
-  <string name="Button.dismiss">Afvis</string>
-  <!-- Button to return to the "home" screen (the home screen is the top menu). -->
-  <string name="Button.Home">Hjem</string>
-  <!-- Ignore button label -->
-  <string name="Button.ignore">Ignorer</string>
-  <!-- menu button -->
-  <string name="Button.menu">Menu</string>
-  <!-- No button -->
-  <string name="Button.no">Nej</string>
-  <!-- OK button label -->
-  <string name="Button.ok">OK</string>
-  <!-- receive button -->
-  <string name="Button.receive">Modtag</string>
-  <!-- Click this button to sell an asset -->
-  <string name="Button.sell">Sælg</string>
-  <!-- send button -->
-  <string name="Button.send">send</string>
-  <!-- Settings button label -->
-  <string name="Button.settings">Indstillinger</string>
-  <!-- Settings button label -->
-  <string name="Button.submit">Send</string>
-  <!-- Yes button -->
-  <string name="Button.yes">Ja</string>
-  <!-- Camera plugin instruction -->
-  <string name="CameraPlugin.centerInstruction">Centrer dit ID i boksen</string>
-  <!-- Amount to Send: ($1.00) -->
-  <string name="Confirmation.amountLabel">Beløb der skal sendes:</string>
-  <!-- Network Fee: ($1.00) -->
-  <string name="Confirmation.feeLabel">Netværksgebyr:</string>
-  <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
-  <string name="Confirmation.processingTime">Behandlingstid: denne transaktion er efter planen færdig om %1$s.</string>
-  <!-- Label for "send" button on final confirmation screen -->
-  <string name="Confirmation.send">Send</string>
-  <!-- Confirmation Screen title -->
-  <string name="Confirmation.title">Bekræftelse</string>
-  <!-- To: (address) -->
-  <string name="Confirmation.to">Til</string>
-  <!-- Total Cost: ($5.00) -->
-  <string name="Confirmation.totalLabel">Samlede omkostninger:</string>
-  <!-- Confirm paper phrase error message -->
-  <string name="ConfirmPaperPhrase.error">Ordene du har indtastet matcher ikke din papirnøgle. Prøv venligst igen.</string>
-  <!-- Confirm paper phrase view label. -->
-  <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din paper key.</string>
-  <!-- Word label eg. Word #1, Word #2 -->
-  <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
-  <!-- Agree to legal terms button -->
-  <string name="Crowdsale.agree">Enig</string>
-  <!-- As in "(tap here to) buy (some) tokens" -->
-  <string name="Crowdsale.buyButton">Køb tokens</string>
-  <!-- Decline to legal terms button -->
-  <string name="Crowdsale.decline">Afvis</string>
-  <!-- Resume Idnetify verification button -->
-  <string name="Crowdsale.resume">Genoptag bekræftelse</string>
-  <!-- Retry Identity verification button -->
-  <string name="Crowdsale.retry">Prøv igen</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin visningsenhed</string>
-  <!-- Exchange rate label -->
-  <string name="DefaultCurrency.rateLabel">Valutakurs</string>
-  <!-- The wallet is disabled. -->
-  <string name="Disabled.title">Pung deaktiveret</string>
-  <!-- Email unavailable alert title -->
-  <string name="ErrorMessages.emailUnavailableMessage">Denne enhed er ikke konfigureret til at sende e-mail med iOS mailappen.</string>
-  <!-- Email unavailable alert title -->
-  <string name="ErrorMessages.emailUnavailableTitle">E-mail utilgængelig</string>
-  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">Bread kan ikke godkendes grundet en fejl i din version af Android. [Tryk her for flere oplysninger.]</string>
-  <!-- Messaging unavailable alert title -->
-  <string name="ErrorMessages.messagingUnavailableMessage">Denne enhed er ikke konfigureret til at sende beskeder.</string>
-  <!-- Messaging unavailable alert title -->
-  <string name="ErrorMessages.messagingUnavailableTitle">Beskeder utilgængelig</string>
-  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
-  <string name="ErrorMessages.touchIdFailed.android">Fingeraftryk ikke genkendt. Prøv igen.</string>
-  <!-- You can customize your Face ID Spending Limit from the [menu] -->
-  <string name="FaceIDSettings.customizeText">Du kan tilpasse din Face ID betalingsgrænse fra %1$s.</string>
-  <!-- Face Id screen label -->
-  <string name="FaceIDSettings.label">Brug dit ansigt til at låse din BRD op, og send penge op til en fastsat grænse.</string>
-  <!-- Title of the screen for setting the Face ID Spending Limit -->
-  <string name="FaceIDSettings.linkText">Face ID betalingsgrænse-skærm</string>
-  <!-- Setting to turn on Face ID for BRD -->
-  <string name="FaceIDSettings.switchLabel">Aktiver Face ID for BRD</string>
-  <!-- Face ID settings view title -->
-  <string name="FaceIDSettings.title">Face ID</string>
-  <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
-  <string name="FaceIDSettings.unavailableAlertMessage">Du har ikke indstillet Face ID på denne enhed. Gå til Indstillinger-&gt;Face ID &amp; adgangskode for at indstille det nu.</string>
-  <!-- Face ID unavailable alert title -->
-  <string name="FaceIDSettings.unavailableAlertTitle">Face ID ikke indstillet</string>
-  <!-- Face Id spending limit screen title -->
-  <string name="FaceIDSpendingLimit.title">Face ID betalingsgrænse</string>
-  <!-- Economy fee -->
-  <string name="FeeSelector.economy">Økonomi</string>
-  <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1-24 timer</string>
-  <!-- Warning message for economy fee -->
-  <string name="FeeSelector.economyWarning">Denne mulighed er ikke anbefalet for tidsfølsomme transaktioner.</string>
-  <!-- E.g. Estimated delivery: 10-60 minutes -->
-  <string name="FeeSelector.estimatedDeliver">Forventet levering: %1$s</string>
-  <!-- [This transaction will complete in] 2-5 minutes -->
-  <string name="FeeSelector.ethTime">2-5 minutter</string>
-  <!-- Regular fee -->
-  <string name="FeeSelector.regular">Almindelig</string>
-  <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10-60 minutter</string>
-  <!-- Fee Selector title -->
-  <string name="FeeSelector.title">Behandlingshastighed</string>
-  <!-- This is the section that allows administration of the user's wallet -->
-  <string name="HomeScreen.admin">Administration</string>
-  <!-- This section lists the users wallets -->
-  <string name="HomeScreen.portfolio">Tegnebøger</string>
-  <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
-  <string name="HomeScreen.totalAssets">samlet antal aktiver</string>
-  <!-- Checking private key balance progress view text -->
-  <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
-  <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Send %1$s fra denne private nøgle til din pung? Bitcoin netværket vil modtage et gebyr på %2$s.</string>
-  <!-- Duplicate key error message -->
-  <string name="Import.Error.duplicate">Denne private nøgle findes allerede i din pung.</string>
-  <!-- empty private key error message -->
-  <string name="Import.Error.empty">Denne private nøgle er tom.</string>
-  <!-- High fees error message -->
-  <string name="Import.Error.highFees">Transaktionsgebyrer vil koste mere end der er midler til på denne private nøgle.</string>
-  <!-- Not a valid private key error message -->
-  <string name="Import.Error.notValid">Ikke en gyldig privat nøgle</string>
-  <!-- Import signing error message -->
-  <string name="Import.Error.signing">Fejl ved underskrivelse af transaktion</string>
-  <!-- [Redeem] the funds stored on this private key. -->
-  <string name="Import.importButton">Indløs</string>
-  <!-- Importing wallet progress view label -->
-  <string name="Import.importing">Indløser privat nøgle</string>
-  <!-- Caption for graphics -->
-  <string name="Import.leftCaption">Privat nøgle</string>
-  <!-- Import wallet intro screen message -->
-  <string name="Import.message">Private nøgler printes ofte på papir som en QR-kode og bruges til at opbevare midler offline. Indløs en privat nøgle for at overføre alle pengene den indeholder til din Bread, med en enkelt transaktion.</string>
-  <!-- Enter password alert view title -->
-  <string name="Import.password">Denne private nøgle er beskyttet med et kodeord.</string>
-  <!-- password textfield placeholder -->
-  <string name="Import.passwordPlaceholder">adgangskode</string>
-  <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Din Bread pung</string>
-  <!-- Scan Private key button label -->
-  <string name="Import.scan">Scan privat nøgle</string>
-  <!-- Import wallet success alert title -->
-  <string name="Import.success">Succes</string>
-  <!-- Successfully imported wallet message body -->
-  <string name="Import.SuccessBody">Indløste privat nøgle.</string>
-  <!-- Import Wallet screen title -->
-  <string name="Import.title">Indløs privat nøgle</string>
-  <!-- Unlocking Private key activity view message. -->
-  <string name="Import.unlockingActivity">Låser op for nøgle</string>
-  <!-- Import wallet intro warning message -->
-  <string name="Import.warning">At indløse en privat nøgle vil ikke importere transaktionshistorik eller andre detaljer.</string>
-  <!-- Wrong password alert message -->
-  <string name="Import.wrongPassword">Forkert adgangskode, prøv venligst igen.</string>
-  <!-- Close app button -->
-  <string name="JailbreakWarnings.close">Luk</string>
-  <!-- Ignore jailbreak warning button -->
-  <string name="JailbreakWarnings.ignore">Ignorer</string>
-  <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin! Ryd straks denne pung og gendan på en sikker enhed.</string>
-  <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin. Brug kun Bread på en ikke jailbreaket enhed.</string>
-  <!-- Jailbreak warning title -->
-  <string name="JailbreakWarnings.title">ADVARSEL</string>
-  <!-- Location services disabled error -->
-  <string name="LocationPlugin.disabled">Placeringstjenester er deaktiveret.</string>
-  <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread har ikke adgang til placeringstjenester.</string>
-  <!-- Wallet creation date prefix -->
-  <string name="ManageWallet.creationDatePrefix">Du lavede din pung den %1$s</string>
-  <!-- Manage wallet description text -->
-  <string name="ManageWallet.description">Din pungs navn vises kun i din kontos transaktionshistorik, og kan ikke ses af nogen andre.</string>
-  <!-- Change Wallet name textfield label -->
-  <string name="ManageWallet.textFeildLabel">Pungens navn</string>
-  <!-- Manage wallet modal title -->
-  <string name="ManageWallet.title">Administrer pung</string>
-  <!-- "Add [a] Wallet [to the home screen]" -->
-  <string name="MenuButton.addWallet">Tilføj pung</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.lock">Lås pung</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.security">Sikkerhedscenter</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.settings">Indstillinger</string>
-  <!-- Menu button title -->
-  <string name="MenuButton.support">Support</string>
-  <!-- button label -->
-  <string name="MenuViewController.createButton">Opret ny pung</string>
-  <!-- Menu modal title -->
-  <string name="MenuViewController.modalTitle">Menu</string>
-  <!-- button label -->
-  <string name="MenuViewController.recoverButton">Gendan pung</string>
-  <!-- Switch to automatic mode button label -->
-  <string name="NodeSelector.automaticButton">Skift til automatisk tilstand</string>
-  <!-- Node is connected label -->
-  <string name="NodeSelector.connected">Forbundet</string>
-  <!-- Node is connecting label -->
-  <string name="NodeSelector.connecting">Opretter forbindelse</string>
-  <!-- Enter node ip address view body -->
-  <string name="NodeSelector.enterBody">Indtast node-IP-adresse og port (valgfrit)</string>
-  <!-- Enter Node ip address view title -->
-  <string name="NodeSelector.enterTitle">Indtast node</string>
-  <!-- Switch to manual mode button label -->
-  <string name="NodeSelector.manualButton">Skift til manuel tilstand</string>
-  <!-- Node address label -->
-  <string name="NodeSelector.nodeLabel">Nuværende primære node</string>
-  <!-- Node is not connected label -->
-  <string name="NodeSelector.notConnected">Ikke forbundet</string>
-  <!-- Node status label -->
-  <string name="NodeSelector.statusLabel">Node forbindelsesstatus</string>
-  <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Bitcoin-nodes</string>
-  <!-- Bad Payment request alert title -->
-  <string name="PaymentProtocol.Errors.badPaymentRequest">Dårlig betalingsanmodning</string>
-  <!-- Error opening payment protocol file message -->
-  <string name="PaymentProtocol.Errors.corruptedDocument">Ikke understøttet eller beskadiget dokument</string>
-  <!-- Missing certificate payment protocol error message -->
-  <string name="PaymentProtocol.Errors.missingCertificate">manglende certifikat</string>
-  <!-- Request expired payment protocol error message -->
-  <string name="PaymentProtocol.Errors.requestExpired">anmodning udløbet</string>
-  <!-- Payment too small alert title -->
-  <string name="PaymentProtocol.Errors.smallOutputError">Kunne ikke foretage betaling</string>
-  <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Bitcoin betalinger kan ikke være mindre end %1$s.</string>
-  <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaktionsoutput kan ikke være mindre end %1$s.</string>
-  <!-- Unsupported signature type payment protocol error message -->
-  <string name="PaymentProtocol.Errors.unsupportedSignatureType">ikke understøttet signaturtype</string>
-  <!-- Untrusted certificate payment protocol error message -->
-  <string name="PaymentProtocol.Errors.untrustedCertificate">certifikat der ikke er tillid til</string>
-  <!-- Enable face ID prompt body -->
-  <string name="Prompts.FaceId.body">Tryk Fortsæt for at aktivere Face ID</string>
-  <!-- Enable face ID prompt title -->
-  <string name="Prompts.FaceId.title">Aktiver Face ID</string>
-  <!-- No passcode set warning body -->
-  <string name="Prompts.NoPasscode.body">En adgangskode til enheden er nødvendig for at beskytte din wallet. Gå til indstillinger og slå adgangskode til.</string>
-  <!-- No Passcode set warning title -->
-  <string name="Prompts.NoPasscode.title">Slå enhedens adgangskode til</string>
-  <!-- Instruction how to enable device encryption -->
-  <string name="Prompts.NoScreenLock.body.android">Der skal en skærmlås til på enheden, for at beskytte din pung. Gå til \"Indstillinger\" &gt; \"Sikkerhed\" &gt; \"Skærmlås\" og aktiver for at fortsætte.</string>
-  <!-- Device encryption prompt title -->
-  <string name="Prompts.NoScreenLock.title.android">Skærmlås deaktiveret</string>
-  <!-- Warning about paper key. -->
-  <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon. Tryk her for at fortsætte.</string>
-  <!-- An action is required (You must do this action). -->
-  <string name="Prompts.PaperKey.title">Handling påkrævet</string>
-  <!-- Transaction rejected prompt body -->
-  <string name="Prompts.RecommendRescan.body">Din pung er muligvis ikke synkroniseret. Dette kan ofte løses ved at genskanne blokkæden.</string>
-  <!-- Transaction rejected prompt title -->
-  <string name="Prompts.RecommendRescan.title">Transaktion afvist</string>
-  <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Hjælp med at forbedre Bread ved at dele dine anonyme data med os</string>
-  <!-- Share data prompt title -->
-  <string name="Prompts.ShareData.title">Del anonyme data</string>
-  <!-- Enable touch ID prompt body -->
-  <string name="Prompts.TouchId.body">Tryk her for at aktivere Touch ID</string>
-  <!-- Enable Fingerprint prompt body -->
-  <string name="Prompts.TouchId.body.android">Tryk her for at aktivere autentificering via fingeraftryk</string>
-  <!-- Enable touch ID prompt title -->
-  <string name="Prompts.TouchId.title">Aktiver Touch ID</string>
-  <!-- Enable Fingerprint prompt title -->
-  <string name="Prompts.TouchId.title.android">Aktiver autentificering via fingeraftryk</string>
-  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
-  <string name="Prompts.TouchId.usePin.android">PIN</string>
-  <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread er blevet opgraderet til at bruge en 6-cifret PIN. Tryk her for at opgradere.</string>
-  <!-- Upgrade PIN prompt title. -->
-  <string name="Prompts.UpgradePin.title">Opgader PIN</string>
-  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Slå notifikationer til for at modtage særlige meddelelser fra Bread i fremtiden.</string>
-  <!-- Push notifications toggle switch label -->
-  <string name="PushNotifications.label">Push notifikationer</string>
-  <!-- Push notifications are off label -->
-  <string name="PushNotifications.off">Fra</string>
-  <!-- Push notifications are on label -->
-  <string name="PushNotifications.on">Til</string>
-  <!-- Push notifications settings view title label -->
-  <string name="PushNotifications.title">Notifikationer</string>
-  <!-- Address copied message. -->
-  <string name="Receive.copied">Kopieret til udklipsholder.</string>
-  <!-- Share via email button label -->
-  <string name="Receive.emailButton">E-mail</string>
-  <!-- Request button label -->
-  <string name="Receive.request">Anmod om et beløb</string>
-  <!-- Share button label -->
-  <string name="Receive.share">Del</string>
-  <!-- Share via text message (SMS) -->
-  <string name="Receive.textButton">SMS</string>
-  <!-- Receive modal title -->
-  <string name="Receive.title">Modtag</string>
-  <!-- Done button text -->
-  <string name="RecoverWallet.done">Færdig</string>
-  <!-- Recover wallet header -->
-  <string name="RecoverWallet.header">Gendan pung</string>
-  <!-- Reset PIN with paper key: header -->
-  <string name="RecoverWallet.header_reset_pin">Nulstil PIN</string>
-  <!-- Enter paper key instruction -->
-  <string name="RecoverWallet.instruction">Indtast paper key</string>
-  <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Gendan dit Bread med din paper key.</string>
-  <!-- Invalid paper key message -->
-  <string name="RecoverWallet.invalid">Den paper key du indtastede er ugyldig. Dobbelttjek hvert ord og prøv igen.</string>
-  <!-- Previous button accessibility label -->
-  <string name="RecoverWallet.leftArrow">Venstre pil</string>
-  <!-- Next button label -->
-  <string name="RecoverWallet.next">Næste</string>
-  <!-- Reset PIN with paper key: more information button. -->
-  <string name="RecoverWallet.reset_pin_more_info">Tryk her for flere oplysninger.</string>
-  <!-- Next button accessibility label -->
-  <string name="RecoverWallet.rightArrow">Højre pil</string>
-  <!-- Recover wallet sub-header -->
-  <string name="RecoverWallet.subheader">Indtast paper key til pungen du vil gendanne.</string>
-  <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din paper key i boksene nedenfor.</string>
-  <!-- No amount entered error message. -->
-  <string name="RequestAnAmount.noAmount">Indtast venligst et beløb først.</string>
-  <!-- Request a specific amount of bitcoin -->
-  <string name="RequestAnAmount.title">Anmod om et beløb</string>
-  <!-- Alert action button label -->
-  <string name="ReScan.alertAction">Synkroniser</string>
-  <!-- Alert message body -->
-  <string name="ReScan.alertMessage">Du vil ikke kunne sende penge mens du synkroniserer.</string>
-  <!-- Alert message title -->
-  <string name="ReScan.alertTitle">Synkroniser med blokkæde?</string>
-  <!-- extimated time -->
-  <string name="ReScan.body1">20-45 minutter</string>
-  <!-- Syncing explanation -->
-  <string name="ReScan.body2">Hvis en transaktion vises som gennemført i bitcoin netværket, men ikke i dit Bread.</string>
-  <!-- Syncing explanation -->
-  <string name="ReScan.body3">Du modtager gentagne gange en fejlmeddelelse om at din transaktion er blevet afvist.</string>
-  <!-- Start Sync button label -->
-  <string name="ReScan.buttonTitle">Start synkronisering</string>
-  <!-- Sync blockchain view footer -->
-  <string name="ReScan.footer">Du vil ikke kunne bruge penge, når du synkroniserer med blokkæden.</string>
-  <!-- Sync Blockchain view header -->
-  <string name="ReScan.header">Synkroniser blokkæde</string>
-  <!-- Subheader label -->
-  <string name="ReScan.subheader1">Anslået tid</string>
-  <!-- Subheader label -->
-  <string name="ReScan.subheader2">Hvornår skal der synkroniseres?</string>
-  <!-- Scan bitcoin address camera flash toggle -->
-  <string name="Scanner.flashButtonLabel">Kamerablitz</string>
-  <!-- Complete filter label -->
-  <string name="Search.complete">færdig</string>
-  <!-- Pending filter label -->
-  <string name="Search.pending">afventer</string>
-  <!-- Received filter label -->
-  <string name="Search.received">modtaget</string>
-  <!-- [Click here to] search -->
-  <string name="Search.search">Søg</string>
-  <!-- Sent filter label -->
-  <string name="Search.sent">sendt</string>
-  <!-- Face ID button title -->
-  <string name="SecurityCenter.faceIdTitle">Face ID</string>
-  <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
-  <!-- Paper Key button title -->
-  <string name="SecurityCenter.paperKeyTitle">Paper key</string>
-  <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Beskytter dit Bread mod uberettigede brugere.</string>
-  <!-- PIN button title -->
-  <string name="SecurityCenter.pinTitle">6-cifret PIN</string>
-  <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Lås dit Break op og send penge op til en vis grænse.</string>
-  <!-- Touch ID button title -->
-  <string name="SecurityCenter.touchIdTitle">Touch ID</string>
-  <!-- Security center fingerprint authentication button -->
-  <string name="SecurityCenter.touchIdTitle.android">Autentificering via fingeraftryk</string>
-  <!-- Send money amount label -->
-  <string name="Send.amountLabel">Beløb</string>
-  <!-- Balance: $4.00 -->
-  <string name="Send.balance">Balance: %1$s</string>
-  <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Tillad adgang under \"Indstillinger\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Tilladelser\"</string>
-  <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread har ikke tilladelse til at få adgang til kameraet</string>
-  <!-- Camera not allowed message -->
-  <string name="Send.cameraunavailableMessage">Gå til Indstillinger og giv adgang til kamera.</string>
-  <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread har ikke adgang til kameraet</string>
-  <!-- Warning when sending to self. -->
-  <string name="Send.containsAddress">Destinationen er din egen adresse. Du kan ikke sende til dig selv.</string>
-  <!-- Could not create transaction alert title -->
-  <string name="Send.creatTransactionError">Kunne ikke oprette transaktion.</string>
-  <!-- Description for sending money label -->
-  <string name="Send.descriptionLabel">Memo</string>
-  <!-- Emtpy pasteboard error message -->
-  <string name="Send.emptyPasteboard">Tegnebord er tomt</string>
-  <!-- "(you) can't send (to your)self" -->
-  <string name="Send.ethSendSelf">Kan ikke sende til dig selv.</string>
-  <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">Netværksafgift: %1$s</string>
-  <!-- Payee identity not certified alert title. -->
-  <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
-  <!-- Insufficient funds error -->
-  <string name="Send.insufficientFunds">Utilstrækkelige midler</string>
-  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
-  <string name="Send.insufficientGasMessage">Du skal have mindst %1$s i din pung, for at kunne overføre denne type token. Vil du gå til din Ethereum pung nu?</string>
-  <!-- Your ethereum balance is insufficient to complete this action. -->
-  <string name="Send.insufficientGasTitle">Utilstrækkelig Ethereum balance</string>
-  <!-- e.g. The destination is not a valid (bitcoin) address. -->
-  <string name="Send.invalidAddressMessage">Modtageradressen er ikke en gyldig %1$s-adresse.</string>
-  <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Tegnebord indeholder ikke en gyldig %1$s adresse.</string>
-  <!-- Invalid address alert title -->
-  <string name="Send.invalidAddressTitle">Ugyldig adresse</string>
-  <!-- Is rescanning error message -->
-  <string name="Send.isRescanning">Afsendelse er deaktiveret under en ny scanning.</string>
-  <!-- Warning when the user is trying to send bitcoin cash to a legacy bitcoin address (possible, but probably not what the user wants to do) -->
-  <string name="Send.legacyAddressWarning">Advarsel: dette er en legacy-bitcoinadresse. Er du sikker på du vil sende Bitcoin-penge til den?</string>
-  <!-- We are loading the request (now) -->
-  <string name="Send.loadingRequest">Behandler Anmodning</string>
-  <!-- Transaction fee could not be be caluculated error. -->
-  <string name="Send.nilFeeError">Utilstrækkelige midler til at dække transaktionsgebyret.</string>
-  <!-- Empty address alert message -->
-  <string name="Send.noAddress">Indtast modtagerens adresse.</string>
-  <!-- Emtpy amount alert message -->
-  <string name="Send.noAmount">Indtast et beløb, der skal sendes.</string>
-  <!-- No Fees error -->
-  <string name="Send.noFeesError">Netværksgebyr-vilkår bliver downloadet. Prøv venligst igen.</string>
-  <!-- Paste button label -->
-  <string name="Send.pasteLabel">Indsæt</string>
-  <!-- Could not publish transaction alert title -->
-  <string name="Send.publishTransactionError">Kunne ikke offentliggøre transaktion.</string>
-  <!-- Could not load remote request error message -->
-  <string name="Send.remoteRequestError">Kunne ikke behandle betalingsanmodning</string>
-  <!-- Scan button label -->
-  <string name="Send.scanLabel">Scan</string>
-  <!-- Send button label (the action, "press here to send") -->
-  <string name="Send.sendLabel">Send</string>
-  <!-- Send screen title (as in "this is the screen for sending money") -->
-  <string name="Send.title">Send penge</string>
-  <!-- Send money to label -->
-  <string name="Send.toLabel">Til</string>
-  <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin adresser er kun beregnet til en enkelt anvendelse.</string>
-  <!-- Adress already used alert message - second part -->
-  <string name="Send.UsedAddress.secondLIne">Genbrug reducerer privatliv for både dig og modtageren og kan resultere i tab, hvis modtageren ikke har direkte kontrol over adressen.</string>
-  <!-- Adress already used alert title -->
-  <string name="Send.UsedAddress.title">Adresse allerede brugt</string>
-  <!-- About label -->
-  <string name="Settings.about">Om</string>
-  <!-- Advanced settings header -->
-  <string name="Settings.advanced">Avanceret</string>
-  <!-- Advanced Settings title -->
-  <string name="Settings.advancedTitle">Avancerede indstillinger</string>
-  <!-- i.e. the currency which will be displayed -->
-  <string name="Settings.currency">Vis valuta</string>
-  <!-- e.g. "USD Settings" (settings for how USD is handled) -->
-  <string name="Settings.currencyPageTitle">%1$s indstillinger</string>
-  <!-- Section title for a collection of different settings screens, one for each currency -->
-  <string name="Settings.currencySettings">Valutaindstillinger</string>
-  <!-- Join Early access label -->
-  <string name="Settings.earlyAccess">Tilmeld dig Early Access</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Nyder du Bread?</string>
-  <!-- Face ID spending limit label -->
-  <string name="Settings.faceIdLimit">Face ID betalingsgrænse</string>
-  <!-- Redeem the funds stored on this private key. -->
-  <string name="Settings.importTitle">Indløs privat nøgle</string>
-  <!-- Manage settings section header -->
-  <string name="Settings.manage">Administrer</string>
-  <!-- Notifications label -->
-  <string name="Settings.notifications">Notifikationer</string>
-  <!-- Preferences settings section header -->
-  <string name="Settings.preferences">Indstillinger</string>
-  <!-- Tap here to reset the list of currencies to the default settings. -->
-  <string name="Settings.resetCurrencies">Nulstil til standard valutaer</string>
-  <!-- Leave review button label -->
-  <string name="Settings.review">Giv os en anmeldelse</string>
-  <!-- Share anonymous data label -->
-  <string name="Settings.shareData">Del anonyme data</string>
-  <!-- Sync blockchain label -->
-  <string name="Settings.sync">Synkroniser blokkæde</string>
-  <!-- Settings title -->
-  <string name="Settings.title">Indstillinger</string>
-  <!-- Touch ID spending limit label -->
-  <string name="Settings.touchIdLimit">Touch ID brugsgrænse</string>
-  <!-- The fingerprint spending limit -->
-  <string name="Settings.touchIdLimit.android">Brugsgrænse for autentificering via fingeraftryk</string>
-  <!-- Wallet Settings section header -->
-  <string name="Settings.wallet">Wallet</string>
-  <!-- Unlink/delete your wallet from the current device. -->
-  <string name="Settings.wipe">Fjern link fra denne enhed</string>
-  <!-- Share data view body -->
-  <string name="ShareData.body">Hjælp med at forbedre Bread ved at dele dine anonyme data med os. Dette inkluderer ikke finansielle oplysninger. Vi respekterer dit finansielle privatliv.</string>
-  <!-- Share data header -->
-  <string name="ShareData.header">Del data?</string>
-  <!-- Share data switch label. -->
-  <string name="ShareData.toggleLabel">Del anonyme data?</string>
-  <!-- button label -->
-  <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
-  <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit Bread på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
-  <!-- button label -->
-  <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
-  <!-- Argument is date -->
-  <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den %1$s</string>
-  <!-- button label -->
-  <string name="StartViewController.createButton">Opret ny tegnebog</string>
-  <!-- Start view message -->
-  <string name="StartViewController.message">Den mest sikre og trygge måde at bruge bitcoins på.</string>
-  <!-- Recover your wallet from a backup -->
-  <string name="StartViewController.recoverButton">Gendan tegnebog</string>
-  <!-- Syncing view connectiong state header text -->
-  <string name="SyncingView.connecting">Tilslutter</string>
-  <!-- Syncing view header text -->
-  <string name="SyncingView.header">Synkroniserer</string>
-  <!-- Retry button label -->
-  <string name="SyncingView.retry">Prøv igen</string>
-  <!-- Syncing view syncing state header text -->
-  <string name="SyncingView.syncing">Synkroniserer</string>
-  <!-- 6 d (6 days) -->
-  <string name="TimeSince.days">%1$s d</string>
-  <!-- 6 h (6 hours) -->
-  <string name="TimeSince.hours">%1$s h</string>
-  <!-- 6 m (6 minutes) -->
-  <string name="TimeSince.minutes">%1$s m</string>
-  <!-- 6 s (6 seconds) -->
-  <string name="TimeSince.seconds">%1$s s</string>
-  <!-- Add [this item to the list] -->
-  <string name="TokenList.add">Tilføj</string>
-  <!-- Add Wallets  [to your home screen] -->
-  <string name="TokenList.addTitle">Tilføj punge</string>
-  <!-- Hide [this token from view] -->
-  <string name="TokenList.hide">Skjul</string>
-  <!-- [click here to] Manage [your] Wallets -->
-  <string name="TokenList.manageTitle">Administrer punge</string>
-  <!-- Remove [this item from the list] -->
-  <string name="TokenList.remove">Fjern</string>
-  <!-- Show [this item on your home screen] -->
-  <string name="TokenList.show">Vis</string>
-  <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
-  <string name="TouchIdSettings.customizeText">Du kan tilpasse forbrugsgrænsen for dit Touch ID fra %1$s.</string>
-  <!-- Fingerprint enabling description body -->
-  <string name="TouchIdSettings.customizeText.android">Du kan tilpasse din brugsgrænse for autentificering via fingeraftryk fra skærmen Brugsgrænse for autentificering via fingeraftryk</string>
-  <!-- Instruction for the fingerprint setup -->
-  <string name="TouchIdSettings.disabledWarning.body.android">Du har ikke aktiveret autentificering via fingeraftryk på denne enhed. Gå til Indstillinger -&gt; Sikkerhed for at konfigurere autentificering via fingeraftryk.</string>
-  <!-- Fingerprint Is Not Setup -->
-  <string name="TouchIdSettings.disabledWarning.title.android">Autentificering via fingeraftryk ikke aktiveret</string>
-  <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Brug dit fingeraftryk til at låse op for dit Bread og sende penge op til en vis grænse.</string>
-  <!-- Link Text (see TouchIdSettings.customizeText) -->
-  <string name="TouchIdSettings.linkText">Touch ID forbrugsgrænseside</string>
-  <!-- Spending Limit: b100,000 ($100) -->
-  <string name="TouchIdSettings.spendingLimit">Brugsgrænse: %1$s (%2$s)</string>
-  <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Aktiver Touch ID til Bread</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
-  <string name="TouchIdSettings.switchLabel.android">Aktiver autentificering via fingeraftryk</string>
-  <!-- Touch ID settings view title -->
-  <string name="TouchIdSettings.title">Touch ID</string>
-  <!-- Fingerprint authentication label -->
-  <string name="TouchIdSettings.title.android">Autentificering via fingeraftryk</string>
-  <!-- Touch ID unavailable alert message -->
-  <string name="TouchIdSettings.unavailableAlertMessage">Du har ikke indstillet Touch ID på denne enhed. Gå til Indstillinger -&gt; Touch ID og Adgangskode og indstil det nu.</string>
-  <!-- Touch ID unavailable alert title -->
-  <string name="TouchIdSettings.unavailableAlertTitle">Touch ID ikke indstillet</string>
-  <!-- Always require passcode option -->
-  <string name="TouchIdSpendingLimit">Kræv altid adgangskode</string>
-  <!-- Touch ID spending limit screen body -->
-  <string name="TouchIdSpendingLimit.body">Du bliver bedt om at indtaste din 6-cifrede PIN for at sende en transaktion over din brugsgrænse, og hver 48 timer siden du sidst indtastede din 6-cifrede PIN.</string>
-  <!-- Touch Id spending limit screen title -->
-  <string name="TouchIdSpendingLimit.title">Touch ID brugsgrænse</string>
-  <!-- name of spending limit when using fingerprint authorization -->
-  <string name="TouchIdSpendingLimit.title.android">Brugsgrænse for autentificering via fingeraftryk</string>
-  <!-- Availability status text -->
-  <string name="Transaction.available">Tilgængelig at bruge</string>
-  <!-- Transaction complete label -->
-  <string name="Transaction.complete">Færdig</string>
-  <!-- Transaction is confirming status text -->
-  <string name="Transaction.confirming">Behandles</string>
-  <!-- eg. Ending balance: $50.00 -->
-  <string name="Transaction.ending">Slutbalance: %1$s</string>
-  <!-- Exchange rate on date header -->
-  <string name="Transaction.exchangeOnDayReceived">Valutakurs ved modtagelsestidspunkt:</string>
-  <!-- Exchange rate on date header -->
-  <string name="Transaction.exchangeOnDaySent">Valutakurs ved afsendelsestidspunkt:</string>
-  <!-- Transaction failed status text -->
-  <string name="Transaction.failed">Fejlede</string>
-  <!-- (b600 fee) -->
-  <string name="Transaction.fee">(%1$s gebyr)</string>
-  <!-- Invalid transaction -->
-  <string name="Transaction.invalid">UGYLDIG</string>
-  <!-- Timestamp label for event that just happened -->
-  <string name="Transaction.justNow">netop nu</string>
-  <!-- Transaction is pending status text -->
-  <string name="Transaction.pending">Afventede</string>
-  <!-- Receive status text: 'In progress: 20%' -->
-  <string name="Transaction.receivedStatus">I gang: %1$s</string>
-  <!-- Send status text: 'In progress: 20%' -->
-  <string name="Transaction.sendingStatus">I gang: %1$s</string>
-  <!-- sending to <address> -->
-  <string name="Transaction.sendingTo">sender til %1$s</string>
-  <!-- sent to <address> -->
-  <string name="Transaction.sentTo">sendt til %1$s</string>
-  <!-- eg. Starting balance: $50.00 -->
-  <string name="Transaction.starting">Startbalance: %1$s</string>
-  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
-  <string name="Transaction.tokenTransfer">Gebyr for token-overførsel: %1$s</string>
-  <!-- Waiting to be confirmed string -->
-  <string name="Transaction.waiting">Venter på bekræftelse. Nogen forhandlere kræver bekræftelse for at gennemføre en transaktion. Anslået tid: 1-2 timer.</string>
-  <!-- e.g. I received money from an account. -->
-  <string name="TransactionDetails.account">konto</string>
-  <!-- Address received from header -->
-  <string name="TransactionDetails.addressFromHeader">Fra</string>
-  <!-- Address sent to header -->
-  <string name="TransactionDetails.addressToHeader">Til</string>
-  <!-- e.g. "(this was received) via (address #1)" via = by way of -->
-  <string name="TransactionDetails.addressViaHeader">Via</string>
-  <!-- Amount section header -->
-  <string name="TransactionDetails.amountHeader">Beløb</string>
-  <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-  <string name="TransactionDetails.amountWhenReceived">%1$s ved modtagelsen, %2$s nu</string>
-  <!-- Block height label -->
-  <string name="TransactionDetails.blockHeightLabel">Bekræftet i blok</string>
-  <!-- Memo section header -->
-  <string name="TransactionDetails.commentsHeader">Memo</string>
-  <!-- Memo field placeholder -->
-  <string name="TransactionDetails.commentsPlaceholder">Tilføj memo...</string>
-  <!-- Timestamp section header for complete tx -->
-  <string name="TransactionDetails.completeTimestampHeader">Gennemført</string>
-  <!-- Empty transaction list message. -->
-  <string name="TransactionDetails.emptyMessage">Dine transaktioner vil vises her.</string>
-  <!-- e.g. the users balance after the transaction was compeleted -->
-  <string name="TransactionDetails.endingBalanceHeader">Slutsaldo</string>
-  <!-- Exchange rate section header -->
-  <string name="TransactionDetails.exchangeRateHeader">Vekselkurs</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.feeHeader">Samlet gebyr</string>
-  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
-  <string name="TransactionDetails.from">på %1$s</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.gasLimitHeader">Gasgrænse</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.gasPriceHeader">Gaspris</string>
-  <!-- Label showing the transaction was started (initialized) -->
-  <string name="TransactionDetails.initializedTimestampHeader">Påbegyndt</string>
-  <!-- More button title -->
-  <string name="TransactionDetails.more">Mere...</string>
-  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
-  <string name="TransactionDetails.moved">Flyttede %1$s</string>
-  <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttet <b>%1$s</b>]]></string>
-  <!-- eg. Confirmed in Block: Not Confirmed -->
-  <string name="TransactionDetails.notConfirmedBlockHeightLabel">Ikke bekræftet</string>
-  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
-  <string name="TransactionDetails.received">Modtaget %1$s</string>
-  <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Modtaget <b>%1$s</b>]]></string>
-  <!-- received from <address> -->
-  <string name="TransactionDetails.receivedFrom">modtaget fra %1$s</string>
-  <!-- received via <address> -->
-  <string name="TransactionDetails.receivedVia">modtaget via %1$s</string>
-  <!-- receiving from <address> -->
-  <string name="TransactionDetails.receivingFrom">modtager fra %1$s</string>
-  <!-- receiving via <address> -->
-  <string name="TransactionDetails.receivingVia">modtager via %1$s</string>
-  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
-  <string name="TransactionDetails.sent">Sendt %1$s</string>
-  <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Sendt <b>%1$s</b>]]></string>
-  <!-- Show Details button -->
-  <string name="TransactionDetails.showDetails">Vis detaljer</string>
-  <!-- The balance the user started with before the transaction completed -->
-  <string name="TransactionDetails.startingBalanceHeader">Startsaldo</string>
-  <!-- Status section header -->
-  <string name="TransactionDetails.statusHeader">Status</string>
-  <!-- Transaction Details Title -->
-  <string name="TransactionDetails.title">Transaktionsoplysninger</string>
-  <!-- Hide Details button -->
-  <string name="TransactionDetails.titleFailed">Skjul detaljer</string>
-  <!-- Transaction Details Title - Internal -->
-  <string name="TransactionDetails.titleInternal">Internt</string>
-  <!-- Transaction Details Title - Received -->
-  <string name="TransactionDetails.titleReceived">Modtaget</string>
-  <!-- Transaction Details Title - Receiving -->
-  <string name="TransactionDetails.titleReceiving">Modtager</string>
-  <!-- Transaction Details Title - Sending -->
-  <string name="TransactionDetails.titleSending">Sender</string>
-  <!-- Transaction Details Title - Sent -->
-  <string name="TransactionDetails.titleSent">Sendt</string>
-  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
-  <string name="TransactionDetails.to">til %1$s</string>
-  <!-- Tx detail field header -->
-  <string name="TransactionDetails.totalHeader">I alt</string>
-  <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin transaktions-ID</string>
-  <!-- (this transaction was) Received at this address: -->
-  <string name="TransactionDirection.address">Modtaget på denne adresse</string>
-  <!-- (this transaction was) Sent to this address: -->
-  <string name="TransactionDirection.to">Sendt til denne adresse</string>
-  <!-- Disabled until date -->
-  <string name="UnlockScreen.disabled">Deaktiveret indtil: %1$s</string>
-  <!-- Unlock with FaceID accessibility label -->
-  <string name="UnlockScreen.faceIdText">Lås op med Face ID</string>
-  <!-- My Address button title -->
-  <string name="UnlockScreen.myAddress">Min adresse</string>
-  <!-- Reset PIN with Paper Key button label. -->
-  <string name="UnlockScreen.resetPin">Nulstil PIN</string>
-  <!-- Scan button title -->
-  <string name="UnlockScreen.scan">Scan</string>
-  <!-- Instruction to touch the sensor for fingerprint authentication -->
-  <string name="UnlockScreen.touchIdInstructions.android">Touch sensor</string>
-  <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Lås op for dit Bread.</string>
-  <!-- Device authentication body -->
-  <string name="UnlockScreen.touchIdPrompt.android">Lås op for din Android enhed for at fortsætte</string>
-  <!-- Unlock with TouchID accessibility label -->
-  <string name="UnlockScreen.touchIdText">Lås op med Touch ID</string>
-  <!-- Device authentication title -->
-  <string name="UnlockScreen.touchIdTitle.android">Autentificering påkrævet</string>
-  <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">Husk denne PIN. Hvis du glemmer den, vil du ikke kunne få adgang til dine bitcoin.</string>
-  <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Din PIN bliver brugt til at låse op for dit Bread og sende penge.</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.createTitle">Indstil PIN</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.createTitleConfirm">Genindtast PIN</string>
-  <!-- Enter current PIN instruction -->
-  <string name="UpdatePin.enterCurrent">Indtast din nuværende PIN.</string>
-  <!-- Enter new PIN instruction -->
-  <string name="UpdatePin.enterNew">Indtast din nye PIN.</string>
-  <!-- Re-Enter new PIN instruction -->
-  <string name="UpdatePin.reEnterNew">Genindtast din nye PIN.</string>
-  <!-- Update PIN failure error message. -->
-  <string name="UpdatePin.setPinError">Beklager, kunne ikke opdatere PIN.</string>
-  <!-- Update PIN failure alert view title -->
-  <string name="UpdatePin.setPinErrorTitle">Fejl ved opdatering af PIN</string>
-  <!-- Update PIN title -->
-  <string name="UpdatePin.updateTitle">Opdater PIN</string>
-  <!-- Authorize to copy wallet addresses alert message -->
-  <string name="URLHandling.addressaddressListAlertMessage">Kopier pungadresse til udklipsholderen?</string>
-  <!-- Authorize to copy wallet address PIN view prompt. -->
-  <string name="URLHandling.addressList">Tillad at kopiere pungadresse til udklipsholder</string>
-  <!-- Authorize to copy wallet address alert title -->
-  <string name="URLHandling.addressListAlertTitle">Kopier pungadresse</string>
-  <!-- Copy wallet addresses alert button label -->
-  <string name="URLHandling.copy">Kopier</string>
-  <!-- Verify PIN for transaction view body -->
-  <string name="VerifyPin.authorize">Indtast venligst din PIN for at godkende denne transaktion.</string>
-  <!-- Verify PIN view body -->
-  <string name="VerifyPin.continueBody">Indtast din PIN for at fortsætte.</string>
-  <!-- Verify PIN view title -->
-  <string name="VerifyPin.title">PIN påkrævet</string>
-  <!-- Authorize transaction with touch id message -->
-  <string name="VerifyPin.touchIdMessage">Godkend denne transaktion</string>
-  <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Åben Bread iPhone appen for at konfigurere din pung.</string>
-  <!-- Dismiss button label -->
-  <string name="Webview.dismiss">Afvis</string>
-  <!-- Webview loading error message -->
-  <string name="Webview.errorMessage">Der var en fejl ved indlæsning af indholdet. Prøv igen.</string>
-  <!-- Updating webview message -->
-  <string name="Webview.updating">Opdaterer...</string>
-  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet har skiftet navn til Bread med et helt nyt look og nogle nye funktioner.\n\nHvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skærme.</string>
-  <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Velkommen til Bread!</string>
-  <!-- Wipe wallet alert message -->
-  <string name="WipeWallet.alertMessage">Er du sikker på at du vil slette denne wallet?</string>
-  <!-- Wipe wallet alert title -->
-  <string name="WipeWallet.alertTitle">Slet wallet?</string>
-  <!-- Failed wipe wallet alert message -->
-  <string name="WipeWallet.failedMessage">Fejl ved sletning af wallet.</string>
-  <!-- Failed wipe wallet alert title -->
-  <string name="WipeWallet.failedTitle">Fejl</string>
-  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-  <string name="WipeWallet.instruction">For at oprette en ny pung eller gendanne en eksisterende pung, skal du først fjerne linket til den pung der er installeret på nuværende tidspunkt. For at fortsætte, skal du indtaste den nuværende pungs papirnøgle.</string>
-  <!-- Instructions for unlinking the wallet -->
-  <string name="WipeWallet.startMessage">Fjern link til pung for at fjerne den fra denne enhed. Når linket til denne pung er fjernet, kan du starte en ny pung eller gendanne en anden pung på denne enhed.</string>
-  <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">Du vil ikke længere være i stand til at få adgang til din nuværende Bread tegnebog fra denne enhed. Saldoen vil forblive på frasen.</string>
-  <!-- Unlink this wallet from this device. -->
-  <string name="WipeWallet.title">Fjern link til pung</string>
-  <!-- Wipe wallet button title -->
-  <string name="WipeWallet.wipe">Slet</string>
-  <!-- Wiping activity message -->
-  <string name="WipeWallet.wiping">Sletter...</string>
-  <!-- Paper key instructions. -->
-  <string name="WritePaperPhrase.instruction">Skriv hvert ord ned i rækkefølge og opbevar den et sikkert sted.</string>
-  <!-- button label -->
-  <string name="WritePaperPhrase.next">Næste</string>
-  <!-- button label -->
-  <string name="WritePaperPhrase.previous">Forrige</string>
-  <!-- 1 of 3 -->
-  <string name="WritePaperPhrase.step">%1$d af %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andet</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Administrer Tegnebøger</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Køb</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Køb og sælg</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">Scan QR-kode</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">Synkronisering mislykkedes</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">Synkroniseret via %1$s</string>
-  <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-  <string name="TransactionDetails.amountWhenSent">%1$s da de blev sendt, %2$s nu</string>
+    <!-- App name -->
+    <string name="About.appName.android">Bread</string>
+    <!-- About screen blog label -->
+    <string name="About.blog">Blog</string>
+    <!-- About screen footer -->
+    <string name="About.footer">Lavet af det globale Bread hold. Version %1$s</string>
+    <!-- Privay Policy button label -->
+    <string name="About.privacy">Privatlivspolitik</string>
+    <!-- About screen reddit label -->
+    <string name="About.reddit">Reddit</string>
+    <!-- Terms of Use button label -->
+    <string name="About.terms">Brugsbetingelser</string>
+    <!-- About screen title -->
+    <string name="About.title">Om</string>
+    <!-- About screen twitter label -->
+    <string name="About.twitter">Twitter</string>
+    <!-- About screen wallet ID label -->
+    <string name="About.walletID">BRD Rewards ID</string>
+    <!-- Close modal button accessibility label -->
+    <string name="AccessibilityLabels.close">Luk</string>
+    <!-- Support center accessibiliy label -->
+    <string name="AccessibilityLabels.faq">Supportcenter</string>
+    <!-- Account balance -->
+    <string name="Account.balance">Saldo</string>
+    <!-- $10000 per BTC -->
+    <string name="Account.exchangeRate">%1$s per %2$s</string>
+    <!-- Loading Wallet Message -->
+    <string name="Account.loadingMessage">Indlæser pung</string>
+    <!-- Default wallet name -->
+    <string name="AccountHeader.defaultWalletName">Mit Bread</string>
+    <!-- Third party keyboard warning -->
+    <string name="Alert.customKeyboard.android">Det ser ud til at du bruger et tastatur fra en tredjepart, som kan optage det du skriver og stjæle din Paper Key. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
+    <!-- Error alert title -->
+    <string name="Alert.error">Fejl</string>
+    <!-- Keystore error -->
+    <string name="Alert.keystore.generic.android">Der er et problem med din Android OS keystore, kontakt venligst support@breadwallet.com</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">Dine Bread-krypterede data blev for nyligt ugyldiggjort, eftersom din Android skærmlås blev deaktiveret.</string>
+    <!-- Keystore error title -->
+    <string name="Alert.keystore.title.android">Android KeyStore fejl</string>
+    <!-- No internet alert message -->
+    <string name="Alert.noInternet">Ingen internetforbindelse fundet. Tjek din forbindelse og prøv igen.</string>
+    <!-- Warning alert title -->
+    <string name="Alert.warning">Advarsel</string>
+    <!-- 'the addresses were copied'' Alert title -->
+    <string name="Alerts.copiedAddressesHeader">Adresser kopieret</string>
+    <!-- Addresses Copied Alert sub header -->
+    <string name="Alerts.copiedAddressesSubheader">Alle pungens adresser er kopieret.</string>
+    <!-- Alert Header Label (the paper key was set) -->
+    <string name="Alerts.paperKeySet">Paper key indstillet</string>
+    <!-- Alert Subheader label (playfully positive) -->
+    <string name="Alerts.paperKeySetSubheader">Fedt!</string>
+    <!-- Alert Header label (the PIN was set) -->
+    <string name="Alerts.pinSet">PIN indstillet</string>
+    <!-- Send failure alert header label (the send failed to happen) -->
+    <string name="Alerts.sendFailure">Afsendelse mislykkedes</string>
+    <!-- Send success alert header label (confirmation that the send happened) -->
+    <string name="Alerts.sendSuccess">Send bekræftelse</string>
+    <!-- Send success alert subheader label (e.g. the money was sent) -->
+    <string name="Alerts.sendSuccessSubheader">Pengene blev sendt!</string>
+    <!-- Fingerprint was recognized by the scanner -->
+    <string name="Alerts.touchIdSucceeded.android">Fingeraftryk genkendt</string>
+    <!-- Tell the user where they can enable permissions to access device storage. -->
+    <string name="Android.allowFileSystemAccess">Aktiver lagringstilladelse i din enheds indstillinger: \"Indstillinger\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Tilladelser\".</string>
+    <!-- The "home" screen is the name of the top level menu for the app. -->
+    <string name="Android.BCH.welcome.message">Du kan få adgang til enhver BCH i din pung via hjemskærmen.</string>
+    <!-- Warning about using apps that can alter the screen -->
+    <string name="Android.screenAlteringMessage">BRD fungerer ikke korrekt medmindre apps der ændrer skærmbilledet (så som Twilight) er deaktiveret.</string>
+    <!-- An app that alters the screen ("screen-altering app") has been detected. -->
+    <string name="Android.screenAlteringTitle">Der er fundet en app der ændrer skærmbilledet</string>
+    <!-- JSON Serialization error message -->
+    <string name="ApiClient.jsonError">JSON serialiseringsfejl</string>
+    <!-- Wallet not ready error message -->
+    <string name="ApiClient.notReady">Pung ikke klar</string>
+    <!-- API Token error message -->
+    <string name="ApiClient.tokenError">Kunne ikke hente API-nøgle</string>
+    <!-- Send BCH view body. -->
+    <string name="BCH.body">Indtast en BCH destinationsadresse nedenfor. Alle BCH i din wallet ved fork-tidspunktet (%1$s) vil blive afsendt.</string>
+    <!-- Confirm sending <$5.00> to <address>? -->
+    <string name="BCH.confirmationMessage">Bekræft afsendelse af %1$s til %2$s</string>
+    <!-- Confirmation alert title -->
+    <string name="BCH.confirmationTitle">Bekræftelse</string>
+    <!-- Generic bch erorr message -->
+    <string name="BCH.genericError">Din konto indeholder ikke nogle BCH eller du modtog BCH efter fork.</string>
+    <!-- Transaction ID copied message -->
+    <string name="BCH.hashCopiedMessage">Transaktions-ID kopieret</string>
+    <!-- No address error message -->
+    <string name="BCH.noAddressError">Indtast venligst en adresse</string>
+    <!-- Attempted to scan unsupported qr code error message. -->
+    <string name="BCH.paymentProtocolError">Betalingsprotokolanmodninger er ikke understøttet for BCH-transaktioner</string>
+    <!-- BCH successfully sent alert message -->
+    <string name="BCH.successMessage">BCH blev afsendt uden problemer.</string>
+    <!-- Widthdraw BCH view title -->
+    <string name="BCH.title">Tilbagetræk BCH</string>
+    <!-- Tx Hash button header -->
+    <string name="BCH.txHashHeader">BCH transaktions-ID</string>
+    <!-- Approve button label -->
+    <string name="BitID.approve">Godkend</string>
+    <!-- <sitename> is requesting authentication using your bitcoin wallet -->
+    <string name="BitID.authenticationRequest">%1$s anmoder om godkendelse ved hjælp af din bitcoin-wallet</string>
+    <!-- Deny button label -->
+    <string name="BitID.deny">Afvis</string>
+    <!-- BitID error alert title -->
+    <string name="BitID.error">Godkendelsesfejl</string>
+    <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
+    <string name="BitID.errorMessage">Tjek venligst tjenesten. Det kan være nødvendigt at prøve igen.</string>
+    <!-- BitID success alert title -->
+    <string name="BitID.success">Godkendt uden problemer</string>
+    <!-- BitID Authentication Request alert view title -->
+    <string name="BitID.title">BitID godkendelsesanmodning</string>
+    <!-- As in "(tap here to) buy (bitcoin)" -->
+    <string name="Button.buy">Køb</string>
+    <!-- Cancel button label -->
+    <string name="Button.cancel">Annuller</string>
+    <!-- prompt continue button -->
+    <string name="Button.continueAction">Fortsæt</string>
+    <!-- prompt dismiss button -->
+    <string name="Button.dismiss">Afvis</string>
+    <!-- Button to return to the "home" screen (the home screen is the top menu). -->
+    <string name="Button.Home">Hjem</string>
+    <!-- Ignore button label -->
+    <string name="Button.ignore">Ignorer</string>
+    <!-- menu button -->
+    <string name="Button.menu">Menu</string>
+    <!-- No button -->
+    <string name="Button.no">Nej</string>
+    <!-- OK button label -->
+    <string name="Button.ok">OK</string>
+    <!-- receive button -->
+    <string name="Button.receive">Modtag</string>
+    <!-- Click this button to sell an asset -->
+    <string name="Button.sell">Sælg</string>
+    <!-- send button -->
+    <string name="Button.send">send</string>
+    <!-- Settings button label -->
+    <string name="Button.settings">Indstillinger</string>
+    <!-- Settings button label -->
+    <string name="Button.submit">Send</string>
+    <!-- Yes button -->
+    <string name="Button.yes">Ja</string>
+    <!-- Camera plugin instruction -->
+    <string name="CameraPlugin.centerInstruction">Centrer dit ID i boksen</string>
+    <!-- Amount to Send: ($1.00) -->
+    <string name="Confirmation.amountLabel">Beløb der skal sendes:</string>
+    <!-- Network Fee: ($1.00) -->
+    <string name="Confirmation.feeLabel">Netværksgebyr:</string>
+    <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
+    <string name="Confirmation.processingTime">Behandlingstid: denne transaktion er efter planen færdig om %1$s.</string>
+    <!-- Label for "send" button on final confirmation screen -->
+    <string name="Confirmation.send">Send</string>
+    <!-- Confirmation Screen title -->
+    <string name="Confirmation.title">Bekræftelse</string>
+    <!-- To: (address) -->
+    <string name="Confirmation.to">Til</string>
+    <!-- Total Cost: ($5.00) -->
+    <string name="Confirmation.totalLabel">Samlede omkostninger:</string>
+    <!-- Confirm paper phrase error message -->
+    <string name="ConfirmPaperPhrase.error">Ordene du har indtastet matcher ikke din papirnøgle. Prøv venligst igen.</string>
+    <!-- Confirm paper phrase view label. -->
+    <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din paper key.</string>
+    <!-- Word label eg. Word #1, Word #2 -->
+    <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
+    <!-- Agree to legal terms button -->
+    <string name="Crowdsale.agree">Enig</string>
+    <!-- As in "(tap here to) buy (some) tokens" -->
+    <string name="Crowdsale.buyButton">Køb tokens</string>
+    <!-- Decline to legal terms button -->
+    <string name="Crowdsale.decline">Afvis</string>
+    <!-- Resume Idnetify verification button -->
+    <string name="Crowdsale.resume">Genoptag bekræftelse</string>
+    <!-- Retry Identity verification button -->
+    <string name="Crowdsale.retry">Prøv igen</string>
+    <!-- Bitcoin denomination picker label -->
+    <string name="DefaultCurrency.bitcoinLabel">Bitcoin visningsenhed</string>
+    <!-- Exchange rate label -->
+    <string name="DefaultCurrency.rateLabel">Valutakurs</string>
+    <!-- The wallet is disabled. -->
+    <string name="Disabled.title">Pung deaktiveret</string>
+    <!-- Email unavailable alert title -->
+    <string name="ErrorMessages.emailUnavailableMessage">Denne enhed er ikke konfigureret til at sende e-mail med iOS mailappen.</string>
+    <!-- Email unavailable alert title -->
+    <string name="ErrorMessages.emailUnavailableTitle">E-mail utilgængelig</string>
+    <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+    <string name="ErrorMessages.loopingLockScreen.android">Bread kan ikke godkendes grundet en fejl i din version af Android. [Tryk her for flere oplysninger.]</string>
+    <!-- Messaging unavailable alert title -->
+    <string name="ErrorMessages.messagingUnavailableMessage">Denne enhed er ikke konfigureret til at sende beskeder.</string>
+    <!-- Messaging unavailable alert title -->
+    <string name="ErrorMessages.messagingUnavailableTitle">Beskeder utilgængelig</string>
+    <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+    <string name="ErrorMessages.touchIdFailed.android">Fingeraftryk ikke genkendt. Prøv igen.</string>
+    <!-- You can customize your Face ID Spending Limit from the [menu] -->
+    <string name="FaceIDSettings.customizeText">Du kan tilpasse din Face ID betalingsgrænse fra %1$s.</string>
+    <!-- Face Id screen label -->
+    <string name="FaceIDSettings.label">Brug dit ansigt til at låse din BRD op, og send penge op til en fastsat grænse.</string>
+    <!-- Title of the screen for setting the Face ID Spending Limit -->
+    <string name="FaceIDSettings.linkText">Face ID betalingsgrænse-skærm</string>
+    <!-- Setting to turn on Face ID for BRD -->
+    <string name="FaceIDSettings.switchLabel">Aktiver Face ID for BRD</string>
+    <!-- Face ID settings view title -->
+    <string name="FaceIDSettings.title">Face ID</string>
+    <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
+    <string name="FaceIDSettings.unavailableAlertMessage">Du har ikke indstillet Face ID på denne enhed. Gå til Indstillinger-&gt;Face ID &amp; adgangskode for at indstille det nu.</string>
+    <!-- Face ID unavailable alert title -->
+    <string name="FaceIDSettings.unavailableAlertTitle">Face ID ikke indstillet</string>
+    <!-- Face Id spending limit screen title -->
+    <string name="FaceIDSpendingLimit.title">Face ID betalingsgrænse</string>
+    <!-- Economy fee -->
+    <string name="FeeSelector.economy">Økonomi</string>
+    <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
+    <string name="FeeSelector.economyTime">1-24 timer</string>
+    <!-- Warning message for economy fee -->
+    <string name="FeeSelector.economyWarning">Denne mulighed er ikke anbefalet for tidsfølsomme transaktioner.</string>
+    <!-- E.g. Estimated delivery: 10-60 minutes -->
+    <string name="FeeSelector.estimatedDeliver">Forventet levering: %1$s</string>
+    <!-- [This transaction will complete in] 2-5 minutes -->
+    <string name="FeeSelector.ethTime">2-5 minutter</string>
+    <!-- Regular fee -->
+    <string name="FeeSelector.regular">Almindelig</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
+    <string name="FeeSelector.regularTime">10-60 minutter</string>
+    <!-- Fee Selector title -->
+    <string name="FeeSelector.title">Behandlingshastighed</string>
+    <!-- This is the section that allows administration of the user's wallet -->
+    <string name="HomeScreen.admin">Administration</string>
+    <!-- This section lists the users wallets -->
+    <string name="HomeScreen.portfolio">Tegnebøger</string>
+    <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
+    <string name="HomeScreen.totalAssets">samlet antal aktiver</string>
+    <!-- Checking private key balance progress view text -->
+    <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
+    <!-- Sweep private key confirmation message -->
+    <string name="Import.confirm">Send %1$s fra denne private nøgle til din pung? Bitcoin netværket vil modtage et gebyr på %2$s.</string>
+    <!-- Duplicate key error message -->
+    <string name="Import.Error.duplicate">Denne private nøgle findes allerede i din pung.</string>
+    <!-- empty private key error message -->
+    <string name="Import.Error.empty">Denne private nøgle er tom.</string>
+    <!-- High fees error message -->
+    <string name="Import.Error.highFees">Transaktionsgebyrer vil koste mere end der er midler til på denne private nøgle.</string>
+    <!-- Not a valid private key error message -->
+    <string name="Import.Error.notValid">Ikke en gyldig privat nøgle</string>
+    <!-- Import signing error message -->
+    <string name="Import.Error.signing">Fejl ved underskrivelse af transaktion</string>
+    <!-- [Redeem] the funds stored on this private key. -->
+    <string name="Import.importButton">Indløs</string>
+    <!-- Importing wallet progress view label -->
+    <string name="Import.importing">Indløser privat nøgle</string>
+    <!-- Caption for graphics -->
+    <string name="Import.leftCaption">Privat nøgle</string>
+    <!-- Import wallet intro screen message -->
+    <string name="Import.message">Private nøgler printes ofte på papir som en QR-kode og bruges til at opbevare midler offline. Indløs en privat nøgle for at overføre alle pengene den indeholder til din Bread, med en enkelt transaktion.</string>
+    <!-- Enter password alert view title -->
+    <string name="Import.password">Denne private nøgle er beskyttet med et kodeord.</string>
+    <!-- password textfield placeholder -->
+    <string name="Import.passwordPlaceholder">adgangskode</string>
+    <!-- Caption for graphics -->
+    <string name="Import.rightCaption">Din Bread pung</string>
+    <!-- Scan Private key button label -->
+    <string name="Import.scan">Scan privat nøgle</string>
+    <!-- Import wallet success alert title -->
+    <string name="Import.success">Succes</string>
+    <!-- Successfully imported wallet message body -->
+    <string name="Import.SuccessBody">Indløste privat nøgle.</string>
+    <!-- Import Wallet screen title -->
+    <string name="Import.title">Indløs privat nøgle</string>
+    <!-- Unlocking Private key activity view message. -->
+    <string name="Import.unlockingActivity">Låser op for nøgle</string>
+    <!-- Import wallet intro warning message -->
+    <string name="Import.warning">At indløse en privat nøgle vil ikke importere transaktionshistorik eller andre detaljer.</string>
+    <!-- Wrong password alert message -->
+    <string name="Import.wrongPassword">Forkert adgangskode, prøv venligst igen.</string>
+    <!-- Close app button -->
+    <string name="JailbreakWarnings.close">Luk</string>
+    <!-- Ignore jailbreak warning button -->
+    <string name="JailbreakWarnings.ignore">Ignorer</string>
+    <!-- Jailbreak warning message -->
+    <string name="JailbreakWarnings.messageWithBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin! Ryd straks denne pung og gendan på en sikker enhed.</string>
+    <!-- Jailbreak warning message -->
+    <string name="JailbreakWarnings.messageWithoutBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin. Brug kun Bread på en ikke jailbreaket enhed.</string>
+    <!-- Jailbreak warning title -->
+    <string name="JailbreakWarnings.title">ADVARSEL</string>
+    <!-- Location services disabled error -->
+    <string name="LocationPlugin.disabled">Placeringstjenester er deaktiveret.</string>
+    <!-- No permissions for location services -->
+    <string name="LocationPlugin.notAuthorized">Bread har ikke adgang til placeringstjenester.</string>
+    <!-- Wallet creation date prefix -->
+    <string name="ManageWallet.creationDatePrefix">Du lavede din pung den %1$s</string>
+    <!-- Manage wallet description text -->
+    <string name="ManageWallet.description">Din pungs navn vises kun i din kontos transaktionshistorik, og kan ikke ses af nogen andre.</string>
+    <!-- Change Wallet name textfield label -->
+    <string name="ManageWallet.textFeildLabel">Pungens navn</string>
+    <!-- Manage wallet modal title -->
+    <string name="ManageWallet.title">Administrer pung</string>
+    <!-- "Add [a] Wallet [to the home screen]" -->
+    <string name="MenuButton.addWallet">Tilføj pung</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.lock">Lås pung</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.security">Sikkerhedscenter</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.settings">Indstillinger</string>
+    <!-- Menu button title -->
+    <string name="MenuButton.support">Support</string>
+    <!-- button label -->
+    <string name="MenuViewController.createButton">Opret ny pung</string>
+    <!-- Menu modal title -->
+    <string name="MenuViewController.modalTitle">Menu</string>
+    <!-- button label -->
+    <string name="MenuViewController.recoverButton">Gendan pung</string>
+    <!-- Switch to automatic mode button label -->
+    <string name="NodeSelector.automaticButton">Skift til automatisk tilstand</string>
+    <!-- Node is connected label -->
+    <string name="NodeSelector.connected">Forbundet</string>
+    <!-- Node is connecting label -->
+    <string name="NodeSelector.connecting">Opretter forbindelse</string>
+    <!-- Enter node ip address view body -->
+    <string name="NodeSelector.enterBody">Indtast node-IP-adresse og port (valgfrit)</string>
+    <!-- Enter Node ip address view title -->
+    <string name="NodeSelector.enterTitle">Indtast node</string>
+    <!-- Switch to manual mode button label -->
+    <string name="NodeSelector.manualButton">Skift til manuel tilstand</string>
+    <!-- Node address label -->
+    <string name="NodeSelector.nodeLabel">Nuværende primære node</string>
+    <!-- Node is not connected label -->
+    <string name="NodeSelector.notConnected">Ikke forbundet</string>
+    <!-- Node status label -->
+    <string name="NodeSelector.statusLabel">Node forbindelsesstatus</string>
+    <!-- Node Selector view title -->
+    <string name="NodeSelector.title">Bitcoin-nodes</string>
+    <!-- Bad Payment request alert title -->
+    <string name="PaymentProtocol.Errors.badPaymentRequest">Dårlig betalingsanmodning</string>
+    <!-- Error opening payment protocol file message -->
+    <string name="PaymentProtocol.Errors.corruptedDocument">Ikke understøttet eller beskadiget dokument</string>
+    <!-- Missing certificate payment protocol error message -->
+    <string name="PaymentProtocol.Errors.missingCertificate">manglende certifikat</string>
+    <!-- Request expired payment protocol error message -->
+    <string name="PaymentProtocol.Errors.requestExpired">anmodning udløbet</string>
+    <!-- Payment too small alert title -->
+    <string name="PaymentProtocol.Errors.smallOutputError">Kunne ikke foretage betaling</string>
+    <!-- Amount too small error message -->
+    <string name="PaymentProtocol.Errors.smallPayment">Bitcoin betalinger kan ikke være mindre end %1$s.</string>
+    <!-- Output too small error message. -->
+    <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaktionsoutput kan ikke være mindre end %1$s.</string>
+    <!-- Unsupported signature type payment protocol error message -->
+    <string name="PaymentProtocol.Errors.unsupportedSignatureType">ikke understøttet signaturtype</string>
+    <!-- Untrusted certificate payment protocol error message -->
+    <string name="PaymentProtocol.Errors.untrustedCertificate">certifikat der ikke er tillid til</string>
+    <!-- Enable face ID prompt body -->
+    <string name="Prompts.FaceId.body">Tryk Fortsæt for at aktivere Face ID</string>
+    <!-- Enable face ID prompt title -->
+    <string name="Prompts.FaceId.title">Aktiver Face ID</string>
+    <!-- No passcode set warning body -->
+    <string name="Prompts.NoPasscode.body">En adgangskode til enheden er nødvendig for at beskytte din wallet. Gå til indstillinger og slå adgangskode til.</string>
+    <!-- No Passcode set warning title -->
+    <string name="Prompts.NoPasscode.title">Slå enhedens adgangskode til</string>
+    <!-- Instruction how to enable device encryption -->
+    <string name="Prompts.NoScreenLock.body.android">Der skal en skærmlås til på enheden, for at beskytte din pung. Gå til \"Indstillinger\" &gt; \"Sikkerhed\" &gt; \"Skærmlås\" og aktiver for at fortsætte.</string>
+    <!-- Device encryption prompt title -->
+    <string name="Prompts.NoScreenLock.title.android">Skærmlås deaktiveret</string>
+    <!-- Warning about paper key. -->
+    <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon. Tryk her for at fortsætte.</string>
+    <!-- An action is required (You must do this action). -->
+    <string name="Prompts.PaperKey.title">Handling påkrævet</string>
+    <!-- Transaction rejected prompt body -->
+    <string name="Prompts.RecommendRescan.body">Din pung er muligvis ikke synkroniseret. Dette kan ofte løses ved at genskanne blokkæden.</string>
+    <!-- Transaction rejected prompt title -->
+    <string name="Prompts.RecommendRescan.title">Transaktion afvist</string>
+    <!-- Share data prompt body -->
+    <string name="Prompts.ShareData.body">Hjælp med at forbedre Bread ved at dele dine anonyme data med os</string>
+    <!-- Share data prompt title -->
+    <string name="Prompts.ShareData.title">Del anonyme data</string>
+    <!-- Enable touch ID prompt body -->
+    <string name="Prompts.TouchId.body">Tryk her for at aktivere Touch ID</string>
+    <!-- Enable Fingerprint prompt body -->
+    <string name="Prompts.TouchId.body.android">Tryk her for at aktivere autentificering via fingeraftryk</string>
+    <!-- Enable touch ID prompt title -->
+    <string name="Prompts.TouchId.title">Aktiver Touch ID</string>
+    <!-- Enable Fingerprint prompt title -->
+    <string name="Prompts.TouchId.title.android">Aktiver autentificering via fingeraftryk</string>
+    <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+    <string name="Prompts.TouchId.usePin.android">PIN</string>
+    <!-- Upgrade PIN prompt body. -->
+    <string name="Prompts.UpgradePin.body">Bread er blevet opgraderet til at bruge en 6-cifret PIN. Tryk her for at opgradere.</string>
+    <!-- Upgrade PIN prompt title. -->
+    <string name="Prompts.UpgradePin.title">Opgader PIN</string>
+    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+    <string name="PushNotifications.body">Slå notifikationer til for at modtage særlige meddelelser fra Bread i fremtiden.</string>
+    <!-- Push notifications toggle switch label -->
+    <string name="PushNotifications.label">Push notifikationer</string>
+    <!-- Push notifications are off label -->
+    <string name="PushNotifications.off">Fra</string>
+    <!-- Push notifications are on label -->
+    <string name="PushNotifications.on">Til</string>
+    <!-- Push notifications settings view title label -->
+    <string name="PushNotifications.title">Notifikationer</string>
+    <!-- Address copied message. -->
+    <string name="Receive.copied">Kopieret til udklipsholder.</string>
+    <!-- Share via email button label -->
+    <string name="Receive.emailButton">E-mail</string>
+    <!-- Request button label -->
+    <string name="Receive.request">Anmod om et beløb</string>
+    <!-- Share button label -->
+    <string name="Receive.share">Del</string>
+    <!-- Share via text message (SMS) -->
+    <string name="Receive.textButton">SMS</string>
+    <!-- Receive modal title -->
+    <string name="Receive.title">Modtag</string>
+    <!-- Done button text -->
+    <string name="RecoverWallet.done">Færdig</string>
+    <!-- Recover wallet header -->
+    <string name="RecoverWallet.header">Gendan pung</string>
+    <!-- Reset PIN with paper key: header -->
+    <string name="RecoverWallet.header_reset_pin">Nulstil PIN</string>
+    <!-- Enter paper key instruction -->
+    <string name="RecoverWallet.instruction">Indtast paper key</string>
+    <!-- Recover wallet intro -->
+    <string name="RecoverWallet.intro">Gendan dit Bread med din paper key.</string>
+    <!-- Invalid paper key message -->
+    <string name="RecoverWallet.invalid">Den paper key du indtastede er ugyldig. Dobbelttjek hvert ord og prøv igen.</string>
+    <!-- Previous button accessibility label -->
+    <string name="RecoverWallet.leftArrow">Venstre pil</string>
+    <!-- Next button label -->
+    <string name="RecoverWallet.next">Næste</string>
+    <!-- Reset PIN with paper key: more information button. -->
+    <string name="RecoverWallet.reset_pin_more_info">Tryk her for flere oplysninger.</string>
+    <!-- Next button accessibility label -->
+    <string name="RecoverWallet.rightArrow">Højre pil</string>
+    <!-- Recover wallet sub-header -->
+    <string name="RecoverWallet.subheader">Indtast paper key til pungen du vil gendanne.</string>
+    <!-- Reset PIN with paper key: sub-header -->
+    <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din paper key i boksene nedenfor.</string>
+    <!-- No amount entered error message. -->
+    <string name="RequestAnAmount.noAmount">Indtast venligst et beløb først.</string>
+    <!-- Request a specific amount of bitcoin -->
+    <string name="RequestAnAmount.title">Anmod om et beløb</string>
+    <!-- Alert action button label -->
+    <string name="ReScan.alertAction">Synkroniser</string>
+    <!-- Alert message body -->
+    <string name="ReScan.alertMessage">Du vil ikke kunne sende penge mens du synkroniserer.</string>
+    <!-- Alert message title -->
+    <string name="ReScan.alertTitle">Synkroniser med blokkæde?</string>
+    <!-- extimated time -->
+    <string name="ReScan.body1">20-45 minutter</string>
+    <!-- Syncing explanation -->
+    <string name="ReScan.body2">Hvis en transaktion vises som gennemført i bitcoin netværket, men ikke i dit Bread.</string>
+    <!-- Syncing explanation -->
+    <string name="ReScan.body3">Du modtager gentagne gange en fejlmeddelelse om at din transaktion er blevet afvist.</string>
+    <!-- Start Sync button label -->
+    <string name="ReScan.buttonTitle">Start synkronisering</string>
+    <!-- Sync blockchain view footer -->
+    <string name="ReScan.footer">Du vil ikke kunne bruge penge, når du synkroniserer med blokkæden.</string>
+    <!-- Sync Blockchain view header -->
+    <string name="ReScan.header">Synkroniser blokkæde</string>
+    <!-- Subheader label -->
+    <string name="ReScan.subheader1">Anslået tid</string>
+    <!-- Subheader label -->
+    <string name="ReScan.subheader2">Hvornår skal der synkroniseres?</string>
+    <!-- Scan bitcoin address camera flash toggle -->
+    <string name="Scanner.flashButtonLabel">Kamerablitz</string>
+    <!-- Complete filter label -->
+    <string name="Search.complete">færdig</string>
+    <!-- Pending filter label -->
+    <string name="Search.pending">afventer</string>
+    <!-- Received filter label -->
+    <string name="Search.received">modtaget</string>
+    <!-- [Click here to] search -->
+    <string name="Search.search">Søg</string>
+    <!-- Sent filter label -->
+    <string name="Search.sent">sendt</string>
+    <!-- Face ID button title -->
+    <string name="SecurityCenter.faceIdTitle">Face ID</string>
+    <!-- Paper Key button description -->
+    <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle">Paper key</string>
+    <!-- PIN button description -->
+    <string name="SecurityCenter.pinDescription">Beskytter dit Bread mod uberettigede brugere.</string>
+    <!-- PIN button title -->
+    <string name="SecurityCenter.pinTitle">6-cifret PIN</string>
+    <!-- Touch ID button description -->
+    <string name="SecurityCenter.touchIdDescription">Lås dit Break op og send penge op til en vis grænse.</string>
+    <!-- Touch ID button title -->
+    <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+    <!-- Security center fingerprint authentication button -->
+    <string name="SecurityCenter.touchIdTitle.android">Autentificering via fingeraftryk</string>
+    <!-- Send money amount label -->
+    <string name="Send.amountLabel">Beløb</string>
+    <!-- Balance: $4.00 -->
+    <string name="Send.balance">Balance: %1$s</string>
+    <!-- Instructions how to allow the camera access for the app -->
+    <string name="Send.cameraUnavailabeMessage.android">Tillad adgang under \"Indstillinger\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Tilladelser\"</string>
+    <!-- Permission required to access camera -->
+    <string name="Send.cameraUnavailabeTitle.android">Bread har ikke tilladelse til at få adgang til kameraet</string>
+    <!-- Camera not allowed message -->
+    <string name="Send.cameraunavailableMessage">Gå til Indstillinger og giv adgang til kamera.</string>
+    <!-- Camera not allowed alert title -->
+    <string name="Send.cameraUnavailableTitle">Bread har ikke adgang til kameraet</string>
+    <!-- Warning when sending to self. -->
+    <string name="Send.containsAddress">Destinationen er din egen adresse. Du kan ikke sende til dig selv.</string>
+    <!-- Could not create transaction alert title -->
+    <string name="Send.creatTransactionError">Kunne ikke oprette transaktion.</string>
+    <!-- Description for sending money label -->
+    <string name="Send.descriptionLabel">Memo</string>
+    <!-- Emtpy pasteboard error message -->
+    <string name="Send.emptyPasteboard">Tegnebord er tomt</string>
+    <!-- "(you) can't send (to your)self" -->
+    <string name="Send.ethSendSelf">Kan ikke sende til dig selv.</string>
+    <!-- Network Fee: $0.01 -->
+    <string name="Send.fee">Netværksafgift: %1$s</string>
+    <!-- Payee identity not certified alert title. -->
+    <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
+    <!-- Insufficient funds error -->
+    <string name="Send.insufficientFunds">Utilstrækkelige midler</string>
+    <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+    <string name="Send.insufficientGasMessage">Du skal have mindst %1$s i din pung, for at kunne overføre denne type token. Vil du gå til din Ethereum pung nu?</string>
+    <!-- Your ethereum balance is insufficient to complete this action. -->
+    <string name="Send.insufficientGasTitle">Utilstrækkelig Ethereum balance</string>
+    <!-- e.g. The destination is not a valid (bitcoin) address. -->
+    <string name="Send.invalidAddressMessage">Modtageradressen er ikke en gyldig %1$s-adresse.</string>
+    <!-- Invalid address on pasteboard message -->
+    <string name="Send.invalidAddressOnPasteboard">Tegnebord indeholder ikke en gyldig %1$s adresse.</string>
+    <!-- Invalid address alert title -->
+    <string name="Send.invalidAddressTitle">Ugyldig adresse</string>
+    <!-- Is rescanning error message -->
+    <string name="Send.isRescanning">Afsendelse er deaktiveret under en ny scanning.</string>
+    <!-- Warning when the user is trying to send bitcoin cash to a legacy bitcoin address (possible, but probably not what the user wants to do) -->
+    <string name="Send.legacyAddressWarning">Advarsel: dette er en legacy-bitcoinadresse. Er du sikker på du vil sende Bitcoin-penge til den?</string>
+    <!-- We are loading the request (now) -->
+    <string name="Send.loadingRequest">Behandler Anmodning</string>
+    <!-- Transaction fee could not be be caluculated error. -->
+    <string name="Send.nilFeeError">Utilstrækkelige midler til at dække transaktionsgebyret.</string>
+    <!-- Empty address alert message -->
+    <string name="Send.noAddress">Indtast modtagerens adresse.</string>
+    <!-- Emtpy amount alert message -->
+    <string name="Send.noAmount">Indtast et beløb, der skal sendes.</string>
+    <!-- No Fees error -->
+    <string name="Send.noFeesError">Netværksgebyr-vilkår bliver downloadet. Prøv venligst igen.</string>
+    <!-- Paste button label -->
+    <string name="Send.pasteLabel">Indsæt</string>
+    <!-- Could not publish transaction alert title -->
+    <string name="Send.publishTransactionError">Kunne ikke offentliggøre transaktion.</string>
+    <!-- Could not load remote request error message -->
+    <string name="Send.remoteRequestError">Kunne ikke behandle betalingsanmodning</string>
+    <!-- Scan button label -->
+    <string name="Send.scanLabel">Scan</string>
+    <!-- Send button label (the action, "press here to send") -->
+    <string name="Send.sendLabel">Send</string>
+    <!-- Send screen title (as in "this is the screen for sending money") -->
+    <string name="Send.title">Send penge</string>
+    <!-- Send money to label -->
+    <string name="Send.toLabel">Til</string>
+    <!-- Adress already used alert message - first part -->
+    <string name="Send.UsedAddress.firstLine">Bitcoin adresser er kun beregnet til en enkelt anvendelse.</string>
+    <!-- Adress already used alert message - second part -->
+    <string name="Send.UsedAddress.secondLIne">Genbrug reducerer privatliv for både dig og modtageren og kan resultere i tab, hvis modtageren ikke har direkte kontrol over adressen.</string>
+    <!-- Adress already used alert title -->
+    <string name="Send.UsedAddress.title">Adresse allerede brugt</string>
+    <!-- About label -->
+    <string name="Settings.about">Om</string>
+    <!-- Advanced settings header -->
+    <string name="Settings.advanced">Avanceret</string>
+    <!-- Advanced Settings title -->
+    <string name="Settings.advancedTitle">Avancerede indstillinger</string>
+    <!-- i.e. the currency which will be displayed -->
+    <string name="Settings.currency">Vis valuta</string>
+    <!-- e.g. "USD Settings" (settings for how USD is handled) -->
+    <string name="Settings.currencyPageTitle">%1$s indstillinger</string>
+    <!-- Section title for a collection of different settings screens, one for each currency -->
+    <string name="Settings.currencySettings">Valutaindstillinger</string>
+    <!-- Join Early access label -->
+    <string name="Settings.earlyAccess">Tilmeld dig Early Access</string>
+    <!-- Are you enjoying bread alert message body -->
+    <string name="Settings.enjoying">Nyder du Bread?</string>
+    <!-- Face ID spending limit label -->
+    <string name="Settings.faceIdLimit">Face ID betalingsgrænse</string>
+    <!-- Redeem the funds stored on this private key. -->
+    <string name="Settings.importTitle">Indløs privat nøgle</string>
+    <!-- Manage settings section header -->
+    <string name="Settings.manage">Administrer</string>
+    <!-- Notifications label -->
+    <string name="Settings.notifications">Notifikationer</string>
+    <!-- Preferences settings section header -->
+    <string name="Settings.preferences">Indstillinger</string>
+    <!-- Tap here to reset the list of currencies to the default settings. -->
+    <string name="Settings.resetCurrencies">Nulstil til standard valutaer</string>
+    <!-- Leave review button label -->
+    <string name="Settings.review">Giv os en anmeldelse</string>
+    <!-- Share anonymous data label -->
+    <string name="Settings.shareData">Del anonyme data</string>
+    <!-- Sync blockchain label -->
+    <string name="Settings.sync">Synkroniser blokkæde</string>
+    <!-- Settings title -->
+    <string name="Settings.title">Indstillinger</string>
+    <!-- Touch ID spending limit label -->
+    <string name="Settings.touchIdLimit">Touch ID brugsgrænse</string>
+    <!-- The fingerprint spending limit -->
+    <string name="Settings.touchIdLimit.android">Brugsgrænse for autentificering via fingeraftryk</string>
+    <!-- Wallet Settings section header -->
+    <string name="Settings.wallet">Wallet</string>
+    <!-- Unlink/delete your wallet from the current device. -->
+    <string name="Settings.wipe">Fjern link fra denne enhed</string>
+    <!-- Share data view body -->
+    <string name="ShareData.body">Hjælp med at forbedre Bread ved at dele dine anonyme data med os. Dette inkluderer ikke finansielle oplysninger. Vi respekterer dit finansielle privatliv.</string>
+    <!-- Share data header -->
+    <string name="ShareData.header">Del data?</string>
+    <!-- Share data switch label. -->
+    <string name="ShareData.toggleLabel">Del anonyme data?</string>
+    <!-- button label -->
+    <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
+    <!-- Paper key explanation text. -->
+    <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit Bread på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
+    <!-- button label -->
+    <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
+    <!-- Argument is date -->
+    <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den %1$s</string>
+    <!-- button label -->
+    <string name="StartViewController.createButton">Opret ny tegnebog</string>
+    <!-- Start view message -->
+    <string name="StartViewController.message">Den mest sikre og trygge måde at bruge bitcoins på.</string>
+    <!-- Recover your wallet from a backup -->
+    <string name="StartViewController.recoverButton">Gendan tegnebog</string>
+    <!-- Syncing view connectiong state header text -->
+    <string name="SyncingView.connecting">Tilslutter</string>
+    <!-- Syncing view header text -->
+    <string name="SyncingView.header">Synkroniserer</string>
+    <!-- Retry button label -->
+    <string name="SyncingView.retry">Prøv igen</string>
+    <!-- Syncing view syncing state header text -->
+    <string name="SyncingView.syncing">Synkroniserer</string>
+    <!-- 6 d (6 days) -->
+    <string name="TimeSince.days">%1$s d</string>
+    <!-- 6 h (6 hours) -->
+    <string name="TimeSince.hours">%1$s h</string>
+    <!-- 6 m (6 minutes) -->
+    <string name="TimeSince.minutes">%1$s m</string>
+    <!-- 6 s (6 seconds) -->
+    <string name="TimeSince.seconds">%1$s s</string>
+    <!-- Add [this item to the list] -->
+    <string name="TokenList.add">Tilføj</string>
+    <!-- Add Wallets    [to your home screen] -->
+    <string name="TokenList.addTitle">Tilføj punge</string>
+    <!-- Hide [this token from view] -->
+    <string name="TokenList.hide">Skjul</string>
+    <!-- [click here to] Manage [your] Wallets -->
+    <string name="TokenList.manageTitle">Administrer punge</string>
+    <!-- Remove [this item from the list] -->
+    <string name="TokenList.remove">Fjern</string>
+    <!-- Show [this item on your home screen] -->
+    <string name="TokenList.show">Vis</string>
+    <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
+    <string name="TouchIdSettings.customizeText">Du kan tilpasse forbrugsgrænsen for dit Touch ID fra %1$s.</string>
+    <!-- Fingerprint enabling description body -->
+    <string name="TouchIdSettings.customizeText.android">Du kan tilpasse din brugsgrænse for autentificering via fingeraftryk fra skærmen Brugsgrænse for autentificering via fingeraftryk</string>
+    <!-- Instruction for the fingerprint setup -->
+    <string name="TouchIdSettings.disabledWarning.body.android">Du har ikke aktiveret autentificering via fingeraftryk på denne enhed. Gå til Indstillinger -&gt; Sikkerhed for at konfigurere autentificering via fingeraftryk.</string>
+    <!-- Fingerprint Is Not Setup -->
+    <string name="TouchIdSettings.disabledWarning.title.android">Autentificering via fingeraftryk ikke aktiveret</string>
+    <!-- Touch Id screen label -->
+    <string name="TouchIdSettings.label">Brug dit fingeraftryk til at låse op for dit Bread og sende penge op til en vis grænse.</string>
+    <!-- Link Text (see TouchIdSettings.customizeText) -->
+    <string name="TouchIdSettings.linkText">Touch ID forbrugsgrænseside</string>
+    <!-- Spending Limit: b100,000 ($100) -->
+    <string name="TouchIdSettings.spendingLimit">Brugsgrænse: %1$s (%2$s)</string>
+    <!-- Touch id switch label. -->
+    <string name="TouchIdSettings.switchLabel">Aktiver Touch ID til Bread</string>
+    <!-- Enable fingerprint for this wallet called Bread -->
+    <string name="TouchIdSettings.switchLabel.android">Aktiver autentificering via fingeraftryk</string>
+    <!-- Touch ID settings view title -->
+    <string name="TouchIdSettings.title">Touch ID</string>
+    <!-- Fingerprint authentication label -->
+    <string name="TouchIdSettings.title.android">Autentificering via fingeraftryk</string>
+    <!-- Touch ID unavailable alert message -->
+    <string name="TouchIdSettings.unavailableAlertMessage">Du har ikke indstillet Touch ID på denne enhed. Gå til Indstillinger -&gt; Touch ID og Adgangskode og indstil det nu.</string>
+    <!-- Touch ID unavailable alert title -->
+    <string name="TouchIdSettings.unavailableAlertTitle">Touch ID ikke indstillet</string>
+    <!-- Always require passcode option -->
+    <string name="TouchIdSpendingLimit">Kræv altid adgangskode</string>
+    <!-- Touch ID spending limit screen body -->
+    <string name="TouchIdSpendingLimit.body">Du bliver bedt om at indtaste din 6-cifrede PIN for at sende en transaktion over din brugsgrænse, og hver 48 timer siden du sidst indtastede din 6-cifrede PIN.</string>
+    <!-- Touch Id spending limit screen title -->
+    <string name="TouchIdSpendingLimit.title">Touch ID brugsgrænse</string>
+    <!-- name of spending limit when using fingerprint authorization -->
+    <string name="TouchIdSpendingLimit.title.android">Brugsgrænse for autentificering via fingeraftryk</string>
+    <!-- Availability status text -->
+    <string name="Transaction.available">Tilgængelig at bruge</string>
+    <!-- Transaction complete label -->
+    <string name="Transaction.complete">Færdig</string>
+    <!-- Transaction is confirming status text -->
+    <string name="Transaction.confirming">Behandles</string>
+    <!-- eg. Ending balance: $50.00 -->
+    <string name="Transaction.ending">Slutbalance: %1$s</string>
+    <!-- Exchange rate on date header -->
+    <string name="Transaction.exchangeOnDayReceived">Valutakurs ved modtagelsestidspunkt:</string>
+    <!-- Exchange rate on date header -->
+    <string name="Transaction.exchangeOnDaySent">Valutakurs ved afsendelsestidspunkt:</string>
+    <!-- Transaction failed status text -->
+    <string name="Transaction.failed">Fejlede</string>
+    <!-- (b600 fee) -->
+    <string name="Transaction.fee">(%1$s gebyr)</string>
+    <!-- Invalid transaction -->
+    <string name="Transaction.invalid">UGYLDIG</string>
+    <!-- Timestamp label for event that just happened -->
+    <string name="Transaction.justNow">netop nu</string>
+    <!-- Transaction is pending status text -->
+    <string name="Transaction.pending">Afventede</string>
+    <!-- Receive status text: 'In progress: 20%' -->
+    <string name="Transaction.receivedStatus">I gang: %1$s</string>
+    <!-- Send status text: 'In progress: 20%' -->
+    <string name="Transaction.sendingStatus">I gang: %1$s</string>
+    <!-- sending to <address> -->
+    <string name="Transaction.sendingTo">sender til %1$s</string>
+    <!-- sent to <address> -->
+    <string name="Transaction.sentTo">sendt til %1$s</string>
+    <!-- eg. Starting balance: $50.00 -->
+    <string name="Transaction.starting">Startbalance: %1$s</string>
+    <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+    <string name="Transaction.tokenTransfer">Gebyr for token-overførsel: %1$s</string>
+    <!-- Waiting to be confirmed string -->
+    <string name="Transaction.waiting">Venter på bekræftelse. Nogen forhandlere kræver bekræftelse for at gennemføre en transaktion. Anslået tid: 1-2 timer.</string>
+    <!-- e.g. I received money from an account. -->
+    <string name="TransactionDetails.account">konto</string>
+    <!-- Address received from header -->
+    <string name="TransactionDetails.addressFromHeader">Fra</string>
+    <!-- Address sent to header -->
+    <string name="TransactionDetails.addressToHeader">Til</string>
+    <!-- e.g. "(this was received) via (address #1)" via = by way of -->
+    <string name="TransactionDetails.addressViaHeader">Via</string>
+    <!-- Amount section header -->
+    <string name="TransactionDetails.amountHeader">Beløb</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenReceived">%1$s ved modtagelsen, %2$s nu</string>
+    <!-- Block height label -->
+    <string name="TransactionDetails.blockHeightLabel">Bekræftet i blok</string>
+    <!-- Memo section header -->
+    <string name="TransactionDetails.commentsHeader">Memo</string>
+    <!-- Memo field placeholder -->
+    <string name="TransactionDetails.commentsPlaceholder">Tilføj memo...</string>
+    <!-- Timestamp section header for complete tx -->
+    <string name="TransactionDetails.completeTimestampHeader">Gennemført</string>
+    <!-- Empty transaction list message. -->
+    <string name="TransactionDetails.emptyMessage">Dine transaktioner vil vises her.</string>
+    <!-- e.g. the users balance after the transaction was compeleted -->
+    <string name="TransactionDetails.endingBalanceHeader">Slutsaldo</string>
+    <!-- Exchange rate section header -->
+    <string name="TransactionDetails.exchangeRateHeader">Vekselkurs</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.feeHeader">Samlet gebyr</string>
+    <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+    <string name="TransactionDetails.from">på %1$s</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.gasLimitHeader">Gasgrænse</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.gasPriceHeader">Gaspris</string>
+    <!-- Label showing the transaction was started (initialized) -->
+    <string name="TransactionDetails.initializedTimestampHeader">Påbegyndt</string>
+    <!-- More button title -->
+    <string name="TransactionDetails.more">Mere...</string>
+    <!-- Moved $5.00 (as in "I moved $5 to another location") -->
+    <string name="TransactionDetails.moved">Flyttede %1$s</string>
+    <!-- Moved $5.00 -->
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttet <b>%1$s</b>]]></string>
+    <!-- eg. Confirmed in Block: Not Confirmed -->
+    <string name="TransactionDetails.notConfirmedBlockHeightLabel">Ikke bekræftet</string>
+    <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
+    <string name="TransactionDetails.received">Modtaget %1$s</string>
+    <!-- Received $5.00 -->
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Modtaget <b>%1$s</b>]]></string>
+    <!-- received from <address> -->
+    <string name="TransactionDetails.receivedFrom">modtaget fra %1$s</string>
+    <!-- received via <address> -->
+    <string name="TransactionDetails.receivedVia">modtaget via %1$s</string>
+    <!-- receiving from <address> -->
+    <string name="TransactionDetails.receivingFrom">modtager fra %1$s</string>
+    <!-- receiving via <address> -->
+    <string name="TransactionDetails.receivingVia">modtager via %1$s</string>
+    <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
+    <string name="TransactionDetails.sent">Sendt %1$s</string>
+    <!-- Sent $5.00 -->
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Sendt <b>%1$s</b>]]></string>
+    <!-- Show Details button -->
+    <string name="TransactionDetails.showDetails">Vis detaljer</string>
+    <!-- The balance the user started with before the transaction completed -->
+    <string name="TransactionDetails.startingBalanceHeader">Startsaldo</string>
+    <!-- Status section header -->
+    <string name="TransactionDetails.statusHeader">Status</string>
+    <!-- Transaction Details Title -->
+    <string name="TransactionDetails.title">Transaktionsoplysninger</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.titleFailed">Skjul detaljer</string>
+    <!-- Transaction Details Title - Internal -->
+    <string name="TransactionDetails.titleInternal">Internt</string>
+    <!-- Transaction Details Title - Received -->
+    <string name="TransactionDetails.titleReceived">Modtaget</string>
+    <!-- Transaction Details Title - Receiving -->
+    <string name="TransactionDetails.titleReceiving">Modtager</string>
+    <!-- Transaction Details Title - Sending -->
+    <string name="TransactionDetails.titleSending">Sender</string>
+    <!-- Transaction Details Title - Sent -->
+    <string name="TransactionDetails.titleSent">Sendt</string>
+    <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+    <string name="TransactionDetails.to">til %1$s</string>
+    <!-- Tx detail field header -->
+    <string name="TransactionDetails.totalHeader">I alt</string>
+    <!-- Transaction ID header -->
+    <string name="TransactionDetails.txHashHeader">Bitcoin transaktions-ID</string>
+    <!-- (this transaction was) Received at this address: -->
+    <string name="TransactionDirection.address">Modtaget på denne adresse</string>
+    <!-- (this transaction was) Sent to this address: -->
+    <string name="TransactionDirection.to">Sendt til denne adresse</string>
+    <!-- Disabled until date -->
+    <string name="UnlockScreen.disabled">Deaktiveret indtil: %1$s</string>
+    <!-- Unlock with FaceID accessibility label -->
+    <string name="UnlockScreen.faceIdText">Lås op med Face ID</string>
+    <!-- My Address button title -->
+    <string name="UnlockScreen.myAddress">Min adresse</string>
+    <!-- Reset PIN with Paper Key button label. -->
+    <string name="UnlockScreen.resetPin">Nulstil PIN</string>
+    <!-- Scan button title -->
+    <string name="UnlockScreen.scan">Scan</string>
+    <!-- Instruction to touch the sensor for fingerprint authentication -->
+    <string name="UnlockScreen.touchIdInstructions.android">Touch sensor</string>
+    <!-- TouchID prompt text -->
+    <string name="UnlockScreen.touchIdPrompt">Lås op for dit Bread.</string>
+    <!-- Device authentication body -->
+    <string name="UnlockScreen.touchIdPrompt.android">Lås op for din Android enhed for at fortsætte</string>
+    <!-- Unlock with TouchID accessibility label -->
+    <string name="UnlockScreen.touchIdText">Lås op med Touch ID</string>
+    <!-- Device authentication title -->
+    <string name="UnlockScreen.touchIdTitle.android">Autentificering påkrævet</string>
+    <!-- Update PIN caption text -->
+    <string name="UpdatePin.caption">Husk denne PIN. Hvis du glemmer den, vil du ikke kunne få adgang til dine bitcoin.</string>
+    <!-- PIN creation info. -->
+    <string name="UpdatePin.createInstruction">Din PIN bliver brugt til at låse op for dit Bread og sende penge.</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.createTitle">Indstil PIN</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.createTitleConfirm">Genindtast PIN</string>
+    <!-- Enter current PIN instruction -->
+    <string name="UpdatePin.enterCurrent">Indtast din nuværende PIN.</string>
+    <!-- Enter new PIN instruction -->
+    <string name="UpdatePin.enterNew">Indtast din nye PIN.</string>
+    <!-- Re-Enter new PIN instruction -->
+    <string name="UpdatePin.reEnterNew">Genindtast din nye PIN.</string>
+    <!-- Update PIN failure error message. -->
+    <string name="UpdatePin.setPinError">Beklager, kunne ikke opdatere PIN.</string>
+    <!-- Update PIN failure alert view title -->
+    <string name="UpdatePin.setPinErrorTitle">Fejl ved opdatering af PIN</string>
+    <!-- Update PIN title -->
+    <string name="UpdatePin.updateTitle">Opdater PIN</string>
+    <!-- Authorize to copy wallet addresses alert message -->
+    <string name="URLHandling.addressaddressListAlertMessage">Kopier pungadresse til udklipsholderen?</string>
+    <!-- Authorize to copy wallet address PIN view prompt. -->
+    <string name="URLHandling.addressList">Tillad at kopiere pungadresse til udklipsholder</string>
+    <!-- Authorize to copy wallet address alert title -->
+    <string name="URLHandling.addressListAlertTitle">Kopier pungadresse</string>
+    <!-- Copy wallet addresses alert button label -->
+    <string name="URLHandling.copy">Kopier</string>
+    <!-- Verify PIN for transaction view body -->
+    <string name="VerifyPin.authorize">Indtast venligst din PIN for at godkende denne transaktion.</string>
+    <!-- Verify PIN view body -->
+    <string name="VerifyPin.continueBody">Indtast din PIN for at fortsætte.</string>
+    <!-- Verify PIN view title -->
+    <string name="VerifyPin.title">PIN påkrævet</string>
+    <!-- Authorize transaction with touch id message -->
+    <string name="VerifyPin.touchIdMessage">Godkend denne transaktion</string>
+    <!-- 'No wallet' warning for watch app -->
+    <string name="Watch.noWalletWarning">Åben Bread iPhone appen for at konfigurere din pung.</string>
+    <!-- Dismiss button label -->
+    <string name="Webview.dismiss">Afvis</string>
+    <!-- Webview loading error message -->
+    <string name="Webview.errorMessage">Der var en fejl ved indlæsning af indholdet. Prøv igen.</string>
+    <!-- Updating webview message -->
+    <string name="Webview.updating">Opdaterer...</string>
+    <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+    <string name="Welcome.body">Breadwallet har skiftet navn til Bread med et helt nyt look og nogle nye funktioner.\n\nHvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skærme.</string>
+    <!-- Top title of welcome screen -->
+    <string name="Welcome.title">Velkommen til Bread!</string>
+    <!-- Wipe wallet alert message -->
+    <string name="WipeWallet.alertMessage">Er du sikker på at du vil slette denne wallet?</string>
+    <!-- Wipe wallet alert title -->
+    <string name="WipeWallet.alertTitle">Slet wallet?</string>
+    <!-- Failed wipe wallet alert message -->
+    <string name="WipeWallet.failedMessage">Fejl ved sletning af wallet.</string>
+    <!-- Failed wipe wallet alert title -->
+    <string name="WipeWallet.failedTitle">Fejl</string>
+    <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
+    <string name="WipeWallet.instruction">For at oprette en ny pung eller gendanne en eksisterende pung, skal du først fjerne linket til den pung der er installeret på nuværende tidspunkt. For at fortsætte, skal du indtaste den nuværende pungs papirnøgle.</string>
+    <!-- Instructions for unlinking the wallet -->
+    <string name="WipeWallet.startMessage">Fjern link til pung for at fjerne den fra denne enhed. Når linket til denne pung er fjernet, kan du starte en ny pung eller gendanne en anden pung på denne enhed.</string>
+    <!-- Start wipe wallet view warning -->
+    <string name="WipeWallet.startWarning">Du vil ikke længere være i stand til at få adgang til din nuværende Bread tegnebog fra denne enhed. Saldoen vil forblive på frasen.</string>
+    <!-- Unlink this wallet from this device. -->
+    <string name="WipeWallet.title">Fjern link til pung</string>
+    <!-- Wipe wallet button title -->
+    <string name="WipeWallet.wipe">Slet</string>
+    <!-- Wiping activity message -->
+    <string name="WipeWallet.wiping">Sletter...</string>
+    <!-- Paper key instructions. -->
+    <string name="WritePaperPhrase.instruction">Skriv hvert ord ned i rækkefølge og opbevar den et sikkert sted.</string>
+    <!-- button label -->
+    <string name="WritePaperPhrase.next">Næste</string>
+    <!-- button label -->
+    <string name="WritePaperPhrase.previous">Forrige</string>
+    <!-- 1 of 3 -->
+    <string name="WritePaperPhrase.step">%1$d af %2$d</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">Andet</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">Administrer Tegnebøger</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">Menu</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">Køb</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">Køb og sælg</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">Scan QR-kode</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">Synkronisering mislykkedes</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">Synkroniseret via %1$s</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">%1$s da de blev sendt, %2$s nu</string>
 </resources>
