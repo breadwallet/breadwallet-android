@@ -290,7 +290,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 byte[] scriptPubKey = TypesConverter.hexToBytes(obj.getString("scriptPubKey"));
                 long amount = obj.getLong("satoshis");
                 totalAmount += amount;
-                BRCoreTransactionInput in = new BRCoreTransactionInput(txid, vout, amount, scriptPubKey, new byte[]{}, -1);
+                BRCoreTransactionInput in = new BRCoreTransactionInput(txid, vout, amount, scriptPubKey, new byte[]{}, new byte[]{}, -1);
                 transaction.addInput(in);
             }
 

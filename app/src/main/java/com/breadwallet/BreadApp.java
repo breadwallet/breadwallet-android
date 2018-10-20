@@ -36,6 +36,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
+import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
@@ -225,7 +226,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static synchronized String generateWalletId() {
         try {
             // Retrieve the ETH address since the wallet id is based on this.
-            String address = WalletEthManager.getInstance(mInstance).getAddress();
+            String address = WalletEthManager.getInstance(mInstance).getAddress(mInstance);
 
             // Remove the first 2 characters i.e. 0x
             String rawAddress = address.substring(2, address.length());
@@ -338,14 +339,13 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         }
                     }
                 });
-
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         TokenUtil.fetchTokensFromServer(mInstance);
                     }
                 });
-
+                APIClient.getInstance(this).updatePlatform(this);
                 break;
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");

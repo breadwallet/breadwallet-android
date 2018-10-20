@@ -781,7 +781,7 @@ public final class MessageExchangeService extends JobIntentService {
             responseBuilder.setStatus(Protos.Status.REJECTED)
                     .setError(Protos.Error.SCOPE_UNKNOWN);
         } else {
-            String address = walletManager.getAddress();
+            String address = walletManager.getAddress(this);
             if (address == null) {
                 responseBuilder.setStatus(Protos.Status.REJECTED)
                         .setError(Protos.Error.NO_ADDRESS_FOUND);

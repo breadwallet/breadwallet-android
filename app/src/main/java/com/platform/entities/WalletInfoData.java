@@ -25,18 +25,19 @@ package com.platform.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletInfo {
+public class WalletInfoData {
 
-    /**WalletInfo:
-
-     Key: “wallet-info”
-
-     {
-        “classVersion”: 2, //used for versioning the schema
-        “creationDate”: 123475859, //Unix timestamp
-        “name”: “My Bread”,
-        “currentCurrency”: “USD”
-     }
+    /**
+     * WalletInfoData:
+     * <p>
+     * Key: “wallet-info”
+     * <p>
+     * {
+     * “classVersion”: 2, //used for versioning the schema
+     * “creationDate”: 123475859, //Unix timestamp
+     * “name”: “My Bread”,
+     * “currentCurrency”: “USD”
+     * }
      */
 
     public int classVersion;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -72,7 +73,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
         String currencyCode = tokenWallet.getSymbol();
         uiConfig = new WalletUiConfiguration(TokenUtil.getTokenStartColor(currencyCode), TokenUtil.getTokenEndColor(currencyCode), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-        mAddress = mWalletEthManager.getAddress();
+        mAddress = mWalletEthManager.getAddress(null);
     }
 
     private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, BREthereumToken token) {

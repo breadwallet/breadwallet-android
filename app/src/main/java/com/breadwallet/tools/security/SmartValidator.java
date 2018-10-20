@@ -89,16 +89,6 @@ public class SmartValidator {
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }
 
-    public static boolean checkFirstAddress(Activity app, byte[] mpk) {
-        String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
-
-        String generatedAddress = new BRCoreMasterPubKey(mpk, false).getPubKeyAsCoreKey().address();
-        if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
-            Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
-        }
-        return addressFromPrefs.equals(generatedAddress);
-    }
-
     public static String cleanPaperKey(Context activity, String phraseToCheck) {
         return Normalizer.normalize(phraseToCheck.replace("　", " ")
                 .replace("\n", " ").trim().replaceAll(" +", " "), Normalizer.Form.NFKD);

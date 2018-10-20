@@ -12,6 +12,7 @@ import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ import java.util.List;
 public class CurrencySettingsActivity extends BaseSettingsActivity {
 
     private BaseTextView mTitle;
-    private ListView listView;
-    public List<BRSettingsItem> items;
+    private ListView mListView;
+    public List<BRSettingsItem> mItems;
 
     @Override
     public int getLayoutId() {
@@ -40,7 +41,7 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitle = findViewById(R.id.title);
-        listView = findViewById(R.id.settings_list);
+        mListView = findViewById(R.id.settings_list);
 
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
@@ -50,15 +51,17 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (items == null)
-            items = new ArrayList<>();
-        items.clear();
 
-        items.addAll(WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().getSettingsList());
+        if (mItems == null) {
+            mItems = new ArrayList<>();
+        }
+        mItems.clear();
+        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        mItems.addAll(walletManager.getSettingsConfiguration().getSettingsList());
         View view = new View(this);
-        listView.addFooterView(view, null, true);
-        listView.addHeaderView(view, null, true);
-        listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
+        mListView.addFooterView(view, null, true);
+        mListView.addHeaderView(view, null, true);
+        mListView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, mItems));
     }
 
     @Override
