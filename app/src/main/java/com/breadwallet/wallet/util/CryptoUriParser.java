@@ -209,8 +209,10 @@ public class CryptoUriParser {
         return obj;
     }
 
-    private static boolean tryBreadUrl(Context app, String url) {
-        if (Utils.isNullOrEmpty(url)) return false;
+    private static boolean tryBreadUrl(Context context, String url) {
+        if (Utils.isNullOrEmpty(url)) {
+            return false;
+        }
 
         String tmp = cleanUrl(url);
 
@@ -225,20 +227,22 @@ public class CryptoUriParser {
 
             u = Uri.parse(scheme + "://" + schemeSpecific);
 
-            BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+            BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
 
             String host = u.getHost();
-            if (Utils.isNullOrEmpty(host)) return false;
+            if (Utils.isNullOrEmpty(host)) {
+                return false;
+            }
 
             switch (host) {
                 case "scanqr":
-                    UiUtils.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner((Activity) context, BRConstants.SCANNER_REQUEST);
                     break;
                 case "addressList":
                     //todo implement
                     break;
                 case "address":
-                    BRClipboardManager.putClipboard(app, wm.decorateAddress(wm.getAddress()));
+                    BRClipboardManager.putClipboard(context, wm.decorateAddress(wm.getAddress(context)));
 
                     break;
             }
@@ -294,17 +298,16 @@ public class CryptoUriParser {
     }
 
     public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String
-            addr, BigDecimal cryptoAmount, String label, String message, String rURL) {
+            address, BigDecimal cryptoAmount, String label, String message, String rURL) {
         String iso = wm.getIso();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
-        String cleanAddress = addr;
-        if (addr.contains(":")) {
-            cleanAddress = addr.split(":")[1];
+        if (address.contains(":")) {
+            address = address.split(":")[1];
         }
         builder = builder.scheme(walletScheme);
-        if (!Utils.isNullOrEmpty(cleanAddress)) {
-            builder = builder.appendPath(cleanAddress);
+        if (!Utils.isNullOrEmpty(address)) {
+            builder = builder.appendPath(address);
         }
         if (cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
             if (iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {

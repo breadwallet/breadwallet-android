@@ -618,6 +618,25 @@
     <string name="Settings.faceIdLimit">Face ID Spending Limit</string>
     <!-- Redeem the funds stored on this private key. -->
     <string name="Settings.importTitle">Redeem Private Key</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">View Legacy Receive Address</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Receive Bitcoin</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">Only send Bitcoin (BTC) to this address. Any other asset sent to this address will be lost permanently.</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Enable Segwit</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">Enabling SegWit is an irreversible feature.
+Are you sure you want to continue?</string>
+    <!-- Segwit enabled confirmation text 1. -->
+    <string name="Segwit.ConfirmationInstructionsPart1">You have enabled SegWit!</string>
+    <!-- Segwit enabled confirmation text 2. -->
+    <string name="Segwit.ConfirmationInstructionsPart2">Thank you for helping move bitcoin forward.</string>
+    <!-- Segwit description . -->
+    <string name="Segwit.description">SegWit support is still a beta feature.\n\nOnce SegWit is enabled, it will not be possible
+to disable it. You will be able to find the legacy address under Settings. \n\nSome third-party services, including crypto trading, may be unavailable to users who have enabled SegWit. In case of emergency, you will be able to generate a lecacy address from Preferences > Bitcoin Settings. \n\nSegWit will automatically be enabled for all
+users in a future update. </string>
     <!-- Manage settings section header -->
     <string name="Settings.manage">Manage</string>
     <!-- Notifications label -->

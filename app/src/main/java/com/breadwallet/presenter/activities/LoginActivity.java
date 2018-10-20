@@ -131,7 +131,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
                 WalletsMaster.getInstance(LoginActivity.this).initLastWallet(LoginActivity.this);
             }
         });
-        APIClient.getInstance(this).updatePlatform(this);
 
     }
 
