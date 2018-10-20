@@ -377,7 +377,10 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
-                            paymentRequest.getTransactionFee(), paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "", paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter), String.valueOf(tokenPurchaseAmount));
+                            paymentRequest.getTransactionFee(),
+                            paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "",
+                            paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter),
+                            String.valueOf(tokenPurchaseAmount));
 
                     Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
@@ -394,7 +397,10 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
-                            callRequest.getTransactionFee(), callRequest.getAbi(), callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "", callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter), String.valueOf(purchaseAmount));
+                            callRequest.getTransactionFee(), callRequest.getAbi(),
+                            callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "",
+                            callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter),
+                            String.valueOf(purchaseAmount));
 
                     Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
@@ -796,7 +802,7 @@ public final class MessageExchangeService extends JobIntentService {
     }
 
     /**
-     * Process the {@link MessageType.PAYMENT_REQUEST} that was sent by the remote entity to request a payment
+     * Process the {@link MessageType#PAYMENT_REQUEST} that was sent by the remote entity to request a payment
      * from the local entity.
      * <p>
      * This must be called after the user has been prompted to confirm the request.
@@ -821,12 +827,18 @@ public final class MessageExchangeService extends JobIntentService {
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
 
-                        // Add token to home screen once request has been approved
-                        addNewTokenToTokenList(hash, requestMetaData);
+                        // Add token to home screen once request has been approved.
+                        addNewTokenToTokenList(requestMetaData);
+
+                        // Log transaction ACCEPTED event to me/metrics.
+                        logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
 
                     } else {
                         responseBuilder.setStatus(Protos.Status.REJECTED)
                                 .setError(Protos.Error.TRANSACTION_FAILED);
+
+                        // Log transaction REJECED event to me/metrics.
+                        logCallRequestResponse(hash, requestMetaData, Protos.Status.REJECTED, Protos.Error.TRANSACTION_FAILED);
                     }
                     ByteString messageResponse = responseBuilder.build().toByteString();
                     sendResponse(requestMetaData, messageResponse);
@@ -839,11 +851,14 @@ public final class MessageExchangeService extends JobIntentService {
                     .setError(Protos.Error.USER_DENIED);
             ByteString messageResponse = responseBuilder.build().toByteString();
             sendResponse(requestMetaData, messageResponse);
+
+            // Log transaction REJECTED event to me/metrics.
+            logCallRequestResponse(null, requestMetaData, Protos.Status.REJECTED, Protos.Error.USER_DENIED);
         }
     }
 
     /**
-     * Process the {@link MessageType.CALL_REQUEST} that was sent by the remote entity to request a call
+     * Process the {@link MessageType#CALL_REQUEST} that was sent by the remote entity to request a call
      * from the local entity.
      * <p>
      * This must be called after the user has been prompted to confirm the request.
@@ -876,13 +891,19 @@ public final class MessageExchangeService extends JobIntentService {
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
 
-                        // Add token to home screen once request has been approved
-                        addNewTokenToTokenList(hash, requestMetaData);
+                        // Add token to home screen once request has been approved.
+                        addNewTokenToTokenList(requestMetaData);
+
+                        // Log transaction ACCEPTED event to me/metrics.
+                       logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
 
                     } else {
 
                         responseBuilder.setStatus(Protos.Status.REJECTED)
                                 .setError(Protos.Error.TRANSACTION_FAILED);
+
+                        // Log transaction REJECTED event to me/metrics.
+                        logCallRequestResponse(hash, requestMetaData, Protos.Status.REJECTED, Protos.Error.TRANSACTION_FAILED);
                     }
                     ByteString messageResponse = responseBuilder.build().toByteString();
                     sendResponse(requestMetaData, messageResponse);
@@ -894,17 +915,41 @@ public final class MessageExchangeService extends JobIntentService {
                     .setError(Protos.Error.USER_DENIED);
             ByteString messageResponse = responseBuilder.build().toByteString();
             sendResponse(requestMetaData, messageResponse);
+
+            // Log transaction REJECTED event to me/metrics.
+            logCallRequestResponse(null, requestMetaData, Protos.Status.REJECTED, Protos.Error.USER_DENIED);
         }
     }
 
+    /**
+     * Log the response to a payment/call request to the BRD User Metrics endpoint me/metrics.
+     *
+     * @param transactionHash  The transaction hash that is returned if successful.
+     * @param requestMetaData The payment/call request metadata that contains details of the request.
+     * @param status The status of the request response (ACCEPTED, REJECTED, UNKNOWN).
+     * @param error  Optional error that is returned if the transaction failed for some reason.
+     */
+    private void logCallRequestResponse(String transactionHash, RequestMetaData requestMetaData, Protos.Status status, Protos.Error error) {
+        UserMetricsUtil.logCallRequestResponse(status.getNumber(),
+                requestMetaData.getId(),
+                SERVICE_PWB,
+                transactionHash,
+                requestMetaData.getCurrencyCode(),
+                requestMetaData.getAmount(),
+                WalletEthManager.getInstance(this).getAddress(this),
+                requestMetaData.getTokenSymbol(),
+                requestMetaData.getTokenAmount(),
+                requestMetaData.getAddress(),
+                System.currentTimeMillis(),
+                error != null ? error.getNumber() : null);
+    }
 
     /**
      * Adds the token from a payment or call request to the token list and adds it to the home screen.
      *
      * @param requestMetaData The payment/call request metadata that contains details on the new token.
-     * @param txHash The hash of the token purchase transaction that was just made.
      */
-    private void addNewTokenToTokenList(String txHash, RequestMetaData requestMetaData) {
+    private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
 
         if (requestMetaData != null) {
             if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getTokenSymbol())) {
@@ -923,7 +968,6 @@ public final class MessageExchangeService extends JobIntentService {
                 KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
                 WalletsMaster.getInstance(this).updateWallets(this);
 
-                UserMetricsUtil.logCallRequestResponse(txHash, requestMetaData.getCurrencyCode(), requestMetaData.getAmount(), requestMetaData.getAddress(), item.symbol, String.valueOf(requestMetaData.getTokenAmount()), String.valueOf(System.currentTimeMillis()));
             }
         }
     }
