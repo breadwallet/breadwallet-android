@@ -33,6 +33,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -80,13 +81,18 @@ public final class UserMetricsUtil {
     private static final String FIELD_ADVERTISING_ID = "advertising_id";
 
     /* Various field keys and values for data field of pigeon transaction metric */
+    private static final String FIELD_STATUS = "status";  // Version 2
+    private static final String FIELD_IDENTIFIER = "identifier"; // Version 2
+    private static final String FIELD_SERVICE = "service"; // Version 2
     private static final String FIELD_TRANSACTION_HASH = "transactionHash";
     private static final String FIELD_FROM_CURRENCY = "fromCurrency";
-    private static final String FIELD_TIMESTAMP =  "timestamp";
     private static final String FIELD_FROM_AMOUNT = "fromAmount";
     private static final String FIELD_FROM_ADDRESS = "fromAddress";
     private static final String FIELD_TO_CURRENCY = "toCurrency";
     private static final String FIELD_TO_AMOUNT = "toAmount";
+    private static final String FIELD_TO_ADDRESS = "toAddress";
+    private static final String FIELD_TIMESTAMP = "timestamp";
+    private static final String FIELD_ERROR = "error";  // Version 2
 
     private UserMetricsUtil() {
     }
@@ -133,22 +139,62 @@ public final class UserMetricsUtil {
         }
     }
 
-    public static void logCallRequestResponse(String transactionHash, String fromCurrency, String fromAmount, String fromAddress, String toCurrency, String toAmount, String timestamp){
-
+    public static void logCallRequestResponse(int status, String identifier, String service, String transactionHash,
+                                              String fromCurrency, String fromAmount, String fromAddress,
+                                              String toCurrency, String toAmount, String toAddress, long timestamp,
+                                              Integer errorCode) {
         try {
             JSONObject data = new JSONObject();
-            data.put(FIELD_TRANSACTION_HASH, transactionHash);
-            data.put(FIELD_FROM_CURRENCY, fromCurrency);
-            data.put(FIELD_FROM_AMOUNT, fromAmount);
-            data.put(FIELD_FROM_ADDRESS, fromAddress);
-            data.put(FIELD_TO_CURRENCY, toCurrency);
-            data.put(FIELD_TO_AMOUNT, toAmount);
+
+            data.put(FIELD_STATUS, status);
+
+            // Only include a field if its value is not null
+            if (!Utils.isNullOrEmpty(identifier)) {
+                data.put(FIELD_IDENTIFIER, identifier);
+            }
+
+            if (!Utils.isNullOrEmpty(service)) {
+                data.put(FIELD_SERVICE, service);
+            }
+
+            if (!Utils.isNullOrEmpty(transactionHash)) {
+                data.put(FIELD_TRANSACTION_HASH, transactionHash);
+            }
+
+            if (!Utils.isNullOrEmpty(fromCurrency)) {
+                data.put(FIELD_FROM_CURRENCY, fromCurrency);
+            }
+
+            if (!Utils.isNullOrEmpty(fromAmount)) {
+                data.put(FIELD_FROM_AMOUNT, fromAmount);
+            }
+
+            if (!Utils.isNullOrEmpty(fromAddress)) {
+                data.put(FIELD_FROM_ADDRESS, fromAddress);
+            }
+
+            if (!Utils.isNullOrEmpty(toCurrency)) {
+                data.put(FIELD_TO_CURRENCY, toCurrency);
+            }
+
+            if (!Utils.isNullOrEmpty(toAmount)) {
+                data.put(FIELD_TO_AMOUNT, toAmount);
+            }
+
+            if (!Utils.isNullOrEmpty(toAddress)) {
+                data.put(FIELD_TO_ADDRESS, toAddress);
+            }
+
             data.put(FIELD_TIMESTAMP, timestamp);
+
+            if (errorCode != null) {
+                data.put(FIELD_ERROR, errorCode.intValue());
+            }
 
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_PIGEON_TRANSACTION);
             payload.put(FIELD_DATA, data);
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "Error creating call request payload! ", e);
         }
     }
