@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">Bread</string>
+    <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">Blog</string>
     <!-- About screen footer -->
@@ -37,11 +37,13 @@
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
     <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
+    <string name="Alert.keystore.invalidated.android">Your BRD encrypted data was recently invalidated because your Android lock screen was disabled.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStore Error</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">No internet connection found. Check your connection and try again.</string>
+    <!-- Request timed out error message -->
+    <string name="Alert.timedOut">Request timed out. Check your connection and try again.</string>
     <!-- Warning alert title -->
     <string name="Alert.warning">Warning</string>
     <!-- 'the addresses were copied'' Alert title -->
@@ -178,12 +180,18 @@
     <string name="DefaultCurrency.rateLabel">Exchange Rate</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Wallet disabled</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.accountRequest">Request %1$s account information</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.callRequest">Request %1$s smart contract call</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.paymentRequest">Request %1$s payment</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableMessage">This device isn\'t configured to send email with the iOS mail app.</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">Email Unavailable</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">Bread can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">BRD can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">This device isn\'t configured to send messages.</string>
     <!-- Messaging unavailable alert title -->
@@ -224,10 +232,16 @@
     <string name="FeeSelector.title">Processing Speed</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Admin</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">Buy</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">Menu</string>
     <!-- This section lists the users wallets -->
     <string name="HomeScreen.portfolio">Wallets</string>
     <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
     <string name="HomeScreen.totalAssets">Total Assets</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">Trade</string>
     <!-- Checking private key balance progress view text -->
     <string name="Import.checking">Checking private key balance...</string>
     <!-- Sweep private key confirmation message -->
@@ -280,6 +294,22 @@
     <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin. Please only use BRD on a non-jailbroken device.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">WARNING</string>
+    <!-- Wipe wallet button -->
+    <string name="JailbreakWarnings.wipe">Wipe</string>
+    <!-- Approve link wallet button label -->
+    <string name="LinkWallet.approve">Approve</string>
+    <!-- Decline link wallet button label -->
+    <string name="LinkWallet.decline">Decline</string>
+    <!-- Link Wallet view dislaimer footer -->
+    <string name="LinkWallet.disclaimer">External apps cannot send money without approval from this device</string>
+    <!-- Link Wallet view title above domain list -->
+    <string name="LinkWallet.domainTitle">Note: ONLY interact with this app when on one of the following domains</string>
+    <!-- Link wallet logo footer text -->
+    <string name="LinkWallet.logoFooter">Secure Checkout</string>
+    <!-- Link Wallet view title above permissions list -->
+    <string name="LinkWallet.permissionsTitle">This app will be able to:</string>
+    <!-- Link Wallet view title -->
+    <string name="LinkWallet.title">Link Wallet</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">Location services are disabled.</string>
     <!-- No permissions for location services -->
@@ -296,6 +326,10 @@
     <string name="MenuButton.addWallet">Add Wallet</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">Lock Wallet</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">Manage Wallets</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">Scan QR Code</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">Security Settings</string>
     <!-- Menu button title -->
@@ -328,6 +362,10 @@
     <string name="NodeSelector.statusLabel">Node Connection Status</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Bitcoin Nodes</string>
+    <!-- Eg. Send 1.0Eth to purchase CCC -->
+    <string name="PaymentConfirmation.amountText">Send %1$s to purchase %2$s</string>
+    <!-- Payment confirmation view title -->
+    <string name="PaymentConfirmation.title">Confirmation</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">Bad Payment Request</string>
     <!-- Error opening payment protocol file message -->
@@ -386,6 +424,10 @@
     <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
     <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
     <string name="PushNotifications.body">Turn on notifications to receive special messages from BRD in the future.</string>
+    <!-- Push notifications are disabled alert title" -->
+    <string name="PushNotifications.disabled">Notifications Disabled</string>
+    <!-- Push notifications settings instructions -->
+    <string name="PushNotifications.enableInstructions">Turn on notifications in Settings to receive alerts</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">Push Notifications</string>
     <!-- Push notifications are off label -->
@@ -489,9 +531,9 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Balance: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+    <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Permissions\"</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">Bread is not allowed to access the camera</string>
+    <string name="Send.cameraUnavailabeTitle.android">BRD is not allowed to access the camera</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">Go to Settings to allow camera access.</string>
     <!-- Camera not allowed alert title -->
@@ -580,6 +622,8 @@
     <string name="Settings.manage">Manage</string>
     <!-- Notifications label -->
     <string name="Settings.notifications">Notifications</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">Other</string>
     <!-- Preferences settings section header -->
     <string name="Settings.preferences">Preferences</string>
     <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -622,10 +666,14 @@
     <string name="StartViewController.recoverButton">Recover Wallet</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Connecting</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">Sync Failed</string>
     <!-- Syncing view header text -->
     <string name="SyncingView.header">Syncing</string>
     <!-- Retry button label -->
     <string name="SyncingView.retry">Retry</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">Synced through %1$s</string>
     <!-- Syncing view syncing state header text -->
     <string name="SyncingView.syncing">Syncing</string>
     <!-- 6 d (6 days) -->
@@ -638,7 +686,7 @@
     <string name="TimeSince.seconds">%1$s s</string>
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">Add</string>
-    <!-- Add Wallets    [to your home screen] -->
+    <!-- Add Wallets  [to your home screen] -->
     <string name="TokenList.addTitle">Add Wallets</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">Hide</string>
@@ -730,6 +778,8 @@
     <string name="TransactionDetails.amountHeader">Amount</string>
     <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
     <string name="TransactionDetails.amountWhenReceived">%1$s when received, %2$s now</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">%1$s when sent, %2$s now</string>
     <!-- Block height label -->
     <string name="TransactionDetails.blockHeightLabel">Confirmed in Block</string>
     <!-- Memo section header -->
@@ -759,13 +809,17 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">Moved %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Moved <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.movedAmountDescription">
+        <![CDATA[Moved <b>%1$s</b>]]>
+    </string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Not Confirmed</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Received %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Received <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.receivedAmountDescription">
+        <![CDATA[Received <b>%1$s</b>]]>
+    </string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">received from %1$s</string>
     <!-- received via <address> -->
@@ -777,7 +831,9 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Sent %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Sent <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.sentAmountDescription">
+        <![CDATA[Sent <b>%1$s</b>]]>
+    </string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Show Details</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -873,7 +929,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">Updating...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet has changed its name to BRD, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
+    <string name="Welcome.body">BRDwallet has changed its name to BRD, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">Welcome to BRD!</string>
     <!-- Wipe wallet alert message -->
@@ -904,49 +960,6 @@
     <string name="WritePaperPhrase.previous">Previous</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-    <!-- Section header for "other settings". -->
-    <string name="Settings.other">Other</string>
-    <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">Manage Wallets</string>
-    <!-- Menu button on the home screen toolbar -->
-    <string name="HomeScreen.menu">Menu</string>
-    <!-- Home screen menu button to buy some bitcoin -->
-    <string name="HomeScreen.buy">Buy</string>
-    <!-- (Tap here to) trade (your assets for other assets) -->
-    <string name="HomeScreen.trade">Trade</string>
-    <!-- (press here to) scan (a) QR code -->
-    <string name="MenuButton.scan">Scan QR Code</string>
-    <!-- The sync has failed (to complete) -->
-    <string name="SyncingView.failed">Sync Failed</string>
-    <!-- "eg. Synced through <Jan 12, 2015> -->
-    <string name="SyncingView.syncedThrough">Synced through %1$s</string>
-    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-    <string name="TransactionDetails.amountWhenSent">%1$s when sent, %2$s now</string>
     <!-- Wallet unlocked message -->
     <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
-    <!-- Approve link wallet button label -->
-    <string name="LinkWallet.approve">Approve</string>
-    <!-- Decline link wallet button label -->
-    <string name="LinkWallet.decline">Decline</string>
-    <!-- Link Wallet view title -->
-    <string name="LinkWallet.title">Link Wallet</string>
-    <!-- Link Wallet view title above domain list -->
-    <string name="LinkWallet.domainTitle">Note: ONLY interact with this app when on one of the following domains</string>
-    <!-- Link Wallet view title above permissions list -->
-    <string name="LinkWallet.permissionsTitle">This app will be able to:</string>
-    <!-- Link Wallet view disclaimer footer -->
-    <string name="LinkWallet.disclaimer">External apps cannot send money without approval from this device</string>
-    <!-- Link wallet logo footer text -->
-    <string name="LinkWallet.logoFooter">Secure Checkout</string>
-    <!-- Payment confirmation view title -->
-    <string name="PaymentConfirmation.title">Confirmation</string>
-    <!-- Eg. Send 1.0Eth to purchase CCC -->
-    <string name="PaymentConfirmation.amountText">Send %1$s to purchase %2$s</string>
-    <!-- Service capabilities description -->
-    <string name="EME.permissions.accountRequest">Request %1$s account information</string>
-    <!-- Service capabilities description -->
-    <string name="EME.permissions.callRequest">Request %1$s smart contract call</string>
-    <!-- Service capabilities description -->
-    <string name="EME.permissions.paymentRequest">Request %1$s payment</string>
-    <string name="Alert.timedOut">Request timed out. Check your connection and try again.</string>
 </resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">Bread</string>
+    <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">Blogg</string>
     <!-- About screen footer -->
-    <string name="About.footer">Skapad av det lokala teamet för Bread. Version %1$s</string>
+    <string name="About.footer">Skapad av det lokala teamet för BRD. Version %1$s Build %2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">Sekretesspolicy</string>
     <!-- About screen reddit label -->
@@ -29,7 +29,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Laddar plånbok</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">Mitt Bread</string>
+    <string name="AccountHeader.defaultWalletName">Mitt BRD</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">Det verkar som att du använder ett tangentbord från tredje part, vilket kan registrera det du skriver och stjäla din kryptonyckel. Byt till Androids standardtangentbord för extra säkerhet.</string>
     <!-- Error alert title -->
@@ -37,11 +37,13 @@
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Det har uppstått ett problem med KeyStore till Android OS. Kontakta support@breadwallet.com</string>
     <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Dina krypterade Bread-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
+    <string name="Alert.keystore.invalidated.android">Dina krypterade BRD-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">KeyStore-fel för Android</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">Ingen anslutning till internet hittades. Kontrollera din anslutning och försök igen.</string>
+    <!-- Request timed out error message -->
+    <string name="Alert.timedOut">Begärde time-out. Kontrollera din anslutning och försök igen.</string>
     <!-- Warning alert title -->
     <string name="Alert.warning">Varning</string>
     <!-- 'the addresses were copied'' Alert title -->
@@ -178,12 +180,18 @@
     <string name="DefaultCurrency.rateLabel">Växelkurs</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Plånbok inaktiverad</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.accountRequest">Begär %1$s betalning</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.callRequest">Begär %1$s smart kontraktsamtal</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.paymentRequest">Begär %1$s kontoinformation</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableMessage">Enheten är inte konfigurerad för att skicka e-post med post-appen i iOS.</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">E-posten är inte tillgänglig</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">Bread kan inte verifieras på grund av en bugg i din version av Android. [Klicka här för mer information.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">BRD kan inte verifieras på grund av en bugg i din version av Android. [Klicka här för mer information.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">Denna enhet är inte konfigurerad för att skicka meddelanden.</string>
     <!-- Messaging unavailable alert title -->
@@ -224,10 +232,16 @@
     <string name="FeeSelector.title">Bearbetningshastighet</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Admin</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">Köpa</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">Meny</string>
     <!-- This section lists the users wallets -->
     <string name="HomeScreen.portfolio">Plånböcker</string>
     <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
     <string name="HomeScreen.totalAssets">totala tillgångar</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">Handla</string>
     <!-- Checking private key balance progress view text -->
     <string name="Import.checking">Kontrollerar privat nyckelsaldo...</string>
     <!-- Sweep private key confirmation message -->
@@ -249,13 +263,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">Privat Nyckel</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">Privata nycklar trycks ofta på papper som en QR-kod och används för att lagra tillgångar offline. Du löser in en privat nyckel för att överföra alla pengar den kontrollerar in i din Bread med en enda transaktion.</string>
+    <string name="Import.message">Privata nycklar trycks ofta på papper som en QR-kod och används för att lagra tillgångar offline. Du löser in en privat nyckel för att överföra alla pengar den kontrollerar in i din BRD med en enda transaktion.</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">Denna privata nyckel är lösenordsskyddad.</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">lösenord</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">Din Bread-plånbok</string>
+    <string name="Import.rightCaption">Din BRD-plånbok</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">Läs av privat nyckel</string>
     <!-- Import wallet success alert title -->
@@ -275,15 +289,31 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">Ignorera</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
+    <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till BRDs nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till BRDs nyckeldata och stjäla dina bitcoin! Använd BRD endast på en säker enhet.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">VARNING</string>
+    <!-- Wipe wallet button -->
+    <string name="JailbreakWarnings.wipe">Töm</string>
+    <!-- Approve link wallet button label -->
+    <string name="LinkWallet.approve">Godkänn</string>
+    <!-- Decline link wallet button label -->
+    <string name="LinkWallet.decline">Avböj</string>
+    <!-- Link Wallet view dislaimer footer -->
+    <string name="LinkWallet.disclaimer">Externa appar kan inte skicka pengar utan godkännande från denna enhet</string>
+    <!-- Link Wallet view title above domain list -->
+    <string name="LinkWallet.domainTitle">OBS: Interagera BARA med denna app från en av följande domäner</string>
+    <!-- Link wallet logo footer text -->
+    <string name="LinkWallet.logoFooter">Säker kassa</string>
+    <!-- Link Wallet view title above permissions list -->
+    <string name="LinkWallet.permissionsTitle">Denna app kommer att kunna:</string>
+    <!-- Link Wallet view title -->
+    <string name="LinkWallet.title">Länka plånbok</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">Platstjänster är inaktiverade.</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">Bread har inte rätt att utnyttja platstjänster</string>
+    <string name="LocationPlugin.notAuthorized">BRD har inte rätt att utnyttja platstjänster</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">Du skapade din plånbok på %1$s</string>
     <!-- Manage wallet description text -->
@@ -296,6 +326,10 @@
     <string name="MenuButton.addWallet">Lägg till plånbok</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">Lås plånbok</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">Hantera plånböcker</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">Skanna QR-kod</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">Säkerhetscenter</string>
     <!-- Menu button title -->
@@ -328,6 +362,10 @@
     <string name="NodeSelector.statusLabel">Nodens anslutningsstatus</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Bitcoin-noder</string>
+    <!-- Eg. Send 1.0Eth to purchase CCC -->
+    <string name="PaymentConfirmation.amountText">Skicka %1$s för att köpa %2$s</string>
+    <!-- Payment confirmation view title -->
+    <string name="PaymentConfirmation.title">Bekräftelse</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">Felaktig utbetalningsbegäran</string>
     <!-- Error opening payment protocol file message -->
@@ -367,7 +405,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">Transaktionen avslogs</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">Hjälp till att förbättra Bread genom att dela dina anonyma data med oss</string>
+    <string name="Prompts.ShareData.body">Hjälp till att förbättra BRD genom att dela dina anonyma data med oss</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">Dela anonyma data</string>
     <!-- Enable touch ID prompt body -->
@@ -381,11 +419,15 @@
     <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
     <string name="Prompts.TouchId.usePin.android">PIN-kod</string>
     <!-- Upgrade PIN prompt body. -->
-    <string name="Prompts.UpgradePin.body">Bread har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
+    <string name="Prompts.UpgradePin.body">BRD har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Uppgradera PIN-kod</string>
     <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">Slå på aviseringar för att få särskilda meddelanden från Bread i framtiden.</string>
+    <string name="PushNotifications.body">Slå på aviseringar för att få särskilda meddelanden från BRD i framtiden.</string>
+    <!-- Push notifications are disabled alert title" -->
+    <string name="PushNotifications.disabled">Meddelanden avaktiverade</string>
+    <!-- Push notifications settings instructions -->
+    <string name="PushNotifications.enableInstructions">Aktivera meddelanden i inställningar för att ta emot larm</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">Push-meddelanden</string>
     <!-- Push notifications are off label -->
@@ -415,7 +457,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Ange ordnyckel</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Återställ Bread med din ordnyckel.</string>
+    <string name="RecoverWallet.intro">Återställ BRD med din ordnyckel.</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">Den ordnyckel du angav är ogiltig. Dubbelkolla varje ord och försök igen.</string>
     <!-- Previous button accessibility label -->
@@ -443,7 +485,7 @@
     <!-- extimated time -->
     <string name="ReScan.body1">20-45 minuter</string>
     <!-- Syncing explanation -->
-    <string name="ReScan.body2">Om en transaktion visar sig som klar i bitcoins nätverk men inte i Bread.</string>
+    <string name="ReScan.body2">Om en transaktion visar sig som klar i bitcoins nätverk men inte i BRD.</string>
     <!-- Syncing explanation -->
     <string name="ReScan.body3">Du får gång på gång ett meddelande som säger att din transaktion avvisades.</string>
     <!-- Start Sync button label -->
@@ -475,11 +517,11 @@
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
     <!-- PIN button description -->
-    <string name="SecurityCenter.pinDescription">Skyddar ditt Bread från obehöriga användare.</string>
+    <string name="SecurityCenter.pinDescription">Skyddar ditt BRD från obehöriga användare.</string>
     <!-- PIN button title -->
     <string name="SecurityCenter.pinTitle">6-siffrig PIN-kod</string>
     <!-- Touch ID button description -->
-    <string name="SecurityCenter.touchIdDescription">Lås enkelt upp ditt Bread och skicka pengar upp till en inställd gräns.</string>
+    <string name="SecurityCenter.touchIdDescription">Lås enkelt upp ditt BRD och skicka pengar upp till en inställd gräns.</string>
     <!-- Touch ID button title -->
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
@@ -489,13 +531,13 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Saldo: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">Tillåt kameraåtkomst under Inställningar &gt; Appar &gt; Bread &gt; Behörigheter</string>
+    <string name="Send.cameraUnavailabeMessage.android">Tillåt kameraåtkomst under Inställningar &gt; Appar &gt; BRD &gt; Behörigheter</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">Bread har inte åtkomst till kameran</string>
+    <string name="Send.cameraUnavailabeTitle.android">BRD har inte åtkomst till kameran</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">Gå till Inställningar för att ge tillgång till kameran.</string>
     <!-- Camera not allowed alert title -->
-    <string name="Send.cameraUnavailableTitle">Bread har inte tillgång till kameran</string>
+    <string name="Send.cameraUnavailableTitle">BRD har inte tillgång till kameran</string>
     <!-- Warning when sending to self. -->
     <string name="Send.containsAddress">Destinationen är din egen adress. Du kan inte skicka till dig själv.</string>
     <!-- Could not create transaction alert title -->
@@ -571,7 +613,7 @@
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">Använd Snabb tillgång</string>
     <!-- Are you enjoying bread alert message body -->
-    <string name="Settings.enjoying">Gillar du Bread?</string>
+    <string name="Settings.enjoying">Gillar du BRD?</string>
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Utgiftsgräns för Face ID</string>
     <!-- Redeem the funds stored on this private key. -->
@@ -580,6 +622,8 @@
     <string name="Settings.manage">Hantera</string>
     <!-- Notifications label -->
     <string name="Settings.notifications">Meddelanden</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">Andra</string>
     <!-- Preferences settings section header -->
     <string name="Settings.preferences">Preferenser</string>
     <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -601,7 +645,7 @@
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">Ta Bort Länken Från Denna Enhet</string>
     <!-- Share data view body -->
-    <string name="ShareData.body">Hjälp till att förbättra Bread genom att dela dina anonyma uppgifter med oss. Detta inbegriper inga ekonomiska uppgifter. Vi respekterar din ekonomiska sekretess.</string>
+    <string name="ShareData.body">Hjälp till att förbättra BRD genom att dela dina anonyma uppgifter med oss. Detta inbegriper inga ekonomiska uppgifter. Vi respekterar din ekonomiska sekretess.</string>
     <!-- Share data header -->
     <string name="ShareData.header">Dela uppgifter?</string>
     <!-- Share data switch label. -->
@@ -609,7 +653,7 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Din ordnyckel    är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+    <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ BRD om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
     <!-- Argument is date -->
@@ -622,10 +666,14 @@
     <string name="StartViewController.recoverButton">Återställ plånbok</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Ansluter</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">Synkronisering misslyckades</string>
     <!-- Syncing view header text -->
     <string name="SyncingView.header">Synkar</string>
     <!-- Retry button label -->
     <string name="SyncingView.retry">Försök igen</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
     <!-- Syncing view syncing state header text -->
     <string name="SyncingView.syncing">Synkroniserar</string>
     <!-- 6 d (6 days) -->
@@ -638,7 +686,7 @@
     <string name="TimeSince.seconds">%1$s s</string>
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">Lägg till</string>
-    <!-- Add Wallets    [to your home screen] -->
+    <!-- Add Wallets  [to your home screen] -->
     <string name="TokenList.addTitle">Lägg till plånböcker</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">Dölj</string>
@@ -657,13 +705,13 @@
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">Fingeravtrycksautentisering har inte aktiverats</string>
     <!-- Touch Id screen label -->
-    <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp Bread och skicka pengar upp till en inställd gräns.</string>
+    <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp BRD och skicka pengar upp till en inställd gräns.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
     <string name="TouchIdSettings.linkText">Sida för utgiftsgräns i Touch ID</string>
     <!-- Spending Limit: b100,000 ($100) -->
     <string name="TouchIdSettings.spendingLimit">Utnyttjandegräns: %1$s (%2$s)</string>
     <!-- Touch id switch label. -->
-    <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för Bread</string>
+    <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för BRD</string>
     <!-- Enable fingerprint for this wallet called Bread -->
     <string name="TouchIdSettings.switchLabel.android">Aktivera fingeravtrycksautentisering</string>
     <!-- Touch ID settings view title -->
@@ -730,6 +778,8 @@
     <string name="TransactionDetails.amountHeader">Belopp</string>
     <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
     <string name="TransactionDetails.amountWhenReceived">%1$s vid mottagande, %2$s nu</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">%1$s när det skickades, %2$s nu</string>
     <!-- Block height label -->
     <string name="TransactionDetails.blockHeightLabel">Bekräftad i block</string>
     <!-- Memo section header -->
@@ -759,13 +809,17 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">Flyttade %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttade <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.movedAmountDescription">
+        <![CDATA[Flyttade <b>%1$s</b>]]>
+    </string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Inte bekräftad</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Mottog %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Tog emot <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.receivedAmountDescription">
+        <![CDATA[Tog emot <b>%1$s</b>]]>
+    </string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">mottaget från %1$s</string>
     <!-- received via <address> -->
@@ -777,7 +831,9 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Skickade %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Skickade <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.sentAmountDescription">
+        <![CDATA[Skickade <b>%1$s</b>]]>
+    </string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Visa detaljer</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -821,7 +877,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">Touchsensor</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">Lås upp Bread.</string>
+    <string name="UnlockScreen.touchIdPrompt">Lås upp BRD.</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">Lås upp din Android-enhet för att fortsätta.</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -831,7 +887,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">Kom ihåg PIN-koden. Om du glömmer den, kommer du inte åt dina bitcoin.</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">Din PIN-kod används för att låsa upp ditt Bread och skicka pengar</string>
+    <string name="UpdatePin.createInstruction">Din PIN-kod används för att låsa upp ditt BRD och skicka pengar</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">Ställ in PIN-kod</string>
     <!-- Update PIN title -->
@@ -865,7 +921,7 @@
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Godkänn denna transaktion</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">Öppna iPhone-appen Bread för att ställa in din plånbok.</string>
+    <string name="Watch.noWalletWarning">Öppna iPhone-appen BRD för att ställa in din plånbok.</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">Avfärda</string>
     <!-- Webview loading error message -->
@@ -873,9 +929,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">Uppdaterar...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+    <string name="Welcome.body">BRDplånboken har bytt namn till BRD, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">Välkommen till Bread!</string>
+    <string name="Welcome.title">Välkommen till BRD!</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">Är du säker på att du vill ta bort den här plånboken.</string>
     <!-- Wipe wallet alert title -->
@@ -889,7 +945,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Ta bort länken till din plånbok för att ta bort den från denna enhet. När länken till denna plånbok är borttagen kan du skapa en ny plånbok eller återställa en annan plånbok på denna enhet.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Du kommer inte längre att kunna komma åt din aktuella Breadplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
+    <string name="WipeWallet.startWarning">Du kommer inte längre att kunna komma åt din aktuella BRDplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Ta Bort Länken Till Plånboken</string>
     <!-- Wipe wallet button title -->
@@ -904,22 +960,4 @@
     <string name="WritePaperPhrase.previous">Föregående</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d av %2$d</string>
-    <!-- Section header for "other settings". -->
-    <string name="Settings.other">Andra</string>
-    <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">Hantera plånböcker</string>
-    <!-- Menu button on the home screen toolbar -->
-    <string name="HomeScreen.menu">Meny</string>
-    <!-- Home screen menu button to buy some bitcoin -->
-    <string name="HomeScreen.buy">Köpa</string>
-    <!-- (Tap here to) trade (your assets for other assets) -->
-    <string name="HomeScreen.trade">Handla</string>
-    <!-- (press here to) scan (a) QR code -->
-    <string name="MenuButton.scan">Skanna QR-kod</string>
-    <!-- The sync has failed (to complete) -->
-    <string name="SyncingView.failed">Synkronisering misslyckades</string>
-    <!-- "eg. Synced through <Jan 12, 2015> -->
-    <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
-    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-    <string name="TransactionDetails.amountWhenSent">%1$s när det skickades, %2$s nu</string>
 </resources>
