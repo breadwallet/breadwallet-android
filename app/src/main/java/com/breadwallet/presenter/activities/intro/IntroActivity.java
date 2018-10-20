@@ -84,14 +84,6 @@ public class IntroActivity extends BRActivity {
             Utils.printPhoneSpecs(this);
         }
 
-        byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
-        if (masterPubKey != null && masterPubKey.length != 0) {
-            if (!SmartValidator.checkFirstAddress(this, masterPubKey)) {
-                Log.e(TAG, "Address is invalid. Clearing all user data now.");
-                BreadApp.clearApplicationUserData();
-            }
-        }
-
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
         findViewById(R.id.splash_screen).setVisibility(View.GONE);

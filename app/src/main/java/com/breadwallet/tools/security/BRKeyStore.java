@@ -35,7 +35,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
-import com.platform.entities.WalletInfo;
+import com.platform.entities.WalletInfoData;
 import com.platform.tools.KVStoreManager;
 
 import junit.framework.Assert;
@@ -597,7 +597,7 @@ public class BRKeyStore {
         }
         if (Utils.isNullOrEmpty(result)) {
             //if none, try getting from KVStore
-            WalletInfo info = KVStoreManager.getWalletInfo(context);
+            WalletInfoData info = KVStoreManager.getWalletInfo(context);
             if (info != null) {
                 int creationDate = info.creationDate;
                 putWalletCreationTime(creationDate, context);

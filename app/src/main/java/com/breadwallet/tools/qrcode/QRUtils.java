@@ -57,7 +57,9 @@ import static android.graphics.Color.WHITE;
 public class QRUtils {
     private static final String TAG = QRUtils.class.getName();
     private static final String SHARE_IMAGE_TYPE = "image/*";
-    private static final String SHARE_SUBJECT = " Address";
+    private static final String SHARE_SUBJECT = "Address";
+    public static final String VIA_EMAIL = "mailto:";
+    public static final String VIA_MESSAGE ="sms:";
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
@@ -156,7 +158,6 @@ public class QRUtils {
             Log.e(TAG, "share: app is null");
             return;
         }
-
 
         File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
         //Uri uri = Uri.fromFile(file);

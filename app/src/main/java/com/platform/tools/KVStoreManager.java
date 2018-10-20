@@ -18,9 +18,10 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.APIClient;
+import com.platform.entities.SegWitMetaData;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.TxMetaData;
-import com.platform.entities.WalletInfo;
+import com.platform.entities.WalletInfoData;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -65,11 +66,13 @@ public class KVStoreManager {
     private static final String TAG = KVStoreManager.class.getName();
 
     private static final String KEY_WALLET_INFO = "wallet-info";
+    private static final String KEY_SEGWIT_META_DATA = "segwit-metadata";
     private static final String KEY_TOKEN_LIST_META_DATA = "token-list-metadata";
     private static final String KEY_PAIRING_META_DATA = "pairing-metadata";
     private static final String KEY_CURSOR = "lastCursor";
     private static final String CLASS_VERSION = "classVersion";
     private static final String CREATION_DATE = "creationDate";
+    private static final String ENABLED_AT_BLOCK_HEIGHT = "enabledAtBlockHeight";
     private static final String NAME = "name";
     private static final String MY_BREAD = "My Bread";
     private static final String ENABLED_CURRENCIES = "enabledCurrencies";
@@ -95,8 +98,8 @@ public class KVStoreManager {
     private KVStoreManager() {
     }
 
-    public static WalletInfo getWalletInfo(Context context) {
-        WalletInfo result = new WalletInfo();
+    public static WalletInfoData getWalletInfo(Context context) {
+        WalletInfoData result = new WalletInfoData();
         byte[] data = getData(context, KEY_WALLET_INFO);
 
         JSONObject json;
@@ -108,7 +111,7 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(data));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getWalletInfo: ", e);
             return null;
         }
 
@@ -118,18 +121,17 @@ public class KVStoreManager {
             result.name = json.getString(NAME);
             Log.d(TAG, "getWalletInfo: " + result.creationDate + ", name: " + result.name);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+            Log.e(TAG, "getWalletInfo: ", e);
         }
 
         Log.e(TAG, "getWalletInfo: " + json);
         return result;
     }
 
-    public static void putWalletInfo(Context app, WalletInfo info) {
-        WalletInfo old = getWalletInfo(app);
+    public static void putWalletInfo(Context app, WalletInfoData info) {
+        WalletInfoData old = getWalletInfo(app);
         if (old == null) {
-            old = new WalletInfo(); //create new one if it's null
+            old = new WalletInfoData(); //create new one if it's null
         }
 
         //add all the params that we want to change
@@ -160,8 +162,7 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putWalletInfo: FAILED to create json");
+            Log.e(TAG, "putWalletInfo: ", e);
             return;
         }
 
@@ -190,7 +191,7 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(data));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getPairingMetadata: ", e);
             return null;
         }
 
@@ -209,8 +210,7 @@ public class KVStoreManager {
             created = json.getLong(CREATED);
             returnURl = json.getString(RETURN_URL);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getPairingMetadata: FAILED to get json value");
+            Log.e(TAG, "getPairingMetadata: ", e);
         }
         Log.e(TAG, "getPairingMetadata: " + key);
         String hexPubKey = BRCoreKey.encodeHex(Base64.decode(remotePubKey, Base64.NO_WRAP));
@@ -234,8 +234,7 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putPairingMetadata: FAILED to create json");
+            Log.e(TAG, "putPairingMetadata: ", e);
             return;
         }
 
@@ -263,7 +262,7 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(data));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getLastCursor: ", e);
             return null;
         }
 
@@ -272,15 +271,13 @@ public class KVStoreManager {
         try {
             cursor = json.getString(CURSOR);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getLastCursor: FAILED to get json value");
+            Log.e(TAG, "getLastCursor: ", e);
         }
         Log.e(TAG, "getLastCursor: " + KEY_CURSOR);
         return cursor;
     }
 
     public static void putLastCursor(Context app, String lastCursor) {
-
         JSONObject obj = new JSONObject();
         byte[] result;
         try {
@@ -288,8 +285,7 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putLastCursor: FAILED to create json");
+            Log.e(TAG, "putLastCursor: ", e);
             return;
         }
 
@@ -305,6 +301,57 @@ public class KVStoreManager {
 
     }
 
+    /* unused code
+    public static SegWitMetaData getSegwit(Context context) {
+        JSONObject json;
+        byte[] data = getData(context, KEY_SEGWIT_META_DATA);
+        try {
+            if (data == null) {
+                Log.e(TAG, "getSegwit: data value is null");
+                return null;
+            }
+            json = new JSONObject(new String(data));
+        } catch (JSONException e) {
+            Log.e(TAG, "getSegwit: ", e);
+            return null;
+        }
+
+        int classVersion = 0;
+        int enabledAtBlockHeight = 0;
+
+        try {
+            classVersion = json.getInt(CLASS_VERSION);
+            enabledAtBlockHeight = json.getInt(ENABLED_AT_BLOCK_HEIGHT);
+        } catch (JSONException e) {
+            Log.e(TAG, "getSegwit: ", e);
+        }
+        Log.d(TAG, "getSegwit: " + KEY_SEGWIT_META_DATA);
+        return new SegWitMetaData(classVersion, enabledAtBlockHeight);
+    }
+
+    public static void putSegwit(Context app, SegWitMetaData segwitData) {
+        JSONObject obj = new JSONObject();
+        byte[] result;
+        try {
+            obj.put(CLASS_VERSION, segwitData.getClassVersion());
+            obj.put(ENABLED_AT_BLOCK_HEIGHT, segwitData.getEnabledAtBlockHeight());
+            result = obj.toString().getBytes();
+
+        } catch (JSONException e) {
+            Log.e(TAG, "putSegwit: ", e);
+            return;
+        }
+
+        if (result.length == 0) {
+            Log.e(TAG, "putSegwit: FAILED: result is empty");
+            return;
+        }
+        CompletionObject completionObject = setData(app, result, KEY_SEGWIT_META_DATA);
+        if (completionObject != null && completionObject.err != null) {
+            Log.e(TAG, "putSegwit: Error setting value for key: " + KEY_SEGWIT_META_DATA + ", err: " + completionObject.err);
+        }
+    }
+*/
     public static synchronized void putTokenListMetaData(Context app, TokenListMetaData md) {
         TokenListMetaData old = getTokenListMetaData(app);
         if (old == null) {
@@ -335,8 +382,7 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putTokenListMetaData: FAILED to create json");
+            Log.e(TAG, "putTokenListMetaData: ", e);
             return;
         }
 
@@ -365,7 +411,7 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(data));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getTokenListMetaData: ", e);
             return null;
         }
 
@@ -377,8 +423,7 @@ public class KVStoreManager {
             List<TokenListMetaData.TokenInfo> hiddenCurrencies = jsonToMetaData(json.getJSONArray(HIDDEN_CURRENCIES));
             result = new TokenListMetaData(enabledCurrencies, hiddenCurrencies);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getTokenListMetaData: FAILED to get json value");
+            Log.e(TAG, "getTokenListMetaData: ", e);
         }
 
         return result;
@@ -487,8 +532,7 @@ public class KVStoreManager {
                 result.deviceId = json.getString(DEVICE_ID);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getTxMetaData: FAILED to get json value");
+            Log.e(TAG, "valueToMetaData: ", e);
         }
         return result;
     }
@@ -573,8 +617,7 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putTxMetaData: FAILED to create json");
+            Log.e(TAG, "putTxMetaData: ", e);
             return;
         }
 

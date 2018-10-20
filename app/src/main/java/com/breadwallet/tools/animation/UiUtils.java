@@ -34,6 +34,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
@@ -47,6 +48,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 
 /**
  * BreadWallet
@@ -241,7 +243,7 @@ public class UiUtils {
             return;
         fragmentReceive = new FragmentReceive();
         Bundle args = new Bundle();
-        args.putBoolean("receive", isReceive);
+        args.putBoolean(EXTRA_RECEIVE, isReceive);
         fragmentReceive.setArguments(args);
 
         app.getSupportFragmentManager().beginTransaction()
@@ -249,6 +251,23 @@ public class UiUtils {
                 .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
                 .addToBackStack(FragmentReceive.class.getName()).commit();
 
+    }
+
+    public static void showLegacyAddressFragment(FragmentActivity fragmentActivity) {
+        if (fragmentActivity != null) {
+            FragmentShowLegacyAddress showLegacyAddress = (FragmentShowLegacyAddress) fragmentActivity.getSupportFragmentManager()
+                    .findFragmentByTag(FragmentShowLegacyAddress.class.getName());
+            if (showLegacyAddress == null || !showLegacyAddress.isAdded()) {
+                showLegacyAddress = new FragmentShowLegacyAddress();
+
+                fragmentActivity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                        .add(android.R.id.content, showLegacyAddress, FragmentShowLegacyAddress.class.getName())
+                        .addToBackStack(FragmentShowLegacyAddress.class.getName()).commit();
+            }
+        } else {
+            Log.e(TAG, "showLegacyAddressFragment: fragmentActivity is null.");
+        }
     }
 
     public static boolean isClickAllowed() {
@@ -261,8 +280,9 @@ public class UiUtils {
     }
 
     public static void killAllFragments(Activity app) {
-        if (app != null && !app.isDestroyed())
+        if (app != null && !app.isDestroyed()) {
             app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {

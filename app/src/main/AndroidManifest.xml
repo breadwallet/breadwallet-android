@@ -161,13 +161,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.PaperKeyActivity"
-
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.settings.SpendLimitActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+          android:name=".presenter.activities.settings.SegWitActivity"
+          android:launchMode="singleTask"
+          android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.PaperKeyProveActivity"
             android:launchMode="singleTask"

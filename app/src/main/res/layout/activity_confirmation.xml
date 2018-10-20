@@ -17,7 +17,6 @@
             android:background="@color/primary_background"
             android:visibility="invisible">
 
-
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/header_title"
                 android:layout_width="wrap_content"
