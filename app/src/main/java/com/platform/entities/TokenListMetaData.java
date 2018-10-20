@@ -4,6 +4,9 @@ package com.platform.entities;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +37,9 @@ import java.util.List;
  */
 public class TokenListMetaData {
     /**
-     * WalletInfo:
+     * TokenListMetaData:
      * <p>
-     * Key: “wallet-info”
+     * Key: “token-list-metadata”
      * <p>
      * {
      * “classVersion”: 2, //used for versioning the schema
@@ -55,51 +58,56 @@ public class TokenListMetaData {
 
         if (this.enabledCurrencies == null) {
             this.enabledCurrencies = new ArrayList<>();
-            this.enabledCurrencies.add(new TokenInfo("BTC", false, null));
-            this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
-            this.enabledCurrencies.add(new TokenInfo("ETH", false, null));
+            this.enabledCurrencies.add(new TokenInfo(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, false, null));
+            this.enabledCurrencies.add(new TokenInfo(WalletBchManager.BITCASH_CURRENCY_CODE, false, null));
+            this.enabledCurrencies.add(new TokenInfo(WalletEthManager.ETH_CURRENCY_CODE, false, null));
         }
         if (this.hiddenCurrencies == null) this.hiddenCurrencies = new ArrayList<>();
     }
 
     public synchronized boolean isCurrencyHidden(String symbol) {
-        if (hiddenCurrencies == null || hiddenCurrencies.size() == 0) return false;
-        for (TokenInfo info : hiddenCurrencies) {
-            if (info.symbol.equalsIgnoreCase(symbol)) return true;
-        }
-        return false;
-
-    }
-
-
-    public synchronized void showCurrency(String symbol) {
-        if (hiddenCurrencies == null) return;
-        for (int i = 0; i < hiddenCurrencies.size(); i++) {
-
-            TokenInfo info = hiddenCurrencies.get(i);
-
-            if (info.symbol.equalsIgnoreCase(symbol)) {
-                hiddenCurrencies.remove(info);
+        if (hiddenCurrencies != null && hiddenCurrencies.size() != 0) {
+            for (TokenInfo info : hiddenCurrencies) {
+                if (info.symbol.equalsIgnoreCase(symbol)) {
+                    return true;
+                }
             }
         }
+        return false;
+    }
 
+    public synchronized void showCurrency(String symbol) {
+        if (hiddenCurrencies != null) {
+            for (int i = 0; i < hiddenCurrencies.size(); i++) {
 
+                TokenInfo info = hiddenCurrencies.get(i);
+
+                if (info.symbol.equalsIgnoreCase(symbol)) {
+                    hiddenCurrencies.remove(info);
+                }
+            }
+        }
     }
 
     public boolean isCurrencyEnabled(String symbol) {
-        if (enabledCurrencies == null || enabledCurrencies.size() == 0) return false;
-        for (TokenInfo info : enabledCurrencies)
-            if (info.symbol.equalsIgnoreCase(symbol)) return true;
+        if (enabledCurrencies != null && enabledCurrencies.size() != 0) {
+            for (TokenInfo info : enabledCurrencies) {
+                if (info.symbol.equalsIgnoreCase(symbol)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     public synchronized void disableCurrency(String symbol) {
-        if (enabledCurrencies == null || enabledCurrencies.size() == 0) return;
-        for (int i = 0; i < enabledCurrencies.size(); i++) {
-            TokenInfo info = enabledCurrencies.get(i);
-
-            if (info.symbol.equalsIgnoreCase(symbol))
-                enabledCurrencies.remove(info);
+        if (enabledCurrencies != null && enabledCurrencies.size() != 0) {
+            for (int i = 0; i < enabledCurrencies.size(); i++) {
+                TokenInfo info = enabledCurrencies.get(i);
+                if (info.symbol.equalsIgnoreCase(symbol)) {
+                    enabledCurrencies.remove(info);
+                }
+            }
         }
     }
 
@@ -119,6 +127,5 @@ public class TokenListMetaData {
             return erc20 ? symbol + ":" + contractAddress : symbol;
         }
     }
-
 
 }

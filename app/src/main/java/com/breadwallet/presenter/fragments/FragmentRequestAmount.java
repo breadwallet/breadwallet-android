@@ -297,7 +297,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 final BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
                 wallet.refreshAddress(getActivity());
-                mReceiveAddress = wallet.getAddress();
+                mReceiveAddress = wallet.getAddress(getContext());
 
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override

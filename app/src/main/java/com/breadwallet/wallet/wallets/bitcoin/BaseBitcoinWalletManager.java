@@ -165,7 +165,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         return arr;
     }
 
-    protected void setSettingsConfig(WalletSettingsConfiguration settingsConfig) {
+    public void setSettingsConfig(WalletSettingsConfiguration settingsConfig) {
         this.mSettingsConfig = settingsConfig;
     }
 
@@ -419,15 +419,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public void refreshAddress(Context app) {
-        BRCoreAddress address = getWallet().getReceiveAddress();
-        if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(getTag(), "refreshAddress: WARNING, retrieved address:" + address);
-        }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
-    }
-
-    @Override
     public void refreshCachedBalance(Context context) {
         BigDecimal balance = new BigDecimal(getWallet().getBalance());
         onBalanceChanged(context, balance);
@@ -567,8 +558,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public String getAddress() {
-        return BRSharedPrefs.getReceiveAddress(BreadApp.getBreadContext(), getIso());
+    public String getAddress(Context context) {
+        return BRSharedPrefs.getReceiveAddress(context, getIso());
     }
 
     @Override
@@ -815,6 +806,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public void onBalanceChanged(Context context, BigDecimal balance) {
         mWalletManagerHelper.onBalanceChanged(context, getIso(), balance);
+    }
+
+    protected void updateCachedAddress(Context context, String address) {
+        if (Utils.isNullOrEmpty(address)) {
+            Log.e(getTag(), "refreshAddress: WARNING, retrieved address:" + address);
+        }
+        BRSharedPrefs.putReceiveAddress(context, address, getIso());
     }
 
     @Override

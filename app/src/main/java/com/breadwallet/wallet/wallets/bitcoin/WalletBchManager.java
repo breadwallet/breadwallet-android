@@ -3,6 +3,7 @@ package com.breadwallet.wallet.wallets.bitcoin;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
@@ -145,6 +146,12 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     }
 
     @Override
+    public void refreshAddress(Context context) {
+        BRCoreAddress address = getWallet().getLegacyAddress();
+        updateCachedAddress(context, address.stringify());
+    }
+
+    @Override
     public String undecorateAddress(String addr) {
         if (Utils.isNullOrEmpty(addr)) return null;
         String result = BRCoreAddress.bcashDecodeBitcoin(addr);
@@ -155,4 +162,6 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     protected void syncStopped(Context context) {
         BRSharedPrefs.putBchPreforkSynced(context, true);
     }
+
+
 }

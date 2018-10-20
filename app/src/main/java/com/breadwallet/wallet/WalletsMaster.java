@@ -33,7 +33,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
-import com.platform.entities.WalletInfo;
+import com.platform.entities.WalletInfoData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -221,7 +221,7 @@ public class WalletsMaster {
         BRKeyStore.putAuthKey(authKey, ctx);
         int walletCreationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
         BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
-        final WalletInfo info = new WalletInfo();
+        final WalletInfoData info = new WalletInfoData();
         info.creationDate = walletCreationTime;
         KVStoreManager.putWalletInfo(ctx, info); //push the creation time to the kv store
 

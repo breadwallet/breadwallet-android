@@ -21,6 +21,7 @@ import java.util.List;
 public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     private static final String ETHEREUM_ADDRESS_PREFIX = "0x";
 
+
     private WalletManagerHelper mWalletManagerHelper;
     protected String mAddress;
 
@@ -39,7 +40,7 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     }
 
     @Override
-    public synchronized String getAddress() {
+    public synchronized String getAddress(Context context) { //todo context is not used, refactor
         if (mAddress == null) {
             throw new IllegalArgumentException("Address cannot be null.  Make sure it is set in the constructor.");
         }
