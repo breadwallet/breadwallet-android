@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">Bread</string>
+    <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">Блог</string>
     <!-- About screen footer -->
-    <string name="About.footer">Создано международной командой Bread. Версия %1$s</string>
+    <string name="About.footer">Создано международной командой BRD. Версия %1$s Сборка %2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">Политика конфиденциальности</string>
     <!-- About screen reddit label -->
@@ -29,7 +29,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Загружаем кошелек</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">Мой Bread</string>
+    <string name="AccountHeader.defaultWalletName">Мой BRD</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">Похоже, что вы пользуетесь клавиатурой третьей стороны, которая может записывать последовательность нажимаемых клавиш и похитить ваш Бумажный ключ. Переключитесь на клавиатуру Android по умолчанию для дополнительной защиты.</string>
     <!-- Error alert title -->
@@ -37,11 +37,13 @@
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Имеется проблема с хранилищем ключей в вашей ОС Android, обратитесь по адресу: support@breadwallet.com</string>
     <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Ваши зашифрованные данные приложения Bread были недавно аннулированы, так как была отключена блокировка экрана вашего устройства Android.</string>
+    <string name="Alert.keystore.invalidated.android">Ваши зашифрованные данные приложения BRD были недавно аннулированы, так как была отключена блокировка экрана вашего устройства Android.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Ошибка хранилища ключей Android</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">Интернет-подключение не обнаружено. Проверьте подключение и повторите попытку.</string>
+    <!-- Request timed out error message -->
+    <string name="Alert.timedOut">Истекло время запроса. Проверьте подключение и повторите попытку.</string>
     <!-- Warning alert title -->
     <string name="Alert.warning">Предупреждение</string>
     <!-- 'the addresses were copied'' Alert title -->
@@ -178,12 +180,18 @@
     <string name="DefaultCurrency.rateLabel">Обменный курс</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Кошелек отключен</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.accountRequest">Запросить %1$s информацию об учётной записи</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.callRequest">Запросить %1$s вызов смарт-контракта</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.paymentRequest">Запросить %1$s платёж</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableMessage">Для этого устройства не настроена отправка электронных писем через почтовое приложение iOS.</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">Электронное письмо недоступно</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">Bread невозможно аутентифицировать из-за ошибки в вашей версии Android. [Пожалуйста, нажмите сюда, чтобы узнать подробности.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">BRD невозможно аутентифицировать из-за ошибки в вашей версии Android. [Пожалуйста, нажмите сюда, чтобы узнать подробности.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">Для этого устройства отправка сообщений не настроена.</string>
     <!-- Messaging unavailable alert title -->
@@ -224,10 +232,16 @@
     <string name="FeeSelector.title">Скорость обработки</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Админ</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">Купить</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">Меню</string>
     <!-- This section lists the users wallets -->
     <string name="HomeScreen.portfolio">Кошельки</string>
     <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
     <string name="HomeScreen.totalAssets">итого активов</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">Обмен</string>
     <!-- Checking private key balance progress view text -->
     <string name="Import.checking">Проверяем баланс по персональному ключу...</string>
     <!-- Sweep private key confirmation message -->
@@ -249,13 +263,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">Секретный ключ</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">Секретные ключи часто печатаются на бумаге в виде QR-кода и используются для хранения средств в автономном режиме. Восстановите секретный ключ, чтобы перенести все деньги, которые он контролирует, в Bread с помощью одной транзакции.</string>
+    <string name="Import.message">Секретные ключи часто печатаются на бумаге в виде QR-кода и используются для хранения средств в автономном режиме. Восстановите секретный ключ, чтобы перенести все деньги, которые он контролирует, в BRD с помощью одной транзакции.</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">Этот персональный ключ защищен паролем.</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">пароль</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">Ваш кошелек Bread</string>
+    <string name="Import.rightCaption">Ваш кошелек BRD</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">Сканировать персональный ключ</string>
     <!-- Import wallet success alert title -->
@@ -275,15 +289,31 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">Игнорировать</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей    Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
+    <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  BRD и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей    Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  BRD и украсть ваши биткойны. Пожалуйста, используйте BRD только на устройствах с не снятыми с файловой системы ограничениями.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">ПРЕДУПРЕЖДЕНИЕ</string>
+    <!-- Wipe wallet button -->
+    <string name="JailbreakWarnings.wipe">Очистить</string>
+    <!-- Approve link wallet button label -->
+    <string name="LinkWallet.approve">Одобрить</string>
+    <!-- Decline link wallet button label -->
+    <string name="LinkWallet.decline">Отклонить</string>
+    <!-- Link Wallet view dislaimer footer -->
+    <string name="LinkWallet.disclaimer">Внешние приложения не могут отправлять деньги без согласия с этого устройства</string>
+    <!-- Link Wallet view title above domain list -->
+    <string name="LinkWallet.domainTitle">Примечание: взаимодействуйте ТОЛЬКО с этим приложением, когда находитесь на одном из следующих доменов</string>
+    <!-- Link wallet logo footer text -->
+    <string name="LinkWallet.logoFooter">Защищенная Оплата Покупок</string>
+    <!-- Link Wallet view title above permissions list -->
+    <string name="LinkWallet.permissionsTitle">Это приложение способно:</string>
+    <!-- Link Wallet view title -->
+    <string name="LinkWallet.title">Прикрепить Кошелек</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">Сервисы определения местоположения отключены.</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">У Bread не разрешения на доступ к сервисам определения местоположения.</string>
+    <string name="LocationPlugin.notAuthorized">У BRD не разрешения на доступ к сервисам определения местоположения.</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">Вы создали ваш кошелек %1$s</string>
     <!-- Manage wallet description text -->
@@ -296,6 +326,10 @@
     <string name="MenuButton.addWallet">Добавить кошелек</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">Заблокировать кошелек</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">Управлять кошельками</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">Сканировать QR код</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">Центр безопасности</string>
     <!-- Menu button title -->
@@ -328,6 +362,10 @@
     <string name="NodeSelector.statusLabel">Состояние подключения узла</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Биткойн-узлы</string>
+    <!-- Eg. Send 1.0Eth to purchase CCC -->
+    <string name="PaymentConfirmation.amountText">Отправить %1$s, чтобы купить %2$s</string>
+    <!-- Payment confirmation view title -->
+    <string name="PaymentConfirmation.title">Подтверждение</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">Неверный запрос на совершение платежа</string>
     <!-- Error opening payment protocol file message -->
@@ -367,7 +405,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">Транзакция отклонена</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">Помогите улучшить Bread, поделившись с нами своими анонимными данными</string>
+    <string name="Prompts.ShareData.body">Помогите улучшить BRD, поделившись с нами своими анонимными данными</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">Поделиться анонимными данными</string>
     <!-- Enable touch ID prompt body -->
@@ -381,11 +419,15 @@
     <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
     <string name="Prompts.TouchId.usePin.android">PIN-код</string>
     <!-- Upgrade PIN prompt body. -->
-    <string name="Prompts.UpgradePin.body">Bread обновил свой интерфейс до использования 6-цифрового PIN-кода. Коснитесь здесь для обновления.</string>
+    <string name="Prompts.UpgradePin.body">BRD обновил свой интерфейс до использования 6-цифрового PIN-кода. Коснитесь здесь для обновления.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Обновить PIN-код</string>
     <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">Включите уведомления, чтобы в будущем получать от Bread важные сообщения.</string>
+    <string name="PushNotifications.body">Включите уведомления, чтобы в будущем получать от BRD важные сообщения.</string>
+    <!-- Push notifications are disabled alert title" -->
+    <string name="PushNotifications.disabled">Уведомления Отключены</string>
+    <!-- Push notifications settings instructions -->
+    <string name="PushNotifications.enableInstructions">Включить уведомления в Настройках, чтобы получать оповещения</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">Push-уведомления</string>
     <!-- Push notifications are off label -->
@@ -415,7 +457,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Введите бумажный ключ</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Восстановите Ваш Bread-кошелек с помощью бумажного ключа.</string>
+    <string name="RecoverWallet.intro">Восстановите Ваш BRD-кошелек с помощью бумажного ключа.</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">Введенный вами бумажный ключ недействителен. Пожалуйста, внимательно перепроверьте каждое слово и повторите попытку.</string>
     <!-- Previous button accessibility label -->
@@ -443,7 +485,7 @@
     <!-- extimated time -->
     <string name="ReScan.body1">20-45 минут</string>
     <!-- Syncing explanation -->
-    <string name="ReScan.body2">Если транзакция описывается как \"выполненная\" в биткойн-сети, но не в вашем Bread-кошельке.</string>
+    <string name="ReScan.body2">Если транзакция описывается как \"выполненная\" в биткойн-сети, но не в вашем BRD-кошельке.</string>
     <!-- Syncing explanation -->
     <string name="ReScan.body3">Вы несколько раз получили ошибку о том, что транзакция отвергнута.</string>
     <!-- Start Sync button label -->
@@ -475,11 +517,11 @@
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle">Бумажный ключ</string>
     <!-- PIN button description -->
-    <string name="SecurityCenter.pinDescription">Защищает ваш Bread от несанкционированных пользователей.</string>
+    <string name="SecurityCenter.pinDescription">Защищает ваш BRD от несанкционированных пользователей.</string>
     <!-- PIN button title -->
     <string name="SecurityCenter.pinTitle">6-цифровой PIN-код</string>
     <!-- Touch ID button description -->
-    <string name="SecurityCenter.touchIdDescription">Легко и просто разблокируйте ваш Bread-кошелек и отправляйте суммы, не превышающие ваш лимит на расходы.</string>
+    <string name="SecurityCenter.touchIdDescription">Легко и просто разблокируйте ваш BRD-кошелек и отправляйте суммы, не превышающие ваш лимит на расходы.</string>
     <!-- Touch ID button title -->
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
@@ -489,13 +531,13 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Баланс: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">Разрешить доступ к камере в: \"Настройки\" &gt; \"Приложения\" &gt; \"Bread\" &gt; \"Разрешения\"</string>
+    <string name="Send.cameraUnavailabeMessage.android">Разрешить доступ к камере в: \"Настройки\" &gt; \"Приложения\" &gt; \"BRD\" &gt; \"Разрешения\"</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">Приложению Bread не разрешен доступ к камере</string>
+    <string name="Send.cameraUnavailabeTitle.android">Приложению BRD не разрешен доступ к камере</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">Перейдите в \"Настройки\", чтобы разрешить доступ к камере.</string>
     <!-- Camera not allowed alert title -->
-    <string name="Send.cameraUnavailableTitle">Bread не имеет разрешения на доступ к камере</string>
+    <string name="Send.cameraUnavailableTitle">BRD не имеет разрешения на доступ к камере</string>
     <!-- Warning when sending to self. -->
     <string name="Send.containsAddress">Место назначения является вашим собственным адресом. Вы не можете отправить деньги самому себе.</string>
     <!-- Could not create transaction alert title -->
@@ -571,7 +613,7 @@
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">Присоединитесь к пользователям с ранним доступом</string>
     <!-- Are you enjoying bread alert message body -->
-    <string name="Settings.enjoying">Нравится ли вам использовать Bread?</string>
+    <string name="Settings.enjoying">Нравится ли вам использовать BRD?</string>
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Лимит расходов Face ID</string>
     <!-- Redeem the funds stored on this private key. -->
@@ -580,6 +622,8 @@
     <string name="Settings.manage">Управление</string>
     <!-- Notifications label -->
     <string name="Settings.notifications">Уведомления</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">Другие</string>
     <!-- Preferences settings section header -->
     <string name="Settings.preferences">Параметры</string>
     <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -601,7 +645,7 @@
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">Отвязать от этого устройства</string>
     <!-- Share data view body -->
-    <string name="ShareData.body">Помогите нам улучшить Bread, поделившись своими анонимными данными. Такие данные не включают какую-либо финансовую информацию. Мы уважаем вашу финансовую конфиденциальность.</string>
+    <string name="ShareData.body">Помогите нам улучшить BRD, поделившись своими анонимными данными. Такие данные не включают какую-либо финансовую информацию. Мы уважаем вашу финансовую конфиденциальность.</string>
     <!-- Share data header -->
     <string name="ShareData.header">Поделиться данными?</string>
     <!-- Share data switch label. -->
@@ -609,7 +653,7 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+    <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш BRD-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
     <!-- Argument is date -->
@@ -622,10 +666,14 @@
     <string name="StartViewController.recoverButton">Восстановить кошелек</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Соединение</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">Ошибка синхронизации</string>
     <!-- Syncing view header text -->
     <string name="SyncingView.header">Синхронизация</string>
     <!-- Retry button label -->
     <string name="SyncingView.retry">Повторить</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
     <!-- Syncing view syncing state header text -->
     <string name="SyncingView.syncing">Синхронизация</string>
     <!-- 6 d (6 days) -->
@@ -638,7 +686,7 @@
     <string name="TimeSince.seconds">%1$s с</string>
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">Добавить</string>
-    <!-- Add Wallets    [to your home screen] -->
+    <!-- Add Wallets  [to your home screen] -->
     <string name="TokenList.addTitle">Добавить кошельки</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">Скрыть</string>
@@ -657,13 +705,13 @@
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">Аутентификация по отпечаткам пальцев не включена</string>
     <!-- Touch Id screen label -->
-    <string name="TouchIdSettings.label">Используйте отпечатки ваших пальцев для разблокирования Bread-кошелька и отправки сумм, не превышающих ваш лимит на расходы.</string>
+    <string name="TouchIdSettings.label">Используйте отпечатки ваших пальцев для разблокирования BRD-кошелька и отправки сумм, не превышающих ваш лимит на расходы.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
     <string name="TouchIdSettings.linkText">Экран лимита расходов Touch ID</string>
     <!-- Spending Limit: b100,000 ($100) -->
     <string name="TouchIdSettings.spendingLimit">Лимит на расходы: %1$s (%2$s)</string>
     <!-- Touch id switch label. -->
-    <string name="TouchIdSettings.switchLabel">Активировать функцию Touch ID для Bread</string>
+    <string name="TouchIdSettings.switchLabel">Активировать функцию Touch ID для BRD</string>
     <!-- Enable fingerprint for this wallet called Bread -->
     <string name="TouchIdSettings.switchLabel.android">Включить аутентификацию по отпечаткам пальцев</string>
     <!-- Touch ID settings view title -->
@@ -730,6 +778,8 @@
     <string name="TransactionDetails.amountHeader">Сумма</string>
     <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
     <string name="TransactionDetails.amountWhenReceived">%1$s при получении, %2$s сейчас</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">%1$s когда отправлено, %2$s сейчас</string>
     <!-- Block height label -->
     <string name="TransactionDetails.blockHeightLabel">Подтверждено в блоке</string>
     <!-- Memo section header -->
@@ -759,13 +809,17 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">Перемещено %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Перемещено <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.movedAmountDescription">
+        <![CDATA[Перемещено <b>%1$s</b>]]>
+    </string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Не подтверждено</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Получено %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Получено <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.receivedAmountDescription">
+        <![CDATA[Получено <b>%1$s</b>]]>
+    </string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">получено от %1$s</string>
     <!-- received via <address> -->
@@ -777,7 +831,9 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Отправить %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Отправлено <b>%1$s</b>]]></string>
+    <string name="TransactionDetails.sentAmountDescription">
+        <![CDATA[Отправлено <b>%1$s</b>]]>
+    </string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Показать подробности</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -821,7 +877,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">Датчик касания</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">Разблокируйте ваш Bread-кошелек.</string>
+    <string name="UnlockScreen.touchIdPrompt">Разблокируйте ваш BRD-кошелек.</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">Разблокируйте ваше устройство Android, чтобы продолжить.</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -831,7 +887,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">Запомните этот PIN-код. Если вы его забудете, что не сможете получить доступ к вашим биткойнам.</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">Ваш PIN-код будет использоваться для разблокировки кошелька Bread и отправки денег.</string>
+    <string name="UpdatePin.createInstruction">Ваш PIN-код будет использоваться для разблокировки кошелька BRD и отправки денег.</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">Задайте PIN-код</string>
     <!-- Update PIN title -->
@@ -865,7 +921,7 @@
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Разрешить эту транзакцию</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">Запустите Bread-приложение для iPhone, чтобы настроить ваш кошелек.</string>
+    <string name="Watch.noWalletWarning">Запустите BRD-приложение для iPhone, чтобы настроить ваш кошелек.</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">Отклонить</string>
     <!-- Webview loading error message -->
@@ -873,9 +929,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">Идет обновление...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+    <string name="Welcome.body">BRDwallet сменил свое название на BRD и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">Добро пожаловать в Bread!</string>
+    <string name="Welcome.title">Добро пожаловать в BRD!</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">Вы действительно хотите удалить этот кошелек?</string>
     <!-- Wipe wallet alert title -->
@@ -889,7 +945,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Отвязать ваш кошелек, чтобы удалить его с этого устройства. Как только вы отвяжете этот кошелек, вы сможете открыть новый кошелек или восстановить другой на этом устройстве.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Вы больше не сможете получить доступ к текущему кошельку Bread с этого устройства. Ваш баланс останется на этой фразе.</string>
+    <string name="WipeWallet.startWarning">Вы больше не сможете получить доступ к текущему кошельку BRD с этого устройства. Ваш баланс останется на этой фразе.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Отвязать кошелек</string>
     <!-- Wipe wallet button title -->
@@ -904,22 +960,4 @@
     <string name="WritePaperPhrase.previous">Назад</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d из %2$d</string>
-    <!-- Section header for "other settings". -->
-    <string name="Settings.other">Другие</string>
-    <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">Управлять кошельками</string>
-    <!-- Menu button on the home screen toolbar -->
-    <string name="HomeScreen.menu">Меню</string>
-    <!-- Home screen menu button to buy some bitcoin -->
-    <string name="HomeScreen.buy">Купить</string>
-    <!-- (Tap here to) trade (your assets for other assets) -->
-    <string name="HomeScreen.trade">Обмен</string>
-    <!-- (press here to) scan (a) QR code -->
-    <string name="MenuButton.scan">Сканировать QR код</string>
-    <!-- The sync has failed (to complete) -->
-    <string name="SyncingView.failed">Ошибка синхронизации</string>
-    <!-- "eg. Synced through <Jan 12, 2015> -->
-    <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
-    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-    <string name="TransactionDetails.amountWhenSent">%1$s когда отправлено, %2$s сейчас</string>
 </resources>
