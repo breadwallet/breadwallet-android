@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">Bread</string>
+    <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">블로그</string>
     <!-- About screen footer -->
-    <string name="About.footer">글로벌 Bread 팀 제작. 버전 %1$s</string>
+    <string name="About.footer">글로벌 BRD 팀 제작. 버전 %1$s 빌드 %2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">개인정보 보호정책</string>
     <!-- About screen reddit label -->
@@ -29,7 +29,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">지갑 로딩</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">나의 Bread</string>
+    <string name="AccountHeader.defaultWalletName">나의 BRD</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">제3자가 제공한 키보드를 사용하고 계신 것 같습니다, 귀하의 입력을 기록하고 귀하의 페이퍼 키가 도난 당할 수 있습니다. 추가적인 보호를 위해 기본 안드로이드 키보드로 전환해 주세요.</string>
     <!-- Error alert title -->
@@ -42,6 +42,8 @@
     <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">인터넷이 연결되지 않았습니다. 연결을 확인하시고 다시 시도해 주세요.</string>
+    <!-- Request timed out error message -->
+    <string name="Alert.timedOut">요청이 시간 초과 되었습니다. 인터넷 연결을 확인하고 다시 시도하세요.</string>
     <!-- Warning alert title -->
     <string name="Alert.warning">경고</string>
     <!-- 'the addresses were copied'' Alert title -->
@@ -178,12 +180,18 @@
     <string name="DefaultCurrency.rateLabel">환율</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">월렛이 비활성화됨</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.accountRequest">%1$s 계정 정보를 요청합니다</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.callRequest">%1$s 스마트계약 콜을 요청합니다</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.paymentRequest">%1$s 계정 정보를 요청합니다</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableMessage">이 장치는 iOS 메일 앱으로 이메일을 전송하도록 설정되지 않았습니다.</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">이메일 사용불가</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 Bread가 인증될 수 없습니다. [Please tap here for more information.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 BRD가 인증될 수 없습니다. [Please tap here for more information.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">이 장치는 메시지를 보내도록 설정되지 않았습니다.</string>
     <!-- Messaging unavailable alert title -->
@@ -224,10 +232,16 @@
     <string name="FeeSelector.title">처리 속도</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">관리</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">사다</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">메뉴</string>
     <!-- This section lists the users wallets -->
     <string name="HomeScreen.portfolio">지갑</string>
     <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
     <string name="HomeScreen.totalAssets">총 자산</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">교환</string>
     <!-- Checking private key balance progress view text -->
     <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
     <!-- Sweep private key confirmation message -->
@@ -249,13 +263,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">개인 키</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 Bread로 모든 돈을 이전하세요.</string>
+    <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 BRD로 모든 돈을 이전하세요.</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">이 개인 열쇠는 비밀번호로 보호됩니다.</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">비밀번호</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">귀하의 Bread 지갑</string>
+    <string name="Import.rightCaption">귀하의 BRD 지갑</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">개인 열쇠 스캔</string>
     <!-- Import wallet success alert title -->
@@ -275,15 +289,31 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">무시</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+    <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 BRD의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 BRD의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! BRD를 비-jailbroken 장치에서만 사용해 주세요.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">경고</string>
+    <!-- Wipe wallet button -->
+    <string name="JailbreakWarnings.wipe">초기화</string>
+    <!-- Approve link wallet button label -->
+    <string name="LinkWallet.approve">승인</string>
+    <!-- Decline link wallet button label -->
+    <string name="LinkWallet.decline">거절</string>
+    <!-- Link Wallet view dislaimer footer -->
+    <string name="LinkWallet.disclaimer">외부 앱은 이 장치의 승인 없이 돈을 전송할 수 없습니다</string>
+    <!-- Link Wallet view title above domain list -->
+    <string name="LinkWallet.domainTitle">주의: 다음 도메인의 경우에만 이 앱이 연동됨</string>
+    <!-- Link wallet logo footer text -->
+    <string name="LinkWallet.logoFooter">안전한 체크아웃</string>
+    <!-- Link Wallet view title above permissions list -->
+    <string name="LinkWallet.permissionsTitle">이 앱의 기능:</string>
+    <!-- Link Wallet view title -->
+    <string name="LinkWallet.title">연결 지갑</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">Bread가 위치 서비스 접속 권한이 없습니다.</string>
+    <string name="LocationPlugin.notAuthorized">BRD가 위치 서비스 접속 권한이 없습니다.</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">귀하께서는 %1$s 에 지갑을 만들었습니다</string>
     <!-- Manage wallet description text -->
@@ -296,6 +326,10 @@
     <string name="MenuButton.addWallet">지갑 추가</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">지갑 잠그기</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">지갑 관리</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">QR코드 스캔</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">보안 센터</string>
     <!-- Menu button title -->
@@ -328,6 +362,10 @@
     <string name="NodeSelector.statusLabel">노드 연결 상태</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">비트코인 노드</string>
+    <!-- Eg. Send 1.0Eth to purchase CCC -->
+    <string name="PaymentConfirmation.amountText">%2$s 구매를 위해 %1$s 전송</string>
+    <!-- Payment confirmation view title -->
+    <string name="PaymentConfirmation.title">확인</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">틀린 결제 요청</string>
     <!-- Error opening payment protocol file message -->
@@ -367,7 +405,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">거래 거절됨</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">Bread가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
+    <string name="Prompts.ShareData.body">BRD가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">익명 데이터 공유</string>
     <!-- Enable touch ID prompt body -->
@@ -386,6 +424,10 @@
     <string name="Prompts.UpgradePin.title">PIN 업그레이드</string>
     <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
     <string name="PushNotifications.body">알림을 켜두시면, 향후 브레드의 특별 메시지를 수신할 수 있습니다.</string>
+    <!-- Push notifications are disabled alert title" -->
+    <string name="PushNotifications.disabled">알림 비활성</string>
+    <!-- Push notifications settings instructions -->
+    <string name="PushNotifications.enableInstructions">알림을 받으려면 설정에서 알림을 켜세요</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">푸시 알림</string>
     <!-- Push notifications are off label -->
@@ -489,9 +531,9 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">잔액: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"Bread\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
+    <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">Bread의 카메라 접속이 허용되지 않았습니다</string>
+    <string name="Send.cameraUnavailabeTitle.android">BRD의 카메라 접속이 허용되지 않았습니다</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">설정에서 카메라 액세스를 허가해 주세요.</string>
     <!-- Camera not allowed alert title -->
@@ -580,6 +622,8 @@
     <string name="Settings.manage">관리</string>
     <!-- Notifications label -->
     <string name="Settings.notifications">알림</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">기타</string>
     <!-- Preferences settings section header -->
     <string name="Settings.preferences">환경 설정</string>
     <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -622,10 +666,14 @@
     <string name="StartViewController.recoverButton">지갑 복구하기</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">연결 중</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">동기화 실패</string>
     <!-- Syncing view header text -->
     <string name="SyncingView.header">동기화 중</string>
     <!-- Retry button label -->
     <string name="SyncingView.retry">다시 시도</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
     <!-- Syncing view syncing state header text -->
     <string name="SyncingView.syncing">동기화 중</string>
     <!-- 6 d (6 days) -->
@@ -638,7 +686,7 @@
     <string name="TimeSince.seconds">%1$s 초</string>
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">추가</string>
-    <!-- Add Wallets    [to your home screen] -->
+    <!-- Add Wallets  [to your home screen] -->
     <string name="TokenList.addTitle">지갑 추가</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">숨기기</string>
@@ -730,6 +778,8 @@
     <string name="TransactionDetails.amountHeader">금액</string>
     <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
     <string name="TransactionDetails.amountWhenReceived">받았을 때 %1$s, 지금은 %2$s</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">전송 시 %1$s, 현재 %2$s</string>
     <!-- Block height label -->
     <string name="TransactionDetails.blockHeightLabel">차단 확인</string>
     <!-- Memo section header -->
@@ -759,13 +809,17 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">%1$s 이동함</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
+    <string name="TransactionDetails.movedAmountDescription">
+        <![CDATA[<b>%1$s</b> 이동됨]]>
+    </string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">%1$s 받음</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
+    <string name="TransactionDetails.receivedAmountDescription">
+        <![CDATA[<b>%1$s</b> 수신됨]]>
+    </string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
     <!-- received via <address> -->
@@ -777,7 +831,9 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">%1$s 보냄</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
+    <string name="TransactionDetails.sentAmountDescription">
+        <![CDATA[<b>%1$s</b> 전송됨]]>
+    </string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -821,7 +877,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">터치 센서</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">Bread의 잠금을 해제하세요.</string>
+    <string name="UnlockScreen.touchIdPrompt">BRD의 잠금을 해제하세요.</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">계속하시려면 귀하의 안드로이드 장치 잠금을 해제해 주세요.</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -831,7 +887,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 비트코인을 사용할 수 없게 됩니다.</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 Bread의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
+    <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 BRD의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">PIN 설정</string>
     <!-- Update PIN title -->
@@ -865,7 +921,7 @@
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">이 거래 승인</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 Bread 앱을 열어 주세요.</string>
+    <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 BRD 앱을 열어 주세요.</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">무시</string>
     <!-- Webview loading error message -->
@@ -873,9 +929,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">업데이트 중...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+    <string name="Welcome.body">BRDwallet이 이름을 BRD로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">Bread에 환영합니다!</string>
+    <string name="Welcome.title">BRD에 환영합니다!</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">정말 이 월렛을 삭제할까요?</string>
     <!-- Wipe wallet alert title -->
@@ -889,7 +945,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">지갑의 연결을 해제하여 이 기기에서 제거하세요. 이 지갑의 연결이 해제되면, 새로운 지갑을 시작하거나 이 기기에 다른 지갑을 복구할 수 있습니다.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">이장치에서 현재 Bread 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
+    <string name="WipeWallet.startWarning">이장치에서 현재 BRD 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">지갑 연결 해제</string>
     <!-- Wipe wallet button title -->
@@ -904,22 +960,4 @@
     <string name="WritePaperPhrase.previous">이전</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
-    <!-- Section header for "other settings". -->
-    <string name="Settings.other">기타</string>
-    <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">지갑 관리</string>
-    <!-- Menu button on the home screen toolbar -->
-    <string name="HomeScreen.menu">메뉴</string>
-    <!-- Home screen menu button to buy some bitcoin -->
-    <string name="HomeScreen.buy">사다</string>
-    <!-- (Tap here to) trade (your assets for other assets) -->
-    <string name="HomeScreen.trade">교환</string>
-    <!-- (press here to) scan (a) QR code -->
-    <string name="MenuButton.scan">QR코드 스캔</string>
-    <!-- The sync has failed (to complete) -->
-    <string name="SyncingView.failed">동기화 실패</string>
-    <!-- "eg. Synced through <Jan 12, 2015> -->
-    <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
-    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-    <string name="TransactionDetails.amountWhenSent">전송 시 %1$s, 현재 %2$s</string>
 </resources>

@@ -5,7 +5,7 @@
     <!-- About screen blog label -->
     <string name="About.blog">ブログ</string>
     <!-- About screen footer -->
-    <string name="About.footer">グローバルブレッドチームによって開発されました。バージョン %1$s</string>
+    <string name="About.footer">グローバルブレッドチームによって開発されました。バージョン %1$sビルド%2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">プライバシーポリシー</string>
     <!-- About screen reddit label -->
@@ -42,6 +42,8 @@
     <string name="Alert.keystore.title.android">Android KeyStoreエラー</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">インターネット接続が見つかりません。接続を確認してから、もう一度お試しください。</string>
+    <!-- Request timed out error message -->
+    <string name="Alert.timedOut">リクエストはタイムアウトしました。接続を確認して、もう一度お試しください。</string>
     <!-- Warning alert title -->
     <string name="Alert.warning">警告</string>
     <!-- 'the addresses were copied'' Alert title -->
@@ -178,12 +180,18 @@
     <string name="DefaultCurrency.rateLabel">為替レート</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">ウォレットが無効になっています</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.accountRequest">%1$s のアカウント情報をリクエスト</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.callRequest">%1$s のスマートコントラクトのコールをリクエスト</string>
+    <!-- Service capabilities description -->
+    <string name="EME.permissions.paymentRequest">%1$s のアカウント情報をリクエスト</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableMessage">この端末は、iOSのメールアプリを使用してメールを送信する設定がされていません。</string>
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">メールが利用できません</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">Breadは、お使いのAndroidのバージョンに不具合があるため認証できません。 [詳しい情報はこちらをタップしてご覧ください。]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">BRDは、お使いのAndroidのバージョンに不具合があるため認証できません。 [詳しい情報はこちらをタップしてご覧ください。]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">この端末からメッセージを送信するための設定がされていません。</string>
     <!-- Messaging unavailable alert title -->
@@ -224,10 +232,16 @@
     <string name="FeeSelector.title">処理速度</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
+    <!-- Home screen menu button to buy some bitcoin -->
+    <string name="HomeScreen.buy">購入する</string>
+    <!-- Menu button on the home screen toolbar -->
+    <string name="HomeScreen.menu">メニュー</string>
     <!-- This section lists the users wallets -->
     <string name="HomeScreen.portfolio">ウォレット</string>
     <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
     <string name="HomeScreen.totalAssets">総資産</string>
+    <!-- (Tap here to) trade (your assets for other assets) -->
+    <string name="HomeScreen.trade">取引</string>
     <!-- Checking private key balance progress view text -->
     <string name="Import.checking">秘密鍵の残高確認中...</string>
     <!-- Sweep private key confirmation message -->
@@ -249,7 +263,7 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">秘密鍵</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">秘密鍵は通常QRコードとして紙に印刷され、オフラインでの資金保管に使用されています。秘密鍵からの引き出しをすると秘密鍵が管理する資金全額を1回の取引でお使いのBreadに送金します。</string>
+    <string name="Import.message">秘密鍵は通常QRコードとして紙に印刷され、オフラインでの資金保管に使用されています。秘密鍵からの引き出しをすると秘密鍵が管理する資金全額を1回の取引でお使いのBRDに送金します。</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">この秘密鍵はパスワードで保護されています。</string>
     <!-- password textfield placeholder -->
@@ -275,11 +289,27 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">無視する</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります\n 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!    直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
+    <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります\n 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります\n「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!    ブレッドは必ず脱獄端末以外で利用してください。</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります\n「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  ブレッドは必ず脱獄端末以外で利用してください。</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">警告</string>
+    <!-- Wipe wallet button -->
+    <string name="JailbreakWarnings.wipe">完全削除</string>
+    <!-- Approve link wallet button label -->
+    <string name="LinkWallet.approve">承認する</string>
+    <!-- Decline link wallet button label -->
+    <string name="LinkWallet.decline">拒否する</string>
+    <!-- Link Wallet view dislaimer footer -->
+    <string name="LinkWallet.disclaimer">外部のアプリは,このデバイスの承認がないと送金できません</string>
+    <!-- Link Wallet view title above domain list -->
+    <string name="LinkWallet.domainTitle">ご注意:以下のいずれかのドメインに属している場合は,このアプリとのみ情報をやり取りしてください</string>
+    <!-- Link wallet logo footer text -->
+    <string name="LinkWallet.logoFooter">安全なチェックアウト</string>
+    <!-- Link Wallet view title above permissions list -->
+    <string name="LinkWallet.permissionsTitle">このアプリでできること:</string>
+    <!-- Link Wallet view title -->
+    <string name="LinkWallet.title">リンクウォレット</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">位置情報サービスが無効化されています。</string>
     <!-- No permissions for location services -->
@@ -296,6 +326,10 @@
     <string name="MenuButton.addWallet">ウォレットの追加</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">ウォレットにロックを設定する</string>
+    <!-- (Click here to) manage (your list of) wallets -->
+    <string name="MenuButton.manageWallets">ウォレットの管理</string>
+    <!-- (press here to) scan (a) QR code -->
+    <string name="MenuButton.scan">QRコードの読み込み</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">セキュリティ</string>
     <!-- Menu button title -->
@@ -328,6 +362,10 @@
     <string name="NodeSelector.statusLabel">ノードの接続状況</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">ビットコインノード</string>
+    <!-- Eg. Send 1.0Eth to purchase CCC -->
+    <string name="PaymentConfirmation.amountText">%2$sを購入するために%1$sを送金する</string>
+    <!-- Payment confirmation view title -->
+    <string name="PaymentConfirmation.title">確認</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">不正な支払い要求</string>
     <!-- Error opening payment protocol file message -->
@@ -367,7 +405,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">トランザクションが拒否されました</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">匿名のデータを共有してBreadの機能向上に役立てる</string>
+    <string name="Prompts.ShareData.body">匿名のデータを共有してBRDの機能向上に役立てる</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">匿名のデータを共有する</string>
     <!-- Enable touch ID prompt body -->
@@ -385,7 +423,11 @@
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">PINコードを更新する</string>
     <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">今後、Breadからの特別なメッセージを受け取るために通知をオンにしてください。</string>
+    <string name="PushNotifications.body">今後、BRDからの特別なメッセージを受け取るために通知をオンにしてください。</string>
+    <!-- Push notifications are disabled alert title" -->
+    <string name="PushNotifications.disabled">通知が無効になっています</string>
+    <!-- Push notifications settings instructions -->
+    <string name="PushNotifications.enableInstructions">アラートを受け取るには,設定で通知をオンにしてください</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">プッシュ通知</string>
     <!-- Push notifications are off label -->
@@ -443,7 +485,7 @@
     <!-- extimated time -->
     <string name="ReScan.body1">20〜45分</string>
     <!-- Syncing explanation -->
-    <string name="ReScan.body2">ビットコインネットワークでトランザクションが完了したと表示されているが、Bread上では完了と表示されない場合。</string>
+    <string name="ReScan.body2">ビットコインネットワークでトランザクションが完了したと表示されているが、BRD上では完了と表示されない場合。</string>
     <!-- Syncing explanation -->
     <string name="ReScan.body3">送金しているが、拒否され続けている場合。</string>
     <!-- Start Sync button label -->
@@ -479,7 +521,7 @@
     <!-- PIN button title -->
     <string name="SecurityCenter.pinTitle">6桁のPINコード</string>
     <!-- Touch ID button description -->
-    <string name="SecurityCenter.touchIdDescription">Breadロック解除の他、設定した限度額までの送金も指紋認証で出来ます。</string>
+    <string name="SecurityCenter.touchIdDescription">BRDロック解除の他、設定した限度額までの送金も指紋認証で出来ます。</string>
     <!-- Touch ID button title -->
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
@@ -580,6 +622,8 @@
     <string name="Settings.manage">管理</string>
     <!-- Notifications label -->
     <string name="Settings.notifications">通知</string>
+    <!-- Section header for "other settings". -->
+    <string name="Settings.other">その他</string>
     <!-- Preferences settings section header -->
     <string name="Settings.preferences">設定</string>
     <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -622,10 +666,14 @@
     <string name="StartViewController.recoverButton">ウォレットを復元する</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">接続中</string>
+    <!-- The sync has failed (to complete) -->
+    <string name="SyncingView.failed">同期に失敗しました</string>
     <!-- Syncing view header text -->
     <string name="SyncingView.header">同期中</string>
     <!-- Retry button label -->
     <string name="SyncingView.retry">再試行</string>
+    <!-- "eg. Synced through <Jan 12, 2015> -->
+    <string name="SyncingView.syncedThrough">%1$sまで同期完了</string>
     <!-- Syncing view syncing state header text -->
     <string name="SyncingView.syncing">同期中</string>
     <!-- 6 d (6 days) -->
@@ -638,7 +686,7 @@
     <string name="TimeSince.seconds">%1$s秒</string>
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">追加する</string>
-    <!-- Add Wallets    [to your home screen] -->
+    <!-- Add Wallets  [to your home screen] -->
     <string name="TokenList.addTitle">ウォレットを追加する</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">非表示にする</string>
@@ -730,6 +778,8 @@
     <string name="TransactionDetails.amountHeader">金額</string>
     <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
     <string name="TransactionDetails.amountWhenReceived">%1$s を受領したので、%2$s になります</string>
+    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
+    <string name="TransactionDetails.amountWhenSent">送金時%1$s、現在%2$s</string>
     <!-- Block height label -->
     <string name="TransactionDetails.blockHeightLabel">ブロックチェーンで承認済み</string>
     <!-- Memo section header -->
@@ -759,13 +809,17 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">%1$sを移動させました</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b>を移動させました]]></string>
+    <string name="TransactionDetails.movedAmountDescription">
+        <![CDATA[<b>%1$s</b>を移動させました]]>
+    </string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">未承認</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">%1$sを受け取りました</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b>を受け取りました]]></string>
+    <string name="TransactionDetails.receivedAmountDescription">
+        <![CDATA[<b>%1$s</b>を受け取りました]]>
+    </string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">%1$sから受け取りました</string>
     <!-- received via <address> -->
@@ -777,7 +831,9 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">%1$sを送金しました</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b>を送金しました]]></string>
+    <string name="TransactionDetails.sentAmountDescription">
+        <![CDATA[<b>%1$s</b>を送金しました]]>
+    </string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">詳細を表示する</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -865,7 +921,7 @@
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">このトランザクションを認証する</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">BreadのiPhoneアプリを開き、ウォレットをセットアップする</string>
+    <string name="Watch.noWalletWarning">BRDのiPhoneアプリを開き、ウォレットをセットアップする</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">解除</string>
     <!-- Webview loading error message -->
@@ -873,9 +929,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">更新中...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、Breadという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
+    <string name="Welcome.body">BRDwalletは新しい機能や見た目を備えて、BRDという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">Breadへようこそ！</string>
+    <string name="Welcome.title">BRDへようこそ！</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">本当にこのウォレットを削除しますか？</string>
     <!-- Wipe wallet alert title -->
@@ -889,7 +945,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">ご利用ウォレットのリンクを解除してこの機器から解除してください。このウォレットのリンクが解除されると、この機器で新しいウォレットを起動したり、別のウォレット再び利用できるようになります。</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">この端末から現在使用中のBreadウォレットへのアクセスはできなくなります。復元する際は復元フレーズが必要になります。</string>
+    <string name="WipeWallet.startWarning">この端末から現在使用中のBRDウォレットへのアクセスはできなくなります。復元する際は復元フレーズが必要になります。</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">ウォレットのリンクを解除</string>
     <!-- Wipe wallet button title -->
@@ -904,22 +960,4 @@
     <string name="WritePaperPhrase.previous">前へ</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%2$dの%1$d</string>
-    <!-- Section header for "other settings". -->
-    <string name="Settings.other">その他</string>
-    <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">ウォレットの管理</string>
-    <!-- Menu button on the home screen toolbar -->
-    <string name="HomeScreen.menu">メニュー</string>
-    <!-- Home screen menu button to buy some bitcoin -->
-    <string name="HomeScreen.buy">購入する</string>
-    <!-- (Tap here to) trade (your assets for other assets) -->
-    <string name="HomeScreen.trade">取引</string>
-    <!-- (press here to) scan (a) QR code -->
-    <string name="MenuButton.scan">QRコードの読み込み</string>
-    <!-- The sync has failed (to complete) -->
-    <string name="SyncingView.failed">同期に失敗しました</string>
-    <!-- "eg. Synced through <Jan 12, 2015> -->
-    <string name="SyncingView.syncedThrough">%1$sまで同期完了</string>
-    <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
-    <string name="TransactionDetails.amountWhenSent">送金時%1$s、現在%2$s</string>
 </resources>
