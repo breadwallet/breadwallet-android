@@ -60,8 +60,7 @@ public class AboutActivity extends BaseSettingsActivity {
         TextView infoText = findViewById(R.id.info_text);
         TextView policyText = findViewById(R.id.policy_text);
 
-        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
-
+        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), BuildConfig.VERSION_NAME, BuildConfig.BUILD_VERSION));
         infoText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +182,7 @@ public class AboutActivity extends BaseSettingsActivity {
         stringBuilder.append("\nApplication id: " + BuildConfig.APPLICATION_ID);
         stringBuilder.append("\nBuild Type: " + BuildConfig.BUILD_TYPE);
         stringBuilder.append("\nBuild Flavor: " + BuildConfig.FLAVOR);
-        stringBuilder.append("\nApp Version: " + (BuildConfig.VERSION_NAME + " " + BuildConfig.VERSION_CODE));
+        stringBuilder.append("\nApp Version: " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_VERSION));
         for (String bundleName : APIClient.BUNDLE_NAMES) {
             stringBuilder.append(String.format("\n Bundle %s - Version: %s", bundleName, BRSharedPrefs.getBundleHash(this, bundleName)));
         }
