@@ -12,7 +12,6 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -41,6 +40,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public class WalletElaManager extends BRCoreWalletManager implements BaseWalletManager {
 
+    private static final String TAG = WalletElaManager.class.getSimpleName();
+
     public static final String ONE_ELA_IN_SALA = "100000000"; // 1 ela in sala, 100 millions
     public static final String MAX_ELA = "10000"; //Max amount in ela
     public static final String ELA_SYMBOL = "ELA";
@@ -48,7 +49,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     private static final String NAME = "Elastos";
     private static final String ELA_ADDRESS_PREFIX = "E";
 
-    private static final BigDecimal ONE_ELA = new BigDecimal(ONE_ELA_IN_SALA);
+    public static final BigDecimal ONE_ELA = new BigDecimal(ONE_ELA_IN_SALA);
 
     private static WalletElaManager mInstance;
 
@@ -89,11 +90,13 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public int getForkId() {
+        Log.i(TAG, "getForkId");
         return -1;
     }
 
     @Override
     public BREthereumAmount.Unit getUnit() {
+        Log.i(TAG, "getUnit");
         throw new RuntimeException("stub");
     }
 
@@ -113,6 +116,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String getAddress() {
+        Log.i(TAG, "getAddress");
         if (mAddress == null) {
             try {
                 getPrivateKey();
@@ -129,18 +133,32 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public boolean isAddressValid(String address) {
+        Log.i(TAG, "isAddressValid");
         return !Utils.isNullOrEmpty(address) && address.startsWith(ELA_ADDRESS_PREFIX);
     }
 
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
+        Log.i(TAG, "signAndPublishTransaction");
         BRElaTransaction raw = tx.getElaTx();
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
-        UtxoEntity utxoEntity = ElaDataSource.getInstance(mContext).getUtxos(mAddress);
-        List txIds = getTxids(utxoEntity);
-        ElaDataSource.getInstance(mContext).getTransactionsByTxids(txIds);
-        TxManager.getInstance().updateTxList(mContext);
+        updateTxHistory();
         return mRwTxid.getBytes();
+    }
+
+    public static boolean is_update = false;
+
+    public void updateTxHistory(){
+        if(is_update) return;
+        is_update = true;
+        try {
+            UtxoEntity utxoEntity = ElaDataSource.getInstance(mContext).getUtxos(getAddress());
+            List txIds = getTxids(utxoEntity);
+            ElaDataSource.getInstance(mContext).getTransactionsByTxids(txIds);
+            TxManager.getInstance().updateTxList(mContext);
+        } finally {
+            is_update = false;
+        }
     }
 
     private List getTxids(UtxoEntity utxoEntity){
@@ -163,66 +181,73 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void onBalanceChanged(BigDecimal balance) {
+        Log.i(TAG, "onBalanceChanged");
         mWalletManagerHelper.onBalanceChanged(balance);
     }
 
     @Override
     public void addSyncListener(SyncListener listener) {
-
+        Log.i(TAG, "addSyncListener");
     }
 
     @Override
     public void removeSyncListener(SyncListener listener) {
-
+        Log.i(TAG, "removeSyncListener");
     }
 
     @Override
     public void addTxListModifiedListener(OnTxListModified list) {
+        Log.i(TAG, "addTxListModifiedListener");
         mWalletManagerHelper.addTxListModifiedListener(list);
     }
 
     @Override
     public void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener) {
-
+        Log.i(TAG, "watchTransactionForHash");
     }
 
     @Override
     public long getRelayCount(byte[] txHash) {
+        Log.i(TAG, "getRelayCount");
         return 0;
     }
 
     @Override
     public double getSyncProgress(long startHeight) {
+        Log.i(TAG, "getSyncProgress");
         return 1.0;
     }
 
     @Override
     public double getConnectStatus() {
+        Log.i(TAG, "getConnectStatus");
         return 2;
     }
 
     @Override
     public void connect(Context app) {
-
+        Log.i(TAG, "connect");
     }
 
     @Override
     public void disconnect(Context app) {
-
+        Log.i(TAG, "disconnect");
     }
 
     @Override
     public boolean useFixedNode(String node, int port) {
+        Log.i(TAG, "useFixedNode");
         return false;
     }
 
     @Override
     public void rescan(Context app) {
-
+        Log.i(TAG, "rescan");
     }
 
     @Override
     public CryptoTransaction[] getTxs(Context app) {
+        Log.i(TAG, "getTxs");
         return new CryptoTransaction[0];
     }
 
@@ -230,6 +255,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
+        Log.i(TAG, "getTxFee");
         return ELA_FEE;
     }
 
@@ -260,6 +286,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getTransactionAmount(CryptoTransaction tx) {
+        Log.i(TAG, "getTransactionAmount");
         return new BigDecimal(getWallet().getTransactionAmount(tx.getCoreTx()));
     }
 
@@ -280,6 +307,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void refreshCachedBalance(final Context app) {
+        Log.i(TAG, "refreshCachedBalance");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -292,6 +320,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
+        Log.i(TAG, "getTxUiHolders");
+        updateTxHistory();
         List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
         try{
@@ -365,7 +395,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
-
+        Log.i(TAG, "createTransaction");
         BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
         return new CryptoTransaction(brElaTransaction);
     }
@@ -387,12 +417,14 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
+        Log.i(TAG, "getCachedBalance");
         return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
     //TODO wait
     @Override
     public BigDecimal getTotalSent(Context app) {
+        Log.i(TAG, "getTotalSent");
         return BigDecimal.ZERO;
     }
 
@@ -406,16 +438,19 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void syncStarted() {
+        Log.i(TAG, "syncStarted");
         mWalletManagerHelper.onSyncStarted();
     }
 
     @Override
     public void syncStopped(String error) {
+        Log.i(TAG, "syncStopped");
         mWalletManagerHelper.onSyncStopped(error);
     }
 
     @Override
     public boolean networkIsReachable() {
+        Log.i(TAG, "networkIsReachable");
         Context app = BreadApp.getBreadContext();
         return InternetManager.getInstance().isConnected(app);
     }

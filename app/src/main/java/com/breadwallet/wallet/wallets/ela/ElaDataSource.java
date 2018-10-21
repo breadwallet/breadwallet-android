@@ -20,6 +20,7 @@ import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.tx.TransactionEntity;
 import com.breadwallet.wallet.wallets.ela.response.tx.TransactionRes;
+import com.breadwallet.wallet.wallets.ela.response.tx.Vout;
 import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoEntity;
 import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoRes;
 import com.elastos.jni.Utility;
@@ -30,9 +31,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -88,11 +91,17 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public void putTransaction(List<ElaTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
+        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
             for(ElaTransactionEntity entity : elaTransactionEntities){
+                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
+                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ?", new String[]{entity.txReversed}, null, null, null);
+
+                if(cursor==null || cursor.getCount()>=1) continue;
+
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
                 value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp);
@@ -115,11 +124,13 @@ public class ElaDataSource implements BRDataSourceInterface {
             closeDatabase();
             e.printStackTrace();
         } finally {
+            cursor.close();
             database.endTransaction();
             closeDatabase();
         }
 
     }
+
 
     public List<ElaTransactionEntity> getAllTransactions(){
         List<ElaTransactionEntity> currencies = new ArrayList<>();
@@ -206,23 +217,28 @@ public class ElaDataSource implements BRDataSourceInterface {
             //test
             List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
+            long tmp = 0;
+            BigDecimal balance = BRSharedPrefs.getCachedBalance(mContext, "ELA");
             for(TransactionEntity entity : transactionRes.result){
+                BigDecimal b = new BigDecimal(entity.vout.get(1).value).multiply(new BigDecimal(100000000));
                 ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
                 elaTransactionEntity.toAddress = entity.vout.get(0).address;
                 elaTransactionEntity.fromAddress = entity.vout.get(1).address;
-                elaTransactionEntity.amount = /*transactionEntity.payload.CrossChainAmounts.get(0)*/10000000;
                 elaTransactionEntity.txSize = entity.vsize;
                 elaTransactionEntity.hash = entity.blockhash.getBytes();
                 elaTransactionEntity.blockHeight = entity.confirmations;
                 elaTransactionEntity.timeStamp = entity.time;
                 elaTransactionEntity.txReversed = entity.txid;
-                elaTransactionEntity.balanceAfterTx = 10000000000L;
+                elaTransactionEntity.balanceAfterTx = elaTransactionEntity.balanceAfterTx + b.longValue();
                 elaTransactionEntity.fee = 100;
                 elaTransactionEntity.isValid = true;
-                elaTransactionEntity.isReceived = true;
+                elaTransactionEntity.isReceived = false;
+                elaTransactionEntity.amount = balance.longValue() - elaTransactionEntity.balanceAfterTx;
 
+                tmp = elaTransactionEntity.balanceAfterTx;
                 elaTransactionEntities.add(elaTransactionEntity);
             }
+            BRSharedPrefs.putCachedBalance(mContext, "ELA", new BigDecimal(tmp));
             putTransaction(elaTransactionEntities);
         }catch (Exception e){
             e.printStackTrace();
@@ -230,7 +246,6 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         return transaction;
     }
-
 
     public BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
         BRElaTransaction brElaTransaction = null;
