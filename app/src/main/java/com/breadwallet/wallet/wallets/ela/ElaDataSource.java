@@ -86,28 +86,29 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
     };
 
-    public void putTransaction(ElaTransactionEntity entity){
-        if(entity == null) return;
+    public void putTransaction(List<ElaTransactionEntity> elaTransactionEntities){
+        if(elaTransactionEntities == null) return;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            ContentValues value = new ContentValues();
-            value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
-            value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp);
-            value.put(BRSQLiteHelper.ELA_COLUMN_BLOCKHEIGHT, entity.blockHeight);
-            value.put(BRSQLiteHelper.ELA_COLUMN_HASH, entity.hash);
-            value.put(BRSQLiteHelper.ELA_COLUMN_TXREVERSED, entity.txReversed);
-            value.put(BRSQLiteHelper.ELA_COLUMN_FEE, entity.fee);
-            value.put(BRSQLiteHelper.ELA_COLUMN_TO, entity.toAddress);
-            value.put(BRSQLiteHelper.ELA_COLUMN_FROM, entity.fromAddress);
-            value.put(BRSQLiteHelper.ELA_COLUMN_BALANCEAFTERTX, entity.balanceAfterTx);
-            value.put(BRSQLiteHelper.ELA_COLUMN_TXSIZE, entity.txSize);
-            value.put(BRSQLiteHelper.ELA_COLUMN_AMOUNT, entity.amount);
-            value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
+            for(ElaTransactionEntity entity : elaTransactionEntities){
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp);
+                value.put(BRSQLiteHelper.ELA_COLUMN_BLOCKHEIGHT, entity.blockHeight);
+                value.put(BRSQLiteHelper.ELA_COLUMN_HASH, entity.hash);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TXREVERSED, entity.txReversed);
+                value.put(BRSQLiteHelper.ELA_COLUMN_FEE, entity.fee);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TO, entity.toAddress);
+                value.put(BRSQLiteHelper.ELA_COLUMN_FROM, entity.fromAddress);
+                value.put(BRSQLiteHelper.ELA_COLUMN_BALANCEAFTERTX, entity.balanceAfterTx);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TXSIZE, entity.txSize);
+                value.put(BRSQLiteHelper.ELA_COLUMN_AMOUNT, entity.amount);
+                value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
 
-            long failed = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-            if (failed != 0) Log.e(TAG, "putCurrencies: failed:" + failed);
+                database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            }
             database.setTransactionSuccessful();
         } catch (Exception e) {
             database.endTransaction();
@@ -191,6 +192,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public TransactionEntity getTransactionsByTxids(List<String> txIds){
+        if(txIds==null) return null;
         TransactionEntity transaction = null;
         try{
             String url = ELA_SERVIER_URL+"/api/1/tx";
@@ -201,22 +203,27 @@ public class ElaDataSource implements BRDataSourceInterface {
 
 
             if(transactionRes==null || transactionRes.result==null || transactionRes.result.size()<=0) return null;
-            TransactionEntity transactionEntity = transactionRes.result.get(0);
             //test
-            ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
-            elaTransactionEntity.toAddress = "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG";
-            elaTransactionEntity.fromAddress = "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG";
-            elaTransactionEntity.amount = 1000000000;
-            elaTransactionEntity.txSize = 289;
-            elaTransactionEntity.hash = new byte[128];
-            elaTransactionEntity.blockHeight = 1024;
-            elaTransactionEntity.timeStamp = 1539919032;
-            elaTransactionEntity.txReversed = "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8";
-            elaTransactionEntity.balanceAfterTx = 10000000000L;
-            elaTransactionEntity.fee = 100;
-            elaTransactionEntity.isValid = true;
-            elaTransactionEntity.isReceived = true;
-            putTransaction(elaTransactionEntity);
+            List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
+            elaTransactionEntities.clear();
+            for(TransactionEntity entity : transactionRes.result){
+                ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+                elaTransactionEntity.toAddress = entity.vout.get(0).address;
+                elaTransactionEntity.fromAddress = entity.vout.get(1).address;
+                elaTransactionEntity.amount = /*transactionEntity.payload.CrossChainAmounts.get(0)*/10000000;
+                elaTransactionEntity.txSize = entity.vsize;
+                elaTransactionEntity.hash = entity.blockhash.getBytes();
+                elaTransactionEntity.blockHeight = entity.confirmations;
+                elaTransactionEntity.timeStamp = entity.time;
+                elaTransactionEntity.txReversed = entity.txid;
+                elaTransactionEntity.balanceAfterTx = 10000000000L;
+                elaTransactionEntity.fee = 100;
+                elaTransactionEntity.isValid = true;
+                elaTransactionEntity.isReceived = true;
+
+                elaTransactionEntities.add(elaTransactionEntity);
+            }
+            putTransaction(elaTransactionEntities);
         }catch (Exception e){
             e.printStackTrace();
         }

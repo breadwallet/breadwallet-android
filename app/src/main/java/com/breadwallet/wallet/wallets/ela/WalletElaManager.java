@@ -144,6 +144,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     private List getTxids(UtxoEntity utxoEntity){
+        if(utxoEntity==null || utxoEntity.Utxo==null || utxoEntity.Utxo.size()<=0) return null;
         List<String> result = new ArrayList();
         List<Utxo> utxo = utxoEntity.Utxo;
         if(utxo==null || utxo.size()<=0) return null;

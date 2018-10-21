@@ -13,6 +13,7 @@ public class TransactionEntity {
     public String blockhash;
     public int size;
     public long blocktime;
+    public Payload payload;
     public List<Vin> vin;
     public int payloadversion;
     public List<Attributes> attributes;
