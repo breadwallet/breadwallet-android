@@ -5,13 +5,30 @@ apply plugin: 'com.google.protobuf'
 android {
     compileSdkVersion = 27
     buildToolsVersion = '27.0.3'
+    ext {
+        brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
+        brdProductVersion = 5     // Minor version. Usually affected by product. Maximum value: 99
+        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
+
+        // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
+        // relationship between builds with a max value of 2 100 000 000.
+        generateVersionCode = { marketing, product, engineering, build ->
+            (marketing * 1000000) + (product * 10000) + (engineering * 1000) + build;
+        }
+
+        brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
+    }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 341
-        versionName "3.4.1"
+
+        versionCode brdVersionCode
+        versionName "$brdMarketingVersion.$brdProductVersion.$brdEngineeringVersion"
+        buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
+
         multiDexEnabled true
         // Similar to other properties in the defaultConfig block,
         // you can configure the ndk block for each product flavor
