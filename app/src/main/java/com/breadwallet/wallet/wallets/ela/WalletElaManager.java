@@ -28,8 +28,6 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
-import com.breadwallet.wallet.wallets.ela.response.utxo.Utxo;
-import com.breadwallet.wallet.wallets.ela.response.utxo.UtxoEntity;
 import com.elastos.jni.Utility;
 
 import java.math.BigDecimal;
@@ -142,7 +140,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "signAndPublishTransaction");
         BRElaTransaction raw = tx.getElaTx();
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
-        updateTxHistory();
         return mRwTxid.getBytes();
     }
 
@@ -152,26 +149,11 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         if(is_update) return;
         is_update = true;
         try {
-            UtxoEntity utxoEntity = ElaDataSource.getInstance(mContext).getUtxos(getAddress());
-            List txIds = getTxids(utxoEntity);
-            ElaDataSource.getInstance(mContext).getTransactionsByTxids(txIds);
+            ElaDataSource.getInstance(mContext).getTransactions(getAddress());
             TxManager.getInstance().updateTxList(mContext);
         } finally {
             is_update = false;
         }
-    }
-
-    private List getTxids(UtxoEntity utxoEntity){
-        if(utxoEntity==null || utxoEntity.Utxo==null || utxoEntity.Utxo.size()<=0) return null;
-        List<String> result = new ArrayList();
-        List<Utxo> utxo = utxoEntity.Utxo;
-        if(utxo==null || utxo.size()<=0) return null;
-        result.clear();
-        for(int i=0; i<utxo.size(); i++){
-            result.add(utxo.get(i).Txid);
-        }
-
-        return result;
     }
 
     @Override
@@ -308,19 +290,18 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public void refreshCachedBalance(final Context app) {
         Log.i(TAG, "refreshCachedBalance");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
-                final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
-                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
+//                final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
+//                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
+//            }
+//        }).start();
     }
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        Log.i(TAG, "getTxUiHolders");
         updateTxHistory();
         List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -396,6 +377,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         Log.i(TAG, "createTransaction");
+        //TODO daokun.xi
+        updateTxHistory();
         BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
         return new CryptoTransaction(brElaTransaction);
     }
