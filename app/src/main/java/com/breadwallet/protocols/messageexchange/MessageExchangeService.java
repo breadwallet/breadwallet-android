@@ -930,7 +930,7 @@ public final class MessageExchangeService extends JobIntentService {
      * @param error  Optional error that is returned if the transaction failed for some reason.
      */
     private void logCallRequestResponse(String transactionHash, RequestMetaData requestMetaData, Protos.Status status, Protos.Error error) {
-        UserMetricsUtil.logCallRequestResponse(status.getNumber(),
+        UserMetricsUtil.logCallRequestResponse(this, status.getNumber(),
                 requestMetaData.getId(),
                 SERVICE_PWB,
                 transactionHash,
