@@ -70,10 +70,11 @@ public class IntroActivity extends BRActivity {
         mSplashScreen = findViewById(R.id.splash_screen);
         TextView subtitle = findViewById(R.id.intro_subtitle);
 
-        if(!"armeabi-v7a".equals(android.os.Build.CPU_ABI)){
-            BRDialog.showSimpleDialog(this, "Incompatible", "not support "+android.os.Build.CPU_ABI);
-            return;
-        }
+//        String aa = android.os.Build.CPU_ABI;
+//        if(!"armeabi-v7a".equals(android.os.Build.CPU_ABI)){
+//            BRDialog.showSimpleDialog(this, "Incompatible", "not support "+android.os.Build.CPU_ABI);
+//            return;
+//        }
         setListeners();
         updateBundles();
         ImageButton faq = findViewById(R.id.faq_button);

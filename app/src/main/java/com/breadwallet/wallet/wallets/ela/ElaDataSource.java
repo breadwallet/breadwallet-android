@@ -202,6 +202,11 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     }
 
+
+    public void getTransactions(String address){
+        String url = "";
+    }
+
     public TransactionEntity getTransactionsByTxids(List<String> txIds){
         if(txIds==null) return null;
         TransactionEntity transaction = null;
