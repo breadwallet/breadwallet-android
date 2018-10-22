@@ -30,6 +30,10 @@ public class WalletManagerHelper {
         }
     }
 
+    public void removeBalanceChangedListener(BalanceUpdateListener listener) {
+        mOnBalanceChangedListeners.remove(listener);
+    }
+
     public void onBalanceChanged(Context context, String currencyCode, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(context, currencyCode, balance);
         for (BalanceUpdateListener listener : mOnBalanceChangedListeners) {

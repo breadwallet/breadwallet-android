@@ -802,6 +802,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public void addBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
+    @Override
+    public void removeBalanceChangedListener(BalanceUpdateListener listener) {
+        mWalletManagerHelper.removeBalanceChangedListener(listener);
+    }
 
     @Override
     public void onBalanceChanged(Context context, BigDecimal balance) {

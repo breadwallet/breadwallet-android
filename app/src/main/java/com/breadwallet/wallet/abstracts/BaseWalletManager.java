@@ -64,6 +64,8 @@ public interface BaseWalletManager {
 
     void addBalanceChangedListener(BalanceUpdateListener list);
 
+    void removeBalanceChangedListener(BalanceUpdateListener list);
+
     void onBalanceChanged(Context context, BigDecimal balance);
 
     void addSyncListener(SyncListener listener);

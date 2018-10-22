@@ -118,8 +118,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         mSeparatorHeaderView.setVisibility(View.GONE);
         setListeners();
 
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
-
         ImageButton faq = rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
@@ -268,36 +266,30 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
             mSignalLayout.removeView(mRequestButton);
             mTitle.setText(getString(R.string.UnlockScreen_myAddress));
         }
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateQr();
-            }
-        });
-
+        updateQr();
     }
 
     private void updateQr() {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
-                walletManager.refreshAddress(getContext());
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        String address = walletManager.getAddress(getContext());
-                        mAddress.setText(walletManager.decorateAddress(address));
-                        Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, walletManager.decorateAddress(address),
-                                BigDecimal.ZERO, null, null, null);
-                        boolean generated = QRUtils.generateQR(getContext(), uri.toString(), mQrImage);
-                        if (!generated) {
-                            throw new RuntimeException("failed to generate qr image for address");
+                if (getContext() != null) {
+                    final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
+                    walletManager.refreshAddress(getContext());
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            String address = walletManager.getAddress(getContext());
+                            mAddress.setText(walletManager.decorateAddress(address));
+                            Utils.correctTextSizeIfNeeded(mAddress);
+                            Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, walletManager.decorateAddress(address),
+                                    BigDecimal.ZERO, null, null, null);
+                            if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
+                                throw new RuntimeException("failed to generate qr image for address");
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 
@@ -307,7 +299,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         Activity app = getActivity();
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
         // The testnet does not work with the BCH address format so copy the legacy address for testing purposes.
-        if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET) {
+        if (BuildConfig.BITCOIN_TESTNET) {
             BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
         }
 
@@ -318,11 +310,13 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     @Override
     public void onResume() {
         super.onResume();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
     }
 
     @Override
