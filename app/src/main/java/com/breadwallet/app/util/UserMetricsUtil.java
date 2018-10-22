@@ -125,21 +125,14 @@ public final class UserMetricsUtil {
             payload.put(FIELD_METRIC, METRIC_LAUNCH);
             payload.put(FIELD_DATA, data);
 
-            final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
-            RequestBody requestBody = RequestBody.create(JSON, payload.toString());
-            Request request = new Request.Builder()
-                    .url(URL)
-                    .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                    .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
-
-            APIClient.getInstance(context).sendRequest(request, true);
+            sendMetricsRequestWithPayload(context, payload);
 
         } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException e) {
             Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
 
-    public static void logCallRequestResponse(int status, String identifier, String service, String transactionHash,
+    public static void logCallRequestResponse(Context context, int status, String identifier, String service, String transactionHash,
                                               String fromCurrency, String fromAmount, String fromAddress,
                                               String toCurrency, String toAmount, String toAddress, long timestamp,
                                               Integer errorCode) {
@@ -175,14 +168,14 @@ public final class UserMetricsUtil {
 
             if (!Utils.isNullOrEmpty(toCurrency)) {
                 data.put(FIELD_TO_CURRENCY, toCurrency);
-            }
 
-            if (!Utils.isNullOrEmpty(toAmount)) {
-                data.put(FIELD_TO_AMOUNT, toAmount);
-            }
+                if (!Utils.isNullOrEmpty(toAmount)) {
+                    data.put(FIELD_TO_AMOUNT, toAmount);
+                }
 
-            if (!Utils.isNullOrEmpty(toAddress)) {
-                data.put(FIELD_TO_ADDRESS, toAddress);
+                if (!Utils.isNullOrEmpty(toAddress)) {
+                    data.put(FIELD_TO_ADDRESS, toAddress);
+                }
             }
 
             data.put(FIELD_TIMESTAMP, timestamp);
@@ -194,9 +187,22 @@ public final class UserMetricsUtil {
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_PIGEON_TRANSACTION);
             payload.put(FIELD_DATA, data);
+
+            sendMetricsRequestWithPayload(context, payload);
         } catch (JSONException e) {
             Log.e(TAG, "Error creating call request payload! ", e);
         }
+    }
+
+    private static void sendMetricsRequestWithPayload(final Context context, final JSONObject payload) {
+        final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
+        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+        Request request = new Request.Builder()
+                .url(URL)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
+
+        APIClient.getInstance(context).sendRequest(request, true);
     }
 
 }
