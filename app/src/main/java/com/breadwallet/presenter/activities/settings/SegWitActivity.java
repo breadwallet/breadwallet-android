@@ -30,8 +30,10 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 /**
@@ -78,6 +80,12 @@ public class SegWitActivity extends BaseSettingsActivity {
     private void enableSegwit() {
         BRSharedPrefs.putIsSegwitEnabled(this, true);
         WalletBitcoinManager.getInstance(this).updateSettings(this);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                UserMetricsUtil.logSegwitEvent(SegWitActivity.this, UserMetricsUtil.ENABLE_SEG_WIT);
+            }
+        });
     }
 
     @Override
