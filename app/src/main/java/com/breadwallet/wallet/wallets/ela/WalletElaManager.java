@@ -290,14 +290,14 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public void refreshCachedBalance(final Context app) {
         Log.i(TAG, "refreshCachedBalance");
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
-//                final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
-//                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
+                final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
+                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
+            }
+        }).start();
     }
 
     @Override

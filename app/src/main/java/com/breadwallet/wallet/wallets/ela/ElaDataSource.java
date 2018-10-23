@@ -185,6 +185,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public void getTransactions(String address){
+        //TODO test 目前测试网络区块浏览器还不能用
+        address = "8K9gkit8NPM5bD84wJuE5n7tS9Rdski5uB";
         try {
             String url = "https://blockchain.elastos.org/api/v1/txs/?address="+address+"&pageNum=0";
 
@@ -193,7 +195,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             String result = urlGET(url)/*getTxHistory()*/;
             Log.i(TAG, "result");
             TransactionRes transactionRes = new Gson().fromJson(result, TransactionRes.class);
-
 
             List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
@@ -342,15 +343,8 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         try {
             bodyText = resp.getBodyText();
-            String strDate = resp.getHeaders().get("date");
-            if (strDate == null) {
-                return bodyText;
-            }
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-            Date date = formatter.parse(strDate);
-            long timeStamp = date.getTime();
-            BRSharedPrefs.putSecureTime(mContext, timeStamp);
-        } catch (ParseException e) {
+            return bodyText;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return bodyText;
