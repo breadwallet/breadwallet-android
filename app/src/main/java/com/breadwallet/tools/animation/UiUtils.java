@@ -23,11 +23,13 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -40,6 +42,7 @@ import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -253,8 +256,14 @@ public class UiUtils {
 
     }
 
-    public static void showLegacyAddressFragment(FragmentActivity fragmentActivity) {
+    public static void showLegacyAddressFragment(final FragmentActivity fragmentActivity) {
         if (fragmentActivity != null) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    UserMetricsUtil.logSegwitEvent(fragmentActivity, UserMetricsUtil.VIEW_LEGACY_ADDRESS);
+                }
+            });
             FragmentShowLegacyAddress showLegacyAddress = (FragmentShowLegacyAddress) fragmentActivity.getSupportFragmentManager()
                     .findFragmentByTag(FragmentShowLegacyAddress.class.getName());
             if (showLegacyAddress == null || !showLegacyAddress.isAdded()) {
