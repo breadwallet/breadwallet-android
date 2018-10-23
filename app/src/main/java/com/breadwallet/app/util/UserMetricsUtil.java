@@ -69,6 +69,7 @@ public final class UserMetricsUtil {
     /* Metric field values */
     private static final String METRIC_LAUNCH = "launch";
     private static final String METRIC_PIGEON_TRANSACTION = "pigeon-transaction";
+    private static final String METRIC_SEG_WIT = "segWit";
 
     /* Various field keys and values for data field of launch metric */
     private static final String FIELD_BUNDLES = "bundles";
@@ -93,6 +94,11 @@ public final class UserMetricsUtil {
     private static final String FIELD_TO_ADDRESS = "toAddress";
     private static final String FIELD_TIMESTAMP = "timestamp";
     private static final String FIELD_ERROR = "error";  // Version 2
+
+    /* Various field keys and values for data field of segWit metric */
+    private static final String FIELD_EVENT_TYPE = "eventType";
+    public static final String ENABLE_SEG_WIT = "enableSegWit";
+    public static final String VIEW_LEGACY_ADDRESS = "viewLegacyAddress";
 
     private UserMetricsUtil() {
     }
@@ -191,6 +197,21 @@ public final class UserMetricsUtil {
             sendMetricsRequestWithPayload(context, payload);
         } catch (JSONException e) {
             Log.e(TAG, "Error creating call request payload! ", e);
+        }
+    }
+
+    public static void logSegwitEvent(Context context, String eventType) {
+        try {
+            JSONObject data = new JSONObject();
+
+            data.put(FIELD_EVENT_TYPE, eventType);
+            data.put(FIELD_TIMESTAMP, System.currentTimeMillis());
+            JSONObject payload = new JSONObject();
+            payload.put(FIELD_METRIC, METRIC_SEG_WIT);
+            payload.put(FIELD_DATA, data);
+            sendMetricsRequestWithPayload(context, payload);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
 
