@@ -45,31 +45,7 @@ public class TestActivity extends Activity {
         }
     }
 
-    public void generatePrivateKey(View view){
-        if(mPrivateKey ==null){
-            mPrivateKey = Utility.generatePrivateKey();
-            mPrivateKeyTv.setText(mPrivateKey);
-        }
-    }
 
-    public void getPublicKey(View view){
-        if(mPublicKey == null){
-            mPublicKey = Utility.getPublicKey(mPrivateKey);
-            mPublicKeyTv.setText(mPublicKey);
-        }
-    }
-
-    public void getAddress(View view){
-        if(mAddress == null){
-            mAddress = Utility.getAddress(mPublicKey);
-            mAddressTv.setText(mAddress);
-        }
-    }
-
-    public void getPrivateKey(View view){
-        mPrivateKey = Utility.getPrivateKey(mMmnemonic, "english", mRootPath);
-        mPrivateKeyTv.setText(mPrivateKey);
-    }
 
     public void generateRawTransaction(View view){
 

@@ -12,6 +12,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -101,9 +102,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static String getPrivateKey(){
         if(mPrivateKey == null){
             try {
-                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
-//                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-//                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+//                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
+                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+                mPrivateKey = Utility.getSinglePrivateKey(new String(phrase));
                 Log.i("test", "test");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -117,8 +118,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "getAddress");
         if (mAddress == null) {
             try {
-                getPrivateKey();
-                String publickey = Utility.getPublicKey(mPrivateKey);
+                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+                String publickey = Utility.getSinglePublicKey(new String(phrase));
                 mAddress = Utility.getAddress(publickey);
             } catch (Exception e) {
                 e.printStackTrace();

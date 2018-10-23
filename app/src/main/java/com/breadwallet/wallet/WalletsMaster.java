@@ -35,6 +35,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
+import com.elastos.jni.Utility;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -182,8 +183,9 @@ public class WalletsMaster {
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
+        Utility.initLanguage(ctx);
         if (languageCode == null) languageCode = "en";
-        list = Bip39Reader.bip39List(ctx, /*languageCode*/"en");
+        list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);//128bit
         String seedTest = new String(randomSeed);
