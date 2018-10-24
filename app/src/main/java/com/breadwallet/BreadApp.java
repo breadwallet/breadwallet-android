@@ -78,8 +78,6 @@ public class BreadApp extends Application {
     private static Timer isBackgroundChecker;
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
-    public static String mElaLanguage;
-    public static String mElaWords;
     private static Context mContext;
     private ApplicationLifecycleObserver mObserver;
 

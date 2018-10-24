@@ -19,20 +19,38 @@ public class Utility {
 
     public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
 
+    private static Utility mInstance;
+
+    private static String mLanguage = null;
+
+    private static String mWords = null;
+
     static {
         System.loadLibrary("utility");
     }
 
+    private Utility(Context context){
+        initLanguage(context);
+    }
+
+    public static Utility getInstance(Context context){
+        if(mInstance == null){
+            mInstance = new Utility(context);
+        }
+        initLanguage(context);
+        return mInstance;
+    }
+
     public static void initLanguage(Context context){
-        if(BreadApp.mElaLanguage==null || BreadApp.mElaWords==null){
+        if(mLanguage==null || mWords==null){
             String languageCode = Locale.getDefault().getLanguage();
             boolean exists = false;
             for (String s : LANGS) if (s.equalsIgnoreCase(languageCode)) exists = true;
             if (!exists) {
                 languageCode = "en"; //use en if not a supported lang
             }
-            BreadApp.mElaLanguage = getLanguage(languageCode);
-            BreadApp.mElaWords = getWords(context, languageCode +"-BIP39Words.txt");
+            mLanguage = getLanguage(languageCode);
+            mWords = getWords(context, languageCode +"-BIP39Words.txt");
         }
     }
 
@@ -46,31 +64,31 @@ public class Utility {
     }
 
 
-    public static String getSinglePrivateKey(String mnemonic){
-        return getSinglePrivateKey(BreadApp.mElaLanguage, mnemonic, BreadApp.mElaWords, "");
+    public String getSinglePrivateKey(String mnemonic){
+        return getSinglePrivateKey(mLanguage, mnemonic, mWords, "");
     }
 
-    public static String getSinglePublicKey(String mnemonic){
-        return getSinglePublicKey(BreadApp.mElaLanguage, mnemonic, BreadApp.mElaWords, "");
+    public String getSinglePublicKey(String mnemonic){
+        return getSinglePublicKey(mLanguage, mnemonic, mWords, "");
     }
 
-    public static String generateMnemonic(String language, String words){
+    public String generateMnemonic(String language, String words){
         return nativeGenerateMnemonic(language, words);
     }
 
-    private static String getSinglePrivateKey(String jlanguage, String jmnemonic, String jwords, String jpassword){
+    private String getSinglePrivateKey(String jlanguage, String jmnemonic, String jwords, String jpassword){
         return nativeGetSinglePrivateKey(jlanguage, jmnemonic, jwords, jpassword);
     }
 
-    private static String getSinglePublicKey(String jlanguage, String jmnemonic, String jwords, String jpassword){
+    private String getSinglePublicKey(String jlanguage, String jmnemonic, String jwords, String jpassword){
         return nativeGetSinglePublicKey(jlanguage, jmnemonic, jwords, jpassword);
     }
 
-    public static String getAddress(String jpublickey){
+    public  String getAddress(String jpublickey){
         return nativeGetAddress(jpublickey);
     }
 
-    public static String generateRawTransaction(String transaction){
+    public  String generateRawTransaction(String transaction){
         return nativeGenerateRawTransaction(transaction);
     }
 

@@ -38,15 +38,6 @@ public class TestActivity extends Activity {
         mRootPath = getApplicationContext().getFilesDir().getParent();
     }
 
-    public void generateMmemonic(View view){
-        if(mMmnemonic == null){
-            mMmnemonic = Utility.generateMnemonic("english", mRootPath);
-            mMnemonicTv.setText(mMmnemonic);
-        }
-    }
-
-
-
     public void generateRawTransaction(View view){
 
     }

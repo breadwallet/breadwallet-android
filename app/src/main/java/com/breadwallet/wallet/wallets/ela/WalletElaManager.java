@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -67,9 +68,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private static Context mContext;
 
-    public static WalletElaManager getInstance(Context context){
+    public static WalletElaManager getInstance(Context context) {
 
-        if(mInstance == null){
+        if (mInstance == null) {
             mInstance = new WalletElaManager();
             mContext = context;
         }
@@ -77,7 +78,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mInstance;
     }
 
-    private WalletElaManager(){
+    private WalletElaManager() {
         mUiConfig = new WalletUiConfiguration("#003d79", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
 
@@ -99,12 +100,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         throw new RuntimeException("stub");
     }
 
-    public static String getPrivateKey(){
-        if(mPrivateKey == null){
+    public static String getPrivateKey() {
+        if (mPrivateKey == null) {
             try {
 //                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
                 byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                mPrivateKey = Utility.getSinglePrivateKey(new String(phrase));
+                mPrivateKey = Utility.getInstance(mContext).getSinglePrivateKey(new String(phrase));
                 Log.i("test", "test");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -116,11 +117,18 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public String getAddress() {
         Log.i(TAG, "getAddress");
+        try {
+            byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+            String word = new String(phrase);
+            Log.i("test", "test");
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
         if (mAddress == null) {
             try {
                 byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                String publickey = Utility.getSinglePublicKey(new String(phrase));
-                mAddress = Utility.getAddress(publickey);
+                String publickey = Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
+                mAddress = Utility.getInstance(mContext).getAddress(publickey);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -144,17 +152,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mRwTxid.getBytes();
     }
 
-    public static boolean is_update = false;
-
-    public void updateTxHistory(){
-        if(is_update) return;
-        is_update = true;
-        try {
-            ElaDataSource.getInstance(mContext).getTransactions(getAddress());
-            TxManager.getInstance().updateTxList(mContext);
-        } finally {
-            is_update = false;
-        }
+    public void updateTxHistory() {
+        ElaDataSource.getInstance(mContext).getTransactions(getAddress());
+        TxManager.getInstance().updateTxList(mContext);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             @Override
             public void run() {
                 String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
-                final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
+                final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
                 BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
             }
         }).start();
@@ -303,11 +303,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        updateTxHistory();
         List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
-        try{
-            for(ElaTransactionEntity entity : transactionEntities){
+        try {
+            for (ElaTransactionEntity entity : transactionEntities) {
                 TxUiHolder txUiHolder = new TxUiHolder(null,
                         entity.isReceived,
                         entity.timeStamp,
@@ -378,8 +377,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         Log.i(TAG, "createTransaction");
-        //TODO daokun.xi
-        updateTxHistory();
         BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.intValue(), "");
         return new CryptoTransaction(brElaTransaction);
     }

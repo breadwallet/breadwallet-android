@@ -8,7 +8,6 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
@@ -31,13 +30,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -50,6 +45,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
     private static final String ELA_SERVIER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
+
+    private static final String ELA_HISTORY_URL = "http://blockchain-regtest3.elastos.org";
 
     private static ElaDataSource mInstance;
 
@@ -178,22 +175,16 @@ public class ElaDataSource implements BRDataSourceInterface {
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
             balance = object.getString("result");
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return balance;
     }
 
     public void getTransactions(String address){
-        //TODO test 目前测试网络区块浏览器还不能用
-        address = "8K9gkit8NPM5bD84wJuE5n7tS9Rdski5uB";
         try {
-            String url = "https://blockchain.elastos.org/api/v1/txs/?address="+address+"&pageNum=0";
-
-//            String url = "https://blockchain.elastos.org/api/v1/txs/?address=8K9gkit8NPM5bD84wJuE5n7tS9Rdski5uB&pageNum=0";
-//            address = "8K9gkit8NPM5bD84wJuE5n7tS9Rdski5uB";
+            String url = ELA_HISTORY_URL+"/api/v1/txs/?address="+address+"&pageNum=0";
             String result = urlGET(url)/*getTxHistory()*/;
-            Log.i(TAG, "result");
             TransactionRes transactionRes = new Gson().fromJson(result, TransactionRes.class);
 
             List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
@@ -293,7 +284,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         String result = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
-            String rawTransaction = Utility.generateRawTransaction(transaction);
+            String rawTransaction = Utility.getInstance(mContext).generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             String tmp = urlPost(url, json)/*getRawTx()*/;
             JSONObject jsonObject = new JSONObject(tmp);
@@ -322,7 +313,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     @WorkerThread
-    public String urlGET(String myURL) {
+    public String urlGET(String myURL) throws IOException {
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
         Request.Builder builder = new Request.Builder()
@@ -338,16 +329,13 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         Request request = builder.build();
-        String bodyText = null;
-        APIClient.BRResponse resp = APIClient.getInstance(mContext).sendRequest(request, false);
+        Response response = APIClient.elaClient.newCall(request).execute();
 
-        try {
-            bodyText = resp.getBodyText();
-            return bodyText;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
         }
-        return bodyText;
     }
 
 
