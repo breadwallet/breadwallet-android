@@ -195,10 +195,14 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return 0;
     }
 
+    private static double time = 0;
+
     @Override
     public double getSyncProgress(long startHeight) {
         Log.i(TAG, "getSyncProgress");
-        return 1.0;
+        time += 0.1;
+        if(time >= 1.0) time = 1.0;
+        return time;
     }
 
     @Override
@@ -295,6 +299,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             @Override
             public void run() {
                 String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
+                if(balance == null) return;
                 final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
                 BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
             }

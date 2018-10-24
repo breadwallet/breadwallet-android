@@ -62,6 +62,8 @@ public class TxManager {
     }
 
     public void init(final WalletActivity app) {
+        txList = app.findViewById(R.id.tx_list);
+        txList.setLayoutManager(new CustomLinearLayoutManager(app));
         mItemListener = new RecyclerItemClickListener(app,
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -77,8 +79,6 @@ public class TxManager {
 
             }
         });
-        txList = app.findViewById(R.id.tx_list);
-        txList.setLayoutManager(new CustomLinearLayoutManager(app));
         txList.addOnItemTouchListener(mItemListener);
         if (adapter == null)
             adapter = new TransactionListAdapter(app, null);
