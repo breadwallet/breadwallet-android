@@ -149,6 +149,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "signAndPublishTransaction");
         BRElaTransaction raw = tx.getElaTx();
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+        if(mRwTxid == null) return new byte[1];
+        TxManager.getInstance().updateTxList(mContext);
         return mRwTxid.getBytes();
     }
 
@@ -383,7 +385,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         Log.i(TAG, "createTransaction");
         BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.longValue(), "");
-        updateTxHistory();
         return new CryptoTransaction(brElaTransaction);
     }
 
