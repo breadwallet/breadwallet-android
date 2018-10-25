@@ -25,7 +25,6 @@ import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
-    private static final String ELA_SERVIER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
+    private static final String ELA_SERVER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
 
     private static final String ELA_HISTORY_URL = "http://blockchain-regtest3.elastos.org";
 
@@ -188,7 +187,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public String getElaBalance(String address){
         String balance = null;
         try {
-            String url = ELA_SERVIER_URL+"/api/1/balance/"+address;
+            String url = ELA_SERVER_URL +"/api/1/balance/"+address;
             String result = urlGET(url);JSONObject object = new JSONObject(result);
             balance = object.getString("result");
         } catch (Exception e) {
@@ -260,7 +259,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
         BRElaTransaction brElaTransaction = null;
         try {
-            String url = ELA_SERVIER_URL+"/api/1/createTx";
+            String url = ELA_SERVER_URL +"/api/1/createTx";
 
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -313,7 +312,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         String result = null;
         try {
-            String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
+            String url = ELA_SERVER_URL +"/api/1/sendRawTx";
             String rawTransaction = Utility.getInstance(mContext).generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
