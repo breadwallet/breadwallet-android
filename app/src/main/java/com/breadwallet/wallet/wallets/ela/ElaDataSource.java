@@ -150,7 +150,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, null, null, null, null, null);
+            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, null, null, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -189,8 +189,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         String balance = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/balance/"+address;
-            String result = urlGET(url);
-            JSONObject object = new JSONObject(result);
+            String result = urlGET(url);JSONObject object = new JSONObject(result);
             balance = object.getString("result");
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,8 +299,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.txSize = 0;
             elaTransactionEntity.amount = amount;
             elaTransactionEntity.balanceAfterTx = 0;
+            elaTransactionEntity.timeStamp = System.currentTimeMillis();
             elaTransactionEntity.isValid = true;
-            elaTransactionEntity.timeStamp = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

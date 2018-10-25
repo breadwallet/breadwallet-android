@@ -80,7 +80,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
             ELA_COLUMN_ID + " integer primary key autoincrement, " +
             ELA_COLUMN_ISRECEIVED + " integer, " +
-            ELA_COLUMN_TIMESTAMP + " text DEFAULT '0' , " +
+            ELA_COLUMN_TIMESTAMP + " integer DEFAULT '0' , " +
             ELA_COLUMN_BLOCKHEIGHT + " interger, " +
             ELA_COLUMN_HASH + " blob, " +
             ELA_COLUMN_TXREVERSED+ " text DEFAULT 'ELA' , " +

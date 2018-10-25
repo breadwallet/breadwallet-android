@@ -104,10 +104,12 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
-            BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
-            enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
-            mTokenListMetaData = new TokenListMetaData(enabled, null);
-            KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
+            if(ethWallet!=null && ethWallet.node!=null){
+                BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
+                enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
+                mTokenListMetaData = new TokenListMetaData(enabled, null);
+                KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
+            }
         }
 
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {

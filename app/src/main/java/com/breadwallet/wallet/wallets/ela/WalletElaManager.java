@@ -147,7 +147,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         Log.i(TAG, "signAndPublishTransaction");
+        if(tx == null) return new byte[1];
         BRElaTransaction raw = tx.getElaTx();
+        if(raw == null) return new byte[1];
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
         if(mRwTxid == null) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
