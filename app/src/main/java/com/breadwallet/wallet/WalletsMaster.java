@@ -177,8 +177,7 @@ public class WalletsMaster {
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
-        if (languageCode == null) languageCode = "en";
-        list = Bip39Reader.bip39List(ctx, languageCode);
+        list = Bip39Reader.getBip39Words(ctx, Bip39Reader.SupportedLanguage.valueOf(languageCode));
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);
         if (words.length != 2048) {
