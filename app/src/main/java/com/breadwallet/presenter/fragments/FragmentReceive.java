@@ -75,6 +75,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
+    private String mReceiveAddress;
     private View mSeparatorRequestView;
     private BRButton mShareButton;
     private Button mShareEmailButton;
@@ -154,7 +155,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(BRSharedPrefs.getReceiveAddress(getContext(), walletManager.getIso())),
+                        walletManager.decorateAddress(mReceiveAddress),
                         BigDecimal.ZERO, null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
@@ -167,7 +168,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(BRSharedPrefs.getReceiveAddress(getContext(), walletManager.getIso())),
+                        walletManager.decorateAddress(mReceiveAddress),
                         BigDecimal.ZERO, null, null, null);
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
@@ -278,10 +279,11 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String address = walletManager.getAddress(getContext());
-                        mAddress.setText(walletManager.decorateAddress(address));
+                        mReceiveAddress = walletManager.getAddress(getContext());
+                        String decoratedReceiveAddress = walletManager.decorateAddress(mReceiveAddress);
+                        mAddress.setText(decoratedReceiveAddress);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, walletManager.decorateAddress(address),
+                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, decoratedReceiveAddress,
                                 BigDecimal.ZERO, null, null, null);
                         if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
                             throw new RuntimeException("failed to generate qr image for address");
