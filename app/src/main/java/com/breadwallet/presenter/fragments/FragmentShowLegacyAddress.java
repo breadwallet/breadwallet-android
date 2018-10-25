@@ -93,8 +93,6 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         mCloseButton = rootView.findViewById(R.id.close_button);
         setListeners();
 
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
-
         mSignalLayout.removeView(mShareButtonsLayout);
         mSignalLayout.removeView(mCopiedLayout);
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
@@ -193,19 +191,14 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateQr();
-            }
-        });
+        updateQr();
     }
 
     private void updateQr() {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(getContext());
+                final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(getActivity());
                 walletBitcoinManager.refreshAddress(getActivity());
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
@@ -233,6 +226,18 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         }
 
         showCopiedLayout(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
     }
 
     @Override
