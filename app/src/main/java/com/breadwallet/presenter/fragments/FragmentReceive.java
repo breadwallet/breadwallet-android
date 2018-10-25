@@ -273,26 +273,23 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (getContext() != null) {
-                    final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
-                    walletManager.refreshAddress(getContext());
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            String address = walletManager.getAddress(getContext());
-                            mAddress.setText(walletManager.decorateAddress(address));
-                            Utils.correctTextSizeIfNeeded(mAddress);
-                            Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, walletManager.decorateAddress(address),
-                                    BigDecimal.ZERO, null, null, null);
-                            if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
-                                throw new RuntimeException("failed to generate qr image for address");
-                            }
+                final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
+                walletManager.refreshAddress(getContext());
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String address = walletManager.getAddress(getContext());
+                        mAddress.setText(walletManager.decorateAddress(address));
+                        Utils.correctTextSizeIfNeeded(mAddress);
+                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, walletManager.decorateAddress(address),
+                                BigDecimal.ZERO, null, null, null);
+                        if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
+                            throw new RuntimeException("failed to generate qr image for address");
                         }
-                    });
-                }
+                    }
+                });
             }
         });
-
     }
 
     private void copyText() {
