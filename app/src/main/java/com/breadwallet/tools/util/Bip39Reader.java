@@ -2,6 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.SmartValidator;
@@ -40,41 +41,72 @@ import java.util.List;
  */
 
 public class Bip39Reader {
-
-    private static final String TAG = Bip39Reader.class.getName();
+    private static final String TAG = Bip39Reader.class.getSimpleName();
     public static final int WORD_LIST_SIZE = 2048;
-    public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
 
-    //if lang is null then all the lists
-    public static List<String> bip39List(Context app, String lang) {
+    private static final String FILE_PREFIX = "words/";
+    private static final String FILE_SUFFIX = "-BIP39Words.txt";
+    // UTF-8 BOM is a sequence of bytes (EF BB BF) that allows the reader to identify a file as being encoded in UTF-8.
+    // Use FEFF because this is the Unicode char represented by EF BB BF.
+    private static final String UTF8_BOM = "\uFEFF";
 
-        if (lang == null)
-            return getAllWords(app); //return all the words for all langs
-        else {
-            boolean exists = false;
-            for (String s : LANGS) if (s.equalsIgnoreCase(lang)) exists = true;
-            if (!exists) {
-                lang = "en"; //use en if not a supported lang
-            }
+
+    public enum SupportedLanguage {
+        EN("en"),
+        ES("es"),
+        FR("fr"),
+        IT("it"),
+        JA("ja"),
+        KO("ko"),
+        ZH_HANS("zh-Hans"),
+        ZH_HANT("zh-Hant");
+
+        private final String mName;
+
+        SupportedLanguage(String name) {
+            mName = name;
         }
 
-        return getList(app, lang);
+        public boolean equalsName(String otherName) {
+            return mName.equals(otherName);
+        }
+
+        public String toString() {
+            return this.mName;
+        }
     }
 
-    private static List<String> getAllWords(Context app) {
+    private Bip39Reader() {
+    }
+
+    public static List<String> getBip39Words(Context context, SupportedLanguage targetLanguage) {
+        if (targetLanguage == null) {
+            // Return all words for all languages.
+            return getAllBip39Words(context);
+        }
+        SupportedLanguage actualLanguage = SupportedLanguage.EN;
+        for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
+            if (supportedLanguage.equals(targetLanguage)) {
+                actualLanguage = targetLanguage;
+            }
+        }
+        return getBip39WordsByLanguage(context, actualLanguage);
+    }
+
+    static List<String> getAllBip39Words(Context context) {
         List<String> words = new ArrayList<>();
-        for (String lang : LANGS) {
-            words.addAll(getList(app, lang));
+        for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
+            words.addAll(getBip39WordsByLanguage(context, supportedLanguage));
         }
         return words;
     }
 
-    private static List<String> getList(Context app, String lang) {
-        String fileName = "words/" + lang + "-BIP39Words.txt";
+    private static List<String> getBip39WordsByLanguage(Context context, SupportedLanguage language) {
+        String fileName = FILE_PREFIX + language.toString() + FILE_SUFFIX;
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
         try {
-            AssetManager assetManager = app.getResources().getAssets();
+            AssetManager assetManager = context.getResources().getAssets();
             InputStream inputStream = assetManager.open(fileName);
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
@@ -83,14 +115,14 @@ public class Bip39Reader {
                 wordList.add(cleanWord(line));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
-
+            Log.e(TAG, "getList: ", ex);
         } finally {
             try {
-                if (reader != null)
+                if (reader != null) {
                     reader.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "getList: ", e);
             }
         }
         if (wordList.size() % WORD_LIST_SIZE != 0) {
@@ -99,16 +131,15 @@ public class Bip39Reader {
         return new ArrayList<>(wordList);
     }
 
-
-    public static List<String> detectWords(Context app, String paperKey) {
+    public static List<String> detectWords(Context context, String paperKey) {
         if (Utils.isNullOrEmpty(paperKey)) {
             return null;
         }
-        String cleanPaperKey = SmartValidator.cleanPaperKey(app, paperKey);
+        String cleanPaperKey = SmartValidator.cleanPaperKey(context, paperKey);
         String firstWord = cleanPaperKey.split(" ")[0];
 
-        for (String s : LANGS) {
-            List<String> words = getList(app, s);
+        for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
+            List<String> words = getBip39WordsByLanguage(context, supportedLanguage);
             if (words.contains(firstWord)) {
                 return words;
             }
@@ -117,8 +148,7 @@ public class Bip39Reader {
     }
 
     public static String cleanWord(String word) {
-        String w = Normalizer.normalize(word.trim().replace("　", "")
+        return Normalizer.normalize(word.trim().replace(UTF8_BOM, "").replace("　", "")
                 .replace(" ", ""), Normalizer.Form.NFKD);
-        return w;
     }
 }
