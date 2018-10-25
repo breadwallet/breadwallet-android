@@ -3,6 +3,7 @@ package com.breadwallet.wallet.wallets.ethereum;
 import android.content.Context;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -53,13 +54,14 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     @Override
     public boolean isAddressValid(String address) {
-        return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX);
+        return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX) && BREthereumLightNode.addressIsValid(address);
     }
 
     @Override
     public void addBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
+
     @Override
     public void removeBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.removeBalanceChangedListener(listener);
