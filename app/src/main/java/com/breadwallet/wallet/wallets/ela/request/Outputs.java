@@ -4,6 +4,6 @@ public class Outputs {
 
     public String addr;
 
-    public int amt;
+    public long amt;
 
 }

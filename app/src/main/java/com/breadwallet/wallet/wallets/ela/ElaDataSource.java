@@ -84,7 +84,14 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
     };
 
-    public void putTransaction(List<ElaTransactionEntity> elaTransactionEntities){
+    public void cacheSingleTx(ElaTransactionEntity entity){
+        List<ElaTransactionEntity> entities = new ArrayList<>();
+        entities.clear();
+        entities.add(entity);
+        cacheMultTx(entities);
+    }
+
+    public synchronized void cacheMultTx(List<ElaTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
         Cursor cursor = null;
         try {
@@ -95,7 +102,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
                         allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ?", new String[]{entity.txReversed}, null, null, null);
 
-                if(cursor==null || cursor.getCount()>=1) continue;
+                if(cursor!=null && cursor.getCount()>=1) continue;
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
@@ -206,7 +213,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 elaTransactionEntity.timeStamp = txs.time;
                 elaTransactionEntities.add(elaTransactionEntity);
             }
-            putTransaction(elaTransactionEntities);
+//            cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -240,7 +247,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return true;
     }
 
-    public BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
+    public BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
         BRElaTransaction brElaTransaction = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/createTx";
@@ -271,6 +278,22 @@ public class ElaDataSource implements BRDataSourceInterface {
             brElaTransaction = new BRElaTransaction();
             brElaTransaction.setTx(transactionJson);
             brElaTransaction.setTxId(inputs.get(0).txid);
+
+            ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+            elaTransactionEntity.txReversed = inputs.get(0).txid;
+            elaTransactionEntity.fromAddress = inputAddress;
+            elaTransactionEntity.toAddress = outputsAddress;
+            elaTransactionEntity.isReceived = false;
+            elaTransactionEntity.fee = new BigDecimal(res.Transactions.get(0).Fee).multiply(new BigDecimal(1000000000)).longValue();
+            elaTransactionEntity.blockHeight = 0;
+            elaTransactionEntity.hash = new byte[1];
+            elaTransactionEntity.txSize = 0;
+            elaTransactionEntity.amount = amount;
+            elaTransactionEntity.balanceAfterTx = 0;
+            elaTransactionEntity.isValid = true;
+            elaTransactionEntity.timeStamp = 0;
+
+            cacheSingleTx(elaTransactionEntity);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -286,7 +309,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
             String rawTransaction = Utility.getInstance(mContext).generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
-            String tmp = urlPost(url, json)/*getRawTx()*/;
+            Log.i(TAG, "rawTransaction:"+rawTransaction);
+            String tmp = urlPost(url, json);
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             Log.i("rawTx", "result:"+result);
