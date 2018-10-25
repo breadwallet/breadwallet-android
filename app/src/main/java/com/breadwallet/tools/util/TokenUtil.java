@@ -142,7 +142,7 @@ public final class TokenUtil {
     }
 
     public static synchronized ArrayList<TokenItem> getTokenItems(Context context) {
-        if (mTokenItems == null) {
+        if (mTokenItems == null || mTokenItems.isEmpty()) {
             mTokenItems = getTokensFromFile(context);
         }
         return mTokenItems;
@@ -157,8 +157,12 @@ public final class TokenUtil {
             // rather than on an instance of the class.
             synchronized (TokenItem.class) {
                 String responseBody = response.getBodyText();
-                saveTokenListToFile(context, responseBody);
-                mTokenItems = parseJsonToTokenList(context, responseBody);
+
+                // Check if the response from the server is valid JSON before trying to save & parse.
+                if(Utils.isValidJSON(responseBody)) {
+                    saveTokenListToFile(context, responseBody);
+                    mTokenItems = parseJsonToTokenList(context, responseBody);
+                }
             }
         }
     }
@@ -166,7 +170,7 @@ public final class TokenUtil {
     private static ArrayList<TokenItem> parseJsonToTokenList(Context context, String jsonString) {
         ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        // Iterate over the token list and announce each token to Core
+        // Iterate over the token list and announce each token to Core.
         try {
             JSONArray tokenListArray = new JSONArray(jsonString);
             WalletEthManager ethWalletManager = WalletEthManager.getInstance(context);
@@ -203,7 +207,7 @@ public final class TokenUtil {
                     ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
 
                     // Keep a local reference to the token list, so that we can make token symbols to their
-                    // gradient colors in WalletListAdapter
+                    // gradient colors in WalletListAdapter.
                     TokenItem item = new TokenItem(address, symbol, name, null);
 
                     if (tokenObject.has(FIELD_COLORS)) {
