@@ -25,12 +25,14 @@
 
 package com.breadwallet.presenter.activities.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.app.util.UserMetricsUtil;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -64,6 +66,16 @@ public class SegWitActivity extends BaseSettingsActivity {
                 enableSegwit();
                 confirmChoiceLayout.setVisibility(View.GONE);
                 confirmationLayout.setVisibility(View.VISIBLE);
+                enableButton.setVisibility(View.VISIBLE);
+                enableButton.setText(getString(R.string.Button_BackToHomePage));
+                enableButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(SegWitActivity.this, HomeActivity.class);
+                        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        startActivity(intent);
+                    }
+                });
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
