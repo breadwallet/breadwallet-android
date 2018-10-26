@@ -43,7 +43,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
-    private static final String ELA_SERVER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
+    private static final String ELA_SERVER_URL = "http://WalletServiceTest-env-regtest3.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
 
     private static final String ELA_HISTORY_URL = "http://blockchain-regtest3.elastos.org";
 

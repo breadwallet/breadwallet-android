@@ -24,6 +24,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
@@ -312,6 +313,9 @@ public class CryptoUriParser {
                 builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
             } else if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH")) {
                 BigDecimal amount = cryptoAmount.divide(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS), 8, BRConstants.ROUNDING_MODE);
+                builder = builder.appendQueryParameter("amount", amount.toPlainString());
+            } else if(iso.equalsIgnoreCase("ELA")) {
+                BigDecimal amount = cryptoAmount.divide(new BigDecimal(WalletElaManager.ONE_ELA_IN_SALA), 8, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else {
                 throw new RuntimeException("URI not supported for: " + iso);
