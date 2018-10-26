@@ -52,45 +52,39 @@ public class Bip39Reader {
 
 
     public enum SupportedLanguage {
-        EN("en"),
-        ES("es"),
-        FR("fr"),
-        IT("it"),
-        JA("ja"),
-        KO("ko"),
-        ZH_HANS("zh-Hans"),
-        ZH_HANT("zh-Hant");
+        EN,
+        ES,
+        FR,
+        IT,
+        JA,
+        KO,
+        ZH_HANS,
+        ZH_HANT;
 
-        private final String mName;
+        public static SupportedLanguage getSupportedLanguage(String targetLanguage) {
+            // valueOf() expects upper case since we have defined the enums in upper case.
+            String targetLanguageUpperCase = targetLanguage.toUpperCase();
+            for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
+                if (supportedLanguage.name().equals(targetLanguageUpperCase)) {
+                    return valueOf(targetLanguageUpperCase);
+                }
+            }
 
-        SupportedLanguage(String name) {
-            mName = name;
-        }
-
-        public boolean equalsName(String otherName) {
-            return mName.equals(otherName);
-        }
-
-        public String toString() {
-            return this.mName;
+            // If the target language is not supported, use the default.
+            return SupportedLanguage.EN;
         }
     }
 
     private Bip39Reader() {
     }
 
-    public static List<String> getBip39Words(Context context, SupportedLanguage targetLanguage) {
+    public static List<String> getBip39Words(Context context, String targetLanguage) {
         if (targetLanguage == null) {
             // Return all words for all languages.
             return getAllBip39Words(context);
         }
-        SupportedLanguage actualLanguage = SupportedLanguage.EN;
-        for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
-            if (supportedLanguage.equals(targetLanguage)) {
-                actualLanguage = targetLanguage;
-            }
-        }
-        return getBip39WordsByLanguage(context, actualLanguage);
+
+        return getBip39WordsByLanguage(context, SupportedLanguage.getSupportedLanguage(targetLanguage));
     }
 
     static List<String> getAllBip39Words(Context context) {
@@ -102,7 +96,7 @@ public class Bip39Reader {
     }
 
     private static List<String> getBip39WordsByLanguage(Context context, SupportedLanguage language) {
-        String fileName = FILE_PREFIX + language.toString() + FILE_SUFFIX;
+        String fileName = FILE_PREFIX + language.name().toLowerCase() + FILE_SUFFIX;
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
         try {
