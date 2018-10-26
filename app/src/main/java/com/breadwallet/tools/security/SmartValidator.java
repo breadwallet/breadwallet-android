@@ -44,11 +44,10 @@ public class SmartValidator {
     private static final String TAG = SmartValidator.class.getName();
 
     public static boolean isPaperKeyValid(Context ctx, String paperKey) {
-        String languageCode = Locale.getDefault().getLanguage();
-        if (!isValid(ctx, paperKey, Bip39Reader.SupportedLanguage.valueOf(languageCode.toUpperCase()))) {
+        if (!isValid(ctx, paperKey, Locale.getDefault().getLanguage())) {
             //try all languages
             for (Bip39Reader.SupportedLanguage supportedLanguage : Bip39Reader.SupportedLanguage.values()) {
-                if (isValid(ctx, paperKey, supportedLanguage)) {
+                if (isValid(ctx, paperKey, supportedLanguage.name())) {
                     return true;
                 }
             }
@@ -59,7 +58,7 @@ public class SmartValidator {
         return false;
     }
 
-    private static boolean isValid(Context ctx, String paperKey, Bip39Reader.SupportedLanguage language) {
+    private static boolean isValid(Context ctx, String paperKey, String language) {
         List<String> list = Bip39Reader.getBip39Words(ctx, language);
         String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
