@@ -163,6 +163,11 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         initialize(true);
+
+        // Start our local server as soon as the application instance is created, since we need to
+        // display support WebViews during onboarding.
+        HTTPServer.startServer();
+
     }
 
     /**
@@ -331,14 +336,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 mBackgroundedTime = 0;
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!HTTPServer.isStarted()) {
-                            HTTPServer.startServer();
-                        }
-                    }
-                });
+
+                HTTPServer.startServer();
+
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -352,12 +352,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 mBackgroundedTime = System.currentTimeMillis();
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HTTPServer.stopServer();
-                    }
-                });
+
+                HTTPServer.stopServer();
+
                 break;
         }
     }
