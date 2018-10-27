@@ -108,29 +108,41 @@ public class HTTPServer {
 
     public synchronized static void startServer() {
         Log.d(TAG, "startServer");
-        try {
-            if (server != null && server.isStarted()) {
-                return;
-            }
-            if (server == null) init();
-            server.start();
-            server.join();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (isStarted()) {
+            return;
         }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (server == null) init();
+                    server.start();
+                    server.join();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error starting the local server", e);
+                }
+            }
+        });
     }
 
     public static void stopServer() {
         Log.d(TAG, "stopServer");
-        try {
-            if (server != null) {
 
-                server.stop();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (isStarted()) {
+
+                        server.stop();
+                    }
+                    server = null;
+                } catch (Exception e) {
+                    Log.e(TAG, "Error stopping the local server", e);
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        server = null;
+        });
+
     }
 
     public static boolean isStarted() {
