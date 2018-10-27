@@ -121,7 +121,7 @@ public final class MessageExchangeService extends JobIntentService {
                     // User scanned QR, to initiate pairing with a remote wallet,
                     savePairingMetaDataToKvStore((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));
                     // Show more service details about the pairing and ask the user to confirm.
-                    MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, SERVICE_PWB));
+                    MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, mPairingMetaData.getService()));
                     confirmRequest(linkMetaData);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
@@ -478,6 +478,10 @@ public final class MessageExchangeService extends JobIntentService {
      * @param pairingMetaData The pairing meta data.
      */
     private void savePairingMetaDataToKvStore(PairingMetaData pairingMetaData) {
+        if (Utils.isNullOrEmpty(pairingMetaData.getService())) {
+            pairingMetaData.setService(SERVICE_PWB);
+        }
+
         mPairingMetaData = pairingMetaData;
         KVStoreManager.putPairingMetadata(this, pairingMetaData);
     }
@@ -619,7 +623,7 @@ public final class MessageExchangeService extends JobIntentService {
         Protos.Envelope envelope = Protos.Envelope.newBuilder()
                 .setVersion(ENVELOPE_VERSION)
                 .setMessageType(messageType.name())
-                .setService(SERVICE_PWB)
+                .setService(mPairingMetaData.getService())
                 .setEncryptedMessage(encryptedMessage)
                 .setSenderPublicKey(senderPublicKey)
                 .setReceiverPublicKey(receiverPublicKey)
