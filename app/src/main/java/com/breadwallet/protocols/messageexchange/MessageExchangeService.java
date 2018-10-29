@@ -784,11 +784,20 @@ public final class MessageExchangeService extends JobIntentService {
     private void processPaymentRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
-            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
+            WalletEthManager walletManager = WalletEthManager.getInstance(this);
 
-            // TODO: Support getting gas limit and fee from requestMetaData as with call request.
+            // Assume ETH wallet type for now.
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
+
+            GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
+                    requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
+                    Utils.isNullOrEmpty(requestMetaData.getTransactionFee()) ? walletManager.getWallet().getDefaultGasPrice() : Long.valueOf(requestMetaData.getTransactionFee()),
+                    BREthereumAmount.Unit.ETHER_WEI,
+                    Utils.isNullOrEmpty(requestMetaData.getTransactionSize()) ? GAS_LIMIT : Long.valueOf(requestMetaData.getTransactionSize()),
+                    ""); /* No extra data */
+            cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
+
             SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
                 @Override
                 public void onCompleted(String hash, boolean succeed) {
@@ -843,7 +852,7 @@ public final class MessageExchangeService extends JobIntentService {
                     ((CallRequestMetaData) requestMetaData).getAbi());
             cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
 
-            SendManager.sendTransaction(getApplicationContext(), cryptoRequest, walletManager, new SendManager.SendCompletion() {
+            SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
                 @Override
                 public void onCompleted(String hash, boolean succeed) {
                     Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
@@ -852,7 +861,6 @@ public final class MessageExchangeService extends JobIntentService {
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
                     } else {
-
                         responseBuilder.setStatus(Protos.Status.REJECTED)
                                 .setError(Protos.Error.TRANSACTION_FAILED);
                     }
