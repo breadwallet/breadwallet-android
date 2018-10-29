@@ -11,7 +11,7 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 347
+        versionCode 349
         versionName "3.4.3"
         multiDexEnabled true
 
