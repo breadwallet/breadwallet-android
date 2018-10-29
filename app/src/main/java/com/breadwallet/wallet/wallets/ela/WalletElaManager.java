@@ -204,9 +204,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public double getSyncProgress(long startHeight) {
         Log.i(TAG, "getSyncProgress");
-        time += 0.1;
-        if(time >= 1.0) time = 1.0;
-        return time;
+//        time += 0.1;
+//        if(time >= 1.0) time = 1.0;
+        return /*time*/1.0;
     }
 
     @Override

@@ -298,7 +298,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.txSize = 0;
             elaTransactionEntity.amount = amount;
             elaTransactionEntity.balanceAfterTx = 0;
-            elaTransactionEntity.timeStamp = System.currentTimeMillis();
+            elaTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
             elaTransactionEntity.isValid = true;
         } catch (Exception e) {
             e.printStackTrace();
