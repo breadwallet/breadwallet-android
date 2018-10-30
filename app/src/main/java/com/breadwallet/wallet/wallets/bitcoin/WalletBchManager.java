@@ -51,7 +51,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     private static final String TAG = WalletBchManager.class.getName();
 
     private static final String ISO = BITCASH_CURRENCY_CODE;
-    private static final String NAME = "Bitcoin Cash";
+    public static final String NAME = "Bitcoin Cash";
     private static final String SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
     private static final String COLOR = "#478559";
     private static final long MAINNET_FORK_TIME = 1501568580; // Tuesday, August 1, 2017 6:23:00 AM GMT in seconds since Epoch

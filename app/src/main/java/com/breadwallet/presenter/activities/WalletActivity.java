@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
@@ -40,8 +41,10 @@ import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -50,6 +53,7 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -90,6 +94,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSearchIcon;
     private ConstraintLayout mToolBarConstraintLayout;
     private LinearLayout mWalletFooter;
+    private View mDelistedTokenBanner;
 
     private static final float PRIMARY_TEXT_SIZE = 30;
     private static final float SECONDARY_TEXT_SIZE = 16;
@@ -128,6 +133,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSyncStatusLabel = findViewById(R.id.sync_status_label);
         mProgressLabel = findViewById(R.id.syncing_label);
         mWalletFooter = findViewById(R.id.bottom_toolbar_layout1);
+        mDelistedTokenBanner = findViewById(R.id.delisted_token_layout);
 
         startSyncLoggerIfNeeded();
 
@@ -221,6 +227,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setPriceTags(cryptoPreferred, false);
 
+        Button moreInfoButton = mDelistedTokenBanner.findViewById(R.id.more_info_button);
+        moreInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.showSupportFragment(WalletActivity.this, BRConstants.FAQ_UNSUPPORTED_TOKEN, null);
+            }
+        });
+    }
+
+    /**
+     * This token is no longer supported by the BRD app, notify the user.
+     */
+    private void showDelistedTokenBanner() {
+        mDelistedTokenBanner.setVisibility(View.VISIBLE);
     }
 
     private void startSyncLoggerIfNeeded() {
@@ -404,6 +424,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             mCurrentWalletIso = wallet.getIso();
 
+            if (!TokenUtil.isTokenSupported(mCurrentWalletIso)) {
+                showDelistedTokenBanner();
+            }
             wallet.addSyncListener(this);
         }
 
