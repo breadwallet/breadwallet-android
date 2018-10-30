@@ -93,7 +93,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public static final String MAX_ETH = "90000000";
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
-    private static final String NAME = "Ethereum";
+    public static final String NAME = "Ethereum";
 
     private static WalletEthManager mInstance;
 

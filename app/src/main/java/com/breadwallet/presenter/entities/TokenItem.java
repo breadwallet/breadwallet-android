@@ -10,13 +10,15 @@ public class TokenItem {
     private String mStartColor;
     private String mEndColor;
     private String mContractInitialValue; // This is the initial value of a token during its ICO
+    private boolean mIsSupported;
 
 
-    public TokenItem(String address, String symbol, String name, String image){
+    public TokenItem(String address, String symbol, String name, String image, boolean isSupported){
         this.address = address;
         this.symbol = symbol;
         this.name = name;
         this.image = image;
+        this.mIsSupported = isSupported;
     }
 
     public void setStartColor(String startColor) {
@@ -41,5 +43,9 @@ public class TokenItem {
 
     public String getContractInitialValue() {
         return mContractInitialValue;
+    }
+
+    public boolean isSupported() {
+        return mIsSupported;
     }
 }

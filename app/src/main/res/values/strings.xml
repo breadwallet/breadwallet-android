@@ -114,6 +114,8 @@
     <string name="BitID.title">BitID Authentication Request</string>
     <!-- As in "(tap here to) buy (bitcoin)" -->
     <string name="Button.buy">Buy</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">More info</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">Cancel</string>
     <!-- prompt continue button -->
@@ -983,4 +985,7 @@ users in a future update. </string>
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
     <!-- Wallet unlocked message -->
     <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
+  <!-- Delisted token alert banner message -->
+  <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
+
 </resources>
