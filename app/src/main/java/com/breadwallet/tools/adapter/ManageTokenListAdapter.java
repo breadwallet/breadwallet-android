@@ -3,10 +3,13 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -66,10 +69,20 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             String currencyCode = item.symbol.toLowerCase();
 
             String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, true);
+            GradientDrawable iconDrawable = (GradientDrawable) holder.iconParent.getBackground();
 
-            if(!Utils.isNullOrEmpty(tokenIconPath)) {
+            if (!Utils.isNullOrEmpty(tokenIconPath)) {
+                holder.tokenIcon.setVisibility(View.VISIBLE);
+                holder.tokenLetter.setVisibility(View.GONE);
                 File iconFile = new File(tokenIconPath);
                 Picasso.get().load(iconFile).into(holder.tokenIcon);
+                iconDrawable.setColor(Color.TRANSPARENT);
+            } else {
+                // If no icon is present, then use the capital first letter of the token currency code instead.
+                holder.tokenIcon.setVisibility(View.GONE);
+                holder.tokenLetter.setVisibility(View.VISIBLE);
+                holder.tokenLetter.setText(currencyCode.substring(0, 1).toUpperCase());
+                iconDrawable.setColor(Color.parseColor(TokenUtil.getTokenStartColor(currencyCode)));
             }
 
             holder.tokenName.setText(mTokens.get(position).name);
@@ -170,6 +183,8 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         private BaseTextView tokenBalance;
         private Button showHide;
         private ImageView tokenIcon;
+        private BaseTextView tokenLetter;
+        private View iconParent;
 
         public ManageTokenItemViewHolder(View view) {
             super(view);
@@ -180,6 +195,8 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             tokenBalance = view.findViewById(R.id.token_balance);
             showHide = view.findViewById(R.id.show_hide_button);
             tokenIcon = view.findViewById(R.id.token_icon);
+            tokenLetter = view.findViewById(R.id.icon_letter);
+            iconParent = view.findViewById(R.id.icon_parent);
 
         }
 
