@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +50,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private WalletItem mCurrentWalletSyncing;
     private boolean mObserverIsStarting;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
-
     private static final int VIEW_TYPE_WALLET = 0;
     private static final int VIEW_TYPE_ADD_WALLET = 1;
 
@@ -150,12 +151,34 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             String endColor = wallet.getUiConfiguration().getEndColor();
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
 
-            // Create gradient if 2 colors exist.
-            ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
-            ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
-            holder.mParent.setBackground(drawable);
+            if (TokenUtil.isTokenSupported(currencyCode)) {
+                // Create gradient if 2 colors exist.
+                ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
+                ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+                holder.mParent.setBackground(drawable);
 
+                setWalletItemColors(holder, R.dimen.token_background_no_alpha);
+
+            } else {
+                // To ensure that the unsupported wallet card has the same shape as the supported wallet card, we reuse the drawable.
+                ((GradientDrawable) drawable).setColors(new int[]{mContext.getResources().getColor(R.color.wallet_delisted_token_background), mContext.getResources().getColor(R.color.wallet_delisted_token_background)});
+                holder.mParent.setBackground(drawable);
+                setWalletItemColors(holder,  R.dimen.token_background_with_alpha);
+            }
         }
+    }
+
+    private void setWalletItemColors(WalletItemViewHolder viewHolder, int alpha) {
+
+        TypedValue typedValue = new TypedValue();
+        mContext.getResources().getValue(alpha, typedValue, true);
+        float background = typedValue.getFloat();
+
+        viewHolder.mLogoIcon.setAlpha(background);
+        viewHolder.mWalletName.setAlpha(background);
+        viewHolder.mTradePrice.setAlpha(background);
+        viewHolder.mWalletBalanceFiat.setAlpha(background);
+        viewHolder.mWalletBalanceCurrency.setAlpha(background);
     }
 
     public void stopObserving() {

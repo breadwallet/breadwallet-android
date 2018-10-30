@@ -100,6 +100,7 @@ public final class BRConstants {
     public static final String FAQ_WIPE_WALLET = "wipe-wallet";
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
+    public static final String FAQ_UNSUPPORTED_TOKEN = "unsupported-token";
 
     /**
      * API Constants
