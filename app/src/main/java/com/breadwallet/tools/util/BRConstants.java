@@ -108,7 +108,8 @@ public final class BRConstants {
     public static final String HTTPS_PROTOCOL = "https://";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_ACCEPT = "Accept";
-    public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_JSON = "application/json";
+    public static final String CONTENT_TYPE_JSON_CHARSET_UTF8 = "application/json; charset=utf-8";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
     public static final String HEADER_VALUE_ACCEPT = "application/json";
     public static final String AUTHORIZATION = "Authorization";
@@ -137,7 +138,6 @@ public final class BRConstants {
 
     /**
      * Font constants
-     *
      */
     public static final String TYPEFACE_PATH_CIRCULARPRO_BOLD = "fonts/CircularPro-Bold.otf";
     public static final String TYPEFACE_PATH_CIRCULARPRO_BOOK = "fonts/CircularPro-Book.otf";
@@ -145,6 +145,69 @@ public final class BRConstants {
 
     public static final String STRING_RESOURCES_FILENAME = "string";
 
+    public static final String PROTOCOL = "https";
+    public static final String GZIP = "gzip";
+    public static final String CONTENT_ENCODING = "content-encoding";
+    public static final String METHOD = "method";
+    public static final String BODY = "body";
+    public static final String HEADERS = "headers";
+    public static final String CLOSE_ON = "closeOn";
+    public static final String CLOSE = "_close";
+    public static final String ARTICLE_ID = "articleId";
+    public static final String URL = "url";
+    public static final String JSONRPC = "jsonrpc";
+    public static final String VERSION_2 = "2.0";
+    public static final String ETH_BALANCE = "eth_getBalance";
+    public static final String LATEST = "latest";
+    public static final String PARAMS = "params";
+    public static final String ID = "id";
+    public static final String RESULT = "result";
+    public static final String ACCOUNT = "account";
+    public static final String ETH_GAS_PRICE = "eth_gasPrice";
+    public static final String ETH_ESTIMATE_GAS = "eth_estimateGas";
+    public static final String ETH_SEND_RAW_TRANSACTION = "eth_sendRawTransaction";
+    public static final String ERROR = "error";
+    public static final String CODE = "code";
+    public static final String MESSAGE = "message";
+    public static final String HASH = "hash";
+    public static final String TO = "to";
+    public static final String FROM = "from";
+    public static final String CONTRACT_ADDRESS = "contractAddress";
+    public static final String ADDRESS = "address";
+    public static final String VALUE = "value";
+    public static final String GAS = "gas";
+    public static final String GAS_PRICE = "gasPrice";
+    public static final String NONCE = "nonce";
+    public static final String GAS_USED = "gasUsed";
+    public static final String BLOCK_NUMBER = "blockNumber";
+    public static final String ETH_BLOCK_NUMBER = "eth_blockNumber";
+    public static final String ETH_TRANSACTION_COUNT = "eth_getTransactionCount";
+    public static final String BLOCK_HASH = "blockHash";
+    public static final String LOG_INDEX = "logIndex";
+    public static final String INPUT = "input";
+    public static final String CONFIRMATIONS = "confirmations";
+    public static final String TRANSACTION_INDEX = "transactionIndex";
+    public static final String TIMESTAMP = "timeStamp";
+    public static final String IS_ERROR = "isError";
+    public static final String TOPICS = "topics";
+    public static final String DATA = "data";
+    public static final String DATE = "Date";
+    public static final String TRANSACTION_HASH = "transactionHash";
+    public static final String CHECKOUT = "checkout";
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    public static final String HEADER_WWW_AUTHENTICATE = "www-authenticate";
+    public static final String BREAD = "bread";
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "selected";
+    public static final String SELECTED = "selected";
+    public static final String ENABLED = "enabled";
+    public static final String PRIVATE = "private";
+    public static final String USER_AGENT = "User-agent";
+    public static final String TOKEN = "token";
+    public static final String FEE_PER_KB = "fee_per_kb";
+    public static final String STAGING = "staging";
+    public static final String STAGE = "stage";
 
     private BRConstants() {
     }
