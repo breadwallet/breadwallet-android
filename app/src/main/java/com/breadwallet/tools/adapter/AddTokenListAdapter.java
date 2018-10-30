@@ -2,7 +2,16 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -62,9 +71,20 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         String currencyCode = item.symbol.toLowerCase();
         String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, true);
 
+        GradientDrawable iconDrawable = (GradientDrawable) holder.iconParent.getBackground();
+
         if (!Utils.isNullOrEmpty(tokenIconPath)) {
             File iconFile = new File(tokenIconPath);
             Picasso.get().load(iconFile).into(holder.logo);
+            holder.iconLetter.setVisibility(View.GONE);
+            holder.logo.setVisibility(View.VISIBLE);
+            iconDrawable.setColor(Color.TRANSPARENT);
+        } else {
+            // If no icon is present, then use the capital first letter of the token currency code instead.
+            holder.iconLetter.setVisibility(View.VISIBLE);
+            iconDrawable.setColor(Color.parseColor(item.getStartColor()));
+            holder.iconLetter.setText(currencyCode.substring(0, 1).toUpperCase());
+            holder.logo.setVisibility(View.GONE);
         }
 
         holder.name.setText(mTokens.get(position).name);
@@ -125,6 +145,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         private BaseTextView symbol;
         private BaseTextView name;
         private Button addRemoveButton;
+        private View iconParent;
+        private BaseTextView iconLetter;
 
         public TokenItemViewHolder(View view) {
             super(view);
@@ -133,6 +155,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             symbol = view.findViewById(R.id.token_symbol);
             name = view.findViewById(R.id.token_name);
             addRemoveButton = view.findViewById(R.id.add_remove_button);
+            iconParent = view.findViewById(R.id.icon_parent);
+            iconLetter = view.findViewById(R.id.icon_letter);
 
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
             addRemoveButton.setTypeface(typeface);

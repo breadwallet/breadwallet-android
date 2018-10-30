@@ -133,9 +133,17 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setText(item.mLabelText);
 
             String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, false);
+
             if (!Utils.isNullOrEmpty(tokenIconPath)) {
                 File iconFile = new File(tokenIconPath);
                 Picasso.get().load(iconFile).into(holder.mLogoIcon);
+                holder.mIconLetter.setVisibility(View.GONE);
+                holder.mLogoIcon.setVisibility(View.VISIBLE);
+            } else {
+                // If no icon is present, then use the capital first letter of the token currency code instead.
+                holder.mIconLetter.setVisibility(View.VISIBLE);
+                holder.mLogoIcon.setVisibility(View.GONE);
+                holder.mIconLetter.setText(currencyCode.substring(0, 1).toUpperCase());
             }
 
             String startColor = wallet.getUiConfiguration().getStartColor();
@@ -252,6 +260,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         private BaseTextView mSyncingLabel;
         private ProgressBar mSyncingProgressBar;
         private ImageView mLogoIcon;
+        private BaseTextView mIconLetter;
 
         public WalletItemViewHolder(View view) {
             super(view);
@@ -264,6 +273,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mSyncingLabel = view.findViewById(R.id.syncing_label);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
             mLogoIcon = view.findViewById(R.id.currency_icon_white);
+            mIconLetter = view.findViewById(R.id.icon_letter);
         }
     }
 
