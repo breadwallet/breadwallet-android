@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -44,6 +44,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 
+import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,32 +60,50 @@ import java.util.Map;
 
 public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
-    WebView webView;
-    String theUrl;
-    public static boolean appVisible = false;
-    private static WebViewActivity app;
-    private String onCloseUrl;
-
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 29;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
+    public static final String EXTRA_JSON_PARAM = "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_JSON_PARAM";
+    private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
+    private static final String DOCUMENTS_ACTIVITY_CLASS_NAME = "com.android.documentsui.DocumentsActivity";
+    private static final String KYC_SUFFIX = "_kyc.jpg";
+    private static final String BUY_PATH = "/buy";
+    private static final String SELECT_IMAGE_TITLE = "Select Image Source";
+
+    private WebView mWebView;
+    String mUrl;
+    private String mOnCloseUrl;
 
     private ValueCallback<Uri[]> mFilePathCallback;
     private String mCameraPhotoPath;
 
-    public static WebViewActivity getApp() {
-        return app;
-    }
-
-    private Toolbar topToolbar;
-    private Toolbar bottomToolbar;
+    private Toolbar mTopToolbar;
+    private Toolbar mBottomToolbar;
     private BaseTextView mCloseButton;
     private ImageButton mReloadButton;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private RelativeLayout mRootView;
 
-    private boolean keyboardListenersAttached = false;
+    private boolean mKeyboardListenersAttached = false;
+
+    private ViewTreeObserver.OnGlobalLayoutListener mKeyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            int heightDiff = mRootView.getRootView().getHeight() - mRootView.getHeight();
+            int contentViewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getHeight();
+
+            if (heightDiff <= contentViewTop) {
+                onHideKeyboard();
+                Log.d(TAG, "Hiding keyboard");
+
+            } else {
+                onShowKeyboard();
+                Log.d(TAG, "Showing keyboard");
+
+            }
+        }
+    };
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -92,27 +111,26 @@ public class WebViewActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        webView = findViewById(R.id.web_view);
-        webView.setBackgroundColor(0);
-        webView.setWebViewClient(new WebViewClient() {
+        mWebView = findViewById(R.id.web_view);
+        mWebView.setBackgroundColor(0);
+        mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                Log.e(TAG, "onPageStarted: url:" + url);
+                Log.d(TAG, "onPageStarted: url:" + url);
                 String trimmedUrl = rTrim(url, '/');
                 Uri toUri = Uri.parse(trimmedUrl);
-                if (closeOnMatch(toUri) || toUri.toString().contains("_close")) {
-                    Log.e(TAG, "onPageStarted: close Uri found: " + toUri);
+                if (closeOnMatch(toUri) || toUri.toString().contains(BRConstants.CLOSE)) {
+                    Log.d(TAG, "onPageStarted: close Uri found: " + toUri);
                     onBackPressed();
-                    onCloseUrl = null;
+                    mOnCloseUrl = null;
                 }
 
                 if (view.canGoBack()) {
                     mBackButton.setBackground(getDrawable(R.drawable.ic_webview_left));
                 } else {
                     mBackButton.setBackground(getDrawable(R.drawable.ic_webview_left_inactive));
-
                 }
                 if (view.canGoForward()) {
                     mForwardButton.setBackground(getDrawable(R.drawable.ic_webview_right));
@@ -127,17 +145,17 @@ public class WebViewActivity extends BRActivity {
 
         });
 
-        topToolbar = findViewById(R.id.toolbar);
-        bottomToolbar = findViewById(R.id.toolbar_bottom);
+        mTopToolbar = findViewById(R.id.toolbar);
+        mBottomToolbar = findViewById(R.id.toolbar_bottom);
         mCloseButton = findViewById(R.id.close);
         mReloadButton = findViewById(R.id.reload);
         mForwardButton = findViewById(R.id.webview_forward_arrow);
         mBackButton = findViewById(R.id.webview_back_arrow);
         mRootView = findViewById(R.id.webview_parent);
 
-        String articleId = getIntent().getStringExtra("articleId");
+        String articleId = getIntent().getStringExtra(BRConstants.ARTICLE_ID);
 
-        WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = mWebView.getSettings();
 
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             WebView.setWebContentsDebuggingEnabled(true);
@@ -145,93 +163,69 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        theUrl = getIntent().getStringExtra(BRConstants.EXTRA_URL);
-        String json = getIntent().getStringExtra("json");
+        mUrl = getIntent().getStringExtra(BRConstants.EXTRA_URL);
+        String json = getIntent().getStringExtra(EXTRA_JSON_PARAM);
 
         if (json == null) {
-            if (theUrl != null) {
-                webView.loadUrl(theUrl);
+            if (mUrl != null) {
+                mWebView.loadUrl(mUrl);
 
                 return;
             }
 
-            if (articleId != null && !articleId.isEmpty())
-                theUrl = theUrl + "/" + articleId;
-
-            Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
-            if (!theUrl.contains("checkout")) {
-                bottomToolbar.setVisibility(View.INVISIBLE);
+            if (articleId != null && !articleId.isEmpty()) {
+                mUrl = mUrl + "/" + articleId;
             }
-            if (theUrl.endsWith("/buy"))
-                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso().toLowerCase();
-            webView.loadUrl(theUrl);
-            if (articleId != null && !articleId.isEmpty())
-                navigate(articleId);
-        } else {
-            request(webView, json);
 
+            Log.d(TAG, "onCreate: theUrl: " + mUrl + ", articleId: " + articleId);
+            if (!mUrl.contains(BRConstants.CHECKOUT)) {
+                mBottomToolbar.setVisibility(View.INVISIBLE);
+            }
+            if (mUrl.endsWith(BUY_PATH)) {
+                mUrl = mUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso().toLowerCase();
+            }
+            mWebView.loadUrl(mUrl);
+            if (articleId != null && !articleId.isEmpty()) {
+                navigate(articleId);
+            }
+        } else {
+            request(mWebView, json);
         }
 
-        webView.setWebChromeClient(new BRWebChromeClient());
-
+        mWebView.setWebChromeClient(new BRWebChromeClient());
 
     }
 
-    private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            int heightDiff = mRootView.getRootView().getHeight() - mRootView.getHeight();
-            int contentViewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getHeight();
-
-            if (heightDiff <= contentViewTop) {
-                onHideKeyboard();
-                Log.d(TAG, "Hiding keyboard");
-
-            } else {
-                int keyboardHeight = heightDiff - contentViewTop;
-                onShowKeyboard(keyboardHeight);
-                Log.d(TAG, "Showing keyboard");
-
-
-            }
-        }
-    };
-
-
-    protected void onShowKeyboard(int keyboardHeight) {
-        bottomToolbar.setVisibility(View.INVISIBLE);
+    protected void onShowKeyboard() {
+        mBottomToolbar.setVisibility(View.INVISIBLE);
     }
 
     protected void onHideKeyboard() {
-        bottomToolbar.setVisibility(View.VISIBLE);
-
+        mBottomToolbar.setVisibility(View.VISIBLE);
     }
 
     protected void attachKeyboardListeners() {
-        if (keyboardListenersAttached) {
+        if (mKeyboardListenersAttached) {
             return;
         }
-
-        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
-
-        keyboardListenersAttached = true;
+        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(mKeyboardLayoutListener);
+        mKeyboardListenersAttached = true;
     }
-
 
     private void request(final WebView webView, final String jsonString) {
 
         try {
             JSONObject json = new JSONObject(jsonString);
 
-            String url = json.getString("url");
+            String url = json.getString(BRConstants.URL);
             Log.d(TAG, "Loading -> " + url);
-            if (url != null && url.contains("checkout")) {
+            if (url != null && url.contains(BRConstants.CHECKOUT)) {
 
                 attachKeyboardListeners();
 
                 // Make the top and bottom toolbars visible for Simplex flow
-                topToolbar.setVisibility(View.VISIBLE);
-                bottomToolbar.setVisibility(View.VISIBLE);
+                mTopToolbar.setVisibility(View.VISIBLE);
+                mBottomToolbar.setVisibility(View.VISIBLE);
 
                 // Position the webview below the top toolbar
                 RelativeLayout.LayoutParams webviewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -276,11 +270,10 @@ public class WebViewActivity extends BRActivity {
                     }
                 });
             }
-            String method = json.getString("method");
-            String strBody = json.has("body") ? json.getString("body") : null;
-            String headers = json.has("headers") ? json.getString("headers") : null;
-            onCloseUrl = json.getString("closeOn");
-
+            String method = json.getString(BRConstants.METHOD);
+            String strBody = json.has(BRConstants.BODY) ? json.getString(BRConstants.BODY) : null;
+            String headers = json.has(BRConstants.HEADERS) ? json.getString(BRConstants.HEADERS) : null;
+            mOnCloseUrl = json.getString(BRConstants.CLOSE_ON);
             Map<String, String> httpHeaders = null;
             if (!Utils.isNullOrEmpty(headers)) {
                 httpHeaders = new HashMap<>();
@@ -293,16 +286,15 @@ public class WebViewActivity extends BRActivity {
             }
             byte[] body = strBody == null ? null : strBody.getBytes();
 
-            if (method.equalsIgnoreCase("get")) {
+            if (method.equalsIgnoreCase(HttpMethod.GET.asString())) {
                 if (httpHeaders != null) {
                     webView.loadUrl(url, httpHeaders);
                 } else {
                     webView.loadUrl(url);
                 }
-            } else if (method.equalsIgnoreCase("post")) {
+            } else if (method.equalsIgnoreCase(HttpMethod.POST.asString())) {
                 Log.e(TAG, "request: POST:" + body.length);
                 webView.postUrl(url, body);
-
             } else {
                 throw new NullPointerException("unexpected method: " + method);
             }
@@ -315,7 +307,7 @@ public class WebViewActivity extends BRActivity {
 
     private void navigate(String to) {
         String js = String.format("window.location = \'%s\';", to);
-        webView.evaluateJavascript(js, new ValueCallback<String>() {
+        mWebView.evaluateJavascript(js, new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 Log.e(TAG, "onReceiveValue: " + value);
@@ -324,11 +316,11 @@ public class WebViewActivity extends BRActivity {
     }
 
     private boolean closeOnMatch(Uri toUri) {
-        if (onCloseUrl == null) {
+        if (mOnCloseUrl == null) {
             Log.e(TAG, "closeOnMatch: onCloseUrl is null");
             return false;
         }
-        Uri savedCloseUri = Uri.parse(rTrim(onCloseUrl, '/'));
+        Uri savedCloseUri = Uri.parse(rTrim(mOnCloseUrl, '/'));
         Log.e(TAG, "closeOnMatch: toUrl:" + toUri + ", savedCloseUri: " + savedCloseUri);
         return toUri.getScheme() != null && toUri.getHost() != null && toUri.getScheme().equalsIgnoreCase(savedCloseUri.getScheme()) && toUri.getHost().equalsIgnoreCase(savedCloseUri.getHost())
                 && toUri.toString().toLowerCase().contains(savedCloseUri.toString().toLowerCase());
@@ -363,17 +355,15 @@ public class WebViewActivity extends BRActivity {
             Uri toUri = Uri.parse(trimmedUrl);
 
 //                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
-            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains("_close")) {
+            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains(BRConstants.CLOSE)) {
                 Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
                 onBackPressed();
-                onCloseUrl = null;
+                mOnCloseUrl = null;
             }
         }
 
         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePath, FileChooserParams fileChooserParams) {
-
             Log.d(TAG, "onShowFileChooser");
-
 
             // Double check that we don't have any existing callbacks
             if (mFilePathCallback != null) {
@@ -410,10 +400,8 @@ public class WebViewActivity extends BRActivity {
 
             }
 
-
             requestImageFilePermission();
             requestCameraPermission();
-
 
             return true;
         }
@@ -425,17 +413,13 @@ public class WebViewActivity extends BRActivity {
         File getImage = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         if (getImage != null) {
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "_kyc.jpg"));
+            outputFileUri = Uri.fromFile(new File(getImage.getPath(), KYC_SUFFIX));
         }
         return outputFileUri;
     }
 
 
     public Intent getPickImageChooserIntent() {
-
-        // Determine Uri of camera image to save.
-        //Uri outputFileUri = getCaptureImageOutputUri();
-
         List<Intent> allIntents = new ArrayList();
         PackageManager packageManager = getPackageManager();
 
@@ -447,9 +431,6 @@ public class WebViewActivity extends BRActivity {
             Intent intent = new Intent(captureIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
             intent.setPackage(res.activityInfo.packageName);
-            //if (outputFileUri != null) {
-            //  intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            //}
             allIntents.add(intent);
         }
 
@@ -467,7 +448,7 @@ public class WebViewActivity extends BRActivity {
         // The main intent is the last in the list so pickup the last one
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
         for (Intent intent : allIntents) {
-            if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+            if (intent.getComponent().getClassName().equals(DOCUMENTS_ACTIVITY_CLASS_NAME)) {
                 mainIntent = intent;
                 break;
             }
@@ -475,7 +456,7 @@ public class WebViewActivity extends BRActivity {
         allIntents.remove(mainIntent);
 
         // Create a chooser from the main intent
-        Intent chooserIntent = Intent.createChooser(mainIntent, "Select Image Source");
+        Intent chooserIntent = Intent.createChooser(mainIntent, SELECT_IMAGE_TITLE);
 
         // Add all other intents
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
@@ -499,12 +480,11 @@ public class WebViewActivity extends BRActivity {
         Log.d(TAG, "requestCode -> " + requestCode);
         Log.d(TAG, "resultCode -> " + resultCode);
 
-        //if (requestCode == BRConstants.UPLOAD_FILE_REQUEST) {
-
         if (requestCode != REQUEST_CHOOSE_IMAGE || mFilePathCallback == null) {
             super.onActivityResult(requestCode, resultCode, data);
             return;
         } else if (requestCode == REQUEST_CHOOSE_IMAGE) {
+            //todo why is this empty?
         }
 
         Uri[] results = null;
@@ -526,7 +506,6 @@ public class WebViewActivity extends BRActivity {
             mFilePathCallback.onReceiveValue(results);
             mFilePathCallback = null;
 
-
         }
 
     }
@@ -534,28 +513,24 @@ public class WebViewActivity extends BRActivity {
     private void requestCameraPermission() {
         Log.d(TAG, "requestCameraPermission");
 
-
         // Camera permission is NOT granted, request it
-        if (ContextCompat.checkSelfPermission(app,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
 
             Log.d(TAG, "CAMERA permission NOT granted");
-            android.support.v4.app.ActivityCompat.requestPermissions(app,
+            android.support.v4.app.ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA},
                     REQUEST_CAMERA_PERMISSION);
 
-        }
-
-        // Camera permission already granted, start the camera
-        else {
+        } else {
+            // Camera permission already granted, start the camera
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            app.startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
-            app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+            startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
+            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
 
         }
     }
-
 
     private void requestImageFilePermission() {
         Log.d(TAG, "requestImageFilePermission");
@@ -564,20 +539,13 @@ public class WebViewActivity extends BRActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_EXTERNAL_STORAGE);
-
-
         } else {
-
             startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
-
         }
     }
-
 
     private File createImageFile() throws IOException {
 
@@ -585,13 +553,13 @@ public class WebViewActivity extends BRActivity {
         //new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat(DATE_FORMAT).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         File imageFile = File.createTempFile(
                 imageFileName,  /* prefix */
-                "_kyc.jpg",         /* suffix */
+                KYC_SUFFIX,         /* suffix */
                 storageDir      /* directory */
         );
         return imageFile;
@@ -599,42 +567,37 @@ public class WebViewActivity extends BRActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+                                           int[] grantResults) {
         Log.d(TAG, "onRequestPermissionResult");
         Log.d(TAG, "Request Code -> " + requestCode);
 
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION: {
-
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission is granted, open camera
                     Log.d(TAG, "Camera permission GRANTED");
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    app.startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
-                    app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                    startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
+                    overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
 
                 } else {
-                    Toast.makeText(WebViewActivity.this, app.getString(R.string.Send_cameraUnavailabeMessage_android), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WebViewActivity.this, getString(R.string.Send_cameraUnavailabeMessage_android), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
 
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
-
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Storage permission GRANTED");
 
                     startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
 
-
                 }
-
 
                 break;
             }
-
 
             case BRConstants.GEO_REQUEST_ID: {
                 // If request is cancelled, the result arrays are empty.
@@ -654,23 +617,14 @@ public class WebViewActivity extends BRActivity {
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Check if the key event was the Back button and if there's history
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
-            webView.goBack();
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
+            mWebView.goBack();
             return true;
         }
         // If it wasn't the Back key or there's no web page history, bubble up to the default
         // system behavior (probably exit the activity)
 
         return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
-
-
     }
 
     private String rTrim(String s, char c) {
@@ -684,7 +638,6 @@ public class WebViewActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        appVisible = false;
         LinkPlugin.hasBrowser = false;
     }
 
@@ -692,8 +645,8 @@ public class WebViewActivity extends BRActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (keyboardListenersAttached) {
-            mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
+        if (mKeyboardListenersAttached) {
+            mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardLayoutListener);
         }
     }
 
