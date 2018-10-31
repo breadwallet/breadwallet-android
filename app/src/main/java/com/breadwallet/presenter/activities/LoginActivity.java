@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -15,11 +14,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.PinLayout;
@@ -32,7 +28,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
-import com.platform.APIClient;
 
 
 public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted {
@@ -40,7 +35,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
     private BRKeyboard mKeyboard;
     private LinearLayout mPinLayout;
     private ImageView mUnlockedImage;
-    private TextView mUnlockedText;
     private ImageButton mFingerPrint;
     private static final int DELETE_BUTTON_INDEX = 10;
     private PinLayout mPinDigitViews;
@@ -68,7 +62,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         mFingerPrint = findViewById(R.id.fingerprint_icon);
 
         mUnlockedImage = findViewById(R.id.unlocked_image);
-        mUnlockedText = findViewById(R.id.unlocked_text);
 
         mKeyboard.setShowDecimal(false);
         mKeyboard.setDeleteButtonBackgroundColor(getColor(android.R.color.transparent));
@@ -175,7 +168,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
                 }, DateUtils.SECOND_IN_MILLIS / 2);
             }
         });
-        mUnlockedText.animate().alpha(1f);
     }
 
     private void showFailedToUnlock() {
