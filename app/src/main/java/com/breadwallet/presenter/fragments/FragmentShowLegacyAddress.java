@@ -28,6 +28,7 @@ package com.breadwallet.presenter.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -59,7 +60,6 @@ import java.math.BigDecimal;
 
 public class FragmentShowLegacyAddress extends ModalDialogFragment implements BalanceUpdateListener {
     private static final String TAG = FragmentShowLegacyAddress.class.getName();
-
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
@@ -76,7 +76,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     private ViewGroup mSignalLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated properly.
 
         ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_show_legacy_address, container, false));

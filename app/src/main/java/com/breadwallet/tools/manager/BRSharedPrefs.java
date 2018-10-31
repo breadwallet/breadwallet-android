@@ -51,6 +51,8 @@ public class BRSharedPrefs {
     private static final String SCREEN_WIDTH = "screenWidth";
     private static final String BUNDLE_HASH_PREFIX = "bundleHash_";
     private static final String SEGWIT = "segwit";
+    private static final String EMAIL_OPT_IN = "emailOptIn";
+    private static final String EMAIL_OPT_IN_DISMISSED = "emailOptInDismissed";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -577,6 +579,30 @@ public class BRSharedPrefs {
     public static boolean getIsSegwitEnabled(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(SEGWIT, false);
+    }
+
+    public static void putEmailOptIn(Context context, boolean hasOpted) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(EMAIL_OPT_IN, hasOpted);
+        editor.apply();
+    }
+
+    public static boolean getEmailOptIn(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(EMAIL_OPT_IN, false);
+    }
+
+    public static void putEmailOptInDismissed(Context context, boolean dismissed) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(EMAIL_OPT_IN_DISMISSED, dismissed);
+        editor.apply();
+    }
+
+    public static boolean getEmailOptInDismissed(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(EMAIL_OPT_IN_DISMISSED, false);
     }
 
 }
