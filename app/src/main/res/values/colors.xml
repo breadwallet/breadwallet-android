@@ -103,6 +103,8 @@
     <color name="primary_background">#251935</color>
     <color name="secondary_background">#302442</color>
     <color name="tertiary_background">#2E2540</color>
+    <color name="prompt_background">#1E1C41</color>
+    <color name="prompt_input">#f8f7fc</color>
     <color name="button_gradient_start_color">#FF5193</color>
     <color name="button_gradient_end_color">#F29500</color>
     <color name="button_add_wallet_background">#444b77f3</color>

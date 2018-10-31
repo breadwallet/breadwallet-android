@@ -123,10 +123,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
+            public void onClick(View view) {
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);

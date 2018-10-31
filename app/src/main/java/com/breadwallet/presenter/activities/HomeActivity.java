@@ -50,22 +50,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     public static final String CCC_CURRENCY_CODE = "CCC";
+    public static final int MAX_NUMBER_OF_CHILDREN = 3;
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
     private BaseTextView mFiatTotal;
-    private PromptManager.PromptItem mCurrentPrompt;
     private BRNotificationBar mNotificationBar;
-
-    private BaseTextView mPromptTitle;
-    private BaseTextView mPromptDescription;
-    private BRButton mPromptContinue;
-    private BRButton mPromptDismiss;
-    private CardView mPromptCard;
-
     private LinearLayout mBuyLayout;
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
+    private LinearLayout mListGroupLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,18 +68,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
-
         mNotificationBar = findViewById(R.id.notification_bar);
-
-        mPromptCard = findViewById(R.id.prompt_card);
-        mPromptTitle = findViewById(R.id.prompt_title);
-        mPromptDescription = findViewById(R.id.prompt_description);
-        mPromptContinue = findViewById(R.id.continue_button);
-        mPromptDismiss = findViewById(R.id.dismiss_button);
-
         mBuyLayout = findViewById(R.id.buy_layout);
         mTradeLayout = findViewById(R.id.trade_layout);
         mMenuLayout = findViewById(R.id.menu_layout);
+        mListGroupLayout = findViewById(R.id.list_group_layout);
 
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,51 +117,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onLongItemClick(View view, int position) {
             }
         }));
-
-        mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
-        mPromptDismiss.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hidePrompt();
-            }
-        });
-        mPromptContinue.setColor(Color.parseColor("#4b77f3"));
-        mPromptContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(HomeActivity.this, mCurrentPrompt);
-                if (info.listener != null) {
-                    info.listener.onClick(mPromptContinue);
-                } else {
-                    Log.e(TAG, "Continue :" + info.title + " (FAILED)");
-                }
-            }
-        });
-    }
-
-    public void hidePrompt() {
-        mPromptCard.setVisibility(View.GONE);
-        Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
-        if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-            BRSharedPrefs.putPromptDismissed(this, "shareData", true);
-        } else if (mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT) {
-            BRSharedPrefs.putPromptDismissed(this, "fingerprint", true);
-        }
-        if (mCurrentPrompt != null)
-            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");
-        mCurrentPrompt = null;
     }
 
     private void showNextPromptIfNeeded() {
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(this);
         if (toShow != null) {
-            mCurrentPrompt = toShow;
-            PromptManager.PromptInfo promptInfo = PromptManager.getInstance().promptInfo(this, toShow);
-            mPromptCard.setVisibility(View.VISIBLE);
-            mPromptTitle.setText(promptInfo.title);
-            mPromptDescription.setText(promptInfo.description);
-            mPromptContinue.setOnClickListener(promptInfo.listener);
-
+            View promptView = PromptManager.promptInfo(this, toShow);
+            if (mListGroupLayout.getChildCount() >= MAX_NUMBER_OF_CHILDREN) {
+                mListGroupLayout.removeViewAt(0);
+            }
+            mListGroupLayout.addView(promptView, 0);
         } else {
             Log.i(TAG, "showNextPrompt: nothing to show");
         }
@@ -200,7 +152,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void run() {
                 Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
                 WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
-                WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this).refreshAddress(HomeActivity.this);
+                BaseWalletManager walletManager = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
+                if (walletManager != null) {
+                    walletManager.refreshAddress(HomeActivity.this);
+                }
             }
         });
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
@@ -247,9 +202,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
         if (isConnected) {
             if (mNotificationBar != null) {
-                mNotificationBar.setVisibility(View.INVISIBLE);
+                mNotificationBar.setVisibility(View.GONE);
             }
-
             if (mAdapter != null) {
                 mAdapter.startObserving();
             }

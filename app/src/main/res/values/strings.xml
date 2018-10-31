@@ -392,6 +392,14 @@
     <string name="Prompts.FaceId.body">Tap Continue to enable Face ID</string>
     <!-- Enable face ID prompt title -->
     <string name="Prompts.FaceId.title">Enable Face ID</string>
+    <!-- Email opt in hint -->
+    <string name="Prompts.EmailOptIn.hint">example@domain.com</string>
+    <!-- Email opt in title -->
+    <string name="Prompts.EmailOptIn.title">Get in the loop</string>
+    <!-- Email opt in body-->
+    <string name="Prompts.EmailOptIn.body">Be the first to receive important support and product updates</string>
+    <!-- Email opt in confirmation-->
+    <string name="Prompts.EmailOptIn.confirmation">We appreciate your continued support</string>
     <!-- No passcode set warning body -->
     <string name="Prompts.NoPasscode.body">A device passcode is needed to safeguard your wallet. Go to settings and turn passcode on.</string>
     <!-- No Passcode set warning title -->
