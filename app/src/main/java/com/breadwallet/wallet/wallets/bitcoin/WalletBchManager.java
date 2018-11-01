@@ -3,7 +3,6 @@ package com.breadwallet.wallet.wallets.bitcoin;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
@@ -68,7 +67,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
             }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(context);
-            if (!BRSharedPrefs.getBchPreforkSynced(context) && time == 0)
+            if (!BRSharedPrefs.getBchPreForkSynced(context) && time == 0)
                 time = BuildConfig.BITCOIN_TESTNET ? TESTNET_FORK_TIME : MAINNET_FORK_TIME;
             mInstance = new WalletBchManager(context, pubKey, BuildConfig.BITCOIN_TESTNET ?
                     BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
@@ -160,7 +159,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     }
 
     protected void syncStopped(Context context) {
-        BRSharedPrefs.putBchPreforkSynced(context, true);
+        BRSharedPrefs.putBchPreForkSynced(context, true);
     }
 
 
