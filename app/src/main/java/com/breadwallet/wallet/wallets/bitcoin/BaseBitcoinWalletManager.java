@@ -107,9 +107,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             Log.e(getTag(), "connectWallet: context is null");
             return;
         }
-        String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
-        BRSharedPrefs.putFirstAddress(context, firstAddress);
-
         mUiConfig = new WalletUiConfiguration(getColor(), null, true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
 
     }
