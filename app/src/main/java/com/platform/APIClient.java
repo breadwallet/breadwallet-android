@@ -339,6 +339,7 @@ public class APIClient {
         Request request = newBuilder.build();
         if (withAuth) {
             AuthenticatedRequest authenticatedRequest = authenticateRequest(request);
+            if(authenticatedRequest == null) return null;
             request = authenticatedRequest.getRequest();
             if (request == null) {
                 return null;
