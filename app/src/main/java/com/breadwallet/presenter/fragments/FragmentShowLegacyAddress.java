@@ -34,7 +34,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,11 +64,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     public ImageView mQrImage;
     private String mReceiveAddress;
     private BRButton mShareButton;
-    private Button mShareEmailButton;
-    private Button mShareMessageButton;
-    private BRLinearLayoutWithCaret mShareButtonsLayout;
     private BRLinearLayoutWithCaret mCopiedLayout;
-    private boolean mIsShareButtonsShown = false;
     private ImageButton mCloseButton;
     private Handler mCopyHandler = new Handler();
     private ViewGroup mBackgroundLayout;
@@ -86,14 +81,10 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
         mShareButton = rootView.findViewById(R.id.share_button);
-        mShareEmailButton = rootView.findViewById(R.id.share_email);
-        mShareMessageButton = rootView.findViewById(R.id.share_text);
-        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
         mCloseButton = rootView.findViewById(R.id.close_button);
         setListeners();
-
-        mSignalLayout.removeView(mShareButtonsLayout);
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
         mSignalLayout.removeView(mCopiedLayout);
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
@@ -101,31 +92,14 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     }
 
     private void setListeners() {
-        mShareEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share(QRUtils.VIA_EMAIL, getActivity(), cryptoUri.toString());
-            }
-        });
-        mShareMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share(QRUtils.VIA_MESSAGE, getActivity(), cryptoUri.toString());
-            }
-        });
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIsShareButtonsShown = !mIsShareButtonsShown;
-                showShareButtons(mIsShareButtonsShown);
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                        walletManager.decorateAddress(mReceiveAddress),
+                        BigDecimal.ZERO, null, null, null);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -157,21 +131,10 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         });
     }
 
-    private void showShareButtons(boolean show) {
-        if (show) {
-            mSignalLayout.addView(mShareButtonsLayout, mSignalLayout.getChildCount());
-            showCopiedLayout(false);
-        } else {
-            mSignalLayout.removeView(mShareButtonsLayout);
-        }
-    }
-
     private void showCopiedLayout(boolean show) {
         if (show) {
             if (mSignalLayout.indexOfChild(mCopiedLayout) == -1) {
                 mSignalLayout.addView(mCopiedLayout, mSignalLayout.indexOfChild(mShareButton));
-                showShareButtons(false);
-                mIsShareButtonsShown = false;
                 mCopyHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
