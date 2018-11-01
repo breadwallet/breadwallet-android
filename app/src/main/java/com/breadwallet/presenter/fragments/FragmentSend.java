@@ -435,8 +435,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
-                    BigDecimal b = ethWm.getCachedBalance(app);
-                    if (rawFee.compareTo(b) > 0) {
+                    BigDecimal balance = ethWm.getCachedBalance(app);
+                    if (rawFee.compareTo(balance) > 0) {
                         if (allFilled) {
                             BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, rawFee);
                             sayInsufficientEthereumForFee(ethVal.setScale(ethWm.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE).toPlainString());

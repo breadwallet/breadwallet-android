@@ -518,33 +518,41 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        BigDecimal fiatData = getFiatForEth(app, new BigDecimal(1), BRSharedPrefs.getPreferredFiatIso(app));
-        if (fiatData == null) return null;
-        return fiatData; //dollars
+        BigDecimal fiatData = getFiatForEth(app, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(app));
+        if (fiatData == null) {
+            return null;
+        }
+        return fiatData; //fiat, e.g. dollars
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        if (app == null) return null;
+        if (app == null) {
+            return null;
+        }
         return getFiatForSmallestCrypto(app, getCachedBalance(app), null);
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
+            return amount;
+        }
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent != null) {
             //passed in a custom CurrencyEntity
             //get crypto amount
-            BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
+            BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
             //multiply by fiat rate
             return cryptoAmount.multiply(new BigDecimal(ent.rate));
         }
         //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
+        BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
 
         BigDecimal fiatData = getFiatForEth(app, cryptoAmount, iso);
-        if (fiatData == null) return null;
+        if (fiatData == null) {
+            return null;
+        }
         return fiatData;
     }
 
@@ -559,7 +567,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
-        return amount.divide(ONE_ETH, 8, ROUNDING_MODE);
+        return amount.divide(ONE_ETH, SCALE, ROUNDING_MODE);
     }
 
     @Override
@@ -612,7 +620,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             return null;
         }
 
-        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), 8, BRConstants.ROUNDING_MODE);
+        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
     }
 
 
@@ -1344,7 +1352,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     }
 
-    public long getBlockHeight(){
+    public long getBlockHeight() {
         return node.getBlockHeight();
     }
 
