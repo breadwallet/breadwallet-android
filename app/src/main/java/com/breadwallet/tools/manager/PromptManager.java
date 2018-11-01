@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,17 +25,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.regex.Pattern;
-
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.EMAIL_COLLECTION;
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.PAPER_KEY;
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.RECOMMEND_RESCAN;
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.SHARE_DATA;
-import static com.breadwallet.tools.manager.PromptManager.PromptItem.UPGRADE_PIN;
 
 /**
  * BreadWallet
@@ -67,13 +55,11 @@ import static com.breadwallet.tools.manager.PromptManager.PromptItem.UPGRADE_PIN
 public final class PromptManager {
     private static final String TAG = PromptManager.class.getSimpleName();
     public static final String PROMPT_DISMISSED_FINGERPRINT = "fingerprint";
-    public static final String PROMPT_DISMISSED_SHARE_DATA = "shareData";
     private static final String PROMPT_TOUCH_ID = "touchIdPrompt";
     private static final String PROMPT_PAPER_KEY = "paperKeyPrompt";
     private static final String PROMPT_UPGRADE_PIN = "upgradePinPrompt";
     private static final String PROMPT_RECOMMEND_RESCAN = "recommendRescanPrompt";
     private static final String PROMPT_NO_PASSCODE = "noPasscodePrompt";
-    private static final String PROMPT_SHARE_DATA = "shareDataPrompt";
     private static final String EVENT_PROMPT_PREFIX = "prompt";
     private static final String EVENT_PROMPT_SUFFIX = "dismissed";
     private static final String EVENT_FORMAT = "%s.%s.%s";
@@ -98,8 +84,7 @@ public final class PromptManager {
         PAPER_KEY,
         UPGRADE_PIN,
         RECOMMEND_RESCAN,
-        NO_PASSCODE,
-        SHARE_DATA
+        NO_PASSCODE
     }
 
     private static boolean shouldPrompt(Context context, PromptItem promptItem) {
@@ -117,35 +102,29 @@ public final class PromptManager {
             case RECOMMEND_RESCAN:
                 BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
                 return wallet != null && BRSharedPrefs.getScanRecommended(context, wallet.getIso());
-            case SHARE_DATA:
-                return !BRSharedPrefs.getShareData(context) && !BRSharedPrefs.getPromptDismissed(context, PROMPT_DISMISSED_SHARE_DATA);
         }
         return false;
     }
 
     public static PromptItem nextPrompt(Context context) {
-        if (shouldPrompt(context, RECOMMEND_RESCAN)) {
-            mCurrentPrompt = RECOMMEND_RESCAN;
+        if (shouldPrompt(context, PromptItem.RECOMMEND_RESCAN)) {
+            mCurrentPrompt = PromptItem.RECOMMEND_RESCAN;
             return mCurrentPrompt;
         }
-        if (shouldPrompt(context, UPGRADE_PIN)) {
-            mCurrentPrompt = UPGRADE_PIN;
+        if (shouldPrompt(context, PromptItem.UPGRADE_PIN)) {
+            mCurrentPrompt = PromptItem.UPGRADE_PIN;
             return mCurrentPrompt;
         }
-        if (shouldPrompt(context, PAPER_KEY)) {
-            mCurrentPrompt = PAPER_KEY;
+        if (shouldPrompt(context, PromptItem.PAPER_KEY)) {
+            mCurrentPrompt = PromptItem.PAPER_KEY;
             return mCurrentPrompt;
         }
-        if (shouldPrompt(context, FINGER_PRINT)) {
-            mCurrentPrompt = FINGER_PRINT;
+        if (shouldPrompt(context, PromptItem.FINGER_PRINT)) {
+            mCurrentPrompt = PromptItem.FINGER_PRINT;
             return mCurrentPrompt;
         }
-        if (shouldPrompt(context, SHARE_DATA)) {
-            mCurrentPrompt = SHARE_DATA;
-            return mCurrentPrompt;
-        }
-        if (shouldPrompt(context, EMAIL_COLLECTION)) {
-            mCurrentPrompt = EMAIL_COLLECTION;
+        if (shouldPrompt(context, PromptItem.EMAIL_COLLECTION)) {
+            mCurrentPrompt = PromptItem.EMAIL_COLLECTION;
             return mCurrentPrompt;
         }
         return null;
@@ -222,23 +201,6 @@ public final class PromptManager {
                     }
                 });
                 break;
-            case SHARE_DATA:
-                title.setText(context.getString(R.string.Prompts_ShareData_title));
-                description.setText(context.getString(R.string.Prompts_ShareData_body));
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(context, ShareDataActivity.class);
-                                context.startActivity(intent);
-                                context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            }
-                        });
-                    }
-                });
-                break;
             case EMAIL_COLLECTION:
                 final View customLayout = context.getLayoutInflater().inflate(R.layout.email_prompt, null);
                 BaseTextView customTitle = customLayout.findViewById(R.id.prompt_title);
@@ -298,9 +260,7 @@ public final class PromptManager {
             parentView.removeView(layout);
         }
         layout.setVisibility(View.GONE);
-        if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-            BRSharedPrefs.putPromptDismissed(context, PromptManager.PROMPT_DISMISSED_SHARE_DATA, true);
-        } else if (mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT) {
+        if (mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT) {
             BRSharedPrefs.putPromptDismissed(context, PromptManager.PROMPT_DISMISSED_FINGERPRINT, true);
         }
         if (mCurrentPrompt != null) {
@@ -331,8 +291,6 @@ public final class PromptManager {
                 return PROMPT_RECOMMEND_RESCAN;
             case NO_PASSCODE:
                 return PROMPT_NO_PASSCODE;
-            case SHARE_DATA:
-                return PROMPT_SHARE_DATA;
         }
         return null;
     }
