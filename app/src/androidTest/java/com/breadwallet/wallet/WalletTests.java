@@ -185,7 +185,7 @@ public class WalletTests {
     }
 
     @Test
-    public void walletBitcoinTests() {
+    public void walletCurrencyConversionTests() {
         Activity app = mActivityRule.getActivity();
 
         WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
@@ -203,6 +203,8 @@ public class WalletTests {
         RatesDataSource.getInstance(app).putCurrencies(app, tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
+
+        /**TEST BTC*/
 
         //getCryptoForSmallestCrypto(..)
         BigDecimal val = new BigDecimal(20000);
@@ -257,7 +259,8 @@ public class WalletTests {
         res = btcWallet.getCryptoForFiat(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal(500000)) == 0); //dollars
 
-        //TEST ETH
+        /**TEST ETH*/
+
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         Assert.assertNotNull(ethWallet);
 
@@ -286,30 +289,30 @@ public class WalletTests {
         res = ethWallet.getCryptoForFiat(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal("3")) == 0);
 
+        /**TEST erc20*/
 
-        //TEST erc20
         WalletTokenManager tokenManager = WalletTokenManager.getBrdWallet(ethWallet);
         Assert.assertNotNull(tokenManager);
 
         //getCryptoForSmallestCrypto(..)
-        val = new BigDecimal("25");
+        val = new BigDecimal("25000000000000000000");
         res = tokenManager.getCryptoForSmallestCrypto(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal(25)) == 0);
 
         //getSmallestCryptoForCrypto(..)
         val = new BigDecimal(25);
         res = tokenManager.getSmallestCryptoForCrypto(app, val);
-        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25").toPlainString()) == 0);
+        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25000000000000000000").toPlainString()) == 0);
 
         //getFiatForSmallestCrypto(..)
-        val = new BigDecimal("2");
-        res = tokenManager.getFiatForSmallestCrypto(app, val, null);
-        Assert.assertEquals(res.doubleValue(), btcRate * brdRate * 2, 0.001); //dollars
+        val = new BigDecimal("2000000000000000000");
+        res = tokenManager.getFiatForSmallestCrypto(app, val, null).setScale(8, BRConstants.ROUNDING_MODE);
+        Assert.assertEquals(res.doubleValue(), new BigDecimal(btcRate * brdRate * 2).setScale(8, BRConstants.ROUNDING_MODE).doubleValue(), 0.0000001); //dollars
 
         //getSmallestCryptoForFiat(..)
         val = new BigDecimal(3);//
-        res = tokenManager.getSmallestCryptoForFiat(app, val);
-        Assert.assertEquals(res.doubleValue(), 5, 0.00001);
+        res = tokenManager.getSmallestCryptoForFiat(app, val).setScale(0);
+        Assert.assertEquals(res.toPlainString(), "5000000130000000000");
 
         //getCryptoForFiat(..)
         val = new BigDecimal(3);//
@@ -323,51 +326,5 @@ public class WalletTests {
 
     }
 
-    @Test
-    public void httpTests() {
-        final AtomicInteger count = new AtomicInteger();
-        final String contract = "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
-//        for (int i = 0; i < 10000; i++) {
-//            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                @Override
-//                public void run() {
-//                    count.incrementAndGet();
-//                    final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-//                    final String eth_rpc_url = host + "module=logs&action=getLogs" +
-//                            "&fromBlock=0&toBlock=latest" +
-////                         "&address=" + ... not needed since we're asking for all the contracts
-//                            "&topic0=" + "" +
-//                            "&topic1=" + contract +
-//                            "&topic1_2_opr=or" +
-//                            "&topic2=" + contract;
-//                    Log.d(TAG, "run: " + eth_rpc_url);
-//                    final JSONObject payload = new JSONObject();
-//                    try {
-//                        payload.put("id", String.valueOf(""));
-//                        // ?? payload.put("account", address);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    JsonRpcRequest.makeRpcRequest(mActivityRule.getActivity(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-//                        @Override
-//                        public void onRpcRequestCompleted(String jsonResult) {
-//
-//                            Log.e(TAG, "onRpcRequestCompleted: " + jsonResult);
-//
-//                        }
-//                    });
-//                }
-//            });
-//        }
-        while(count.get() < 10000){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.e(TAG, "httpTests: DONE, with count: " + count.get());
-    }
 
 }

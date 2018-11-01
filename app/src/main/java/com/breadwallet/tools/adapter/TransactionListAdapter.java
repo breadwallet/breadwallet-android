@@ -195,7 +195,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BigDecimal cryptoAmount = item.getAmount().abs();
 
         BREthereumToken tkn = null;
-        if (wm.getIso().equalsIgnoreCase("ETH"))
+        if (wm.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
             tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
         // it's a token transfer ETH tx
         if (tkn != null) {
