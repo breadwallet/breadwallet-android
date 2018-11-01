@@ -297,7 +297,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             if (totalAmount <= 0) {
                 return null;
             }
-//
+
             CryptoAddress address = walletManager.getReceiveAddress(app); //cast, assuming it's BTC or BCH for now
             BRCoreAddress coreAddr = (BRCoreAddress) address.getCoreObject(); //assume BTC and BCH for now
 

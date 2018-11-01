@@ -91,7 +91,7 @@ public class BRDialogView extends DialogFragment {
         if (Utils.isNullOrEmpty(mTitle)) {
             mMainLayout.removeView(titleText);
         }
-        if (Utils.isNullOrEmpty(mMessage) && Utils.isNullOrEmpty(mSpanMessage.toString())) {
+        if (Utils.isNullOrEmpty(mMessage) && (mSpanMessage == null || Utils.isNullOrEmpty(mSpanMessage.toString()))) {
             mMainLayout.removeView(messageText);
         }
 
