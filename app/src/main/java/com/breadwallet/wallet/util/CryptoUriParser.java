@@ -95,7 +95,7 @@ public class CryptoUriParser {
             return false;
         }
         if (requestObject.isPaymentProtocol()) {
-            return tryPaymentRequest(requestObject);
+            return tryPaymentRequest(app, requestObject);
         } else if (requestObject.address != null) {
             return tryCryptoUrl(requestObject, app);
         } else {
@@ -252,7 +252,7 @@ public class CryptoUriParser {
 
     }
 
-    private static boolean tryPaymentRequest(CryptoRequest requestObject) {
+    private static boolean tryPaymentRequest(Context context, CryptoRequest requestObject) {
         String theURL = null;
         String url = requestObject.r;
         synchronized (LOCK_OBJECT) {
@@ -262,7 +262,7 @@ public class CryptoUriParser {
                 e.printStackTrace();
                 return false;
             }
-            new PaymentProtocolTask().execute(theURL, requestObject.label);
+            new PaymentProtocolTask(context).execute(theURL, requestObject.label);
         }
         return true;
     }

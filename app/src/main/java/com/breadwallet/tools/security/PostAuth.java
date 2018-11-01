@@ -343,10 +343,13 @@ public class PostAuth {
         }
     }
 
-    public void onPaymentProtocolRequest(final Activity activity, boolean authAsked) {
+    public void onPaymentProtocolRequest(final Context context, boolean authAsked, CryptoTransaction transaction) {
+        if (transaction != null) {
+            mPaymentProtocolTx = transaction;
+        }
         final byte[] paperKey;
         try {
-            paperKey = BRKeyStore.getPhrase(activity, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            paperKey = BRKeyStore.getPhrase(context, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
                 Log.e(TAG, "onPaymentProtocolRequest: WARNING!!!! LOOP");
@@ -362,7 +365,7 @@ public class PostAuth {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] txHash = WalletsMaster.getInstance(activity).getCurrentWallet(activity).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
+                byte[] txHash = WalletsMaster.getInstance(context).getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }

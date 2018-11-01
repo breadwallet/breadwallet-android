@@ -149,7 +149,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPaymentProtocolRequest(BRActivity.this, true);
+                            PostAuth.getInstance().onPaymentProtocolRequest(BRActivity.this, true, null);
                         }
                     });
 

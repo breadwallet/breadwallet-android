@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.breadwallet.core.BRCorePaymentProtocolRequest;
 import com.breadwallet.tools.exceptions.CertificateChainNotFound;
+import com.breadwallet.wallet.util.CryptoUriParser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -14,6 +16,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -56,7 +59,7 @@ public class X509CertificateValidator {
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
     public static String certificateValidation(List<X509Certificate> certList,
-                                                BRCorePaymentProtocolRequest paymentRequest)
+                                               BRCorePaymentProtocolRequest paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
 
         String result = null;
@@ -113,21 +116,20 @@ public class X509CertificateValidator {
         return certificates;
     }
 
-    public static List<X509Certificate> getCertificateFromBytes(byte[] rawCerts) {
-//        Log.e(TAG, "This is the rawCerts.length supplied for certificates: " + rawCerts.length);
-//        List<X509Certificate> theList = new ArrayList<>();
+    public static List<X509Certificate> validateCertificateChain(byte[] rawCerts) {
+        Log.e(TAG, "This is the rawCerts.length supplied for certificates: " + rawCerts.length);
+        List<X509Certificate> theList = new ArrayList<>();
 //        byte[] result;
 //        int i = 0;
 //        try {
 //            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
 //            while (true) {
-//                result = CryptoUriParser.getCertificatesFromPaymentRequest(rawCerts, i++);
-////                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
+//                result = CryptoUriParser.getCertificatesFromPaymentRequest(rawCerts, i++); //todo create JNI interface for this method.
+//
 //                if (result.length > 0) {
 //                    X509Certificate certForValidation = (X509Certificate)
 //                            certFact.generateCertificate(new ByteArrayInputStream(result));
 //                    theList.add(certForValidation);
-////                    Log.e(TAG, "THIS IS THE CERTIFICATE NAME: " + certForValidation.getIssuerDN().toString());
 //                } else {
 //                    break;
 //                }
@@ -135,8 +137,7 @@ public class X509CertificateValidator {
 //        } catch (CertificateException e) {
 //            e.printStackTrace();
 //        }
-//        return theList;
-        return null;
+        return theList;
     }
 
 }
