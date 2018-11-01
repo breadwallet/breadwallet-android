@@ -21,7 +21,7 @@ import java.util.List;
 
 public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     private static final String ETHEREUM_ADDRESS_PREFIX = "0x";
-
+    static final int SCALE = 8;
 
     private WalletManagerHelper mWalletManagerHelper;
     protected String mAddress;
