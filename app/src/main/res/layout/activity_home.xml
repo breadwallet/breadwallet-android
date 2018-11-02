@@ -69,18 +69,6 @@
         android:paddingEnd="@dimen/bread_margin"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRNotificationBar
-          android:id="@+id/notification_bar"
-          android:layout_width="match_parent"
-          android:layout_height="160dp"
-          android:layout_marginTop="4dp"
-          android:background="@color/blue"
-          android:contentInsetStart="0dp"
-          android:contentInsetLeft="0dp"
-          app:breadText="@string/Alert.noInternet"
-          app:contentInsetLeft="0dp"
-          app:contentInsetStart="0dp" />
-
         <android.support.v7.widget.RecyclerView
           android:id="@+id/rv_wallet_list"
           android:layout_width="match_parent"
@@ -173,6 +161,18 @@
       </TableRow>
 
     </TableLayout>
+
+    <com.breadwallet.presenter.customviews.BRNotificationBar
+        android:id="@+id/notification_bar"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/blue"
+        android:contentInsetStart="0dp"
+        android:contentInsetLeft="0dp"
+        app:breadText="@string/Alert.noInternet"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp" />
 
   </RelativeLayout>
 
