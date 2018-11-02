@@ -13,6 +13,9 @@ import com.breadwallet.R;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.util.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -40,10 +43,13 @@ import com.breadwallet.tools.util.Utils;
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BREdit extends EditText {
     private static final String TAG = BREdit.class.getName();
-    private final int ANIMATION_DURATION = 200;
-    private int currentX = 0;
-    private int currentY = 0;
-    private boolean isBreadButton; //meaning is has the special animation and shadow
+    private List<EditTextEventListener> mEditTextEventListeners = new ArrayList<>();
+
+    public enum EditTextEvent {
+        CUT,
+        PASTE,
+        COPY
+    }
 
     public BREdit(Context context) {
         super(context);
@@ -69,6 +75,46 @@ public class BREdit extends EditText {
         String customFont = attributes.getString(R.styleable.BREdit_customEFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         attributes.recycle();
+    }
+
+    /**
+     * Here you can catch paste, copy and cut events
+     */
+    @Override
+    public boolean onTextContextMenuItem(int id) {
+        boolean consumed = super.onTextContextMenuItem(id);
+        switch (id) {
+            case android.R.id.cut:
+                fireEditTextEventListeners(EditTextEvent.CUT);
+                break;
+            case android.R.id.paste:
+                fireEditTextEventListeners(EditTextEvent.PASTE);
+                break;
+            case android.R.id.copy:
+                fireEditTextEventListeners(EditTextEvent.COPY);
+                break;
+        }
+        return consumed;
+    }
+
+    public void fireEditTextEventListeners(EditTextEvent editTextEvent) {
+        for (EditTextEventListener editTextEventListener : mEditTextEventListeners) {
+            editTextEventListener.onEvent(editTextEvent);
+        }
+    }
+
+    public interface EditTextEventListener {
+        void onEvent(EditTextEvent editTextEvent);
+    }
+
+    public void addEditTextEventListener(EditTextEventListener editTextEventListener) {
+        if (!mEditTextEventListeners.contains(editTextEventListener)) {
+            mEditTextEventListeners.add(editTextEventListener);
+        }
+    }
+
+    public void removeEditTextEventListener(EditTextEventListener editTextEventListener) {
+        mEditTextEventListeners.remove(editTextEventListener);
     }
 
 }
