@@ -14,12 +14,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -34,7 +37,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputWordsActivity extends BRActivity implements View.OnFocusChangeListener {
+public class InputWordsActivity extends BRActivity implements View.OnFocusChangeListener, BREdit.EditTextEventListener {
     private static final String TAG = InputWordsActivity.class.getName();
     private Button mNextButton;
 
@@ -44,9 +47,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     public static final String EXTRA_UNLINK = "com.breadwallet.EXTRA_UNLINK";
     public static final String EXTRA_RESET_PIN = "com.breadwallet.EXTRA_RESET_PIN";
 
-    private List<EditText> mEditWords = new ArrayList<>(NUMBER_OF_WORDS);
-
-    private String mDebugPhrase;
+    private List<BREdit> mEditTextWords = new ArrayList<>(NUMBER_OF_WORDS);
 
     //will be true if this screen was called from the restore screen
     private boolean mIsUnlinking = false;
@@ -57,19 +58,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
-
-//        if (Utils.isEmulatorOrDebug(this)) {
-//            //japanese
-//            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
-//            //english
-//            mDebugPhrase = "blush wear arctic fruit unique quantum because mammal entry country school curtain";
-//            //french
-//            mDebugPhrase = "eyebrow elbow weasel again gate organ mobile then behind name debate joke";
-//            //spanish
-//            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
-//            //chinese
-//            mDebugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";
-//        }
 
         mNextButton = findViewById(R.id.send_button);
 
@@ -106,20 +94,20 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         TextView title = findViewById(R.id.title);
         TextView description = findViewById(R.id.description);
 
-        mEditWords.add((EditText) findViewById(R.id.word1));
-        mEditWords.add((EditText) findViewById(R.id.word2));
-        mEditWords.add((EditText) findViewById(R.id.word3));
-        mEditWords.add((EditText) findViewById(R.id.word4));
-        mEditWords.add((EditText) findViewById(R.id.word5));
-        mEditWords.add((EditText) findViewById(R.id.word6));
-        mEditWords.add((EditText) findViewById(R.id.word7));
-        mEditWords.add((EditText) findViewById(R.id.word8));
-        mEditWords.add((EditText) findViewById(R.id.word9));
-        mEditWords.add((EditText) findViewById(R.id.word10));
-        mEditWords.add((EditText) findViewById(R.id.word11));
-        mEditWords.add((EditText) findViewById(R.id.word12));
+        mEditTextWords.add((BREdit) findViewById(R.id.word1));
+        mEditTextWords.add((BREdit) findViewById(R.id.word2));
+        mEditTextWords.add((BREdit) findViewById(R.id.word3));
+        mEditTextWords.add((BREdit) findViewById(R.id.word4));
+        mEditTextWords.add((BREdit) findViewById(R.id.word5));
+        mEditTextWords.add((BREdit) findViewById(R.id.word6));
+        mEditTextWords.add((BREdit) findViewById(R.id.word7));
+        mEditTextWords.add((BREdit) findViewById(R.id.word8));
+        mEditTextWords.add((BREdit) findViewById(R.id.word9));
+        mEditTextWords.add((BREdit) findViewById(R.id.word10));
+        mEditTextWords.add((BREdit) findViewById(R.id.word11));
+        mEditTextWords.add((BREdit) findViewById(R.id.word12));
 
-        for (EditText editText : mEditWords) {
+        for (EditText editText : mEditTextWords) {
             editText.setOnFocusChangeListener(this);
         }
 
@@ -139,8 +127,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             description.setText(getString(R.string.RecoverWallet_subheader_reset_pin));
         }
 
-
-        mEditWords.get(LAST_WORD_INDEX).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditTextWords.get(LAST_WORD_INDEX).setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     mNextButton.performClick();
@@ -151,13 +138,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
+            public void onClick(View view) {
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
-                if (Utils.isEmulatorOrDebug(app) && !Utils.isNullOrEmpty(mDebugPhrase)) {
-                    phraseToCheck = mDebugPhrase;
-                }
                 if (phraseToCheck == null) {
                     return;
                 }
@@ -238,11 +221,27 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (BuildConfig.DEBUG) {
+            mEditTextWords.get(0).addEditTextEventListener(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (BuildConfig.DEBUG) {
+            mEditTextWords.get(0).removeEditTextEventListener(this);
+        }
+    }
+
     private String getPhrase() {
         boolean success = true;
 
         StringBuilder paperKeyStringBuilder = new StringBuilder();
-        for (EditText editText : mEditWords) {
+        for (EditText editText : mEditTextWords) {
             String cleanedWords = clean(editText.getText().toString().toLowerCase());
             if (Utils.isNullOrEmpty(cleanedWords)) {
                 SpringAnimator.failShakeAnimation(this, editText);
@@ -273,7 +272,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     }
 
     private void clearWords() {
-        for (EditText editText : mEditWords) {
+        for (EditText editText : mEditTextWords) {
             editText.setText("");
         }
     }
@@ -310,4 +309,18 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
     }
 
+    @Override
+    public void onEvent(BREdit.EditTextEvent editTextEvent) {
+        switch (editTextEvent) {
+            case PASTE:
+                String clipboardText = BRClipboardManager.getClipboard(this);
+                String[] potentialWords = clipboardText.split("\\s+");  // Uses any whitespace as a delimiter.
+                for (int i = 0; i < potentialWords.length && i < mEditTextWords.size(); i++) {
+                    BREdit firstEditText = mEditTextWords.get(i);
+                    firstEditText.setText(potentialWords[i]);
+                    validateWord(firstEditText);
+                }
+                break;
+        }
+    }
 }
