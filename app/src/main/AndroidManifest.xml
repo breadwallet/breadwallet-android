@@ -51,6 +51,7 @@
         android:launchMode="singleTask"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Dark"
+        android:testOnly="false"
         android:windowSoftInputMode="stateVisible|adjustResize">
         <provider
             android:name="android.support.v4.content.FileProvider"
