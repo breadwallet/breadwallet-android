@@ -352,8 +352,9 @@ public class APIClient {
             rawResponse = mHTTPClient.newCall(request).execute();
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
+            String message = e.getMessage() == null ? "" : e.getMessage();
             return new Response.Builder().code(NETWORK_ERROR_CODE).request(request)
-                    .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build();
+                    .body(ResponseBody.create(null, message)).message(message).protocol(Protocol.HTTP_1_1).build();
         }
         byte[] bytesBody = new byte[0];
         try {
@@ -410,7 +411,7 @@ public class APIClient {
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                     return createBrResponse(new Response.Builder().code(HttpStatus.INTERNAL_SERVER_ERROR_500).request(request)
-                            .body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
+                            .body(ResponseBody.create(null, new byte[0])).message("").protocol(Protocol.HTTP_1_1).build());
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
                     return createBrResponse(sendHttpRequest(new Request.Builder().url(newLocation).get().build(), withAuth));
