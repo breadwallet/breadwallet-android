@@ -42,6 +42,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
@@ -96,9 +97,8 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
             @Override
             public void onClick(View view) {
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
             }
         });
@@ -170,7 +170,8 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
                         String decorated = walletBitcoinManager.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, decorated, BigDecimal.ZERO, null, null, null);
+                        CryptoRequest request = new CryptoRequest.Builder().setAddress(decorated).setAmount(BigDecimal.ZERO).build();
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, request);
                         if (!QRUtils.generateQR(getActivity(), uri.toString(), mQrImage)) {
                             throw new IllegalStateException("failed to generate qr image for address");
                         }

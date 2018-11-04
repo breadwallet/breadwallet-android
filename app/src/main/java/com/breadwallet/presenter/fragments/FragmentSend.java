@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -116,6 +112,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private SendViewModel mViewModel;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
+    private static boolean mIsSendShown;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -148,7 +145,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
         mCloseButton = rootView.findViewById(R.id.close_button);
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(getContext());
+        mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
 
@@ -273,23 +270,23 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
 
-                if (obj == null || Utils.isNullOrEmpty(obj.address)) {
+                if (obj == null || Utils.isNullOrEmpty(obj.getAddress())) {
                     sayInvalidClipboardData();
                     return;
                 }
                 if (Utils.isEmulatorOrDebug(getActivity())) {
-                    Log.d(TAG, "Send Address -> " + obj.address);
-                    Log.d(TAG, "Send Value -> " + obj.value);
-                    Log.d(TAG, "Send Amount -> " + obj.amount);
+                    Log.d(TAG, "Send Address -> " + obj.getAddress());
+                    Log.d(TAG, "Send Value -> " + obj.getValue());
+                    Log.d(TAG, "Send Amount -> " + obj.getAmount());
                 }
 
-                if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso())) {
+                if (obj.getCurrencyCode() != null && !obj.getCurrencyCode().equalsIgnoreCase(wm.getCurrencyCode())) {
                     sayInvalidAddress(); //invalid if the screen is Bitcoin and scanning BitcoinCash for instance
                     return;
                 }
 
 
-                if (wm.isAddressValid(obj.address)) {
+                if (wm.isAddressValid(obj.getAddress())) {
                     final Activity app = getActivity();
                     if (app == null) {
                         Log.e(TAG, "mPaste onClick: app is null");
@@ -298,7 +295,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.containsAddress(obj.address)) {
+                            if (wm.containsAddress(obj.getAddress())) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -313,7 +310,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(obj.address)) {
+                            } else if (wm.addressIsUsed(obj.getAddress())) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -323,7 +320,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                                     @Override
                                                     public void onClick(BRDialogView brDialogView) {
                                                         brDialogView.dismiss();
-                                                        mAddressEdit.setText(wm.decorateAddress(obj.address));
+                                                        mAddressEdit.setText(wm.decorateAddress(obj.getAddress()));
                                                     }
                                                 }, new BRDialogView.BROnClickListener() {
                                                     @Override
@@ -338,8 +335,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Log.e(TAG, "run: " + wm.getIso());
-                                        mAddressEdit.setText(wm.decorateAddress(obj.address));
+                                        mAddressEdit.setText(wm.decorateAddress(obj.getAddress()));
 
                                     }
                                 });
@@ -359,7 +355,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 if (mSelectedCurrencyCode.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     Activity app = getActivity();
-                    mSelectedCurrencyCode = WalletsMaster.getInstance(app).getCurrentWallet(app).getIso();
+                    mSelectedCurrencyCode = WalletsMaster.getInstance(app).getCurrentWallet(app).getCurrencyCode();
                 } else {
                     mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
@@ -404,12 +400,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wm.getSmallestCryptoForFiat(getActivity(), rawAmount);
 
                 CryptoRequest req = CryptoUriParser.parseRequest(getActivity(), rawAddress);
-                if (req == null || Utils.isNullOrEmpty(req.address)) {
+                if (req == null || Utils.isNullOrEmpty(req.getAddress())) {
                     sayInvalidClipboardData();
                     return;
                 }
                 final Activity app = getActivity();
-                if (!wm.isAddressValid(req.address)) {
+                if (!wm.isAddressValid(req.getAddress())) {
 
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress),
                             app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -431,7 +427,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     SpringAnimator.failShakeAnimation(getActivity(), mFeeText);
                 }
 
-                if (WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso())) {
+                if (WalletsMaster.getInstance(getActivity()).isCurrencyCodeErc20(getActivity(), wm.getCurrencyCode())) {
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
@@ -447,7 +443,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 }
 
                 if (allFilled) {
-                    final CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
+                    final CryptoRequest item = new CryptoRequest.Builder().setAddress(req.getAddress()).setAmount(cryptoAmount).setMessage(comment).build();
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -603,6 +599,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+        setIsSendShown(false);
     }
 
     private void loadParameters() {
@@ -675,7 +672,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
         String balanceString;
         if (mSelectedCurrencyCode == null)
-            mSelectedCurrencyCode = wm.getIso();
+            mSelectedCurrencyCode = wm.getCurrencyCode();
         BigDecimal mCurrentBalance = wm.getCachedBalance(context);
         if (!mIsAmountLabelShown) {
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(context, mSelectedCurrencyCode));
@@ -684,7 +681,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(context).isIsoCrypto(context, mSelectedCurrencyCode);
-        boolean isWalletErc20 = WalletsMaster.getInstance(context).isIsoErc20(context, wm.getIso());
+        boolean isWalletErc20 = WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, wm.getCurrencyCode());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
@@ -705,7 +702,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         if (isWalletErc20) {
             BaseWalletManager ethWm = WalletEthManager.getInstance(context);
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(context, rawFee, null);
-            formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
+            formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getCurrencyCode() : mSelectedCurrencyCode, isoFee);
         }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
@@ -731,7 +728,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
         mAmountLayout.requestLayout();
     }
-
 
     private void showFeeSelectionButtons(boolean b) {
         if (!b) {
@@ -764,7 +760,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private void setButton(boolean isRegular) {
         BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        String iso = wallet.getIso();
+        String iso = wallet.getCurrencyCode();
         if (isRegular) {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);
             mRegularFeeButton.setTextColor(getContext().getColor(R.color.white));
@@ -830,16 +826,16 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 code = mSelectedCurrencyCode;
             }
         } else {
-            address = request.address;
-            memo = request.message;
-            code = request.iso;
+            address = request.getAddress();
+            memo = request.getMessage();
+            code = request.getCurrencyCode();
             BaseWalletManager walletManager = WalletsMaster.getInstance(context).getCurrentWallet(context);
-            if (request.amount != null && request.amount.compareTo(BigDecimal.ZERO) > 0 && !request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+            if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) > 0 && !request.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
-                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.amount.toPlainString())).toPlainString();
-            } else if (request.value != null && request.value.compareTo(BigDecimal.ZERO) > 0 && request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.getAmount().toPlainString())).toPlainString();
+            } else if (request.getValue() != null && request.getValue().compareTo(BigDecimal.ZERO) > 0 && request.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // ETH request amount param is named `value` and it is in ether.
-                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.value.toPlainString())).toPlainString();
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.getValue().toPlainString())).toPlainString();
             }
 
         }
@@ -871,5 +867,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     @Override
     public void onKeyInsert(String key) {
         handleClick(key);
+    }
+
+    public static boolean isIsSendShown() {
+        return mIsSendShown;
+    }
+
+    public static void setIsSendShown(boolean isSendShown) {
+        mIsSendShown = isSendShown;
     }
 }

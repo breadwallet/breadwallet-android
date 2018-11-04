@@ -48,7 +48,7 @@ public class SyncService extends /*Job*/ IntentService {
 
     public static final String ACTION_START_SYNC_PROGRESS_POLLING = "com.breadwallet.tools.services.ACTION_START_SYNC_PROGRESS_POLLING";
     public static final String ACTION_SYNC_PROGRESS_UPDATE = "com.breadwallet.tools.services.ACTION_SYNC_PROGRESS_UPDATE";
-    public static final String EXTRA_WALLET_ISO = "com.breadwallet.tools.services.EXTRA_WALLET_ISO";
+    public static final String EXTRA_WALLET_CURRENCY_CODE = "com.breadwallet.tools.services.EXTRA_WALLET_CURRENCY_CODE";
     public static final String EXTRA_PROGRESS = "com.breadwallet.tools.services.EXTRA_PROGRESS";
 
     private static final int POLLING_INTERVAL = 500; // in milliseconds
@@ -92,7 +92,7 @@ public class SyncService extends /*Job*/ IntentService {
         if (intent != null) {
             switch (intent.getAction()) {
                 case ACTION_START_SYNC_PROGRESS_POLLING:
-                    String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
+                    String walletIso = intent.getStringExtra(EXTRA_WALLET_CURRENCY_CODE);
                     if (walletIso != null) {
                         startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
                     }
@@ -114,7 +114,7 @@ public class SyncService extends /*Job*/ IntentService {
     private static Intent createIntent(Context context, String action, String currencyCode) {
         Intent intent = new Intent(context, SyncService.class);
         intent.setAction(action)
-                .putExtra(EXTRA_WALLET_ISO, currencyCode);
+                .putExtra(EXTRA_WALLET_CURRENCY_CODE, currencyCode);
         return intent;
     }
 
@@ -167,7 +167,7 @@ public class SyncService extends /*Job*/ IntentService {
                     pendingIntent);
         }
 
-        broadcastSyncProgressUpdate(context, walletManager.getIso(), progress);
+        broadcastSyncProgressUpdate(context, walletManager.getCurrencyCode(), progress);
     }
 
     /**

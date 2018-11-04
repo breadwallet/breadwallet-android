@@ -13,9 +13,8 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.protocols.paymentrequest.Protos;
-import com.breadwallet.tools.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.protocols.paymentrequest.Protos;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -42,7 +41,6 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -123,15 +121,14 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             URL url = new URL(params[0]);
             BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-            String acceptHeaderValue =
-                    walletManager.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
-                            ? String.format(ACCEPT_HEADER_FORMAT, walletManager.getName().toLowerCase())
-                            : ACCEPT_HEADER_BITPAY;
+            String acceptHeaderValue = walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
+                    ? String.format(ACCEPT_HEADER_FORMAT, walletManager.getName().toLowerCase())
+                    : ACCEPT_HEADER_BITPAY;
             Request request = new Request.Builder().url(url).get().addHeader(BRConstants.HEADER_ACCEPT, acceptHeaderValue).build();
             final APIClient.BRResponse response = APIClient.getInstance(mContext).sendRequest(request, false);
-            if (!walletManager.getIso().equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)
-                    && !walletManager.getIso().equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE)) {
-                throw new RuntimeException("Can't happen, Payment protocol for: " + walletManager.getIso());
+            if (!walletManager.getCurrencyCode().equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)
+                    && !walletManager.getCurrencyCode().equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE)) {
+                throw new RuntimeException("Can't happen, Payment protocol for: " + walletManager.getCurrencyCode());
             }
 
             if (!response.isSuccessful()) {
@@ -342,7 +339,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
     }
 
-    private String getAttributeFromDistinguishedName(String distinguishedName, String attributeKey) {
+    private String getAttributeFromDistinguishedName(String distinguishedName, String
+            attributeKey) {
         String[] distinguishedNameAttributes = distinguishedName.split(",");
         for (String distinguishedNameAttribute : distinguishedNameAttributes) {
             if (distinguishedNameAttribute.contains(attributeKey)) {
@@ -359,13 +357,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         for (BRCoreTransactionOutput output : outputs) {
             allAddresses.append(output.getAddress()).append(", ");
         }
-        final BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        BRCoreWallet coreWallet =
-                wm.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
-                        ? ((WalletBitcoinManager) wm).getWallet()
-                        : ((WalletBchManager) wm).getWallet();
-        final BRCoreTransaction trans = coreWallet.createTransactionForOutputs(mPaymentProtocolRequest.getOutputs());
-        if (trans == null) {
+        final BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        BRCoreWallet coreWallet = walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
+                ? ((WalletBitcoinManager) walletManager).getWallet()
+                : ((WalletBchManager) walletManager).getWallet();
+        final BRCoreTransaction transactionForOutputs = coreWallet.createTransactionForOutputs(mPaymentProtocolRequest.getOutputs());
+        if (transactionForOutputs == null) {
             BRDialog.showSimpleDialog(mContext, mContext.getString(R.string.Send_insufficientFunds), "");
             mPaymentProtocolRequest = null;
             return;
@@ -378,12 +375,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 coreWallet.setFeePerKb(customFeePerKb);
             }
         }
-        final CryptoTransaction transaction = new CryptoTransaction(trans);
+        final CryptoTransaction transaction = new CryptoTransaction(transactionForOutputs);
         //put the original fee rate back.
         coreWallet.setFeePerKb(originalFeePerKb);
 
-        final BigDecimal amount = wm.getTransactionAmount(transaction).abs();
-        final BigDecimal fee = wm.getTxFee(transaction);
+        final BigDecimal amount = walletManager.getTransactionAmount(transaction).abs();
+        final BigDecimal fee = walletManager.getTxFee(transaction);
 
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
         final String memo = (!Utils.isNullOrEmpty(mPaymentProtocolRequest.getMemo()) ? "\n" : "") + mPaymentProtocolRequest.getMemo();
@@ -394,8 +391,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal txAmt = wm.getTransactionAmount(transaction).abs();
-                BigDecimal minOutput = wm.getMinOutputAmount(mContext);
+                BigDecimal txAmt = walletManager.getTransactionAmount(transaction).abs();
+                BigDecimal minOutput = walletManager.getMinOutputAmount(mContext);
                 if (txAmt.compareTo(minOutput) < 0) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), mContext.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.BITS_SYMBOL + minOutput.divide(new BigDecimal(ONE_HUNDRED), BRConstants.ROUNDING_MODE));
@@ -428,6 +425,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
+
                     public void run() {
                         AuthManager.getInstance().authPrompt(mContext, mContext.getString(R.string.Confirmation_title),
                                 message, false, false, new BRAuthCompletion() {
@@ -458,6 +456,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             mCurrency = currency;
             mPaymentId = paymentId;
         }
+
 
         public String getRequiredFeeRate() {
             return mRequiredFeeRate;

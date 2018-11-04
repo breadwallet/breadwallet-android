@@ -101,7 +101,7 @@ public final class PromptManager {
                 return BRKeyStore.getPinCode(context).length() != PinLayout.MAX_PIN_DIGITS;
             case RECOMMEND_RESCAN:
                 BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
-                return wallet != null && BRSharedPrefs.getScanRecommended(context, wallet.getIso());
+                return wallet != null && BRSharedPrefs.getScanRecommended(context, wallet.getCurrencyCode());
         }
         return false;
     }

@@ -195,22 +195,22 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BigDecimal cryptoAmount = item.getAmount().abs();
 
         BREthereumToken tkn = null;
-        if (wm.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
+        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
             tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
         // it's a token transfer ETH tx
         if (tkn != null) {
             cryptoAmount = item.getFee();
         }
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String preferredIso = isCryptoPreferred ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(mContext);
+        String preferredCurrencyCode = isCryptoPreferred ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(mContext);
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         if (!received && amount != null) {
             amount = amount.negate();
         }
-        String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
+        String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredCurrencyCode, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
         convertView.transactionAmount.setText(formattedAmount);
         int blockHeight = item.getBlockHeight();
-        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
+        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getCurrencyCode());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
         int level;
         if (confirms <= 0) {
@@ -335,7 +335,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
                     int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0
-                            : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso()) - item.getBlockHeight() + 1;
+                            : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getCurrencyCode()) - item.getBlockHeight() + 1;
                     //complete
                     if (switches[2] && confirms >= 6) {
                         willAdd = false;

@@ -367,7 +367,7 @@ public class WalletPlugin implements Plugin {
 
             JSONObject obj = new JSONObject();
             try {
-                obj.put(KEY_CURRENCY, w.getIso());
+                obj.put(KEY_CURRENCY, w.getCurrencyCode());
                 obj.put(KEY_ADDRESS, w.getReceiveAddress(app).stringify());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -415,10 +415,10 @@ public class WalletPlugin implements Plugin {
             return;
         }
         BigDecimal bigAmount =
-                WalletsMaster.getInstance(app).isIsoErc20(app, currency)
+                WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, currency)
                         ? new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE)
                         : new BigDecimal(numerator);
-        final CryptoRequest item = new CryptoRequest(null, false, null, addr, bigAmount);
+        final CryptoRequest item = new CryptoRequest.Builder().setAddress(addr).setAmount(bigAmount).build();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -448,8 +448,8 @@ public class WalletPlugin implements Plugin {
         for (BaseWalletManager w : list) {
             JSONObject obj = new JSONObject();
             try {
-                obj.put(KEY_ID, w.getIso());
-                obj.put(KEY_TICKER, w.getIso());
+                obj.put(KEY_ID, w.getCurrencyCode());
+                obj.put(KEY_TICKER, w.getCurrencyCode());
                 obj.put(KEY_NAME, w.getName());
 
                 //Colors
@@ -463,7 +463,7 @@ public class WalletPlugin implements Plugin {
 
                 BigDecimal rawBalance = w.getCachedBalance(app);
                 String denominator = w.getDenominator();
-                balance.put(KEY_CURRENCY, w.getIso());
+                balance.put(KEY_CURRENCY, w.getCurrencyCode());
                 balance.put(KEY_NUMERATOR, rawBalance.toPlainString());
                 balance.put(KEY_DENOMINATOR, denominator);
 

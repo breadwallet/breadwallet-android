@@ -61,7 +61,7 @@ public class QRCodeReaderView extends SurfaceView
 
     public interface OnQRCodeReadListener {
 
-        void onQRCodeRead(String text, PointF[] points);
+        boolean onQRCodeRead(String text, PointF[] points);
     }
 
     private OnQRCodeReadListener mOnQRCodeReadListener;
@@ -71,7 +71,7 @@ public class QRCodeReaderView extends SurfaceView
     private QRCodeReader mQRCodeReader;
     private int mPreviewWidth;
     private int mPreviewHeight;
-    private CameraManager mCameraManager;
+    private static CameraManager mCameraManager;
     private boolean mQrDecodingEnabled = true;
     private DecodeFrameTask decodeFrameTask;
     private Map<DecodeHintType, Object> decodeHints;
@@ -128,14 +128,14 @@ public class QRCodeReaderView extends SurfaceView
     /**
      * Starts camera preview and decoding
      */
-    public void startCamera() {
+    public static void startCamera() {
         mCameraManager.startPreview();
     }
 
     /**
      * Stop camera preview and decoding
      */
-    public void stopCamera() {
+    public static void stopCamera() {
         mCameraManager.stopPreview();
     }
 
@@ -383,8 +383,6 @@ public class QRCodeReaderView extends SurfaceView
         protected void onPostExecute(Result result) {
             super.onPostExecute(result);
 
-
-
             final QRCodeReaderView view = viewRef.get();
 
             // Notify we found a QRCode
@@ -392,7 +390,13 @@ public class QRCodeReaderView extends SurfaceView
                 // Transform resultPoints to View coordinates
                 final PointF[] transformedPoints =
                         transformToViewCoordinates(view, result.getResultPoints());
-                view.mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
+                Log.e(TAG, "onPostExecute: handling....");
+                boolean handled = view.mOnQRCodeReadListener.onQRCodeRead(result.getText(), transformedPoints);
+                if (handled) {
+                    Log.e(TAG, "onPostExecute: Handled!");
+                    this.cancel(true);
+                    stopCamera();
+                }
             }
         }
 
