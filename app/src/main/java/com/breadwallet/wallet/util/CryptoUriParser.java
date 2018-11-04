@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -19,7 +16,6 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -32,17 +28,17 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
-import org.eclipse.jetty.http.HttpScheme;
-
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
+import static com.breadwallet.tools.util.BRConstants.BREAD;
 
 /**
  * BreadWallet
@@ -72,10 +68,22 @@ import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_R
 public class CryptoUriParser {
     private static final String TAG = CryptoUriParser.class.getName();
     private static final Object LOCK_OBJECT = new Object();
+    public static final String AMPERSAND = "&";
+    public static final String EQUAL = "=";
 
-    public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
+    public static final String AMOUNT = "amount";
+    public static final String VALUE = "value";
+    public static final String LABEL = "label";
+    public static final String MESSAGE = "message";
+    public static final String REQ = "req"; // "req" parameter, whose value is a required variable which are prefixed with a req-.
+    public static final String R_URL = "r"; // "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched
+    public static final String SCAN_QR = "scanqr";
+    public static final String ADDRESS_LIST = "addressList";
+    public static final String ADDRESS = "address";
+
+    public static synchronized boolean processRequest(Context context, String url, BaseWalletManager walletManager) {
         Log.d(TAG, "processRequest -> " + url);
-        if (app == null) {
+        if (context == null) {
             Log.e(TAG, "processRequest: app is null");
             return false;
         }
@@ -84,22 +92,22 @@ public class CryptoUriParser {
             return false;
         }
 
-        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager) || tryBreadUrl(app, url)) {
+        if (ImportPrivKeyTask.trySweepWallet(context, url, walletManager) || tryBreadUrl(context, url)) {
             return true;
         }
 
-        CryptoRequest requestObject = parseRequest(app, url);
+        CryptoRequest requestObject = parseRequest(context, url);
 
         if (requestObject == null) {
-            BRDialog.showSimpleDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Send_invalidAddressTitle));
+            BRDialog.showSimpleDialog(context, context.getString(R.string.JailbreakWarnings_title), context.getString(R.string.Send_invalidAddressTitle));
             return false;
         }
         if (requestObject.isPaymentProtocol()) {
-            return tryPaymentRequest(app, requestObject);
-        } else if (requestObject.address != null) {
-            return tryCryptoUrl(requestObject, app);
+            return tryPaymentRequest(context, requestObject);
+        } else if (requestObject.getAddress() != null) {
+            return tryCryptoUrl(requestObject, context);
         } else {
-            BRDialog.showSimpleDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Send_remoteRequestError));
+            BRDialog.showSimpleDialog(context, context.getString(R.string.JailbreakWarnings_title), context.getString(R.string.Send_remoteRequestError));
             return false;
         }
     }
@@ -116,97 +124,143 @@ public class CryptoUriParser {
         if (Utils.isNullOrEmpty(url)) {
             return false;
         }
-        if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
+        if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url)) {
             return true;
+        }
 
         CryptoRequest requestObject = parseRequest(app, url);
-        // return true if the request is valid url and has param: r or param: address
-        // return true if it is a valid bitcoinPrivKey
-        return (requestObject != null && (requestObject.isPaymentProtocol() || requestObject.hasAddress()));
-    }
+        if (requestObject == null) {
+            return false;
+        }
 
-
-    public static CryptoRequest parseRequest(Context app, String str) {
-        if (str == null || str.isEmpty()) return null;
-        CryptoRequest obj = new CryptoRequest();
-
-        String tmp = cleanUrl(str);
-
-        Uri u = Uri.parse(tmp);
-        String scheme = u.getScheme();
-
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-
-        if (scheme == null) {
-            scheme = wm.getScheme();
-            obj.iso = wm.getIso();
-
-        } else {
-            if (scheme.equalsIgnoreCase(HttpScheme.HTTP.asString()) || scheme.equalsIgnoreCase(HttpScheme.HTTPS.asString())) {
-                return null;
-            }
+        //if the scheme is present, check if it's a valid one.
+        if (!Utils.isNullOrEmpty(requestObject.getScheme())) {
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
-                if (scheme.equalsIgnoreCase(walletManager.getScheme())) {
-                    obj.iso = walletManager.getIso();
-                    break;
+                if (requestObject.getScheme().equalsIgnoreCase(walletManager.getScheme())) {
+                    return requestObject.isPaymentProtocol() || requestObject.hasAddress();
                 }
             }
         }
+        return false;
 
-        obj.scheme = scheme;
+    }
 
-        String schemeSpecific = u.getSchemeSpecificPart();
+    public static CryptoRequest parseRequest(Context context, String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        CryptoRequest.Builder cryptoBuilder = new CryptoRequest.Builder();
+
+        String tmp = cleanUrl(str);
+
+        Uri uri = Uri.parse(tmp);
+
+        String schemeSpecific = uri.getSchemeSpecificPart();
+        // Fix invalid bitcoin uri
         if (schemeSpecific.startsWith("//")) {
-            // Fix invalid bitcoin uri
             schemeSpecific = schemeSpecific.substring(2);
         }
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme();
+        uri = Uri.parse(scheme + "://" + schemeSpecific);
+        BaseWalletManager currentWallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
 
-        u = Uri.parse(scheme + "://" + schemeSpecific);
-
-        String host = u.getHost();
-        if (host != null) {
-            String trimmedHost = host.trim();
-            if (obj.iso.equalsIgnoreCase("bch"))
-                trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
-            String addrs = wm.undecorateAddress(trimmedHost);
-            if (!Utils.isNullOrEmpty(addrs) && wm.isAddressValid(addrs)) {
-                obj.address = addrs;
+        cryptoBuilder = sanitizeData(context, currentWallet, uri, cryptoBuilder);
+        if (cryptoBuilder == null) {
+            return null;
+        }
+        BaseWalletManager matchingWallet = WalletsMaster.getInstance(context).getWalletByIso(context, cryptoBuilder.getCurrencyCode());
+        //invalid currency code
+        if (matchingWallet == null) {
+            return null;
+        }
+        String address = cryptoBuilder.getAddress();
+        if (address != null) {
+            String trimmedAddress = address.trim();
+            String rawAddress = matchingWallet.undecorateAddress(trimmedAddress);
+            if (!Utils.isNullOrEmpty(rawAddress) && matchingWallet.isAddressValid(rawAddress)) {
+                cryptoBuilder.setAddress(rawAddress);
             }
         }
-        String query = u.getQuery();
-        pushUrlEvent(u);
+        String query = uri.getQuery();
+        pushUrlEvent(uri);
         if (query == null) {
-            return obj;
+            return cryptoBuilder.build();
         }
-        String[] params = query.split("&");
+        String[] params = query.split(AMPERSAND);
         for (String s : params) {
-            String[] keyValue = s.split("=", 2);
+            String[] keyValue = s.split(EQUAL, 2);
             if (keyValue.length != 2) {
                 continue;
             }
-            if (keyValue[0].trim().equals("amount")) {
+            if (keyValue[0].trim().equals(AMOUNT)) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    obj.amount = WalletBitcoinManager.getInstance(app).getSmallestCryptoForCrypto(app, bigDecimal);
+                    cryptoBuilder.setAmount(WalletBitcoinManager.getInstance(context).getSmallestCryptoForCrypto(context, bigDecimal));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
                 // ETH payment request amounts are called `value`
-            } else if (keyValue[0].trim().equals("value")) {
+            } else if (keyValue[0].trim().equals(VALUE)) {
                 BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                obj.value = WalletEthManager.getInstance(app).getSmallestCryptoForCrypto(app, bigDecimal);
-            } else if (keyValue[0].trim().equals("label")) {
-                obj.label = keyValue[1].trim();
-            } else if (keyValue[0].trim().equals("message")) {
-                obj.message = keyValue[1].trim();
-            } else if (keyValue[0].trim().startsWith("req")) {
-                obj.req = keyValue[1].trim();
-            } else if (keyValue[0].trim().startsWith("r")) {
-                obj.r = keyValue[1].trim();
+                cryptoBuilder.setAmount(WalletEthManager.getInstance(context).getSmallestCryptoForCrypto(context, bigDecimal));
+            } else if (keyValue[0].trim().equals(LABEL)) {
+                cryptoBuilder.setLabel(keyValue[1].trim());
+            } else if (keyValue[0].trim().equals(MESSAGE)) {
+                cryptoBuilder.setMessage(keyValue[1].trim());
+            } else if (keyValue[0].trim().startsWith(REQ)) {
+                cryptoBuilder.setReqUrl(keyValue[1].trim());
+            } else if (keyValue[0].trim().startsWith(R_URL)) {
+                cryptoBuilder.setRUrl(keyValue[1].trim());
             }
         }
-        return obj;
+        return cryptoBuilder.build();
+    }
+
+    private static CryptoRequest.Builder sanitizeData(Context context, BaseWalletManager currentWallet, Uri uri, CryptoRequest.Builder builder) {
+        String address = uri.getHost();
+        builder.setAddress(address);
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+        if (Utils.isNullOrEmpty(uri.getScheme())) {
+            WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(context);
+            WalletBchManager walletBchManager = WalletBchManager.getInstance(context);
+            String potentialBchAddress = walletBchManager.undecorateAddress(walletBchManager.getScheme() + ":" + address);
+            if (walletBitcoinManager.isAddressValid(address)) {
+                builder.setCurrencyCode(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
+                builder.setScheme(walletBitcoinManager.getScheme());
+            } else if (!Utils.isNullOrEmpty(potentialBchAddress)) {
+                builder.setCurrencyCode(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE);
+                builder.setScheme(walletBchManager.getScheme());
+                builder.setAddress(potentialBchAddress);
+            } else if (walletEthManager.isAddressValid(address)) {
+                builder.setCurrencyCode(WalletEthManager.ETH_CURRENCY_CODE);
+                builder.setScheme(walletEthManager.getScheme());
+            }
+        } else {
+            builder = builder.setScheme(uri.getScheme());
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+            for (BaseWalletManager walletManager : list) {
+                if (uri.getScheme().equalsIgnoreCase(walletManager.getScheme())) {
+                    builder.setCurrencyCode(walletManager.getCurrencyCode());
+                    break;
+                }
+            }
+        }
+        if (Utils.isNullOrEmpty(builder.getCurrencyCode())) {
+            return null;
+        }
+        if (builder.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+            boolean isCurrentWalletErc20 = WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, currentWallet.getCurrencyCode());
+            if (!isCurrentWalletErc20) {
+                builder.setCurrencyCode(WalletEthManager.ETH_CURRENCY_CODE);
+                builder.setScheme(walletEthManager.getScheme());
+            } else {
+                //else if the current wallet is erc20 then we need to scan a ETH address but still use the erc20 wallet to send funds.
+                builder.setCurrencyCode(currentWallet.getCurrencyCode());
+                //no scheme for erc20 wallets.
+            }
+        }
+        return builder;
     }
 
     private static boolean tryBreadUrl(Context context, String url) {
@@ -218,7 +272,7 @@ public class CryptoUriParser {
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
-        if (scheme != null && scheme.equalsIgnoreCase("bread")) {
+        if (scheme != null && scheme.equalsIgnoreCase(BREAD)) {
             String schemeSpecific = u.getSchemeSpecificPart();
             if (schemeSpecific != null && schemeSpecific.startsWith("//")) {
                 // Fix invalid bitcoin uri
@@ -235,15 +289,14 @@ public class CryptoUriParser {
             }
 
             switch (host) {
-                case "scanqr":
+                case SCAN_QR:
                     UiUtils.openScanner((Activity) context, BRConstants.SCANNER_REQUEST);
                     break;
-                case "addressList":
+                case ADDRESS_LIST:
                     //todo implement
                     break;
-                case "address":
+                case ADDRESS:
                     BRClipboardManager.putClipboard(context, wm.decorateAddress(wm.getAddress(context)));
-
                     break;
             }
             return true;
@@ -254,25 +307,26 @@ public class CryptoUriParser {
 
     private static boolean tryPaymentRequest(Context context, CryptoRequest requestObject) {
         String theURL = null;
-        String url = requestObject.r;
+        String url = requestObject.getRUrl();
         synchronized (LOCK_OBJECT) {
             try {
-                theURL = URLDecoder.decode(url, "UTF-8");
+                theURL = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return false;
             }
-            new PaymentProtocolTask(context).execute(theURL, requestObject.label);
+            new PaymentProtocolTask(context).execute(theURL, requestObject.getLabel());
         }
         return true;
     }
 
     private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
-        if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
+        if (requestObject == null || requestObject.getAddress() == null || requestObject.getAddress().isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
-        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
-            if (!(WalletsMaster.getInstance(context).isIsoErc20(context, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
+        if (requestObject.getCurrencyCode() != null && !requestObject.getCurrencyCode().equalsIgnoreCase(wallet.getCurrencyCode())) {
+            if (!(WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, wallet.getCurrencyCode())
+                    && requestObject.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))) {
                 BRDialog.showCustomDialog(context, context.getString(R.string.Alert_error),
                         String.format(context.getString(R.string.Send_invalidAddressMessage), wallet.getName()), context.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                             @Override
@@ -283,51 +337,51 @@ public class CryptoUriParser {
                 return true; //true since it's a crypto url but different iso than the currently chosen one
             } //  else ->   //allow tokens to scan ETH so continue ..
         }
+        BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
 
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BRSharedPrefs.putCurrentWalletIso(context, requestObject.iso);
+                BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
                 Intent newIntent = new Intent(context, WalletActivity.class);
                 newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
                 context.startActivity(newIntent);
             }
         });
         return true;
-
     }
 
-    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String
-            address, BigDecimal cryptoAmount, String label, String message, String rURL) {
-        String iso = wm.getIso();
+    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, CryptoRequest request) {
+        String currencyCode = wm.getCurrencyCode();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
-        if (address.contains(":")) {
-            address = address.split(":")[1];
+        String cleanAddress = request.getAddress();
+        if (request.getAddress().contains(":")) {
+            cleanAddress = request.getAddress().split(":")[1];
         }
         builder = builder.scheme(walletScheme);
-        if (!Utils.isNullOrEmpty(address)) {
-            builder = builder.appendPath(address);
+        if (!Utils.isNullOrEmpty(cleanAddress)) {
+            builder = builder.appendPath(cleanAddress);
         }
-        if (cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
-            if (iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletEthManager.getInstance(app).getCryptoForSmallestCrypto(app, cryptoAmount);
-                builder = builder.appendQueryParameter("value", amount.toPlainString());
-            } else if (iso.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || iso.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletBitcoinManager.getInstance(app).getCryptoForSmallestCrypto(app, cryptoAmount);
-                builder = builder.appendQueryParameter("amount", amount.toPlainString());
+        if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+            if (currencyCode.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                BigDecimal amount = WalletEthManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                builder = builder.appendQueryParameter(VALUE, amount.toPlainString());
+            } else if (currencyCode.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || currencyCode.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
+                BigDecimal amount = WalletBitcoinManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                builder = builder.appendQueryParameter(AMOUNT, amount.toPlainString());
             } else {
-                throw new RuntimeException("URI not supported for: " + iso);
+                throw new RuntimeException("URI not supported for: " + currencyCode);
             }
         }
-        if (label != null && !label.isEmpty()) {
-            builder = builder.appendQueryParameter("label", label);
+        if (!Utils.isNullOrEmpty(request.getLabel())) {
+            builder = builder.appendQueryParameter(LABEL, request.getLabel());
         }
-        if (message != null && !message.isEmpty()) {
-            builder = builder.appendQueryParameter("message", message);
+        if (!Utils.isNullOrEmpty(request.getMessage())) {
+            builder = builder.appendQueryParameter(MESSAGE, request.getMessage());
         }
-        if (rURL != null && !rURL.isEmpty()) {
-            builder = builder.appendQueryParameter("r", rURL);
+        if (!Utils.isNullOrEmpty(request.getRUrl())) {
+            builder = builder.appendQueryParameter(R_URL, request.getRUrl());
         }
 
         return Uri.parse(builder.build().toString().replace("/", ""));

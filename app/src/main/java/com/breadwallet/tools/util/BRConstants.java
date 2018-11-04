@@ -145,6 +145,7 @@ public final class BRConstants {
 
 
     public static final String STRING_RESOURCES_FILENAME = "string";
+    public static final String BREAD = "bread";
 
     public static final String PROTOCOL = "https";
     public static final String GZIP = "gzip";
@@ -198,7 +199,6 @@ public final class BRConstants {
     public static final String GET = "GET";
     public static final String POST = "POST";
     public static final String HEADER_WWW_AUTHENTICATE = "www-authenticate";
-    public static final String BREAD = "bread";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "selected";
     public static final String SELECTED = "selected";

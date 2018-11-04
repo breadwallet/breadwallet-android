@@ -122,12 +122,12 @@ public class UiUtils {
                 return;
             }
             String iso = BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE;
-            if (wm != null) wm.getIso();
+            if (wm != null) wm.getCurrencyCode();
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
-            bundle.putString("walletIso", iso);
+            bundle.putString(FragmentSupport.WALLET_CURRENCY_CODE, iso);
             if (!Utils.isNullOrEmpty(articleId))
-                bundle.putString("articleId", articleId);
+                bundle.putString(FragmentSupport.EXTRA_ARTICLE_ID, articleId);
 
             fragmentSupport.setArguments(bundle);
             app.getSupportFragmentManager().beginTransaction()

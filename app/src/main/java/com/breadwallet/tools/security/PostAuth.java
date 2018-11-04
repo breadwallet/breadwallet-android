@@ -220,10 +220,10 @@ public class PostAuth {
         }
         try {
             if (rawPhrase.length > 0) {
-                if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
+                if (mCryptoRequest != null && mCryptoRequest.getAmount() != null && mCryptoRequest.getAddress() != null) {
                     final CryptoTransaction tx;
                     if (mCryptoRequest.getGenericTransactionMetaData() == null) {
-                        tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                        tx = mWalletManager.createTransaction(mCryptoRequest.getAmount(), mCryptoRequest.getAddress());
 
                         if (tx == null) {
                             BRDialog.showCustomDialog(context, context.getString(R.string.Alert_error), context.getString(R.string.Send_insufficientFunds),
@@ -237,16 +237,17 @@ public class PostAuth {
                         }
 
                         mTxMetaData = new TxMetaData();
-                        mTxMetaData.comment = mCryptoRequest.message;
+                        mTxMetaData.comment = mCryptoRequest.getMessage();
                         mTxMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
                         BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(context);
                         mTxMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
                         mTxMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
                         mTxMetaData.txSize = tx.getTxSize().intValue();
-                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getIso());
+                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getCurrencyCode());
                         mTxMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
                         mTxMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
                         mTxMetaData.classVersion = 1;
+
 
                     } else {
                         WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
@@ -260,8 +261,8 @@ public class PostAuth {
                     }
 
                     // We use dynamic gas for ETH and ERC20 tokens. BUT not when we have a generic transaction CALL_REQUEST.
-                    if (mCryptoRequest.getGenericTransactionMetaData() == null && (mWalletManager.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
-                            || WalletsMaster.getInstance(context).isIsoErc20(context, mWalletManager.getIso()))) {
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
+                            || WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
                         final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
                         final Timer timeoutTimer = new Timer();
                         final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {

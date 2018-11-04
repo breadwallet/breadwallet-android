@@ -174,8 +174,6 @@ public class RatesDataSource implements BRDataSourceInterface {
         CurrencyEntity result = null;
         try {
             database = openDatabase();
-//            printTest();
-//            Log.e(TAG, "getCurrencyByCode: code: " + code + ", iso: " + walletManager.getIso(app));
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                     allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE",
                     new String[]{code, iso.toUpperCase()}, null, null, null);

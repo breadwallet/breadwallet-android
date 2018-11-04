@@ -19,10 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -36,6 +36,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.breadwallet.R;
 
 import java.math.BigDecimal;
 
@@ -194,8 +195,8 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                     return;
                 }
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, walletManager.decorateAddress(mReceiveAddress),
-                        getAmount(), null, null, null);
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
                 showKeyboard(false);
             }
@@ -222,7 +223,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             @Override
             public void onClick(View v) {
                 if (mSelectedCurrencyCode.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
-                    mSelectedCurrencyCode = mWallet.getIso();
+                    mSelectedCurrencyCode = mWallet.getCurrencyCode();
                 } else {
                     mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
@@ -258,7 +259,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                     @Override
                     public void run() {
                         mAddress.setText(mWallet.decorateAddress(mReceiveAddress));
-                        boolean generated = generateQrImage(mWallet.decorateAddress(mReceiveAddress), null, wallet.getIso());
+                        boolean generated = generateQrImage(mWallet.decorateAddress(mReceiveAddress), null, wallet.getCurrencyCode());
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -358,15 +359,19 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     }
 
     private boolean generateQrImage(String address, String strAmount, String iso) {
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
         boolean isCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), iso);
 
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
 
-        BigDecimal amount = isCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wm.getSmallestCryptoForFiat(getActivity(), bigAmount);
+        BigDecimal amount = isCrypto ? walletManager.getSmallestCryptoForCrypto(getActivity(), bigAmount) : walletManager.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
-        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
+        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                new CryptoRequest.Builder()
+                        .setAddress(address)
+                        .setAmount(amount)
+                        .build());
 
         return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }

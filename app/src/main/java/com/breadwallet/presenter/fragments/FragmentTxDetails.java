@@ -203,9 +203,9 @@ public class FragmentTxDetails extends DialogFragment {
         if (mTransaction != null) {
             //user prefers crypto (or fiat)
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
-            String cryptoIso = walletManager.getIso();
+            String cryptoIso = walletManager.getCurrencyCode();
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
-            boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, cryptoIso);
+            boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, cryptoIso);
 
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 
@@ -257,7 +257,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
-            if (walletManager.getIso().equalsIgnoreCase("ETH"))
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
             if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
 
@@ -270,7 +270,7 @@ public class FragmentTxDetails extends DialogFragment {
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
-                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso());
+                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getCurrencyCode());
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);
@@ -320,7 +320,7 @@ public class FragmentTxDetails extends DialogFragment {
             });
 
             //this is always crypto amount
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), received ? cryptoAmount : cryptoAmount.negate()));
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getCurrencyCode(), received ? cryptoAmount : cryptoAmount.negate()));
 
             if (received) {
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));

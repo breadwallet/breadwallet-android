@@ -68,11 +68,27 @@ public class WebViewActivity extends BRActivity {
     private static final String DOCUMENTS_ACTIVITY_CLASS_NAME = "com.android.documentsui.DocumentsActivity";
     private static final String KYC_SUFFIX = "_kyc.jpg";
     private static final String BUY_PATH = "/buy";
+    private static final String CURRENCY = "currency";
+    private static final String URL_FORMAT = "%s?%s=%s";
     private static final String SELECT_IMAGE_TITLE = "Select Image Source";
 
     private WebView mWebView;
     String mUrl;
     private String mOnCloseUrl;
+    public static final String CHECKOUT = "checkout";
+    public static final String ARTICLE_ID = "articleId";
+    public static final String CLOSE = "_close";
+    public static final String JSON = "json";
+    public static final String URL = "url";
+    public static final String METHOD = "method";
+    public static final String BODY = "body";
+    public static final String HEADERS = "headers";
+    public static final String CLOSE_ON = "closeOn";
+    public static final String GET = "get";
+    public static final String POST = "post";
+    public static final String KYC_FILENAME = "_kyc.jpg";
+    public static final String INTENT_TYPE_IMAGE = "image/*";
+    public static final String DOCUMENTS_ACTIVITY_REFERENCE = "com.android.documentsui.DocumentsActivity";
 
     private ValueCallback<Uri[]> mFilePathCallback;
     private String mCameraPhotoPath;
@@ -167,12 +183,6 @@ public class WebViewActivity extends BRActivity {
         String json = getIntent().getStringExtra(EXTRA_JSON_PARAM);
 
         if (json == null) {
-            if (mUrl != null) {
-                mWebView.loadUrl(mUrl);
-
-                return;
-            }
-
             if (articleId != null && !articleId.isEmpty()) {
                 mUrl = mUrl + "/" + articleId;
             }
@@ -182,7 +192,8 @@ public class WebViewActivity extends BRActivity {
                 mBottomToolbar.setVisibility(View.INVISIBLE);
             }
             if (mUrl.endsWith(BUY_PATH)) {
-                mUrl = mUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso().toLowerCase();
+                mUrl = String.format(URL_FORMAT, mUrl, CURRENCY, WalletsMaster.getInstance(this).getCurrentWallet(this).getCurrencyCode().toLowerCase());
+
             }
             mWebView.loadUrl(mUrl);
             if (articleId != null && !articleId.isEmpty()) {
@@ -213,14 +224,12 @@ public class WebViewActivity extends BRActivity {
     }
 
     private void request(final WebView webView, final String jsonString) {
-
         try {
             JSONObject json = new JSONObject(jsonString);
 
             String url = json.getString(BRConstants.URL);
             Log.d(TAG, "Loading -> " + url);
             if (url != null && url.contains(BRConstants.CHECKOUT)) {
-
                 attachKeyboardListeners();
 
                 // Make the top and bottom toolbars visible for Simplex flow
@@ -302,7 +311,6 @@ public class WebViewActivity extends BRActivity {
             Log.e(TAG, "request: Failed to parse json or not enough params: " + jsonString);
             e.printStackTrace();
         }
-
     }
 
     private void navigate(String to) {
@@ -364,7 +372,6 @@ public class WebViewActivity extends BRActivity {
 
         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePath, FileChooserParams fileChooserParams) {
             Log.d(TAG, "onShowFileChooser");
-
             // Double check that we don't have any existing callbacks
             if (mFilePathCallback != null) {
                 mFilePathCallback.onReceiveValue(null);
@@ -397,7 +404,6 @@ public class WebViewActivity extends BRActivity {
                 }
             } else {
                 Log.d(TAG, "Image Capture Activity NOT FOUND");
-
             }
 
             requestImageFilePermission();
@@ -436,7 +442,7 @@ public class WebViewActivity extends BRActivity {
 
         // Collect all gallery intents
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
+        galleryIntent.setType(INTENT_TYPE_IMAGE);
         List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
         for (ResolveInfo res : listGallery) {
             Intent intent = new Intent(galleryIntent);
@@ -587,15 +593,12 @@ public class WebViewActivity extends BRActivity {
                 }
                 break;
             }
-
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "Storage permission GRANTED");
 
                     startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
-
                 }
-
                 break;
             }
 

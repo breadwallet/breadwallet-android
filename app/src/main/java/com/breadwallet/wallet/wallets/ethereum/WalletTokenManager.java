@@ -23,6 +23,7 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
@@ -65,6 +66,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     private BREthereumWallet mWalletToken;
     private WalletUiConfiguration mUiConfig;
 
+    private static final String DEFAULT_COLOR_LEFT = "#ff5193"; // tokenWallet.getToken().getColorLeft()
+    private static final String DEFAULT_COLOR_RIGHT = "#f9a43a"; // tokenWallet.getToken().getColorRight();
     public static final String BRD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x7108ca7c4718efa810457f228305c9c71390931a" : "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
     public static final String BRD_CURRENCY_CODE = "BRD";
 
@@ -297,7 +300,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     }
 
     @Override
-    public String getIso() {
+    public String getCurrencyCode() {
         return mWalletToken.getToken().getSymbol();
     }
 
@@ -347,7 +350,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public BigDecimal getCachedBalance(Context context) {
-        return BRSharedPrefs.getCachedBalance(context, getIso());
+        return BRSharedPrefs.getCachedBalance(context, getCurrencyCode());
     }
 
     @Override
@@ -471,7 +474,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         //fiat rate for btc
         CurrencyEntity rate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getIso(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
 
         if (rate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC or ETH");
@@ -495,7 +498,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getIso(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

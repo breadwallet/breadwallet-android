@@ -582,6 +582,8 @@
     <string name="Send.legacyAddressWarning">Warning: this is a legacy bitcoin address. Are you sure you want to send Bitcoin Cash to it?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Loading Request</string>
+    <!-- We are loading the request (now) -->
+    <string name="Send.SendMax">Send maximum amount?</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Insufficient funds to cover the transaction fee.</string>
     <!-- Empty address alert message -->
