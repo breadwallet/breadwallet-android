@@ -159,7 +159,7 @@ public interface BaseWalletManager {
     String getSymbol(Context app);
 
     //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
-    String getIso();
+    String getCurrencyCode();
 
     //get the currency scheme (bitcoin or bitcoincash)
     String getScheme();
