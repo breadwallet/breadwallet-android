@@ -1,10 +1,12 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.tools.manager.BREventManager;
@@ -49,7 +51,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
 
     private static final String TAG = WalletBitcoinManager.class.getName();
 
-    private static final String ISO = BITCOIN_SYMBOL;
+    private static final String ISO = BITCOIN_CURRENCY_CODE;
     private static final String NAME = "Bitcoin";
     private static final String SCHEME = "bitcoin";
     private static final String COLOR = "#f29500";
@@ -91,6 +93,10 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
             }
         });
         WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
+        updateSettings(context);
+    }
+
+    public void updateSettings(Context context) {
         setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
     }
 
@@ -140,6 +146,12 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     protected void syncStopped(Context context) {
+    }
+
+    @Override
+    public void refreshAddress(Context context) {
+        BRCoreAddress address = BRSharedPrefs.getIsSegwitEnabled(context) ? getWallet().getReceiveAddress() : getWallet().getLegacyAddress();
+        updateCachedAddress(context, address.stringify());
     }
 
 }

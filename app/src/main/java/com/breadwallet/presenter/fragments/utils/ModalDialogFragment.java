@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
 /**
@@ -101,7 +103,7 @@ public class ModalDialogFragment extends Fragment {
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
 
-        signalLayout.animate().translationY(reverse ? IntroActivity.screenParametersPoint.y : translationY).setDuration(SLIDE_ANIMATION_DURATION)
+        signalLayout.animate().translationY(reverse ? signalHeight : translationY).setDuration(SLIDE_ANIMATION_DURATION)
                 .setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(OVERSHOOT_INTERPOLATOR_TENSION))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override

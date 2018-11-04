@@ -67,7 +67,7 @@ public class BRButton extends Button {
     private static final float SHADOW_PRESSED = 0.88f;
     private static final float SHADOW_UNPRESSED = 0.95f;
     private float shadowOffSet = SHADOW_UNPRESSED;
-    private static final int ROUND_PIXELS = 16;
+    private static final int ROUND_PIXELS = 8;
     private boolean isBreadButton; //meaning is has the special animation and shadow
     private boolean hasShadow; // allows us to add/remove the drop shadow from the button without affecting the animation
 
@@ -181,9 +181,14 @@ public class BRButton extends Button {
             modifiedWidth = width - 10;
             modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
-            canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
             if (type == 2 || type == 3)
                 canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
+            if (type == 8 || type == 9) {
+                canvas.drawRoundRect(bRect, 22, 22, bPaint);
+            } else {
+                canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
+            }
+
         }
         super.onDraw(canvas);
 
@@ -251,6 +256,20 @@ public class BRButton extends Button {
             setHasShadow(false);
             TypedValue buttonColorValue = new TypedValue();
             getContext().getTheme().resolveAttribute(R.attr.recover_wallet_background, buttonColorValue, true);
+            setTextColor(getContext().getColor(R.color.white));
+            bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
+            bPaint.setStyle(Paint.Style.FILL);
+        } else if (type == 8) {
+            setHasShadow(false);
+            TypedValue buttonColorValue = new TypedValue();
+            getContext().getTheme().resolveAttribute(R.attr.deny_wallet_link_button, buttonColorValue, true);
+            setTextColor(getContext().getColor(R.color.white));
+            bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
+            bPaint.setStyle(Paint.Style.FILL);
+        } else if (type == 9) {
+            setHasShadow(false);
+            TypedValue buttonColorValue = new TypedValue();
+            getContext().getTheme().resolveAttribute(R.attr.approve_wallet_link_button, buttonColorValue, true);
             setTextColor(getContext().getColor(R.color.white));
             bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
             bPaint.setStyle(Paint.Style.FILL);

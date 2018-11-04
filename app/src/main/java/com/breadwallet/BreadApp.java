@@ -2,31 +2,42 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
-import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
-import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
+import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.services.BRDFirebaseMessagingService;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -34,9 +45,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,19 +75,54 @@ import io.fabric.sdk.android.Fabric;
  * THE SOFTWARE.
  */
 
-public class BreadApp extends Application {
+public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
-    public static int DISPLAY_HEIGHT_PX;
-    public static int DISPLAY_WIDTH_PX;
-    private FingerprintManager mFingerprintManager;
-    // host is the server(s) on which the API is hosted
-    public static String HOST = "api.breadwallet.com";
-    private static List<OnAppBackgrounded> listeners;
-    private static Timer isBackgroundChecker;
-    public static AtomicInteger activityCounter = new AtomicInteger();
-    public static long backgroundedTime;
-    private static Context mContext;
-    private ApplicationLifecycleObserver mObserver;
+
+    // The server(s) on which the API is hosted
+    public static final String HOST = BuildConfig.DEBUG ? "stage2.breadwallet.com" : "api.breadwallet.com";
+    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
+    private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
+    private static final String WALLET_ID_SEPARATOR = " ";
+    private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
+
+    private static BreadApp mInstance;
+    public static int mDisplayHeightPx;
+    public static int mDisplayWidthPx;
+    private static long mBackgroundedTime;
+    private static Activity mCurrentActivity;
+    private static final Map<String, String> mHeaders = new HashMap<>();
+
+    private Runnable mDisconnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.disconnect(BreadApp.this);
+                    }
+                });
+            }
+        }
+    };
+
+    private Runnable mConnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.connect(BreadApp.this);
+                    }
+                });
+            }
+        }
+    };
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -93,19 +136,11 @@ public class BreadApp extends Application {
         }
     }
 
-    public static final boolean IS_ALPHA = false;
-
-    public static final Map<String, String> mHeaders = new HashMap<>();
-
-    private static Activity currentActivity;
-
     @Override
     public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.DEBUG) {
-            HOST = "stage2.breadwallet.com";
-        }
+        mInstance = this;
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
@@ -113,169 +148,226 @@ public class BreadApp extends Application {
                 .build();
         Fabric.with(fabric);
 
-//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                    .detectDiskReads()
-//                    .detectDiskWrites()
-//                    .detectNetwork()   // or .detectAll() for all detectable problems
-//                    .penaltyLog()
-//                    .build());
-//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                    .detectLeakedSqlLiteObjects()
-//                    .detectLeakedClosableObjects()
-//                    .penaltyLog()
-//                    .penaltyDeath()
-//                    .build());
-
-        mContext = this;
-
-        if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
-            throw new RuntimeException("can't be alpha for release");
-
-        boolean isTestVersion = APIClient.getInstance(this).isStaging();
-        boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        String lang = getCurrentLocale(this);
-
-        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, lang);
+        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, BuildConfig.DEBUG ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode());
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        DISPLAY_WIDTH_PX = size.x;
-        DISPLAY_HEIGHT_PX = size.y;
-        mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+        mDisplayWidthPx = size.x;
+        mDisplayHeightPx = size.y;
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        mObserver = new ApplicationLifecycleObserver();
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+        initialize(true);
+
+        // Start our local server as soon as the application instance is created, since we need to
+        // display support WebViews during onboarding.
+        HTTPServer.startServer();
 
     }
 
-    public static void generateWalletIfIfNeeded(Context app, String address) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getWalletRewardId(app))) {
-            String rewardId = generateWalletId(app, address);
-            if (!Utils.isNullOrEmpty(rewardId)) {
+    /**
+     * Initializes the application.  Only put things in here that need to happen after the user has created or
+     * recovered the BRD wallet.
+     *
+     * @param isApplicationOnCreate True if initialize is called from application onCreate.
+     */
+    public static void initialize(boolean isApplicationOnCreate) {
+        if (bRDWalletExists()) {
+            // Initialize the wallet id (also called rewards id).
+            initializeWalletId();
 
-                BRSharedPrefs.putWalletRewardId(app, rewardId);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
+            // Initialize application lifecycle observer and register this application for events.
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
+
+            // Initialize message exchange inbox polling.
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver());
+            if (!isApplicationOnCreate) {
+                InboxPollingWorker.initialize();
             }
-        }
 
+            // Initialize the Firebase Messaging Service.
+            BRDFirebaseMessagingService.initialize(mInstance);
+
+            // Initialize TokenUtil to load our tokens.json file from res/raw
+            TokenUtil.initialize(mInstance);
+        }
     }
 
-    private static synchronized String generateWalletId(Context app, String address) {
-        if (app == null) {
-            Log.e(TAG, "generateWalletId: app is null");
-            return null;
+    /**
+     * Returns whether the BRD wallet exists.  i.e. has the BRD wallet been created or recovered.
+     *
+     * @return True if the BRD wallet exists; false, otherwise.
+     */
+    private static boolean bRDWalletExists() {
+        return BRKeyStore.getMasterPublicKey(mInstance) != null;
+    }
+
+    /**
+     * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
+     */
+    private static void initializeWalletId() {
+        String walletId = generateWalletId();
+        if (!Utils.isNullOrEmpty(walletId) && walletId.matches(WALLET_ID_PATTERN)) {
+            BRSharedPrefs.putWalletRewardId(mInstance, walletId);
+        } else {
+            Log.e(TAG, "initializeWalletId: walletId is empty or faulty after generation");
+            BRSharedPrefs.putWalletRewardId(mInstance, "");
+            BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
         }
+    }
+
+    /**
+     * Generates the wallet id (rewards id) based on the Ethereum address. The format of the id is
+     * "xxxx xxxx xxxx xxxx", where x is a lowercase letter or a number.
+     *
+     * @return The wallet id.
+     */
+    private static synchronized String generateWalletId() {
         try {
-            // Remove the first 2 characters
-            String cleanAddress = address.substring(2, address.length());
+            // Retrieve the ETH address since the wallet id is based on this.
+            String address = WalletEthManager.getInstance(mInstance).getAddress(mInstance);
 
-            // Get the shortened address bytes
-            byte[] addressBytes = cleanAddress.getBytes("UTF-8");
+            // Remove the first 2 characters i.e. 0x
+            String rawAddress = address.substring(2, address.length());
 
-            // Run sha256 on the shortened address bytes
+            // Get the address bytes.
+            byte[] addressBytes = rawAddress.getBytes("UTF-8");
+
+            // Run SHA256 on the address bytes.
             byte[] sha256Address = CryptoHelper.sha256(addressBytes);
             if (Utils.isNullOrEmpty(sha256Address)) {
-                BRReportsManager.reportBug(new IllegalAccessException("Failed to sha256"));
+                BRReportsManager.reportBug(new IllegalAccessException("Failed to generate SHA256 hash."));
                 return null;
             }
 
-            // Get the first 10 bytes
-            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
+            // Get the first 10 bytes of the SHA256 hash.
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
 
+            // Convert the first 10 bytes to a lower case string.
             String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
 
+            // Insert a space every 4 chars to match the specified format.
             StringBuilder builder = new StringBuilder();
-
             Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
+            String separator = "";
             while (matcher.find()) {
                 String piece = base32String.substring(matcher.start(), matcher.end());
-                builder.append(piece + " ");
+                builder.append(separator + piece);
+                separator = WALLET_ID_SEPARATOR;
             }
             return builder.toString();
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-
+            Log.e(TAG, "Unable to get address bytes.", e);
+            return null;
         }
-        return null;
-
     }
 
+    /**
+     * Clears all app data from disk. This is equivalent to the user choosing to clear the app's data from within the
+     * device settings UI. It erases all dynamic data associated with the app -- its private data and data in its
+     * private area on external storage -- but does not remove the installed application itself, nor any OBB files.
+     * It also revokes all runtime permissions that the app has acquired, clears all notifications and removes all
+     * Uri grants related to this application.
+     *
+     * @throws IllegalStateException if the {@link ActivityManager} fails to wipe the user's data.
+     */
+    public static void clearApplicationUserData() {
+        if (!((ActivityManager) mInstance.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData()) {
+            throw new IllegalStateException(TAG + ": Failed to clear user application data.");
+        }
+    }
+
+    /**
+     * Return the current language code i.e. "en_US" for US English.
+     *
+     * @return The current language code.
+     */
     @TargetApi(Build.VERSION_CODES.N)
-    public String getCurrentLocale(Context ctx) {
+    private String getCurrentLanguageCode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
+            return getResources().getConfiguration().getLocales().get(0).toString();
         } else {
-            //noinspection deprecation
-            return ctx.getResources().getConfiguration().locale.getLanguage();
+            // No inspection deprecation.
+            return getResources().getConfiguration().locale.toString();
         }
     }
 
+    /**
+     * Returns true if the application is in the background; false, otherwise.
+     *
+     * @return True if the application is in the background; false, otherwise.
+     */
+    public static boolean isInBackground() {
+        return mBackgroundedTime > 0;
+    }
+
+    // TODO: Refactor and move to more appropriate class
     public static Map<String, String> getBreadHeaders() {
         return mHeaders;
     }
 
+    // TODO: Refactor so this does not store the current activity like this.
     public static Context getBreadContext() {
-        Context app = currentActivity;
-        if (app == null) app = SyncReceiver.app;
-        if (app == null) app = mContext;
+        Context app = mCurrentActivity;
+        if (app == null) {
+            app = mInstance;
+        }
         return app;
     }
 
+    // TODO: Refactor so this does not store the current activity like this.
     public static void setBreadContext(Activity app) {
-        BreadApp.activityCounter.incrementAndGet();
-        currentActivity = app;
+        mCurrentActivity = app;
     }
 
-    public static synchronized void fireListeners() {
-        if (listeners == null) return;
-        List<OnAppBackgrounded> copy = new ArrayList<>(listeners);
-        for (OnAppBackgrounded lis : copy) if (lis != null) lis.onBackgrounded();
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        switch (event) {
+            case ON_START:
+                Log.d(TAG, "onLifeCycle: START");
+                mBackgroundedTime = 0;
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
+
+                HTTPServer.startServer();
+
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        TokenUtil.fetchTokensFromServer(mInstance);
+                    }
+                });
+                APIClient.getInstance(this).updatePlatform(this);
+                break;
+            case ON_STOP:
+                Log.d(TAG, "onLifeCycle: STOP");
+                mBackgroundedTime = System.currentTimeMillis();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+
+                HTTPServer.stopServer();
+
+                break;
+        }
     }
 
-    public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
-        if (listeners == null) listeners = new ArrayList<>();
-        if (listener != null && !listeners.contains(listener)) listeners.add(listener);
-    }
-
-    public static boolean isAppInBackground(final Context context) {
-        return context == null || activityCounter.get() <= 0;
-    }
-
-    //call onStop on every activity so
-    public static void onStop(final BRActivity app) {
-
-        if (isBackgroundChecker != null) isBackgroundChecker.cancel();
-        isBackgroundChecker = new Timer();
-        TimerTask backgroundCheck = new TimerTask() {
-            @Override
-            public void run() {
-                if (isAppInBackground(app)) {
-                    backgroundedTime = System.currentTimeMillis();
-                    Log.e(TAG, "App went in background!");
-                    // APP in background, do something
-                    fireListeners();
-                    isBackgroundChecker.cancel();
-                }
-                // APP in foreground, do something else
+    public static void lockIfNeeded(Activity activity) {
+        //lock wallet if 3 minutes passed
+        if (mBackgroundedTime != 0
+                && (System.currentTimeMillis() - mBackgroundedTime >= LOCK_TIMEOUT)
+                && !(activity instanceof DisabledActivity)) {
+            if (!BRKeyStore.getPinCode(activity).isEmpty()) {
+                UiUtils.startBreadActivity(activity, true);
             }
-        };
+        }
 
-        isBackgroundChecker.schedule(backgroundCheck, 500, 500);
     }
-
-    public interface OnAppBackgrounded {
-        void onBackgrounded();
-    }
-
-
 }

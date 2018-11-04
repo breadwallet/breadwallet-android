@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,14 +24,13 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.listeners.OnStartDragListener;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
+import com.squareup.picasso.Picasso;
 
-import java.math.BigDecimal;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -67,12 +65,12 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             final TokenItem item = mTokens.get(position);
             String currencyCode = item.symbol.toLowerCase();
 
-            if (currencyCode.equals("1st")) {
-                currencyCode = "first";
-            }
+            String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, true);
 
-            String iconResourceName = currencyCode;
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
+            if(!Utils.isNullOrEmpty(tokenIconPath)) {
+                File iconFile = new File(tokenIconPath);
+                Picasso.get().load(iconFile).into(holder.tokenIcon);
+            }
 
             holder.tokenName.setText(mTokens.get(position).name);
             holder.tokenTicker.setText(mTokens.get(position).symbol);
@@ -80,14 +78,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
             holder.showHide.setTypeface(typeface);
 
-            try {
-                holder.tokenIcon.setBackground(mContext.getDrawable(iconResourceId));
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d(TAG, "Error finding icon for -> " + iconResourceName);
-            }
-
-            boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
+            boolean isHidden = KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
             TypedValue showWalletTypedValue = new TypedValue();
             TypedValue hideWalletTypedValue = new TypedValue();
@@ -103,7 +94,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                 @Override
                 public void onClick(View v) {
                     // If token is already hidden, show it
-                    if (KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
+                    if (KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
                         mListener.onShowToken(item);
                         // If token is already showing, hide it
                     } else {
@@ -111,21 +102,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                     }
                 }
             });
-
-            BigDecimal tokenBalance;
-            String iso = item.symbol.toUpperCase();
-            WalletEthManager ethManager = WalletEthManager.getInstance(mContext);
-            WalletTokenManager tokenManager = WalletTokenManager.getTokenWalletByIso(mContext, ethManager, item.symbol);
-
-            if (tokenManager != null) {
-                tokenBalance = tokenManager.getCachedBalance(mContext);
-                if (tokenBalance.compareTo(BigDecimal.ZERO) == 0) {
-                    holder.tokenBalance.setText("");
-                } else {
-                    holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);
-                }
-
-            }
 
             holder.dragHandle.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -250,12 +226,15 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     public void onItemMove(int fromPosition, int toPosition) {
         notifyItemMoved(fromPosition, toPosition);
 
-        TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
+        TokenListMetaData currentMd = KVStoreManager.getTokenListMetaData(mContext);
 
-        Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
-        Collections.swap(mTokens, fromPosition, toPosition);
-
-        KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+        // Only move this token to position that is not the last position, which is the "Add Wallet"
+        // button
+        if (toPosition < mTokens.size()) {
+            Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
+            Collections.swap(mTokens, fromPosition, toPosition);
+            KVStoreManager.putTokenListMetaData(mContext, currentMd);
+        }
 
     }
 }

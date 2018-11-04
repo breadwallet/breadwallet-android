@@ -147,7 +147,7 @@ public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
             @Override
             public void run() {
                 if (getActivity() != null) {
-                    getActivity().getFragmentManager().beginTransaction().remove(PinFragment.this).commit();
+                    getActivity().getFragmentManager().beginTransaction().remove(PinFragment.this).commitAllowingStateLoss();
                 }
             }
         }, DateUtils.SECOND_IN_MILLIS);

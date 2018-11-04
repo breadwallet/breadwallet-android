@@ -1,6 +1,7 @@
 package com.platform.tools;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
@@ -89,7 +90,7 @@ public class BRBitId {
         return false;
     }
 
-    public static void signBitID(final Activity app, String uri, JSONObject jsonBody) {
+    public static void signBitID(final Context context, String uri, JSONObject jsonBody) {
 
         if (uri == null && jsonBody != null) {
             try {
@@ -128,7 +129,7 @@ public class BRBitId {
                 return;
             }
         } else if ("bitid".equals(bitIdUri.getScheme())) {
-            if (app == null) {
+            if (context == null) {
                 Log.e(TAG, "signBitID: app is null, returning true still");
                 return;
             }
@@ -148,31 +149,32 @@ public class BRBitId {
                 }
 
                 if (authNeeded) {
-                    app.runOnUiThread(new Runnable() {
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, false, new BRAuthCompletion() {
+                            AuthManager.getInstance().authPrompt(context, _promptString, bitIdUri.getHost(), true, false, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
-                                    PostAuth.getInstance().onBitIDAuth(app, true);
+                                    PostAuth.getInstance().onBitIDAuth(context, true);
                                 }
 
                                 @Override
                                 public void onCancel() {
-                                    PostAuth.getInstance().onBitIDAuth(app, false);
+                                    PostAuth.getInstance().onBitIDAuth(context, false);
                                 }
                             });
                         }
                     });
+
                 } else {
-                    PostAuth.getInstance().onBitIDAuth(app, true);
+                    PostAuth.getInstance().onBitIDAuth(context, true);
                 }
 
             }
         });
     }
 
-    public static void completeBitID(final Activity app, boolean authenticated) {
+    public static void completeBitID(final Context context, boolean authenticated) {
         final byte[] phrase;
         final byte[] nulTermPhrase;
         final byte[] seed;
@@ -180,7 +182,7 @@ public class BRBitId {
             WalletPlugin.sendBitIdResponse(null, false);
             return;
         }
-        if (app == null) {
+        if (context == null) {
             Log.e(TAG, "completeBitID: app is null");
             return;
         }
@@ -192,7 +194,7 @@ public class BRBitId {
         final Uri uri = Uri.parse(_bitUri);
 
         try {
-            phrase = BRKeyStore.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
+            phrase = BRKeyStore.getPhrase(context, BRConstants.REQUEST_PHRASE_BITID);
         } catch (UserNotAuthenticatedException e) {
             return;
         }
@@ -210,10 +212,10 @@ public class BRBitId {
                 try {
                     if (_strToSign == null) {
                         //meaning it's a link handling
-                        bitIdLink(app, uri, seed);
+                        bitIdLink(context, uri, seed);
                     } else {
                         //meaning its the wallet plugin, glidera auth (platform)
-                        bitIdPlatform(app, uri, seed);
+                        bitIdPlatform(context, uri, seed);
                     }
                 } finally {
                     //release everything
@@ -230,7 +232,7 @@ public class BRBitId {
 
     }
 
-    private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
+    private static void bitIdPlatform(Context context, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
         final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, _index, biUri);
@@ -274,7 +276,7 @@ public class BRBitId {
         WalletPlugin.sendBitIdResponse(postJson, true);
     }
 
-    private static void bitIdLink(Activity app, Uri uri, byte[] seed) {
+    private static void bitIdLink(Context context, Uri uri, byte[] seed) {
         String nonce = null;
         String scheme = "https";
 
@@ -284,7 +286,7 @@ public class BRBitId {
         }
         String x = uri.getQueryParameter("x");
         if (Utils.isNullOrEmpty(x)) {
-            nonce = newNonce(app, uri.getHost() + uri.getPath());     // we are generating our own nonce
+            nonce = newNonce(context, uri.getHost() + uri.getPath());     // we are generating our own nonce
         } else {
             nonce = x;              // service is providing a nonce
         }
@@ -321,20 +323,20 @@ public class BRBitId {
                 .post(requestBody)
                 .header("Content-Type", "application/json")
                 .build();
-        APIClient.BRResponse res = APIClient.getInstance(app).sendRequest(request, true);
+        APIClient.BRResponse res = APIClient.getInstance(context).sendRequest(request, true);
     }
 
-    public static String newNonce(Activity app, String nonceKey) {
+    public static String newNonce(Context context, String nonceKey) {
         // load previous nonces. we save all nonces generated for each service
         // so they are not used twice from the same device
-        List<Integer> existingNonces = BRSharedPrefs.getBitIdNonces(app, nonceKey);
+        List<Integer> existingNonces = BRSharedPrefs.getBitIdNonces(context, nonceKey);
 
         String nonce = "";
         while (existingNonces.contains(Integer.valueOf(nonce))) {
             nonce = String.valueOf(System.currentTimeMillis() / 1000);
         }
         existingNonces.add(Integer.valueOf(nonce));
-        BRSharedPrefs.putBitIdNonces(app, existingNonces, nonceKey);
+        BRSharedPrefs.putBitIdNonces(context, existingNonces, nonceKey);
 
         return nonce;
     }

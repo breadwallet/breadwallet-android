@@ -45,6 +45,12 @@ public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
     public static final String PREFS_NAME = "MyPrefsFile";
+    private static final String FCM_TOKEN = "fcmToken";
+    private static final String NOTIFICATION_ID = "notificationId";
+    private static final String SCREEN_HEIGHT = "screenHeight";
+    private static final String SCREEN_WIDTH = "screenWidth";
+    private static final String BUNDLE_HASH_PREFIX = "bundleHash_";
+    private static final String SEGWIT = "segwit";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -188,6 +194,7 @@ public class BRSharedPrefs {
         editor.putString("lastRescanModeUsed_" + iso.toUpperCase(), mode);
         editor.apply();
     }
+
     public static long getLastSendTransactionBlockheight(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("lastSendTransactionBlockheight_" + iso.toUpperCase(), 0);
@@ -301,6 +308,7 @@ public class BRSharedPrefs {
         editor.putString("currentWalletIso", iso);
         editor.apply();
     }
+
     public static String getWalletRewardId(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("walletRewardId", null);
@@ -446,6 +454,7 @@ public class BRSharedPrefs {
         editor.putBoolean("shareData", show);
         editor.apply();
     }
+
     public static boolean isNewWallet(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("newWallet", true);
@@ -497,4 +506,77 @@ public class BRSharedPrefs {
         editor.apply();
 
     }
+
+    public static void putFCMRegistrationToken(Context context, String token) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(FCM_TOKEN, token);
+        editor.apply();
+    }
+
+    public static String getFCMRegistrationToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(FCM_TOKEN, "");
+    }
+
+    public static void putNotificationId(Context context, int notificationId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(NOTIFICATION_ID, notificationId);
+        editor.apply();
+    }
+
+    public static int getNotificationId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(NOTIFICATION_ID, 0);
+    }
+
+    public static void putScreenHeight(Context context, int screenHeight) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(SCREEN_HEIGHT, screenHeight);
+        editor.apply();
+    }
+
+    public static int getScreenHeight(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(SCREEN_HEIGHT, 0);
+    }
+
+    public static void putScreenWidth(Context context, int screenWidth) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(SCREEN_WIDTH, screenWidth);
+        editor.apply();
+    }
+
+    public static int getScreenWidth(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(SCREEN_WIDTH, 0);
+    }
+
+    public static void putBundleHash(Context context, String bundleName, String bundleHash) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(BUNDLE_HASH_PREFIX + bundleName, bundleHash);
+        editor.apply();
+    }
+
+    public static String getBundleHash(Context context, String bundleName) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(BUNDLE_HASH_PREFIX + bundleName, null);
+    }
+
+    public static void putIsSegwitEnabled(Context context, boolean isEnabled) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(SEGWIT, isEnabled);
+        editor.apply();
+    }
+
+    public static boolean getIsSegwitEnabled(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(SEGWIT, false);
+    }
+
 }

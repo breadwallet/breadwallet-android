@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -226,7 +227,6 @@ public class WebViewActivity extends BRActivity {
             Log.d(TAG, "Loading -> " + url);
             if (url != null && url.contains("checkout")) {
 
-
                 attachKeyboardListeners();
 
                 // Make the top and bottom toolbars visible for Simplex flow
@@ -237,7 +237,6 @@ public class WebViewActivity extends BRActivity {
                 RelativeLayout.LayoutParams webviewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 webviewParams.addRule(RelativeLayout.BELOW, R.id.toolbar);
                 webView.setLayoutParams(webviewParams);
-
 
                 // Make the reload/refresh button functional
                 mReloadButton.setOnClickListener(new View.OnClickListener() {
@@ -267,7 +266,6 @@ public class WebViewActivity extends BRActivity {
                     }
                 });
 
-
                 // Make the forward button functional
                 mForwardButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -279,26 +277,28 @@ public class WebViewActivity extends BRActivity {
                 });
             }
             String method = json.getString("method");
-            String strBody = json.getString("body");
-            String headers = json.getString("headers");
-            String closeOn = json.getString("closeOn");
-            if (Utils.isNullOrEmpty(url) || Utils.isNullOrEmpty(method) ||
-                    Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn)) {
-                Log.e(TAG, "request: not enough params: " + jsonString);
-                return;
-            }
-            onCloseUrl = closeOn;
+            String strBody = json.has("body") ? json.getString("body") : null;
+            String headers = json.has("headers") ? json.getString("headers") : null;
+            onCloseUrl = json.getString("closeOn");
 
-            Map<String, String> httpHeaders = new HashMap<>();
-//            JSONObject jsonHeaders = new JSONObject(headers);
-//            while (jsonHeaders.keys().hasNext()) {
-//                String key = jsonHeaders.keys().next();
-//                jsonHeaders.put(key, jsonHeaders.getString(key));
-//            }
-            byte[] body = strBody.getBytes();
+            Map<String, String> httpHeaders = null;
+            if (!Utils.isNullOrEmpty(headers)) {
+                httpHeaders = new HashMap<>();
+                JSONObject jsonHeaders = new JSONObject(headers);
+                Iterator<String> headerIterator = jsonHeaders.keys();
+                while (headerIterator.hasNext()) {
+                    String key = headerIterator.next();
+                    httpHeaders.put(key, jsonHeaders.getString(key));
+                }
+            }
+            byte[] body = strBody == null ? null : strBody.getBytes();
 
             if (method.equalsIgnoreCase("get")) {
-                webView.loadUrl(url, httpHeaders);
+                if (httpHeaders != null) {
+                    webView.loadUrl(url, httpHeaders);
+                } else {
+                    webView.loadUrl(url);
+                }
             } else if (method.equalsIgnoreCase("post")) {
                 Log.e(TAG, "request: POST:" + body.length);
                 webView.postUrl(url, body);

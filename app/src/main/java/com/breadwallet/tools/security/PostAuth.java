@@ -8,9 +8,11 @@ import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -26,13 +28,16 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -67,7 +72,7 @@ public class PostAuth {
     public CryptoRequest mCryptoRequest;
     //The user is stuck with endless authentication due to KeyStore bug.
     public static boolean mAuthLoopBugHappened;
-    public static TxMetaData txMetaData;
+    public static TxMetaData mTxMetaData;
     public SendManager.SendCompletion mSendCompletion;
     private BaseWalletManager mWalletManager;
 
@@ -85,10 +90,10 @@ public class PostAuth {
     }
 
     public void onCreateWalletAuth(final Activity activity, boolean authAsked) {
-        Log.e(TAG, "onCreateWalletAuth: " + authAsked);
-        long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
         if (success) {
+            BreadApp.initialize(false);
+
             Intent intent = new Intent(activity, WriteDownActivity.class);
             intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
             activity.startActivity(intent);
@@ -142,8 +147,8 @@ public class PostAuth {
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
-    public void onBitIDAuth(Activity activity, boolean authenticated) {
-        BRBitId.completeBitID(activity, authenticated);
+    public void onBitIDAuth(Context context, boolean authenticated) {
+        BRBitId.completeBitID(context, authenticated);
     }
 
     public void onRecoverWalletAuth(final Activity activity, boolean authAsked) {
@@ -178,6 +183,7 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
+                    BreadApp.initialize(false);
 
                     Intent intent = new Intent(activity, InputPinActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -197,17 +203,17 @@ public class PostAuth {
     }
 
     @WorkerThread
-    public void onPublishTxAuth(final Context activity, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
+    public void onPublishTxAuth(final Context context, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
         if (completion != null) {
             mSendCompletion = completion;
         }
         if (wm != null) mWalletManager = wm;
-        byte[] rawPhrase;
+        final byte[] rawPhrase;
         try {
-            rawPhrase = BRKeyStore.getPhrase(activity, BRConstants.PAY_REQUEST_CODE);
+            rawPhrase = BRKeyStore.getPhrase(context, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, "onPublishTxAuth: WARNING!!!! LOOP");
+                Log.e(TAG, "onPublishTxAuth: WARNING! Authentication Loop bug");
                 mAuthLoopBugHappened = true;
             }
             return;
@@ -215,55 +221,80 @@ public class PostAuth {
         try {
             if (rawPhrase.length > 0) {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
+                    final CryptoTransaction tx;
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null) {
+                        tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
 
-                    CryptoTransaction tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
-
-                    if (tx == null) {
-                        BRDialog.showCustomDialog(activity, activity.getString(R.string.Alert_error), activity.getString(R.string.Send_insufficientFunds),
-                                activity.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismiss();
-                                    }
-                                }, null, null, 0);
-                        return;
-                    }
-                    final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
-
-                    txMetaData = new TxMetaData();
-                    txMetaData.comment = mCryptoRequest.message;
-                    txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(activity);
-                    BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(activity);
-                    txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                    txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
-                    txMetaData.txSize = tx.getTxSize().intValue();
-                    txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(activity, mWalletManager.getIso());
-                    txMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
-                    txMetaData.deviceId = BRSharedPrefs.getDeviceId(activity);
-                    txMetaData.classVersion = 1;
-
-                    if (Utils.isNullOrEmpty(txHash)) {
-                        if (tx.getEtherTx() != null) {
-                            mWalletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
-                                @Override
-                                public void onUpdated(String hash) {
-                                    if (mSendCompletion != null) {
-                                        mSendCompletion.onCompleted(hash, true);
-                                        stampMetaData(activity, txHash);
-                                        mSendCompletion = null;
-                                    }
-                                }
-                            });
-                            return; // ignore ETH since txs do not have the hash right away
+                        if (tx == null) {
+                            BRDialog.showCustomDialog(context, context.getString(R.string.Alert_error), context.getString(R.string.Send_insufficientFunds),
+                                    context.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                        @Override
+                                        public void onClick(BRDialogView brDialogView) {
+                                            brDialogView.dismiss();
+                                        }
+                                    }, null, null, 0);
+                            return;
                         }
-                        Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
-                        BRDialog.showSimpleDialog(activity, activity.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
+
+                        mTxMetaData = new TxMetaData();
+                        mTxMetaData.comment = mCryptoRequest.message;
+                        mTxMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
+                        BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(context);
+                        mTxMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
+                        mTxMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
+                        mTxMetaData.txSize = tx.getTxSize().intValue();
+                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getIso());
+                        mTxMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
+                        mTxMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
+                        mTxMetaData.classVersion = 1;
+
                     } else {
-                        if (mSendCompletion != null) {
-                            mSendCompletion.onCompleted(tx.getHash(), true);
-                            mSendCompletion = null;
-                        }
-                        stampMetaData(activity, txHash);
+                        WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
+                        GenericTransactionMetaData genericTransactionMetaData = mCryptoRequest.getGenericTransactionMetaData();
+                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(
+                                genericTransactionMetaData.getTargetAddress(),
+                                genericTransactionMetaData.getAmount(),
+                                genericTransactionMetaData.getAmountUnit(), String.valueOf(genericTransactionMetaData.getGasPrice()),
+                                genericTransactionMetaData.getGasPriceUnit(),
+                                String.valueOf(genericTransactionMetaData.getGasLimit()), genericTransactionMetaData.getData()));
+                    }
+
+                    // We use dynamic gas for ETH and ERC20 tokens. BUT not when we have a generic transaction CALL_REQUEST.
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null && (mWalletManager.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
+                            || WalletsMaster.getInstance(context).isIsoErc20(context, mWalletManager.getIso()))) {
+                        final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+                        final Timer timeoutTimer = new Timer();
+                        final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {
+                            @Override
+                            public void onTransactionEvent(BREthereumLightNode.Listener.TransactionEvent event) {
+                                switch (event) {
+                                    case GAS_ESTIMATE_UPDATED:
+                                        Log.d(TAG, "onTransactionEvent: UPDATED");
+                                        timeoutTimer.cancel();
+                                        continueWithPayment(context, rawPhrase, tx);
+                                        break;
+                                }
+                            }
+                        };
+                        // If getting the gas estimate takes longer than 30 seconds, show error message.
+                        timeoutTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "timeoutTimer: did not update gas");
+                                walletEthManager.removeTransactionEventListener(onTransactionEventListener);
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BRDialog.showSimpleDialog(context, context.getString(R.string.Alerts_sendFailure), context.getString(R.string.Alert_timedOut));
+                                    }
+                                });
+                            }
+                        }, DateUtils.MINUTE_IN_MILLIS / 2);
+
+                        walletEthManager.addTransactionEventListener(onTransactionEventListener);
+                        walletEthManager.getWallet().estimateGas(tx.getEtherTx());
+                    } else {
+                        continueWithPayment(context, rawPhrase, tx);
                     }
 
                 } else {
@@ -275,17 +306,41 @@ public class PostAuth {
                 return;
             }
         } finally {
-            Arrays.fill(rawPhrase, (byte) 0);
             mCryptoRequest = null;
         }
 
     }
 
+    private void continueWithPayment(final Context context, byte[] rawPhrase, CryptoTransaction transaction) {
+        if (transaction.getEtherTx() != null) {
+            mWalletManager.watchTransactionForHash(transaction, new BaseWalletManager.OnHashUpdated() {
+                @Override
+                public void onUpdated(String hash) {
+                    if (mSendCompletion != null) {
+                        mSendCompletion.onCompleted(hash, true);
+                        mSendCompletion = null;
+                    }
+                    stampMetaData(context, hash.getBytes());
+                }
+            });
+        }
+        final byte[] txHash = mWalletManager.signAndPublishTransaction(transaction, rawPhrase);
+        if (!Utils.isNullOrEmpty(txHash)) {
+            if (mSendCompletion != null) {
+                mSendCompletion.onCompleted(transaction.getHash(), true);
+                mSendCompletion = null;
+            }
+            stampMetaData(context, txHash);
+        }
+
+    }
+
     public static void stampMetaData(Context activity, byte[] txHash) {
-        if (txMetaData != null) {
-            KVStoreManager.getInstance().putTxMetaData(activity, txMetaData, txHash);
-            txMetaData = null;
-        } else Log.e(TAG, "stampMetaData: txMetaData is null!");
+        if (mTxMetaData != null) {
+            KVStoreManager.putTxMetaData(activity, mTxMetaData, txHash);
+        } else {
+            Log.e(TAG, "stampMetaData: mTxMetaData is null!");
+        }
     }
 
     public void onPaymentProtocolRequest(final Activity activity, boolean authAsked) {
@@ -311,7 +366,6 @@ public class PostAuth {
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }
-                Arrays.fill(paperKey, (byte) 0);
                 mPaymentProtocolTx = null;
             }
         });
@@ -353,12 +407,7 @@ public class PostAuth {
                 return;
             }
 
-            String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
-            if (strPhrase.isEmpty()) {
-                WalletsMaster m = WalletsMaster.getInstance(activity);
-                m.wipeKeyStore(activity);
-                m.wipeWalletButKeystore(activity);
-            } else {
+            if (phrase != null) {
                 Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
                 try {
                     BRKeyStore.putCanary(BRConstants.CANARY_STRING, activity, 0);

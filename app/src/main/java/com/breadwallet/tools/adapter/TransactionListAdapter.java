@@ -113,17 +113,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         for (int i = 0; i < backUpFeed.size(); i++) {
             TxUiHolder item = backUpFeed.get(i);
-            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+            TxMetaData md = KVStoreManager.getTxMetaData(mContext, item.getTxHash());
             if (System.currentTimeMillis() - item.getTimeStamp() < DateUtils.HOUR_IN_MILLIS) {
                 if (md == null) {
-                    md = KVStoreManager.getInstance().createMetadata(mContext, wm,
+                    md = KVStoreManager.createMetadata(mContext, wm,
                             new CryptoTransaction(item.getTransaction()));
-                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                    KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
                 } else if (md.exchangeRate == 0) {
                     md.exchangeRate = wm.getFiatExchangeRate(mContext).doubleValue();
                     md.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(mContext);
                     Log.d(TAG, "MetaData not null");
-                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                    KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
                 }
             }
             localMDs.put(i, md);

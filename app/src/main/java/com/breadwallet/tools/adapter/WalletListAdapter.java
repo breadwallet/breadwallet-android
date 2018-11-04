@@ -23,11 +23,15 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.TokenUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -42,12 +46,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private final Context mContext;
     private ArrayList<WalletItem> mWalletItems;
     private WalletItem mCurrentWalletSyncing;
-    private boolean mObesrverIsStarting;
+    private boolean mObserverIsStarting;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
 
     private static final int VIEW_TYPE_WALLET = 0;
     private static final int VIEW_TYPE_ADD_WALLET = 1;
-    public static final String IMAGE_RESOURCE_ID_PREFIX = "white_";
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
@@ -103,9 +106,20 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             String name = wallet.getName();
             String currencyCode = wallet.getIso();
 
-            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
-            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
+            BigDecimal bigExchangeRate = wallet.getFiatExchangeRate(mContext);
+            BigDecimal bigFiatBalance = wallet.getFiatBalance(mContext);
+
+            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
+            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
             String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
+
+            if (Utils.isNullOrZero(bigExchangeRate)) {
+                holder.mWalletBalanceFiat.setVisibility(View.INVISIBLE);
+                holder.mTradePrice.setVisibility(View.INVISIBLE);
+            } else {
+                holder.mWalletBalanceFiat.setVisibility(View.VISIBLE);
+                holder.mTradePrice.setVisibility(View.VISIBLE);
+            }
 
             // Set wallet fields
             holder.mWalletName.setText(name);
@@ -118,19 +132,17 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingLabel.setText(item.mLabelText);
 
-            String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
-
-
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
-            if (iconResourceId > 0) {
-                holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+            String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, false);
+            if (!Utils.isNullOrEmpty(tokenIconPath)) {
+                File iconFile = new File(tokenIconPath);
+                Picasso.get().load(iconFile).into(holder.mLogoIcon);
             }
 
             String startColor = wallet.getUiConfiguration().getStartColor();
             String endColor = wallet.getUiConfiguration().getEndColor();
-
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
-            //create gradient with 2 colors if exist
+
+            // Create gradient if 2 colors exist.
             ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
             ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
             holder.mParent.setBackground(drawable);
@@ -143,10 +155,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public void startObserving() {
-        if (mObesrverIsStarting) {
+        if (mObserverIsStarting) {
             return;
         }
-        mObesrverIsStarting = true;
+        mObserverIsStarting = true;
 
         SyncService.registerSyncNotificationBroadcastReceiver(mContext.getApplicationContext(), mSyncNotificationBroadcastReceiver);
 
@@ -169,9 +181,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso();
                     mCurrentWalletSyncing.walletManager.connect(mContext);
-                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
+                    SyncService.startService(mContext, walletIso);
                 } finally {
-                    mObesrverIsStarting = false;
+                    mObserverIsStarting = false;
                 }
 
             }
@@ -185,15 +197,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             return false;
         }
         if (syncProgress > SyncService.PROGRESS_START && syncProgress < SyncService.PROGRESS_FINISH) {
-//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
             StringBuffer labelText = new StringBuffer(mContext.getString(R.string.SyncingView_syncing));
             labelText.append(' ')
                     .append(NumberFormat.getPercentInstance().format(syncProgress));
 
             mCurrentWalletSyncing.updateData(true, labelText.toString());
         } else if (syncProgress == SyncService.PROGRESS_FINISH) {
-//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (100%)");
-
             //Done should not be seen but if it is because of a bug or something, then let if be a decent explanation
             mCurrentWalletSyncing.updateData(false);
 

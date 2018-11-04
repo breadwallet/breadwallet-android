@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_intro_set_pit"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="com.breadwallet.presenter.activities.settings.ShareDataActivity">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="?attr/toolbar_back_arrow" />
+
+      <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:textSize="20sp"
+        app:customTFont="CircularPro-Bold.otf" />
+
+    </RelativeLayout>
+
+  </android.support.v7.widget.Toolbar>
+
+  <com.breadwallet.presenter.customviews.BaseTextView
+    android:id="@+id/description"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginEnd="16dp"
+    android:lineSpacingMultiplier="1.3"
+    android:text="@string/Segwit.description"
+    android:textSize="15sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintLeft_toLeftOf="@+id/toolbar"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+  <ImageView
+    android:id="@+id/imageView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:src="@drawable/ic_segwit_logo"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+  <com.breadwallet.presenter.customviews.BRButton
+    android:id="@+id/enable_button"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    android:background="@android:color/transparent"
+    android:padding="10dp"
+    android:text="@string/common_google_play_services_enable_button"
+    android:textColor="@color/white"
+    android:textSize="20sp"
+    app:buttonType="1"
+    app:hasShadow="false"
+    app:isBreadButton="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <android.support.constraint.ConstraintLayout
+    android:id="@+id/confirm_choice_layout"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    android:background="@color/confirmation_box"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/baseTextView"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="24dp"
+      android:layout_marginTop="24dp"
+      android:layout_marginEnd="24dp"
+      android:lineSpacingMultiplier="1.3"
+      android:text="@string/Segwit.ConfirmChoiceLayout"
+      android:textSize="15sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="100dp"
+      android:orientation="horizontal"
+      android:weightSum="2"
+      app:layout_constraintTop_toBottomOf="@+id/baseTextView">
+
+      <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:padding="10dp"
+        android:text="@string/Button.cancel"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:buttonType="7"
+        app:hasShadow="false"
+        app:isBreadButton="true" />
+
+      <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/continue_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:padding="10dp"
+        android:text="@string/Button.continueAction"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:buttonType="1"
+        app:hasShadow="false"
+        app:isBreadButton="true" />
+    </LinearLayout>
+
+  </android.support.constraint.ConstraintLayout>
+
+  <android.support.constraint.ConstraintLayout
+    android:id="@+id/confirmation_layout"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    android:background="@color/confirmation_box"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toTopOf="@id/enable_button"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <ImageView
+      android:id="@+id/imageView2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginEnd="8dp"
+      android:src="@drawable/ic_check_green"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/confirmation_instructions1"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="24dp"
+      android:layout_marginTop="24dp"
+      android:layout_marginEnd="24dp"
+      android:gravity="center"
+      android:lineSpacingMultiplier="1.3"
+      android:text="@string/Segwit.ConfirmationInstructionsPart1"
+      android:textSize="15sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="24dp"
+      android:layout_marginEnd="24dp"
+      android:layout_marginBottom="16dp"
+      android:gravity="center"
+      android:lineSpacingMultiplier="1.3"
+      android:text="@string/Segwit.ConfirmationInstructionsPart2"
+      android:textSize="15sp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/confirmation_instructions1" />
+
+  </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

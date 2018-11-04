@@ -27,6 +27,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
@@ -80,12 +81,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         try {
             Log.e(TAG, "the uri: " + params[0]);
             URL url = new URL(params[0]);
-            BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-            if (!wm.getIso().equalsIgnoreCase("BTC") && !wm.getIso().equalsIgnoreCase("BCH")) {
-                throw new RuntimeException("Can't happen, Payment protocol for: " + wm.getIso());
+            BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+            if (!walletManager.getIso().equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)
+                    && !walletManager.getIso().equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE)) {
+                throw new RuntimeException("Can't happen, Payment protocol for: " + walletManager.getIso());
             }
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Accept", "application/" + wm.getName().toLowerCase() + "-paymentrequest");
+            urlConnection.setRequestProperty("Accept", "application/" + walletManager.getName().toLowerCase() + "-paymentrequest");
             urlConnection.setConnectTimeout(3000);
             urlConnection.setReadTimeout(3000);
             urlConnection.setUseCaches(false);

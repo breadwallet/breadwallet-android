@@ -47,14 +47,16 @@ public class CurrencyUtils {
     }
 
     /**
-     * @param app    - the Context
-     * @param iso    - the iso for the currency we want to format the amount for
-     * @param amount - the smallest denomination currency (e.g. dollars or satoshis)
+     * @param app                       - the Context
+     * @param iso                       - the iso for the currency we want to format the amount for
+     * @param amount                    - the smallest denomination currency (e.g. dollars or satoshis)
      * @param maxDecimalPlacesForCrypto - max decimal places to use or -1 for wallet's default
      * @return - the formatted amount e.g. $535.50 or b5000
      */
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount, int maxDecimalPlacesForCrypto) {
-        if (amount == null) return "---"; //to be able to detect in a bug
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
         if (Utils.isNullOrEmpty(iso)) throw new RuntimeException("need iso for formatting!");
         DecimalFormat currencyFormat;
         // This formats currency values as the user expects to read them (default locale).

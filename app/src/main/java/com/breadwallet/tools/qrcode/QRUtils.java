@@ -12,6 +12,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
@@ -57,7 +58,9 @@ import static android.graphics.Color.WHITE;
 public class QRUtils {
     private static final String TAG = QRUtils.class.getName();
     private static final String SHARE_IMAGE_TYPE = "image/*";
-    private static final String SHARE_SUBJECT = " Address";
+    private static final String SHARE_SUBJECT = "Address";
+    public static final String VIA_EMAIL = "mailto:";
+    public static final String VIA_MESSAGE ="sms:";
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
@@ -157,10 +160,9 @@ public class QRUtils {
             return;
         }
 
-
         File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
         //Uri uri = Uri.fromFile(file);
-        Uri uri = FileProvider.getUriForFile(app, "com.breadwallet", file);
+        Uri uri = FileProvider.getUriForFile(app, BuildConfig.APPLICATION_ID, file);
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);

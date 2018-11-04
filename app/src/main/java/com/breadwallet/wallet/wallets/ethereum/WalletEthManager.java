@@ -77,14 +77,15 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
+public class WalletEthManager extends BaseEthereumWalletManager implements BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
-    private static final String ISO = "ETH";
+    public static final String ETH_CURRENCY_CODE = "ETH";
+    public static final String HEX_PREFIX = "0x";
     public static final String ETH_SCHEME = "ethereum";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
@@ -101,6 +102,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     private BREthereumWallet mWallet;
     public BREthereumLightNode node;
+    public List<OnTransactionEventListener> mTransactionEventListeners = new ArrayList<>();
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
@@ -128,6 +130,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                         + Locale.getDefault().getLanguage());
                 return;
             }
+
 
             node = new BREthereumLightNode(this, network, paperKey, words);
             node.addListener(this);
@@ -157,7 +160,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         if (Utils.isNullOrEmpty(mAddress)) {
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
-        BreadApp.generateWalletIfIfNeeded(app, mAddress);
+
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
@@ -259,12 +262,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void connect(Context app) {
-        //Not needed for ETH
+        node.connect();
     }
 
     @Override
     public void disconnect(Context app) {
-        //Not needed for ETH
+        node.disconnect();
     }
 
     @Override
@@ -297,7 +300,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
-        if (amount == null) return null;
+        if (amount == null) {
+            return null;
+        }
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             fee = BigDecimal.ZERO;
         } else {
@@ -319,7 +324,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     @Override
     public BigDecimal getMaxOutputAmount(Context app) {
         BigDecimal balance = getCachedBalance(app);
-        if (balance.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
         BigDecimal fee = new BigDecimal(mWallet.transactionEstimatedFee(balance.toPlainString()));
         if (fee.compareTo(balance) > 0) return BigDecimal.ZERO;
         return balance.subtract(fee);
@@ -388,28 +395,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     }
 
     @Override
-    public void refreshCachedBalance(final Context app) {
+    public void refreshCachedBalance(final Context context) {
         final BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-
+        onBalanceChanged(context, balance);
     }
 
-    @Override
-    public List<TxUiHolder> getTxUiHolders(Context app) {
-        BREthereumTransaction txs[] = mWallet.getTransactions();
-        if (txs == null || txs.length <= 0) return null;
-        List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (int i = txs.length - 1; i >= 0; i--) { //revere order
-            BREthereumTransaction tx = txs[i];
-            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(),
-                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)),
-                    tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.ETHER_WEI)), true));
-        }
-
-        return uiTxs;
-    }
 
     @Override
     public boolean containsAddress(String address) {
@@ -431,12 +421,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     @Override
     public String getSymbol(Context app) {
 //        return BRConstants.symbolEther;
-        return ISO;
+        return ETH_CURRENCY_CODE;
     }
 
     @Override
     public String getIso() {
-        return ISO;
+        return ETH_CURRENCY_CODE;
     }
 
     @Override
@@ -642,9 +632,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -653,7 +640,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
+                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
                     payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
                     params.put(address);
                     params.put(JsonRpcHelper.LATEST);
@@ -693,10 +680,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                    final String contractAddress,
                                    final String address,
                                    final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            Log.e(TAG, "getTokenBalance: App in background!");
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -723,7 +706,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                     node.announceBalance(wid, balance, rid);
 
                                 } else {
-                                    Log.e(TAG, "onRpcRequestCompleted: Response does not contain the key 'result'.");
+                                    Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                                 }
                             }
                         } catch (JSONException je) {
@@ -738,9 +721,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -766,8 +746,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 if (responseObject.has(JsonRpcHelper.RESULT)) {
                                     String gasPrice = responseObject.getString(JsonRpcHelper.RESULT);
-                                    Log.d(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
                                     node.announceGasPrice(wid, gasPrice, rid);
+                                } else {
+                                    Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                                 }
                             }
                         } catch (JSONException je) {
@@ -783,9 +764,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -794,20 +772,24 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
-
-                params.put(to);
-                params.put(amount);
-                params.put(data);
+                final JSONObject param1 = new JSONObject();
 
                 try {
+                    param1.put(JsonRpcHelper.TO, to);
+                    if (!amount.equalsIgnoreCase(HEX_PREFIX)) {
+                        param1.put(JsonRpcHelper.VALUE, amount);
+                    }
+                    if (!data.equalsIgnoreCase(HEX_PREFIX)) {
+                        param1.put(JsonRpcHelper.DATA, data);
+                    }
+                    params.put(param1);
+                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
                     payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_ESTIMATE_GAS);
                     payload.put(JsonRpcHelper.PARAMS, params);
                     payload.put(JsonRpcHelper.ID, rid);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
@@ -818,6 +800,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                 String gasEstimate = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -831,9 +815,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
             Log.e(TAG, "submitTransaction: wid:" + wid);
             Log.e(TAG, "submitTransaction: tid:" + tid);
@@ -924,9 +905,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getTransactions(final String address, final int id) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1099,9 +1077,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getLogs(final String contract, final String address, final String event, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1162,9 +1137,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getBlockNumber(final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1192,6 +1164,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                             if (responseObject.has(JsonRpcHelper.RESULT)) {
                                 String blockNumber = responseObject.getString(JsonRpcHelper.RESULT);
                                 node.announceBlockNumber(blockNumber, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1202,10 +1176,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         });
     }
 
-    public BREthereumLightNode getNode() {
-        return node;
-    }
-
     private void printInfo(String infoText, String walletIso, String eventName) {
         Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
     }
@@ -1214,9 +1184,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event,
                                   Status status,
                                   String errorDescription) {
-        Context app = BreadApp.getBreadContext();
+        Context context = BreadApp.getBreadContext();
 
-        if (app != null) {
+        if (context != null) {
             String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
@@ -1224,7 +1194,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     break;
                 case BALANCE_UPDATED:
                     if (status == Status.SUCCESS) {
-                        notifyBalanceWasUpdated(wallet, iso);
+                        WalletsMaster.getInstance(context).refreshBalances(context);
                         printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     } else {
                         BRReportsManager.reportBug(new IllegalArgumentException("BALANCE_UPDATED: Failed to update balance: status:"
@@ -1235,7 +1205,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     printInfo("New Gas Limit: ...", iso, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso()), iso, event.name());
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(context, getIso()), iso, event.name());
                     break;
                 case DELETED:
                     BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
@@ -1275,6 +1245,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
         if (app != null) {
             String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
+            for (OnTransactionEventListener listener : mTransactionEventListeners) {
+                listener.onTransactionEvent(event);
+                mTransactionEventListeners.remove(listener);
+            }
             switch (event) {
                 case ADDED:
                     printInfo("New transaction added: ", iso, event.name());
@@ -1306,7 +1280,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     } else {
                         Log.e(TAG, "handleTransactionEvent: tx is null");
                     }
-                    Log.e(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
+                    Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
                     printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCKED:
@@ -1327,9 +1301,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getNonce(final String address, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1360,6 +1331,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                 String nonce = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
                                 node.announceNonce(address, nonce, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1371,51 +1344,31 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     }
 
+    public long getBlockHeight(){
+        return node.getBlockHeight();
+    }
 
-    /**
-     * refresh current wallet's balance by code
-     *
-     * @param code - wallet code for which the balance was updated
-     */
-    private void notifyBalanceWasUpdated(BREthereumWallet wallet, String code) {
-        if (Utils.isNullOrEmpty(code)) {
-            BRReportsManager.reportBug(new NullPointerException("Invalid code: " + code));
-            return;
-        }
-        final Context context = BreadApp.getBreadContext();
+    public BREthereumWallet getWallet() {
+        return mWallet;
+    }
 
-        if (getIso().equalsIgnoreCase(code)) {
-            //ETH wallet balance was updated
-            final BigDecimal balance = new BigDecimal(wallet.getBalance(getUnit()));
-            setCachedBalance(context, balance);
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    onBalanceChanged(balance); //this, Eth wallet.
-                }
-            });
-
-        } else {
-            //ERC20 wallet balance was updated
-            final BigDecimal balance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)); //use TOKEN_DECIMAL
-            final String iso = wallet.getToken().getSymbol();
-            if (context != null) {
-                final BaseWalletManager wm = WalletsMaster.getInstance(context).getWalletByIso(context, iso); //the token wallet being updated.
-                if (wm != null) {
-                    wm.setCachedBalance(context, balance);
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            wm.onBalanceChanged(balance);
-                        }
-                    });
-                } else {
-                    BRReportsManager.reportBug(new NullPointerException("Could not find wallet with code: " + code));
-                }
-
-            }
+    public void addTransactionEventListener(OnTransactionEventListener listener) {
+        if (!mTransactionEventListeners.contains(listener)) {
+            mTransactionEventListeners.add(listener);
         }
     }
 
+    public void removeTransactionEventListener(OnTransactionEventListener listener) {
+        mTransactionEventListeners.remove(listener);
+    }
+
+    public interface OnTransactionEventListener {
+        void onTransactionEvent(TransactionEvent event);
+    }
+
+    @Override
+    protected WalletEthManager getEthereumWallet() {
+        return this;
+    }
 
 }

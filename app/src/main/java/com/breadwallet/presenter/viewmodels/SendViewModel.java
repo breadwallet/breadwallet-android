@@ -29,8 +29,12 @@ import java.math.BigDecimal;
  * THE SOFTWARE.
  */
 public class SendViewModel extends ViewModel {
+    private static final String DECIMAL = ".";
+    private static final String DECIMAL_WITH_LEADING_ZERO = "0.";
+
     private String mAddress;
     private String mMemo;
+    //Raw amount, ETH, BTC..
     private String mAmount;
     private String mChosenCode;
 
@@ -58,9 +62,12 @@ public class SendViewModel extends ViewModel {
     }
 
     public void setAmount(String amount) {
+        if (DECIMAL.equals(amount)) {
+            amount = DECIMAL_WITH_LEADING_ZERO;
+        }
+
         this.mAmount = amount;
     }
-
 
     public String getChosenCode() {
         return mChosenCode;
@@ -68,5 +75,12 @@ public class SendViewModel extends ViewModel {
 
     public void setChosenCode(String chosenCode) {
         this.mChosenCode = chosenCode;
+    }
+
+    public void clear() {
+        mAmount = null;
+        mMemo = null;
+        mAmount = null;
+        mChosenCode = null;
     }
 }
