@@ -118,7 +118,8 @@ public class APIClient {
     //Fee per kb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token path
-    private static final String TOKEN = "/token";
+    private static final String TOKEN_PATH = "/token";
+    private static final String TOKEN = "token";
     //me path
     private static final String ME = "/me";
     //singleton instance
@@ -239,7 +240,7 @@ public class APIClient {
             return null;
         }
         try {
-            String strUtl = BASE_URL + TOKEN;
+            String strUtl = BASE_URL + TOKEN_PATH;
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(getCachedAuthKey());
