@@ -23,23 +23,26 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -48,7 +51,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-
+import static com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 
 /**
  * BreadWallet
@@ -102,26 +105,6 @@ public class UiUtils {
         mSupportIsShowing = isSupportFragmentShown;
     }
 
-    public static void showSendFragment(FragmentActivity app, final CryptoRequest request) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-
-        FragmentSend fragmentSend = (FragmentSend) app.getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend == null) {
-            fragmentSend = new FragmentSend();
-        }
-        fragmentSend.saveViewModelData(request);
-        if (!fragmentSend.isAdded()) {
-            app.getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
-        }
-
-    }
-
     public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {
         if (mSupportIsShowing) {
             return;
@@ -138,7 +121,7 @@ public class UiUtils {
                 app.getFragmentManager().popBackStack();
                 return;
             }
-            String iso = BaseBitcoinWalletManager.BITCOIN_SYMBOL;
+            String iso = BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE;
             if (wm != null) wm.getIso();
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
@@ -263,7 +246,7 @@ public class UiUtils {
             return;
         fragmentReceive = new FragmentReceive();
         Bundle args = new Bundle();
-        args.putBoolean("receive", isReceive);
+        args.putBoolean(EXTRA_RECEIVE, isReceive);
         fragmentReceive.setArguments(args);
 
         app.getSupportFragmentManager().beginTransaction()
@@ -271,6 +254,29 @@ public class UiUtils {
                 .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
                 .addToBackStack(FragmentReceive.class.getName()).commit();
 
+    }
+
+    public static void showLegacyAddressFragment(final FragmentActivity fragmentActivity) {
+        if (fragmentActivity != null) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    UserMetricsUtil.logSegwitEvent(fragmentActivity, UserMetricsUtil.VIEW_LEGACY_ADDRESS);
+                }
+            });
+            FragmentShowLegacyAddress showLegacyAddress = (FragmentShowLegacyAddress) fragmentActivity.getSupportFragmentManager()
+                    .findFragmentByTag(FragmentShowLegacyAddress.class.getName());
+            if (showLegacyAddress == null || !showLegacyAddress.isAdded()) {
+                showLegacyAddress = new FragmentShowLegacyAddress();
+
+                fragmentActivity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                        .add(android.R.id.content, showLegacyAddress, FragmentShowLegacyAddress.class.getName())
+                        .addToBackStack(FragmentShowLegacyAddress.class.getName()).commit();
+            }
+        } else {
+            Log.e(TAG, "showLegacyAddressFragment: fragmentActivity is null.");
+        }
     }
 
     public static boolean isClickAllowed() {
@@ -283,8 +289,9 @@ public class UiUtils {
     }
 
     public static void killAllFragments(Activity app) {
-        if (app != null && !app.isDestroyed())
+        if (app != null && !app.isDestroyed()) {
             app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {
@@ -359,5 +366,4 @@ public class UiUtils {
 
         return 0;
     }
-
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="60dp"
+    android:background="@color/tertiary_background">
+
+    <ImageView
+        android:id="@+id/ico_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/ico_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:textSize="30sp"
+        android:text="@string/Button.buy"
+        android:textColor="@color/white_60_percent_opaque"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ico_icon" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/ico_price_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:textSize="18sp"
+        android:text="@string/Button.buy"
+        android:textColor="@color/white_60_percent_opaque"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ico_name" />
+
+    <RelativeLayout
+        android:id="@+id/footer_layout"
+        android:background="@color/primary_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <LinearLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_alignParentBottom="true">
+
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/negative_button"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="6dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:text="@string/Button.cancel"
+                app:buttonType="8"
+                app:isBreadButton="true" />
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/positive_button"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/negative_button"
+                android:layout_weight="1"
+                android:text="@string/Button.buy"
+                app:buttonType="9"
+                app:isBreadButton="true" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</android.support.constraint.ConstraintLayout>
+

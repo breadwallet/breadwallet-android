@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/link_wallet_cotnainer"
+    android:background="@color/tertiary_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:text="@string/LinkWallet.title"
+            android:textColor="@color/white_60_percent_opaque"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RelativeLayout
+            android:id="@+id/logo_subtitle_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/dialogTitle">
+
+            <ImageView
+                android:id="@+id/brd_logo"
+                android:layout_width="120dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/brd_logo_gradient" />
+
+            <com.breadwallet.presenter.customviews.BaseTextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/brd_logo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-16dp"
+                android:text="@string/LinkWallet.logoFooter"
+                android:textColor="?attr/link_wallet_subtitle_text_color"
+                android:textSize="20sp"
+                app:customTFont="CircularPro-Bold.otf" />
+
+        </RelativeLayout>
+
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/domain_warning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="@string/LinkWallet.domainTitle"
+            android:textColor="@color/white_60_percent_opaque"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo_subtitle_layout" />
+
+
+        <RelativeLayout
+            android:id="@+id/valid_domains_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/domain_warning"></RelativeLayout>
+
+
+        <ScrollView
+            android:id="@+id/permission_scrollview_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/valid_domains_layout">
+
+            <RelativeLayout
+                android:id="@+id/permission_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/link_wallet_permission_bg"
+                android:orientation="vertical">
+
+                <com.breadwallet.presenter.customviews.BaseTextView
+                    android:id="@+id/permissionsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/LinkWallet.permissionsTitle"
+                    android:layout_marginStart="26dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginStart="26dp"
+                    android:layout_below="@id/permissionsTitle"
+                    android:layout_marginTop="13dp"
+                    android:background="@color/white_60_percent_opaque" />
+
+                <RelativeLayout
+                    android:id="@+id/permission_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/divider"
+                    android:layout_marginTop="17dp"></RelativeLayout>
+
+
+            </RelativeLayout>
+        </ScrollView>
+
+
+        <RelativeLayout
+            android:id="@+id/footer_layout"
+            android:background="@color/primary_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="161dp">
+
+
+            <com.breadwallet.presenter.customviews.BaseTextView
+                android:id="@+id/external_apps_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/LinkWallet.disclaimer"
+                android:textColor="@color/white_60_percent_opaque" />
+
+
+            <LinearLayout
+                android:id="@+id/buttons_layout"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_alignParentBottom="true">
+
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/negative_button"
+                    android:layout_width="200dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_weight="1"
+                    android:text="@string/LinkWallet.decline"
+                    app:buttonType="8"
+                    app:isBreadButton="true" />
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/positive_button"
+                    android:layout_width="200dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/negative_button"
+                    android:layout_weight="1"
+                    android:text="@string/LinkWallet.approve"
+                    app:buttonType="9"
+                    app:isBreadButton="true" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

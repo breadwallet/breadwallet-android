@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.UiUtils;
@@ -49,7 +49,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     private String mDebugPhrase;
 
     //will be true if this screen was called from the restore screen
-    private boolean mIsRestoring = false;
+    private boolean mIsUnlinking = false;
     private boolean mIsResettingPin = false;
     private TypedValue mTypedValue = new TypedValue();
 
@@ -62,9 +62,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 //            //japanese
 //            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
 //            //english
-//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+//            mDebugPhrase = "blush wear arctic fruit unique quantum because mammal entry country school curtain";
 //            //french
-//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
+//            mDebugPhrase = "eyebrow elbow weasel again gate organ mobile then behind name debate joke";
 //            //spanish
 //            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
 //            //chinese
@@ -125,11 +125,11 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mIsRestoring = extras.getBoolean(EXTRA_UNLINK);
+            mIsUnlinking = extras.getBoolean(EXTRA_UNLINK);
             mIsResettingPin = extras.getBoolean(EXTRA_RESET_PIN);
         }
 
-        if (mIsRestoring) {
+        if (mIsUnlinking) {
             //change the labels
             title.setText(getString(R.string.MenuViewController_recoverButton));
             description.setText(getString(R.string.WipeWallet_instruction));
@@ -168,26 +168,17 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                 }
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
-                    if (mIsRestoring || mIsResettingPin) {
+                    if (mIsUnlinking || mIsResettingPin) {
                         if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
                             Utils.hideKeyboard(app);
                             clearWords();
 
-                            if (mIsRestoring) {
+                            if (mIsUnlinking) {
                                 BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle),
                                         getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismissWithAnimation();
-                                                WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                                                m.wipeWalletButKeystore(app);
-                                                m.wipeKeyStore(app);
-                                                Intent intent = new Intent(app, IntroActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                                                startActivity(intent);
-                                                if (!InputWordsActivity.this.isDestroyed())
-                                                    finish();
+                                                BreadApp.clearApplicationUserData();
                                             }
                                         }, new BRDialogView.BROnClickListener() {
                                             @Override
@@ -216,13 +207,13 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         }
 
                     } else {
+                        // Recover Wallet
                         Utils.hideKeyboard(app);
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                        m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
                         //Disallow BTC and BCH sending.
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false);
 
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
@@ -235,7 +226,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                     brDialogView.dismissWithAnimation();
                                 }
                             }, null, null, 0);
-
                 }
             }
         });

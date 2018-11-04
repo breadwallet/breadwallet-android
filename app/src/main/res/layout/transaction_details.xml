@@ -206,7 +206,6 @@
                 android:inputType="text"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
                 android:textColor="?attr/secondary_text_color"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf"/>

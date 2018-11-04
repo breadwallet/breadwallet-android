@@ -34,7 +34,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
@@ -68,9 +68,10 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends ModalDialogFragment implements OnBalanceChangedListener {
+public class FragmentReceive extends ModalDialogFragment implements BalanceUpdateListener {
     private static final String TAG = FragmentReceive.class.getName();
 
+    public static final String EXTRA_RECEIVE = "com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE";
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
@@ -88,7 +89,6 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
     private Handler mCopyHandler = new Handler();
     private BRKeyboard mKeyboard;
     private View mSeparatorHeaderView;
-    private boolean mIsViewReceive;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
 
@@ -118,16 +118,15 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mSeparatorHeaderView = rootView.findViewById(R.id.separator2);
         mSeparatorHeaderView.setVisibility(View.GONE);
         setListeners();
-        mIsViewReceive = getArguments().getBoolean("receive");
-
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
@@ -148,7 +147,6 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
 
         return rootView;
     }
-
 
     private void setListeners() {
         mShareEmailButton.setOnClickListener(new View.OnClickListener() {
@@ -262,59 +260,47 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         super.onViewCreated(view, savedInstanceState);
 
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-
-        mShowRequestAnAmount = mIsViewReceive && wm.getUiConfiguration().isShowRequestedAmount();
+        boolean isReceive = getArguments().getBoolean(EXTRA_RECEIVE);
+        mShowRequestAnAmount = isReceive && wm.getUiConfiguration().isShowRequestedAmount();
         if (!mShowRequestAnAmount) {
             mSignalLayout.removeView(mSeparatorRequestView);
             mSignalLayout.removeView(mRequestButton);
             mTitle.setText(getString(R.string.UnlockScreen_myAddress));
         }
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateQr();
-            }
-        });
-
+        updateQr();
     }
 
     private void updateQr() {
-        final Context ctx = getContext() == null ? BreadApp.getBreadContext() : (Activity) getContext();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWalletManager wm = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
-                wm.refreshAddress(ctx);
+                final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
+                walletManager.refreshAddress(getContext());
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (mIsViewReceive) {
-                            mReceiveAddress = wm.getAddress();
-                        } else {
-                            mReceiveAddress = WalletBitcoinManager.getInstance(ctx).getAddress();
-                        }
-
-                        String decorated = wm.decorateAddress(mReceiveAddress);
-                        mAddress.setText(decorated);
+                        mReceiveAddress = walletManager.getAddress(getContext());
+                        String decoratedReceiveAddress = walletManager.decorateAddress(mReceiveAddress);
+                        mAddress.setText(decoratedReceiveAddress);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, BigDecimal.ZERO, null, null, null);
-                        boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
-                        if (!generated)
+                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, decoratedReceiveAddress,
+                                BigDecimal.ZERO, null, null, null);
+                        if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
                             throw new RuntimeException("failed to generate qr image for address");
+                        }
                     }
                 });
             }
         });
-
     }
 
     private void copyText() {
         Activity app = getActivity();
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
-        //copy the legacy for testing purposes (testnet faucet money receiving)
-        if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET)
+        // The testnet does not work with the BCH address format so copy the legacy address for testing purposes.
+        if (BuildConfig.BITCOIN_TESTNET) {
             BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
+        }
 
         showCopiedLayout(true);
     }
@@ -323,11 +309,13 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
     @Override
     public void onResume() {
         super.onResume();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
     }
 
     @Override

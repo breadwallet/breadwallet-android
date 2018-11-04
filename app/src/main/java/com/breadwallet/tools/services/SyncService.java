@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+//import android.support.v4.app.JobIntentService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -40,8 +41,10 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SyncService extends IntentService {
+public class SyncService extends /*Job*/ IntentService {
     private static final String TAG = SyncService.class.getSimpleName();
+
+//    private static final int JOB_ID = 0xe1743572; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
 
     public static final String ACTION_START_SYNC_PROGRESS_POLLING = "com.breadwallet.tools.services.ACTION_START_SYNC_PROGRESS_POLLING";
     public static final String ACTION_SYNC_PROGRESS_UPDATE = "com.breadwallet.tools.services.ACTION_SYNC_PROGRESS_UPDATE";
@@ -105,13 +108,13 @@ public class SyncService extends IntentService {
      *
      * @param context   The context in which we are operating.
      * @param action    The action of the intent.
-     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     * @param currencyCode The currency code of the wallet being synced.
      * @return An intent with the specified parameters.
      */
-    private static Intent createIntent(Context context, String action, String walletIso) {
+    private static Intent createIntent(Context context, String action, String currencyCode) {
         Intent intent = new Intent(context, SyncService.class);
         intent.setAction(action)
-                .putExtra(EXTRA_WALLET_ISO, walletIso);
+                .putExtra(EXTRA_WALLET_ISO, currencyCode);
         return intent;
     }
 
@@ -133,11 +136,11 @@ public class SyncService extends IntentService {
      * Starts the sync polling service with the specified parameters.
      *
      * @param context   The context in which we are operating.
-     * @param action    The action of the intent.
-     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     * @param currencyCode    The currency code of the wallet that is syncing.
      */
-    public static void startService(Context context, String action, String walletIso) {
-        context.startService(createIntent(context, action, walletIso));
+    public static void startService(Context context, String currencyCode) {
+//        enqueueWork(context, SyncService.class, JOB_ID, createIntent(context, SyncService.ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
+        context.startService(createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
     }
 
     /**

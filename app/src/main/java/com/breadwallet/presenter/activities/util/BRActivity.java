@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Display;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
@@ -23,6 +25,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -30,9 +33,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.util.CryptoUriParser;
-import com.platform.HTTPServer;
-import com.platform.tools.BRBitId;
 
 /**
  * BreadWallet
@@ -58,9 +58,8 @@ import com.platform.tools.BRBitId;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgrounded {
+public class BRActivity extends FragmentActivity {
     private static final String TAG = BRActivity.class.getName();
-    public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
     static {
@@ -74,16 +73,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        saveScreenSizesIfNeeded();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        BreadApp.activityCounter.decrementAndGet();
-        BreadApp.onStop(this);
-
         //open back to HomeActivity if needed
         if (this instanceof WalletActivity)
             BRSharedPrefs.putAppBackgroundedFromHome(this, false);
@@ -94,10 +91,9 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
     @Override
     protected void onResume() {
-        init(this);
+        //init first
+        init();
         super.onResume();
-        BreadApp.backgroundedTime = 0;
-
     }
 
     @Override
@@ -211,19 +207,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                             String result = data.getStringExtra("result");
-                            if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
-                                CryptoUriParser.processRequest(BRActivity.this, result,
-                                        WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
-                            else if (BRBitId.isBitId(result))
-                                BRBitId.signBitID(BRActivity.this, result, null);
-                            else
-                                Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
+                            AppEntryPointHandler.processQrResult(BRActivity.this, result);
                         }
                     });
 
@@ -240,7 +225,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     });
 
                 } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
+                    Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
+                    // TODO: Should this be BreadApp.clearApplicationUserData();?
                     WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
                     m.wipeWalletButKeystore(this);
                     finish();
@@ -264,53 +250,32 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
         }
     }
 
-    public void init(Activity app) {
+    public void init() {
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
-        if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
-            BRApiManager.getInstance().startTimer(app);
+        if (!(this instanceof IntroActivity || this instanceof RecoverActivity || this instanceof WriteDownActivity))
+            BRApiManager.getInstance().startTimer(this);
         //show wallet locked if it is and we're not in an illegal activity
-        if (!(app instanceof InputPinActivity || app instanceof InputWordsActivity)) {
-            if (AuthManager.getInstance().isWalletDisabled(app)) {
-                AuthManager.getInstance().setWalletDisabled(app);
+        if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
+            if (AuthManager.getInstance().isWalletDisabled(this)) {
+                AuthManager.getInstance().setWalletDisabled(this);
             }
         }
-        BreadApp.setBreadContext(app);
+        BreadApp.setBreadContext(this);
 
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (!HTTPServer.isStarted()) {
-                    HTTPServer.startServer();
-                    BreadApp.addOnBackgroundedListener(BRActivity.this);
-                }
-            }
-        });
-        lockIfNeeded(this);
+        BreadApp.lockIfNeeded(this);
     }
 
-    private void lockIfNeeded(Activity app) {
-        long start = System.currentTimeMillis();
-        //lock wallet if 3 minutes passed
-        if (BreadApp.backgroundedTime != 0
-                && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
-                && !(app instanceof DisabledActivity)) {
-            if (!BRKeyStore.getPinCode(app).isEmpty()) {
-                UiUtils.startBreadActivity(app, true);
-            }
+    private void saveScreenSizesIfNeeded() {
+        if (BRSharedPrefs.getScreenHeight(this) == 0) {
+            Log.d(TAG, "saveScreenSizesIfNeeded: saving screen sizes.");
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            BRSharedPrefs.putScreenHeight(this, size.y);
+            BRSharedPrefs.putScreenWidth(this, size.x);
         }
 
-    }
-
-    @Override
-    public void onBackgrounded() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.stopServer();
-            }
-        });
     }
 }

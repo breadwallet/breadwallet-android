@@ -7,8 +7,10 @@ import android.util.Log;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -36,7 +38,7 @@ import java.math.BigDecimal;
  * THE SOFTWARE.
  */
 
-public class CryptoRequest {
+public class CryptoRequest implements Serializable {
     public static final String TAG = CryptoRequest.class.getName();
     public String iso = "BTC"; //make it default
     public String address;
@@ -47,6 +49,7 @@ public class CryptoRequest {
     public String message;
     public String req;
     public BigDecimal value; // ETH payment request amounts are called `value`
+    private GenericTransactionMetaData genericTransactionMetaData;
 
     public String cn;
     public boolean isAmountRequested;
@@ -71,7 +74,6 @@ public class CryptoRequest {
     public boolean hasAddress() {
         return !Utils.isNullOrEmpty(address);
     }
-
 
     public boolean isSmallerThanMin(Context app, BaseWalletManager walletManager) {
         BigDecimal minAmount = walletManager.getMinOutputAmount(app);
@@ -131,4 +133,11 @@ public class CryptoRequest {
         return receiver;
     }
 
+    public GenericTransactionMetaData getGenericTransactionMetaData() {
+        return genericTransactionMetaData;
+    }
+
+    public void setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
+        this.genericTransactionMetaData = genericTransactionMetaData;
+    }
 }
