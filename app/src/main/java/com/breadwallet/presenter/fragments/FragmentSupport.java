@@ -58,6 +58,9 @@ public class FragmentSupport extends ModalDialogFragment {
     private String mOnCloseUrl;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
+    public static final String EXTRA_ARTICLE_ID = "com.breadwallet.presenter.fragments.FragmentSupport.EXTRA_ARTICLE_ID";
+    public static final String WALLET_CURRENCY_CODE = "com.breadwallet.presenter.fragments.FragmentSupport.WALLET_CURRENCY_CODE";
+    public static final String CLOSE = "_close";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -81,7 +84,7 @@ public class FragmentSupport extends ModalDialogFragment {
                 if (mOnCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(mOnCloseUrl)) {
                     getActivity().getSupportFragmentManager().popBackStack();
                     mOnCloseUrl = null;
-                } else if (request.getUrl().toString().contains("_close")) {
+                } else if (request.getUrl().toString().contains(CLOSE)) {
                     getActivity().getSupportFragmentManager().popBackStack();
                 } else {
                     view.loadUrl(request.getUrl().toString());
@@ -105,8 +108,8 @@ public class FragmentSupport extends ModalDialogFragment {
                 HTTPServer.setOnCloseListener(null);
             }
         });
-        String articleId = getArguments() == null ? null : getArguments().getString("articleId");
-        String walletIso = getArguments() == null ? null : getArguments().getString("walletIso");
+        String articleId = getArguments() == null ? null : getArguments().getString(EXTRA_ARTICLE_ID);
+        String walletIso = getArguments() == null ? null : getArguments().getString(WALLET_CURRENCY_CODE);
         if (Utils.isNullOrEmpty(mUrl) || Utils.isNullOrEmpty(walletIso)) {
             throw new IllegalArgumentException("No articleId or walletIso extra! " + walletIso);
         }

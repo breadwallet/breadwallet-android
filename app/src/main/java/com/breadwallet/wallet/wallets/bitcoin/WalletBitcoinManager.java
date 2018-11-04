@@ -51,7 +51,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
 
     private static final String TAG = WalletBitcoinManager.class.getName();
 
-    private static final String ISO = BITCOIN_CURRENCY_CODE;
+    private static final String CURRENCY_CODE = BITCOIN_CURRENCY_CODE;
     public static final String NAME = "Bitcoin";
     private static final String SCHEME = "bitcoin";
     private static final String COLOR = "#f29500";
@@ -79,16 +79,16 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BRSharedPrefs.getStartHeight(context, getIso()) == 0)
-                    BRSharedPrefs.putStartHeight(context, getIso(), getPeerManager().getLastBlockHeight());
+                if (BRSharedPrefs.getStartHeight(context, getCurrencyCode()) == 0)
+                    BRSharedPrefs.putStartHeight(context, getCurrencyCode(), getPeerManager().getLastBlockHeight());
 
-                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getIso());
-                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getIso());
+                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getCurrencyCode());
+                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getCurrencyCode());
                 if (fee.compareTo(BigDecimal.ZERO) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getIso()) ? fee.longValue() : economyFee.longValue());
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
                 WalletsMaster.getInstance(context).updateFixedPeer(context, WalletBitcoinManager.this);
             }
         });
@@ -97,7 +97,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     public void updateSettings(Context context) {
-        setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
+        setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
     }
 
     @Override
@@ -121,8 +121,8 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     @Override
-    public String getIso() {
-        return ISO;
+    public String getCurrencyCode() {
+        return CURRENCY_CODE;
     }
 
     @Override

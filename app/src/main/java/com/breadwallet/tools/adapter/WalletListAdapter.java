@@ -30,6 +30,8 @@ import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -105,14 +107,14 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             WalletItem item = mWalletItems.get(position);
             final BaseWalletManager wallet = item.walletManager;
             String name = wallet.getName();
-            String currencyCode = wallet.getIso();
+            String currencyCode = wallet.getCurrencyCode();
 
             BigDecimal bigExchangeRate = wallet.getFiatExchangeRate(mContext);
             BigDecimal bigFiatBalance = wallet.getFiatBalance(mContext);
 
             String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
             String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
-            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
+            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getCurrencyCode(), wallet.getCachedBalance(mContext));
 
             if (Utils.isNullOrZero(bigExchangeRate)) {
                 holder.mWalletBalanceFiat.setVisibility(View.INVISIBLE);
@@ -210,7 +212,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
                         return;
                     }
-                    String walletIso = mCurrentWalletSyncing.walletManager.getIso();
+                    String walletIso = mCurrentWalletSyncing.walletManager.getCurrencyCode();
                     mCurrentWalletSyncing.walletManager.connect(mContext);
                     SyncService.startService(mContext, walletIso);
                 } finally {
@@ -248,19 +250,19 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     //return the next wallet that is not connected or null if all are connected
     private WalletItem getNextWalletToSync() {
         BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        if (currentWallet != null && currentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso())) == 1) {
+        if (currentWallet != null && currentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getCurrencyCode())) == 1) {
             currentWallet = null;
         }
 
         for (WalletItem w : mWalletItems) {
             if (currentWallet == null) {
-                if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso())) < 1
+                if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getCurrencyCode())) < 1
                         || w.walletManager.getConnectStatus() != 2) {
                     w.walletManager.connect(mContext);
                     return w;
                 }
             } else {
-                if (w.walletManager.getIso().equalsIgnoreCase(currentWallet.getIso())) {
+                if (w.walletManager.getCurrencyCode().equalsIgnoreCase(currentWallet.getCurrencyCode())) {
                     return w;
                 }
             }
@@ -339,7 +341,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         @Override
         public void onReceive(Context context, Intent intent) {
             if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
-                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_CURRENCY_CODE);
                 double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINED);
 
                 if (mCurrentWalletSyncing == null) {
@@ -347,15 +349,15 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     return;
                 }
 
-                String currentWalletISO = mCurrentWalletSyncing.walletManager.getIso();
-                if (currentWalletISO.equals(intentWalletIso)) {
+                String currentWalletCurrencyCode = mCurrentWalletSyncing.walletManager.getCurrencyCode();
+                if (currentWalletCurrencyCode.equals(intentWalletIso)) {
                     if (progress >= SyncService.PROGRESS_START) {
                         updateUi(mCurrentWalletSyncing, progress);
                     } else {
                         Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Progress not set:" + progress);
                     }
                 } else {
-                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + currentWalletISO + " Actual:" + intentWalletIso + " Progress:" + progress);
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + currentWalletCurrencyCode + " Actual:" + intentWalletIso + " Progress:" + progress);
                 }
             }
         }

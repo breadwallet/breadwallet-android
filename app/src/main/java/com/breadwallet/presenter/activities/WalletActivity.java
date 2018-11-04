@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -76,6 +77,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
     private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
+    private static final int SEND_SHOW_DELAY = 300;
 
     private BaseTextView mCurrencyTitle;
     private BaseTextView mCurrencyPriceUsd;
@@ -272,10 +274,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), bigExchangeRate);
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), walletManager.getFiatBalance(this));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, walletManager.getIso(), walletManager.getCachedBalance(this), walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, walletManager.getCurrencyCode(), walletManager.getCachedBalance(this), walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
 
         mCurrencyTitle.setText(walletManager.getName());
-        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, walletManager.getIso()));
+        mCurrencyPriceUsd.setText(String.format(getString(R.string.Account_exchangeRate), fiatExchangeRate, walletManager.getCurrencyCode()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
 
@@ -422,7 +424,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             wallet.addBalanceChangedListener(this);
 
-            mCurrentWalletIso = wallet.getIso();
+            mCurrentWalletIso = wallet.getCurrencyCode();
 
             if (!TokenUtil.isTokenSupported(mCurrentWalletIso)) {
                 showDelistedTokenBanner();
@@ -441,12 +443,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private void showSendIfNeeded(final Intent intent) {
         final CryptoRequest request = (CryptoRequest) intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST);
+        intent.removeExtra(EXTRA_CRYPTO_REQUEST);
         if (request != null) {
             showSendFragment(request);
         }
 
     }
-
 
     @Override
     protected void onPause() {
@@ -580,7 +582,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         @Override
         public void onReceive(Context context, Intent intent) {
             if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
-                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_CURRENCY_CODE);
                 double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINED);
                 if (mCurrentWalletIso.equals(intentWalletIso)) {
                     if (progress >= SyncService.PROGRESS_START) {
@@ -597,20 +599,30 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void showSendFragment(final CryptoRequest request) {
-        FragmentSend fragmentSend = (FragmentSend) getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend == null) {
-            fragmentSend = new FragmentSend();
+        // TODO: Find a better solution.
+        if (FragmentSend.isIsSendShown()) {
+            return;
         }
+        FragmentSend.setIsSendShown(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FragmentSend fragmentSend = (FragmentSend) getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+                if (fragmentSend == null) {
+                    fragmentSend = new FragmentSend();
+                }
 
-        Bundle arguments = new Bundle();
-        arguments.putSerializable(EXTRA_CRYPTO_REQUEST, request);
-        fragmentSend.setArguments(arguments);
-        if (!fragmentSend.isAdded()) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
-        }
+                Bundle arguments = new Bundle();
+                arguments.putSerializable(EXTRA_CRYPTO_REQUEST, request);
+                fragmentSend.setArguments(arguments);
+                if (!fragmentSend.isAdded()) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                            .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                            .addToBackStack(FragmentSend.class.getName()).commit();
+                }
+            }
+        }, SEND_SHOW_DELAY);
 
     }
 

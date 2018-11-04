@@ -159,7 +159,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBitcoinManager.getIso());
+                BRSharedPrefs.putCurrentWalletIso(activity, walletBitcoinManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));
@@ -169,7 +169,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bchSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBchManager.getIso());
+                BRSharedPrefs.putCurrentWalletIso(activity, walletBchManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));

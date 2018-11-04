@@ -77,7 +77,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY, WalletBitcoinManager.getInstance(HomeActivity.this).getIso());
+                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY, WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
                 UiUtils.startWebActivity(HomeActivity.this, url);
             }
         });
@@ -102,7 +102,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
                 if (mAdapter.getItemViewType(position) == 0) {
-                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso());
+                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getCurrencyCode());
                     Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                     startActivity(newIntent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

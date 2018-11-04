@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -189,6 +190,7 @@ public class BRActivity extends FragmentActivity {
                     });
                 }
                 break;
+
             case BRConstants.PROVE_PHRASE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -199,6 +201,7 @@ public class BRActivity extends FragmentActivity {
                     });
                 }
                 break;
+
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -217,7 +220,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            String result = data.getStringExtra("result");
+                            String result = data.getStringExtra(ScanQRActivity.EXTRA_RESULT);
                             AppEntryPointHandler.processQrResult(BRActivity.this, result);
                         }
                     });

@@ -21,6 +21,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
@@ -142,9 +143,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                     return;
                 }
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
             }
         });
@@ -236,8 +236,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                         String decoratedReceiveAddress = walletManager.decorateAddress(mReceiveAddress);
                         mAddress.setText(decoratedReceiveAddress);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, decoratedReceiveAddress,
-                                BigDecimal.ZERO, null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, new CryptoRequest.Builder().setAddress(decoratedReceiveAddress).build());
+                        boolean generated = QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
                         if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
                             throw new RuntimeException("failed to generate qr image for address");
                         }
