@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -64,6 +66,8 @@ public final class SettingsUtil {
     private static final String MARKET_URI = "market://details?id=com.breadwallet";
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
+    private static final String DEVELOPER_OPTIONS_TITLE = "Developer Options";
+    private static final String SEND_LOGS = "Send Logs";
 
     private SettingsUtil() {
     }
@@ -138,6 +142,17 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_review));
+        if (BuildConfig.DEBUG) {
+            settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(activity, SettingsActivity.class);
+                    intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.DEVELOPER_OPTIONS);
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                }
+            }, false, 0));
+        }
         return settingsItems;
     }
 
@@ -151,9 +166,9 @@ public final class SettingsUtil {
                 Intent intent = new Intent(activity, DisplayCurrencyActivity.class);
                 activity.startActivity(intent);
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
             }
         }, false, 0));
+
         final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
         String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
@@ -227,6 +242,17 @@ public final class SettingsUtil {
                 Intent intent = new Intent(activity, UnlinkActivity.class);
                 activity.startActivity(intent);
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, 0));
+        return items;
+    }
+
+    public static List<BRSettingsItem> getDeveloperOptionsSettings(final Activity activity) {
+        List<BRSettingsItem> items = new ArrayList<>();
+        items.add(new BRSettingsItem(SEND_LOGS, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LogsUtils.shareLogs(activity);
             }
         }, false, 0));
         return items;
