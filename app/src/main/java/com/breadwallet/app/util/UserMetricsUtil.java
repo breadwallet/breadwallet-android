@@ -128,14 +128,19 @@ public final class UserMetricsUtil {
             data.put(FIELD_USER_AGENT, System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
             data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
-            data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
+
+            try {
+                data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
+            } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException e) {
+                Log.e(TAG, "Error obtaining Google advertising id. Skipping sending id in metrics.", e);
+            }
 
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_LAUNCH);
             payload.put(FIELD_DATA, data);
 
             sendMetricsRequestWithPayload(context, ME_METRICS_URL, payload);
-        } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException e) {
+        } catch (IOException | JSONException e) {
             Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
