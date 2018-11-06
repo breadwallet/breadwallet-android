@@ -209,6 +209,7 @@ public final class BRConstants {
     public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
     public static final String STAGE = "stage";
+    public static final String CURRENCY_ERC20 = "erc20";
 
     private BRConstants() {
     }
