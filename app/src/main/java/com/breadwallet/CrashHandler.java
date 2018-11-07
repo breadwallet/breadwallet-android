@@ -25,7 +25,7 @@ import java.util.Map;
  * @Author xidaokun
  * @Date 18-11-7
  */
-public class CrashHandler implements Thread.UncaughtExceptionHandler { // 需求是 整个应用程序 只有一个 MyCrash-Handler
+public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     public static final String TAG = "CrashHandler";
 
@@ -74,7 +74,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler { // 需求
             @Override
             public void run() {
                 Looper.prepare();
-                Toast.makeText(mContext, "很抱歉,程序出现异常,正在收集日志，即将退出", Toast.LENGTH_LONG)
+                Toast.makeText(mContext, "program exception", Toast.LENGTH_LONG)
                         .show();
                 Looper.loop();
             }
