@@ -140,7 +140,7 @@ public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
         mKeyboard.animate().translationY(R.dimen.animation_short).withLayer();
         mDialogLayout.animate().scaleY(0).scaleX(0).alpha(0);
         mMainLayout.animate().alpha(0);
-        if (!mAuthSucceeded) {
+        if (!mAuthSucceeded && mCompletion!=null) {
             mCompletion.onCancel();
         }
         new Handler().postDelayed(new Runnable() {

@@ -11,6 +11,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
@@ -206,6 +207,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     @WorkerThread
     public String getElaBalance(String address){
+        if(address==null || address.isEmpty()) return null;
         String balance = null;
         try {
             String url = ELA_SERVER_URL +"/api/1/balance/"+address;
@@ -218,6 +220,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public void getHistory(String address){
+        if(address == null) return;
         try {
             String url = ELA_HISTORY_URL+"/history/"+address+"&pageNum=10&pageSize=1";
             String result = urlGET(url)/*getTxHistory()*/;
@@ -260,6 +263,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
+        if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
         try {
             String url = ELA_SERVER_URL +"/api/1/createTx";

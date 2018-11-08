@@ -84,6 +84,8 @@ public class BreadApp extends Application {
     private static Context mContext;
     private ApplicationLifecycleObserver mObserver;
 
+    public static String mLang = "en";
+
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
     static {
@@ -111,28 +113,15 @@ public class BreadApp extends Application {
         }
 
 
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(this);
-//        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
+        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
-
-//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                    .detectDiskReads()
-//                    .detectDiskWrites()
-//                    .detectNetwork()   // or .detectAll() for all detectable problems
-//                    .penaltyLog()
-//                    .build());
-//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                    .detectLeakedSqlLiteObjects()
-//                    .detectLeakedClosableObjects()
-//                    .penaltyLog()
-//                    .penaltyDeath()
-//                    .build());
 
         mContext = this;
 

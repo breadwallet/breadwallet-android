@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -26,10 +27,12 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.elastos.jni.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -220,6 +223,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
+                        BreadApp.mLang = Bip39Reader.detectLang(app, cleanPhrase);
+                        Utility.initLanguage(InputWordsActivity.this);
+
                         //Disallow BTC and BCH sending.
                         BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
                         BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);

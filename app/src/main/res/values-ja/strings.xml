@@ -340,6 +340,7 @@
   <string name="NodeSelector.statusLabel">ノードの接続状況</string>
   <!-- Node Selector view title -->
   <string name="NodeSelector.title">ビットコインノード</string>
+  <string name="ELA_NodeSelector.title">Elastosノード</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">不正な支払い要求</string>
   <!-- Error opening payment protocol file message -->

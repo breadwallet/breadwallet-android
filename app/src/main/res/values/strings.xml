@@ -340,6 +340,7 @@
   <string name="NodeSelector.statusLabel">Node Connection Status</string>
   <!-- Node Selector view title -->
   <string name="NodeSelector.title">Bitcoin Nodes</string>
+  <string name="ELA_NodeSelector.title">Elastos Nodes</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Bad Payment Request</string>
   <!-- Error opening payment protocol file message -->
@@ -351,7 +352,7 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Couldn\'t make payment</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Bitcoin payments can\'t be less than %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">payments can\'t be less than %1$s.</string>
   <!-- Output too small error message. -->
   <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaction outputs can\'t be less than %1$s.</string>
   <!-- Unsupported signature type payment protocol error message -->

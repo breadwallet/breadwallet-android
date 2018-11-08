@@ -20,7 +20,9 @@ import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -106,11 +108,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
                              BRCoreChainParams chainParams,
                              double earliestPeerTime) {
+        super(masterPubKey, chainParams, 0);
         mContext = context;
         mUiConfig = new WalletUiConfiguration("#003d79", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
 
-        mSettingsConfig = new WalletSettingsConfiguration();
+        mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getElastosSettings(mContext), new ArrayList<BigDecimal>(0));
 
         mWalletManagerHelper = new WalletManagerHelper();
     }
@@ -327,15 +330,19 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public void refreshCachedBalance(final Context app) {
         Log.i(TAG, "refreshCachedBalance");
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
-                if(balance == null) return;
-                final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
-                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
+                try {
+                    String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
+                    if(balance == null) return;
+                    final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
+                    BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }).start();
+        });
     }
 
     @Override
@@ -573,33 +580,28 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
-        BigDecimal result = BigDecimal.ZERO;
-        int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
-        switch (unit) {
-            case BRConstants.CURRENT_UNIT_BITS:
-                result = amount.multiply(new BigDecimal("100"));
-                break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = amount.multiply(new BigDecimal("100000"));
-                break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = amount.multiply(new BigDecimal("100000000"));
-                break;
-        }
-        return result;
+        return amount.multiply(new BigDecimal("100000000"));
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), iso);
-        if (ent == null) {
-            return amount;
+        String code = BRSharedPrefs.getPreferredFiatIso(app);
+        //fiat rate for btc
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        //Btc rate for ela
+        CurrencyEntity elaBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
+        if (btcRate == null) {
+            return null;
         }
-        double rate = ent.rate;
-        //convert c to $.
-        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
+        if (elaBtcRate == null) {
+            return null;
+        }
+
+        BigDecimal tmp = amount.divide(new BigDecimal(btcRate.rate),8, BRConstants.ROUNDING_MODE).
+                divide(new BigDecimal(elaBtcRate.rate),8, BRConstants.ROUNDING_MODE)
+                .multiply(new BigDecimal(100000000f));
+        Log.i("tmp", "tmp:"+tmp.floatValue());
+        return tmp;
     }
 }

@@ -340,6 +340,7 @@
   <string name="NodeSelector.statusLabel">节点连接状态</string>
   <!-- Node Selector view title -->
   <string name="NodeSelector.title">比特币节点</string>
+  <string name="ELA_NodeSelector.title">Elastos节点</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">假的付款请求</string>
   <!-- Error opening payment protocol file message -->
@@ -351,7 +352,7 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">无法付款</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">比特币支付不能小于%1$s。</string>
+  <string name="PaymentProtocol.Errors.smallPayment">支付不能小于%1$s。</string>
   <!-- Output too small error message. -->
   <string name="PaymentProtocol.Errors.smallTransaction">比特币交易输出不能小于 %1$s。</string>
   <!-- Unsupported signature type payment protocol error message -->

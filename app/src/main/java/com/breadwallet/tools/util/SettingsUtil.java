@@ -30,6 +30,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,8 @@ public final class SettingsUtil {
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
 
-    private SettingsUtil() { }
+    private SettingsUtil() {
+    }
 
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
@@ -153,6 +155,17 @@ public final class SettingsUtil {
 
             }
         }, false, 0));
+
+        final WalletElaManager elaManager = WalletElaManager.getInstance(activity);
+        String elaSettingsLabel = String.format("%s %s", elaManager.getName(), activity.getString(R.string.Settings_title));
+        items.add(new BRSettingsItem(elaSettingsLabel, currentFiatCode, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRSharedPrefs.putCurrentWalletIso(activity, elaManager.getIso());
+                startCurrencySettings(activity);
+            }
+        }, false, 0));
+
         final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
         String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
@@ -172,14 +185,14 @@ public final class SettingsUtil {
                 startCurrencySettings(activity);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), currentFiatCode, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, ShareDataActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, 0));
+//        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), currentFiatCode, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(activity, ShareDataActivity.class);
+//                activity.startActivity(intent);
+//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            }
+//        }, false, 0));
         return items;
     }
 
@@ -231,6 +244,20 @@ public final class SettingsUtil {
         return items;
     }
 
+    public static List<BRSettingsItem> getElastosSettings(Context activity) {
+        List<BRSettingsItem> items = new ArrayList<>();
+        items.add(new BRSettingsItem(activity.getString(R.string.ELA_NodeSelector_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity currentActivity = (Activity) v.getContext();
+                Intent intent = new Intent(currentActivity, NodesActivity.class);
+                currentActivity.startActivity(intent);
+                currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, 0));
+        return items;
+    }
+
     public static List<BRSettingsItem> getBitcoinSettings(final Context activity) {
         List<BRSettingsItem> items = new ArrayList<>();
         if (AuthManager.isFingerPrintAvailableAndSetup(activity)) {
@@ -240,18 +267,18 @@ public final class SettingsUtil {
                     final Activity currentActivity = (Activity) v.getContext();
                     AuthManager.getInstance().authPrompt(currentActivity, null,
                             currentActivity.getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                        @Override
-                        public void onComplete() {
-                            Intent intent = new Intent(currentActivity, SpendLimitActivity.class);
-                            currentActivity.startActivity(intent);
-                            currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        }
+                                @Override
+                                public void onComplete() {
+                                    Intent intent = new Intent(currentActivity, SpendLimitActivity.class);
+                                    currentActivity.startActivity(intent);
+                                    currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                }
 
-                        @Override
-                        public void onCancel() {
+                                @Override
+                                public void onCancel() {
 
-                        }
-                    });
+                                }
+                            });
 
                 }
             }, false, 0));
@@ -290,6 +317,7 @@ public final class SettingsUtil {
         }, false, 0));
         return items;
     }
+
     public static List<BRSettingsItem> getBitcoinCashSettings(final Context activity) {
         List<BRSettingsItem> items = new ArrayList<>();
         items.add(new BRSettingsItem(activity.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {

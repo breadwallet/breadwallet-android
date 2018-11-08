@@ -340,6 +340,7 @@
   <string name="NodeSelector.statusLabel">노드 연결 상태</string>
   <!-- Node Selector view title -->
   <string name="NodeSelector.title">비트코인 노드</string>
+  <string name="ELA_NodeSelector.title">Elastos 노드</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">틀린 결제 요청</string>
   <!-- Error opening payment protocol file message -->

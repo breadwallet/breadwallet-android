@@ -94,8 +94,8 @@ public class PromptManager {
             case RECOMMEND_RESCAN:
                 BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 return wallet != null && BRSharedPrefs.getScanRecommended(app, wallet.getIso());
-            case SHARE_DATA:
-                return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getPromptDismissed(app, "shareData");
+//            case SHARE_DATA:
+//                return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getPromptDismissed(app, "shareData");
 
         }
         return false;
@@ -106,7 +106,7 @@ public class PromptManager {
         if (shouldPrompt(app, UPGRADE_PIN)) return UPGRADE_PIN;
         if (shouldPrompt(app, PAPER_KEY)) return PAPER_KEY;
         if (shouldPrompt(app, FINGER_PRINT)) return FINGER_PRINT;
-        if (shouldPrompt(app, SHARE_DATA)) return SHARE_DATA;
+//        if (shouldPrompt(app, SHARE_DATA)) return SHARE_DATA;
         return null;
     }
 

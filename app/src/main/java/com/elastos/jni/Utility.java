@@ -3,6 +3,7 @@ package com.elastos.jni;
 import android.content.Context;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.util.Bip39Reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,9 +40,6 @@ public class Utility {
     public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
 
     private static Utility mInstance;
-
-    private static String mLanguage = null;
-
     private static String mWords = null;
 
     static {
@@ -61,34 +59,15 @@ public class Utility {
     }
 
     public static void initLanguage(Context context){
-        if(mLanguage==null || mWords==null){
-            String languageCode = Locale.getDefault().getLanguage();
-            boolean exists = false;
-            for (String s : LANGS) if (s.equalsIgnoreCase(languageCode)) exists = true;
-            if (!exists) {
-                languageCode = "en"; //use en if not a supported lang
-            }
-            mLanguage = getLanguage(languageCode);
-            mWords = getWords(context, languageCode +"-BIP39Words.txt");
-        }
+        mWords = getWords(context, BreadApp.mLang +"-BIP39Words.txt");
     }
-
-    private static String getLanguage(String languageCode){
-        if(languageCode.equalsIgnoreCase("en")) return "english";
-        if(languageCode.equalsIgnoreCase("es")) return "spanish";
-        if(languageCode.equalsIgnoreCase("fr")) return "french";
-        if(languageCode.equalsIgnoreCase("ja")) return "japanese";
-        if(languageCode.equalsIgnoreCase("zh")) return "chinese";
-        return "english";
-    }
-
 
     public String getSinglePrivateKey(String mnemonic){
-        return getSinglePrivateKey(mLanguage, mnemonic, mWords, "");
+        return getSinglePrivateKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
     }
 
     public String getSinglePublicKey(String mnemonic){
-        return getSinglePublicKey(mLanguage, mnemonic, mWords, "");
+        return getSinglePublicKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
     }
 
     public String generateMnemonic(String language, String words){

@@ -116,9 +116,34 @@ public class Bip39Reader {
         return null;
     }
 
+    public static String detectLang(Context app, String paperKey) {
+        if (Utils.isNullOrEmpty(paperKey)) {
+            return null;
+        }
+        String cleanPaperKey = SmartValidator.cleanPaperKey(app, paperKey);
+        String firstWord = cleanPaperKey.split(" ")[0];
+
+        for (String s : LANGS) {
+            List<String> words = getList(app, s);
+            if (words.contains(firstWord)) {
+                return s;
+            }
+        }
+        return "en";
+    }
+
     public static String cleanWord(String word) {
         String w = Normalizer.normalize(word.trim().replace("　", "")
                 .replace(" ", ""), Normalizer.Form.NFKD);
         return w;
+    }
+
+    public static String getLanguage(String languageCode){
+        if(languageCode.equalsIgnoreCase("en")) return "english";
+        if(languageCode.equalsIgnoreCase("es")) return "spanish";
+        if(languageCode.equalsIgnoreCase("fr")) return "french";
+        if(languageCode.equalsIgnoreCase("ja")) return "japanese";
+        if(languageCode.equalsIgnoreCase("zh")) return "chinese";
+        return "english";
     }
 }
