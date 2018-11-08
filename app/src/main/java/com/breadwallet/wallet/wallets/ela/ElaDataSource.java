@@ -66,7 +66,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static final String ELA_SERVER_URL = "http://WalletServiceTest-env-regtest3.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
 
-    private static final String ELA_HISTORY_URL = "http://blockchain-regtest3.elastos.org";
+    private static final String ELA_HISTORY_URL = "http://54.64.220.165:8080";
 
     private static ElaDataSource mInstance;
 
@@ -220,7 +220,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public void getHistory(String address){
         try {
             String url = ELA_HISTORY_URL+"/history/"+address+"&pageNum=10&pageSize=1";
-            String result = /*urlGET(url)*/getTxHistory();
+            String result = urlGET(url)/*getTxHistory()*/;
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
             TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
