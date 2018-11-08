@@ -6,10 +6,13 @@ import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -108,9 +111,9 @@ public class BreadApp extends Application {
         }
 
 
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(this);
-//        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
+        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())

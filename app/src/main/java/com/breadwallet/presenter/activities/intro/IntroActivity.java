@@ -1,10 +1,14 @@
 
 package com.breadwallet.presenter.activities.intro;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -115,6 +119,15 @@ public class IntroActivity extends BRActivity {
 
         mSplashScreen.setVisibility(View.GONE);
 
+        checkPermisson();
+    }
+
+    private void checkPermisson(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0x01);
+        }
     }
 
     private void updateBundles() {

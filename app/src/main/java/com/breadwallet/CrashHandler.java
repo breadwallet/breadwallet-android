@@ -53,8 +53,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
+//            android.os.Process.killProcess(android.os.Process.myPid());
+//            System.exit(1);
         }
     }
 
@@ -62,7 +62,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         mContext = context;
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        nameString = /*BmobUserManager.getInstance(mContext).getCurrentUserName()*/"elephant";
+        nameString = "elephant";
     }
 
     private boolean handleException(Throwable ex) {
@@ -138,12 +138,14 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                     + ".log";
             if (Environment.getExternalStorageState().equals(
                     Environment.MEDIA_MOUNTED)) {
-                String path = /*WMapConstants.CrashLogDir*/ Environment.getExternalStorageDirectory().getAbsolutePath()+"/elastos";
+                String path = /*WMapConstants.CrashLogDir*/ Environment.getExternalStorageDirectory().getAbsolutePath()+"/elephant";
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(path + fileName);
+                File file = new File(dir.getAbsoluteFile(), fileName);
+                if(!file.exists()) file.createNewFile();
+                FileOutputStream fos = new FileOutputStream(path + "/" +fileName);
                 fos.write(sb.toString().getBytes());
                 fos.close();
             }

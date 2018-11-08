@@ -1,10 +1,14 @@
 package com.breadwallet.presenter.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -157,7 +161,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
         Log.e(TAG, "onCreate: 2");
-
     }
 
     public void hidePrompt() {
