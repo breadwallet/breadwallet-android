@@ -39,6 +39,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.platform.HTTPServer;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -161,6 +162,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
         Log.e(TAG, "onCreate: 2");
+
+        CrashReport.testJavaCrash();
     }
 
     public void hidePrompt() {

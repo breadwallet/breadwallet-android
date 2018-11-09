@@ -30,6 +30,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -117,11 +118,11 @@ public class BreadApp extends Application {
 //        crashHandler.init(this);
 //        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
 
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
-                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
-                .build();
-        Fabric.with(fabric);
+//        final Fabric fabric = new Fabric.Builder(this)
+//                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
+//                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
+//                .build();
+//        Fabric.with(fabric);
 
         mContext = this;
 
@@ -149,6 +150,8 @@ public class BreadApp extends Application {
 
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+
+        CrashReport.initCrashReport(getApplicationContext(), "d20fa2f1b9", true);
 
     }
 
