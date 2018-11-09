@@ -35,7 +35,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/TouchIdSettings.title.android"
                 android:textSize="@dimen/header"
-                app:customTFont="CircularPro-Bold.otf"/>
+                app:customTFont="BioSans-SemiBold.otf" />
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -75,11 +75,11 @@
         android:layout_below="@+id/textView10"
         android:layout_marginTop="16dp"
         android:layout_toStartOf="@+id/toggleButton"
-        android:paddingEnd="8dp"
         android:paddingStart="16dp"
+        android:paddingEnd="8dp"
         android:text="@string/TouchIdSettings.switchLabel.android"
         android:textSize="@dimen/paragraph"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
     <ToggleButton
         android:id="@+id/toggleButton"
@@ -93,7 +93,7 @@
         />
 
     <View
-        android:id="@+id/divider1"
+        android:id="@+id/reddit_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/enable_label"
@@ -106,7 +106,7 @@
         android:id="@+id/limit_exchange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider1"
+        android:layout_below="@+id/reddit_divider"
         android:layout_margin="@dimen/bread_margin"
         android:textSize="18sp"
         />

@@ -10,13 +10,15 @@
         android:id="@+id/add_wallets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_centerInParent="false"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="16dp"
         android:drawableStart="@drawable/ic_add_wallets"
-        android:drawablePadding="16dp"
+        android:drawablePadding="10dp"
+        android:fontFamily="BioSans-SemiBold.otf"
         android:text="@string/TokenList.addTitle"
         android:textColor="@color/white"
-        android:layout_marginBottom="16dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
 </RelativeLayout>
