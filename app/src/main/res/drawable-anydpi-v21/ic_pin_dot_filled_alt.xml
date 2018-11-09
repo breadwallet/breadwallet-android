@@ -10,5 +10,5 @@
         android:pathData="M 3 3 H 21 V 21 H 3 V 3 Z" />
     <path
         android:fillColor="#50468E"
-        android:pathData="M3 21L21 21L21 3L3 21Z" />
+        android:pathData="M3 3L3 21L21 21L3 3Z" />
 </vector>

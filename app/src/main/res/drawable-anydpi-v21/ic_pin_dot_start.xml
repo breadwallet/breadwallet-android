@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-
-    <!-- fill color -->
-    <solid android:color="@android:color/transparent" />
-
-    <!-- radius -->
-    <stroke
-        android:width="1dp"
-        android:color="@color/button_gradient_end_color" />
-
-    <!-- corners -->
-    <corners
-        android:radius="2dp"/>
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#2A3D58"
+        android:pathData="M 3 3 H 21 V 21 H 3 V 3 Z" />
+</vector>
