@@ -50,7 +50,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     public static final String CCC_CURRENCY_CODE = "CCC";
-    public static final int MAX_NUMBER_OF_CHILDREN = 3;
+    public static final int MAX_NUMBER_OF_CHILDREN = 2;
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
