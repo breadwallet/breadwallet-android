@@ -14,14 +14,13 @@
         android:id="@+id/digit1"
         android:layout_width="@dimen/pin_dot_size"
         android:layout_height="@dimen/pin_dot_size"
-        android:background="@drawable/ic_pin_dot_empty"
-        />
+        android:background="@drawable/ic_pin_dot_empty" />
 
     <View
         android:id="@+id/digit2"
         android:layout_width="@dimen/pin_dot_size"
         android:layout_height="@dimen/pin_dot_size"
-        android:background="@drawable/ic_pin_dot_empty"/>
+        android:background="@drawable/ic_pin_dot_empty" />
 
     <View
         android:id="@+id/digit3"
@@ -33,7 +32,7 @@
         android:id="@+id/digit4"
         android:layout_width="@dimen/pin_dot_size"
         android:layout_height="@dimen/pin_dot_size"
-        android:background="@drawable/ic_pin_dot_empty"/>
+        android:background="@drawable/ic_pin_dot_empty" />
 
     <View
         android:id="@+id/digit5"
@@ -45,5 +44,5 @@
         android:id="@+id/digit6"
         android:layout_width="@dimen/pin_dot_size"
         android:layout_height="@dimen/pin_dot_size"
-        android:background="@drawable/ic_pin_dot_empty"/>
+        android:background="@drawable/ic_pin_dot_empty" />
 </LinearLayout>
