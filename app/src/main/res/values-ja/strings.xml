@@ -4,18 +4,20 @@
   <string name="About.appName.android">ブレッド</string>
   <!-- About screen blog label -->
   <string name="About.blog">ブログ</string>
+  <string name="About.cr">CyberRepublic.org</string>
   <!-- About screen footer -->
   <string name="About.footer">グローバルブレッドチームによって開発されました。バージョン %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">プライバシーポリシー</string>
-  <!-- About screen reddit label -->
-  <string name="About.reddit">Reddit（レディット）</string>
+  <!-- About screen social labels -->
+  <string name="About.discord">Discord</string>
+  <string name="About.telegram">Telegram</string>
+  <string name="About.reddit">Reddit</string>
+  <string name="About.twitter">Twitter</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">利用規約</string>
   <!-- About screen title -->
   <string name="About.title">概要</string>
-  <!-- About screen twitter label -->
-  <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
   <string name="About.walletID">BRDリワードID</string>
   <!-- Close modal button accessibility label -->

@@ -125,10 +125,12 @@ public final class BRConstants {
      *
      */
 
-    public static final String URL_PRIVACY_POLICY = "https://brd.com/privacy";
-    public static final String URL_TWITTER = "https://twitter.com/breadapp";
-    public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
-    public static final String URL_BLOG  = "https://brd.com/blog/";
+    public static final String URL_PRIVACY_POLICY = "https://elastos.org/privacy/";
+    public static final String URL_TELEGRAM = "https://t.me/elastosgroup";
+    public static final String URL_DISCORD = "https://discord.gg/MHSUVZN";
+    public static final String URL_REDDIT = "https://reddit.com/r/elastos/";
+    public static final String URL_BLOG  = "https://elastos.org/";
+    public static final String URL_CR  = "https://cyberrepublic.org/";
 
 
     private BRConstants() {
