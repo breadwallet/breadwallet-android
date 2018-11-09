@@ -113,9 +113,9 @@ public class BreadApp extends Application {
         }
 
 
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
-        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(this);
+//        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())

@@ -334,7 +334,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             @Override
             public void run() {
                 try {
-                    String balance = ElaDataSource.getInstance(mContext).getElaBalance(getAddress());
+                    String address = getAddress();
+                    if(address == null) return;
+                    String balance = ElaDataSource.getInstance(mContext).getElaBalance(address);
                     if(balance == null) return;
                     final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
                     BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));

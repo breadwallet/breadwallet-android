@@ -65,7 +65,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
-    private static final String ELA_SERVER_URL = "http://WalletServiceTest-env-regtest3.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
+    private static final String ELA_SERVER_URL = "http://18.179.207.38:8080";
 
     private static final String ELA_HISTORY_URL = "http://54.64.220.165:8080";
 
@@ -222,7 +222,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public void getHistory(String address){
         if(address == null) return;
         try {
-            String url = ELA_HISTORY_URL+"/history/"+address+"&pageNum=10&pageSize=1";
+            String url = ELA_HISTORY_URL+"/history/"+address+"?pageNum=10&pageSize=1";
             String result = urlGET(url)/*getTxHistory()*/;
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
@@ -237,11 +237,11 @@ public class ElaDataSource implements BRDataSourceInterface {
                 elaTransactionEntity.isReceived = isReceived(history.Type);
                 elaTransactionEntity.fromAddress = history.Inputs.get(0);
                 elaTransactionEntity.toAddress = history.Outputs.get(0);
-                elaTransactionEntity.fee = new BigDecimal(history.Fee).multiply(new BigDecimal(1000000000)).longValue();
+                elaTransactionEntity.fee = /*new BigDecimal(history.Fee).multiply(new BigDecimal(1000000000)).longValue()*/100;
                 elaTransactionEntity.blockHeight = history.Height;
                 elaTransactionEntity.hash = history.Txid.getBytes();
                 elaTransactionEntity.txSize = 0;
-                elaTransactionEntity.amount = new BigDecimal(history.Value).multiply(new BigDecimal(1000000000)).longValue();
+                elaTransactionEntity.amount = new BigDecimal(history.Value).multiply(new BigDecimal(100000000)).longValue();
                 elaTransactionEntity.balanceAfterTx = 0;
                 elaTransactionEntity.isValid = true;
                 elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
