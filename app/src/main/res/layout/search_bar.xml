@@ -62,69 +62,65 @@
                 android:id="@+id/sent_filter"
                 android:layout_width="60dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="4dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:paddingBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="16dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="@string/Search.sent"
                 android:textColor="@color/light_gray"
                 android:textSize="@dimen/paragraph"
                 app:buttonType="2"
-                app:customBFont="CircularPro-Book.otf"
-                app:isBreadButton="true"/>
+                app:isBreadButton="true" />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/received_filter"
                 android:layout_width="85dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="16dp"
-                android:paddingBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="16dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="@string/Search.received"
                 android:textColor="@color/light_gray"
                 android:textSize="@dimen/paragraph"
                 app:buttonType="2"
-                app:customBFont="CircularPro-Book.otf"
-                app:isBreadButton="true"/>
+                app:isBreadButton="true" />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/pending_filter"
                 android:layout_width="85dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="16dp"
-                android:paddingBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="16dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="@string/Search.pending"
                 android:textColor="@color/light_gray"
                 android:textSize="@dimen/paragraph"
                 app:buttonType="2"
-                app:customBFont="CircularPro-Book.otf"
-                app:isBreadButton="true"/>
+                app:isBreadButton="true" />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/complete_filter"
-                android:layout_width="85dp"
+                android:layout_width="90dp"
                 android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="16dp"
-                android:paddingBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="@string/Search.complete"
                 android:textColor="@color/light_gray"
                 android:textSize="@dimen/paragraph"
                 app:buttonType="2"
-                app:customBFont="CircularPro-Book.otf"
-                app:isBreadButton="true"/>
+                app:isBreadButton="true" />
 
         </LinearLayout>
 
@@ -132,17 +128,13 @@
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="0dp"
             android:background="@android:color/transparent"
             android:paddingTop="8dp"
             android:text="@string/Button.cancel"
-            app:isBreadButton="false"
-            app:customBFont="CircularPro-Book.otf"
+            android:textColor="@color/button_primary_normal"
             app:layout_constraintBottom_toBottomOf="@+id/search_edit"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/search_edit"/>
+            app:layout_constraintTop_toTopOf="@+id/search_edit" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.Toolbar>

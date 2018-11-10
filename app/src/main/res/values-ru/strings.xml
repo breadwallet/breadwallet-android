@@ -3,19 +3,21 @@
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
-  <string name="About.blog">Блог</string>
+  <string name="About.site">Elastos.org</string>
+  <string name="About.cr">CyberRepublic.org</string>
   <!-- About screen footer -->
   <string name="About.footer">Создано международной командой Bread. Версия %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Политика конфиденциальности</string>
-  <!-- About screen reddit label -->
+  <!-- About screen social labels -->
+  <string name="About.discord">Discord</string>
+  <string name="About.telegram">Telegram</string>
   <string name="About.reddit">Reddit</string>
+  <string name="About.twitter">Twitter</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">Условия использования</string>
   <!-- About screen title -->
   <string name="About.title">О нас</string>
-  <!-- About screen twitter label -->
-  <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
   <string name="About.walletID">Идентификатор BRD для вознаграждений</string>
   <!-- Close modal button accessibility label -->

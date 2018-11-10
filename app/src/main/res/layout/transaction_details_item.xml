@@ -50,8 +50,7 @@
                 android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/header"
-                app:customTFont="CircularPro-Bold.otf"
-                />
+                app:customTFont="BioSans-SemiBold.otf" />
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -95,22 +94,20 @@
                     android:textColor="@color/light_gray"
                     android:textIsSelectable="true"
                     android:textSize="18sp"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/description_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
                     android:text="sent --- "
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="true"
                     android:textSize="30sp"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/sub_header"
@@ -143,8 +140,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.statusHeader"
                     android:textColor="@color/light_gray"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/confirmation_text"
@@ -162,7 +158,7 @@
                     android:text="@string/Transaction.available"
                     android:textColor="#48F0B8"
                     android:textIsSelectable="true"
-                    app:customTFont="CircularPro-Bold.otf"/>
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <View
                     android:layout_width="match_parent"
@@ -179,8 +175,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.commentsHeader"
                     android:textColor="@color/light_gray"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <EditText
                     android:id="@+id/comment_text"
@@ -206,8 +201,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.amountHeader"
                     android:textColor="@color/light_gray"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/amount_text"
@@ -233,8 +227,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/Confirmation.to"
                     android:textColor="@color/light_gray"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                    app:customTFont="BioSans-SemiBold.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
 

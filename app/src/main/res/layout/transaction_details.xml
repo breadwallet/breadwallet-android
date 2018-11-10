@@ -98,7 +98,7 @@
 
 
             <View
-                android:id="@+id/divider1"
+                android:id="@+id/reddit_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/amount_when_sent"
@@ -110,7 +110,7 @@
                 android:id="@+id/tx_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider1"
+                android:layout_below="@id/reddit_divider"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
                 android:drawablePadding="5dp"
@@ -125,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/divider1"
+                android:layout_below="@id/reddit_divider"
                 android:layout_marginTop="14dp"
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"

@@ -25,7 +25,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-            app:customTFont="CircularPro-Bold.otf"/>
+            app:customTFont="BioSans-SemiBold.otf" />
 
         <ImageView
             android:layout_width="wrap_content"

@@ -53,7 +53,7 @@
                 android:text="@string/Send.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/header"
-                app:customTFont="CircularPro-Bold.otf"
+                app:customTFont="BioSans-SemiBold.otf"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
 
@@ -170,7 +170,7 @@
                 android:layout_marginStart="16dp"
                 android:text="$"
                 android:textSize="28sp"
-                app:customTFont="CircularPro-Medium.otf"
+                app:customTFont="BioSans-Regular.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -314,7 +314,7 @@
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:customBFont="CircularPro-Medium.otf"
+                    app:customBFont="BioSans-Regular.otf"
                     app:isBreadButton="false"
                     />
 
@@ -328,7 +328,7 @@
                     android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    app:customBFont="CircularPro-Medium.otf"
+                    app:customBFont="BioSans-Regular.otf"
                     app:isBreadButton="false"
                     />
             </LinearLayout>
@@ -337,13 +337,12 @@
                 android:id="@+id/warning_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="@dimen/paragraph"
-                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/FeeSelector.economyWarning"
                 android:textColor="@color/red_text"
-                />
+                android:textSize="@dimen/paragraph" />
 
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
@@ -385,14 +384,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
                 android:hint="@string/Send.descriptionLabel"
-                android:textSize="@dimen/sub_header"
                 android:inputType="textPersonName"
                 android:maxLength="250"
-                />
+                android:textSize="@dimen/sub_header"
+                app:customEFont="BioSans-SemiBold.otf" />
 
         </LinearLayout>
 

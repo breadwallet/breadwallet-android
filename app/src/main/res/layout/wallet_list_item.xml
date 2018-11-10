@@ -1,18 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/wallet_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/crypto_card_shape">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/wallet_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/crypto_card_shape">
 
     <RelativeLayout
         android:id="@+id/icon_background"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/asset_icon_background_transparent"
         android:orientation="vertical">
 
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -33,7 +33,7 @@
         android:layout_toEndOf="@+id/icon_background"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/wallet_trade_price"
@@ -44,56 +44,56 @@
         android:layout_toEndOf="@+id/icon_background"
         android:textColor="@color/balance_crypto_color"
         android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/wallet_balance_fiat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16sp"
         android:layout_marginTop="16sp"
+        android:layout_marginEnd="16dp"
         android:text="$12.00"
         android:textColor="@color/wallet_balance_fiat"
         android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/syncing_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/wallet_balance_fiat"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="3dp"
         android:layout_marginTop="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="16dp"
         android:layout_toStartOf="@id/sync_progress"
         android:text="@string/SyncingView.syncing"
         android:textColor="@color/sync_text"
         android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
     <ProgressBar
         android:id="@+id/sync_progress"
         android:layout_width="14dp"
         android:layout_height="14dp"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/wallet_balance_fiat"
-        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="3dp"
+        android:layout_marginEnd="10dp"
         android:indeterminate="true"
         android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
         android:indeterminateTint="@color/sync_text"
-        android:keepScreenOn="true"/>
+        android:keepScreenOn="true" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/wallet_balance_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/wallet_balance_fiat"
         android:layout_below="@id/wallet_balance_fiat"
+        android:layout_alignEnd="@id/wallet_balance_fiat"
         android:textColor="@color/balance_crypto_color"
         android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BioSans-SemiBold.otf" />
 
 </RelativeLayout>

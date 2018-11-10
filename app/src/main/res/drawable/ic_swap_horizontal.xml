@@ -1,7 +1,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:height="18dp"
-    android:width="18dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-    <path android:fillColor="@color/currency_subheading_color" android:pathData="M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z" />
+    android:height="36dp"
+    android:width="36dp"
+    android:viewportWidth="36"
+    android:viewportHeight="43">
+    <path android:fillColor="@color/currency_subheading_color" android:pathData="M0 17.5L5.02588 26.25L10.0817 35L15.1077 26.25L10.0818 17.5L15.1077 8.75002L10.0818 0L5.02588 8.75002L0 17.5ZM36 25.5L30.9741 16.75L25.9183 8L20.8923 16.75L25.9182 25.5L20.8923 34.25L25.9182 43L30.9741 34.25L36 25.5Z" />
 </vector>

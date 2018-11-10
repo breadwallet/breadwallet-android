@@ -61,7 +61,7 @@ public class BaseTextView extends TextView {
     private void init(Context ctx, AttributeSet attrs) {
         TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BaseTextView);
         String customFont = attributes.getString(R.styleable.BaseTextView_customTFont);
-        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
+        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "BioSans-Regular.otf" : customFont);
         attributes.recycle();
         setLineSpacing(0, 1.3f);
 

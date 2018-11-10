@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">Elastos</string>
   <!-- About screen blog label -->
-  <string name="About.blog">Blog</string>
+  <string name="About.site">Elastos.org</string>
+  <string name="About.cr">CyberRepublic.org</string>
   <!-- About screen footer -->
   <string name="About.footer">Gemaakt door het globale Bread team. Versie %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacyverklaring</string>
-  <!-- About screen reddit label -->
+  <!-- About screen social labels -->
+  <string name="About.discord">Discord</string>
+  <string name="About.telegram">Telegram</string>
   <string name="About.reddit">Reddit</string>
+  <string name="About.twitter">Twitter</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">Gebruikersvoorwaarden</string>
   <!-- About screen title -->
   <string name="About.title">Over</string>
-  <!-- About screen twitter label -->
-  <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
   <string name="About.walletID">BRD-beloningenidentificatie</string>
   <!-- Close modal button accessibility label -->
