@@ -120,32 +120,32 @@ public class WalletPlugin implements Plugin {
         if (!target.startsWith(PATH_BASE)) {
             return false;
         }
-        Activity app = (Activity) BreadApp.getBreadContext();
+        Activity context = (Activity) BreadApp.getBreadContext();
 
         if (target.startsWith(PATH_BASE + PATH_INFO) && request.getMethod().equalsIgnoreCase(GET.asString())) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            if (app == null) {
+            if (context == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "context is null", baseRequest, response);
             }
-            WalletsMaster wm = WalletsMaster.getInstance(app);
-            BaseWalletManager w = WalletBitcoinManager.getInstance(app);
+            WalletsMaster walletsMaster = WalletsMaster.getInstance(context);
+            BaseWalletManager walletManager = WalletBitcoinManager.getInstance(context);
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
-                jsonResp.put(KEY_NO_WALLET, wm.noWalletForPlatform(app));
+                jsonResp.put(KEY_NO_WALLET, walletsMaster.noWalletForPlatform(context));
 
-                String address = w.getReceiveAddress(app).stringify();
+                String address = getLegacyAddress(context, walletManager);
                 if (Utils.isNullOrEmpty(address)) {
-                    throw new IllegalArgumentException("Bitcoin address is empty");
+                    throw new IllegalArgumentException("Address is empty");
                 }
 
                 /**the current receive address*/
                 jsonResp.put(KEY_RECEIVE_ADDRESS, address);
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put(KEY_BTC_DENOMINATION_DIGITS, w.getMaxDecimalPlaces(app));
-                String preferredCode = BRSharedPrefs.getPreferredFiatIso(app);
+                jsonResp.put(KEY_BTC_DENOMINATION_DIGITS, walletManager.getMaxDecimalPlaces(context));
+                String preferredCode = BRSharedPrefs.getPreferredFiatIso(context);
                 Currency fiatCurrency = Currency.getInstance(preferredCode);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
@@ -217,7 +217,7 @@ public class WalletPlugin implements Plugin {
              "signature": "oibwaeofbawoefb" // base64-encoded signature
              }
              */
-            if (app == null) {
+            if (context == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "context is null", baseRequest, response);
             }
@@ -242,7 +242,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                BRBitId.signBitID(app, null, obj);
+                BRBitId.signBitID(context, null, obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
@@ -277,7 +277,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                AuthManager.getInstance().authPrompt(app, authText, "", false, false, new BRAuthCompletion() {
+                AuthManager.getInstance().authPrompt(context, authText, "", false, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -324,7 +324,7 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(SC_BAD_REQUEST, "failed to parse json", baseRequest, response);
             }
         } else if (target.startsWith(PATH_BASE + PATH_CURRENCIES)) {
-            JSONArray arr = getCurrencyData(app);
+            JSONArray arr = getCurrencyData(context);
             if (arr.length() == 0) {
                 BRReportsManager.reportBug(new IllegalArgumentException("_wallet/currencies created an empty json"));
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "Failed to create json", baseRequest, response);
@@ -345,7 +345,7 @@ public class WalletPlugin implements Plugin {
 
             try {
                 JSONObject obj = new JSONObject(reqBody);
-                sendTx(app, obj);
+                sendTx(context, obj);
 
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
@@ -360,15 +360,15 @@ public class WalletPlugin implements Plugin {
 
         } else if (target.startsWith(PATH_BASE + PATH_ADDRESSES)) {
             String iso = target.substring(target.lastIndexOf("/") + 1);
-            BaseWalletManager w = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
-            if (w == null) {
+            BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, iso);
+            if (walletManager == null) {
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "Invalid iso for address: " + iso, baseRequest, response);
             }
-
+            String address = getLegacyAddress(context, walletManager);
             JSONObject obj = new JSONObject();
             try {
-                obj.put(KEY_CURRENCY, w.getCurrencyCode());
-                obj.put(KEY_ADDRESS, w.getReceiveAddress(app).stringify());
+                obj.put(KEY_CURRENCY, walletManager.getCurrencyCode());
+                obj.put(KEY_ADDRESS, address);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -594,5 +594,11 @@ public class WalletPlugin implements Plugin {
         }
         continuation = null;
         globalBaseRequest = null;
+    }
+
+    private static String getLegacyAddress(Context context, BaseWalletManager walletManager) {
+        return walletManager instanceof WalletBitcoinManager
+                ? ((WalletBitcoinManager) walletManager).getWallet().getLegacyAddress().stringify()
+                : walletManager.getReceiveAddress(context).stringify();
     }
 }
