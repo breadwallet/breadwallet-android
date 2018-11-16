@@ -439,7 +439,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                             allFilled = false;
                         }
                     }
-
                 }
 
                 if (allFilled) {
