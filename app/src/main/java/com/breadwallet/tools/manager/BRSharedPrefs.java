@@ -86,6 +86,7 @@ public class BRSharedPrefs {
     private static final String PROMPT_PREFIX = "prompt_";
     private static final String TRUST_NODE_PREFIX = "trustNode_";
     private static final String APP_BACKGROUNDED_FROM_HOME = "appBackgroundedFromHome";
+    private static final String DEBUG_HOST = "debug_host";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -445,6 +446,18 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(USER_ID, uuid);
+        editor.apply();
+    }
+
+    public static String getDebugHost(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
+        return settingsToGet.getString(DEBUG_HOST, "");
+    }
+
+    public static void putDebugHost(Context context, String host) {
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(DEBUG_HOST, host);
         editor.apply();
     }
 

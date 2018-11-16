@@ -278,7 +278,7 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
     @WorkerThread
     public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
-        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getCurrencyCode();
+        String url = APIClient.getBaseURL() + "/rates?currency=" + walletManager.getCurrencyCode();
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) {
