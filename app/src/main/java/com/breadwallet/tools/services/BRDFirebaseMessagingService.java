@@ -180,7 +180,7 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_PUSH_DEVICES;
+                    String url = APIClient.getBaseURL() + ENDPOINT_PUSH_DEVICES;
                     String deviceEnvironment;
 
                     if (BuildConfig.DEBUG) {

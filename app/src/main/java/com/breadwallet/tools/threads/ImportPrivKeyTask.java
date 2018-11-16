@@ -39,6 +39,7 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +75,7 @@ import java.math.BigDecimal;
 public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     public static final String TAG = ImportPrivKeyTask.class.getName();
 
-    private static final String UTXO_URL_FORMAT = "https://%s/q/addr/%s/utxo?currency=%s";
+    private static final String UTXO_URL_FORMAT = "%s/q/addr/%s/utxo?currency=%s";
     private static final int TOAST_DELAY = 340;
     private Context mContext;
     private BRCoreKey mKey;
@@ -157,7 +158,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String decoratedAddress = walletManager.decorateAddress(theAddress);
 
         //automatically uses testnet if x-testnet is true
-        String utxoUrl = String.format(UTXO_URL_FORMAT, BreadApp.HOST, decoratedAddress, currencyCode);
+        String utxoUrl = String.format(UTXO_URL_FORMAT, APIClient.getBaseURL(), decoratedAddress, currencyCode);
 
         String responseBody = BRApiManager.urlGET(mContext, utxoUrl);
         String errorMessage = null;
