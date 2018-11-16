@@ -79,7 +79,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static final String TAG = BreadApp.class.getName();
 
     // The server(s) on which the API is hosted
-    public static final String HOST = BuildConfig.DEBUG ? "stage2.breadwallet.com" : "api.breadwallet.com";
+    private static final String HOST = BuildConfig.DEBUG ? "stage2.breadwallet.com" : "api.breadwallet.com";
     private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
     private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
     private static final String WALLET_ID_SEPARATOR = " ";
@@ -370,4 +370,29 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
 
     }
+
+    /**
+     *
+     * @return host or debug host if build is DEBUG
+     */
+    public static String getHost() {
+        if (BuildConfig.DEBUG) {
+            String host = BRSharedPrefs.getDebugHost(mInstance);
+            if (!Utils.isNullOrEmpty(host)) {
+                return host;
+            }
+        }
+        return HOST;
+    }
+
+    /**
+     * Sets the debug host into the shared preferences, only do that if the build is DEBUG.
+     * @param host
+     */
+    public static void setDebugHost(String host) {
+        if (BuildConfig.DEBUG) {
+            BRSharedPrefs.putDebugHost(mCurrentActivity, host);
+        }
+    }
+
 }

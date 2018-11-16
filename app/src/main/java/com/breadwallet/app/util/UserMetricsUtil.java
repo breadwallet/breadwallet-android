@@ -58,8 +58,8 @@ public final class UserMetricsUtil {
     private static final String TAG = UserMetricsUtil.class.getSimpleName();
 
     /* Url fields */
-    private static final String ME_METRICS_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/metrics";
-    private static final String ME_MAILING_LIST_SUBSCRIBE_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/mailing-list-subscribe";
+    private static final String ME_METRICS_URL = APIClient.getBaseURL() + "/me/metrics";
+    private static final String ME_MAILING_LIST_SUBSCRIBE_URL = APIClient.getBaseURL() + "/me/mailing-list-subscribe";
 
     /* Metric field key */
     private static final String FIELD_METRIC = "metric";
@@ -243,7 +243,7 @@ public final class UserMetricsUtil {
      * Makes request to metrics endpoint.
      *
      * @param context The context in which we are operating.
-     * @param url The URL endpoint to send the specified payload to.
+     * @param url     The URL endpoint to send the specified payload to.
      * @param payload The payload to send.
      */
     private static void sendMetricsRequestWithPayload(final Context context, String url, final JSONObject payload) {

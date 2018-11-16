@@ -9,7 +9,6 @@ import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.util.ArrayList;
 import java.util.List;

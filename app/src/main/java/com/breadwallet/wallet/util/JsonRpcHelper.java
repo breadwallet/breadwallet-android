@@ -51,22 +51,22 @@ public class JsonRpcHelper {
     }
 
     public static String getEthereumRpcUrl() {
-        return BRConstants.PROTOCOL + "://" + BreadApp.HOST + JsonRpcHelper.BRD_ETH_RPC_ENDPOINT;
+        return APIClient.getBaseURL() + JsonRpcHelper.BRD_ETH_RPC_ENDPOINT;
     }
 
     public static String createTokenTransactionsUrl(String address, String contractAddress) {
-        return BRConstants.PROTOCOL + "://" + BreadApp.HOST + BRD_ETH_TX_ENDPOINT + "query?" + "module=account&action=tokenbalance"
+        return APIClient.getBaseURL() + BRD_ETH_TX_ENDPOINT + "query?" + "module=account&action=tokenbalance"
                 + "&address=" + address + "&contractaddress=" + contractAddress;
     }
 
     public static String createEthereumTransactionsUrl(String address) {
-        return BRConstants.PROTOCOL + "://" + BreadApp.HOST + BRD_ETH_TX_ENDPOINT
+        return APIClient.getBaseURL() + BRD_ETH_TX_ENDPOINT
                 + "query?module=account&action=txlist&address=" + address;
     }
 
     public static String createLogsUrl(String address, String contract, String event) {
 
-        return BRConstants.PROTOCOL + "://" + BreadApp.HOST + BRD_ETH_TX_ENDPOINT + "query?"
+        return APIClient.getBaseURL() + BRD_ETH_TX_ENDPOINT + "query?"
                 + "module=logs&action=getLogs"
                 + "&fromBlock=0&toBlock=latest"
                 + (null == contract ? "" : ("&address=" + contract))
