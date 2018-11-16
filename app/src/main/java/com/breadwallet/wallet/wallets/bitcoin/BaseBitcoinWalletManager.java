@@ -59,6 +59,7 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -236,7 +237,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 return;
             }
         }
-        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getCurrencyCode());
+        String jsonString = BRApiManager.urlGET(app, APIClient.getBaseURL() + "/fee-per-kb?currency=" + getCurrencyCode());
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(getTag(), "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;

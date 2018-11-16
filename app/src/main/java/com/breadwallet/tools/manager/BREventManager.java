@@ -28,7 +28,6 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-import static com.platform.APIClient.BASE_URL;
 
 /**
  * BreadWallet
@@ -141,7 +140,7 @@ public class BREventManager implements ApplicationLifecycleObserver.ApplicationL
                     obj.put("appVersion", verCode);
                     obj.put("events", arr);
 
-                    String strUtl = BASE_URL + "/events";
+                    String strUtl = APIClient.getBaseURL() + "/events";
 
                     final MediaType JSON = MediaType.parse("application/json");
                     RequestBody requestBody = RequestBody.create(JSON, obj.toString());

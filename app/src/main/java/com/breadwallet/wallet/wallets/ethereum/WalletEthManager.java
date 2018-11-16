@@ -42,6 +42,7 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,7 +96,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
     public static final String NAME = "Ethereum";
-    private static final String FEE_URL_FORMAT = "https://%s/fee-per-kb?currency=%s";
+    private static final String FEE_URL_FORMAT = "%s/fee-per-kb?currency=%s";
 
     private static WalletEthManager mInstance;
 
@@ -361,7 +362,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, BreadApp.HOST, getCurrencyCode()));
+        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, APIClient.getBaseURL(), getCurrencyCode()));
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);

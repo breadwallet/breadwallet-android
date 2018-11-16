@@ -102,7 +102,7 @@ public class APIClient {
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
-
+    private static final String HTTPS_SCHEME = "https://";
     private static final String GMT = "GMT";
     private static final String BREAD = "bread";
     private static final int NETWORK_ERROR_CODE = 599;
@@ -114,7 +114,7 @@ public class APIClient {
     private static final String DEVICE_ID = "deviceID";
 
     // convenience getter for the API endpoint
-    public static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
+    private static final String BASE_URL = HTTPS_SCHEME + BreadApp.getHost();
     //Fee per kb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token path
@@ -134,8 +134,8 @@ public class APIClient {
     private static final String BUNDLES_FOLDER = "/bundles";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    public static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
-    public static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
+    private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
+    private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
 
     public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
@@ -192,7 +192,7 @@ public class APIClient {
             throw new NetworkOnMainThreadException();
         }
         try {
-            String strUtl = BASE_URL + FEE_PER_KB_URL;
+            String strUtl = getBaseURL() + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
             BRResponse response = sendRequest(request, false);
             JSONObject object = new JSONObject(response.getBodyText());
@@ -214,7 +214,7 @@ public class APIClient {
         if (mContext == null) {
             return null;
         }
-        String strUtl = BASE_URL + ME;
+        String strUtl = getBaseURL() + ME;
         Request request = new Request.Builder()
                 .url(strUtl)
                 .get()
@@ -240,7 +240,7 @@ public class APIClient {
             return null;
         }
         try {
-            String strUtl = BASE_URL + TOKEN_PATH;
+            String strUtl = getBaseURL() + TOKEN_PATH;
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(getCachedAuthKey());
@@ -408,7 +408,7 @@ public class APIClient {
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
                     return createBrResponse(response);
-                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST)
+                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                     return createBrResponse(new Response.Builder().code(HttpStatus.INTERNAL_SERVER_ERROR_500).request(request)
@@ -570,7 +570,7 @@ public class APIClient {
                 Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
                 long startTime = System.currentTimeMillis();
                 Request request = new Request.Builder()
-                        .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
+                        .url(String.format("%s/assets/bundles/%s/download", getBaseURL(), bundleName))
                         .get().build();
                 byte[] body;
                 BRResponse response = sendRequest(request, false);
@@ -610,7 +610,7 @@ public class APIClient {
         String latestVersion = null;
         Request request = new Request.Builder()
                 .get()
-                .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, bundleName))
+                .url(String.format("%s/assets/bundles/%s/versions", getBaseURL(), bundleName))
                 .build();
 
         BRResponse response = sendRequest(request, false);
@@ -633,7 +633,7 @@ public class APIClient {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
-        Request diffRequest = new Request.Builder().url(String.format(BUNDLES_FORMAT, BASE_URL, bundleName, currentTarVersion)).get().build();
+        Request diffRequest = new Request.Builder().url(String.format(BUNDLES_FORMAT, getBaseURL(), bundleName, currentTarVersion)).get().build();
         BRResponse resp = sendRequest(diffRequest, false);
         if (Utils.isNullOrEmpty(resp.getBodyText())) {
             Log.e(TAG, "downloadDiff: no response");
@@ -775,7 +775,7 @@ public class APIClient {
     }
 
     public String buildUrl(String path) {
-        return BASE_URL + path;
+        return getBaseURL() + path;
     }
 
     private class LoggingInterceptor implements Interceptor {
@@ -1043,6 +1043,14 @@ public class APIClient {
         public void setCode(int code) {
             mCode = code;
         }
+    }
+
+    public static String getBaseURL() {
+        if (BuildConfig.DEBUG) {
+            // In the debug case, the user may have changed the host.
+            return HTTPS_SCHEME + BreadApp.getHost();
+        }
+        return BASE_URL;
     }
 
 }
