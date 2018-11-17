@@ -11,14 +11,19 @@
     <item name="light_gray" type="color">#ff9d9d9d</item>
     <item name="separator_gray" type="color">#c6c6c6</item>
     <item name="gray_shadow" type="color">#41484848</item>
-    <item name="page_indicator_gray" type="color">#ff9d9d9d</item>
+    <item name="page_indicator_gray" type="color">#221f3f</item>
     <item name="extra_light_gray" type="color">#D6DAE1</item>
     <item name="dark_gray" type="color">#65696e</item>
     <item name="almost_black" type="color">#303030</item>
     <item name="dark_blue" type="color">#4C98FD</item>
+    <item name="on_boarding" type="color">#141233</item>
+    <item name="on_boarding_secondary_text" type="color">#8B89A1</item>
+    <item name="on_boarding_buy_button" type="color">#027AFF</item>
+    <item name="on_boarding_browse_button" type="color">#26000000</item>
     <item name="notification_gradient_start" type="color">#63BCFF</item>
     <item name="notification_gradient_end" type="color">#378DFD</item>
     <item name="wallet_orange" type="color">#ff8000</item>
+    <item name="brd_orange" type="color">#EA8017</item>
     <item name="white_trans" type="color">#32ffffff</item>
     <item name="black_trans" type="color">#b5000000</item>
     <item name="red_text" type="color">#FF5454</item>

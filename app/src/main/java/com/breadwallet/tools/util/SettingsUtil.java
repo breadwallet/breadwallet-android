@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
+import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -34,10 +35,11 @@ import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.OnBoardingAnimationManager;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
@@ -82,6 +84,7 @@ public final class SettingsUtil {
     private static final String SEND_LOGS = "Send Logs";
     private static final String API_SERVER = "API Server";
     private static final String API_SERVER_SET_FORMAT = "Api server %s set!";
+    private static final String ONBOARDING_FLOW = "Onboarding flow";
 
     private SettingsUtil() {
     }
@@ -160,6 +163,12 @@ public final class SettingsUtil {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            OnBoardingAnimationManager.loadAnimationFrames(activity);
+                        }
+                    });
                     Intent intent = new Intent(activity, SettingsActivity.class);
                     intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.DEVELOPER_OPTIONS);
                     activity.startActivity(intent);
@@ -273,6 +282,14 @@ public final class SettingsUtil {
             @Override
             public void onClick(View view) {
                 showInputDialog(activity);
+            }
+        }, false, 0));
+        items.add(new BRSettingsItem(ONBOARDING_FLOW, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, OnBoardingActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
         return items;
