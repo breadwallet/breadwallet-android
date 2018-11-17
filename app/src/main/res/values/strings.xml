@@ -995,7 +995,42 @@ users in a future update. </string>
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
     <!-- Wallet unlocked message -->
     <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
-  <!-- Delisted token alert banner message -->
-  <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
+
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">Welcome to BRD, your new global wallet!</string>
+    <!--Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">"Control and move your money without banks</string>
+
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">Buy and trade cryptocurrencies and tokens</string>
+
+    <!--Onboarding screen Page 3 title-->
+    <string name="OnboardingPageThree.title">Invest easily with BRD</string>
+
+    <!--Onboarding screen Page 4 subtitle  -->
+    <string name="OnboardingPageFour.subtitle">"Trusted by over 1.4 million people with $6 billion in assets</string>
+
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">BRD is safe and simple</string>
+
+    <!--Onboarding screen Page 5 title -->
+    <string name="OnboardingPageFive.title">Get started today with as little as $50!</string>
+
+    <!--Onboarding screen 'Create new wallet' button -->
+    <string name="Onboarding.createWalletButton">Create new wallet</string>
+
+    <!--Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirstButton">I\'ll browse first</string>
+
+    <!--Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoinButton">Buy some coin</string>
+
+    <!--Onboarding screen 'Next' button -->
+    <string name="Onboarding.nextButton">Next</string>
+
+    <!--Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWalletButto">Restore wallet</string>
 
 </resources>

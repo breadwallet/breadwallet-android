@@ -77,7 +77,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY, WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
+                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY,
+                        WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
                 UiUtils.startWebActivity(HomeActivity.this, url);
             }
         });
