@@ -222,7 +222,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        long start = System.currentTimeMillis();
         BigDecimal fee;
         if (amount == null) {
             return null;
@@ -231,7 +230,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             fee = BigDecimal.ZERO;
         } else {
             String feeString = mWalletToken.transactionEstimatedFee(amount.toPlainString(),
-                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI);
+                    BREthereumAmount.Unit.TOKEN_INTEGER, BREthereumAmount.Unit.ETHER_WEI);
             fee = Utils.isNullOrEmpty(feeString) ? BigDecimal.ZERO : new BigDecimal(feeString);
         }
         return fee;
@@ -326,7 +325,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
-        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_DECIMAL);
+        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_INTEGER);
         return new CryptoTransaction(tx);
     }
 
@@ -422,7 +421,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             //passed in a custom CurrencyEntity
             //get crypto amount
             //multiply by fiat rate
-            return amount.multiply(new BigDecimal(ent.rate));
+            return getCryptoForSmallestCrypto(context, amount).multiply(new BigDecimal(ent.rate));
         }
         BigDecimal cryptoAmount = getCryptoForSmallestCrypto(context, amount);
         BigDecimal fiatData = getFiatForToken(context, cryptoAmount, iso);
@@ -454,7 +453,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
             return amount;
         }
-        return amount.multiply(new BigDecimal(getDenominator()));
+        return amount.multiply(new BigDecimal(getDenominator())).stripTrailingZeros();
     }
 
     @Override

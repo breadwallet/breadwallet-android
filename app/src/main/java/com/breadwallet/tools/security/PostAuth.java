@@ -267,7 +267,8 @@ public class PostAuth {
                     }
 
                     // We use dynamic gas for ETH and ERC20 tokens. BUT not when we have a generic transaction CALL_REQUEST.
-                    if (mCryptoRequest.getGenericTransactionMetaData() == null && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null
+                            && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             || WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
                         final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
                         final Timer timeoutTimer = new Timer();

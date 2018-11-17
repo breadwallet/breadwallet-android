@@ -279,7 +279,6 @@ public class SendManager {
             Log.e(TAG, "confirmPay: context is null");
             return;
         }
-
         String message = createConfirmation(ctx, request, wm);
         if (message == null) {
             BRDialog.showSimpleDialog(ctx, "Failed", "Confirmation message failed");
@@ -349,8 +348,7 @@ public class SendManager {
 
     private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager wm) {
 
-        String receiver;
-        receiver = wm.decorateAddress(request.getAddress());
+        String receiver = wm.decorateAddress(request.getAddress());
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BigDecimal feeForTx = wm.getEstimatedFee(request.getAmount(), request.getAddress());

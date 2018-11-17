@@ -778,7 +778,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             @Override
             public void run() {
                 final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
-                Log.d(TAG, "Making rpc request to -> " + ethUrl);
+                Log.d(TAG, "Making getGasEstimate rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
