@@ -398,8 +398,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         InternetManager.registerConnectionReceiver(this, this);
 
-        TxManager.getInstance().onResume(this);
-
         RatesDataSource.getInstance(this).addOnDataChangedListener(this);
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (wallet != null) {
