@@ -16,6 +16,7 @@ import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
+import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -31,6 +32,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -75,6 +77,7 @@ public class PostAuth {
     public static TxMetaData mTxMetaData;
     public SendManager.SendCompletion mSendCompletion;
     private BaseWalletManager mWalletManager;
+    private AuthenticationSuccessListener mAuthenticationSuccessListener;
 
     private CryptoTransaction mPaymentProtocolTx;
     private static PostAuth mInstance;
@@ -89,22 +92,25 @@ public class PostAuth {
         return mInstance;
     }
 
-    public void onCreateWalletAuth(final Activity activity, boolean authAsked) {
-        boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
+    /**
+     *
+     * @param context the context to be used
+     * @param authAsked Device authentication for this action was asked already
+     * @param listener Action on device authentication or null if using the cached listener.
+     */
+    public void onCreateWalletAuth(final Context context, boolean authAsked, AuthenticationSuccessListener listener) {
+        if (listener != null) {
+            mAuthenticationSuccessListener = listener;
+        }
+        boolean success = WalletsMaster.getInstance(context).generateRandomSeed(context);
         if (success) {
             BreadApp.initialize(false);
-
-            Intent intent = new Intent(activity, WriteDownActivity.class);
-            intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            activity.finish();
+            mAuthenticationSuccessListener.onAuthenticatedSuccess();
         } else {
             if (authAsked) {
                 Log.e(TAG, "onCreateWalletAuth: WARNING!!!! LOOP");
                 mAuthLoopBugHappened = true;
             }
-            return;
         }
     }
 
@@ -425,6 +431,10 @@ public class PostAuth {
             }
         }
         WalletsMaster.getInstance(activity).startTheWalletIfExists(activity);
+    }
+
+    public interface AuthenticationSuccessListener {
+        void onAuthenticatedSuccess();
     }
 
 }
