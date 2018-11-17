@@ -1,6 +1,5 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.WorkerThread;
@@ -50,26 +49,31 @@ import java.util.List;
 public class TxManager {
 
     private static final String TAG = TxManager.class.getName();
-    private static TxManager instance;
-    private RecyclerView txList;
-    public TransactionListAdapter adapter;
+    private static TxManager mInstance;
+    private RecyclerView mTxList;
+    private TransactionListAdapter mAdapter;
     private RecyclerItemClickListener mItemListener;
 
+    public TransactionListAdapter getAdapter() {
+        return mAdapter;
+    }
 
     public static TxManager getInstance() {
-        if (instance == null) instance = new TxManager();
-        return instance;
+        if (mInstance == null) {
+            mInstance = new TxManager();
+        }
+        return mInstance;
     }
 
     public void init(final WalletActivity app) {
         mItemListener = new RecyclerItemClickListener(app,
-                txList, new RecyclerItemClickListener.OnItemClickListener() {
+                mTxList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-
-                if (position == -1) return;
-                TxUiHolder item = adapter.getItems().get(position);
-                UiUtils.showTransactionDetails(app, item, position);
+                if (position >= 0) {
+                    TxUiHolder item = mAdapter.getItems().get(position);
+                    UiUtils.showTransactionDetails(app, item, position);
+                }
             }
 
             @Override
@@ -77,21 +81,19 @@ public class TxManager {
 
             }
         });
-        txList = app.findViewById(R.id.tx_list);
-        txList.setLayoutManager(new CustomLinearLayoutManager(app));
-        txList.addOnItemTouchListener(mItemListener);
-        if (adapter == null)
-            adapter = new TransactionListAdapter(app, null);
-        if (txList.getAdapter() == null)
-            txList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        mTxList = app.findViewById(R.id.tx_list);
+        mTxList.setLayoutManager(new CustomLinearLayoutManager(app));
+        mTxList.addOnItemTouchListener(mItemListener);
+        if (mAdapter == null) {
+            mAdapter = new TransactionListAdapter(app, null);
+        }
+        if (mTxList.getAdapter() == null) {
+            mTxList.setAdapter(mAdapter);
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private TxManager() {
-    }
-
-    public void onResume(final Activity app) {
-        crashIfNotMain();
     }
 
     @WorkerThread
@@ -101,20 +103,20 @@ public class TxManager {
             Log.e(TAG, "updateTxList: wallet is null");
             return;
         }
-        if (TxManager.getInstance().adapter != null)
-            TxManager.getInstance().adapter.updateData();
+        if (TxManager.getInstance().mAdapter != null) {
+            TxManager.getInstance().mAdapter.updateData();
+        }
         final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
-        if (adapter != null) {
+        if (mAdapter != null) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.setItems(items);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.setItems(items);
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
-
     }
 
     private class CustomLinearLayoutManager extends LinearLayoutManager {
