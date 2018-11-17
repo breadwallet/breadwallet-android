@@ -35,6 +35,8 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.HTTPServer;
 
 /**
  * BreadWallet
@@ -233,7 +235,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, null);
                         }
                     });
 
@@ -243,20 +245,6 @@ public class BRActivity extends FragmentActivity {
                     WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
                     m.wipeWalletButKeystore(this);
                     finish();
-                }
-                break;
-            case InputPinActivity.SET_PIN_REQUEST_CODE:
-                if (data != null) {
-                    boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
-                    if (isPinAccepted) {
-                        if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
-                            PostAuth.getInstance().onCreateWalletAuth(this, false);
-                        } else {
-                            UiUtils.startBreadActivity(this, false);
-                        }
-
-                    }
-
                 }
                 break;
 

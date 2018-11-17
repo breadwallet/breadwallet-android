@@ -12,8 +12,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
@@ -102,16 +104,19 @@ public class BRButton extends Button {
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
-        int[] attributeArray = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
+        int[] attributeArray = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd,
+                android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
         //then obtain typed array
         TypedArray arr = ctx.obtainStyledAttributes(attrs, attributeArray);
         //You can check if attribute exists (in this example checking paddingRight)
 
         isBreadButton = attributes.getBoolean(R.styleable.BRButton_isBreadButton, false);
+        int buttonColor = attributes.getResourceId(R.styleable.BRButton_buttonColor, 0);
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
+
         hasShadow = attributes.getBoolean(R.styleable.BRButton_hasShadow, true);
 
         int type = attributes.getInteger(R.styleable.BRButton_buttonType, 0);
@@ -138,6 +143,10 @@ public class BRButton extends Button {
                 correctTextBalance();
             }
         });
+        if (buttonColor > 0) {
+            bPaint.setColor(getContext().getColor(buttonColor));
+            invalidate();
+        }
     }
 
     @Override

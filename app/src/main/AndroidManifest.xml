@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -128,7 +127,6 @@
                     android:host="brd.com"
                     android:pathPrefix="/scanqr"
                     android:scheme="https" />
-
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -293,6 +291,11 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8f7c58228ac371e49f7c5e8b1a94c4c0833986a1" />
+
+        <activity
+            android:name=".presenter.activities.intro.OnBoardingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -2,29 +2,28 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.animation.OnBoardingAnimationManager;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
-
 
 /**
  * BreadWallet
@@ -53,6 +52,7 @@ import com.platform.APIClient;
 
 public class IntroActivity extends BRActivity {
     private static final String TAG = IntroActivity.class.getSimpleName();
+    public static final String BRD = "BRD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +60,6 @@ public class IntroActivity extends BRActivity {
         setContentView(R.layout.activity_intro);
         setOnClickListeners();
         updateBundles();
-
-        Shader shader = new LinearGradient(
-                90, 0, 100, 100,
-                getColor(R.color.button_gradient_start_color),
-                getColor(R.color.button_gradient_end_color),
-                Shader.TileMode.CLAMP);
-
-        TextView subtitle = findViewById(R.id.intro_subtitle);
-        subtitle.getPaint().setShader(shader);
 
         ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
@@ -80,13 +71,20 @@ public class IntroActivity extends BRActivity {
             }
         });
 
+        BaseTextView introSubtitle = findViewById(R.id.intro_subtitle);
+        String welcomeString = getString(R.string.OnboardingPageOne_title);
+        Spannable spannableWelcome = new SpannableString(welcomeString);
+        int brdStartIndex = welcomeString.indexOf(BRD);
+        spannableWelcome.setSpan(new ForegroundColorSpan(getColor(R.color.brd_orange)),
+                brdStartIndex, brdStartIndex + BRD.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        introSubtitle.setText(spannableWelcome);
+
         if (Utils.isEmulatorOrDebug(this)) {
             Utils.printPhoneSpecs(this);
         }
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
-        findViewById(R.id.splash_screen).setVisibility(View.GONE);
     }
 
     private void updateBundles() {
@@ -103,20 +101,21 @@ public class IntroActivity extends BRActivity {
     }
 
     private void setOnClickListeners() {
-        findViewById(R.id.button_new_wallet).setOnClickListener(new View.OnClickListener() {
+        BRButton buttonNewWallet = findViewById(R.id.button_new_wallet);
+        BRButton buttonRecoverWallet = findViewById(R.id.button_recover_wallet);
+        buttonNewWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Intent intent = new Intent(IntroActivity.this, OnBoardingActivity.class);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                startActivity(intent);
             }
         });
 
-        findViewById(R.id.button_recover_wallet).setOnClickListener(new View.OnClickListener() {
+        buttonRecoverWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
@@ -128,4 +127,18 @@ public class IntroActivity extends BRActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    OnBoardingAnimationManager.loadAnimationFrames(IntroActivity.this);
+                }
+            });
+        }
+    }
+
 }
