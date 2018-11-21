@@ -1,22 +1,20 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.tools.BRBitId;
-
-import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
 
 /**
  * BreadWallet
@@ -44,6 +42,10 @@ import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_R
  */
 public final class AppEntryPointHandler {
     private static final String TAG = AppEntryPointHandler.class.getSimpleName();
+    private static final String BRD_HOST = "brd.com";
+    private static final String BRD_PROTOCOL = "https://";
+    private static final String PLATFORM_PATH_PREFIX = "/x/platform/";
+    private static final String PLATFORM_URL_FORMAT = "link?to=/%s";
 
     /**
      * A utility class used to process QR codes URL links to start our application.
@@ -63,7 +65,9 @@ public final class AppEntryPointHandler {
     }
 
     private static void processIntentResult(final Context context, String result) {
-        if (CryptoUriParser.isCryptoUrl(context, result)) {
+        if (isDeepLinkPlatformUrl(result)) {
+            processPlatformDeepLinkingUrl(context, result);
+        } else if (CryptoUriParser.isCryptoUrl(context, result)) {
             // Handle external click with crypto scheme.
             CryptoUriParser.processRequest(context, result,
                     WalletsMaster.getInstance(context).getCurrentWallet(context));
@@ -81,6 +85,22 @@ public final class AppEntryPointHandler {
         }
     }
 
+    private static boolean isDeepLinkPlatformUrl(String url) {
+        if (!Utils.isNullOrEmpty(url)) {
+            Uri uri = Uri.parse(url);
+            return BRD_HOST.equalsIgnoreCase(uri.getHost())
+                    && !Utils.isNullOrEmpty(uri.getPath())
+                    && uri.getPath().startsWith(PLATFORM_PATH_PREFIX);
+        }
+        return false;
+    }
+
+    private static void processPlatformDeepLinkingUrl(Context context, String url) {
+        Uri uri = Uri.parse(url);
+        String platformPath = uri.getPath().replace(PLATFORM_PATH_PREFIX, "");
+        String platformUrl = String.format(PLATFORM_URL_FORMAT, platformPath);
+        UiUtils.startWebActivity((Activity) context, platformUrl);
+    }
 
     /**
      * Processes a deep link into the application.
@@ -89,7 +109,6 @@ public final class AppEntryPointHandler {
      * @param url     The url for the deep link.
      */
     public static void processDeepLink(final Context context, String url) {
-        Log.e(TAG, "processDeepLink: " + url);
         if (url != null && !url.isEmpty()) {
             if (!WalletsMaster.getInstance(context).isBrdWalletCreated(context)) {
                 // Go to intro screen if the wallet is not create yet.
