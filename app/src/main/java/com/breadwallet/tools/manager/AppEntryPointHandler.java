@@ -3,8 +3,11 @@ package com.breadwallet.tools.manager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.util.BRConstants;
@@ -12,6 +15,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.tools.BRBitId;
+
+import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
 
 /**
  * BreadWallet
@@ -38,6 +43,8 @@ import com.platform.tools.BRBitId;
  * THE SOFTWARE.
  */
 public final class AppEntryPointHandler {
+    private static final String TAG = AppEntryPointHandler.class.getSimpleName();
+
     /**
      * A utility class used to process QR codes URL links to start our application.
      */
@@ -48,14 +55,14 @@ public final class AppEntryPointHandler {
      * Returns whether the specified QR code result is supported by our application.
      *
      * @param context The context in which we are operating.
-     * @param result The QR code result to check.
+     * @param result  The QR code result to check.
      * @return Returns true if the specified QR code result is supported by our application; false, otherwise.
      */
     public static boolean isSupportedQRCode(Context context, String result) {
         return CryptoUriParser.isCryptoUrl(context, result) || BRBitId.isBitId(result) || isWalletPairUrl(result);
     }
 
-    public static void processQrResult(final Context context, String result) {
+    private static void processIntentResult(final Context context, String result) {
         if (CryptoUriParser.isCryptoUrl(context, result)) {
             // Handle external click with crypto scheme.
             CryptoUriParser.processRequest(context, result,
@@ -69,25 +76,27 @@ public final class AppEntryPointHandler {
                     context,
                     MessageExchangeService.ACTION_REQUEST_TO_PAIR,
                     pairingMetaData));
+        } else {
+            Log.d(TAG, "processIntentResult: unknown url: " + result);
         }
     }
+
 
     /**
      * Processes a deep link into the application.
      *
      * @param context The context in which we are operating.
-     * @param intent The intent containing data (URL) for the deep link.
+     * @param url     The url for the deep link.
      */
-    public static void processDeepLink(final Context context, Intent intent) {
-        final Uri data = intent.getData();
-        intent.setData(null);
-        if (data != null && !data.toString().isEmpty()) {
+    public static void processDeepLink(final Context context, String url) {
+        Log.e(TAG, "processDeepLink: " + url);
+        if (url != null && !url.isEmpty()) {
             if (!WalletsMaster.getInstance(context).isBrdWalletCreated(context)) {
                 // Go to intro screen if the wallet is not create yet.
                 Intent introIntent = new Intent(context, IntroActivity.class);
                 context.startActivity(introIntent);
             } else {
-                processQrResult(context, data.toString());
+                processIntentResult(context, url);
             }
         }
     }
