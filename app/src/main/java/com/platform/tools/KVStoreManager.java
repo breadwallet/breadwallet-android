@@ -219,36 +219,39 @@ public class KVStoreManager {
 
     public static void putPairingMetadata(Context app, PairingMetaData pairingData) {
         Log.d(TAG, "putPairingMetadata: hexPubkey: " + pairingData.getPublicKeyHex());
-        byte[] rawPubKey = BRCoreKey.decodeHex(pairingData.getPublicKeyHex());
-        String base64PubKey = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
+        if (pairingData.getPublicKeyHex() != null) {
+            byte[] rawPubKey = BRCoreKey.decodeHex(pairingData.getPublicKeyHex());
+            String base64PubKey = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
 
-        JSONObject obj = new JSONObject();
-        byte[] result;
-        try {
-            obj.put(CLASS_VERSION, 1);
-            obj.put(IDENTIFIER, pairingData.getId());
-            obj.put(SERVICE, pairingData.getService());
-            obj.put(REMOTE_PUBKEY, base64PubKey);
-            obj.put(CREATED, System.currentTimeMillis());
-            obj.put(RETURN_URL, pairingData.getReturnUrl());
-            result = obj.toString().getBytes();
+            JSONObject obj = new JSONObject();
+            byte[] result;
+            try {
+                obj.put(CLASS_VERSION, 1);
+                obj.put(IDENTIFIER, pairingData.getId());
+                obj.put(SERVICE, pairingData.getService());
+                obj.put(REMOTE_PUBKEY, base64PubKey);
+                obj.put(CREATED, System.currentTimeMillis());
+                obj.put(RETURN_URL, pairingData.getReturnUrl());
+                result = obj.toString().getBytes();
 
-        } catch (JSONException e) {
-            Log.e(TAG, "putPairingMetadata: ", e);
-            return;
+            } catch (JSONException e) {
+                Log.e(TAG, "putPairingMetadata: ", e);
+                return;
+            }
+
+            if (result.length == 0) {
+                Log.e(TAG, "putPairingMetadata: FAILED: result is empty");
+                return;
+            }
+            String key = pairingKey(rawPubKey);
+            Log.e(TAG, "putPairingMetadata: " + key);
+            CompletionObject completionObject = setData(app, result, key);
+            if (completionObject != null && completionObject.err != null) {
+                Log.e(TAG, "putPairingMetadata: Error setting value for key: " + KEY_PAIRING_META_DATA + ", err: " + completionObject.err);
+            }
+        } else {
+            Log.e(TAG, "putPairingMetadata: pairingData.getPublicKeyHex() is null!");
         }
-
-        if (result.length == 0) {
-            Log.e(TAG, "putPairingMetadata: FAILED: result is empty");
-            return;
-        }
-        String key = pairingKey(rawPubKey);
-        Log.e(TAG, "putPairingMetadata: " + key);
-        CompletionObject completionObject = setData(app, result, key);
-        if (completionObject != null && completionObject.err != null) {
-            Log.e(TAG, "putPairingMetadata: Error setting value for key: " + KEY_PAIRING_META_DATA + ", err: " + completionObject.err);
-        }
-
     }
 
     public static String getLastCursor(Context context) {

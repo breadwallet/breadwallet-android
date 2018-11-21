@@ -1,11 +1,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -16,13 +14,12 @@ import android.widget.LinearLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
@@ -30,6 +27,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -48,6 +46,7 @@ import java.util.ArrayList;
 public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged, BalanceUpdateListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
+    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
 
     public static final String CCC_CURRENCY_CODE = "CCC";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
@@ -118,6 +117,23 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onLongItemClick(View view, int position) {
             }
         }));
+        processIntentData(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        processIntentData(intent);
+    }
+
+    private synchronized void processIntentData(Intent intent) {
+        String data = intent.getStringExtra(EXTRA_DATA);
+        if (Utils.isNullOrEmpty(data)) {
+            data = intent.getDataString();
+        }
+        if (data != null) {
+            AppEntryPointHandler.processDeepLink(this, data);
+        }
     }
 
     private void showNextPromptIfNeeded() {

@@ -370,7 +370,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 if (!UiUtils.isClickAllowed()) return;
                 saveViewModelData();
                 closeWithAnimation();
-                UiUtils.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(getActivity());
 
             }
         });
