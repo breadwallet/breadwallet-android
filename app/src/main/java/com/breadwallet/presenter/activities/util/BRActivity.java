@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -113,7 +114,7 @@ public class BRActivity extends FragmentActivity {
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Camera permission has been granted, preview can be displayed.
                     Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                    UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner(this);
                 } else {
                     Log.i(TAG, "CAMERA permission was NOT granted.");
                     BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
@@ -153,7 +154,6 @@ public class BRActivity extends FragmentActivity {
                             PostAuth.getInstance().onBitIDAuth(BRActivity.this, true);
                         }
                     });
-
                 }
                 break;
 
@@ -216,20 +216,6 @@ public class BRActivity extends FragmentActivity {
                     finish();
                 }
                 break;
-
-            case BRConstants.SCANNER_REQUEST:
-                if (resultCode == Activity.RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            String result = data.getStringExtra(ScanQRActivity.EXTRA_RESULT);
-                            AppEntryPointHandler.processQrResult(BRActivity.this, result);
-                        }
-                    });
-
-                }
-                break;
-
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -238,7 +224,6 @@ public class BRActivity extends FragmentActivity {
                             PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, null);
                         }
                     });
-
                 } else {
                     Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
                     // TODO: Should this be BreadApp.clearApplicationUserData();?
@@ -247,7 +232,6 @@ public class BRActivity extends FragmentActivity {
                     finish();
                 }
                 break;
-
         }
     }
 

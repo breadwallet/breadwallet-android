@@ -195,7 +195,7 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(this);
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
             } else {
