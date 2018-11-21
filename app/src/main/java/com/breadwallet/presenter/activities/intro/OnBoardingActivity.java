@@ -118,31 +118,34 @@ public class OnBoardingActivity extends BRActivity {
                     showBuyScreen();
                 } else {
                     mShowBuyBitcoinAfterPinInsert = true;
-                    PostAuth.getInstance().onCreateWalletAuth(OnBoardingActivity.this, false, new PostAuth.AuthenticationSuccessListener() {
-                        @Override
-                        public void onAuthenticatedSuccess() {
-                            APIClient.getInstance(OnBoardingActivity.this).updatePlatform(OnBoardingActivity.this);
-                            Intent intent = new Intent(OnBoardingActivity.this, InputPinActivity.class);
-                            OnBoardingActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            OnBoardingActivity.this.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-                        }
-                    });
+                    setupPin();
                 }
             }
         });
         mButtonBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostAuth.getInstance().onCreateWalletAuth(OnBoardingActivity.this, false, new PostAuth.AuthenticationSuccessListener() {
-                    @Override
-                    public void onAuthenticatedSuccess() {
-                        UiUtils.startBreadActivity(OnBoardingActivity.this, false);
-                    }
-                });
+                if (BRKeyStore.getPinCode(OnBoardingActivity.this).length() > 0) {
+                    UiUtils.startBreadActivity(OnBoardingActivity.this, true);
+                } else {
+                    setupPin();
+                }
             }
         });
         showAnimation(++mCurrentScene);
         moveButtonsAway();
+    }
+
+    private void setupPin() {
+        PostAuth.getInstance().onCreateWalletAuth(OnBoardingActivity.this, false, new PostAuth.AuthenticationSuccessListener() {
+            @Override
+            public void onAuthenticatedSuccess() {
+                APIClient.getInstance(OnBoardingActivity.this).updatePlatform(OnBoardingActivity.this);
+                Intent intent = new Intent(OnBoardingActivity.this, InputPinActivity.class);
+                OnBoardingActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                OnBoardingActivity.this.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+            }
+        });
     }
 
     private void moveButtonsAway() {
