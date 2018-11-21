@@ -96,7 +96,7 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.openScanner(activity, BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(activity);
             }
         }, false, R.drawable.ic_camera));
 
