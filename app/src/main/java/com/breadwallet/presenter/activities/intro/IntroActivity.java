@@ -53,6 +53,7 @@ import com.platform.APIClient;
 public class IntroActivity extends BRActivity {
     private static final String TAG = IntroActivity.class.getSimpleName();
     public static final String BRD = "BRD";
+    private static final String WELCOME_STRING_FORMAT = "%s \uD83D\uDE42"; //\uD83D\uDE42 is a smiley face
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class IntroActivity extends BRActivity {
 
         BaseTextView introSubtitle = findViewById(R.id.intro_subtitle);
         String welcomeString = getString(R.string.OnboardingPageOne_title);
-        Spannable spannableWelcome = new SpannableString(welcomeString);
+        Spannable spannableWelcome = new SpannableString(String.format(WELCOME_STRING_FORMAT, welcomeString));
         int brdStartIndex = welcomeString.indexOf(BRD);
         spannableWelcome.setSpan(new ForegroundColorSpan(getColor(R.color.brd_orange)),
                 brdStartIndex, brdStartIndex + BRD.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
