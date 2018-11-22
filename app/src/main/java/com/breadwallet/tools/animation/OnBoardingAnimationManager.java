@@ -58,7 +58,7 @@ public class OnBoardingAnimationManager {
     public static void loadAnimationFrames(Context context) {
         Log.d(TAG, "loadAnimationFrames: Loading..");
         if (mAnimationDrawables.size() == 0) {
-            for (int i = 0; i < OnBoardingActivity.FOURTH_SCENE; i++) {
+            for (int i = 0; i < OnBoardingActivity.THIRD_SCENE; i++) {
                 mAnimationDrawables.add(new AnimationDrawable());
             }
             try {

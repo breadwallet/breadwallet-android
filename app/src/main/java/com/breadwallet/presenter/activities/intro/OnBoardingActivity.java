@@ -59,12 +59,11 @@ public class OnBoardingActivity extends BRActivity {
     public static final float SCALE_TO_ANIMATION = 1.5f;
     private static final int ANIMATION_DURATION = 300;
     private static final int BUTTONS_ANIMATION_DELAY = 500;
-    private static final float PRIMARY_TEXT_POSITION = 200f;
-    private static final float SECONDARY_TEXT_POSITION = 420f;
+    private static final float PRIMARY_TEXT_POSITION = 240f;
+    private static final float SECONDARY_TEXT_POSITION = 500f;
     private static final int FIRST_SCENE = 1;
     private static final int SECOND_SCENE = 2;
-    private static final int THIRD_SCENE = 3;
-    public static final int FOURTH_SCENE = 4;
+    public static final int THIRD_SCENE = 3;
     private ImageView mAnimationImageView;
     private BaseTextView mPrimaryText;
     private BaseTextView mSecondaryText;
@@ -78,7 +77,6 @@ public class OnBoardingActivity extends BRActivity {
     private float mBuyButtonY;
     private float mBrowseButtonY;
     private float mPrimaryTextTranslationY;
-    private float mSecondaryTextTranslationY;
     private float mImageViewScaleX;
     private float mImageViewScaleY;
 
@@ -98,7 +96,6 @@ public class OnBoardingActivity extends BRActivity {
         mImageViewScaleX = mAnimationImageView.getScaleX();
         mImageViewScaleY = mAnimationImageView.getScaleY();
         mPrimaryTextTranslationY = mPrimaryText.getTranslationY();
-        mSecondaryTextTranslationY = mSecondaryText.getTranslationY();
         mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,11 +162,17 @@ public class OnBoardingActivity extends BRActivity {
                 mAnimationImageView.animate().scaleX(SCALE_TO_ANIMATION).scaleY(SCALE_TO_ANIMATION).setDuration(0);
                 mPrimaryText.setText(getString(R.string.OnboardingPageTwo_title));
                 mPrimaryText.animate().alpha(1).y(PRIMARY_TEXT_POSITION)
-                        .setStartDelay(ANIMATION_DURATION).setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
+                        .setStartDelay(ANIMATION_DURATION).setDuration(ANIMATION_DURATION)
+                        .setInterpolator(new DecelerateInterpolator());
+                mSecondaryText.setText(getString(R.string.OnboardingPageTwo_subtitle));
+                mSecondaryText.animate().alpha(1).y(SECONDARY_TEXT_POSITION)
+                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
                 break;
             case SECOND_SCENE:
                 mButtonBack.setVisibility(View.GONE);
                 mAnimationImageView.animate().scaleX(mImageViewScaleX).scaleY(mImageViewScaleY).setDuration(ANIMATION_DURATION);
+                mSecondaryText.animate().alpha(0)
+                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
                 mPrimaryText.animate().alpha(0)
                         .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
                     @Override
@@ -185,24 +188,7 @@ public class OnBoardingActivity extends BRActivity {
                 });
                 break;
             case THIRD_SCENE:
-                mSecondaryText.animate().alpha(0)
-                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
-                mPrimaryText.animate().alpha(0)
-                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPrimaryText.setText(getString(R.string.OnboardingPageFour_title));
-                        mPrimaryText.setTranslationY(mPrimaryTextTranslationY);
-                        mSecondaryText.setTranslationY(mSecondaryTextTranslationY);
-                        mPrimaryText.animate().alpha(1).y(PRIMARY_TEXT_POSITION)
-                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
-                        mSecondaryText.setText(getString(R.string.OnboardingPageFour_subtitle));
-                        mSecondaryText.animate().alpha(1).y(SECONDARY_TEXT_POSITION)
-                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
-                    }
-                });
-                break;
-            case FOURTH_SCENE:
+                mAnimationImageView.animate().y(BRSharedPrefs.getScreenHeight(this));
                 mButtonNext.animate().translationY(SECONDARY_TEXT_POSITION).alpha(0);
                 mSecondaryText.animate().alpha(0)
                         .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
@@ -217,6 +203,7 @@ public class OnBoardingActivity extends BRActivity {
                     }
                 });
                 break;
+
         }
         createAnimationAndStart(sceneNumber);
     }
@@ -226,7 +213,7 @@ public class OnBoardingActivity extends BRActivity {
         mAnimationImageView.setImageDrawable(animationDrawable);
         animationDrawable.setOneShot(true);
         animationDrawable.start();
-        if (sceneNumber == FOURTH_SCENE) {
+        if (sceneNumber == THIRD_SCENE) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
