@@ -104,7 +104,7 @@ public class UiUtils {
         mSupportIsShowing = isSupportFragmentShown;
     }
 
-    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {
+    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager walletManager) {
         if (mSupportIsShowing) {
             return;
         }
@@ -115,7 +115,8 @@ public class UiUtils {
                 return;
             }
 
-            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
+            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager()
+                    .findFragmentByTag(FragmentSupport.class.getName());
             if (fragmentSupport != null && fragmentSupport.isAdded()) {
                 app.getFragmentManager().popBackStack();
                 return;
@@ -124,12 +125,15 @@ public class UiUtils {
             if (WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, currencyCode)) {
                 currencyCode = BRConstants.CURRENCY_ERC20;
             }
-            if (wm != null) wm.getCurrencyCode();
+            if (walletManager != null) {
+                walletManager.getCurrencyCode();
+            }
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
             bundle.putString(FragmentSupport.WALLET_CURRENCY_CODE, currencyCode);
-            if (!Utils.isNullOrEmpty(articleId))
+            if (!Utils.isNullOrEmpty(articleId)) {
                 bundle.putString(FragmentSupport.EXTRA_ARTICLE_ID, articleId);
+            }
 
             fragmentSupport.setArguments(bundle);
             app.getSupportFragmentManager().beginTransaction()

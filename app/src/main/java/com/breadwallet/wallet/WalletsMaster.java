@@ -240,8 +240,11 @@ public class WalletsMaster {
     }
 
     public boolean isCurrencyCodeErc20(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso)) return false;
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(app);
+        if (Utils.isNullOrEmpty(iso) || walletEthManager == null) {
+            return false;
+        }
+        BREthereumToken[] tokens = walletEthManager.node.getTokens();
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
                 return true;
