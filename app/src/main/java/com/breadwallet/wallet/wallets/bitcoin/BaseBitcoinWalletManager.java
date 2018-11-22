@@ -756,13 +756,36 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public BRCoreTransaction[] loadTransactions() {
         Context app = BreadApp.getBreadContext();
-
         List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, getCurrencyCode());
         if (txs == null || txs.size() == 0) return new BRCoreTransaction[0];
         BRCoreTransaction arr[] = new BRCoreTransaction[txs.size()];
+        final List<BRTransactionEntity> failedToParseTxs = new ArrayList<>();
         for (int i = 0; i < txs.size(); i++) {
             BRTransactionEntity ent = txs.get(i);
-            arr[i] = new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp());
+            try {
+                arr[i] = new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp());
+            } catch (BRCoreTransaction.FailedToParse ex) {
+                failedToParseTxs.add(ent);
+            }
+        }
+        if (!failedToParseTxs.isEmpty()) {
+            // Need to rescan.
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    long blockHeight = Long.MAX_VALUE;
+                    for (BRTransactionEntity transactionEntity : failedToParseTxs) {
+                        if (transactionEntity.getBlockheight() < blockHeight) {
+                            blockHeight = transactionEntity.getBlockheight();
+                        }
+                    }
+                    if (blockHeight > 0 && blockHeight < Long.MAX_VALUE) {
+                        getPeerManager().rescanFromBlock(blockHeight);
+                    } else {
+                        getPeerManager().rescan();
+                    }
+                }
+            });
         }
         return arr;
     }
@@ -800,6 +823,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public void addBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
+
     @Override
     public void removeBalanceChangedListener(BalanceUpdateListener listener) {
         mWalletManagerHelper.removeBalanceChangedListener(listener);
@@ -846,6 +870,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     /**
      * Core callback for balance updates.
+     *
      * @param balance
      */
     public void balanceChanged(final long balance) {
