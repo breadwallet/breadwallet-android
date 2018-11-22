@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.util.BRConstants;
@@ -15,8 +13,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.tools.BRBitId;
-
-import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
 
 /**
  * BreadWallet
