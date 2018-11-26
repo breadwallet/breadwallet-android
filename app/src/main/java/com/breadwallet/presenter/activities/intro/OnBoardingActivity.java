@@ -196,7 +196,7 @@ public class OnBoardingActivity extends BRActivity {
                         .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        mPrimaryText.setText(getString(R.string.OnboardingPageFive_title));
+                        mPrimaryText.setText(getString(R.string.OnboardingPageFour_title));
                         mPrimaryText.setTranslationY(mPrimaryTextTranslationY);
                         mPrimaryText.animate().alpha(1)
                                 .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
