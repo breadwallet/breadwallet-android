@@ -200,6 +200,8 @@ public interface BaseWalletManager {
 
     boolean networkIsReachable();
 
+    boolean checkConfirmations(int conformations);
+
     //return the maximum amount for this currency
     BigDecimal getMaxAmount(Context app);
 
@@ -256,6 +258,5 @@ public interface BaseWalletManager {
      * or null if there is no fiat exchange data from the API yet
      */
     BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount);
-
 
 }

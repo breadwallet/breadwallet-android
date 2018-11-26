@@ -121,4 +121,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         }
     }
 
+    @Override
+    public boolean checkConfirmations(int conformations) {
+        return mWalletManagerHelper.checkConfirmations(conformations);
+    }
 }
