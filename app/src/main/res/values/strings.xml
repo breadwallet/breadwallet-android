@@ -1016,9 +1016,6 @@ users in a future update. </string>
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Start investing today with as little as $50!</string>
 
-    <!--Onboarding screen Page 5 title -->
-    <string name="OnboardingPageFive.title">Get started today with as little as $50!</string>
-
     <!--Onboarding screen 'Create new wallet' button -->
     <string name="Onboarding.createWalletButton">Create new wallet</string>
 
