@@ -71,7 +71,7 @@ public class OnBoardingActivity extends BRActivity {
     private BRButton mButtonBrowse;
     private BRButton mButtonNext;
     private ImageButton mButtonBack;
-    private static boolean mShowBuyBitcoinAfterPinInsert;
+    private static NEXT_SCREEN mNextScreen;
 
     private int mCurrentScene;
     private float mBuyButtonY;
@@ -79,6 +79,11 @@ public class OnBoardingActivity extends BRActivity {
     private float mPrimaryTextTranslationY;
     private float mImageViewScaleX;
     private float mImageViewScaleY;
+
+    private enum NEXT_SCREEN {
+        BUY_SCREEN,
+        HOME_SCREEN
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +119,7 @@ public class OnBoardingActivity extends BRActivity {
                 if (BRKeyStore.getPinCode(OnBoardingActivity.this).length() > 0) {
                     showBuyScreen();
                 } else {
-                    mShowBuyBitcoinAfterPinInsert = true;
+                    mNextScreen = NEXT_SCREEN.BUY_SCREEN;
                     setupPin();
                 }
             }
@@ -125,6 +130,7 @@ public class OnBoardingActivity extends BRActivity {
                 if (BRKeyStore.getPinCode(OnBoardingActivity.this).length() > 0) {
                     UiUtils.startBreadActivity(OnBoardingActivity.this, true);
                 } else {
+                    mNextScreen = NEXT_SCREEN.HOME_SCREEN;
                     setupPin();
                 }
             }
@@ -239,10 +245,13 @@ public class OnBoardingActivity extends BRActivity {
             if (data != null) {
                 boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
                 if (isPinAccepted) {
-                    if (mShowBuyBitcoinAfterPinInsert) {
-                        showBuyScreen();
-                    } else {
-                        UiUtils.startBreadActivity(this, false);
+                    switch (mNextScreen) {
+                        case BUY_SCREEN:
+                            showBuyScreen();
+                            break;
+                        case HOME_SCREEN:
+                            UiUtils.startBreadActivity(this, false);
+                            break;
                     }
                 }
             }
