@@ -31,7 +31,10 @@ import android.os.Handler;
 
 import com.breadwallet.R;
 
+import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -60,7 +63,7 @@ public class OnBoardingActivity extends BRActivity {
     private static final int ANIMATION_DURATION = 300;
     private static final int BUTTONS_ANIMATION_DELAY = 500;
     private static final float PRIMARY_TEXT_POSITION = 240f;
-    private static final float SECONDARY_TEXT_POSITION = 500f;
+    private static final float TEXT_SPACING = 80;
     private static final int FIRST_SCENE = 1;
     private static final int SECOND_SCENE = 2;
     public static final int THIRD_SCENE = 3;
@@ -169,10 +172,15 @@ public class OnBoardingActivity extends BRActivity {
                 mPrimaryText.setText(getString(R.string.OnboardingPageTwo_title));
                 mPrimaryText.animate().alpha(1).y(PRIMARY_TEXT_POSITION)
                         .setStartDelay(ANIMATION_DURATION).setDuration(ANIMATION_DURATION)
-                        .setInterpolator(new DecelerateInterpolator());
-                mSecondaryText.setText(getString(R.string.OnboardingPageTwo_subtitle));
-                mSecondaryText.animate().alpha(1).y(SECONDARY_TEXT_POSITION)
-                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
+                        .setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSecondaryText.setText(getString(R.string.OnboardingPageTwo_subtitle));
+                        mSecondaryText.animate().alpha(1).y(getSecondaryTextPosition())
+                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
+                    }
+                });
+
                 break;
             case SECOND_SCENE:
                 mButtonBack.setVisibility(View.GONE);
@@ -186,16 +194,21 @@ public class OnBoardingActivity extends BRActivity {
                         mPrimaryText.setText(getString(R.string.OnboardingPageThree_title));
                         mPrimaryText.setTranslationY(mPrimaryTextTranslationY);
                         mPrimaryText.animate().alpha(1).y(PRIMARY_TEXT_POSITION)
-                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
-                        mSecondaryText.setText(getString(R.string.OnboardingPageThree_subtitle));
-                        mSecondaryText.animate().alpha(1).y(SECONDARY_TEXT_POSITION)
-                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
+                                .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSecondaryText.setText(getString(R.string.OnboardingPageThree_subtitle));
+                                mSecondaryText.animate().alpha(1).y(getSecondaryTextPosition())
+                                        .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
+                            }
+                        });
+
                     }
                 });
                 break;
             case THIRD_SCENE:
                 mAnimationImageView.animate().y(BRSharedPrefs.getScreenHeight(this));
-                mButtonNext.animate().translationY(SECONDARY_TEXT_POSITION).alpha(0);
+                mButtonNext.animate().translationY(getSecondaryTextPosition()).alpha(0);
                 mSecondaryText.animate().alpha(0)
                         .setDuration(ANIMATION_DURATION).setInterpolator(new DecelerateInterpolator());
                 mPrimaryText.animate().alpha(0)
@@ -230,6 +243,10 @@ public class OnBoardingActivity extends BRActivity {
         } else {
             moveButtonsAway();
         }
+    }
+
+    private float getSecondaryTextPosition() {
+        return PRIMARY_TEXT_POSITION + mPrimaryText.getHeight() + TEXT_SPACING;
     }
 
     private void showBuyScreen() {
