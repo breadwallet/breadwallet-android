@@ -972,18 +972,19 @@ public final class MessageExchangeService extends JobIntentService {
                 WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getTokenSymbol());
                 TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
 
-                TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
-                if (tokenListMetaData == null) {
-                    tokenListMetaData = new TokenListMetaData(null, null);
+                if (tokenWalletManager != null) {
+                    TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
+                    if (tokenListMetaData == null) {
+                        tokenListMetaData = new TokenListMetaData(null, null);
+                    }
+
+                    if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
+                        tokenListMetaData.enabledCurrencies.add(item);
+                    }
+
+                    KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
+                    WalletsMaster.getInstance(this).updateWallets(this);
                 }
-
-                if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
-                    tokenListMetaData.enabledCurrencies.add(item);
-                }
-
-                KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
-                WalletsMaster.getInstance(this).updateWallets(this);
-
             }
         }
     }
