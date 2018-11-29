@@ -14,7 +14,11 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * BreadWallet
@@ -45,7 +49,8 @@ public final class AppEntryPointHandler {
     private static final String BRD_HOST = "brd.com";
     private static final String BRD_PROTOCOL = "https://";
     private static final String PLATFORM_PATH_PREFIX = "/x/platform/";
-    private static final String PLATFORM_URL_FORMAT = "link?to=/%s";
+    private static final String PLATFORM_URL_FORMAT = "/link?to=%s";
+    private static final String PATH_ENCODING = "utf-8";
 
     /**
      * A utility class used to process QR codes URL links to start our application.
@@ -97,9 +102,15 @@ public final class AppEntryPointHandler {
 
     private static void processPlatformDeepLinkingUrl(Context context, String url) {
         Uri uri = Uri.parse(url);
-        String platformPath = uri.getPath().replace(PLATFORM_PATH_PREFIX, "");
-        String platformUrl = String.format(PLATFORM_URL_FORMAT, platformPath);
-        UiUtils.startWebActivity((Activity) context, platformUrl);
+        String platformPath = "/".concat(uri.getPath().replace(PLATFORM_PATH_PREFIX, ""));
+        try {
+            String encodedPlatformPath = URLEncoder.encode(platformPath, PATH_ENCODING);
+            String platformUrl = String.format(PLATFORM_URL_FORMAT, encodedPlatformPath);
+            String fullPlatformUrl = String.format("%s%s", HTTPServer.PLATFORM_BASE_URL, platformUrl);
+            UiUtils.startWebActivity((Activity) context, fullPlatformUrl);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "processPlatformDeepLinkingUrl: ", e);
+        }
     }
 
     /**
