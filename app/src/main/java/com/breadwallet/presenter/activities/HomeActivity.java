@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
@@ -32,6 +34,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -55,7 +58,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private WalletListAdapter mAdapter;
     private BaseTextView mFiatTotal;
     private BRNotificationBar mNotificationBar;
-    private LinearLayout mBuyLayout;
+    private ConstraintLayout mBuyLayout;
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
@@ -118,6 +121,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         }));
         processIntentData(getIntent());
+
+        ImageView buyBell = findViewById(R.id.buy_bell);
+        boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.name());
+        buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override

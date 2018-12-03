@@ -154,7 +154,8 @@ public class APIClient {
 
     public enum FeatureFlags {
         BUY_BITCOIN("buy-bitcoin"),
-        EARLY_ACCESS("early-access");
+        EARLY_ACCESS("early-access"),
+        BUY_NOTIFICATION("buy-notification");
 
         private final String text;
 
