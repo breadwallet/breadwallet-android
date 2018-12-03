@@ -137,6 +137,7 @@ public class APIClient {
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
+    private static final String BUY_NOTIFICATION_KEY = "buy-notification";
 
     public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
     public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
@@ -153,25 +154,17 @@ public class APIClient {
     private Context mContext;
 
     public enum FeatureFlags {
-        BUY_BITCOIN("buy-bitcoin"),
-        EARLY_ACCESS("early-access"),
-        BUY_NOTIFICATION("buy-notification");
+        BUY_NOTIFICATION(BUY_NOTIFICATION_KEY);
 
-        private final String text;
+        private final String mText;
 
-        /**
-         * @param text
-         */
         FeatureFlags(final String text) {
-            this.text = text;
+            mText = text;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Enum#toString()
-         */
         @Override
         public String toString() {
-            return text;
+            return mText;
         }
     }
 
@@ -769,10 +762,6 @@ public class APIClient {
     private boolean isBreadChallenge(Response resp) {
         String challenge = resp.header(BRConstants.HEADER_WWW_AUTHENTICATE);
         return challenge != null && challenge.startsWith(BREAD);
-    }
-
-    public boolean isFeatureEnabled(String feature) {
-        return BRSharedPrefs.getFeatureEnabled(mContext, feature);
     }
 
     public String buildUrl(String path) {
