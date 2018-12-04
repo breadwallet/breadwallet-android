@@ -1030,5 +1030,6 @@ users in a future update. </string>
 
     <!--Onboarding screen restore an existing wallet. -->
     <string name="Onboarding.restoreWalletButto">Restore wallet</string>
-
+    <!-- Message that gets shown when we've detected the user has encountered an issue in which we would like them to contact support with a specific issue number. -->
+    <string name="ErrorMessages.ContactSupportBug.android">BRD cannot proceed due to a bug in your app version. Please contact support with issue #%1$d.</string>
 </resources>
