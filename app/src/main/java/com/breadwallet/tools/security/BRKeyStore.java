@@ -300,8 +300,12 @@ public class BRKeyStore {
                         return decryptedData;
                     }
                 } catch (IllegalBlockSizeException | BadPaddingException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
+                    Log.e(TAG, "Failed to decrypt the following data: " + alias, e);
+                    BRReportsManager.reportBug(e);
+
+                    // This issue refers to DROID-1019.
+                    showErrorMessage(context, 1019);
+                    return null;
                 }
             }
             //no new format data, get the old one and migrate it to the new format
@@ -391,15 +395,30 @@ public class BRKeyStore {
             }
 
         } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException e) {
-            /** if for any other reason the keystore fails, crash! */
-            Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
+            /** If for any other reason the keystore fails, ask user to contact support! */
+            Log.e(TAG, "getData: Issue with keystore while getting the following data: " + alias, e);
             BRReportsManager.reportBug(e);
-            throw new RuntimeException(e.getMessage());
+
+            // This issue refers to DROID-1019.
+            showErrorMessage(context, 1019);
+            return null;
         } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         } finally {
             lock.unlock();
+        }
+    }
+
+    private static void showErrorMessage(Context context, int issueNumber) {
+        // HACK: We are just ignoring the cases where this error is called from an application context because
+        // at present this method is only used by DROID-1019 which if it happens will happen so much that we can
+        // ignore these cases. In reality we should not be showing any UI in the BRKeystore. The error should
+        // be passed up the stack and some caller higher up should handle it.
+        if (context instanceof Activity) {
+            BRDialog.showCustomDialog(context, context.getString(R.string.JailbreakWarnings_title),
+                    String.format(context.getString(R.string.ErrorMessages_ContactSupportBug_android), issueNumber),
+                    null, null, null, null, null, 0);
         }
     }
 
