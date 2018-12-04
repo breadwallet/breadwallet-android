@@ -522,7 +522,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public BigDecimal getFiatExchangeRate(Context app) {
         BigDecimal fiatData = getFiatForEth(app, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(app));
         if (fiatData == null) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return fiatData; //fiat, e.g. dollars
     }

@@ -397,7 +397,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public BigDecimal getFiatExchangeRate(Context context) {
         BigDecimal fiatData = getFiatForToken(context, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(context));
         if (fiatData == null) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return fiatData; //fiat, e.g. dollars
     }

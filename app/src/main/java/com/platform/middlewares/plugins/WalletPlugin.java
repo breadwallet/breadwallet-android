@@ -445,40 +445,38 @@ public class WalletPlugin implements Plugin {
     private JSONArray getCurrencyData(Context app) {
         JSONArray arr = new JSONArray();
         List<BaseWalletManager> list = WalletsMaster.getInstance(app).getAllWallets(app);
-        for (BaseWalletManager w : list) {
+        for (BaseWalletManager walletManager : list) {
             JSONObject obj = new JSONObject();
             try {
-                obj.put(KEY_ID, w.getCurrencyCode());
-                obj.put(KEY_TICKER, w.getCurrencyCode());
-                obj.put(KEY_NAME, w.getName());
+                obj.put(KEY_ID, walletManager.getCurrencyCode());
+                obj.put(KEY_TICKER, walletManager.getCurrencyCode());
+                obj.put(KEY_NAME, walletManager.getName());
 
                 //Colors
                 JSONArray colors = new JSONArray();
-                colors.put(w.getUiConfiguration().getStartColor());
-                colors.put(w.getUiConfiguration().getEndColor());
+                colors.put(walletManager.getUiConfiguration().getStartColor());
+                colors.put(walletManager.getUiConfiguration().getEndColor());
 
                 obj.put(KEY_COLORS, colors);
 
                 JSONObject balance = new JSONObject();
 
-                BigDecimal rawBalance = w.getCachedBalance(app);
-                String denominator = w.getDenominator();
-                balance.put(KEY_CURRENCY, w.getCurrencyCode());
+                BigDecimal rawBalance = walletManager.getCachedBalance(app);
+                String denominator = walletManager.getDenominator();
+                balance.put(KEY_CURRENCY, walletManager.getCurrencyCode());
                 balance.put(KEY_NUMERATOR, rawBalance.toPlainString());
                 balance.put(KEY_DENOMINATOR, denominator);
 
                 //Fiat balance
                 JSONObject fiatBalance = new JSONObject();
-
                 fiatBalance.put(KEY_CURRENCY, BRSharedPrefs.getPreferredFiatIso(app));
-                fiatBalance.put(KEY_NUMERATOR, w.getFiatBalance(app).multiply(new BigDecimal(DOLLAR_IN_CENTS)).toPlainString());
+                fiatBalance.put(KEY_NUMERATOR, walletManager.getFiatBalance(app).multiply(new BigDecimal(DOLLAR_IN_CENTS)).toPlainString());
                 fiatBalance.put(KEY_DENOMINATOR, String.valueOf(DOLLAR_IN_CENTS));
 
                 //Exchange
                 JSONObject exchange = new JSONObject();
-
                 exchange.put(KEY_CURRENCY, BRSharedPrefs.getPreferredFiatIso(app));
-                exchange.put(KEY_NUMERATOR, w.getFiatExchangeRate(app).multiply(new BigDecimal(DOLLAR_IN_CENTS)).toPlainString());
+                exchange.put(KEY_NUMERATOR, walletManager.getFiatExchangeRate(app).multiply(new BigDecimal(DOLLAR_IN_CENTS)).toPlainString());
                 exchange.put(KEY_DENOMINATOR, String.valueOf(DOLLAR_IN_CENTS));
 
                 obj.put(KEY_BALANCE, balance);
