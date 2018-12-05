@@ -39,6 +39,8 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -123,7 +125,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         processIntentData(getIntent());
 
         ImageView buyBell = findViewById(R.id.buy_bell);
-        boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.name());
+        boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.name())
+                && CurrencyUtils.isBuyNotificationNeeded();
         buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
     }
 
