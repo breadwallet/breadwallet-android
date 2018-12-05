@@ -999,7 +999,7 @@ users in a future update. </string>
     <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
 
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Welcome to BRD, your new global wallet!</string>
+    <string name="OnboardingPageOne.title">Welcome to your new global wallet!</string>
 
     <!--Onboarding screen Page 2 title -->
     <string name="OnboardingPageTwo.title">Join the 1.5 million people around the world who trust BRD.</string>
@@ -1017,19 +1017,24 @@ users in a future update. </string>
     <string name="OnboardingPageFour.title">Start investing today with as little as $50!</string>
 
     <!--Onboarding screen 'Create new wallet' button -->
-    <string name="Onboarding.createWalletButton">Create new wallet</string>
+    <string name="Onboarding.getStarted">Get started</string>
 
     <!--Onboarding screen 'I'll browse first' button -->
-    <string name="Onboarding.browseFirstButton">I\'ll browse first</string>
+    <string name="Onboarding.browseFirst">I\'ll browse first</string>
 
     <!--Onboarding screen 'Buy some coin' button -->
-    <string name="Onboarding.buyCoinButton">Buy some coin</string>
+    <string name="Onboarding.buyCoin">Buy some coin</string>
 
     <!--Onboarding screen 'Next' button -->
-    <string name="Onboarding.nextButton">Next</string>
+    <string name="Onboarding.next">Next</string>
 
-    <!--Onboarding screen restore an existing wallet. -->
-    <string name="Onboarding.restoreWalletButto">Restore wallet</string>
     <!-- Message that gets shown when we've detected the user has encountered an issue in which we would like them to contact support with a specific issue number. -->
     <string name="ErrorMessages.ContactSupportBug.android">BRD cannot proceed due to a bug in your app version. Please contact support with issue #%1$d.</string>
+    <string name="Onboarding.restoreWallet">Restore wallet</string>
+
+    <!--Onboarding skip button. -->
+    <string name="Onboarding.skip">Skip</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
