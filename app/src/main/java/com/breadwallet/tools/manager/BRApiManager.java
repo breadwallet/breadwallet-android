@@ -19,6 +19,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
@@ -70,38 +71,37 @@ import static com.breadwallet.presenter.activities.HomeActivity.CCC_CURRENCY_COD
  * THE SOFTWARE.
  */
 
-public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
+public final class BRApiManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BRApiManager.class.getName();
-
     public static final String HEADER_WALLET_ID = "X-Wallet-Id";
     public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
     public static final String HEADER_TESTFLIGHT = "X-Testflight";
     public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
     public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
-    public static final String NAME = "name";
-    public static final String CODE = "code";
-    public static final String RATE = "rate";
-    public static final String PRICE_BTC = "price_btc";
-    public static final String SYMBOL = "symbol";
-    public static final String RATES_URL_BTC = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+    private static final String BIT_PAY_URL = "https://bitpay.com/rates";
+    private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+    private static final String CURRENCY_QUERY_STRING = "/rates?currency=";
+    private static final String NAME = "name";
+    private static final String CODE = "code";
+    private static final String RATE = "rate";
+    private static final String PRICE_BTC = "price_btc";
+    private static final String SYMBOL = "symbol";
+    private static final String RATES_URL_BTC = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
 
-    private static BRApiManager instance;
-    private Timer timer;
-
-    private TimerTask timerTask;
-
-    private Handler handler;
+    private static BRApiManager mInstance;
+    private Timer mTimer;
+    private TimerTask mTimerTask;
+    private Handler mHandler;
 
     private BRApiManager() {
-        handler = new Handler();
+        mHandler = new Handler();
     }
 
     public static BRApiManager getInstance() {
-
-        if (instance == null) {
-            instance = new BRApiManager();
+        if (mInstance == null) {
+            mInstance = new BRApiManager();
         }
-        return instance;
+        return mInstance;
     }
 
     @WorkerThread
@@ -130,14 +130,15 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
                     }
                     set.add(currencyEntity);
                 }
-
             } else {
                 Log.e(TAG, "getCurrencies: failed to get currencies, response string: " + arr);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (set.size() > 0) RatesDataSource.getInstance(context).putCurrencies(context, set);
+        if (set.size() > 0) {
+            RatesDataSource.getInstance(context).putCurrencies(context, set);
+        }
 
     }
 
@@ -145,23 +146,22 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
         if (currencyEntity == null) {
             return null;
         }
-        CurrencyEntity ethBtcExchangeRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, "ETH", "BTC");
+        CurrencyEntity ethBtcExchangeRate = RatesDataSource.getInstance(context)
+                .getCurrencyByCode(context, WalletEthManager.ETH_CURRENCY_CODE, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (ethBtcExchangeRate == null) {
             Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null");
             return null;
         }
         float newRate = new BigDecimal(currencyEntity.rate).multiply(new BigDecimal(ethBtcExchangeRate.rate)).floatValue();
-        return new CurrencyEntity("BTC", currencyEntity.name, newRate, currencyEntity.iso);
-
+        return new CurrencyEntity(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, currencyEntity.name, newRate, currencyEntity.iso);
     }
-
 
     private void initializeTimerTask(final Context context) {
         ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
-        timerTask = new TimerTask() {
+        mTimerTask = new TimerTask() {
             public void run() {
                 //use a handler to run a toast that shows the current timestamp
-                handler.post(new Runnable() {
+                mHandler.post(new Runnable() {
                     public void run() {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
@@ -183,37 +183,27 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
                 updateErc20Rates(context);
             }
         });
-
         List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
-
         for (final BaseWalletManager walletManager : list) {
-            //only update stuff for non erc20 for now, API endpoint BUG
-            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
-                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCASH_CURRENCY_CODE)
-                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
-                    || walletManager.getCurrencyCode().equalsIgnoreCase(HomeActivity.CCC_CURRENCY_CODE)) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        walletManager.updateFee(context);
-                    }
-                });
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //get each wallet's rates
-                        updateRates(context, walletManager);
-                    }
-                });
-            }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    walletManager.updateFee(context);
+                }
+            });
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    //get each wallet's rates
+                    updateRates(context, walletManager);
+                }
+            });
         }
-
     }
 
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
-
         String result = urlGET(context, RATES_URL_BTC);
         try {
             if (Utils.isNullOrEmpty(result)) {
@@ -228,7 +218,6 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
             String object = null;
             Set<CurrencyEntity> tmp = new LinkedHashSet<>();
             for (int i = 0; i < arr.length(); i++) {
-
                 Object obj = arr.get(i);
                 if (!(obj instanceof JSONObject)) {
                     object = obj.getClass().getSimpleName();
@@ -242,7 +231,6 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
                 CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
                 tmp.add(ent);
-
             }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null) {
@@ -252,33 +240,32 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
             BRReportsManager.reportBug(e);
             e.printStackTrace();
         }
-
     }
 
-    public void startTimer(Context context) {
+    public synchronized void startTimer(Context context) {
         //set a new Timer
-        if (timer != null) {
+        if (mTimer != null) {
             return;
         }
-        timer = new Timer();
-        Log.e(TAG, "startTimer: started...");
+        mTimer = new Timer();
+        Log.d(TAG, "startTimer: started...");
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        timer.schedule(timerTask, DateUtils.SECOND_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS);
+        mTimer.schedule(mTimerTask, DateUtils.SECOND_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS);
     }
 
-    public void stopTimerTask() {
+    private synchronized void stopTimerTask() {
         //stop the timer, if it's not already null
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
         }
     }
 
     @WorkerThread
-    public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
-        String url = APIClient.getBaseURL() + "/rates?currency=" + walletManager.getCurrencyCode();
+    private static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
+        String url = APIClient.getBaseURL() + CURRENCY_QUERY_STRING + walletManager.getCurrencyCode();
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) {
@@ -287,7 +274,7 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
         }
         try {
             JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("body");
+            jsonArray = obj.getJSONArray(BRConstants.BODY);
 
         } catch (JSONException ignored) {
         }
@@ -295,23 +282,22 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
     }
 
     @WorkerThread
-    public static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
-        if (!walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getCurrencyCode())) {
-            //todo add backup for BCH
-            return null;
+    private static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
+        if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)) {
+            String jsonString = urlGET(app, BIT_PAY_URL);
+            JSONArray jsonArray = null;
+            if (jsonString != null) {
+                try {
+                    JSONObject obj = new JSONObject(jsonString);
+                    jsonArray = obj.getJSONArray(BRConstants.DATA);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return jsonArray;
+            }
         }
-        String jsonString = urlGET(app, "https://bitpay.com/rates");
-
-        JSONArray jsonArray = null;
-        if (jsonString == null) return null;
-        try {
-            JSONObject obj = new JSONObject(jsonString);
-
-            jsonArray = obj.getJSONArray("data");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonArray;
+        //todo add backup for BCH
+        return null;
     }
 
     @WorkerThread
@@ -323,10 +309,8 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .get();
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            builder.header((String) pair.getKey(), (String) pair.getValue());
+        for (Map.Entry entry : headers.entrySet()) {
+            builder.header((String) entry.getKey(), (String) entry.getValue());
         }
 
         Request request = builder.build();
@@ -335,12 +319,12 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
         try {
             bodyText = resp.getBodyText();
-            String strDate = resp.getHeaders().get("date");
+            String strDate = resp.getHeaders().get(BRConstants.DATE);
             if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
                 return bodyText;
             }
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+            SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT, Locale.US);
             Date date = formatter.parse(strDate);
             long timeStamp = date.getTime();
             BRSharedPrefs.putSecureTime(app, timeStamp);

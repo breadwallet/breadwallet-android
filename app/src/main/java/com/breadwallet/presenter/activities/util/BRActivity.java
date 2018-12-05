@@ -238,8 +238,9 @@ public class BRActivity extends FragmentActivity {
     public void init() {
         //set status bar color
         InternetManager.getInstance();
-        if (!(this instanceof IntroActivity || this instanceof RecoverActivity || this instanceof WriteDownActivity))
+        if (WalletsMaster.isBrdWalletCreated(this)) {
             BRApiManager.getInstance().startTimer(this);
+        }
         //show wallet locked if it is and we're not in an illegal activity.
         if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {
