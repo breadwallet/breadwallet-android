@@ -356,7 +356,7 @@ public class WalletsMaster {
         }
     }
 
-    public boolean isBrdWalletCreated(Context context) {
+    public static boolean isBrdWalletCreated(Context context) {
         return !Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(context));
     }
 
