@@ -8,113 +8,6 @@
     android:background="@color/on_boarding"
     tools:context="com.breadwallet.presenter.activities.intro.OnBoardingActivity">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/primary_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="8dp"
-        android:alpha="0"
-        android:gravity="center"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.51" />
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/secondary_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="8dp"
-        android:alpha="0"
-        android:gravity="center"
-        android:textColor="@color/on_boarding_secondary_text"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.51" />
-
-    <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/button_buy"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="0dp"
-        android:padding="10dp"
-        android:text="@string/Onboarding.buyCoinButton"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:buttonColor="@color/on_boarding_buy_button"
-        app:buttonType="6"
-        app:isBreadButton="true"
-        app:layout_constraintBottom_toTopOf="@+id/button_browse"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/button_browse"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:padding="10dp"
-        android:text="@string/Onboarding.browseFirstButton"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:buttonColor="@color/on_boarding_browse_button"
-        app:buttonType="6"
-        app:isBreadButton="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/animation_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clickable="false"
-        android:cropToPadding="true"
-        android:focusable="false"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/button_browse"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/button_next"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:padding="10dp"
-        android:text="@string/RecoverWallet.next"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:buttonColor="@color/on_boarding_buy_button"
-        app:buttonType="6"
-        app:isBreadButton="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageButton
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
@@ -125,5 +18,64 @@
         android:src="?attr/back_arrow_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_skip"
+        android:layout_width="40dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:text="@string/Onboarding.skip"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_back" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/view_pager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:id="@+id/indicator1"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/page_indicator_active" />
+
+        <View
+            android:id="@+id/indicator2"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/page_indicator_inactive" />
+
+        <View
+            android:id="@+id/indicator3"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/page_indicator_inactive" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
