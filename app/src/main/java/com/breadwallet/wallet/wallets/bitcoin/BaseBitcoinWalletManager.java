@@ -1056,4 +1056,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         onTxListModified(hash);
     }
 
+    @Override
+    public boolean checkConfirmations(int conformations) {
+        return mWalletManagerHelper.checkConfirmations(conformations);
+    }
 }
