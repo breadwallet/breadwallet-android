@@ -40,6 +40,9 @@ import java.util.Locale;
 
 public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
+    private static final String KRONE = "DKK";
+    private static final String POUND = "GBP";
+    private static final String EURO = "EUR";
 
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
         //Use default (wallet's maxDecimal places)
@@ -117,6 +120,12 @@ public class CurrencyUtils {
             return wallet.getMaxDecimalPlaces(app);
         }
 
+    }
+
+    public static boolean isBuyNotificationNeeded() {
+        Locale locale = Locale.getDefault();
+        String currencyCode = Currency.getInstance(locale).getCurrencyCode();
+        return KRONE.equalsIgnoreCase(currencyCode) || POUND.equalsIgnoreCase(currencyCode) || EURO.equalsIgnoreCase(currencyCode);
     }
 
 }
