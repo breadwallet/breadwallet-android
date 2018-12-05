@@ -210,6 +210,8 @@ public final class BRConstants {
     public static final String STAGING = "staging";
     public static final String STAGE = "stage";
     public static final String CURRENCY_ERC20 = "erc20";
+    public static final String RATES = "rates";
+    public static final String CURRENCY = "currency";
 
     private BRConstants() {
     }
