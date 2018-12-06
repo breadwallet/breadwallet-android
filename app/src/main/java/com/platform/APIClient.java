@@ -354,11 +354,10 @@ public class APIClient {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
         }
-        Map<String, String> headers = new HashMap<>(mHttpHeaders);
 
         Request.Builder newBuilder = locRequest.newBuilder();
-        for (String key : headers.keySet()) {
-            String value = headers.get(key);
+        for (String key : mHttpHeaders.keySet()) {
+            String value = mHttpHeaders.get(key);
             newBuilder.header(key, value);
         }
 
