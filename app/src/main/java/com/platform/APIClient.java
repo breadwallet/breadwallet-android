@@ -15,7 +15,6 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -225,10 +224,6 @@ public class APIClient {
             // No inspection deprecation.
             return context.getResources().getConfiguration().locale.toString();
         }
-    }
-
-    public static Map<String, String> getHttpHeaders() {
-        return mHttpHeaders;
     }
 
     //returns the fee per kb or 0 if something went wrong

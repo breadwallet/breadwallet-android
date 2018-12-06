@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -293,17 +292,11 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
 
     @WorkerThread
     public static String urlGET(Context app, String myURL) {
-        // Is this needed? Won't these be added in APIClient.sendRequest?
-        Map<String, String> headers = APIClient.getHttpHeaders();
-
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .get();
-        for (Map.Entry entry : headers.entrySet()) {
-            builder.header((String) entry.getKey(), (String) entry.getValue());
-        }
 
         Request request = builder.build();
         String bodyText = null;
