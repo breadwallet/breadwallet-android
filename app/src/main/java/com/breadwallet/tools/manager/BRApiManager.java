@@ -302,7 +302,8 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
 
     @WorkerThread
     public static String urlGET(Context app, String myURL) {
-        Map<String, String> headers = BreadApp.getBreadHeaders();
+        // Is this needed? Won't these be added in APIClient.sendRequest?
+        Map<String, String> headers = APIClient.getHttpHeaders();
 
         Request.Builder builder = new Request.Builder()
                 .url(myURL)

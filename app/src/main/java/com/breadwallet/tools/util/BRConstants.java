@@ -28,6 +28,11 @@ import java.math.RoundingMode;
  */
 
 public final class BRConstants {
+    /**
+     * Boolean values as Strings.
+     */
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
 
     /**
      * Native library name

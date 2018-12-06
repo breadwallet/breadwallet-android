@@ -2,6 +2,7 @@ package com.platform;
 
 
 import android.accounts.AuthenticatorException;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -137,6 +139,8 @@ public class APIClient {
     private boolean mIsFetchingToken;
 
     private OkHttpClient mHTTPClient;
+    private static final Map<String, String> mHttpHeaders = new HashMap<>();
+
 
     private static final String BUNDLES_FOLDER = "/bundles";
     private static final String BRD_WEB = "brd-web-3";
@@ -183,22 +187,43 @@ public class APIClient {
         return ourInstance;
     }
 
-    String mUserAgent;
-
     private APIClient(Context context) {
         mContext = context;
 
-        // Split the user agent string by spaces and take the first string.
+        // Split the default device user agent string by spaces and take the first string.
         // Example user agent string: "Dalvik/1.6.0 (Linux; U;Android 5.1; LG-F320SBuild/KOT49I.F320S22g) Android/9"
         // We only want: "Dalvik/1.6.0"
-        String defaultUserAgent = System.getProperty(SYSTEM_PROPERTY_USER_AGENT).split(BRConstants.SPACE_REGEX)[0];
+        String deviceUserAgent = System.getProperty(SYSTEM_PROPERTY_USER_AGENT).split(BRConstants.SPACE_REGEX)[0];
 
-        // Create the user agent string once since it is used many many times
-        mUserAgent = (new StringBuffer()).append(USER_AGENT_APP_NAME).append(BuildConfig.VERSION_CODE).append(' ')
-                .append(defaultUserAgent).append(' ')
+        // The BRD server expects the following user agent: appName/appVersion engine/engineVersion plaform/plaformVersion
+        String brdUserAgent = (new StringBuffer()).append(USER_AGENT_APP_NAME).append(BuildConfig.VERSION_CODE).append(' ')
+                .append(deviceUserAgent).append(' ')
                 .append(USER_AGENT_PLATFORM_NAME).append(Build.VERSION.RELEASE).toString();
 
-        String s = "";
+        mHttpHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? TRUE : FALSE);
+        mHttpHeaders.put(BRApiManager.HEADER_TESTFLIGHT, BuildConfig.DEBUG ? TRUE : FALSE);
+        mHttpHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? TRUE : FALSE);
+        mHttpHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode(context));
+        mHttpHeaders.put(USER_AGENT, brdUserAgent);
+    }
+
+    /**
+     * Return the current language code i.e. "en_US" for US English.
+     *
+     * @return The current language code.
+     */
+    @TargetApi(Build.VERSION_CODES.N)
+    private String getCurrentLanguageCode(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0).toString();
+        } else {
+            // No inspection deprecation.
+            return context.getResources().getConfiguration().locale.toString();
+        }
+    }
+
+    public static Map<String, String> getHttpHeaders() {
+        return mHttpHeaders;
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -324,7 +349,7 @@ public class APIClient {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
         }
-        Map<String, String> headers = new HashMap<>(BreadApp.getBreadHeaders());
+        Map<String, String> headers = new HashMap<>(mHttpHeaders);
 
         Request.Builder newBuilder = locRequest.newBuilder();
         for (String key : headers.keySet()) {
@@ -365,7 +390,6 @@ public class APIClient {
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
             }
 
-            request = request.newBuilder().header(USER_AGENT, mUserAgent).build();
             rawResponse = mHTTPClient.newCall(request).execute();
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
