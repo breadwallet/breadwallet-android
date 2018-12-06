@@ -90,7 +90,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Activity mCurrentActivity;
-    private static final Map<String, String> mHeaders = new HashMap<>();
 
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
         @Override
@@ -147,11 +146,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
-
-        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, BuildConfig.DEBUG ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode());
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -286,32 +280,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     /**
-     * Return the current language code i.e. "en_US" for US English.
-     *
-     * @return The current language code.
-     */
-    @TargetApi(Build.VERSION_CODES.N)
-    private String getCurrentLanguageCode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return getResources().getConfiguration().getLocales().get(0).toString();
-        } else {
-            // No inspection deprecation.
-            return getResources().getConfiguration().locale.toString();
-        }
-    }
-
-    /**
      * Returns true if the application is in the background; false, otherwise.
      *
      * @return True if the application is in the background; false, otherwise.
      */
     public static boolean isInBackground() {
         return mBackgroundedTime > 0;
-    }
-
-    // TODO: Refactor and move to more appropriate class
-    public static Map<String, String> getBreadHeaders() {
-        return mHeaders;
     }
 
     // TODO: Refactor so this does not store the current activity like this.
