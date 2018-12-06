@@ -35,10 +35,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.fragments.FragmentOnBoarding;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
@@ -55,6 +58,8 @@ import java.util.List;
 public class OnBoardingActivity extends BRActivity {
     private static final String TAG = OnBoardingActivity.class.getSimpleName();
     private List<View> mIndicators = new ArrayList<>();
+    private ImageButton mBackButton;
+    private Button mSkipButton;
 
     private static NextScreen mNextScreen;
 
@@ -71,13 +76,15 @@ public class OnBoardingActivity extends BRActivity {
         mIndicators.add(findViewById(R.id.indicator1));
         mIndicators.add(findViewById(R.id.indicator2));
         mIndicators.add(findViewById(R.id.indicator3));
-        findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
+        mBackButton = findViewById(R.id.button_back);
+        mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        findViewById(R.id.button_skip).setOnClickListener(new View.OnClickListener() {
+        mSkipButton = findViewById(R.id.button_skip);
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(OnBoardingPagerAdapter.COUNT - 1);
@@ -92,6 +99,11 @@ public class OnBoardingActivity extends BRActivity {
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
+                if (position == 0) {
+                    showHideToolBarButtons(true);
+                } else {
+                    showHideToolBarButtons(false);
+                }
                 setActiveIndicator(position);
             }
 
@@ -112,6 +124,11 @@ public class OnBoardingActivity extends BRActivity {
         String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY,
                 WalletBitcoinManager.getInstance(activity).getCurrencyCode());
         UiUtils.startWebActivity(activity, url);
+    }
+
+    private void showHideToolBarButtons(boolean show) {
+        mSkipButton.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        mBackButton.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
