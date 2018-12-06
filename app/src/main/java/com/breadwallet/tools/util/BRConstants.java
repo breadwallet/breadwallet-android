@@ -209,7 +209,6 @@ public final class BRConstants {
     public static final String SELECTED = "selected";
     public static final String ENABLED = "enabled";
     public static final String PRIVATE = "private";
-    public static final String USER_AGENT = "User-agent";
     public static final String TOKEN = "token";
     public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
