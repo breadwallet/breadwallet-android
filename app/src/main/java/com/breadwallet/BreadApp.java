@@ -1,6 +1,5 @@
 package com.breadwallet;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -22,7 +20,6 @@ import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -42,9 +39,7 @@ import com.platform.HTTPServer;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

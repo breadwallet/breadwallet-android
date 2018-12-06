@@ -57,8 +57,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.breadwallet.tools.manager.BRApiManager.HEADER_WALLET_ID;
-
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -126,12 +124,19 @@ public class APIClient {
     //me path
     private static final String ME = "/me";
 
+    // Http Header constants
+    private static final String HEADER_WALLET_ID = "X-Wallet-Id";
+    private static final String HEADER_IS_INTERNAL = "X-Is-Internal";
+    private static final String HEADER_TESTFLIGHT = "X-Testflight";
+    private static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
+    private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+    private static final String HEADER_USER_AGENT = "User-agent";
+
     // User Agent constants
     public static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
     private static final String USER_AGENT_APP_NAME = "breadwallet/";
     private static final String USER_AGENT_PLATFORM_NAME = "android/";
 
-    //singleton instance
     private static APIClient ourInstance;
 
     private byte[] mCachedAuthKey;
@@ -200,11 +205,11 @@ public class APIClient {
                 .append(deviceUserAgent).append(' ')
                 .append(USER_AGENT_PLATFORM_NAME).append(Build.VERSION.RELEASE).toString();
 
-        mHttpHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? TRUE : FALSE);
-        mHttpHeaders.put(BRApiManager.HEADER_TESTFLIGHT, BuildConfig.DEBUG ? TRUE : FALSE);
-        mHttpHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? TRUE : FALSE);
-        mHttpHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode(context));
-        mHttpHeaders.put(USER_AGENT, brdUserAgent);
+        mHttpHeaders.put(HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_TESTFLIGHT, BuildConfig.DEBUG ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode(context));
+        mHttpHeaders.put(HEADER_USER_AGENT, brdUserAgent);
     }
 
     /**
