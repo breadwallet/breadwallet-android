@@ -75,7 +75,6 @@ public final class UserMetricsUtil {
     private static final String FIELD_BUNDLES = "bundles";
     private static final String FIELD_OS_VERSION = "os_version";
     private static final String FIELD_USER_AGENT = "user_agent";
-    private static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
     private static final String FIELD_DEVICE_TYPE = "device_type";
     private static final String DEVICE_TYPE = Build.MANUFACTURER + " " + Build.MODEL;
     private static final String FIELD_APPLICATION_ID = "application_id";
@@ -125,7 +124,7 @@ public final class UserMetricsUtil {
             JSONObject data = new JSONObject();
             data.put(FIELD_BUNDLES, bundles);
             data.put(FIELD_OS_VERSION, Build.VERSION.RELEASE);
-            data.put(FIELD_USER_AGENT, System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
+            data.put(FIELD_USER_AGENT, System.getProperty(APIClient.SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
             data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
 

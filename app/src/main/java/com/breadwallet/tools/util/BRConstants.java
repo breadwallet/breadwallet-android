@@ -213,6 +213,11 @@ public final class BRConstants {
     public static final String RATES = "rates";
     public static final String CURRENCY = "currency";
 
+    /**
+     * Commonly used regular expressions.
+     */
+    public static final String SPACE_REGEX = "\\s";
+
     private BRConstants() {
     }
 

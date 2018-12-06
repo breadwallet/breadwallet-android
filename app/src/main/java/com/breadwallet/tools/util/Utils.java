@@ -213,33 +213,6 @@ public class Utils {
 
     }
 
-    public static String getAgentString(Context app, String cfnetwork) {
-
-        int versionNumber = 0;
-        if (app != null) {
-            try {
-                PackageInfo pInfo = null;
-                pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
-                versionNumber = pInfo.versionCode;
-
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        String release = Build.VERSION.RELEASE;
-//        return String.format("%s/%d %s %s/%s", "Bread", versionNumber, cfnetwork, "Android", release);
-        return "Bread/" + String.valueOf(versionNumber) + " " + cfnetwork + " Android/" + release;
-    }
-
-    public static String reverseHex(String hex) {
-        if (hex == null) return null;
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i <= hex.length() - 2; i = i + 2) {
-            result.append(new StringBuilder(hex.substring(i, i + 2)).reverse());
-        }
-        return result.reverse().toString();
-    }
-
     // This method checks if a screen altering app(such as Twightlight) is currently running
     // If it is, notify the user that the BRD app will not function properly and they should
     // disable it

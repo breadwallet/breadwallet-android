@@ -4,6 +4,7 @@ package com.platform;
 import android.accounts.AuthenticatorException;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -122,6 +123,12 @@ public class APIClient {
     private static final String TOKEN = "token";
     //me path
     private static final String ME = "/me";
+
+    // User Agent constants
+    public static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
+    private static final String USER_AGENT_APP_NAME = "breadwallet/";
+    private static final String USER_AGENT_PLATFORM_NAME = "android/";
+
     //singleton instance
     private static APIClient ourInstance;
 
@@ -176,8 +183,22 @@ public class APIClient {
         return ourInstance;
     }
 
+    String mUserAgent;
+
     private APIClient(Context context) {
         mContext = context;
+
+        // Split the user agent string by spaces and take the first string.
+        // Example user agent string: "Dalvik/1.6.0 (Linux; U;Android 5.1; LG-F320SBuild/KOT49I.F320S22g) Android/9"
+        // We only want: "Dalvik/1.6.0"
+        String defaultUserAgent = System.getProperty(SYSTEM_PROPERTY_USER_AGENT).split(BRConstants.SPACE_REGEX)[0];
+
+        // Create the user agent string once since it is used many many times
+        mUserAgent = (new StringBuffer()).append(USER_AGENT_APP_NAME).append(BuildConfig.VERSION_CODE).append(' ')
+                .append(defaultUserAgent).append(' ')
+                .append(USER_AGENT_PLATFORM_NAME).append(Build.VERSION.RELEASE).toString();
+
+        String s = "";
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -343,7 +364,8 @@ public class APIClient {
                         .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
             }
-            request = request.newBuilder().header(USER_AGENT, Utils.getAgentString(mContext, OkHttpClient.class.getSimpleName())).build();
+
+            request = request.newBuilder().header(USER_AGENT, mUserAgent).build();
             rawResponse = mHTTPClient.newCall(request).execute();
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
