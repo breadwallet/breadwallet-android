@@ -7,11 +7,8 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -23,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import org.json.JSONArray;
