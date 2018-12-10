@@ -8,9 +8,7 @@ import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.app.ApplicationLifecycleObserver;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -19,7 +17,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
@@ -33,11 +30,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -73,11 +68,6 @@ import static com.breadwallet.presenter.activities.HomeActivity.CCC_CURRENCY_COD
 
 public final class BRApiManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BRApiManager.class.getName();
-    public static final String HEADER_WALLET_ID = "X-Wallet-Id";
-    public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
-    public static final String HEADER_TESTFLIGHT = "X-Testflight";
-    public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
-    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
     private static final String BIT_PAY_URL = "https://bitpay.com/rates";
     private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private static final String CURRENCY_QUERY_STRING = "/rates?currency=";
@@ -302,16 +292,11 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
 
     @WorkerThread
     public static String urlGET(Context app, String myURL) {
-        Map<String, String> headers = BreadApp.getBreadHeaders();
-
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .get();
-        for (Map.Entry entry : headers.entrySet()) {
-            builder.header((String) entry.getKey(), (String) entry.getValue());
-        }
 
         Request request = builder.build();
         String bodyText = null;

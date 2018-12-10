@@ -28,6 +28,11 @@ import java.math.RoundingMode;
  */
 
 public final class BRConstants {
+    /**
+     * Boolean values as Strings.
+     */
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
 
     /**
      * Native library name
@@ -204,7 +209,6 @@ public final class BRConstants {
     public static final String SELECTED = "selected";
     public static final String ENABLED = "enabled";
     public static final String PRIVATE = "private";
-    public static final String USER_AGENT = "User-agent";
     public static final String TOKEN = "token";
     public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
@@ -212,6 +216,11 @@ public final class BRConstants {
     public static final String CURRENCY_ERC20 = "erc20";
     public static final String RATES = "rates";
     public static final String CURRENCY = "currency";
+
+    /**
+     * Commonly used regular expressions.
+     */
+    public static final String SPACE_REGEX = "\\s";
 
     private BRConstants() {
     }
