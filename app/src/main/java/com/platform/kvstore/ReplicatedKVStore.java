@@ -37,7 +37,6 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -45,8 +44,6 @@ import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVItem;
 import com.platform.sqlite.PlatformSqliteHelper;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

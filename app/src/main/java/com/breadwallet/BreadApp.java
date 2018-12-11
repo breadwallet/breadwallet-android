@@ -27,6 +27,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -321,7 +322,13 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 mBackgroundedTime = System.currentTimeMillis();
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
-
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        EventUtils.saveEvents(BreadApp.this);
+                        EventUtils.pushToServer(BreadApp.this);
+                    }
+                });
                 HTTPServer.stopServer();
 
                 break;
@@ -341,7 +348,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     /**
-     *
      * @return host or debug host if build is DEBUG
      */
     public static String getHost() {
@@ -356,6 +362,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     /**
      * Sets the debug host into the shared preferences, only do that if the build is DEBUG.
+     *
      * @param host
      */
     public static void setDebugHost(String host) {
