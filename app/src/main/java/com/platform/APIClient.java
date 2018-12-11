@@ -287,7 +287,7 @@ public class APIClient {
             requestMessageJSON.put(PUBKEY, base58PubKey);
             requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
 
-            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
+            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON);
             RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
             Request request = new Request.Builder()
                     .url(strUtl)
@@ -440,6 +440,9 @@ public class APIClient {
             }
             if (response.code() == 401) {
                 BRReportsManager.reportBug(new AuthenticatorException("Request: " + request.url() + " returned 401!"));
+            }
+            if (!response.isSuccessful()) {
+                logRequestAndResponse(request, response);
             }
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
@@ -1086,6 +1089,46 @@ public class APIClient {
             return HTTPS_SCHEME + BreadApp.getHost();
         }
         return BASE_URL;
+    }
+
+    private void logRequestAndResponse(Request request, Response response) {
+        StringBuffer reportStringBuffer = new StringBuffer();
+        reportStringBuffer.append("Request:\n");
+        reportStringBuffer.append(request.url());
+        reportStringBuffer.append("\n");
+        reportStringBuffer.append(request.headers().toString());
+        reportStringBuffer.append(bodyToString(request));
+        reportStringBuffer.append("\n\n");
+        reportStringBuffer.append("Response:\n");
+        reportStringBuffer.append(response.code());
+        reportStringBuffer.append(response.message());
+        reportStringBuffer.append("\n");
+        reportStringBuffer.append(response.headers().toString());
+        reportStringBuffer.append("\n");
+        Log.e(TAG, "sendRequest: Not successful: \n" + reportStringBuffer.toString());
+    }
+
+    /**
+     * Convert {@link Request} to a {@link String}.
+     *
+     * Reference: <a href="https://stackoverflow.com/a/29033727/3211679">stackoverflow</a>
+     *
+     * @param request The request to convert to a {@link String}.
+     * @return The {@link String} version of the specified {@link Request}.
+     */
+
+    private static String bodyToString(final Request request) {
+        try {
+            final Request copy = request.newBuilder().build();
+            final Buffer buffer = new Buffer();
+            RequestBody body = copy.body();
+            if (body != null) {
+                body.writeTo(buffer);
+            }
+            return buffer.readUtf8();
+        } catch (final IOException e) {
+            return null;
+        }
     }
 
 }

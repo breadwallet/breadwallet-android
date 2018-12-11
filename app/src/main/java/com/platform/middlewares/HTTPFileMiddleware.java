@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON;
+
 
 /**
  * BreadWallet
@@ -214,7 +216,7 @@ public class HTTPFileMiddleware implements Middleware {
             case "js":
                 return "application/javascript";
             case "json":
-                return "application/json";
+                return CONTENT_TYPE_JSON;
             default:
                 break;
         }

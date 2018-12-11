@@ -27,6 +27,7 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.wallet.WalletsMaster;
 
 
@@ -168,10 +169,12 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
                 }, DateUtils.SECOND_IN_MILLIS / 2);
             }
         });
+        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_SUCCESS);
     }
 
     private void showFailedToUnlock() {
         SpringAnimator.failShakeAnimation(LoginActivity.this, mPinLayout);
+        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_FAILED);
     }
 
     @Override

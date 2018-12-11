@@ -30,6 +30,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -250,6 +251,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     private void copyText() {
         Activity app = getActivity();
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
+        EventUtils.pushEvent(EventUtils.EVENT_RECEIVE_COPIED_ADDRESS);
         // The testnet does not work with the BCH address format so copy the legacy address for testing purposes.
         if (BuildConfig.BITCOIN_TESTNET) {
             BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));

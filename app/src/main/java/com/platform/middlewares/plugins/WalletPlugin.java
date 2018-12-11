@@ -5,11 +5,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
@@ -44,6 +43,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON;
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.eclipse.jetty.http.HttpMethod.GET;
 import static org.eclipse.jetty.http.HttpMethod.POST;
@@ -84,7 +84,6 @@ public class WalletPlugin implements Plugin {
     private static final String PATH_CURRENCIES = "/currencies";
     private static final String PATH_TRANSACTION = "/transaction";
     private static final String PATH_ADDRESSES = "/addresses";
-    private static final String CONTENT_TYPE_JSON = "application/json";
 
     private static final String KEY_NO_WALLET = "no_wallet";
     private static final String KEY_RECEIVE_ADDRESS = "receive_address";
@@ -190,9 +189,9 @@ public class WalletPlugin implements Plugin {
                         Log.e(TAG, String.format("Failed to get the key: %s, from json: %s", key, json.toString()));
                     }
                 }
-                BREventManager.getInstance().pushEvent(name, attr);
+                EventUtils.pushEvent(name, attr);
             } else {
-                BREventManager.getInstance().pushEvent(name);
+                EventUtils.pushEvent(name);
             }
             APIClient.BRResponse resp = new APIClient.BRResponse(null, SC_OK);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);

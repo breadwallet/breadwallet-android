@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.util.BRConstants;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -90,7 +91,7 @@ public class KVStorePlugin implements Plugin {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.version, kv.time, response));
                     }
-                    APIClient.BRResponse resp = new APIClient.BRResponse(kv.value, 200, "application/json");
+                    APIClient.BRResponse resp = new APIClient.BRResponse(kv.value, 200, BRConstants.CONTENT_TYPE_JSON);
 
                     return BRHTTPHelper.handleSuccess(resp, baseRequest, decorateResponse(kv.version, kv.time, response));
                 case "PUT":
@@ -109,7 +110,7 @@ public class KVStorePlugin implements Plugin {
                         return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
                     String ct = request.getHeader("content-type");
-                    if (ct == null || !ct.equalsIgnoreCase("application/json")) {
+                    if (ct == null || !ct.equalsIgnoreCase(BRConstants.CONTENT_TYPE_JSON)) {
                         Log.e(TAG, "handle: can only set application/json request bodies: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
@@ -175,7 +176,7 @@ public class KVStorePlugin implements Plugin {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         String rfc1123 = dateFormat.format(time);
-        response.setHeader("Content-Type", "application/json");
+        response.setHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON);
         response.addHeader("Last-Modified", rfc1123);
         return response;
     }
