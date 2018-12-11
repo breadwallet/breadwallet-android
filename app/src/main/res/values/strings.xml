@@ -381,7 +381,7 @@
     <!-- Payment too small alert title -->
     <string name="PaymentProtocol.Errors.smallOutputError">Couldn\'t make payment</string>
     <!-- Amount too small error message -->
-    <string name="PaymentProtocol.Errors.smallPayment">Bitcoin payments can\'t be less than %1$s.</string>
+    <string name="PaymentProtocol.Errors.smallPayment">"Payment can\’t be less than %1$s. Bitcoin transaction fees are more than the amount of this transaction. Please increase the amount and try again."</string>
     <!-- Output too small error message. -->
     <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaction outputs can\'t be less than %1$s.</string>
     <!-- Unsupported signature type payment protocol error message -->
@@ -1035,6 +1035,4 @@ users in a future update. </string>
     <!--Onboarding skip button. -->
     <string name="Onboarding.skip">Skip</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
