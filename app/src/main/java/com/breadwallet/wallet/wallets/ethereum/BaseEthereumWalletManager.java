@@ -6,6 +6,7 @@ import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
+import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
@@ -17,6 +18,7 @@ import com.breadwallet.wallet.wallets.WalletManagerHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseEthereumWalletManager implements BaseWalletManager {
@@ -124,5 +126,9 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     @Override
     public boolean checkConfirmations(int conformations) {
         return mWalletManagerHelper.checkConfirmations(conformations);
+    }
+
+    public List<BRSettingsItem> getSettingsList(Context context) {
+        return Collections.emptyList();
     }
 }
