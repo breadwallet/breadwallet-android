@@ -9,6 +9,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -154,4 +155,8 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         updateCachedAddress(context, address.stringify());
     }
 
+    @Override
+    public List<BRSettingsItem> getSettingsList(Context context) {
+        return SettingsUtil.getBitcoinSettings(context);
+    }
 }
