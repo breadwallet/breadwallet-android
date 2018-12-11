@@ -29,6 +29,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
@@ -154,6 +155,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 mListGroupLayout.removeViewAt(0);
             }
             mListGroupLayout.addView(promptView, 0);
+            EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX
+                    + PromptManager.getPromptName(toShow) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED);
         } else {
             Log.i(TAG, "showNextPrompt: nothing to show");
         }

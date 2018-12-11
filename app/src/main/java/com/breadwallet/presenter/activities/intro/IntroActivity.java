@@ -3,9 +3,6 @@ package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,7 +11,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -57,7 +54,6 @@ public class IntroActivity extends BRActivity {
         setContentView(R.layout.activity_intro);
         setOnClickListeners();
         updateBundles();
-
         ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +69,12 @@ public class IntroActivity extends BRActivity {
         }
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_APPEARED);
     }
 
     private void updateBundles() {
@@ -98,6 +99,7 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED);
                 Intent intent = new Intent(IntroActivity.this, OnBoardingActivity.class);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 startActivity(intent);
@@ -110,6 +112,7 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET);
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

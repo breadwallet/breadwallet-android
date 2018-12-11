@@ -37,14 +37,13 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.fragments.FragmentOnBoarding;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
 
@@ -63,6 +62,13 @@ public class OnBoardingActivity extends BRActivity {
 
     private static NextScreen mNextScreen;
 
+    private enum OnBoardingEvent {
+        GLOBE_PAGE_APPEARED,
+        COINS_PAGE_APPEARED,
+        FINAL_PAGE_APPEARED;
+    }
+
+
     public enum NextScreen {
         BUY_SCREEN,
         HOME_SCREEN
@@ -80,6 +86,7 @@ public class OnBoardingActivity extends BRActivity {
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventUtils.pushEvent(EventUtils.EVENT_BACK_BUTTON);
                 onBackPressed();
             }
         });
@@ -87,6 +94,7 @@ public class OnBoardingActivity extends BRActivity {
         mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventUtils.pushEvent(EventUtils.EVENT_SKIP_BUTTON);
                 viewPager.setCurrentItem(OnBoardingPagerAdapter.COUNT - 1);
             }
         });
@@ -105,6 +113,7 @@ public class OnBoardingActivity extends BRActivity {
                     showHideToolBarButtons(false);
                 }
                 setActiveIndicator(position);
+                sendEvent(OnBoardingEvent.values()[position]);
             }
 
             // This method will be invoked when the current page is scrolled
@@ -118,6 +127,7 @@ public class OnBoardingActivity extends BRActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+        sendEvent(OnBoardingEvent.GLOBE_PAGE_APPEARED);
     }
 
     public static void showBuyScreen(Activity activity) {
@@ -148,6 +158,20 @@ public class OnBoardingActivity extends BRActivity {
                     }
                 }
             }
+        }
+    }
+
+    private void sendEvent(OnBoardingEvent event) {
+        switch (event) {
+            case GLOBE_PAGE_APPEARED:
+                EventUtils.pushEvent(EventUtils.EVENT_GLOBE_PAGE_APPEARED);
+                break;
+            case COINS_PAGE_APPEARED:
+                EventUtils.pushEvent(EventUtils.EVENT_COINS_PAGE_APPEARED);
+                break;
+            case FINAL_PAGE_APPEARED:
+                EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_APPEARED);
+                break;
         }
     }
 

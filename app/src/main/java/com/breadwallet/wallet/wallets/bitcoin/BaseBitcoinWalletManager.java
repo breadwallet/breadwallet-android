@@ -47,6 +47,7 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -68,7 +69,9 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -707,15 +710,18 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (app instanceof Activity)
+                if (app instanceof Activity) {
+                    EventUtils.sendTransactionEvent(error);
                     UiUtils.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : "Error: " + error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
                                 @Override
                                 public void onComplete() {
-                                    if (!((Activity) app).isDestroyed())
+                                    if (!((Activity) app).isDestroyed()) {
                                         ((Activity) app).getFragmentManager().popBackStack();
+                                    }
                                 }
                             });
+                }
 
             }
         });

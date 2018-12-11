@@ -18,6 +18,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.util.EventUtils;
 import com.platform.APIClient;
 
 public class FragmentOnBoarding extends Fragment {
@@ -71,6 +72,7 @@ public class FragmentOnBoarding extends Fragment {
                 buttonBuy.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BUY_COIN);
                         if (BRKeyStore.getPinCode(getContext()).length() > 0) {
                             OnBoardingActivity.showBuyScreen(getActivity());
                         } else {
@@ -82,6 +84,7 @@ public class FragmentOnBoarding extends Fragment {
                 buttonBrowse.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST);
                         if (BRKeyStore.getPinCode(getActivity()).length() > 0) {
                             UiUtils.startBreadActivity(getActivity(), true);
                         } else {
@@ -92,7 +95,6 @@ public class FragmentOnBoarding extends Fragment {
                 });
                 break;
         }
-
         return rootLayout;
     }
 

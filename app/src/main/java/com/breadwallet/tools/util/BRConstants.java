@@ -111,11 +111,9 @@ public final class BRConstants {
      * API Constants
      */
 
-    public static final String HTTPS_PROTOCOL = "https://";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_ACCEPT = "Accept";
-    public static final String CONTENT_TYPE_JSON = "application/json";
-    public static final String CONTENT_TYPE_JSON_CHARSET_UTF8 = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
     public static final String HEADER_VALUE_ACCEPT = "application/json";
     public static final String AUTHORIZATION = "Authorization";

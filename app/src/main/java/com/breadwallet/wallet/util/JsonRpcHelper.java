@@ -78,16 +78,15 @@ public class JsonRpcHelper {
 
     @WorkerThread
     public static void makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
-        final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
+        final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
 
         Request request = new Request.Builder()
                 .url(url)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .post(requestBody).build();
-
 
         APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true);
         String responseString = resp.getBodyText();
