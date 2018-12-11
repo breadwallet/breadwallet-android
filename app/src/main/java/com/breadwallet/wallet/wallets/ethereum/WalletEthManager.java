@@ -30,6 +30,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -875,15 +876,16 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                final Context app = BreadApp.getBreadContext();
-                                if (app != null && app instanceof Activity) {
+                                final Context context = BreadApp.getBreadContext();
+                                if (context instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
-                                        PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        UiUtils.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
-                                                app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                                        PostAuth.stampMetaData(context, finalTxHash.getBytes());
+                                        EventUtils.sendTransactionEvent(null);
+                                        UiUtils.showBreadSignal((Activity) context, context.getString(R.string.Alerts_sendSuccess),
+                                                context.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                                     @Override
                                                     public void onComplete() {
-                                                        UiUtils.killAllFragments((Activity) app);
+                                                        UiUtils.killAllFragments((Activity) context);
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
@@ -894,7 +896,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                                 });
                                     } else {
                                         String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
-                                        BRDialog.showSimpleDialog(app, app.getString(R.string.WipeWallet_failedTitle), message);
+                                        EventUtils.sendTransactionEvent(message);
+                                        BRDialog.showSimpleDialog(context, context.getString(R.string.WipeWallet_failedTitle), message);
                                     }
                                 } else {
                                     Log.e(TAG, "submitTransaction: app is null or not an activity");

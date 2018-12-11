@@ -9,17 +9,15 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.WalletActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -118,7 +116,7 @@ public class CryptoUriParser {
         attr.put("scheme", u == null ? "null" : u.getScheme());
         attr.put("host", u == null ? "null" : u.getHost());
         attr.put("path", u == null ? "null" : u.getPath());
-        BREventManager.getInstance().pushEvent("send.handleURL", attr);
+        EventUtils.pushEvent(EventUtils.EVENT_SEND_HANDLE_URL, attr);
     }
 
     public static boolean isCryptoUrl(Context app, String url) {

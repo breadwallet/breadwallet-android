@@ -44,6 +44,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
@@ -325,6 +326,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (!UiUtils.isClickAllowed()) {
             return;
         }
+        EventUtils.pushEvent(EventUtils.EVENT_AMOUNT_SWAP_CURRENCY);
         BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
         setPriceTags(BRSharedPrefs.isCryptoPreferred(WalletActivity.this), true);
     }

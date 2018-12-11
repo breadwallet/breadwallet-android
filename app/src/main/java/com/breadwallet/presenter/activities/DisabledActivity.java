@@ -16,6 +16,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -79,6 +80,7 @@ public class DisabledActivity extends BRActivity {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
             UiUtils.startBreadActivity(DisabledActivity.this, true);
+            EventUtils.pushEvent(EventUtils.EVENT_LOGIN_UNLOCKED);
         }
     }
 
