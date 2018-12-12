@@ -150,7 +150,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
      */
     private String trySweep(String currencyCode, BRCoreKey coreKey) {
 
-        String theAddress = coreKey.address();
+        String theAddress = coreKey.addressLegacy();
 
         BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, currencyCode);
 
