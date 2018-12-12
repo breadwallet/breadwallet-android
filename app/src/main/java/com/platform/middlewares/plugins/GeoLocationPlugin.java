@@ -24,8 +24,6 @@ import org.eclipse.jetty.server.Request;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -71,7 +69,7 @@ public class GeoLocationPlugin implements Plugin {
                 try {
                     if (granted) {
                         Log.e(TAG, "handleGeoPermission: granted");
-                        APIClient.BRResponse resp = new APIClient.BRResponse(null, 204, BRConstants.CONTENT_TYPE_JSON);
+                        APIClient.BRResponse resp = new APIClient.BRResponse(null, 204, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                         globalBaseRequest.setHandled(true);
 
@@ -132,7 +130,7 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, BRConstants.CONTENT_TYPE_JSON);
+                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                     } catch (JSONException e) {
                         e.printStackTrace();

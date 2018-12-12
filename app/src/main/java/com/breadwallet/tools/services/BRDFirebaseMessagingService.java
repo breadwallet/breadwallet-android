@@ -201,14 +201,14 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
                         payload.put(KEY_DATA, data);
 
                         final MediaType JSON
-                                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
+                                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
 
                         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
 
                         Request request = new Request.Builder()
                                 .url(url)
-                                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
+                                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON).post(requestBody).build();
 
                         APIClient.getInstance(context).sendRequest(request, true);
 
