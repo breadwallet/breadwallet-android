@@ -294,8 +294,8 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
     public static String urlGET(Context app, String myURL) {
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
                 .get();
 
         Request request = builder.build();

@@ -176,7 +176,7 @@ public final class MessageExchangeNetworkHelper {
         Request request = new Request.Builder()
                 .url(ackUrl)
                 .post(requestBody)
-                .addHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                .addHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
