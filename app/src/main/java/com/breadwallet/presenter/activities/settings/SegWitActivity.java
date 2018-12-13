@@ -67,7 +67,7 @@ public class SegWitActivity extends BaseSettingsActivity {
                 confirmChoiceLayout.setVisibility(View.GONE);
                 confirmationLayout.setVisibility(View.VISIBLE);
                 enableButton.setVisibility(View.VISIBLE);
-                enableButton.setText(getString(R.string.Button_BackToHomePage));
+                enableButton.setText(getString(R.string.Segwit_HomeButton));
                 enableButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

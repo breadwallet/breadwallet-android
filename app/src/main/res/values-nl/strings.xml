@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">Ondersteuningscentrum</string>
     <!-- Account balance -->
     <string name="Account.balance">Balans</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">Dit token is verwijderd omdat de uitgever besloot de ERC20-ondersteuning stop te zetten. \n\nMogelijk kunt u deze tokens nog steeds naar een ander platform verzenden. Ga voor meer informatie naar onze ondersteuningspagina.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">Android KeyStore fout</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">Er is geen internetconnectie gevonden. Controleer je connectie en probeer opnieuw.</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">Er is iets misgegaan. Probeer het alstublieft opnieuw.</string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">Verzoek loopt af. Controleer uw verbinding en probeer het opnieuw.</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">Negeren</string>
     <!-- menu button -->
     <string name="Button.menu">Menu</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">Meer info</string>
     <!-- No button -->
     <string name="Button.no">Nee</string>
     <!-- OK button label -->
@@ -271,7 +277,7 @@
     <!-- Caption for graphics -->
     <string name="Import.rightCaption">Jouw BRD Portemonnee</string>
     <!-- Scan Private key button label -->
-    <string name="Import.scan">Scan private key</string>
+    <string name="Import.scan">Scan private key </string>
     <!-- Import wallet success alert title -->
     <string name="Import.success">Succes</string>
     <!-- Successfully imported wallet message body -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">Connectiestatus van de node</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Bitcoin-nodes</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">Ik kijk eerst even rond</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">Koop wat munten</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">Ga aan de slag</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">Volgende</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">Herstel portemonnee</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">Overslaan</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">Begin vandaag met investeren vanaf slechts $50!</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">Welkom bij uw nieuwe wereldwijde portemonnee!</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">Investeer en diversifieer met BRD, snel en veilig.</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">Koop en handel in bitcoin, tokens en andere digitale valuta.</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">We hebben meer dan $6 miljard USD waard aan aandelen onder onze bescherming.</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">Sluit u aan bij de 1,5 miljoen mensen van over de hele wereld die op BRD vertrouwen.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">%1$s versturen om %2$s te kopen</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">niet-ondersteund handtekening type</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">niet-vertrouwd certificaat</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">Wees de eerste om belangrijke support- en productupdates te ontvangen</string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">voer uw e-mailadres in</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">U hebt zich succesvol ingeschreven voor het ontvangen van onze updates</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">We waarderen uw constante support</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">Bedankt!</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">Blijf op de hoogte</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">Tik op Doorgaan om Face-ID in te schakelen</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">Authenticatie met vingerafdruk</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">U hebt SegWit geactiveerd!</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">Bedankt voor het ondersteunen van Bitcoin.</string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">SegWit-support is nog een bèta-functie.\nZodra SegWit is geactiveerd, zal het niet langer mogelijk zijn om de functie te deactiveren. U kunt de het legacyadres vinden onder Instellingen.\nSommige externe diensten, waaronder de cryptotrade, zijn mogelijk niet beschikbaar voor gebruikers die SegWit hebben geactiveerd. In geval van nood kunt u een legacyadres genereren via Voorkeuren &gt; Bitcoininstellingen.\nSegWit zal automatisch worden geactiveerd voor alle gebruikers in een toekomstige update.</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">Het activeren van SegWit is een onomkeerbaar proces. Weet u zeker dat u verder wilt gaan?</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">Activeer</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Bedrag</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">Scannen</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Versturen</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">Verstuur maximum bedrag?</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">Versturen</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">Valuta-instellingen</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">Doe Mee aan Early Access</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Activeer SegWit</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">Vind je BRD leuk?</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">Touch ID Bestedingslimiet</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">Uitgavelimiet voor authenticatie met vingerafdruk</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">Bekijk Legacyontvangstadres</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">Verzend enkel Bitcoin (BTC) naar dit adres. Elk ander activum dat naar dit adres wordt verzonden, zal permanent verloren gaan.</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Ontvang Bitcoin</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">Portemonnee</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">%1$s verplaatst</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[<b>%1$s</b> verplaatst]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> verplaatst]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Niet bevestigd</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Ontvangen %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[Ontvangen <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Ontvangen <b>%1$s</b>]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">ontvangen van %1$s</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Verstuurd %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[Verstuurd <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Verstuurd <b>%1$s</b>]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Details weergeven</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -929,7 +985,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">Updaten...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">BRDwallet is omgedoopt tot BRD, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+    <string name="Welcome.body">Breadwallet is omgedoopt tot BRD, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">Welkom bij BRD!</string>
     <!-- Wipe wallet alert message -->

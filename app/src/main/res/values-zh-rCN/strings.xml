@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">支持中心</string>
     <!-- Account balance -->
     <string name="Account.balance">余额</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">这种代币已被摘牌，因为发行者决定停止支持 ERC20。\n\n您仍然可以将这些代币汇到别的平台。请访问我们的支持页面获取更多细节。</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s / %2$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">安卓系统密钥库错误</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">未发现互联网连接。检查您的连接并重试。</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">出错了。请重试。</string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">请求超时。请检查您的连接，然后重试。</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">忽略</string>
     <!-- menu button -->
     <string name="Button.menu">菜单</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">更多信息</string>
     <!-- No button -->
     <string name="Button.no">不</string>
     <!-- OK button label -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">节点连接状态</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">比特币节点</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">我要先浏览一下</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">购买一些钱币</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">开始</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">下一步</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">恢复钱包</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">跳过</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">今天就开始投资吧,只需 50 美元！</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">欢迎来到你新的世界钱包！</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">轻松又安全地与 BRD 进行投资和多样化</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">购买并交易比特币,代币和其他数字货币。</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">我们有价值超过 600 亿美元的资产受到保护。</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">成为全世界信任 BRD 的 150 万人中的一员。</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">发送%1$s以购买%2$s</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">不受支持的签名类型</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">不可信证书</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">率先接收重要支持和产品更新</string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">输入您的电子邮箱</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">您已成功订阅接收更新</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">我们感谢您的持续支持</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">谢谢！</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">加入</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">点击继续开启面部识别</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">触摸 ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">指纹认证</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">您已启用 SegWit！</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">感谢您帮助比特币发展。</string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">SegWit 支持还是一项不成熟的测试功能。\n启用 SegWit 后,将无法将其禁用。\n您可以在\"设置\"下找到传统地址。\n启用了 SegWit 的用户可能无法使用包括加密货币交易在内的部分第三方服务。如果出现紧急情况,您可以通过\"首选项\"(Preferences) &gt;\"比特币设置\"(Bitcoin Settings) 生成一个传统地址。\n在将来的更新中,将自动为所有用户\n启用 SegWit。</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">启用 SegWit 是不可逆转的功能。是否确定要继续？</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">启用</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金额</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">扫描</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">发送</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">发送最高金额?</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">发送</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">货币设置</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">加入早期访问</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">启用 SegWit</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">您喜欢 BRD 吗？</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">触摸 ID 支出限制</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">指纹认证支出限额</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">查看传统接收地址</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">请仅发送比特币 (BTC) 至此地址。发送至此地址的任何其他资产将永久丢失。</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">接收比特币</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">钱包</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">移出 %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[已移动 <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[已移动 <b>%1$s</b>]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">未确认</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">已接收 %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[已收到 <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[已收到 <b>%1$s</b>]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已接收，来自 %1$s</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已发送 %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[已发送 <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[已发送 <b>%1$s</b>]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">显示详细信息</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -929,7 +985,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">正在更新...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">BRDwallet 更名为 BRD， 并增加了全新的界面和功能。如果您需要帮助，请使用在大多数设备屏幕右上角的(?)</string>
+    <string name="Welcome.body">Breadwallet 更名为 BRD， 并增加了全新的界面和功能。如果您需要帮助，请使用在大多数设备屏幕右上角的(?)</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">欢迎使用BRD！</string>
     <!-- Wipe wallet alert message -->

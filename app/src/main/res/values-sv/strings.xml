@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">Support Center</string>
     <!-- Account balance -->
     <string name="Account.balance">Saldo</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">Denna token har avförts eftersom utfärdaren har beslutat att sluta stödja ERC20. \n\nDu kan eventuellt skicka dessa tokens till en annan plattform. Besök vår supportsida för mer information.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">KeyStore-fel för Android</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">Ingen anslutning till internet hittades. Kontrollera din anslutning och försök igen.</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">Något gick fel. Försök igen, tack. </string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">Begärde time-out. Kontrollera din anslutning och försök igen.</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">Ignorera</string>
     <!-- menu button -->
     <string name="Button.menu">Meny</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">Mer info</string>
     <!-- No button -->
     <string name="Button.no">Nej</string>
     <!-- OK button label -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">Nodens anslutningsstatus</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Bitcoin-noder</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">Jag ska titta runt först</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">Köp mynt</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">Kom igång</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">Nästa</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">Återskapa plånbok</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">Hoppa över</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">Börja investera idag med så lite som $50!</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">Välkommen till din nya globala plånbok!</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">Investera och bredda dig med BRD, lätt och tryggt.</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">Köp och handla med bitcoin, jetonger och andra digitala valutor.</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">Vi har skyddade tillgångar värda över 6 miljarder  USD.</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">Anslut dig till de 1,5 miljoner människor världen runt som litar på BRD.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Skicka %1$s för att köpa %2$s</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">signaturtypen saknar stöd</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">opålitligt certifikat</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">Var först med att få viktiga support- och produktuppdateringar </string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">ange din e-post</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">Du prenumererar nu på uppdateringar</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">Vi uppskattar ditt fortsatta stöd</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">Tack!</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">Häng med i utvecklingen</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">Klicka Fortsätt för att aktivera Face ID</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">Fingeravtrycksautentisering</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">Du aktiverade Segwit!</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">Tack för att du hjälper bitcoin framåt. </string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">Segwit-support är fortfarande på betastadiet. \nNär Segwit väl har aktiverats är det inte möjligt att avaktivera det. Du kan hitta den gamla adressen under Inställningar. \nVissa tredjepartstjänster, inklusive kryptohandel, kanske inte är tillgängliga för användare som har aktiverat Segwit. I nödfall har du möjlighet att skapa en gammal adress i Preferenser &gt; Bitcoininställningar. \nSegwit kommer automatiskt att vara aktiverat för alla användare i en framtida uppdatering. </string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">En aktivering av Segwit är oåterkallelig. Är du säker på att du vill fortsätta?</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">Aktivera</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Belopp</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">Läs av</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Skicka</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">Skicka maxbeloppet?</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">Skicka</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">Valutainställningar</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">Använd Snabb tillgång</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Aktivera Segwit</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">Gillar du BRD?</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">Touch ID utnyttjandegräns</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">Maxbelopp med fingeravtrycksautentisering</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">Visa mottagaradress i gamla formatet</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">Skicka endast bitcoin (BTC) till denna adress. Alla andra tillgångar som skickas till denna adress går förlorade permanent.</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Erhåll bitcoin</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">Plånbok</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">Flyttade %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[Flyttade <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttade <b>%1$s</b>]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Inte bekräftad</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Mottog %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[Tog emot <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Tog emot <b>%1$s</b>]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">mottaget från %1$s</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Skickade %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[Skickade <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Skickade <b>%1$s</b>]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Visa detaljer</string>
     <!-- The balance the user started with before the transaction completed -->

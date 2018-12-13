@@ -212,8 +212,8 @@ public final class PromptManager {
                 final ImageView promptIcon = customLayout.findViewById(R.id.prompt_icon);
                 final BREdit emailEditText = customLayout.findViewById(R.id.email_edit);
                 submitButton.setColor(context.getColor(R.color.create_new_wallet_button_dark));
-                customTitle.setText(context.getString(R.string.Prompts_EmailOptIn_title));
-                customDescription.setText(context.getString(R.string.Prompts_EmailOptIn_body));
+                customTitle.setText(context.getString(R.string.Prompts_Email_title));
+                customDescription.setText(context.getString(R.string.Prompts_Email_body));
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
