@@ -69,6 +69,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -763,13 +764,15 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public BRCoreTransaction[] loadTransactions() {
         Context app = BreadApp.getBreadContext();
         List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, getCurrencyCode());
-        if (txs == null || txs.size() == 0) return new BRCoreTransaction[0];
-        BRCoreTransaction arr[] = new BRCoreTransaction[txs.size()];
+        if (txs == null || txs.size() == 0) {
+            return new BRCoreTransaction[0];
+        }
+        List<BRCoreTransaction> filteredTransactions = new ArrayList<>();
         final List<BRTransactionEntity> failedToParseTxs = new ArrayList<>();
         for (int i = 0; i < txs.size(); i++) {
             BRTransactionEntity ent = txs.get(i);
             try {
-                arr[i] = new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp());
+                filteredTransactions.add(new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp()));
             } catch (BRCoreTransaction.FailedToParse ex) {
                 failedToParseTxs.add(ent);
             }
@@ -793,7 +796,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 }
             });
         }
-        return arr;
+        return filteredTransactions.size() > 0 ? filteredTransactions.toArray(new BRCoreTransaction[0]) : new BRCoreTransaction[0];
     }
 
     public BRCoreMerkleBlock[] loadBlocks() {
@@ -815,7 +818,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRCorePeer arr[] = new BRCorePeer[peers.size()];
         for (int i = 0; i < peers.size(); i++) {
             BRPeerEntity ent = peers.get(i);
-            arr[i] = new BRCorePeer(ent.getAddress(), TypesConverter.bytesToInt(ent.getPort()), TypesConverter.byteArray2long(ent.getTimeStamp()));
+            arr[i] = new BRCorePeer(ent.getAddress(), TypesConverter.bytesToInt(ent.getPort()),
+                    TypesConverter.byteArray2long(ent.getTimeStamp()));
         }
         return arr;
     }
