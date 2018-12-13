@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">サポートセンター</string>
     <!-- Account balance -->
     <string name="Account.balance">残高</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">発行者がERC20のサポートを終了することを決定した為、このトークンはリストから外れています。 \n\nそれらのトークンを他のプラットフォームに転送することは依然可能かもしれません。詳しくは、サポートページをご覧ください。</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%2$sあたり%1$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">Android KeyStoreエラー</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">インターネット接続が見つかりません。接続を確認してから、もう一度お試しください。</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">何か問題が生じました。再度お試しください。</string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">リクエストはタイムアウトしました。接続を確認して、もう一度お試しください。</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">無視する</string>
     <!-- menu button -->
     <string name="Button.menu">メニュー</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">さらなる情報</string>
     <!-- No button -->
     <string name="Button.no">いいえ</string>
     <!-- OK button label -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">ノードの接続状況</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">ビットコインノード</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">まずは閲覧</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">コインを購入</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">開始</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">次へ</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">ウォレットを復元する</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">スキップ</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">最低50ドルから,今すぐ投資を始めましょう！</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">新しいグローバルウォレットにようこそ！</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">BRDで容易に安全に投資して多様化しましょう。</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">ビットコイン,トークン,その他のデジタル通貨を購入・取引しましょう。</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">当社の保護下には,60億USドル超相当の資産があります。</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">世界中にいるBRDを信頼する150万人の仲間になりましょう。</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">%2$sを購入するために%1$sを送金する</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">サポートされていないタイプの署名です</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">信頼できない証明書</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">誰よりも早く重要なサポートを受け,製品をアップデートしましょう</string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">メールアドレスを入力してください</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">アップデートを受け取るための申し込みが完了しました</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">継続的なサポートに感謝いたします</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">ありがとうございます！</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">輪に加わりましょう</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">Face IDを有効にするには続行をタップして下さい</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">指紋認証</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">SegWitを有効化しました！</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">Bitcoinの前進にご協力いただきありがとうございます。</string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">SegWit対応はまだベータ版の機能です。\n一度SegWitが有効化されると取り消しはできません。設定画面の下でレガシーアドレスをご確認いただけます。\nSegWitを有効化したユーザーは,第三者のサービス（仮想通貨取引を含む）を利用できない場合があります。緊急の場合は,プリファレンス &gt; Bitcoin設定から,レガシーアドレスを作成することができます。\n将来のアップデートでは,全ユーザーに対して自動的にSegWitが有効化されます。</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">「SegWitの有効化」は取り消しできない機能です。継続してよろしいですか？</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">有効化する</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">スキャン</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">送金する</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">限度額を送金しますか？</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">送金</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">通貨設定</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">早期アクセスに参加</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Segwitを有効にする</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">ブレッドをお楽しみいただいていますか?</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">Touch IDの利用限度額</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">指紋認証利用上限</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">受取用レガシーアドレスを表示</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">このアドレスにはBitcoin（BTC）だけを送信してください。このアドレスに送信された他の資産は,いかなるものも永久に失われます。</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Bitcoinを受け取りましょう</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">ウォレット</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">%1$sを移動させました</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[<b>%1$s</b>を移動させました]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b>を移動させました]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">未承認</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">%1$sを受け取りました</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[<b>%1$s</b>を受け取りました]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b>を受け取りました]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">%1$sから受け取りました</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">%1$sを送金しました</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[<b>%1$s</b>を送金しました]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b>を送金しました]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">詳細を表示する</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -929,7 +985,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">更新中...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">BRDwalletは新しい機能や見た目を備えて、BRDという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
+    <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、BRDという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">BRDへようこそ！</string>
     <!-- Wipe wallet alert message -->
