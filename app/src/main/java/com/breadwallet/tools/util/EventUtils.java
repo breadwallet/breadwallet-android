@@ -132,6 +132,8 @@ public final class EventUtils {
     private static final String DEVICE_TYPE = "deviceType";
     private static final String EVENTS = "events";
     private static final String ERROR_MESSAGE_ATTRIBUTE_KEY = "errorMessage";
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
 
     private static final String EVENTS_FOLDER_NAME = "events";
 
@@ -165,7 +167,8 @@ public final class EventUtils {
                     JSONObject metadataJsonObject = new JSONObject();
                     if (event.getAttributes() != null && event.getAttributes().size() > 0) {
                         for (Map.Entry<String, String> entry : event.getAttributes().entrySet()) {
-                            metadataJsonObject.put(entry.getKey(), entry.getValue());
+                            metadataJsonObject.put(KEY, entry.getKey());
+                            metadataJsonObject.put(VALUE, entry.getValue());
                         }
                         eventJsonObject.put(METADATA, metadataJsonObject);
                     }
