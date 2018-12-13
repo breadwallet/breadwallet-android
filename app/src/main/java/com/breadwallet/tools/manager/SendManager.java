@@ -256,7 +256,7 @@ public class SendManager {
             item.setAmount(maxAmountDouble);
 
             BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError),
-                    app.getString(R.string.Send_SendMax), posButtonText, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                    app.getString(R.string.Send_sendMaximum), posButtonText, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
