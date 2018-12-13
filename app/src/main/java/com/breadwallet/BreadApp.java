@@ -154,6 +154,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         initialize(true);
 
+        // Start our local server as soon as the application instance is created, since we need to
+        // display support WebViews during onboarding.
+        HTTPServer.startServer();
+
     }
 
     /**
