@@ -60,6 +60,7 @@ import java.util.Map;
 
 public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
+
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 29;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
@@ -71,36 +72,20 @@ public class WebViewActivity extends BRActivity {
     private static final String CURRENCY = "currency";
     private static final String URL_FORMAT = "%s?%s=%s";
     private static final String SELECT_IMAGE_TITLE = "Select Image Source";
+    private static final String INTENT_TYPE_IMAGE = "image/*";
 
     private WebView mWebView;
-    String mUrl;
-    private String mOnCloseUrl;
-    public static final String CHECKOUT = "checkout";
-    public static final String ARTICLE_ID = "articleId";
-    public static final String CLOSE = "_close";
-    public static final String JSON = "json";
-    public static final String URL = "url";
-    public static final String METHOD = "method";
-    public static final String BODY = "body";
-    public static final String HEADERS = "headers";
-    public static final String CLOSE_ON = "closeOn";
-    public static final String GET = "get";
-    public static final String POST = "post";
-    public static final String KYC_FILENAME = "_kyc.jpg";
-    public static final String INTENT_TYPE_IMAGE = "image/*";
-    public static final String DOCUMENTS_ACTIVITY_REFERENCE = "com.android.documentsui.DocumentsActivity";
-
-    private ValueCallback<Uri[]> mFilePathCallback;
-    private String mCameraPhotoPath;
-
+    private RelativeLayout mRootView;
     private Toolbar mTopToolbar;
     private Toolbar mBottomToolbar;
     private BaseTextView mCloseButton;
     private ImageButton mReloadButton;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
-    private RelativeLayout mRootView;
-
+    private ValueCallback<Uri[]> mFilePathCallback;
+    private String mCameraPhotoPath;
+    private String mUrl;
+    private String mOnCloseUrl;
     private boolean mKeyboardListenersAttached = false;
 
     private ViewTreeObserver.OnGlobalLayoutListener mKeyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
