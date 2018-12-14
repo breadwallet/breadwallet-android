@@ -31,7 +31,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.breadwallet.R;
@@ -61,18 +60,22 @@ import java.util.Map;
 public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
 
-    private static final int REQUEST_CHOOSE_IMAGE = 1;
-    private static final int REQUEST_CAMERA_PERMISSION = 29;
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
     public static final String EXTRA_JSON_PARAM = "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_JSON_PARAM";
     private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
-    private static final String DOCUMENTS_ACTIVITY_CLASS_NAME = "com.android.documentsui.DocumentsActivity";
-    private static final String KYC_SUFFIX = "_kyc.jpg";
+    private static final String IMAGE_FILE_NAME_SUFFIX = "_kyc.jpg";
     private static final String BUY_PATH = "/buy";
     private static final String CURRENCY = "currency";
     private static final String URL_FORMAT = "%s?%s=%s";
     private static final String SELECT_IMAGE_TITLE = "Select Image Source";
+    private static final String FILE_SCHEME = "file:";
     private static final String INTENT_TYPE_IMAGE = "image/*";
+
+    private static final int CHOOSE_IMAGE_REQUEST_CODE = 1;
+    private static final int GET_CAMERA_PERMISSIONS_REQUEST_CODE = 2;
+    private static final String[] CAMERA_PERMISSIONS = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
 
     private WebView mWebView;
     private RelativeLayout mRootView;
@@ -320,6 +323,17 @@ public class WebViewActivity extends BRActivity {
 
     }
 
+    private boolean hasPermissions(String... permissions) {
+        if (permissions != null) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private class BRWebChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -357,104 +371,75 @@ public class WebViewActivity extends BRActivity {
 
         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePath, FileChooserParams fileChooserParams) {
             Log.d(TAG, "onShowFileChooser");
+
             // Double check that we don't have any existing callbacks
             if (mFilePathCallback != null) {
                 mFilePathCallback.onReceiveValue(null);
             }
+
+            // Save the new call back. It will be called when the image file chooser activity returns.
             mFilePathCallback = filePath;
 
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                Log.d(TAG, "Image Capture Activity FOUND");
-                // Create the File where the photo should go
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                    takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
-                } catch (IOException ex) {
-                    // Error occurred while creating the File
-                    Log.e(TAG, "Unable to create Image File", ex);
-                }
-
-                // Continue only if the File was successfully created
-                if (photoFile != null) {
-                    Log.d(TAG, "Image File NOT null");
-                    mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(photoFile));
-                } else {
-                    Log.d(TAG, "Image File IS NULL");
-
-                    takePictureIntent = null;
-                }
+            if (hasPermissions(CAMERA_PERMISSIONS)) {
+                startActivityForResult(getImageFileChooserIntent(), CHOOSE_IMAGE_REQUEST_CODE);
             } else {
-                Log.d(TAG, "Image Capture Activity NOT FOUND");
+                ActivityCompat.requestPermissions(WebViewActivity.this, CAMERA_PERMISSIONS, GET_CAMERA_PERMISSIONS_REQUEST_CODE);
             }
-
-            requestImageFilePermission();
-            requestCameraPermission();
-
             return true;
         }
     }
 
-    // Get URI to image received from capture by camera.
-    private Uri getCaptureImageOutputUri() {
-        Uri outputFileUri = null;
-        File getImage = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        if (getImage != null) {
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), KYC_SUFFIX));
-        }
-        return outputFileUri;
-    }
-
-
-    public Intent getPickImageChooserIntent() {
-        List<Intent> allIntents = new ArrayList();
+    private Intent getImageFileChooserIntent() {
+        List<Intent> intents = new ArrayList();
         PackageManager packageManager = getPackageManager();
 
-        // collect all camera intents
-        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        // Get Camera intent so user can take a photo.
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                try {
+                    // Create a file to store the camera image.
+                    File imageFile = File.createTempFile(new SimpleDateFormat(DATE_FORMAT).format(new Date()) + '_',
+                            IMAGE_FILE_NAME_SUFFIX,
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    );
 
-        for (ResolveInfo res : listCam) {
-            Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            allIntents.add(intent);
+                    if (imageFile != null) {
+                        mCameraPhotoPath = FILE_SCHEME + imageFile.getAbsolutePath();
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+                        intents.add(cameraIntent);
+                    }
+                } catch (IOException e) {
+                    // Error occurred while creating the File
+                    Log.e(TAG, "getImageFileChooserIntent: Unable to create image file for camera intent.", e);
+                }
+
+            } else {
+                Log.d(TAG, "getImageFileChooserIntent: Image capture intent not found, unable to allow camera use.");
+            }
         }
 
-        // Collect all gallery intents
+        // Get all gallery intents so user can select a photo.
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        //            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE); // shiv
         galleryIntent.setType(INTENT_TYPE_IMAGE);
         List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
         for (ResolveInfo res : listGallery) {
             Intent intent = new Intent(galleryIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
             intent.setPackage(res.activityInfo.packageName);
-            allIntents.add(intent);
+            intents.add(intent);
         }
 
-        // The main intent is the last in the list so pickup the last one
-        Intent mainIntent = allIntents.get(allIntents.size() - 1);
-        for (Intent intent : allIntents) {
-            if (intent.getComponent().getClassName().equals(DOCUMENTS_ACTIVITY_CLASS_NAME)) {
-                mainIntent = intent;
-                break;
-            }
-        }
-        allIntents.remove(mainIntent);
+        // Create the file chooser intent. The first intent that will appear in the chooser, must be removed from the intents array.
+        Intent imageFileChooserIntent = Intent.createChooser(intents.get(0), SELECT_IMAGE_TITLE);
+        intents.remove(0);
 
-        // Create a chooser from the main intent
-        Intent chooserIntent = Intent.createChooser(mainIntent, SELECT_IMAGE_TITLE);
+        // Add the remaining image file chooser intents to an auxiliary array.  These will also appear in the file chooser.
+        imageFileChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[intents.size()]));
 
-        // Add all other intents
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
-
-        return chooserIntent;
+        return imageFileChooserIntent;
     }
-
 
     @Override
     public void onBackPressed() {
@@ -466,127 +451,50 @@ public class WebViewActivity extends BRActivity {
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
-        Log.d(TAG, "requestCode -> " + requestCode);
-        Log.d(TAG, "resultCode -> " + resultCode);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " resultCode: " + resultCode);
 
-        if (requestCode != REQUEST_CHOOSE_IMAGE || mFilePathCallback == null) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        } else if (requestCode == REQUEST_CHOOSE_IMAGE) {
-            //todo why is this empty?
-        }
-
-        Uri[] results = null;
-
-        // Check that the response is a good one
-        if (resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "Photo Path -> " + mCameraPhotoPath);
-
-            if (data != null && data.getDataString() != null && !data.getDataString().isEmpty()) {
-                Log.d(TAG, "Data string -> " + data.getDataString());
-                results = new Uri[]{Uri.parse(data.getDataString())};
-
-
-            } else if (mCameraPhotoPath != null) {
-                results = new Uri[]{Uri.parse(mCameraPhotoPath)};
-                Toast.makeText(WebViewActivity.this, "Error getting selected image!", Toast.LENGTH_SHORT).show();
+        if ((requestCode == CHOOSE_IMAGE_REQUEST_CODE && mFilePathCallback != null)) {
+            Uri[] imageFileUri = null;
+            if (resultCode == Activity.RESULT_OK) {
+                if (intent == null) {
+                    // If there is not data, then we may have taken a photo.
+                    if (mCameraPhotoPath != null) {
+                        imageFileUri = new Uri[]{Uri.parse(mCameraPhotoPath)};
+                    }
+                } else {
+                    // Else we have the path of the selected photo.
+                    String dataString = intent.getDataString();
+                    if (dataString != null) {
+                        imageFileUri = new Uri[]{Uri.parse(dataString)};
+                    }
+                }
             }
 
-            mFilePathCallback.onReceiveValue(results);
+            // Return the image file Uris to the web.
+            mFilePathCallback.onReceiveValue(imageFileUri);
             mFilePathCallback = null;
-
-        }
-
-    }
-
-    private void requestCameraPermission() {
-        Log.d(TAG, "requestCameraPermission");
-
-        // Camera permission is NOT granted, request it
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            Log.d(TAG, "CAMERA permission NOT granted");
-            android.support.v4.app.ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CAMERA_PERMISSION);
-
         } else {
-            // Camera permission already granted, start the camera
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
-            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-
+            super.onActivityResult(requestCode, resultCode, intent);
         }
     }
-
-    private void requestImageFilePermission() {
-        Log.d(TAG, "requestImageFilePermission");
-
-        // Image File permission is not granted, request it now
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_EXTERNAL_STORAGE);
-        } else {
-            startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
-        }
-    }
-
-    private File createImageFile() throws IOException {
-
-        // ActivityCompat.requestPermissions(WebViewActivity.this,
-        //new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat(DATE_FORMAT).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File imageFile = File.createTempFile(
-                imageFileName,  /* prefix */
-                KYC_SUFFIX,         /* suffix */
-                storageDir      /* directory */
-        );
-        return imageFile;
-    }
-
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-                                           int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionResult");
-        Log.d(TAG, "Request Code -> " + requestCode);
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionResult: requestCode: " + requestCode);
 
         switch (requestCode) {
-            case REQUEST_CAMERA_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
+            case GET_CAMERA_PERMISSIONS_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission is granted, open camera
-                    Log.d(TAG, "Camera permission GRANTED");
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
-                    overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-
+                    startActivityForResult(getImageFileChooserIntent(), CHOOSE_IMAGE_REQUEST_CODE);
                 } else {
-                    Toast.makeText(WebViewActivity.this, getString(R.string.Send_cameraUnavailabeMessage_android), Toast.LENGTH_SHORT).show();
+                    // If permissions were denied, finish the call back to the web so it does not hang.
+                    if (mFilePathCallback != null) {
+                        mFilePathCallback.onReceiveValue(new Uri[]{new Uri.Builder().build()});
+                    }
                 }
                 break;
             }
-            case REQUEST_WRITE_EXTERNAL_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Storage permission GRANTED");
-
-                    startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
-                }
-                break;
-            }
-
             case BRConstants.GEO_REQUEST_ID: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
@@ -637,5 +545,4 @@ public class WebViewActivity extends BRActivity {
             mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(mKeyboardLayoutListener);
         }
     }
-
 }
