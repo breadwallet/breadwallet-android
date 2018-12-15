@@ -381,7 +381,7 @@ public class WebViewActivity extends BRActivity {
             mFilePathCallback = filePath;
 
             if (hasPermissions(CAMERA_PERMISSIONS)) {
-                startActivityForResult(getImageFileChooserIntent(), CHOOSE_IMAGE_REQUEST_CODE);
+                startActivityForResult(getImageFileChooserIntent(true), CHOOSE_IMAGE_REQUEST_CODE);
             } else {
                 ActivityCompat.requestPermissions(WebViewActivity.this, CAMERA_PERMISSIONS, GET_CAMERA_PERMISSIONS_REQUEST_CODE);
             }
@@ -389,12 +389,12 @@ public class WebViewActivity extends BRActivity {
         }
     }
 
-    private Intent getImageFileChooserIntent() {
+    private Intent getImageFileChooserIntent(boolean hasCameraPermissions) {
         List<Intent> intents = new ArrayList();
         PackageManager packageManager = getPackageManager();
 
         // Get Camera intent so user can take a photo.
-        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA) && hasCameraPermissions) {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                 try {
@@ -423,11 +423,11 @@ public class WebViewActivity extends BRActivity {
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         //            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE); // shiv
         galleryIntent.setType(INTENT_TYPE_IMAGE);
-        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-        for (ResolveInfo res : listGallery) {
+        List<ResolveInfo> galleryActivityList = packageManager.queryIntentActivities(galleryIntent, 0);
+        for (ResolveInfo resolveInfo : galleryActivityList) {
             Intent intent = new Intent(galleryIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
+            intent.setComponent(new ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
+            intent.setPackage(resolveInfo.activityInfo.packageName);
             intents.add(intent);
         }
 
@@ -484,21 +484,12 @@ public class WebViewActivity extends BRActivity {
         Log.d(TAG, "onRequestPermissionResult: requestCode: " + requestCode);
 
         switch (requestCode) {
-            case GET_CAMERA_PERMISSIONS_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivityForResult(getImageFileChooserIntent(), CHOOSE_IMAGE_REQUEST_CODE);
-                } else {
-                    // If permissions were denied, finish the call back to the web so it does not hang.
-                    if (mFilePathCallback != null) {
-                        mFilePathCallback.onReceiveValue(new Uri[]{new Uri.Builder().build()});
-                    }
-                }
+            case GET_CAMERA_PERMISSIONS_REQUEST_CODE:
+                startActivityForResult(getImageFileChooserIntent(permissionGranted(grantResults)), CHOOSE_IMAGE_REQUEST_CODE);
                 break;
-            }
             case BRConstants.GEO_REQUEST_ID: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission is granted
                     Log.d(TAG, "Geo permission GRANTED");
                     GeoLocationPlugin.handleGeoPermission(true);
@@ -508,7 +499,15 @@ public class WebViewActivity extends BRActivity {
                 break;
             }
         }
+    }
 
+    private boolean permissionGranted(int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
