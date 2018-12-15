@@ -66,15 +66,14 @@ public class WebViewActivity extends BRActivity {
     private static final String BUY_PATH = "/buy";
     private static final String CURRENCY = "currency";
     private static final String URL_FORMAT = "%s?%s=%s";
-    private static final String SELECT_IMAGE_TITLE = "Select Image Source";
     private static final String FILE_SCHEME = "file:";
     private static final String INTENT_TYPE_IMAGE = "image/*";
 
-    private static final int CHOOSE_IMAGE_REQUEST_CODE = 1;
-    private static final int GET_CAMERA_PERMISSIONS_REQUEST_CODE = 2;
-    private static final String[] CAMERA_PERMISSIONS = {
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    private static final int CHOOSE_IMAGE_REQUEST_CODE = 1; // Activity request used to select an image.
+    private static final int GET_CAMERA_PERMISSIONS_REQUEST_CODE = 2; // Permissions request to ask for camera permissions
+    private static final String[] CAMERA_PERMISSIONS = {  // To use the camera we need the following permissions
+            Manifest.permission.CAMERA, // Used to take the photo.
+            Manifest.permission.WRITE_EXTERNAL_STORAGE // Used to save the taken photo to storage.
     };
 
     private WebView mWebView;
@@ -323,17 +322,6 @@ public class WebViewActivity extends BRActivity {
 
     }
 
-    private boolean hasPermissions(String... permissions) {
-        if (permissions != null) {
-            for (String permission : permissions) {
-                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     private class BRWebChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -389,6 +377,30 @@ public class WebViewActivity extends BRActivity {
         }
     }
 
+    /**
+     * Checks if the specified list of permissions are currently granted.
+     *
+     * @param permissions The permissions to check.
+     * @return True if all the specified permissions are currently granted; false otherwise.
+     */
+    private boolean hasPermissions(String... permissions) {
+        if (permissions != null) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns a set of intents that will be used to allow the user to select an image. These intents will be plugged
+     * into the a system file chooser dialog to prompt the user to make a selection.
+     *
+     * @param hasCameraPermissions True if we have permission to use the camera; false otherwise.
+     * @return The list of intents that can be used to select an image.
+     */
     private Intent getImageFileChooserIntent(boolean hasCameraPermissions) {
         List<Intent> intents = new ArrayList();
         PackageManager packageManager = getPackageManager();
@@ -404,24 +416,22 @@ public class WebViewActivity extends BRActivity {
                             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                     );
 
+                    // Create a camera intent for use in the file chooser.
                     if (imageFile != null) {
                         mCameraPhotoPath = FILE_SCHEME + imageFile.getAbsolutePath();
                         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
                         intents.add(cameraIntent);
                     }
                 } catch (IOException e) {
-                    // Error occurred while creating the File
                     Log.e(TAG, "getImageFileChooserIntent: Unable to create image file for camera intent.", e);
                 }
-
             } else {
                 Log.d(TAG, "getImageFileChooserIntent: Image capture intent not found, unable to allow camera use.");
             }
         }
 
-        // Get all gallery intents so user can select a photo.
+        // Get all gallery intents so user can select a photo with the file chooser.
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        //            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE); // shiv
         galleryIntent.setType(INTENT_TYPE_IMAGE);
         List<ResolveInfo> galleryActivityList = packageManager.queryIntentActivities(galleryIntent, 0);
         for (ResolveInfo resolveInfo : galleryActivityList) {
@@ -431,8 +441,9 @@ public class WebViewActivity extends BRActivity {
             intents.add(intent);
         }
 
-        // Create the file chooser intent. The first intent that will appear in the chooser, must be removed from the intents array.
-        Intent imageFileChooserIntent = Intent.createChooser(intents.get(0), SELECT_IMAGE_TITLE);
+        // Create the file chooser intent. The first intent from our list that will appear in the chooser, must be
+        // removed from the intents array and passed into the chooser upon creation.
+        Intent imageFileChooserIntent = Intent.createChooser(intents.get(0), getString(R.string.FileChooser_selectImageSource_android));
         intents.remove(0);
 
         // Add the remaining image file chooser intents to an auxiliary array.  These will also appear in the file chooser.
@@ -455,15 +466,16 @@ public class WebViewActivity extends BRActivity {
         Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " resultCode: " + resultCode);
 
         if ((requestCode == CHOOSE_IMAGE_REQUEST_CODE && mFilePathCallback != null)) {
+            // The user has selected an image.
             Uri[] imageFileUri = null;
             if (resultCode == Activity.RESULT_OK) {
                 if (intent == null) {
-                    // If there is not data, then we may have taken a photo.
+                    // If there is no intent, then we may have taken a photo with the camera.
                     if (mCameraPhotoPath != null) {
                         imageFileUri = new Uri[]{Uri.parse(mCameraPhotoPath)};
                     }
                 } else {
-                    // Else we have the path of the selected photo.
+                    // Else we have the path of the selected image.
                     String dataString = intent.getDataString();
                     if (dataString != null) {
                         imageFileUri = new Uri[]{Uri.parse(dataString)};
@@ -485,6 +497,8 @@ public class WebViewActivity extends BRActivity {
 
         switch (requestCode) {
             case GET_CAMERA_PERMISSIONS_REQUEST_CODE:
+                // The camera permissions have changed upon a request for the user to select an image. Show the appropriate
+                // image file chooser based on the current permissions.
                 startActivityForResult(getImageFileChooserIntent(permissionGranted(grantResults)), CHOOSE_IMAGE_REQUEST_CODE);
                 break;
             case BRConstants.GEO_REQUEST_ID: {
@@ -501,6 +515,12 @@ public class WebViewActivity extends BRActivity {
         }
     }
 
+    /**
+     * Aggregates the result of a list of granted permissions.
+     *
+     * @param grantResults The list of permissions resuts to check.
+     * @return True if *all* permissions were granted; false otherwise.
+     */
     private boolean permissionGranted(int[] grantResults) {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
