@@ -110,7 +110,10 @@ public class HTTPServer {
 
     public synchronized static void startServer() {
         Log.d(TAG, "startServer");
-        if (!isStarted()) {
+
+        if(isStartedOrStarting()){
+            return;
+        } else {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -130,23 +133,31 @@ public class HTTPServer {
 
     public static void stopServer() {
         Log.d(TAG, "stopServer");
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (isStarted()) {
-                        server.stop();
+        if (isStoppedOrStopping()) {
+            return;
+        } else {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (server != null) {
+                            server.stop();
+                            server = null;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error stopping the local server", e);
                     }
-                    server = null;
-                } catch (Exception e) {
-                    Log.e(TAG, "Error stopping the local server", e);
                 }
-            }
-        });
+            });
+        }
     }
 
-    public static boolean isStarted() {
-        return server != null && server.isStarted();
+    private static boolean isStartedOrStarting() {
+        return server != null && server.isStarted() || server != null && server.isStarting();
+    }
+
+    private static boolean isStoppedOrStopping() {
+        return server != null && server.isStopped() || server != null && server.isStopping();
     }
 
     private static class ServerHandler extends AbstractHandler {
