@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -123,9 +122,10 @@ public class CurrencyUtils {
 
     }
 
-    public static boolean isBuyNotificationNeeded(Context context) {
-        String fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso(context);
-        return KRONE.equalsIgnoreCase(fiatCurrencyCode) || POUND.equalsIgnoreCase(fiatCurrencyCode) || EURO.equalsIgnoreCase(fiatCurrencyCode);
+    public static boolean isBuyNotificationNeeded() {
+        Locale locale = Locale.getDefault();
+        String currencyCode = Currency.getInstance(locale).getCurrencyCode();
+        return KRONE.equalsIgnoreCase(currencyCode) || POUND.equalsIgnoreCase(currencyCode) || EURO.equalsIgnoreCase(currencyCode);
     }
 
 }
