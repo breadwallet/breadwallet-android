@@ -127,7 +127,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         ImageView buyBell = findViewById(R.id.buy_bell);
         boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.toString())
-                && CurrencyUtils.isBuyNotificationNeeded();
+                && CurrencyUtils.isBuyNotificationNeeded(this);
         buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
     }
 
