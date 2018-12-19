@@ -467,16 +467,22 @@ public class WebViewActivity extends BRActivity {
         Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " resultCode: " + resultCode);
 
         if ((requestCode == CHOOSE_IMAGE_REQUEST_CODE && mFilePathCallback != null)) {
-            // The user has selected an image.
+            // We have returned from the image file chooser intent.
             Uri[] imageFileUri = null;
             if (resultCode == Activity.RESULT_OK) {
-                if (intent == null) {
-                    // If there is no intent, then we may have taken a photo with the camera.
+                if (intent == null || intent.getDataString() == null) {
+                    // Camera Intent Result:
+                    // If the resulting intent is null or empty the user has taken a photo with the camera.  On some
+                    // versions of Android, the camera intent returns a null intent (i.e. Android 8.1), on other
+                    // versions (i.e. Android 9), the intent is empty (all fields are null).
+                    // We only check getDataString() because in the else case the data string will not be null.
                     if (mCameraImageFileUri != null) {
                         imageFileUri = new Uri[]{mCameraImageFileUri};
                     }
                 } else {
-                    // Else we have the path of the selected image.
+                    // Gallery Intent Result:
+                    // If the resulting intent has the dataString, the user has selected an existing image and the data
+                    // string the URI of the selected image.
                     String dataString = intent.getDataString();
                     if (dataString != null) {
                         imageFileUri = new Uri[]{Uri.parse(dataString)};
@@ -488,6 +494,7 @@ public class WebViewActivity extends BRActivity {
             mFilePathCallback.onReceiveValue(imageFileUri);
             mFilePathCallback = null;
         } else {
+            // We have returned from some other intent not handled by this Activity.
             super.onActivityResult(requestCode, resultCode, intent);
         }
     }
