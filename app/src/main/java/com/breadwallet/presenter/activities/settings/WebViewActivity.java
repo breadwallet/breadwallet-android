@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toolbar;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
@@ -66,7 +68,6 @@ public class WebViewActivity extends BRActivity {
     private static final String BUY_PATH = "/buy";
     private static final String CURRENCY = "currency";
     private static final String URL_FORMAT = "%s?%s=%s";
-    private static final String FILE_SCHEME = "file:";
     private static final String INTENT_TYPE_IMAGE = "image/*";
 
     private static final int CHOOSE_IMAGE_REQUEST_CODE = 1; // Activity request used to select an image.
@@ -85,7 +86,7 @@ public class WebViewActivity extends BRActivity {
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private ValueCallback<Uri[]> mFilePathCallback;
-    private String mCameraPhotoPath;
+    private Uri mCameraImageFileUri;
     private String mUrl;
     private String mOnCloseUrl;
     private boolean mKeyboardListenersAttached = false;
@@ -418,8 +419,8 @@ public class WebViewActivity extends BRActivity {
 
                     // Create a camera intent for use in the file chooser.
                     if (imageFile != null) {
-                        mCameraPhotoPath = FILE_SCHEME + imageFile.getAbsolutePath();
-                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+                        mCameraImageFileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID, imageFile);
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraImageFileUri);
                         intents.add(cameraIntent);
                     }
                 } catch (IOException e) {
@@ -471,8 +472,8 @@ public class WebViewActivity extends BRActivity {
             if (resultCode == Activity.RESULT_OK) {
                 if (intent == null) {
                     // If there is no intent, then we may have taken a photo with the camera.
-                    if (mCameraPhotoPath != null) {
-                        imageFileUri = new Uri[]{Uri.parse(mCameraPhotoPath)};
+                    if (mCameraImageFileUri != null) {
+                        imageFileUri = new Uri[]{mCameraImageFileUri};
                     }
                 } else {
                     // Else we have the path of the selected image.
