@@ -108,10 +108,7 @@ public class HTTPServer {
 
     public static synchronized void startServer() {
         Log.d(TAG, "startServer");
-
-        if (isStartedOrStarting()) {
-            return;
-        } else {
+        if (!isStartedOrStarting()) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -129,11 +126,9 @@ public class HTTPServer {
         }
     }
 
-    public static void stopServer() {
+    public static synchronized void stopServer() {
         Log.d(TAG, "stopServer");
-        if (isStoppedOrStopping()) {
-            return;
-        } else {
+        if (!isStoppedOrStopping()) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -145,6 +140,7 @@ public class HTTPServer {
                     } catch (Exception e) {
                         Log.e(TAG, "Error stopping the local server", e);
                     }
+
                 }
             });
         }
