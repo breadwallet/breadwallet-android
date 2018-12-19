@@ -999,4 +999,6 @@ users in a future update. </string>
   <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
     <!-- Message that gets shown when we've detected the user has encountered an issue in which we would like them to contact support with a specific issue number. -->
     <string name="ErrorMessages.ContactSupportBug.android">BRD cannot proceed due to a bug in your app version. Please contact support with issue #%1$d.</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file.-->
+    <string name="FileChooser.selectImageSource.android">Select Image Source</string>
 </resources>
