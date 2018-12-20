@@ -37,7 +37,7 @@ import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.presenter.fragments.FragmentSignal;
-import com.breadwallet.presenter.fragments.FragmentSupport;
+import com.breadwallet.presenter.fragments.FragmentWebModal;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -46,6 +46,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.HTTPServer;
 
 import java.util.List;
 
@@ -80,6 +81,8 @@ import static com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 public class UiUtils {
     private static final String TAG = UiUtils.class.getName();
     public static final int CLICK_PERIOD_ALLOWANCE = 300;
+    public static final String ARTICLE_QUERY_STRING = "/article?slug=";
+    public static final String CURRENCY_QUERY_STRING = "&currency=";
     private static long mLastClickTime = 0;
     private static boolean mSupportIsShowing;
 
@@ -104,45 +107,42 @@ public class UiUtils {
         mSupportIsShowing = isSupportFragmentShown;
     }
 
-    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager walletManager) {
+    public static void showSupportFragment(FragmentActivity fragmentActivity, String articleId, BaseWalletManager walletManager) {
         if (mSupportIsShowing) {
             return;
         }
         try {
             mSupportIsShowing = true;
-            if (app == null) {
+            if (fragmentActivity == null) {
                 Log.e(TAG, "showSupportFragment: app is null");
                 return;
             }
 
-            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager()
-                    .findFragmentByTag(FragmentSupport.class.getName());
-            if (fragmentSupport != null && fragmentSupport.isAdded()) {
-                app.getFragmentManager().popBackStack();
-                return;
-            }
-            String currencyCode = BRSharedPrefs.getCurrentWalletIso(app);
-            if (WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, currencyCode)) {
-                currencyCode = BRConstants.CURRENCY_ERC20;
-            }
-            if (walletManager != null) {
-                walletManager.getCurrencyCode();
-            }
-            fragmentSupport = new FragmentSupport();
-            Bundle bundle = new Bundle();
-            bundle.putString(FragmentSupport.WALLET_CURRENCY_CODE, currencyCode);
-            if (!Utils.isNullOrEmpty(articleId)) {
-                bundle.putString(FragmentSupport.EXTRA_ARTICLE_ID, articleId);
-            }
+            String url = HTTPServer.URL_SUPPORT + ARTICLE_QUERY_STRING + articleId + CURRENCY_QUERY_STRING + walletManager.getCurrencyCode().toLowerCase();
 
-            fragmentSupport.setArguments(bundle);
-            app.getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
+            showWebModal(fragmentActivity, url);
         } finally {
             mSupportIsShowing = false;
         }
+
+    }
+
+    public static void showWebModal(FragmentActivity fragmentActivity, String url) {
+        FragmentWebModal fragmentSupport = (FragmentWebModal) fragmentActivity.getSupportFragmentManager()
+                .findFragmentByTag(FragmentWebModal.class.getName());
+        if (fragmentSupport != null && fragmentSupport.isAdded()) {
+            fragmentActivity.getFragmentManager().popBackStack();
+            return;
+        }
+        fragmentSupport = new FragmentWebModal();
+        Bundle bundle = new Bundle();
+        bundle.putString(FragmentWebModal.EXTRA_URL, url);
+
+        fragmentSupport.setArguments(bundle);
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
+                .addToBackStack(FragmentSend.class.getName()).commit();
 
     }
 
