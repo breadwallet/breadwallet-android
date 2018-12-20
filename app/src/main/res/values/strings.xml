@@ -154,6 +154,8 @@
     <string name="Confirmation.amountLabel">Amount to Send:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Network Fee:</string>
+    <!-- Network Fee for ETH/ERC20 transactions -->
+    <string name="Confirmation.feeLabelETH">Network Fee (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
