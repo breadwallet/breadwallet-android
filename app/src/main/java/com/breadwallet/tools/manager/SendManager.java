@@ -392,6 +392,7 @@ public class SendManager {
         String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
 
         boolean isErc20 = WalletsMaster.getInstance(ctx).isCurrencyCodeErc20(ctx, wm.getCurrencyCode());
+        String feeLabel = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
 
         if (isErc20) {
             formattedCryptoTotal = "";
@@ -399,16 +400,16 @@ public class SendManager {
             BaseWalletManager ethWm = WalletEthManager.getInstance(ctx);
             formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getCurrencyCode(), feeForTx);
             formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
+            feeLabel = ctx.getString(R.string.Confirmation_feeLabelETH) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
         }
 
-        String line1 = receiver + "\n\n";
-        String line2 = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
-        String line3 = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
-        String line4 = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
-        String line5 = Utils.isNullOrEmpty(request.getMessage()) ? "" : "\n\n" + request.getMessage();
+        String receiverLabel = receiver + "\n\n";
+        String amountLabel = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
+        String totalLabel = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
+        String messageLabel = Utils.isNullOrEmpty(request.getMessage()) ? "" : "\n\n" + request.getMessage();
 
         //formatted text
-        return line1 + line2 + line3 + (isErc20 ? "" : line4) + line5;
+        return receiverLabel + amountLabel + feeLabel + (isErc20 ? "" : totalLabel) + messageLabel;
     }
 
     public interface SendCompletion {
