@@ -70,6 +70,8 @@ import java.util.TimerTask;
 public class PostAuth {
     public static final String TAG = PostAuth.class.getName();
 
+    public String mOnDoneAction;
+
     private String mCachedPaperKey;
     public CryptoRequest mCryptoRequest;
     //The user is stuck with endless authentication due to KeyStore bug.
@@ -93,10 +95,9 @@ public class PostAuth {
     }
 
     /**
-     *
-     * @param context the context to be used
+     * @param context   the context to be used
      * @param authAsked Device authentication for this action was asked already
-     * @param listener Action on device authentication or null if using the cached listener.
+     * @param listener  Action on device authentication or null if using the cached listener.
      */
     public void onCreateWalletAuth(final Context context, boolean authAsked, AuthenticationSuccessListener listener) {
         if (listener != null) {
@@ -114,7 +115,18 @@ public class PostAuth {
         }
     }
 
-    public void onPhraseCheckAuth(Activity activity, boolean authAsked) {
+    /**
+     * Start the PaperKeyActivity with an extra action to be done on key confirmed or null for default action
+     *
+     * @param activity    - the activity to use
+     * @param authAsked   - was authentication already approved by user
+     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
+     */
+
+    public void onPhraseCheckAuth(Activity activity, boolean authAsked, String intentExtra) {
+        if (intentExtra != null) {
+            mOnDoneAction = intentExtra;
+        }
         String cleanPhrase;
         try {
             byte[] raw = BRKeyStore.getPhrase(activity, BRConstants.SHOW_PHRASE_REQUEST_CODE);
@@ -131,12 +143,26 @@ public class PostAuth {
             return;
         }
         Intent intent = new Intent(activity, PaperKeyActivity.class);
-        intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyActivity.EXTRA_PAPER_KEY, cleanPhrase);
+        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
+            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
+            mOnDoneAction = null;
+        }
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
     }
 
-    public void onPhraseProveAuth(Activity activity, boolean authAsked) {
+    /**
+     * Start the PaperKeyProveActivity with an extra action to be done on key confirmed or null for default action
+     *
+     * @param activity    - the activity to use
+     * @param authAsked   - was authentication already approved by user
+     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
+     */
+    public void onPhraseProveAuth(Activity activity, boolean authAsked, String intentExtra) {
+        if (intentExtra != null) {
+            mOnDoneAction = intentExtra;
+        }
         String cleanPhrase;
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(activity, BRConstants.PROVE_PHRASE_REQUEST));
@@ -148,7 +174,11 @@ public class PostAuth {
             return;
         }
         Intent intent = new Intent(activity, PaperKeyProveActivity.class);
-        intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyProveActivity.EXTRA_PAPER_KEY, cleanPhrase);
+        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
+            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
+            mOnDoneAction = null;
+        }
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }

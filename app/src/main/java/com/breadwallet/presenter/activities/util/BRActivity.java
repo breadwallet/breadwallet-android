@@ -133,7 +133,7 @@ public class BRActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
@@ -187,7 +187,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true, null);
                         }
                     });
                 }
@@ -198,7 +198,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true, null);
                         }
                     });
                 }
