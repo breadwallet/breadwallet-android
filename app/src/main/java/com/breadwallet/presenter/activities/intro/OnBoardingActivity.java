@@ -39,11 +39,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.presenter.activities.PaperKeyActivity;
+import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentOnBoarding;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
 
@@ -150,15 +154,25 @@ public class OnBoardingActivity extends BRActivity {
                 if (isPinAccepted) {
                     switch (mNextScreen) {
                         case BUY_SCREEN:
-                            showBuyScreen(this);
+                            showPaperKeyActivity(PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name());
                             break;
                         case HOME_SCREEN:
-                            UiUtils.startBreadActivity(this, false);
+                            showPaperKeyActivity(null);
                             break;
                     }
                 }
             }
         }
+    }
+
+    private void showPaperKeyActivity(String onDoneExtra) {
+        Intent intent = new Intent(this, WriteDownActivity.class);
+        intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.ON_BOARDING.getValue());
+        if (!Utils.isNullOrEmpty(onDoneExtra)) {
+            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, onDoneExtra);
+        }
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
     private void sendEvent(OnBoardingEvent event) {

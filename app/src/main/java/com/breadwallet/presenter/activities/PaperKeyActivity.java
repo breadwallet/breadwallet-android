@@ -34,16 +34,21 @@ public class PaperKeyActivity extends BRActivity {
     private static final String TAG = PaperKeyActivity.class.getName();
 
     private static final int NAVIGATION_BUTTONS_WEIGHT = 1;
+    private static final int WORD_COUNT = 12;
     private static final float BUTTONS_LAYOUT_WEIGHT_SUM_DEFAULT = 2.0f;
     private static final float BUTTONS_LAYOUT_WEIGHT_SUM_SINGLE = 1.0f;
+    public static final String EXTRA_PAPER_KEY = "com.breadwallet.presenter.activities.EXTRA_PAPER_KEY";
 
     private ViewPager mWordViewPager;
     private Button mNextButton;
     private Button mPreviousButton;
     private LinearLayout mButtonsLayout;
     private TextView mItemIndexTextView;
-    private ImageButton mCloseImageButton;
     private SparseArray<String> mWordMap;
+
+    public enum DoneAction {
+        SHOW_BUY_SCREEN
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,7 @@ public class PaperKeyActivity extends BRActivity {
 
         mNextButton = findViewById(R.id.next_button);
         mPreviousButton = findViewById(R.id.previous_button);
-        mCloseImageButton = findViewById(R.id.close_button);
+        ImageButton closeImageButton = findViewById(R.id.close_button);
         mItemIndexTextView = findViewById(R.id.item_index_text);
         mButtonsLayout = findViewById(R.id.buttons_layout);
         updateNavigationButtons(false);
@@ -90,7 +95,7 @@ public class PaperKeyActivity extends BRActivity {
             }
         });
 
-        mCloseImageButton.setOnClickListener(new View.OnClickListener() {
+        closeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
@@ -107,7 +112,7 @@ public class PaperKeyActivity extends BRActivity {
             }
         });
 
-        String cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra("phrase");
+        String cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra(EXTRA_PAPER_KEY);
         mWordMap = new SparseArray<>();
 
         if (Utils.isNullOrEmpty(cleanPhrase)) {
@@ -126,7 +131,7 @@ public class PaperKeyActivity extends BRActivity {
                     }, null, null, 0);
             BRReportsManager.reportBug(new IllegalArgumentException("Paper Key error, please contact support at breadwallet.com: " + wordArray.length), true);
         } else {
-            if (wordArray.length != 12) {
+            if (wordArray.length != WORD_COUNT) {
                 BRReportsManager.reportBug(new IllegalArgumentException("Wrong number of paper keys: " + wordArray.length + ", lang: " + Locale.getDefault().getLanguage()), true);
             }
             WordPagerAdapter adapter = new WordPagerAdapter(getFragmentManager());
@@ -178,8 +183,12 @@ public class PaperKeyActivity extends BRActivity {
         int currentIndex = mWordViewPager.getCurrentItem();
         if (isNext) {
             setButtonEnabled(true);
-            if (currentIndex >= 11) {
-                PostAuth.getInstance().onPhraseProveAuth(this, false);
+            //Last word index is 11.
+            if (currentIndex >= WORD_COUNT - 1) {
+                String extraDoneAction = getIntent().getExtras() == null
+                        ? null
+                        : getIntent().getStringExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION);
+                PostAuth.getInstance().onPhraseProveAuth(this, false, extraDoneAction);
             } else {
                 mWordViewPager.setCurrentItem(currentIndex + 1);
             }
@@ -201,14 +210,15 @@ public class PaperKeyActivity extends BRActivity {
     }
 
     private void updateItemIndexText() {
-        String text = String.format(Locale.getDefault(), getString(R.string.WritePaperPhrase_step), mWordViewPager.getCurrentItem() + 1, mWordMap.size());
+        String text = String.format(Locale.getDefault(), getString(R.string.WritePaperPhrase_step),
+                mWordViewPager.getCurrentItem() + 1, mWordMap.size());
         mItemIndexTextView.setText(text);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        overridePendingTransition(R.anim.empty_300, R.anim.exit_to_bottom);
     }
 
     private class WordPagerAdapter extends FragmentPagerAdapter {
