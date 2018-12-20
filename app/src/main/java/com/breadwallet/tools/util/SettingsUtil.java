@@ -42,6 +42,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +155,12 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_review));
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.URL_REWARDS);
+            }
+        }, false, R.drawable.ic_star));
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
