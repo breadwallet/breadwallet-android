@@ -78,7 +78,7 @@ public class HTTPServer {
         init();
     }
 
-    private static void init() {
+    private synchronized static void init() {
         middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
         try {
