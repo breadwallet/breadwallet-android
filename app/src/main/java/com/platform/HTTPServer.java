@@ -73,6 +73,7 @@ public class HTTPServer {
     public static final String URL_TRADE = PLATFORM_BASE_URL + "/trade";
     public static final String URL_SELL = PLATFORM_BASE_URL + "/sell";
     public static final String URL_SUPPORT = PLATFORM_BASE_URL + "/support";
+    public static final String URL_REWARDS = PLATFORM_BASE_URL + "/rewards";
     private static OnCloseListener mOnCloseListener;
 
     public HTTPServer() {
