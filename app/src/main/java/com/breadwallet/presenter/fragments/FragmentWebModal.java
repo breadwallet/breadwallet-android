@@ -23,8 +23,6 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
 
-import static com.platform.HTTPServer.URL_SUPPORT;
-
 
 /**
  * BreadWallet
@@ -51,15 +49,10 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentSupport extends ModalDialogFragment {
-    private static final String TAG = FragmentSupport.class.getName();
-    private WebView mWebView;
-    private String mUrl;
+public class FragmentWebModal extends ModalDialogFragment {
+    private static final String TAG = FragmentWebModal.class.getName();
     private String mOnCloseUrl;
-    private ViewGroup mBackgroundLayout;
-    private ViewGroup mSignalLayout;
-    public static final String EXTRA_ARTICLE_ID = "com.breadwallet.presenter.fragments.FragmentSupport.EXTRA_ARTICLE_ID";
-    public static final String WALLET_CURRENCY_CODE = "com.breadwallet.presenter.fragments.FragmentSupport.WALLET_CURRENCY_CODE";
+    public static final String EXTRA_URL = "com.breadwallet.presenter.fragments.FragmentWebModal.URL";
     public static final String CLOSE = "_close";
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -68,16 +61,16 @@ public class FragmentSupport extends ModalDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_support, container, false));
-        mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
-        mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
+        ViewGroup signalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
+        assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
 
-        mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
-        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
+        signalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
-        mWebView = rootView.findViewById(R.id.web_view);
-        mWebView.setWebChromeClient(new BRWebChromeClient());
-        mWebView.setWebViewClient(new WebViewClient() {
+        WebView webView = rootView.findViewById(R.id.web_view);
+        webView.setWebChromeClient(new BRWebChromeClient());
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl() + " | " + request.getMethod());
@@ -100,7 +93,17 @@ public class FragmentSupport extends ModalDialogFragment {
             }
         });
 
-        mUrl = URL_SUPPORT;
+        String url = getArguments() == null ? null : getArguments().getString(EXTRA_URL);
+        if (Utils.isNullOrEmpty(url)) {
+            throw new IllegalArgumentException("No url provided!");
+        }
+
+        WebSettings webSettings = webView.getSettings();
+
+        if ((getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
         HTTPServer.setOnCloseListener(new HTTPServer.OnCloseListener() {
             @Override
             public void onClose() {
@@ -108,26 +111,12 @@ public class FragmentSupport extends ModalDialogFragment {
                 HTTPServer.setOnCloseListener(null);
             }
         });
-        String articleId = getArguments() == null ? null : getArguments().getString(EXTRA_ARTICLE_ID);
-        String walletIso = getArguments() == null ? null : getArguments().getString(WALLET_CURRENCY_CODE);
-        if (Utils.isNullOrEmpty(mUrl) || Utils.isNullOrEmpty(walletIso)) {
-            throw new IllegalArgumentException("No articleId or walletIso extra! " + walletIso);
-        }
 
-        WebSettings webSettings = mWebView.getSettings();
 
-        if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        if (!Utils.isNullOrEmpty(articleId)) {
-            mUrl = mUrl + "/article?slug=" + articleId + "&currency=" + walletIso.toLowerCase();
-        }
-
-        Log.d(TAG, "onCreate: mUrl: " + mUrl + ", articleId: " + articleId);
-        mWebView.loadUrl(mUrl);
+        webView.loadUrl(url);
 
         return rootView;
     }
