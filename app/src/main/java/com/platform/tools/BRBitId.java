@@ -1,9 +1,9 @@
 package com.platform.tools;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -20,12 +20,9 @@ import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.WalletPlugin;
 
-import junit.framework.Assert;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,7 +37,6 @@ import java.util.Map;
 
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 
 /**
@@ -69,19 +65,35 @@ import okhttp3.Response;
  */
 public class BRBitId {
     public static final String TAG = BRBitId.class.getName();
-    public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Bitcoin Signed Message:\n";
+    private static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Bitcoin Signed Message:\n";
+    private static final String BIT_ID = "bitid";
+    private static final String BIT_ID_URL = "bitid_url";
+    private static final String BIT_ID_INDEX = "bitid_index";
+    private static final String PROMPT_STRING = "prompt_string";
+    private static final String STRING_TO_SIGN = "string_to_sign";
+    private static final String ADDRESS = "address";
+    private static final String SIGNATURE = "signature";
+    private static final String HTTPS = "https";
+    private static final String HTTP = "http";
+    private static final String URI = "uri";
+    private static final String SHA_256 = "SHA-256";
+    private static final String X_QUERY_PARAM_STRING = "?x=";
+    private static final String BIT_ID_SCHEME = "bitid://";
+    private static final String URI_DELIMITER = "://";
+    private static final String QUERY_PARAM_U = "u";
+    private static final String QUERY_PARAM_X = "x";
+    private static final String QUERY_PARAM_U_VALUE = "1";
 
-    private static String _bitUri;
-    private static String _bitIdUrl;
-    private static String _strToSign = null;
-    private static String _promptString = null;
-    private static int _index = 0;
-    private volatile static Map<String, Boolean> bitIdKeys = new HashMap<>();
+    private static String mBitUri;
+    private static String mStringToSign;
+    private static String mPromptString;
+    private static int mIndex;
+    private static volatile Map<String, Boolean> mBitIdKeys = new HashMap<>();
 
     public static boolean isBitId(String uri) {
         try {
             URI bitIdUri = new URI(uri);
-            if ("bitid".equals(bitIdUri.getScheme())) {
+            if (BIT_ID.equals(bitIdUri.getScheme())) {
                 return true;
             }
         } catch (URISyntaxException e) {
@@ -94,7 +106,7 @@ public class BRBitId {
 
         if (uri == null && jsonBody != null) {
             try {
-                uri = jsonBody.getString("bitid_url");
+                uri = jsonBody.getString(BIT_ID_URL);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -104,11 +116,11 @@ public class BRBitId {
             Log.e(TAG, "signBitID: uri is null");
             return;
         }
-        _bitUri = uri;
+        mBitUri = uri;
 
         final URI bitIdUri;
         try {
-            bitIdUri = new URI(_bitUri);
+            bitIdUri = new URI(mBitUri);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             Log.e(TAG, "signBitID: returning false: ", e);
@@ -116,34 +128,30 @@ public class BRBitId {
         }
 
         final String biUri = bitIdUri.getHost() == null ? bitIdUri.toString() : bitIdUri.getHost();
-        final boolean authNeeded = !bitIdKeys.containsKey(biUri);
+        final boolean authNeeded = !mBitIdKeys.containsKey(biUri);
 
         if (jsonBody != null) {
             try {
-                _promptString = jsonBody.getString("prompt_string");
-                _bitIdUrl = jsonBody.getString("bitid_url");
-                _index = jsonBody.getInt("bitid_index");
-                _strToSign = jsonBody.getString("string_to_sign");
+                mPromptString = jsonBody.getString(PROMPT_STRING);
+                mIndex = jsonBody.getInt(BIT_ID_INDEX);
+                mStringToSign = jsonBody.getString(STRING_TO_SIGN);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return;
             }
-        } else if ("bitid".equals(bitIdUri.getScheme())) {
+        } else if (BIT_ID.equals(bitIdUri.getScheme())) {
             if (context == null) {
                 Log.e(TAG, "signBitID: app is null, returning true still");
                 return;
             }
-            _promptString = "BitID Authentication Request";
+            mPromptString = "BitID Authentication Request";
         }
 
-//        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
-//        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
-//        Log.e(TAG, "signBitID: _index: " + _index);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(DateUtils.SECOND_IN_MILLIS / 2);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -152,17 +160,18 @@ public class BRBitId {
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(context, _promptString, bitIdUri.getHost(), true, false, new BRAuthCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    PostAuth.getInstance().onBitIDAuth(context, true);
-                                }
+                            AuthManager.getInstance().authPrompt(context, mPromptString, bitIdUri.getHost(),
+                                    true, false, new BRAuthCompletion() {
+                                        @Override
+                                        public void onComplete() {
+                                            PostAuth.getInstance().onBitIDAuth(context, true);
+                                        }
 
-                                @Override
-                                public void onCancel() {
-                                    PostAuth.getInstance().onBitIDAuth(context, false);
-                                }
-                            });
+                                        @Override
+                                        public void onCancel() {
+                                            PostAuth.getInstance().onBitIDAuth(context, false);
+                                        }
+                                    });
                         }
                     });
 
@@ -176,7 +185,6 @@ public class BRBitId {
 
     public static void completeBitID(final Context context, boolean authenticated) {
         final byte[] phrase;
-        final byte[] nulTermPhrase;
         final byte[] seed;
         if (!authenticated) {
             WalletPlugin.sendBitIdResponse(null, false);
@@ -186,12 +194,12 @@ public class BRBitId {
             Log.e(TAG, "completeBitID: app is null");
             return;
         }
-        if (_bitUri == null) {
-            Log.e(TAG, "completeBitID: _bitUri is null");
+        if (mBitUri == null) {
+            Log.e(TAG, "completeBitID: mBitUri is null");
             return;
         }
 
-        final Uri uri = Uri.parse(_bitUri);
+        final Uri uri = Uri.parse(mBitUri);
 
         try {
             phrase = BRKeyStore.getPhrase(context, BRConstants.REQUEST_PHRASE_BITID);
@@ -210,7 +218,7 @@ public class BRBitId {
             @Override
             public void run() {
                 try {
-                    if (_strToSign == null) {
+                    if (mStringToSign == null) {
                         //meaning it's a link handling
                         bitIdLink(context, uri, seed);
                     } else {
@@ -219,11 +227,10 @@ public class BRBitId {
                     }
                 } finally {
                     //release everything
-                    _bitUri = null;
-                    _strToSign = null;
-                    _bitIdUrl = null;
-                    _promptString = null;
-                    _index = 0;
+                    mBitUri = null;
+                    mStringToSign = null;
+                    mPromptString = null;
+                    mIndex = 0;
                     Arrays.fill(phrase, (byte) 0);
                     Arrays.fill(seed, (byte) 0);
                 }
@@ -235,41 +242,42 @@ public class BRBitId {
     private static void bitIdPlatform(Context context, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, _index, biUri);
+        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, mIndex, biUri);
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");
             return;
         }
-        if (_strToSign == null) {
-            Log.d(TAG, "bitIdPlatform: _strToSign is null!");
+        if (mStringToSign == null) {
+            Log.d(TAG, "bitIdPlatform: mStringToSign is null!");
             return;
         }
-        final String sig = BRBitId.signMessage(_strToSign, new BRCoreKey(key));
-        final String address = new BRCoreKey(key).address();
+        final String sig = BRBitId.signMessage(mStringToSign, new BRCoreKey(key));
+        final String address = new BRCoreKey(key).addressLegacy();
 
         JSONObject postJson = new JSONObject();
-        Log.e(TAG, "GLIDERA: address:" + address);
+        Log.d(TAG, "GLIDERA: address:" + address);
         try {
-            postJson.put("address", address);
-            postJson.put("signature", sig);
+            postJson.put(ADDRESS, address);
+            postJson.put(SIGNATURE, sig);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         //keep auth off for this host for 60 seconds.
-        if (!bitIdKeys.containsKey(biUri)) {
-            bitIdKeys.put(biUri, true);
+        if (!mBitIdKeys.containsKey(biUri)) {
+            mBitIdKeys.put(biUri, true);
             Log.d(TAG, "run: saved temporary sig for key: " + biUri);
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(60000);
+                        Thread.sleep(DateUtils.MINUTE_IN_MILLIS);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     Log.d(TAG, "run: removed temporary sig for key: " + biUri);
-                    if (bitIdKeys != null)
-                        bitIdKeys.remove(biUri);
+                    if (mBitIdKeys != null) {
+                        mBitIdKeys.remove(biUri);
+                    }
                 }
             });
         }
@@ -277,63 +285,67 @@ public class BRBitId {
     }
 
     private static void bitIdLink(Context context, Uri uri, byte[] seed) {
-        String nonce = null;
-        String scheme = "https";
+        String nonce;
+        String scheme = HTTPS;
 
-        String u = uri.getQueryParameter("u");
-        if (u != null && u.equalsIgnoreCase("1")) {
-            scheme = "http";
+        String u = uri.getQueryParameter(QUERY_PARAM_U);
+        if (u != null && u.equalsIgnoreCase(QUERY_PARAM_U_VALUE)) {
+            scheme = HTTP;
         }
-        String x = uri.getQueryParameter("x");
+        String x = uri.getQueryParameter(QUERY_PARAM_X);
         if (Utils.isNullOrEmpty(x)) {
-            nonce = newNonce(context, uri.getHost() + uri.getPath());     // we are generating our own nonce
+            // we are generating our own nonce
+            nonce = newNonce(context, uri.getHost() + uri.getPath());
         } else {
-            nonce = x;              // service is providing a nonce
+            // service is providing a nonce
+            nonce = x;
         }
 
-        String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
+        String callbackUrl = scheme + URI_DELIMITER + uri.getHost() + uri.getPath();
 
         // build a payload consisting of the signature, address and signed uri
-
-        String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
+        String uriWithNonce = BIT_ID_SCHEME + uri.getHost() + uri.getPath() + X_QUERY_PARAM_STRING + nonce;
 
         Log.e(TAG, "LINK: callbackUrl:" + callbackUrl);
-        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, _index, _bitUri);
+        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, mIndex, mBitUri);
 
         if (key == null) {
-            Log.d(TAG, "completeBitID: key is null!");
+            Log.e(TAG, "completeBitID: key is null!");
             return;
         }
 
         final String sig = BRBitId.signMessage(uriWithNonce, new BRCoreKey(key));
-        final String address = new BRCoreKey(key).address();
-        Log.e(TAG, "LINK: address: " + address);
+        final String address = new BRCoreKey(key).addressLegacy();
+        Log.d(TAG, "LINK: address: " + address);
         JSONObject postJson = new JSONObject();
         try {
-            postJson.put("address", address);
-            postJson.put("signature", sig);
-            postJson.put("uri", uriWithNonce);
+            postJson.put(ADDRESS, address);
+            postJson.put(SIGNATURE, sig);
+            postJson.put(URI, uriWithNonce);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         RequestBody requestBody = RequestBody.create(null, postJson.toString());
         Request request = new Request.Builder()
-                .url(callbackUrl + "?x=" + nonce)
+                .url(callbackUrl + X_QUERY_PARAM_STRING + nonce)
                 .post(requestBody)
                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .build();
         APIClient.BRResponse res = APIClient.getInstance(context).sendRequest(request, true);
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "bitIdLink: Request was unsuccesful: " + res.getCode());
+        }
     }
 
-    public static String newNonce(Context context, String nonceKey) {
+    private static String newNonce(Context context, String nonceKey) {
         // load previous nonces. we save all nonces generated for each service
         // so they are not used twice from the same device
         List<Integer> existingNonces = BRSharedPrefs.getBitIdNonces(context, nonceKey);
 
         String nonce = "";
         while (existingNonces.contains(Integer.valueOf(nonce))) {
-            nonce = String.valueOf(System.currentTimeMillis() / 1000);
+            nonce = String.valueOf(System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
         }
         existingNonces.add(Integer.valueOf(nonce));
         BRSharedPrefs.putBitIdNonces(context, existingNonces, nonceKey);
@@ -341,12 +353,12 @@ public class BRBitId {
         return nonce;
     }
 
-    public static String signMessage(String message, BRCoreKey key) {
+    private static String signMessage(String message, BRCoreKey key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
 
-        MessageDigest digest = null;
+        MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            digest = MessageDigest.getInstance(SHA_256);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
@@ -363,14 +375,14 @@ public class BRBitId {
         byte[] messageBytes = null;
 
         try {
-            headerBytes = BITCOIN_SIGNED_MESSAGE_HEADER.getBytes("UTF-8");
-            messageBytes = message.getBytes("UTF-8");
+            headerBytes = BITCOIN_SIGNED_MESSAGE_HEADER.getBytes(BRConstants.UTF_8);
+            messageBytes = message.getBytes(BRConstants.UTF_8);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        assert (headerBytes != null);
-        assert (messageBytes != null);
-        if (headerBytes == null || messageBytes == null) return new byte[0];
+        if (headerBytes == null || messageBytes == null) {
+            return new byte[0];
+        }
 
         int cap = 1 + headerBytes.length + varIntSize(messageBytes.length) + messageBytes.length;
 
@@ -379,11 +391,8 @@ public class BRBitId {
         dataBuffer.put(headerBytes);                        //put the header
         putVarInt(message.length(), dataBuffer);            //put message count
         dataBuffer.put(messageBytes);                       //put the message
-        byte[] result = dataBuffer.array();
 
-        Assert.assertEquals(cap, result.length);
-
-        return result;
+        return dataBuffer.array();
     }
 
     /**
