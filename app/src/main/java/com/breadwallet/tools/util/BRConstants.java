@@ -214,6 +214,7 @@ public final class BRConstants {
     public static final String CURRENCY_ERC20 = "erc20";
     public static final String RATES = "rates";
     public static final String CURRENCY = "currency";
+    public static final String UTF_8 = "UTF-8";
 
     /**
      * Commonly used regular expressions.
