@@ -560,7 +560,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void sayInvalidAddress() {
-        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage),
+        BRDialog.showCustomDialog(getActivity(), "", String.format(getResources().getString(R.string.Send_invalidAddressMessage), BRSharedPrefs.getCurrentWalletCurrencyCode(getActivity())),
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
