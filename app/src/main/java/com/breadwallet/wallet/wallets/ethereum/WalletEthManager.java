@@ -41,6 +41,7 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,7 +94,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public static final String MAX_ETH = "90000000";
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
-    private static final String NAME = "Ethereum";
+    public static final String NAME = "Ethereum";
+    private static final String FEE_URL_FORMAT = "https://%s/fee-per-kb?currency=%s";
 
     private static WalletEthManager mInstance;
 
@@ -359,7 +361,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso());
+        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, BreadApp.HOST, getCurrencyCode()));
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
@@ -372,18 +374,18 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             JSONObject obj = new JSONObject(jsonString);
             fee = new BigDecimal(obj.getString("fee_per_kb"));
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.d(TAG, "updateFee: " + getIso() + ":" + fee + "|" + economyFee);
+            Log.d(TAG, "updateFee: " + getCurrencyCode() + ":" + fee + "|" + economyFee);
 
             if (fee.compareTo(BigDecimal.ZERO) > 0) {
-                BRSharedPrefs.putFeeRate(app, getIso(), fee);
-                BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
+                BRSharedPrefs.putFeeRate(app, getCurrencyCode(), fee);
+                BRSharedPrefs.putFeeTime(app, getCurrencyCode(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
                 Log.d(TAG, "Error: Fee is unexpected value");
 
             }
             if (economyFee.compareTo(BigDecimal.ZERO) > 0) {
-                BRSharedPrefs.putEconomyFeeRate(app, getIso(), economyFee);
+                BRSharedPrefs.putEconomyFeeRate(app, getCurrencyCode(), economyFee);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
                 Log.d(TAG, "Error: Economy fee is unexpected value");
@@ -399,7 +401,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         final BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
         onBalanceChanged(context, balance);
     }
-
 
     @Override
     public boolean containsAddress(String address) {
@@ -425,7 +426,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     }
 
     @Override
-    public String getIso() {
+    public String getCurrencyCode() {
         return ETH_CURRENCY_CODE;
     }
 
@@ -441,7 +442,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public String getDenominator() {
-        return "1000000000000000000";
+        return ETHER_WEI;
     }
 
     @Override
@@ -472,7 +473,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getIso());
+        return BRSharedPrefs.getCachedBalance(app, getCurrencyCode());
     }
 
     @Override
@@ -518,33 +519,41 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        BigDecimal fiatData = getFiatForEth(app, new BigDecimal(1), BRSharedPrefs.getPreferredFiatIso(app));
-        if (fiatData == null) return null;
-        return fiatData; //dollars
+        BigDecimal fiatData = getFiatForEth(app, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(app));
+        if (fiatData == null) {
+            return null;
+        }
+        return fiatData; //fiat, e.g. dollars
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        if (app == null) return null;
+        if (app == null) {
+            return null;
+        }
         return getFiatForSmallestCrypto(app, getCachedBalance(app), null);
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
+            return amount;
+        }
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent != null) {
             //passed in a custom CurrencyEntity
             //get crypto amount
-            BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
+            BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
             //multiply by fiat rate
             return cryptoAmount.multiply(new BigDecimal(ent.rate));
         }
         //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
+        BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
 
         BigDecimal fiatData = getFiatForEth(app, cryptoAmount, iso);
-        if (fiatData == null) return null;
+        if (fiatData == null) {
+            return null;
+        }
         return fiatData;
     }
 
@@ -559,7 +568,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
-        return amount.divide(ONE_ETH, 8, ROUNDING_MODE);
+        return amount.divide(ONE_ETH, SCALE, ROUNDING_MODE);
     }
 
     @Override
@@ -581,9 +590,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     //ETH rates are in BTC (thus this math)
     private BigDecimal getFiatForEth(Context app, BigDecimal ethAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(),  WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -600,9 +609,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app,  WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(),  WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -612,7 +621,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             return null;
         }
 
-        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), 8, BRConstants.ROUNDING_MODE);
+        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
     }
 
 
@@ -640,12 +649,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
+                    payload.put(BRConstants.JSONRPC, BRConstants.VERSION_2);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_BALANCE);
                     params.put(address);
-                    params.put(JsonRpcHelper.LATEST);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    params.put(BRConstants.LATEST);
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -659,8 +668,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
-                                if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                    String balance = responseObject.getString(JsonRpcHelper.RESULT);
+                                if (responseObject.has(BRConstants.RESULT)) {
+                                    String balance = responseObject.getString(BRConstants.RESULT);
                                     node.announceBalance(wid, balance, rid);
                                 }
                             } else {
@@ -689,7 +698,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put(JsonRpcHelper.ID, String.valueOf(rid));
+                    payload.put(BRConstants.ID, String.valueOf(rid));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -701,8 +710,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                             if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
-                                if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                    String balance = responseObject.getString(JsonRpcHelper.RESULT);
+                                if (responseObject.has(BRConstants.RESULT)) {
+                                    String balance = responseObject.getString(BRConstants.RESULT);
                                     node.announceBalance(wid, balance, rid);
 
                                 } else {
@@ -731,9 +740,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_GAS_PRICE);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_GAS_PRICE);
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -744,8 +753,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
-                                if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                    String gasPrice = responseObject.getString(JsonRpcHelper.RESULT);
+                                if (responseObject.has(BRConstants.RESULT)) {
+                                    String gasPrice = responseObject.getString(BRConstants.RESULT);
                                     node.announceGasPrice(wid, gasPrice, rid);
                                 } else {
                                     Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
@@ -768,25 +777,25 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             @Override
             public void run() {
                 final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
-                Log.d(TAG, "Making rpc request to -> " + ethUrl);
+                Log.d(TAG, "Making getGasEstimate rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
                 final JSONObject param1 = new JSONObject();
 
                 try {
-                    param1.put(JsonRpcHelper.TO, to);
+                    param1.put(BRConstants.TO, to);
                     if (!amount.equalsIgnoreCase(HEX_PREFIX)) {
-                        param1.put(JsonRpcHelper.VALUE, amount);
+                        param1.put(BRConstants.VALUE, amount);
                     }
                     if (!data.equalsIgnoreCase(HEX_PREFIX)) {
-                        param1.put(JsonRpcHelper.DATA, data);
+                        param1.put(BRConstants.DATA, data);
                     }
                     params.put(param1);
-                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_ESTIMATE_GAS);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    payload.put(BRConstants.JSONRPC, BRConstants.VERSION_2);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_ESTIMATE_GAS);
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -796,8 +805,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
-                            if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                String gasEstimate = responseObject.getString(JsonRpcHelper.RESULT);
+                            if (responseObject.has(BRConstants.RESULT)) {
+                                String gasEstimate = responseObject.getString(BRConstants.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
                             } else {
@@ -831,11 +840,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
                 try {
-                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_SEND_RAW_TRANSACTION);
+                    payload.put(BRConstants.JSONRPC, BRConstants.VERSION_2);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_SEND_RAW_TRANSACTION);
                     params.put(rawTransaction);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -850,14 +859,14 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 Log.d(TAG, "onRpcRequestCompleted: " + responseObject);
-                                if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                    txHash = responseObject.getString(JsonRpcHelper.RESULT);
+                                if (responseObject.has(BRConstants.RESULT)) {
+                                    txHash = responseObject.getString(BRConstants.RESULT);
                                     Log.d(TAG, "onRpcRequestCompleted: " + txHash);
                                     node.announceSubmitTransaction(wid, tid, txHash, rid);
-                                } else if (responseObject.has(JsonRpcHelper.ERROR)) {
-                                    JSONObject errObj = responseObject.getJSONObject(JsonRpcHelper.ERROR);
-                                    errCode = errObj.getInt(JsonRpcHelper.CODE);
-                                    errMessage = errObj.getString(JsonRpcHelper.MESSAGE);
+                                } else if (responseObject.has(BRConstants.ERROR)) {
+                                    JSONObject errObj = responseObject.getJSONObject(BRConstants.ERROR);
+                                    errCode = errObj.getInt(BRConstants.CODE);
+                                    errMessage = errObj.getString(BRConstants.MESSAGE);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -912,8 +921,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put(JsonRpcHelper.ID, String.valueOf(id));
-                    payload.put(JsonRpcHelper.ACCOUNT, address);
+                    payload.put(BRConstants.ID, String.valueOf(id));
+                    payload.put(BRConstants.ACCOUNT, address);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -927,7 +936,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                 // Convert response into JsonArray of transactions
                                 JSONObject transactions = new JSONObject(jsonResult);
 
-                                JSONArray transactionsArray = transactions.getJSONArray(JsonRpcHelper.RESULT);
+                                JSONArray transactionsArray = transactions.getJSONArray(BRConstants.RESULT);
 
                                 String txHash = "";
                                 String txTo = "";
@@ -953,99 +962,99 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                                     Log.d(TAG, "TxObject contains -> " + txObject.toString());
 
-                                    if (txObject.has(JsonRpcHelper.HASH)) {
-                                        txHash = txObject.getString(JsonRpcHelper.HASH);
+                                    if (txObject.has(BRConstants.HASH)) {
+                                        txHash = txObject.getString(BRConstants.HASH);
                                         // Log.d(TAG, "TxObject Hash -> " + txHash);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.TO)) {
-                                        txTo = txObject.getString(JsonRpcHelper.TO);
+                                    if (txObject.has(BRConstants.TO)) {
+                                        txTo = txObject.getString(BRConstants.TO);
                                         // Log.d(TAG, "TxObject to -> " + txTo);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.FROM)) {
-                                        txFrom = txObject.getString(JsonRpcHelper.FROM);
+                                    if (txObject.has(BRConstants.FROM)) {
+                                        txFrom = txObject.getString(BRConstants.FROM);
                                         // Log.d(TAG, "TxObject from -> " + txFrom);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.CONTRACT_ADDRESS)) {
-                                        txContract = txObject.getString(JsonRpcHelper.CONTRACT_ADDRESS);
+                                    if (txObject.has(BRConstants.CONTRACT_ADDRESS)) {
+                                        txContract = txObject.getString(BRConstants.CONTRACT_ADDRESS);
                                         // Log.d(TAG, "TxObject contractAddress -> " + txContract);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.VALUE)) {
-                                        txValue = txObject.getString(JsonRpcHelper.VALUE);
+                                    if (txObject.has(BRConstants.VALUE)) {
+                                        txValue = txObject.getString(BRConstants.VALUE);
                                         // Log.d(TAG, "TxObject value -> " + txValue);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.GAS)) {
-                                        txGas = txObject.getString(JsonRpcHelper.GAS);
+                                    if (txObject.has(BRConstants.GAS)) {
+                                        txGas = txObject.getString(BRConstants.GAS);
                                         // Log.d(TAG, "TxObject gas -> " + txGas);
 
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.GAS_PRICE)) {
-                                        txGasPrice = txObject.getString(JsonRpcHelper.GAS_PRICE);
+                                    if (txObject.has(BRConstants.GAS_PRICE)) {
+                                        txGasPrice = txObject.getString(BRConstants.GAS_PRICE);
                                         // Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.NONCE)) {
-                                        txNonce = txObject.getString(JsonRpcHelper.NONCE);
+                                    if (txObject.has(BRConstants.NONCE)) {
+                                        txNonce = txObject.getString(BRConstants.NONCE);
                                         // Log.d(TAG, "TxObject nonce -> " + txNonce);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.GAS_USED)) {
-                                        txGasUsed = txObject.getString(JsonRpcHelper.GAS_USED);
+                                    if (txObject.has(BRConstants.GAS_USED)) {
+                                        txGasUsed = txObject.getString(BRConstants.GAS_USED);
                                         // Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.BLOCK_NUMBER)) {
-                                        txBlockNumber = txObject.getString(JsonRpcHelper.BLOCK_NUMBER);
+                                    if (txObject.has(BRConstants.BLOCK_NUMBER)) {
+                                        txBlockNumber = txObject.getString(BRConstants.BLOCK_NUMBER);
                                         // Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.BLOCK_HASH)) {
-                                        txBlockHash = txObject.getString(JsonRpcHelper.BLOCK_HASH);
+                                    if (txObject.has(BRConstants.BLOCK_HASH)) {
+                                        txBlockHash = txObject.getString(BRConstants.BLOCK_HASH);
                                         // Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.INPUT)) {
-                                        txData = txObject.getString(JsonRpcHelper.INPUT);
+                                    if (txObject.has(BRConstants.INPUT)) {
+                                        txData = txObject.getString(BRConstants.INPUT);
                                         // Log.d(TAG, "TxObject input -> " + txData);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.CONFIRMATIONS)) {
-                                        txBlockConfirmations = txObject.getString(JsonRpcHelper.CONFIRMATIONS);
+                                    if (txObject.has(BRConstants.CONFIRMATIONS)) {
+                                        txBlockConfirmations = txObject.getString(BRConstants.CONFIRMATIONS);
                                         // Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.TRANSACTION_INDEX)) {
-                                        txBlockTransactionIndex = txObject.getString(JsonRpcHelper.TRANSACTION_INDEX);
+                                    if (txObject.has(BRConstants.TRANSACTION_INDEX)) {
+                                        txBlockTransactionIndex = txObject.getString(BRConstants.TRANSACTION_INDEX);
                                         // Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.TIMESTAMP)) {
-                                        txBlockTimestamp = txObject.getString(JsonRpcHelper.TIMESTAMP);
+                                    if (txObject.has(BRConstants.TIMESTAMP)) {
+                                        txBlockTimestamp = txObject.getString(BRConstants.TIMESTAMP);
                                         // Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
 
                                     }
 
-                                    if (txObject.has(JsonRpcHelper.IS_ERROR)) {
-                                        txIsError = txObject.getString(JsonRpcHelper.IS_ERROR);
+                                    if (txObject.has(BRConstants.IS_ERROR)) {
+                                        txIsError = txObject.getString(BRConstants.IS_ERROR);
                                         // Log.d(TAG, "TxObject isError -> " + txIsError);
 
                                     }
@@ -1058,7 +1067,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                                     int blockHeight = (int) node.getBlockHeight();
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
+                                        BRSharedPrefs.putLastBlockHeight(app, getCurrencyCode(), blockHeight);
                                     }
                                 }
 
@@ -1084,7 +1093,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 Log.d(TAG, "getLogs: " + ethRpcUtl);
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put(JsonRpcHelper.ID, String.valueOf(rid));
+                    payload.put(BRConstants.ID, String.valueOf(rid));
                     // ?? payload.put("account", address);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1098,7 +1107,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                             try {
                                 // Convert response into JsonArray of logs
                                 JSONObject logs = new JSONObject(jsonResult);
-                                JSONArray logsArray = logs.getJSONArray(JsonRpcHelper.RESULT);
+                                JSONArray logsArray = logs.getJSONArray(BRConstants.RESULT);
 
                                 // Iterate through the list of transactions and call node.announceTransaction()
                                 // to notify the core
@@ -1107,23 +1116,23 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                                     Log.d(TAG, "LogObject contains -> " + log.toString());
 
-                                    JSONArray topicsArray = log.getJSONArray(JsonRpcHelper.TOPICS);
+                                    JSONArray topicsArray = log.getJSONArray(BRConstants.TOPICS);
                                     String[] topics = new String[topicsArray.length()];
                                     for (int dex = 0; dex < topics.length; dex++) {
                                         topics[dex] = topicsArray.getString(dex);
                                     }
 
                                     node.announceLog(rid,
-                                            log.getString(JsonRpcHelper.TRANSACTION_HASH),
-                                            log.getString(JsonRpcHelper.ADDRESS), // contract
+                                            log.getString(BRConstants.TRANSACTION_HASH),
+                                            log.getString(BRConstants.ADDRESS), // contract
                                             topics,
-                                            log.getString(JsonRpcHelper.DATA),
-                                            log.getString(JsonRpcHelper.GAS_PRICE),
-                                            log.getString(JsonRpcHelper.GAS_USED),
-                                            log.getString(JsonRpcHelper.LOG_INDEX),
-                                            log.getString(JsonRpcHelper.BLOCK_NUMBER),
-                                            log.getString(JsonRpcHelper.TRANSACTION_INDEX),
-                                            log.getString(JsonRpcHelper.TIMESTAMP));
+                                            log.getString(BRConstants.DATA),
+                                            log.getString(BRConstants.GAS_PRICE),
+                                            log.getString(BRConstants.GAS_USED),
+                                            log.getString(BRConstants.LOG_INDEX),
+                                            log.getString(BRConstants.BLOCK_NUMBER),
+                                            log.getString(BRConstants.TRANSACTION_INDEX),
+                                            log.getString(BRConstants.TIMESTAMP));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1147,9 +1156,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BLOCK_NUMBER);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_BLOCK_NUMBER);
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1161,8 +1170,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
-                            if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                String blockNumber = responseObject.getString(JsonRpcHelper.RESULT);
+                            if (responseObject.has(BRConstants.RESULT)) {
+                                String blockNumber = responseObject.getString(BRConstants.RESULT);
                                 node.announceBlockNumber(blockNumber, rid);
                             } else {
                                 Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
@@ -1187,29 +1196,29 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         Context context = BreadApp.getBreadContext();
 
         if (context != null) {
-            String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
+            String currencyCode = (null == wallet.getToken() ? getCurrencyCode() : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
-                    printInfo("Wallet Created", iso, event.name());
+                    printInfo("Wallet Created", currencyCode, event.name());
                     break;
                 case BALANCE_UPDATED:
                     if (status == Status.SUCCESS) {
                         WalletsMaster.getInstance(context).refreshBalances(context);
-                        printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
+                        printInfo("New Balance: " + wallet.getBalance(), currencyCode, event.name());
                     } else {
                         BRReportsManager.reportBug(new IllegalArgumentException("BALANCE_UPDATED: Failed to update balance: status:"
                                 + status + ", err: " + errorDescription));
                     }
                     break;
                 case DEFAULT_GAS_LIMIT_UPDATED:
-                    printInfo("New Gas Limit: ...", iso, event.name());
+                    printInfo("New Gas Limit: ...", currencyCode, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(context, getIso()), iso, event.name());
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(context, getCurrencyCode()), currencyCode, event.name());
                     break;
                 case DELETED:
                     BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
-                    printInfo("Deleted: ", iso, event.name());
+                    printInfo("Deleted: ", currencyCode, event.name());
                     break;
             }
         }
@@ -1244,7 +1253,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         Context app = BreadApp.getBreadContext();
 
         if (app != null) {
-            String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
+            String iso = (null == wallet.getToken() ? getCurrencyCode() : wallet.getToken().getSymbol());
             for (OnTransactionEventListener listener : mTransactionEventListeners) {
                 listener.onTransactionEvent(event);
                 mTransactionEventListeners.remove(listener);
@@ -1311,11 +1320,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_TRANSACTION_COUNT);
+                    payload.put(BRConstants.METHOD, BRConstants.ETH_TRANSACTION_COUNT);
                     params.put(address);
-                    params.put(JsonRpcHelper.LATEST);  // or "pending" ?
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
+                    params.put(BRConstants.LATEST);  // or "pending" ?
+                    payload.put(BRConstants.PARAMS, params);
+                    payload.put(BRConstants.ID, rid);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1327,8 +1336,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
-                            if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                String nonce = responseObject.getString(JsonRpcHelper.RESULT);
+                            if (responseObject.has(BRConstants.RESULT)) {
+                                String nonce = responseObject.getString(BRConstants.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
                                 node.announceNonce(address, nonce, rid);
                             } else {
@@ -1344,7 +1353,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     }
 
-    public long getBlockHeight(){
+    public long getBlockHeight() {
         return node.getBlockHeight();
     }
 

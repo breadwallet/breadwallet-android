@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,7 +21,6 @@ import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionInput;
 import com.breadwallet.core.BRCoreTransactionOutput;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRDialog;
@@ -41,16 +39,12 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
-import com.google.android.gms.common.util.JsonUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.nio.channels.MembershipKey;
-
-import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -210,8 +204,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String formattedFiatAmount = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), walletManager.getFiatForSmallestCrypto(mContext, bigAmount, null));
 
         //bits, BTCs..
-        String amount = CurrencyUtils.getFormattedAmount(mContext, walletManager.getIso(), bigAmount);
-        String fee = CurrencyUtils.getFormattedAmount(mContext, walletManager.getIso(), bigFee.abs());
+        String amount = CurrencyUtils.getFormattedAmount(mContext, walletManager.getCurrencyCode(), bigAmount);
+        String fee = CurrencyUtils.getFormattedAmount(mContext, walletManager.getCurrencyCode(), bigFee.abs());
         String message = String.format(mContext.getString(R.string.Import_confirm), amount, fee);
         String posButton = String.format("%s (%s)", amount, formattedFiatAmount);
         BRDialog.showCustomDialog(mContext, "", message, posButton, mContext.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
@@ -297,7 +291,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             if (totalAmount <= 0) {
                 return null;
             }
-//
+
             CryptoAddress address = walletManager.getReceiveAddress(app); //cast, assuming it's BTC or BCH for now
             BRCoreAddress coreAddr = (BRCoreAddress) address.getCoreObject(); //assume BTC and BCH for now
 
@@ -385,7 +379,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return true;
         } else if (BRCoreKey.isValidBitcoinPrivateKey(privKey)) {
             Log.d(TAG, "isValidBitcoinPrivateKey true");
-            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey, walletManager.getIso());
+            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey, walletManager.getCurrencyCode());
             return true;
         } else {
             Log.e(TAG, "trySweepWallet: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");

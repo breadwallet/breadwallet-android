@@ -28,12 +28,12 @@ package com.breadwallet.presenter.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +42,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
@@ -59,24 +60,19 @@ import java.math.BigDecimal;
 
 public class FragmentShowLegacyAddress extends ModalDialogFragment implements BalanceUpdateListener {
     private static final String TAG = FragmentShowLegacyAddress.class.getName();
-
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
     private String mReceiveAddress;
     private BRButton mShareButton;
-    private Button mShareEmailButton;
-    private Button mShareMessageButton;
-    private BRLinearLayoutWithCaret mShareButtonsLayout;
     private BRLinearLayoutWithCaret mCopiedLayout;
-    private boolean mIsShareButtonsShown = false;
     private ImageButton mCloseButton;
     private Handler mCopyHandler = new Handler();
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated properly.
 
         ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_show_legacy_address, container, false));
@@ -86,14 +82,10 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
         mShareButton = rootView.findViewById(R.id.share_button);
-        mShareEmailButton = rootView.findViewById(R.id.share_email);
-        mShareMessageButton = rootView.findViewById(R.id.share_text);
-        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
         mCloseButton = rootView.findViewById(R.id.close_button);
         setListeners();
-
-        mSignalLayout.removeView(mShareButtonsLayout);
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
         mSignalLayout.removeView(mCopiedLayout);
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
@@ -101,31 +93,13 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     }
 
     private void setListeners() {
-        mShareEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share(QRUtils.VIA_EMAIL, getActivity(), cryptoUri.toString());
-            }
-        });
-        mShareMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share(QRUtils.VIA_MESSAGE, getActivity(), cryptoUri.toString());
-            }
-        });
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIsShareButtonsShown = !mIsShareButtonsShown;
-                showShareButtons(mIsShareButtonsShown);
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -157,21 +131,10 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         });
     }
 
-    private void showShareButtons(boolean show) {
-        if (show) {
-            mSignalLayout.addView(mShareButtonsLayout, mSignalLayout.getChildCount());
-            showCopiedLayout(false);
-        } else {
-            mSignalLayout.removeView(mShareButtonsLayout);
-        }
-    }
-
     private void showCopiedLayout(boolean show) {
         if (show) {
             if (mSignalLayout.indexOfChild(mCopiedLayout) == -1) {
                 mSignalLayout.addView(mCopiedLayout, mSignalLayout.indexOfChild(mShareButton));
-                showShareButtons(false);
-                mIsShareButtonsShown = false;
                 mCopyHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -207,7 +170,8 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
                         String decorated = walletBitcoinManager.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, decorated, BigDecimal.ZERO, null, null, null);
+                        CryptoRequest request = new CryptoRequest.Builder().setAddress(decorated).setAmount(BigDecimal.ZERO).build();
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, request);
                         if (!QRUtils.generateQR(getActivity(), uri.toString(), mQrImage)) {
                             throw new IllegalStateException("failed to generate qr image for address");
                         }

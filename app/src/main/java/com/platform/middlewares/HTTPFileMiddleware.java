@@ -103,11 +103,11 @@ public class HTTPFileMiddleware implements Middleware {
 
             if (modified) {
                 try {
-                    brResp.body = FileUtils.readFileToByteArray(temp);
+                    brResp.setBody(FileUtils.readFileToByteArray(temp));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (Utils.isNullOrEmpty(brResp.body)) {
+                if (Utils.isNullOrEmpty(brResp.getBody())) {
                     return BRHTTPHelper.handleError(400, "could not read the file", baseRequest, response);
                 }
             } else {
@@ -128,7 +128,7 @@ public class HTTPFileMiddleware implements Middleware {
             brResp = APIClient.getInstance(app).sendRequest(debugRequest, false);
         }
 
-        brResp.code = 200;
+        brResp.setCode(200);
 
         String rangeString = request.getHeader("range");
         if (!Utils.isNullOrEmpty(rangeString)) {

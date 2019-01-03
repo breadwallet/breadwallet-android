@@ -97,86 +97,89 @@ public class WalletTests {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
-    public void exchangeTests() {
-        long satoshis = 50000000;
-        //todo finish tests
-    }
-
     @Test
-    public void paymentRequestTest() throws InvalidAlgorithmParameterException {
+    public void paymentRequestTest() {
         Activity app = mActivityRule.getActivity();
         CryptoRequest obj = CryptoUriParser.parseRequest(app, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi", obj.address);
-
-//        r = [BRPaymentRequest requestWithString:@"1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQ"];
-//        XCTAssertFalse(r.isValid);
-//        XCTAssertEqualObjects(@"bitcoin:1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQ", r.string,
-//        @"[BRPaymentRequest requestWithString:]");
+        assertEquals("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi", obj.getAddress());
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=1");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        BigDecimal bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        BigDecimal bigDecimal = obj.getAmount();
         long amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "100000000");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.00000001");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        bigDecimal = obj.getAmount();
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "1");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=21000000");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        bigDecimal = obj.getAmount();
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2100000000000000");
 
         // test for floating point rounding issues, these values cannot be exactly represented with an IEEE 754 double
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999999");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        bigDecimal = obj.getAmount();
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2099999999999999");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999995");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        bigDecimal = obj.getAmount();
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2099999999999995");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.07433");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = obj.amount;
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        bigDecimal = obj.getAmount();
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "7433000");
 
         // invalid amount string
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=foobar");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals(obj.amount, null);
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        assertEquals(obj.getAmount(), null);
 
         // test correct encoding of '&' in argument value
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals(obj.label, "foo");
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        assertEquals(obj.getLabel(), "foo");
 
         // test handling of ' ' in label or message
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo bar&message=bar foo");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals(obj.label, "foo bar");
-        assertEquals(obj.message, "bar foo");
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        assertEquals(obj.getLabel(), "foo bar");
+        assertEquals(obj.getMessage(), "bar foo");
 
         // test bip73
         obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?r=https://foobar.com");
-        assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        assertEquals(obj.r, "https://foobar.com");
+        assertEquals(obj.getAddress(), "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        assertEquals(obj.getRUrl(), "https://foobar.com");
 
         obj = CryptoUriParser.parseRequest(app, "bitcoin:?r=https://foobar.com");
-        assertEquals(obj.address, null);
-        assertEquals(obj.r, "https://foobar.com");
+        assertEquals(obj.getAddress(), "");
+        assertEquals(obj.getRUrl(), "https://foobar.com");
+
+        obj = CryptoUriParser.parseRequest(app, "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+        assertEquals(obj.getAddress(), "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+
+        obj = CryptoUriParser.parseRequest(app, "ethereum:0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+        assertEquals(obj.getAddress(), "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+
+        obj = CryptoUriParser.parseRequest(app, "ethereum://0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+        assertEquals(obj.getAddress(), "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+
+        obj = CryptoUriParser.parseRequest(app, "ethereum://0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F?value=1");
+        assertEquals(obj.getAddress(), "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
+        assertEquals(obj.getAmount(), new BigDecimal("1000000000000000000"));
     }
 
     @Test
@@ -185,7 +188,7 @@ public class WalletTests {
     }
 
     @Test
-    public void walletBitcoinTests() {
+    public void walletCurrencyConversionTests() {
         Activity app = mActivityRule.getActivity();
 
         WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
@@ -203,6 +206,8 @@ public class WalletTests {
         RatesDataSource.getInstance(app).putCurrencies(app, tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
+
+        /**TEST BTC*/
 
         //getCryptoForSmallestCrypto(..)
         BigDecimal val = new BigDecimal(20000);
@@ -257,7 +262,8 @@ public class WalletTests {
         res = btcWallet.getCryptoForFiat(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal(500000)) == 0); //dollars
 
-        //TEST ETH
+        /**TEST ETH*/
+
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         Assert.assertNotNull(ethWallet);
 
@@ -286,88 +292,36 @@ public class WalletTests {
         res = ethWallet.getCryptoForFiat(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal("3")) == 0);
 
+        /**TEST erc20*/
 
-        //TEST erc20
         WalletTokenManager tokenManager = WalletTokenManager.getBrdWallet(ethWallet);
         Assert.assertNotNull(tokenManager);
 
         //getCryptoForSmallestCrypto(..)
-        val = new BigDecimal("25");
+        val = new BigDecimal("25000000000000000000");
         res = tokenManager.getCryptoForSmallestCrypto(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal(25)) == 0);
 
         //getSmallestCryptoForCrypto(..)
         val = new BigDecimal(25);
         res = tokenManager.getSmallestCryptoForCrypto(app, val);
-        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25").toPlainString()) == 0);
+        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25000000000000000000").toPlainString()) == 0);
 
         //getFiatForSmallestCrypto(..)
-        val = new BigDecimal("2");
-        res = tokenManager.getFiatForSmallestCrypto(app, val, null);
-        Assert.assertEquals(res.doubleValue(), btcRate * brdRate * 2, 0.001); //dollars
+        val = new BigDecimal("2000000000000000000");
+        res = tokenManager.getFiatForSmallestCrypto(app, val, null).setScale(8, BRConstants.ROUNDING_MODE);
+        Assert.assertEquals(res.doubleValue(), new BigDecimal(btcRate * brdRate * 2).setScale(8, BRConstants.ROUNDING_MODE).doubleValue(), 0.0000001); //dollars
 
         //getSmallestCryptoForFiat(..)
         val = new BigDecimal(3);//
-        res = tokenManager.getSmallestCryptoForFiat(app, val);
-        Assert.assertEquals(res.doubleValue(), 5, 0.00001);
+        res = tokenManager.getSmallestCryptoForFiat(app, val).setScale(0);
+        Assert.assertEquals(res.toPlainString(), "5000000130000000000");
 
         //getCryptoForFiat(..)
         val = new BigDecimal(3);//
         res = tokenManager.getCryptoForFiat(app, val);
         Assert.assertEquals(res.doubleValue(), 5, 0.00001);
 
-    }
-
-    @Test
-    public void walletPaperKeyTests() {
-
-    }
-
-    @Test
-    public void httpTests() {
-        final AtomicInteger count = new AtomicInteger();
-        final String contract = "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
-//        for (int i = 0; i < 10000; i++) {
-//            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                @Override
-//                public void run() {
-//                    count.incrementAndGet();
-//                    final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-//                    final String eth_rpc_url = host + "module=logs&action=getLogs" +
-//                            "&fromBlock=0&toBlock=latest" +
-////                         "&address=" + ... not needed since we're asking for all the contracts
-//                            "&topic0=" + "" +
-//                            "&topic1=" + contract +
-//                            "&topic1_2_opr=or" +
-//                            "&topic2=" + contract;
-//                    Log.d(TAG, "run: " + eth_rpc_url);
-//                    final JSONObject payload = new JSONObject();
-//                    try {
-//                        payload.put("id", String.valueOf(""));
-//                        // ?? payload.put("account", address);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    JsonRpcRequest.makeRpcRequest(mActivityRule.getActivity(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-//                        @Override
-//                        public void onRpcRequestCompleted(String jsonResult) {
-//
-//                            Log.e(TAG, "onRpcRequestCompleted: " + jsonResult);
-//
-//                        }
-//                    });
-//                }
-//            });
-//        }
-        while(count.get() < 10000){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.e(TAG, "httpTests: DONE, with count: " + count.get());
     }
 
 }

@@ -91,7 +91,7 @@ public class BRDialogView extends DialogFragment {
         if (Utils.isNullOrEmpty(mTitle)) {
             mMainLayout.removeView(titleText);
         }
-        if (Utils.isNullOrEmpty(mMessage) && Utils.isNullOrEmpty(mSpanMessage.toString())) {
+        if (Utils.isNullOrEmpty(mMessage) && (mSpanMessage == null || Utils.isNullOrEmpty(mSpanMessage.toString()))) {
             mMainLayout.removeView(messageText);
         }
 
@@ -115,44 +115,58 @@ public class BRDialogView extends DialogFragment {
             messageText.setTextSize(SMALLER_TEXT_SIZE);
         }
 
-        positiveButton.setColor(Color.parseColor(POSITIVE_BUTTON_COLOR));
-        positiveButton.setHasShadow(false);
-        positiveButton.setText(mPositiveButtonText);
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
-                if (mPositiveListener != null) {
-                    mPositiveListener.onClick(BRDialogView.this);
-                }
-            }
-        });
-        if (Utils.isNullOrEmpty(mNegativeButtonText)) {
+        if (Utils.isNullOrEmpty(mPositiveButtonText)) {
+            // No buttons case. Remove the buttons.
+            mButtonsLayout.removeView(positiveButton);
             mButtonsLayout.removeView(mNegativeButton);
             mButtonsLayout.requestLayout();
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_HORIZONTAL;
-            params.weight = 1.0f;
-            positiveButton.setLayoutParams(params);
-        }
+            // Make the dialog modal.
+            setCancelable(false);
+        } else {
+            // Setup the first button.  Use this button to achieve a one button dialogs.
+            positiveButton.setColor(Color.parseColor(POSITIVE_BUTTON_COLOR));
+            positiveButton.setHasShadow(false);
+            positiveButton.setText(mPositiveButtonText);
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!UiUtils.isClickAllowed()) {
+                        return;
+                    }
+                    if (mPositiveListener != null) {
+                        mPositiveListener.onClick(BRDialogView.this);
+                    }
+                }
+            });
 
-        mNegativeButton.setColor(Color.parseColor(NEGATIVE_BUTTON_COLOR));
-        mNegativeButton.setHasShadow(false);
-        mNegativeButton.setText(mNegativeButtonText);
-        mNegativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
-                if (mNegativeListener != null) {
-                    mNegativeListener.onClick(BRDialogView.this);
-                }
+            // If there is no negative button, remove it from the view.
+            if (Utils.isNullOrEmpty(mNegativeButtonText)) {
+                mButtonsLayout.removeView(mNegativeButton);
+                mButtonsLayout.requestLayout();
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.gravity = Gravity.CENTER_HORIZONTAL;
+                params.weight = 1.0f;
+                positiveButton.setLayoutParams(params);
             }
-        });
+
+            // Setup the second button. Use this button in addition to the first to achieve two button dialogs.
+            mNegativeButton.setColor(Color.parseColor(NEGATIVE_BUTTON_COLOR));
+            mNegativeButton.setHasShadow(false);
+            mNegativeButton.setText(mNegativeButtonText);
+            mNegativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!UiUtils.isClickAllowed()) {
+                        return;
+                    }
+                    if (mNegativeListener != null) {
+                        mNegativeListener.onClick(BRDialogView.this);
+                    }
+                }
+            });
+        }
 
         builder.setView(view);
 

@@ -74,12 +74,12 @@ public class NodesActivity extends BRActivity {
                 final Activity app = NodesActivity.this;
                 final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
 
-                if (BRSharedPrefs.getTrustNode(app, wm.getIso()).isEmpty()) {
+                if (BRSharedPrefs.getTrustNode(app, wm.getCurrencyCode()).isEmpty()) {
                     createDialog();
                 } else {
                     if (!updatingNode) {
                         updatingNode = true;
-                        BRSharedPrefs.putTrustNode(app, wm.getIso(), "");
+                        BRSharedPrefs.putTrustNode(app, wm.getCurrencyCode(), "");
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -108,7 +108,7 @@ public class NodesActivity extends BRActivity {
 
     private void updateButtonText() {
         WalletBitcoinManager wm = WalletBitcoinManager.getInstance(this);
-        if (BRSharedPrefs.getTrustNode(this, wm.getIso()).isEmpty()) {
+        if (BRSharedPrefs.getTrustNode(this, wm.getCurrencyCode()).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
@@ -169,7 +169,7 @@ public class NodesActivity extends BRActivity {
                 final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
                 if (TrustedNode.isValid(str)) {
                     mDialog.setMessage("");
-                    BRSharedPrefs.putTrustNode(NodesActivity.this, wm.getIso(), str);
+                    BRSharedPrefs.putTrustNode(NodesActivity.this, wm.getCurrencyCode(), str);
                     if (!updatingNode) {
                         updatingNode = true;
                         customTitle.setText(getString(R.string.Webview_updating));

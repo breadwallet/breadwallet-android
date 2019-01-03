@@ -103,6 +103,8 @@
     <color name="primary_background">#251935</color>
     <color name="secondary_background">#302442</color>
     <color name="tertiary_background">#2E2540</color>
+    <color name="prompt_background">#1E1C41</color>
+    <color name="prompt_input">#f8f7fc</color>
     <color name="button_gradient_start_color">#FF5193</color>
     <color name="button_gradient_end_color">#F29500</color>
     <color name="button_add_wallet_background">#444b77f3</color>
@@ -130,6 +132,11 @@
     <color name="link_wallet_subtitle_dark">#FAA43A</color>
     <color name="link_wallet_subtitle">#ffffff</color>
     <color name="link_wallet_permission_bg">#1C0D31</color>
+
+    // Wallet delisted more info button
+    <color name="wallet_delisted_more_info">#22aeaeae</color>
+    <color name="wallet_delisted_token_background">#190C2A</color>
+    <color name="wallet_delisted_token_icon_background">#3E3C61</color>
 
 
     <array name="pin_digit_button_colors">

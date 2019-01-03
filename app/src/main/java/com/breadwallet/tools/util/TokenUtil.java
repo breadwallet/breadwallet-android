@@ -53,7 +53,7 @@ public final class TokenUtil {
 
     private static final String TAG = TokenUtil.class.getSimpleName();
 
-    private static final String ENDPOINT_CURRENCIES = "/currencies";
+    private static final String ENDPOINT_CURRENCIES = "/currencies?type=erc20";
     private static final String ENDPOINT_CURRENCIES_SALE_ADDRESS = "/currencies?saleAddress=";
     private static final String FIELD_CODE = "code";
     private static final String FIELD_NAME = "name";
@@ -142,7 +142,7 @@ public final class TokenUtil {
     }
 
     public static synchronized ArrayList<TokenItem> getTokenItems(Context context) {
-        if (mTokenItems == null) {
+        if (mTokenItems == null || mTokenItems.isEmpty()) {
             mTokenItems = getTokensFromFile(context);
         }
         return mTokenItems;
@@ -157,8 +157,12 @@ public final class TokenUtil {
             // rather than on an instance of the class.
             synchronized (TokenItem.class) {
                 String responseBody = response.getBodyText();
-                saveTokenListToFile(context, responseBody);
-                mTokenItems = parseJsonToTokenList(context, responseBody);
+
+                // Check if the response from the server is valid JSON before trying to save & parse.
+                if (Utils.isValidJSON(responseBody)) {
+                    saveTokenListToFile(context, responseBody);
+                    mTokenItems = parseJsonToTokenList(context, responseBody);
+                }
             }
         }
     }
@@ -166,7 +170,7 @@ public final class TokenUtil {
     private static ArrayList<TokenItem> parseJsonToTokenList(Context context, String jsonString) {
         ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        // Iterate over the token list and announce each token to Core
+        // Iterate over the token list and announce each token to Core.
         try {
             JSONArray tokenListArray = new JSONArray(jsonString);
             WalletEthManager ethWalletManager = WalletEthManager.getInstance(context);
@@ -178,6 +182,7 @@ public final class TokenUtil {
                 String symbol = "";
                 String contractInitialValue = "";
                 int decimals = 0;
+                boolean isSupported = true;
 
                 if (tokenObject.has(FIELD_CONTRACT_ADDRESS)) {
                     address = tokenObject.getString(FIELD_CONTRACT_ADDRESS);
@@ -199,12 +204,17 @@ public final class TokenUtil {
                     contractInitialValue = tokenObject.getString(FIELD_CONTRACT_INITIAL_VALUE);
                 }
 
+                if (tokenObject.has(FIELD_IS_SUPPORTED)) {
+                    isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
+                }
+
                 if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
                     ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
 
                     // Keep a local reference to the token list, so that we can make token symbols to their
+
                     // gradient colors in WalletListAdapter
-                    TokenItem item = new TokenItem(address, symbol, name, null);
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported);
 
                     if (tokenObject.has(FIELD_COLORS)) {
                         JSONArray colorsArray = tokenObject.getJSONArray(FIELD_COLORS);
@@ -291,5 +301,14 @@ public final class TokenUtil {
         }
 
         return "";
+    }
+
+    public static boolean isTokenSupported(String symbol) {
+        for (TokenItem tokenItem: mTokenItems) {
+            if (tokenItem.symbol.equalsIgnoreCase(symbol)) {
+               return tokenItem.isSupported();
+            }
+        }
+        return true;
     }
 }

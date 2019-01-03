@@ -121,7 +121,7 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
                         currencyEntity.name = tmpObj.getString(NAME);
                         currencyEntity.code = tmpObj.getString(CODE);
                         currencyEntity.rate = Float.valueOf(tmpObj.getString(RATE));
-                        currencyEntity.iso = walletManager.getIso();
+                        currencyEntity.iso = walletManager.getCurrencyCode();
                         if (currencyEntity.iso.equalsIgnoreCase(CCC_CURRENCY_CODE)) {
                             currencyEntity = convertCccEthRatesToBtc(context, currencyEntity);
                         }
@@ -186,21 +186,23 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
         List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
 
-        for (final BaseWalletManager w : list) {
+        for (final BaseWalletManager walletManager : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
-            if (w.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || w.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCASH_CURRENCY_CODE)
-                    || w.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) || w.getIso().equalsIgnoreCase(HomeActivity.CCC_CURRENCY_CODE)) {
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
+                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCASH_CURRENCY_CODE)
+                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
+                    || walletManager.getCurrencyCode().equalsIgnoreCase(HomeActivity.CCC_CURRENCY_CODE)) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        w.updateFee(context);
+                        walletManager.updateFee(context);
                     }
                 });
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         //get each wallet's rates
-                        updateRates(context, w);
+                        updateRates(context, walletManager);
                     }
                 });
             }
@@ -276,7 +278,7 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
     @WorkerThread
     public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
-        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso();
+        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getCurrencyCode();
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) {
@@ -294,7 +296,7 @@ public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLif
 
     @WorkerThread
     public static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
-        if (!walletManager.getIso().equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso())) {
+        if (!walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getCurrencyCode())) {
             //todo add backup for BCH
             return null;
         }
