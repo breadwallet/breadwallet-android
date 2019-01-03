@@ -15,7 +15,10 @@ import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -62,26 +65,26 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             TokenItem tokenItem = null;
             String tokenSymbol = mTokens.get(i).symbol;
 
-            if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
-                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")) {
+            if (!tokenSymbol.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) && !tokenSymbol.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE) &&
+                    !tokenSymbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && !tokenSymbol.equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
 
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
                     BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
                 } else {
-                    tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                    tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null, true);
                 }
 
 
-            } else if (tokenSymbol.equalsIgnoreCase("btc"))
-                tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
+            } else if (tokenSymbol.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE))
+                tokenItem = new TokenItem(null, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, WalletBitcoinManager.NAME, null,true);
 
-            else if (tokenSymbol.equalsIgnoreCase("bch"))
-                tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
-            else if (tokenSymbol.equalsIgnoreCase("eth"))
-                tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
-            else if (tokenSymbol.equalsIgnoreCase("brd"))
-                tokenItem = new TokenItem(null, "BRD", "BRD", null);
+            else if (tokenSymbol.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE))
+                tokenItem = new TokenItem(null, WalletBchManager.BITCASH_CURRENCY_CODE, WalletBchManager.NAME, null, true);
+            else if (tokenSymbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
+                tokenItem = new TokenItem(null, WalletEthManager.ETH_CURRENCY_CODE, WalletEthManager.NAME, null, true);
+            else if (tokenSymbol.equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE))
+                tokenItem = new TokenItem(null, WalletTokenManager.BRD_CURRENCY_CODE, WalletTokenManager.BRD_CURRENCY_CODE, null, true);
 
 
             if (tokenItem != null) {

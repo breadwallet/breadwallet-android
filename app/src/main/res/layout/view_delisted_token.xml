@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/primary_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/message_token_delisted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="21dp"
+        android:paddingTop="21dp"
+        android:text="@string/Account.delistedToken"
+        android:textSize="14sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+    <Button
+        android:id="@+id/more_info_button"
+        android:layout_width="100dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/wallet_delisted_info_button"
+        android:textSize="14sp"
+        android:text="@string/Button.moreInfo"
+        android:textColor="@color/white"
+        android:layout_marginBottom="22dp"
+        android:layout_marginStart="21dp"
+        android:layout_below="@id/message_token_delisted"
+         />
+
+</RelativeLayout>

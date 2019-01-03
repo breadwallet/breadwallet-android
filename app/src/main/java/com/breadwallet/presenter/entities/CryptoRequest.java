@@ -8,6 +8,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.entities.GenericTransactionMetaData;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.io.Serializable;
@@ -40,67 +41,65 @@ import java.math.BigDecimal;
 
 public class CryptoRequest implements Serializable {
     public static final String TAG = CryptoRequest.class.getName();
-    public String iso = "BTC"; //make it default
-    public String address;
-    public String scheme;
-    public String r;
-    public BigDecimal amount;
-    public String label;
-    public String message;
-    public String req;
-    public BigDecimal value; // ETH payment request amounts are called `value`
-    private GenericTransactionMetaData genericTransactionMetaData;
+    private String mCurrencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE; //make it default
+    private String mAddress;
+    private String mScheme;
+    private String mRUrl;// "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched
+    private BigDecimal mAmount;
+    private String mLabel;
+    private String mMessage;
+    private String mReqVariable;// "req" parameter, whose value is a required variable which are prefixed with a req-.
+    private BigDecimal mValue; // ETH payment request amounts are called `value`
+    private GenericTransactionMetaData mGenericTransactionMetaData;
+    private boolean mIsAmountRequested;
 
-    public String cn;
-    public boolean isAmountRequested;
-
-    public CryptoRequest(String certificationName, boolean isAmountRequested, String message, String address, BigDecimal amount) {
-        this.isAmountRequested = isAmountRequested;
-        this.cn = certificationName;
-        this.address = address;
-        this.amount = amount;
-        this.value = amount;
-        this.message = message;
-    }
-
-    public CryptoRequest() {
-
+    public CryptoRequest(Builder builder) {
+        mCurrencyCode = builder.getCurrencyCode(); //make it default
+        mAddress = builder.getAddress();
+        mScheme = builder.getScheme();
+        mRUrl = builder.getRUrl();
+        mAmount = builder.getAmount();
+        mLabel = builder.getLabel();
+        mMessage = builder.getMessage();
+        mReqVariable = builder.getReqVariable();
+        mValue = builder.getValue(); // ETH payment request amounts are called `value`
+        mGenericTransactionMetaData = builder.getGenericTransactionMetaData();
     }
 
     public boolean isPaymentProtocol() {
-        return !Utils.isNullOrEmpty(r);
+        return !Utils.isNullOrEmpty(mRUrl);
     }
 
     public boolean hasAddress() {
-        return !Utils.isNullOrEmpty(address);
+        return !Utils.isNullOrEmpty(mAddress);
     }
 
     public boolean isSmallerThanMin(Context app, BaseWalletManager walletManager) {
         BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-        BigDecimal absAmt = this.amount.abs();
+        BigDecimal absAmt = mAmount.abs();
         Log.e(TAG, "isSmallerThanMin: " + absAmt);
         return minAmount != null && absAmt.compareTo(minAmount) < 0;
     }
 
     public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
-        return amount.abs().compareTo(walletManager.getCachedBalance(app)) > 0
-                && amount.abs().compareTo(BigDecimal.ZERO) > 0;
+        return mAmount.abs().compareTo(walletManager.getCachedBalance(app)) > 0
+                && mAmount.abs().compareTo(BigDecimal.ZERO) > 0;
     }
 
     //not enough money for a tx + fee
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getCachedBalance(app);
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso());
+        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
-            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
-            return amount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0;
+            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
+            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0;
         } else {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
             BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
-            return amount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) > 0;
+            return mAmount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) > 0;
         }
     }
 
@@ -108,36 +107,210 @@ public class CryptoRequest implements Serializable {
     public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getCachedBalance(app);
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso());
+        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
             return false; //never need adjustment for ERC20s (fee is in ETH)
         } else {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
             BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
-            return amount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) < 0;
+            return mAmount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) < 0;
         }
-    }
-
-    public String getReceiver(BaseWalletManager walletManager) {
-        String receiver;
-        boolean certified = false;
-        if (cn != null && cn.length() != 0) {
-            certified = true;
-        }
-        receiver = address;
-        if (certified) {
-            receiver = "certified: " + cn + "\n";
-        }
-        return receiver;
     }
 
     public GenericTransactionMetaData getGenericTransactionMetaData() {
-        return genericTransactionMetaData;
+        return mGenericTransactionMetaData;
     }
 
     public void setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
-        this.genericTransactionMetaData = genericTransactionMetaData;
+        mGenericTransactionMetaData = genericTransactionMetaData;
+    }
+
+    public String getCurrencyCode() {
+        return mCurrencyCode;
+    }
+
+    public String getAddress() {
+        return mAddress;
+    }
+
+    public String getScheme() {
+        return mScheme;
+    }
+
+    public String getRUrl() {
+        return mRUrl;
+    }
+
+    public BigDecimal getAmount() {
+        return mAmount;
+    }
+
+    public String getLabel() {
+        return mLabel;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public String getReqVariable() {
+        return mReqVariable;
+    }
+
+    public BigDecimal getValue() {
+        return mValue;
+    }
+
+    public boolean isAmountRequested() {
+        return mIsAmountRequested;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        mCurrencyCode = currencyCode;
+    }
+
+    public void setAddress(String address) {
+        mAddress = address;
+    }
+
+    public void setScheme(String scheme) {
+        mScheme = scheme;
+    }
+
+    public void setRUrl(String rUrl) {
+        mRUrl = rUrl;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        mAmount = amount;
+    }
+
+    public void setLabel(String label) {
+        mLabel = label;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
+    }
+
+    public void setReqVariable(String reqVariable) {
+        mReqVariable = reqVariable;
+    }
+
+    public void setValue(BigDecimal value) {
+        mValue = value;
+    }
+
+    public void setIsAmountRequested(boolean isAmountRequested) {
+        mIsAmountRequested = isAmountRequested;
+    }
+
+    public static class Builder {
+        private String mCurrencyCode;
+        private String mAddress;
+        private String mScheme;
+        private String mRUrl;
+        private BigDecimal mAmount;
+        private String mLabel;
+        private String mMessage;
+        private String mReqVariable;
+        private BigDecimal mValue; // ETH payment request amounts are called `value`
+        private GenericTransactionMetaData mGenericTransactionMetaData;
+
+        public String getCurrencyCode() {
+            return mCurrencyCode;
+        }
+
+        public Builder setCurrencyCode(String currencyCode) {
+            mCurrencyCode = currencyCode;
+            return this;
+        }
+
+        public String getAddress() {
+            return mAddress;
+        }
+
+        public Builder setAddress(String address) {
+            mAddress = address;
+            return this;
+        }
+
+        public String getScheme() {
+            return mScheme;
+        }
+
+        public Builder setScheme(String scheme) {
+            mScheme = scheme;
+            return this;
+        }
+
+        public String getRUrl() {
+            return mRUrl;
+        }
+
+        public Builder setRUrl(String rUrl) {
+            mRUrl = rUrl;
+            return this;
+        }
+
+        public BigDecimal getAmount() {
+            return mAmount;
+        }
+
+        public Builder setAmount(BigDecimal amount) {
+            mAmount = amount;
+            return this;
+        }
+
+        public String getLabel() {
+            return mLabel;
+        }
+
+        public Builder setLabel(String label) {
+            mLabel = label;
+            return this;
+        }
+
+        public String getMessage() {
+            return mMessage;
+        }
+
+        public Builder setMessage(String message) {
+            mMessage = message;
+            return this;
+        }
+
+        public String getReqVariable() {
+            return mReqVariable;
+        }
+
+        public Builder setReqUrl(String reqUrl) {
+            mReqVariable = reqUrl;
+            return this;
+        }
+
+        public BigDecimal getValue() {
+            return mValue;
+        }
+
+        public Builder setValue(BigDecimal value) {
+            mValue = value;
+            return this;
+        }
+
+        public GenericTransactionMetaData getGenericTransactionMetaData() {
+            return mGenericTransactionMetaData;
+        }
+
+        public Builder setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
+            mGenericTransactionMetaData = genericTransactionMetaData;
+            return this;
+        }
+
+        public CryptoRequest build() {
+            return new CryptoRequest(this);
+        }
     }
 }

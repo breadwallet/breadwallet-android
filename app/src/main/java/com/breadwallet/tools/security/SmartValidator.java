@@ -8,10 +8,9 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.tools.util.TypesConverter;
-import com.breadwallet.wallet.WalletsMaster;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -43,14 +42,12 @@ import java.util.Locale;
 public class SmartValidator {
 
     private static final String TAG = SmartValidator.class.getName();
-    private static List<String> list;
 
     public static boolean isPaperKeyValid(Context ctx, String paperKey) {
-        String languageCode = Locale.getDefault().getLanguage();
-        if (!isValid(ctx, paperKey, languageCode)) {
-            //try all langs
-            for (String lang : Bip39Reader.LANGS) {
-                if (isValid(ctx, paperKey, lang)) {
+        if (!isValid(ctx, paperKey, Locale.getDefault().getLanguage())) {
+            //try all languages
+            for (Bip39Reader.SupportedLanguage supportedLanguage : Bip39Reader.SupportedLanguage.values()) {
+                if (isValid(ctx, paperKey, supportedLanguage.name())) {
                     return true;
                 }
             }
@@ -59,11 +56,10 @@ public class SmartValidator {
         }
 
         return false;
-
     }
 
-    private static boolean isValid(Context ctx, String paperKey, String lang) {
-        List<String> list = Bip39Reader.bip39List(ctx, lang);
+    private static boolean isValid(Context ctx, String paperKey, String language) {
+        List<String> list = Bip39Reader.getBip39Words(ctx, language);
         String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
             Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
@@ -74,8 +70,9 @@ public class SmartValidator {
 
     public static boolean isPaperKeyCorrect(String insertedPhrase, Context activity) {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-        if (!SmartValidator.isPaperKeyValid(activity, normalizedPhrase))
+        if (!SmartValidator.isPaperKeyValid(activity, normalizedPhrase)) {
             return false;
+        }
         byte[] rawPhrase = normalizedPhrase.getBytes();
         byte[] pubKey = new BRCoreMasterPubKey(rawPhrase, true).serialize();
         byte[] pubKeyFromKeyStore = new byte[0];
@@ -95,11 +92,9 @@ public class SmartValidator {
     }
 
     public static boolean isWordValid(Context ctx, String word) {
-        Log.e(TAG, "isWordValid: word:" + word + ":" + word.length());
-        if (list == null) list = Bip39Reader.bip39List(ctx, null);
+        List<String> wordList = Bip39Reader.getBip39Words(ctx, null);
         String cleanWord = Bip39Reader.cleanWord(word);
-        Log.e(TAG, "isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
-        return list.contains(cleanWord);
+        return wordList.contains(cleanWord);
 
     }
 }

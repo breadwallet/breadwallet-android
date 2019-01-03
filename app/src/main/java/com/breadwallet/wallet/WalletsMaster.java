@@ -101,7 +101,6 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo(WalletBchManager.BITCASH_CURRENCY_CODE, false, null));
             enabled.add(new TokenListMetaData.TokenInfo(WalletEthManager.ETH_CURRENCY_CODE, false, null));
             enabled.add(new TokenListMetaData.TokenInfo(WalletTokenManager.BRD_CURRENCY_CODE, true, WalletTokenManager.BRD_CONTRACT_ADDRESS));
-
             mTokenListMetaData = new TokenListMetaData(enabled, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
@@ -110,13 +109,13 @@ public class WalletsMaster {
 
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
-            if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
+            if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE) && !isHidden) {
                 //BTC wallet
                 mWallets.add(WalletBitcoinManager.getInstance(app));
-            } else if (enabled.symbol.equalsIgnoreCase("BCH") && !isHidden) {
+            } else if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE) && !isHidden) {
                 //BCH wallet
                 mWallets.add(WalletBchManager.getInstance(app));
-            } else if (enabled.symbol.equalsIgnoreCase("ETH") && !isHidden) {
+            } else if (enabled.symbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && !isHidden) {
                 //ETH wallet
                 mWallets.add(ethWallet);
             } else {
@@ -139,17 +138,17 @@ public class WalletsMaster {
     }
 
     //return the needed wallet for the iso
-    public BaseWalletManager getWalletByIso(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso))
-            throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
-        if (iso.equalsIgnoreCase("BTC"))
+    public BaseWalletManager getWalletByIso(Context app, String currencyCode) {
+        if (WalletBitcoinManager.BITCOIN_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
             return WalletBitcoinManager.getInstance(app);
-        if (iso.equalsIgnoreCase("BCH"))
+        }
+        if (WalletBitcoinManager.BITCASH_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
             return WalletBchManager.getInstance(app);
-        if (iso.equalsIgnoreCase("ETH"))
+        }
+        if (WalletEthManager.ETH_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
             return WalletEthManager.getInstance(app);
-        else if (isIsoErc20(app, iso)) {
-            return WalletTokenManager.getTokenWalletByIso(app, iso);
+        } else if (isCurrencyCodeErc20(app, currencyCode)) {
+            return WalletTokenManager.getTokenWalletByIso(app, currencyCode);
         }
         return null;
     }
@@ -174,12 +173,9 @@ public class WalletsMaster {
 
     public synchronized boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
-        final String[] words;
-        List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
-        if (languageCode == null) languageCode = "en";
-        list = Bip39Reader.bip39List(ctx, languageCode);
-        words = list.toArray(new String[list.size()]);
+        List<String> wordList = Bip39Reader.getBip39Words(ctx, languageCode);
+        final String[] words = wordList.toArray(new String[wordList.size()]);
         final byte[] randomSeed = sr.generateSeed(16);
         if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
@@ -236,16 +232,19 @@ public class WalletsMaster {
     public boolean isIsoCrypto(Context app, String iso) {
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager w : list) {
-            if (w.getIso().equalsIgnoreCase(iso)) {
+            if (w.getCurrencyCode().equalsIgnoreCase(iso)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isIsoErc20(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso)) return false;
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
+    public boolean isCurrencyCodeErc20(Context app, String iso) {
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(app);
+        if (Utils.isNullOrEmpty(iso) || walletEthManager == null) {
+            return false;
+        }
+        BREthereumToken[] tokens = walletEthManager.node.getTokens();
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
                 return true;
@@ -323,7 +322,7 @@ public class WalletsMaster {
 
     public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
         if (app == null) return;
-        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso());
+        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getCurrencyCode());
         if (limit.compareTo(BigDecimal.ZERO) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
@@ -331,8 +330,8 @@ public class WalletsMaster {
                     long start = System.currentTimeMillis();
                     BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                     BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
-                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso()));
-                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso());
+                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getCurrencyCode()));
+                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getCurrencyCode());
                 }
             });
 
@@ -363,7 +362,7 @@ public class WalletsMaster {
 
     @WorkerThread
     public void updateFixedPeer(Context app, BaseWalletManager wm) {
-        String node = BRSharedPrefs.getTrustNode(app, wm.getIso());
+        String node = BRSharedPrefs.getTrustNode(app, wm.getCurrencyCode());
         if (!Utils.isNullOrEmpty(node)) {
             String host = TrustedNode.getNodeHost(node);
             int port = TrustedNode.getNodePort(node);
@@ -406,7 +405,7 @@ public class WalletsMaster {
 
     public boolean hasWallet(String currencyCode) {
         for (BaseWalletManager walletManager : mWallets) {
-            if (walletManager.getIso().equalsIgnoreCase(currencyCode)) {
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(currencyCode)) {
                 return true;
             }
         }

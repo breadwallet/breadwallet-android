@@ -114,6 +114,8 @@
     <string name="BitID.title">BitID Authentication Request</string>
     <!-- As in "(tap here to) buy (bitcoin)" -->
     <string name="Button.buy">Buy</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">More info</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">Cancel</string>
     <!-- prompt continue button -->
@@ -390,6 +392,14 @@
     <string name="Prompts.FaceId.body">Tap Continue to enable Face ID</string>
     <!-- Enable face ID prompt title -->
     <string name="Prompts.FaceId.title">Enable Face ID</string>
+    <!-- Email opt in hint -->
+    <string name="Prompts.EmailOptIn.hint">example@domain.com</string>
+    <!-- Email opt in title -->
+    <string name="Prompts.EmailOptIn.title">Get in the loop</string>
+    <!-- Email opt in body-->
+    <string name="Prompts.EmailOptIn.body">Be the first to receive important support and product updates</string>
+    <!-- Email opt in confirmation-->
+    <string name="Prompts.EmailOptIn.confirmation">We appreciate your continued support</string>
     <!-- No passcode set warning body -->
     <string name="Prompts.NoPasscode.body">A device passcode is needed to safeguard your wallet. Go to settings and turn passcode on.</string>
     <!-- No Passcode set warning title -->
@@ -572,6 +582,8 @@
     <string name="Send.legacyAddressWarning">Warning: this is a legacy bitcoin address. Are you sure you want to send Bitcoin Cash to it?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Loading Request</string>
+    <!-- We are loading the request (now) -->
+    <string name="Send.SendMax">Send maximum amount?</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Insufficient funds to cover the transaction fee.</string>
     <!-- Empty address alert message -->
@@ -983,4 +995,8 @@ users in a future update. </string>
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
     <!-- Wallet unlocked message -->
     <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
+  <!-- Delisted token alert banner message -->
+  <string name="Account.delistedToken">This token has been delisted because the issuer decided to move to their own blockchain.\nDon’t worry! You will be able to send these tokens out from the BRD app to another platform that supports the token swap.\nFor more details, please visit our support page.</string>
+    <!-- Message that gets shown when we've detected the user has encountered an issue in which we would like them to contact support with a specific issue number. -->
+    <string name="ErrorMessages.ContactSupportBug.android">BRD cannot proceed due to a bug in your app version. Please contact support with issue #%1$d.</string>
 </resources>

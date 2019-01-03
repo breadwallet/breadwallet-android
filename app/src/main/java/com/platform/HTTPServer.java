@@ -127,13 +127,11 @@ public class HTTPServer {
 
     public static void stopServer() {
         Log.d(TAG, "stopServer");
-
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (isStarted()) {
-
                         server.stop();
                     }
                     server = null;
@@ -142,7 +140,6 @@ public class HTTPServer {
                 }
             }
         });
-
     }
 
     public static boolean isStarted() {
@@ -151,10 +148,9 @@ public class HTTPServer {
 
     private static class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-            boolean success;
-            success = dispatch(target, baseRequest, request, response);
-            if (!success) {
-                Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST: " + target);
+            if (!dispatch(target, baseRequest, request, response)) {
+                Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST, 404-ing: " + target);
+                BRHTTPHelper.handleError(404, "No middleware could handle the request.", baseRequest, response);
             }
         }
     }
