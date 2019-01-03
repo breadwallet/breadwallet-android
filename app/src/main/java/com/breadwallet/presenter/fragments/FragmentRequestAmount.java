@@ -144,7 +144,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
 
         showCurrencyList(false);
 
-        String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+        String currentIso = BRSharedPrefs.getCurrentWalletCurrencyCode(getActivity());
         mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         mSignalLayout.setOnClickListener(new View.OnClickListener() {

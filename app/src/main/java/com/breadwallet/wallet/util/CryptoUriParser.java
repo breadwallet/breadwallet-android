@@ -322,11 +322,11 @@ public class CryptoUriParser {
     private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
         if (requestObject == null || requestObject.getAddress() == null || requestObject.getAddress().isEmpty())
             return false;
-        BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
+        BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
                 Intent newIntent = new Intent(context, WalletActivity.class);
                 newIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
                 newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
