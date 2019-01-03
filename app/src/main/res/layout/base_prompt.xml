@@ -1,0 +1,84 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/prompt_card"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginStart="16dp"
+  android:layout_marginTop="8dp"
+  android:layout_marginEnd="16dp"
+  android:background="@color/extra_light_blue_background"
+  app:cardCornerRadius="4dp">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background">
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/prompt_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginTop="16dp"
+      android:text="@string/Prompts.PaperKey.title"
+      android:textColor="@color/almost_black"
+      android:textSize="16sp"
+      app:customTFont="CircularPro-Bold.otf" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/prompt_description"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/prompt_title"
+      android:layout_marginTop="8dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:text="@string/Prompts.PaperKey.body"
+      android:textColor="@color/almost_black"
+      android:textSize="14sp" />
+
+    <LinearLayout
+      android:id="@+id/button_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/prompt_description"
+      android:layout_alignParentBottom="true"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="16dp"
+      android:weightSum="2">
+
+      <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/dismiss_button"
+        android:layout_width="10dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:background="@color/light_gray"
+        android:text="@string/Button.dismiss"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:buttonType="4"
+        app:customTFont="CircularPro-Bold.otf"
+        app:hasShadow="false"
+        app:isBreadButton="true" />
+
+      <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/continue_button"
+        android:layout_width="10dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:background="@color/dark_blue"
+        android:text="@string/Button.continueAction"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:buttonType="4"
+        app:customTFont="CircularPro-Bold.otf"
+        app:hasShadow="false"
+        app:isBreadButton="true" />
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+</android.support.v7.widget.CardView>

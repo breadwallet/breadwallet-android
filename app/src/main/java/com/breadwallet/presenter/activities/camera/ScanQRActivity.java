@@ -8,21 +8,19 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.util.CryptoUriParser;
-import com.platform.tools.BRBitId;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -51,52 +49,46 @@ import com.platform.tools.BRBitId;
  */
 public class ScanQRActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener {
     private static final String TAG = ScanQRActivity.class.getName();
-    private ImageView cameraGuide;
-    private TextView descriptionText;
-    private long lastUpdated;
-    private UIUpdateTask task;
-    private boolean handlingCode;
-    public static boolean appVisible = false;
-    private static ScanQRActivity app;
     private static final int MY_PERMISSION_REQUEST_CAMERA = 56432;
+    private static final int CAMERA_EXPANSION_DELAY_MILLISECONDS = 400;
+    private static final long AUTO_FOCUS_PERIOD_TIME = 500;
+    private static final long CAMERA_UI_UPDATE_MILLISECONDS = 100;
+    public static final String EXTRA_RESULT = "com.breadwallet.presenter.activities.camera.ScanQRActivity.EXTRA_RESULT";
 
-    private ViewGroup mainLayout;
-
-    private QRCodeReaderView qrCodeReaderView;
-
-    public static ScanQRActivity getApp() {
-        return app;
-    }
+    private ImageView mCameraGuide;
+    private long mLastUpdated;
+    //    private boolean mIsQrProcessing;
+    private Timer mCameraGuideTimer;
+    private TimerTask mCameraGuideTask;
+    private Handler mCameraGuideHandler;
+    private QRCodeReaderView mQrCodeReaderView;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
 
-        cameraGuide = (ImageView) findViewById(R.id.scan_guide);
-        descriptionText = (TextView) findViewById(R.id.description_text);
+        mCameraGuide = findViewById(R.id.scan_guide);
 
-        task = new UIUpdateTask();
-        task.start();
+        mCameraGuideHandler = new Handler();
 
-        cameraGuide.setImageResource(R.drawable.cameraguide);
-        cameraGuide.setVisibility(View.GONE);
+        mCameraGuide.setImageResource(R.drawable.cameraguide);
+        mCameraGuide.setVisibility(View.GONE);
 
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             initQRCodeReaderView();
         } else {
-//            requestCameraPermission();
-            Log.e(TAG, "onCreate: Permissions needed? HUH?");
+            Log.e(TAG, "onCreate: Permissions should have been granted by now, Can't happen!");
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                cameraGuide.setVisibility(View.VISIBLE);
-                SpringAnimator.showExpandCameraGuide(cameraGuide);
+                mCameraGuide.setVisibility(View.VISIBLE);
+                SpringAnimator.showExpandCameraGuide(mCameraGuide);
             }
-        }, 400);
+        }, CAMERA_EXPANSION_DELAY_MILLISECONDS);
 
     }
 
@@ -104,21 +96,19 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     @Override
     protected void onResume() {
         super.onResume();
-        appVisible = true;
-        app = this;
-        if (qrCodeReaderView != null) {
-            qrCodeReaderView.startCamera();
+        if (mQrCodeReaderView != null) {
+            mQrCodeReaderView.startCamera();
         }
+        startTimer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        appVisible = false;
-        if (qrCodeReaderView != null) {
-            qrCodeReaderView.stopCamera();
+        if (mQrCodeReaderView != null) {
+            mQrCodeReaderView.stopCamera();
         }
-        task.stopTask();
+        stopTimerTask();
     }
 
     @Override
@@ -127,33 +117,37 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         super.onBackPressed();
     }
 
-    private class UIUpdateTask extends Thread {
-        public boolean running = true;
+    public void startTimer() {
+        //set a new Timer
+        if (mCameraGuideTimer != null) return;
+        mCameraGuideTimer = new Timer();
+        //initialize the TimerTask's job
+        initializeTimerTask();
 
-        @Override
-        public void run() {
-            super.run();
-            while (running) {
-                if (System.currentTimeMillis() - lastUpdated > 300) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            cameraGuide.setImageResource(R.drawable.cameraguide);
-                            descriptionText.setText("");
+        mCameraGuideTimer.schedule(mCameraGuideTask, 0, CAMERA_UI_UPDATE_MILLISECONDS);
+    }
+
+    public void stopTimerTask() {
+        //stop the timer, if it's not already null
+        if (mCameraGuideTimer != null) {
+            mCameraGuideTimer.cancel();
+            mCameraGuideTimer = null;
+        }
+    }
+
+    private void initializeTimerTask() {
+        mCameraGuideTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                mCameraGuideHandler.post(new Runnable() {
+                    public void run() {
+                        if (System.currentTimeMillis() - mLastUpdated > CAMERA_UI_UPDATE_MILLISECONDS) {
+                            mCameraGuide.setImageResource(R.drawable.cameraguide);
                         }
-                    });
-                }
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
-        }
-
-        public void stopTask() {
-            running = false;
-        }
+        };
     }
 
     @Override
@@ -164,62 +158,45 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         }
 
         if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            Snackbar.make(mainLayout, "Camera permission was granted.", Snackbar.LENGTH_SHORT).show();
             initQRCodeReaderView();
-        } else {
-//            Snackbar.make(mainLayout, "Camera permission request was denied.", Snackbar.LENGTH_SHORT)
-//                    .show();
         }
     }
 
     @Override
-    public void onQRCodeRead(final String text, PointF[] points) {
-        lastUpdated = System.currentTimeMillis();
-        if (handlingCode) return;
-        handlingCode = true;
+    public boolean onQRCodeRead(final String text, PointF[] points) {
+        mLastUpdated = System.currentTimeMillis();
         if (AppEntryPointHandler.isSupportedQRCode(this, text)) {
             Log.d(TAG, "onQRCodeRead: isCrypto");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        cameraGuide.setImageResource(R.drawable.cameraguide);
-                        descriptionText.setText("");
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("result", text);
-                        setResult(Activity.RESULT_OK, returnIntent);
-                        finish();
-                    } finally {
-                        handlingCode = false;
-                    }
-
+                    mCameraGuide.setImageResource(R.drawable.cameraguide);
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra(EXTRA_RESULT, text);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
                 }
             });
+            return true;
         } else {
             Log.d(TAG, "onQRCodeRead: not a crypto url");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        cameraGuide.setImageResource(R.drawable.cameraguide_red);
-                        lastUpdated = System.currentTimeMillis();
-                        descriptionText.setText("Not a valid " + WalletsMaster.getInstance(app).getCurrentWallet(app).getName() + " address");
-                    } finally {
-                        handlingCode = false;
-                    }
+                    mCameraGuide.setImageResource(R.drawable.cameraguide_red);
+                    mLastUpdated = System.currentTimeMillis();
                 }
             });
-
+            return false;
         }
-
     }
 
     private void initQRCodeReaderView() {
-        qrCodeReaderView = findViewById(R.id.qrdecoderview);
-        qrCodeReaderView.setAutofocusInterval(500L);
-        qrCodeReaderView.setOnQRCodeReadListener(this);
-        qrCodeReaderView.setBackCamera();
-        qrCodeReaderView.startCamera();
+        mQrCodeReaderView = findViewById(R.id.qrdecoderview);
+        mQrCodeReaderView.setAutofocusInterval(AUTO_FOCUS_PERIOD_TIME);
+        mQrCodeReaderView.setOnQRCodeReadListener(this);
+        mQrCodeReaderView.setBackCamera();
+        mQrCodeReaderView.startCamera();
     }
 
 }

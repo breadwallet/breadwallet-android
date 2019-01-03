@@ -68,7 +68,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     public BRTransactionEntity putTransaction(Context app, String iso, BRTransactionEntity transactionEntity) {
 
-        Log.e(TAG, "putTransaction: " + transactionEntity.getTxISO() + ":" + transactionEntity.getTxHash() + ", b:" + transactionEntity.getBlockheight() + ", t:" + transactionEntity.getTimestamp());
+        Log.e(TAG, "putTransaction: " + transactionEntity.getTxCurrencyCode() + ":" + transactionEntity.getTxHash() + ", b:" + transactionEntity.getBlockheight() + ", t:" + transactionEntity.getTimestamp());
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -146,7 +146,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
     }
 
     public boolean updateTransaction(Context app, String iso, BRTransactionEntity tx) {
-        Log.e(TAG, "updateTransaction: " + tx.getTxISO() + ":" + tx.getTxHash() + ", b:" + tx.getBlockheight() + ", t:" + tx.getTimestamp());
+        Log.e(TAG, "updateTransaction: " + tx.getTxCurrencyCode() + ":" + tx.getTxHash() + ", b:" + tx.getBlockheight() + ", t:" + tx.getTimestamp());
 
         try {
             database = openDatabase();
@@ -214,7 +214,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             cursor.moveToFirst();
             if (!cursor.isAfterLast()) {
                 BRTransactionEntity ent = cursorToTransaction(app, iso.toUpperCase(), cursor);
-                builder.append("ISO:" + ent.getTxISO() + ", Hash:" + ent.getTxHash() + ", blockHeight:" + ent.getBlockheight() + ", timeStamp:" + ent.getTimestamp() + "\n");
+                builder.append("ISO:" + ent.getTxCurrencyCode() + ", Hash:" + ent.getTxHash() + ", blockHeight:" + ent.getBlockheight() + ", timeStamp:" + ent.getTimestamp() + "\n");
             }
             Log.e(TAG, "printTest: " + builder.toString());
         } finally {

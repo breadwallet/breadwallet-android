@@ -18,6 +18,7 @@ public class SettingsActivity extends BaseSettingsActivity {
     private static final String TAG = SettingsActivity.class.getName();
     public static final String EXTRA_MODE = "com.breadwallet.presenter.activities.settings.EXTRA_MODE";
     public static final String MODE_SETTINGS = "settings";
+    public static final String DEVELOPER_OPTIONS = "Developer Options";
     public static final String MODE_PREFERENCES = "preferences";
     public static final String MODE_SECURITY = "security";
     public static final String MODE_CURRENCY_SETTINGS = "currency_settings";
@@ -57,6 +58,11 @@ public class SettingsActivity extends BaseSettingsActivity {
             case MODE_PREFERENCES:
                 settingsItems = SettingsUtil.getPreferencesSettings(this);
                 title.setText(getString(R.string.Settings_preferences));
+                mIsButtonBackArrow = true;
+                break;
+            case DEVELOPER_OPTIONS:
+                settingsItems = SettingsUtil.getDeveloperOptionsSettings(this);
+                title.setText(DEVELOPER_OPTIONS);
                 mIsButtonBackArrow = true;
                 break;
             case MODE_SECURITY:

@@ -29,7 +29,6 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -45,8 +44,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.util.List;
 
@@ -105,7 +104,7 @@ public class UiUtils {
         mSupportIsShowing = isSupportFragmentShown;
     }
 
-    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {
+    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager walletManager) {
         if (mSupportIsShowing) {
             return;
         }
@@ -116,18 +115,25 @@ public class UiUtils {
                 return;
             }
 
-            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
+            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager()
+                    .findFragmentByTag(FragmentSupport.class.getName());
             if (fragmentSupport != null && fragmentSupport.isAdded()) {
                 app.getFragmentManager().popBackStack();
                 return;
             }
-            String iso = BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE;
-            if (wm != null) wm.getIso();
+            String currencyCode = BRSharedPrefs.getCurrentWalletIso(app);
+            if (WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, currencyCode)) {
+                currencyCode = BRConstants.CURRENCY_ERC20;
+            }
+            if (walletManager != null) {
+                walletManager.getCurrencyCode();
+            }
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
-            bundle.putString("walletIso", iso);
-            if (!Utils.isNullOrEmpty(articleId))
-                bundle.putString("articleId", articleId);
+            bundle.putString(FragmentSupport.WALLET_CURRENCY_CODE, currencyCode);
+            if (!Utils.isNullOrEmpty(articleId)) {
+                bundle.putString(FragmentSupport.EXTRA_ARTICLE_ID, articleId);
+            }
 
             fragmentSupport.setArguments(bundle);
             app.getSupportFragmentManager().beginTransaction()

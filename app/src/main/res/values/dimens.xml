@@ -34,4 +34,8 @@
     <!-- Participate with BRD link wallet dialog -->
     <dimen name="link_wallet_dialog_width">360dp</dimen>
     <dimen name="permissions_scrollview_max_height">700dp</dimen>
+
+    <!-- Delisted token alpha values (for Home Screen) -->
+    <item name="token_background_with_alpha" type="dimen" format="float">.25</item>
+    <item name="token_background_no_alpha" type="dimen" format="float">1</item>
 </resources>

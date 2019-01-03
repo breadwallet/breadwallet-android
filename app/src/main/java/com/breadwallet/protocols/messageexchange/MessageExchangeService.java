@@ -9,6 +9,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
+
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.app.util.UserMetricsUtil;
@@ -820,8 +821,10 @@ public final class MessageExchangeService extends JobIntentService {
             WalletEthManager walletManager = WalletEthManager.getInstance(this);
 
             // Assume ETH wallet type for now.
-            CryptoRequest cryptoRequest = new CryptoRequest(null, false,
-                    null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
+            CryptoRequest cryptoRequest = new CryptoRequest.Builder()
+                    .setAddress(requestMetaData.getAddress())
+                    .setAmount(new BigDecimal(requestMetaData.getAmount()))
+                    .build();
 
             GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
                     requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
@@ -883,10 +886,11 @@ public final class MessageExchangeService extends JobIntentService {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
             WalletEthManager walletManager = WalletEthManager.getInstance(this);
-
             // Assume ETH wallet type for now.
-            CryptoRequest cryptoRequest = new CryptoRequest(null, false,
-                    null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
+            CryptoRequest cryptoRequest = new CryptoRequest.Builder()
+                    .setAddress(requestMetaData.getAddress())
+                    .setAmount(new BigDecimal(requestMetaData.getAmount()))
+                    .build();
             GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
                     requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
                     Utils.isNullOrEmpty(requestMetaData.getTransactionFee()) ? walletManager.getWallet().getDefaultGasPrice() : Long.valueOf(requestMetaData.getTransactionFee()),
@@ -908,7 +912,7 @@ public final class MessageExchangeService extends JobIntentService {
                         addNewTokenToTokenList(requestMetaData);
 
                         // Log transaction ACCEPTED event to me/metrics.
-                       logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
+                        logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
 
                     } else {
                         responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -936,10 +940,10 @@ public final class MessageExchangeService extends JobIntentService {
     /**
      * Log the response to a payment/call request to the BRD User Metrics endpoint me/metrics.
      *
-     * @param transactionHash  The transaction hash that is returned if successful.
+     * @param transactionHash The transaction hash that is returned if successful.
      * @param requestMetaData The payment/call request metadata that contains details of the request.
-     * @param status The status of the request response (ACCEPTED, REJECTED, UNKNOWN).
-     * @param error  Optional error that is returned if the transaction failed for some reason.
+     * @param status          The status of the request response (ACCEPTED, REJECTED, UNKNOWN).
+     * @param error           Optional error that is returned if the transaction failed for some reason.
      */
     private void logCallRequestResponse(String transactionHash, RequestMetaData requestMetaData, Protos.Status status, Protos.Error error) {
         UserMetricsUtil.logCallRequestResponse(this, status.getNumber(),
@@ -968,17 +972,19 @@ public final class MessageExchangeService extends JobIntentService {
                 WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getTokenSymbol());
                 TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
 
-                TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
-                if (tokenListMetaData == null) {
-                    tokenListMetaData = new TokenListMetaData(null, null);
-                }
+                if (tokenWalletManager != null) {
+                    TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
+                    if (tokenListMetaData == null) {
+                        tokenListMetaData = new TokenListMetaData(null, null);
+                    }
 
-                if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
-                    tokenListMetaData.enabledCurrencies.add(item);
-                }
+                    if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
+                        tokenListMetaData.enabledCurrencies.add(item);
+                    }
 
-                KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
-                WalletsMaster.getInstance(this).updateWallets(this);
+                    KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
+                    WalletsMaster.getInstance(this).updateWallets(this);
+                }
 
             }
         }

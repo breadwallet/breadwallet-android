@@ -50,6 +50,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:launchMode="singleTask"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Dark"
         android:windowSoftInputMode="stateVisible|adjustResize">
@@ -74,7 +75,6 @@
             android:screenOrientation="portrait">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -91,18 +91,56 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="bitcoin" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="bread" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="bitcoincash" />
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="bchtest" />
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/scanqr"
                     android:scheme="https" />
 
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/x/link-wallet"
                     android:scheme="https" />
+
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -168,9 +206,9 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-          android:name=".presenter.activities.settings.SegWitActivity"
-          android:launchMode="singleTask"
-          android:screenOrientation="portrait" />
+            android:name=".presenter.activities.settings.SegWitActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.PaperKeyProveActivity"
             android:launchMode="singleTask"
@@ -238,14 +276,14 @@
 
         <service
             android:name=".tools.services.SyncService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".protocols.messageexchange.MessageExchangeService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service android:name=".tools.services.BRDFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

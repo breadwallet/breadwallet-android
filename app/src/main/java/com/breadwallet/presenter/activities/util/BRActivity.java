@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -26,6 +27,7 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.AppEntryPointHandler;
+import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -100,20 +102,30 @@ public class BRActivity extends FragmentActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
-            // BEGIN_INCLUDE(permission_result)
-            // Received permission result for camera permission.
-            Log.i(TAG, "Received response for CAMERA_REQUEST_ID permission request.");
+        switch (requestCode) {
+            case BRConstants.CAMERA_REQUEST_ID:
+                // Received permission result for camera permission.
+                Log.i(TAG, "Received response for CAMERA_REQUEST_ID permission request.");
 
-            // Check if the only required permission has been granted
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Camera permission has been granted, preview can be displayed
-                Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
-            } else {
-                Log.i(TAG, "CAMERA permission was NOT granted.");
-                BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
-            }
+                // Check if the only required permission has been granted.
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Camera permission has been granted, preview can be displayed.
+                    Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
+                    UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                } else {
+                    Log.i(TAG, "CAMERA permission was NOT granted.");
+                    BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
+                }
+                break;
+
+            case QRUtils.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID:
+                // Check if the only required permission has been granted.
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Write storage permission has been granted, preview can be displayed.
+                    Log.i(TAG, "WRITE permission has now been granted.");
+                    QRUtils.share(this);
+                }
+                break;
         }
     }
 
@@ -121,7 +133,6 @@ public class BRActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
-
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -149,7 +160,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPaymentProtocolRequest(BRActivity.this, true);
+                            PostAuth.getInstance().onPaymentProtocolRequest(BRActivity.this, true, null);
                         }
                     });
 
@@ -179,6 +190,7 @@ public class BRActivity extends FragmentActivity {
                     });
                 }
                 break;
+
             case BRConstants.PROVE_PHRASE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -189,6 +201,7 @@ public class BRActivity extends FragmentActivity {
                     });
                 }
                 break;
+
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -207,7 +220,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            String result = data.getStringExtra("result");
+                            String result = data.getStringExtra(ScanQRActivity.EXTRA_RESULT);
                             AppEntryPointHandler.processQrResult(BRActivity.this, result);
                         }
                     });
@@ -252,11 +265,10 @@ public class BRActivity extends FragmentActivity {
 
     public void init() {
         //set status bar color
-//        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
         if (!(this instanceof IntroActivity || this instanceof RecoverActivity || this instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(this);
-        //show wallet locked if it is and we're not in an illegal activity
+        //show wallet locked if it is and we're not in an illegal activity.
         if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {
                 AuthManager.getInstance().setWalletDisabled(this);

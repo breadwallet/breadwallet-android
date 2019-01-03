@@ -1,0 +1,122 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/prompt_card"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginStart="16dp"
+  android:layout_marginTop="8dp"
+  android:layout_marginEnd="16dp"
+  android:background="@color/prompt_background"
+  app:cardCornerRadius="4dp">
+
+  <android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/prompt_background">
+
+    <ImageView
+      android:id="@+id/close_button"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="8dp"
+      android:src="@drawable/ic_close_light_grey"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/prompt_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginTop="16dp"
+      android:textSize="16sp"
+      app:customTFont="CircularPro-Bold.otf"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/prompt_description"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/prompt_title"
+      android:layout_marginStart="16dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="16dp"
+      android:textSize="14sp"
+      app:layout_constraintEnd_toStartOf="@+id/prompt_icon"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+      android:id="@+id/prompt_confirmation"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/prompt_title"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:text="@string/Prompts.EmailOptIn.confirmation"
+      android:textSize="14sp"
+      android:visibility="invisible"
+      app:layout_constraintBottom_toBottomOf="@+id/email_edit"
+      app:layout_constraintEnd_toStartOf="@+id/prompt_icon"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/email_edit" />
+
+    <com.breadwallet.presenter.customviews.BRButton
+      android:id="@+id/submit_button"
+      android:layout_width="wrap_content"
+      android:layout_height="60dp"
+      android:layout_below="@+id/prompt_description"
+      android:layout_alignParentEnd="true"
+      android:layout_margin="@dimen/bread_margin"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      android:background="@color/dark_blue"
+      android:text="@string/Button.submit"
+      android:textColor="@color/white"
+      android:textSize="14sp"
+      app:buttonType="4"
+      app:customTFont="CircularPro-Bold.otf"
+      app:hasShadow="false"
+      app:isBreadButton="true"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
+
+    <com.breadwallet.presenter.customviews.BREdit
+      android:id="@+id/email_edit"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_alignTop="@+id/submit_button"
+      android:layout_alignBottom="@+id/submit_button"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="12dp"
+      android:layout_toEndOf="@+id/close_button"
+      android:background="?attr/secondary_background"
+      android:hint="@string/Prompts.EmailOptIn.hint"
+      android:inputType="textEmailAddress"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:textColor="@color/white"
+      android:textColorHint="@color/light_gray"
+      android:textCursorDrawable="@null"
+      app:layout_constraintBottom_toBottomOf="@+id/submit_button"
+      app:layout_constraintEnd_toStartOf="@+id/submit_button"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/submit_button" />
+
+    <ImageView
+      android:id="@+id/prompt_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/ic_announcement"
+      app:layout_constraintBottom_toBottomOf="@+id/prompt_description"
+      app:layout_constraintEnd_toStartOf="@+id/close_button"
+      app:layout_constraintTop_toTopOf="@+id/prompt_description" />
+
+  </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

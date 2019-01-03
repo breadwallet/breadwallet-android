@@ -12,6 +12,7 @@ import android.util.Log;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,7 +234,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
                 values.put(BRSQLiteHelper.TX_COLUMN_ID, tx.getTxHash());
                 values.put(BRSQLiteHelper.TX_BUFF, tx.getBuff());
                 values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, tx.getBlockheight());
-                values.put(BRSQLiteHelper.TX_ISO, "BCH");
+                values.put(BRSQLiteHelper.TX_ISO, WalletBchManager.BITCASH_CURRENCY_CODE);
                 values.put(BRSQLiteHelper.TX_TIME_STAMP, tx.getTimestamp());
 
                 db.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);

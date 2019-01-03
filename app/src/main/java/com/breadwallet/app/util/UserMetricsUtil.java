@@ -58,8 +58,8 @@ public final class UserMetricsUtil {
     private static final String TAG = UserMetricsUtil.class.getSimpleName();
 
     /* Url fields */
-    private static final String ENDPOINT_ME_METRICS = "/me/metrics";
-    private static final String URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_ME_METRICS;
+    private static final String ME_METRICS_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/metrics";
+    private static final String ME_MAILING_LIST_SUBSCRIBE_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/mailing-list-subscribe";
 
     /* Metric field key */
     private static final String FIELD_METRIC = "metric";
@@ -100,6 +100,9 @@ public final class UserMetricsUtil {
     public static final String ENABLE_SEG_WIT = "enableSegWit";
     public static final String VIEW_LEGACY_ADDRESS = "viewLegacyAddress";
 
+    /* Payload field for email opt in request. There is no metric or data field in this case.*/
+    public static final String FIELD_EMAIL = "email";
+
     private UserMetricsUtil() {
     }
 
@@ -125,15 +128,19 @@ public final class UserMetricsUtil {
             data.put(FIELD_USER_AGENT, System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
             data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
-            data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
+
+            try {
+                data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
+            } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException e) {
+                Log.e(TAG, "Error obtaining Google advertising id. Skipping sending id in metrics.", e);
+            }
 
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_LAUNCH);
             payload.put(FIELD_DATA, data);
 
-            sendMetricsRequestWithPayload(context, payload);
-
-        } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException e) {
+            sendMetricsRequestWithPayload(context, ME_METRICS_URL, payload);
+        } catch (IOException | JSONException e) {
             Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
@@ -194,36 +201,58 @@ public final class UserMetricsUtil {
             payload.put(FIELD_METRIC, METRIC_PIGEON_TRANSACTION);
             payload.put(FIELD_DATA, data);
 
-            sendMetricsRequestWithPayload(context, payload);
+            sendMetricsRequestWithPayload(context, ME_METRICS_URL, payload);
         } catch (JSONException e) {
-            Log.e(TAG, "Error creating call request payload! ", e);
+            Log.e(TAG, "Error constructing JSON payload for log call/payment request.", e);
         }
     }
 
     public static void logSegwitEvent(Context context, String eventType) {
         try {
             JSONObject data = new JSONObject();
-
             data.put(FIELD_EVENT_TYPE, eventType);
             data.put(FIELD_TIMESTAMP, System.currentTimeMillis());
+
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_SEG_WIT);
             payload.put(FIELD_DATA, data);
-            sendMetricsRequestWithPayload(context, payload);
+
+            sendMetricsRequestWithPayload(context, ME_METRICS_URL, payload);
         } catch (JSONException e) {
-            Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
+            Log.e(TAG, "Error constructing JSON payload for log SegWit event.", e);
         }
     }
 
-    private static void sendMetricsRequestWithPayload(final Context context, final JSONObject payload) {
+    public static void makeEmailOptInRequest(final Context context, final String email) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject payload = new JSONObject();
+                    payload.put(UserMetricsUtil.FIELD_EMAIL, email);
+
+                    sendMetricsRequestWithPayload(context, ME_MAILING_LIST_SUBSCRIBE_URL, payload);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error constructing JSON payload for email opt in request.", e);
+                }
+            }
+        });
+    }
+
+    /**
+     * Makes request to metrics endpoint.
+     *
+     * @param context The context in which we are operating.
+     * @param url The URL endpoint to send the specified payload to.
+     * @param payload The payload to send.
+     */
+    private static void sendMetricsRequestWithPayload(final Context context, String url, final JSONObject payload) {
         final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         Request request = new Request.Builder()
-                .url(URL)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                .url(url)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
-
         APIClient.getInstance(context).sendRequest(request, true);
     }
-
 }
