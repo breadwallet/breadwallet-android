@@ -3,6 +3,7 @@ package com.breadwallet.tools.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.WorkerThread;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -27,9 +28,12 @@ import com.breadwallet.wallet.exceptions.FeeOutOfDate;
 import com.breadwallet.wallet.exceptions.InsufficientFundsException;
 import com.breadwallet.wallet.exceptions.SomethingWentWrong;
 import com.breadwallet.wallet.exceptions.SpendingNotAllowed;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -78,13 +82,14 @@ public class SendManager {
             sending = true;
             long now = System.currentTimeMillis();
             //if the fee (for BTC and BCH only) was updated more than 24 hours ago then try updating the fee
-            if (walletManager.getIso().equalsIgnoreCase("BTC") || walletManager.getIso().equalsIgnoreCase("BCH")) {
-                if (now - BRSharedPrefs.getFeeTime(app, walletManager.getIso()) >= FEE_EXPIRATION_MILLIS) {
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
+                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
+                if (now - BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()) >= FEE_EXPIRATION_MILLIS) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(3000);
+                                Thread.sleep(DateUtils.SECOND_IN_MILLIS * 3);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -94,10 +99,10 @@ public class SendManager {
                     }).start();
                     walletManager.updateFee(app);
                     //if the fee is STILL out of date then fail with network problem message
-                    long time = BRSharedPrefs.getFeeTime(app, walletManager.getIso());
+                    long time = BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode());
                     if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
                         Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
-                        throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getIso()), now);
+                        throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()), now);
                     }
                 }
             }
@@ -107,8 +112,8 @@ public class SendManager {
                 BRReportsManager.reportBug(new NullPointerException("did not send, timedOut!"));
             return true; //return so no error is shown
         } catch (InsufficientFundsException ignored) {
-            BigDecimal fee = walletManager.getEstimatedFee(payment.amount, "");
-            if (WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso()) &&
+            BigDecimal fee = walletManager.getEstimatedFee(payment.getAmount(), "");
+            if (WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode()) &&
                     fee.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0) {
                 sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, WalletEthManager.ETH_CURRENCY_CODE, fee)));
             } else
@@ -187,26 +192,26 @@ public class SendManager {
 
         //not enough for fee
         if (paymentRequest.notEnoughForFee(app, walletManager)) {
-            throw new InsufficientFundsException(paymentRequest.amount, balance);
+            throw new InsufficientFundsException(paymentRequest.getAmount(), balance);
         }
 
         if (paymentRequest.feeOverBalance(app, walletManager)) {
-            throw new FeeNeedsAdjust(paymentRequest.amount, balance, new BigDecimal(-1));
+            throw new FeeNeedsAdjust(paymentRequest.getAmount(), balance, new BigDecimal(-1));
         }
 
         // check if spending is allowed
-        if (!BRSharedPrefs.getAllowSpend(app, walletManager.getIso())) {
+        if (!BRSharedPrefs.getAllowSpend(app, walletManager.getCurrencyCode())) {
             throw new SpendingNotAllowed();
         }
 
         //check if amount isn't smaller than the min amount
         if (paymentRequest.isSmallerThanMin(app, walletManager)) {
-            throw new AmountSmallerThanMinException(paymentRequest.amount, minOutputAmount);
+            throw new AmountSmallerThanMinException(paymentRequest.getAmount(), minOutputAmount);
         }
 
         //amount is larger than balance
         if (paymentRequest.isLargerThanBalance(app, walletManager)) {
-            throw new InsufficientFundsException(paymentRequest.amount, balance);
+            throw new InsufficientFundsException(paymentRequest.getAmount(), balance);
         }
 
         // payment successful
@@ -230,8 +235,8 @@ public class SendManager {
                 }
             }, null, null, 0);
         } else {
-            if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
-            BigDecimal fee = wm.getEstimatedFee(maxAmountDouble, item.address);
+            if (Utils.isNullOrEmpty(item.getAddress())) throw new RuntimeException("can't happen");
+            BigDecimal fee = wm.getEstimatedFee(maxAmountDouble, item.getAddress());
             if (fee.compareTo(BigDecimal.ZERO) <= 0) {
                 BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
@@ -243,27 +248,28 @@ public class SendManager {
                 return;
             }
 
-            String formattedCrypto = CurrencyUtils.getFormattedAmount(app, wm.getIso(), maxAmountDouble.negate());
+            String formattedCrypto = CurrencyUtils.getFormattedAmount(app, wm.getCurrencyCode(), maxAmountDouble.negate());
             String formattedFiat = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), wm.getFiatForSmallestCrypto(app, maxAmountDouble, null).negate());
 
             String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
 
-            item.amount = maxAmountDouble;
+            item.setAmount(maxAmountDouble);
 
-            BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError), "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
-                    PostAuth.getInstance().setPaymentItem(item);
-                    confirmPay(app, item, walletManager, completion);
+            BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError),
+                    app.getString(R.string.Send_SendMax), posButtonText, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                            PostAuth.getInstance().setPaymentItem(item);
+                            confirmPay(app, item, walletManager, completion);
 
-                }
-            }, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
-                }
-            }, null, 0);
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, 0);
         }
 
     }
@@ -273,19 +279,18 @@ public class SendManager {
             Log.e(TAG, "confirmPay: context is null");
             return;
         }
-
         String message = createConfirmation(ctx, request, wm);
         if (message == null) {
             BRDialog.showSimpleDialog(ctx, "Failed", "Confirmation message failed");
             return;
         }
 
-        BigDecimal minOutput = request.isAmountRequested ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
+        BigDecimal minOutput = request.isAmountRequested() ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
         //amount can't be less than the min
-        if (minOutput != null && request.amount.abs().compareTo(minOutput) <= 0) {
+        if (minOutput != null && request.getAmount().abs().compareTo(minOutput) <= 0) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                    CurrencyUtils.getFormattedAmount(ctx, wm.getIso(), minOutput));
+                    CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), minOutput));
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
@@ -304,12 +309,12 @@ public class SendManager {
 
         if (Utils.isEmulatorOrDebug(ctx)) {
             Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
-            Log.e(TAG, "confirmPay: request.amount: " + request.amount);
-            Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getIso()));
-            Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getIso()));
+            Log.e(TAG, "confirmPay: request.amount: " + request.getAmount());
+            Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode()));
+            Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getCurrencyCode()));
         }
 
-        if (wm.getTotalSent(ctx).add(request.amount).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getIso())) > 0) {
+        if (wm.getTotalSent(ctx).add(request.getAmount()).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode())) > 0) {
             forcePin = true;
         }
 
@@ -343,18 +348,10 @@ public class SendManager {
 
     private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager wm) {
 
-        String receiver;
-        boolean certified = false;
-        if (request.cn != null && request.cn.length() != 0) {
-            certified = true;
-        }
-        receiver = wm.decorateAddress(request.address);
-        if (certified) {
-            receiver = "certified: " + request.cn + "\n";
-        }
+        String receiver = wm.decorateAddress(request.getAddress());
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
-        BigDecimal feeForTx = wm.getEstimatedFee(request.amount, request.address);
+        BigDecimal feeForTx = wm.getEstimatedFee(request.getAmount(), request.getAddress());
         if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
             BigDecimal maxAmount = wm.getMaxOutputAmount(ctx);
             if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
@@ -382,23 +379,23 @@ public class SendManager {
                     }, null, null, 0);
             return null;
         }
-        BigDecimal amount = request.amount.abs();
+        BigDecimal amount = request.getAmount().abs();
         final BigDecimal total = amount.add(feeForTx);
-        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(), amount);
-        String formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(), feeForTx);
-        String formattedCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(), total);
+        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), amount);
+        String formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), feeForTx);
+        String formattedCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), total);
 
         String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, amount, null));
         String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
 
-        boolean isErc20 = WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso());
+        boolean isErc20 = WalletsMaster.getInstance(ctx).isCurrencyCodeErc20(ctx, wm.getCurrencyCode());
 
         if (isErc20) {
             formattedCryptoTotal = "";
             formattedTotal = "";
             BaseWalletManager ethWm = WalletEthManager.getInstance(ctx);
-            formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getIso(), feeForTx);
+            formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getCurrencyCode(), feeForTx);
             formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         }
 
@@ -406,7 +403,7 @@ public class SendManager {
         String line2 = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
         String line3 = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
         String line4 = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
-        String line5 = Utils.isNullOrEmpty(request.message) ? "" : "\n\n" + request.message;
+        String line5 = Utils.isNullOrEmpty(request.getMessage()) ? "" : "\n\n" + request.getMessage();
 
         //formatted text
         return line1 + line2 + line3 + (isErc20 ? "" : line4) + line5;

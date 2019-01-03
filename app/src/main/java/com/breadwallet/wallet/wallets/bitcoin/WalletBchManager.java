@@ -3,7 +3,6 @@ package com.breadwallet.wallet.wallets.bitcoin;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
@@ -49,9 +48,8 @@ import java.util.List;
 public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     private static final String TAG = WalletBchManager.class.getName();
-
-    private static final String ISO = BITCASH_CURRENCY_CODE;
-    private static final String NAME = "Bitcoin Cash";
+    private static final String CURRENCY_CODE = BITCASH_CURRENCY_CODE;
+    public static final String NAME = "Bitcoin Cash";
     private static final String SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
     private static final String COLOR = "#478559";
     private static final long MAINNET_FORK_TIME = 1501568580; // Tuesday, August 1, 2017 6:23:00 AM GMT in seconds since Epoch
@@ -68,7 +66,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
             }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(context);
-            if (!BRSharedPrefs.getBchPreforkSynced(context) && time == 0)
+            if (!BRSharedPrefs.getBchPreForkSynced(context) && time == 0)
                 time = BuildConfig.BITCOIN_TESTNET ? TESTNET_FORK_TIME : MAINNET_FORK_TIME;
             mInstance = new WalletBchManager(context, pubKey, BuildConfig.BITCOIN_TESTNET ?
                     BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
@@ -83,21 +81,21 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BRSharedPrefs.getStartHeight(context, getIso()) == 0)
-                    BRSharedPrefs.putStartHeight(context, getIso(), getPeerManager().getLastBlockHeight());
+                if (BRSharedPrefs.getStartHeight(context, getCurrencyCode()) == 0)
+                    BRSharedPrefs.putStartHeight(context, getCurrencyCode(), getPeerManager().getLastBlockHeight());
 
-                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getIso());
-                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getIso());
+                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getCurrencyCode());
+                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getCurrencyCode());
                 if (fee.compareTo(BigDecimal.ZERO) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getIso()) ? fee.longValue() : economyFee.longValue());
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
             }
         });
         WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
 
-        setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
+        setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
     }
 
@@ -121,8 +119,8 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     }
 
     @Override
-    public String getIso() {
-        return ISO;
+    public String getCurrencyCode() {
+        return CURRENCY_CODE;
     }
 
     @Override
@@ -160,7 +158,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     }
 
     protected void syncStopped(Context context) {
-        BRSharedPrefs.putBchPreforkSynced(context, true);
+        BRSharedPrefs.putBchPreForkSynced(context, true);
     }
 
 

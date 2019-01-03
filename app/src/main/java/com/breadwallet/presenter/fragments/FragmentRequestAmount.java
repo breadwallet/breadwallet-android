@@ -19,10 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -36,6 +36,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.breadwallet.R;
 
 import java.math.BigDecimal;
 
@@ -78,8 +79,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     public ImageView mQrImage;
     private String mReceiveAddress;
     private BRButton mShareButton;
-    private Button mShareEmail;
-    private Button mShareTextMessage;
     private boolean mShareButtonsShown = true;
     private String mSelectedCurrencyCode;
     private Button mCurrencyCodeButton;
@@ -87,7 +86,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     private LinearLayout mKeyboardLayout;
     private RelativeLayout mAmountLayout;
     private Button mRequestButton;
-    private BRLinearLayoutWithCaret mShareButtonsLayout;
     private BRLinearLayoutWithCaret mCopiedLayout;
     private int mKeyboardIndex;
     private ImageButton mCloseButton;
@@ -101,7 +99,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_receive, container, false));
         mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
         mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
-        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
         mRequestButton = rootView.findViewById(R.id.request_button);
         mKeyboardLayout = rootView.findViewById(R.id.keyboard_layout);
@@ -119,9 +116,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
         mShareButton = rootView.findViewById(R.id.share_button);
-        mShareEmail = rootView.findViewById(R.id.share_email);
-        mShareTextMessage = rootView.findViewById(R.id.share_text);
-        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
         mCloseButton = rootView.findViewById(R.id.close_button);
         mKeyboardIndex = mSignalLayout.indexOfChild(mKeyboardLayout);
 
@@ -145,7 +139,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         mTitle.setText(getString(R.string.Receive_request));
         setListeners();
 
-        mSignalLayout.removeView(mShareButtonsLayout);
         mSignalLayout.removeView(mCopiedLayout);
         mSignalLayout.removeView(mRequestButton);
 
@@ -175,7 +168,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             public void onClick(View v) {
                 removeCurrencySelector();
                 showKeyboard(true);
-                showShareButtons(false);
             }
         });
 
@@ -196,39 +188,16 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
 
         mKeyboard.setOnInsertListener(this);
 
-
-        mShareEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeCurrencySelector();
-                if (!UiUtils.isClickAllowed()) return;
-                showKeyboard(false);
-                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
-                        getAmount(), null, null, null);
-                QRUtils.share("mailto:", getActivity(), bitcoinUri.toString());
-
-            }
-        });
-        mShareTextMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeCurrencySelector();
-                if (!UiUtils.isClickAllowed()) return;
-                showKeyboard(false);
-                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
-                        getAmount(), null, null, null);
-                QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
-            }
-        });
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                mShareButtonsShown = !mShareButtonsShown;
-                showShareButtons(mShareButtonsShown);
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
                 showKeyboard(false);
             }
         });
@@ -254,7 +223,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             @Override
             public void onClick(View v) {
                 if (mSelectedCurrencyCode.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
-                    mSelectedCurrencyCode = mWallet.getIso();
+                    mSelectedCurrencyCode = mWallet.getCurrencyCode();
                 } else {
                     mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
@@ -274,22 +243,9 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         showCopiedLayout(true);
     }
 
-    private void toggleShareButtonsVisibility() {
-
-        if (mShareButtonsShown) {
-            mSignalLayout.removeView(mShareButtonsLayout);
-        } else {
-            mSignalLayout.addView(mShareButtonsLayout, mSignalLayout.getChildCount());
-        }
-        mShareButtonsShown = !mShareButtonsShown;
-
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        toggleShareButtonsVisibility();
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -303,7 +259,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                     @Override
                     public void run() {
                         mAddress.setText(mWallet.decorateAddress(mReceiveAddress));
-                        boolean generated = generateQrImage(mWallet.decorateAddress(mReceiveAddress), null, wallet.getIso());
+                        boolean generated = generateQrImage(mWallet.decorateAddress(mReceiveAddress), null, wallet.getCurrencyCode());
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -403,32 +359,25 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     }
 
     private boolean generateQrImage(String address, String strAmount, String iso) {
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
         boolean isCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), iso);
 
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
 
-        BigDecimal amount = isCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wm.getSmallestCryptoForFiat(getActivity(), bigAmount);
+        BigDecimal amount = isCrypto ? walletManager.getSmallestCryptoForCrypto(getActivity(), bigAmount) : walletManager.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
-        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
+        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                new CryptoRequest.Builder()
+                        .setAddress(address)
+                        .setAmount(amount)
+                        .build());
 
         return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }
 
     private void removeCurrencySelector() {
 //        showCurrencyList(false);
-    }
-
-    private void showShareButtons(boolean b) {
-        if (!b) {
-            mSignalLayout.removeView(mShareButtonsLayout);
-            mShareButton.setType(2);
-        } else {
-            mSignalLayout.addView(mShareButtonsLayout, mSignalLayout.getChildCount() - 1);
-            mShareButton.setType(3);
-            showCopiedLayout(false);
-        }
     }
 
     private BigDecimal getAmount() {
@@ -447,7 +396,6 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         } else {
             if (mSignalLayout.indexOfChild(mCopiedLayout) == -1) {
                 mSignalLayout.addView(mCopiedLayout, mSignalLayout.indexOfChild(mShareButton));
-                showShareButtons(false);
                 mShareButtonsShown = false;
                 mCopyHandler.postDelayed(new Runnable() {
                     @Override

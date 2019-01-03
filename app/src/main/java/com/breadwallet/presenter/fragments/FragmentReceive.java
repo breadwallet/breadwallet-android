@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,12 +16,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
@@ -36,7 +35,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 
@@ -78,12 +76,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     private String mReceiveAddress;
     private View mSeparatorRequestView;
     private BRButton mShareButton;
-    private Button mShareEmailButton;
-    private Button mShareMessageButton;
     private Button mRequestButton;
-    private BRLinearLayoutWithCaret mShareButtonsLayout;
     private BRLinearLayoutWithCaret mCopiedLayout;
-    private boolean mIsShareButtonsShown = false;
     private boolean mShowRequestAnAmount;
     private ImageButton mCloseButton;
     private Handler mCopyHandler = new Handler();
@@ -104,9 +98,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
         mShareButton = rootView.findViewById(R.id.share_button);
-        mShareEmailButton = rootView.findViewById(R.id.share_email);
-        mShareMessageButton = rootView.findViewById(R.id.share_text);
-        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
         mRequestButton = rootView.findViewById(R.id.request_button);
         mKeyboard = rootView.findViewById(R.id.keyboard);
@@ -123,10 +114,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
+            public void onClick(View view) {
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
@@ -138,7 +126,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
             }
         });
 
-        mSignalLayout.removeView(mShareButtonsLayout);
         mSignalLayout.removeView(mCopiedLayout);
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
@@ -149,36 +136,16 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     }
 
     private void setListeners() {
-        mShareEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
-
-
-            }
-        });
-        mShareMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(mReceiveAddress),
-                        BigDecimal.ZERO, null, null, null);
-                QRUtils.share("sms:", getActivity(), cryptoUri.toString());
-            }
-        });
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                mIsShareButtonsShown = !mIsShareButtonsShown;
-                showShareButtons(mIsShareButtonsShown);
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +162,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 Activity app = getActivity();
                 app.getFragmentManager().popBackStack();
                 UiUtils.showRequestFragment((FragmentActivity) app);
-
             }
         });
 
@@ -222,17 +188,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         });
     }
 
-    private void showShareButtons(boolean b) {
-        if (!b) {
-            mSignalLayout.removeView(mShareButtonsLayout);
-            mShareButton.setType(2);
-        } else {
-            mSignalLayout.addView(mShareButtonsLayout, mShowRequestAnAmount ? mSignalLayout.getChildCount() - 2 : mSignalLayout.getChildCount());
-            mShareButton.setType(3);
-            showCopiedLayout(false);
-        }
-    }
-
     private void showCopiedLayout(boolean b) {
         if (!b) {
             mSignalLayout.removeView(mCopiedLayout);
@@ -240,8 +195,6 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         } else {
             if (mSignalLayout.indexOfChild(mCopiedLayout) == -1) {
                 mSignalLayout.addView(mCopiedLayout, mSignalLayout.indexOfChild(mShareButton));
-                showShareButtons(false);
-                mIsShareButtonsShown = false;
                 mCopyHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -283,8 +236,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                         String decoratedReceiveAddress = walletManager.decorateAddress(mReceiveAddress);
                         mAddress.setText(decoratedReceiveAddress);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(getContext(), walletManager, decoratedReceiveAddress,
-                                BigDecimal.ZERO, null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, new CryptoRequest.Builder().setAddress(decoratedReceiveAddress).build());
+                        boolean generated = QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
                         if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
                             throw new RuntimeException("failed to generate qr image for address");
                         }

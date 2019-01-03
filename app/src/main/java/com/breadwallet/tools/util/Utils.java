@@ -26,6 +26,10 @@ import android.widget.Toast;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -310,4 +314,22 @@ public class Utils {
         }
     }
 
+    /**
+     * Helper function to validate if a string is in JSON format. Supports either JSONObject or JSONArray.
+     *
+     * @param jsonString The string to be validated.
+     * @return True if valid JSON, false if not.
+     */
+    public static boolean isValidJSON(String jsonString) {
+        try {
+            new JSONObject(jsonString);
+        } catch (JSONException e1) {
+            try {
+                new JSONArray(jsonString);
+            } catch (JSONException e2) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

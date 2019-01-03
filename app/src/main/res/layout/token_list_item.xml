@@ -4,12 +4,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="66dp">
 
-    <ImageView
-        android:id="@+id/token_icon"
+    <RelativeLayout
+        android:id="@+id/icon_parent"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp" />
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/token_icon_background_transparent"
+        android:orientation="vertical">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/icon_letter"
+            android:text="T"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:customTFont="CircularPro-Bold.otf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/token_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/token_name"
@@ -17,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
         android:layout_marginTop="12dp"
-        android:layout_toEndOf="@id/token_icon"
+        android:layout_toEndOf="@id/icon_parent"
         android:textSize="18sp"
         app:customTFont="CircularPro-Book.otf" />
 
@@ -28,18 +49,21 @@
         android:layout_below="@id/token_name"
         android:layout_marginStart="11dp"
         android:layout_marginTop="6dp"
-        android:layout_toEndOf="@id/token_icon"
+        android:layout_toEndOf="@id/icon_parent"
         android:textColor="?attr/token_secondary_text_color"
         android:textSize="14sp"
         app:customTFont="CircularPro-Bold.otf" />
 
     <Button
         android:id="@+id/add_remove_button"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:maxLines="1"
         android:background="?attr/add_wallet_button_background"
         android:textColor="@color/button_add_wallet_text"
         android:textSize="14sp" />

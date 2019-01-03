@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.wallet.WalletsMaster;
 
 /**
  * BreadWallet
@@ -97,6 +99,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "current wallet: " + WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext()).getCurrencyCode());
                 TxManager.getInstance().updateTxList(breadActivity);
             }
         });

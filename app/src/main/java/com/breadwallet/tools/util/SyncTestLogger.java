@@ -51,7 +51,7 @@ public class SyncTestLogger extends Thread {
             StringBuilder builder = new StringBuilder();
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(mContext).getAllWallets(mContext));
             for (BaseWalletManager w : list) {
-                builder.append("   " + w.getIso());
+                builder.append("   " + w.getCurrencyCode());
                 String connectionStatus = "";
                 if (w.getConnectStatus() == 2)
                     connectionStatus = "Connected";
@@ -60,7 +60,7 @@ public class SyncTestLogger extends Thread {
                 else if (w.getConnectStatus() == 1)
                     connectionStatus = "Connecting";
 
-                double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.getIso()));
+                double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.getCurrencyCode()));
                 if (progress != 1) needsLog = true;
                 builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
 

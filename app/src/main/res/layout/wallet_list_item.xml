@@ -16,6 +16,16 @@
         android:background="@drawable/asset_icon_background_transparent"
         android:orientation="vertical">
 
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/icon_letter"
+            android:text="T"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:customTFont="CircularPro-Bold.otf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
         <ImageView
             android:id="@+id/currency_icon_white"
             android:layout_width="wrap_content"
