@@ -111,6 +111,7 @@ public class AddWalletsActivity extends BRActivity {
 
                 mAdapter.notifyDataSetChanged();
 
+                mSearchView.getText().clear();
             }
 
             @Override
