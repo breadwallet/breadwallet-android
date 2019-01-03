@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
@@ -193,7 +191,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBitcoinManager.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));
@@ -203,7 +201,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bchSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBchManager.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBchManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));
