@@ -88,61 +88,6 @@ public class HTTPServer extends AbstractLifeCycle {
         return mInstance;
     }
 
-    public void startServer() {
-        try {
-            mInstance.start();
-        } catch (Exception e) {
-            Log.e(TAG, "Error starting the local server.", e);
-        }
-    }
-
-    public void stopServer() {
-        try {
-            mInstance.stop();
-        } catch (Exception e) {
-            Log.e(TAG, "Error stopping the local server.", e);
-        }
-    }
-
-    @Override
-    protected void doStart() {
-        Log.d(TAG, "startServer");
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (mServer == null) {
-                        init();
-                    }
-                    mServer.start();
-                    mServer.join();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error starting the local server.", e);
-                }
-            }
-        });
-    }
-
-    @Override
-    protected void doStop()  {
-        Log.d(TAG, "stopServer");
-        if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (mServer != null) {
-                            mServer.stop();
-                            mServer = null;
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error stopping the local server.", e);
-                    }
-                }
-            });
-        }
-    }
-
     private void init() {
         middlewares = new LinkedHashSet<>();
         mServer = new Server(PORT);
@@ -168,6 +113,61 @@ public class HTTPServer extends AbstractLifeCycle {
         mServer.setHandler(handlerCollection);
 
         setupIntegrations();
+    }
+
+    public void startServer() {
+        try {
+            mInstance.start();
+        } catch (Exception e) {
+            Log.e(TAG, "startServer: Error starting the local server.", e);
+        }
+    }
+
+    public void stopServer() {
+        try {
+            mInstance.stop();
+        } catch (Exception e) {
+            Log.e(TAG, "stopServer: Error stopping the local server.", e);
+        }
+    }
+
+    @Override
+    protected void doStart() {
+        Log.d(TAG, "doStart");
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mServer == null) {
+                        init();
+                    }
+                    mServer.start();
+                    mServer.join();
+                } catch (Exception e) {
+                    Log.e(TAG, "doStart: Error starting the local server.", e);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void doStop()  {
+        Log.d(TAG, "doStop");
+        if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mServer != null) {
+                            mServer.stop();
+                            mServer = null;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "doStop: Error stopping the local server.", e);
+                    }
+                }
+            });
+        }
     }
 
     private static class ServerHandler extends AbstractHandler {
