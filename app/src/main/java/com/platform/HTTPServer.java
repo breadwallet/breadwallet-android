@@ -25,6 +25,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
@@ -60,11 +61,9 @@ import javax.servlet.http.HttpServletResponse;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPServer {
-    public static final String TAG = HTTPServer.class.getName();
+public class HTTPServer extends AbstractLifeCycle {
+    public static final String TAG = HTTPServer.class.getSimpleName();
 
-    private static Set<Middleware> middlewares;
-    private static Server server;
     private static final int PORT = 31120;
     public static final String PLATFORM_BASE_URL = "http://localhost:" + PORT;
     public static final String URL_BUY = PLATFORM_BASE_URL + "/buy";
@@ -72,17 +71,83 @@ public class HTTPServer {
     public static final String URL_SELL = PLATFORM_BASE_URL + "/sell";
     public static final String URL_SUPPORT = PLATFORM_BASE_URL + "/support";
     public static final String URL_REWARDS = PLATFORM_BASE_URL + "/rewards";
+
+    private static HTTPServer mInstance;
+    private Server mServer;
+    private static Set<Middleware> middlewares;
     private static OnCloseListener mOnCloseListener;
 
-    public HTTPServer() {
-        init();
+    private HTTPServer() {
     }
 
-    private static synchronized void init() {
-        middlewares = new LinkedHashSet<>();
-        server = new Server(PORT);
+    public static synchronized HTTPServer getInstance() {
+        if (mInstance == null) {
+            mInstance = new HTTPServer();
+        }
+
+        return mInstance;
+    }
+
+    public void startServer() {
         try {
-            server.dump(System.err);
+            mInstance.start();
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting the local server.", e);
+        }
+    }
+
+    public void stopServer() {
+        try {
+            mInstance.stop();
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping the local server.", e);
+        }
+    }
+
+    @Override
+    protected void doStart() {
+        Log.d(TAG, "startServer");
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mServer == null) {
+                        init();
+                    }
+                    mServer.start();
+                    mServer.join();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error starting the local server.", e);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void doStop()  {
+        Log.d(TAG, "stopServer");
+        if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mServer != null) {
+                            mServer.stop();
+                            mServer = null;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error stopping the local server.", e);
+                    }
+                }
+            });
+        }
+    }
+
+    private void init() {
+        middlewares = new LinkedHashSet<>();
+        mServer = new Server(PORT);
+        try {
+            mServer.dump(System.err);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,58 +165,9 @@ public class HTTPServer {
         handlerCollection.addHandler(serverHandler);
         handlerCollection.addHandler(wsHandler);
 
-        server.setHandler(handlerCollection);
+        mServer.setHandler(handlerCollection);
 
         setupIntegrations();
-
-    }
-
-    public static synchronized void startServer() {
-        Log.d(TAG, "startServer");
-        if (!isStartedOrStarting()) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (server == null) {
-                            init();
-                        }
-                        server.start();
-                        server.join();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error starting the local server", e);
-                    }
-                }
-            });
-        }
-    }
-
-    public static synchronized void stopServer() {
-        Log.d(TAG, "stopServer");
-        if (!isStoppedOrStopping()) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (server != null) {
-                            server.stop();
-                            server = null;
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error stopping the local server", e);
-                    }
-
-                }
-            });
-        }
-    }
-
-    private static boolean isStartedOrStarting() {
-        return server != null && server.isStarted() || server != null && server.isStarting();
-    }
-
-    private static boolean isStoppedOrStopping() {
-        return server != null && server.isStopped() || server != null && server.isStopping();
     }
 
     private static class ServerHandler extends AbstractHandler {
