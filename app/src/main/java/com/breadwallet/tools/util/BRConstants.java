@@ -196,7 +196,7 @@ public final class BRConstants {
     public static final String IS_ERROR = "isError";
     public static final String TOPICS = "topics";
     public static final String DATA = "data";
-    public static final String DATE = "Date";
+    public static final String DATE = "date";
     public static final String TRANSACTION_HASH = "transactionHash";
     public static final String CHECKOUT = "checkout";
     public static final String GET = "GET";
