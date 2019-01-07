@@ -98,7 +98,7 @@
 
 
             <View
-                android:id="@+id/reddit_divider"
+                android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/amount_when_sent"
@@ -110,11 +110,10 @@
                 android:id="@+id/tx_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/reddit_divider"
+                android:layout_below="@id/divider1"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
                 android:drawablePadding="5dp"
-                android:drawableStart="@drawable/checkmark_circled"
                 android:text="@string/Transaction.complete"
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
@@ -125,7 +124,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/reddit_divider"
+                android:layout_below="@id/divider1"
+                android:layout_toRightOf="@+id/tx_status"
                 android:layout_marginTop="14dp"
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"
@@ -190,20 +190,14 @@
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 
-            <com.breadwallet.presenter.customviews.BREdit
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/memo"
-                android:layout_width="130dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_below="@id/divider3"
                 android:layout_marginTop="14dp"
-                android:layout_toEndOf="@id/memo_label"
+                android:layout_toRightOf="@+id/memo_label"
                 android:background="@android:color/transparent"
-                android:cursorVisible="false"
-                android:gravity="end"
-                android:hint="@string/TransactionDetails.commentsPlaceholder"
-                android:imeOptions="actionDone"
-                android:inputType="text"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
@@ -240,7 +234,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Gas Price"
+                        android:text="@string/Gas.price"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -280,7 +274,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Gas Limit"
+                        android:text="@string/Gas.limit"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -389,7 +383,8 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:id="@+id/exchange_rate_label"
@@ -398,7 +393,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Exchange Rate at Time"
+                        android:text="@string/Transaction.rate"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -437,7 +432,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Confirmed in Block"
+                        android:text="@string/Confirm.block"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -478,7 +473,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Transaction ID"
+                        android:text="@string/Transaction.id"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"

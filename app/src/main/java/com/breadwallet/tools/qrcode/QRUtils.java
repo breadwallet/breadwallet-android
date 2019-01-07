@@ -160,7 +160,7 @@ public class QRUtils {
 
         File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
         //Uri uri = Uri.fromFile(file);
-        Uri uri = FileProvider.getUriForFile(app, "com.breadwallet", file);
+        Uri uri = FileProvider.getUriForFile(app, "com.elastos.wallet", file);
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);

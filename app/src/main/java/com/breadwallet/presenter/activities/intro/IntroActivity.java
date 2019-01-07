@@ -63,7 +63,6 @@ public class IntroActivity extends BRActivity {
     private static final String TAG = IntroActivity.class.getName();
     private Button mNewWalletButton;
     private Button mRecoverWalletButton;
-    private View mSplashScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,6 @@ public class IntroActivity extends BRActivity {
         setContentView(R.layout.activity_intro);
         mNewWalletButton = findViewById(R.id.button_new_wallet);
         mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
-        mSplashScreen = findViewById(R.id.splash_screen);
         TextView subtitle = findViewById(R.id.intro_subtitle);
 
 //        String aa = android.os.Build.CPU_ABI;
@@ -80,7 +78,7 @@ public class IntroActivity extends BRActivity {
 //            return;
 //        }
         setListeners();
-        updateBundles();
+//        updateBundles();
         ImageButton faq = findViewById(R.id.faq_button);
 
         Shader shader = new LinearGradient(
@@ -117,8 +115,6 @@ public class IntroActivity extends BRActivity {
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
-        mSplashScreen.setVisibility(View.GONE);
-
         checkPermisson();
     }
 
@@ -130,18 +126,18 @@ public class IntroActivity extends BRActivity {
         }
     }
 
-    private void updateBundles() {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(IntroActivity.this);
-                apiClient.updateBundle();
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle DONE in " + (endTime - startTime) + "ms");
-            }
-        });
-    }
+//    private void updateBundles() {
+//        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                final long startTime = System.currentTimeMillis();
+//                APIClient apiClient = APIClient.getInstance(IntroActivity.this);
+//                apiClient.updateBundle();
+//                long endTime = System.currentTimeMillis();
+//                Log.d(TAG, "updateBundle DONE in " + (endTime - startTime) + "ms");
+//            }
+//        });
+//    }
 
     private void setListeners() {
         mNewWalletButton.setOnClickListener(new View.OnClickListener() {

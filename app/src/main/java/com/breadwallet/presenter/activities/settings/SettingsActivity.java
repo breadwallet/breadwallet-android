@@ -1,5 +1,8 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.breadwallet.R;
@@ -45,6 +48,7 @@ public class SettingsActivity extends BaseSettingsActivity {
         ListView settingsList = findViewById(R.id.settings_list);
         List<BRSettingsItem> settingsItems = new ArrayList<>();
         String mode = getIntent().getStringExtra(EXTRA_MODE);
+        ViewGroup viewGroup = findViewById(R.id.activity_intro_set_pit);
         if (mode == null) {
             throw new IllegalArgumentException("Need mode for the settings activity");
         }
@@ -53,15 +57,18 @@ public class SettingsActivity extends BaseSettingsActivity {
                 settingsItems = SettingsUtil.getMainSettings(this);
                 title.setText(getString(R.string.Settings_title));
                 mIsButtonBackArrow = false;
+                viewGroup.setBackgroundColor(getColor(R.color.primary_background));
                 break;
             case MODE_PREFERENCES:
                 settingsItems = SettingsUtil.getPreferencesSettings(this);
                 title.setText(getString(R.string.Settings_preferences));
+                viewGroup.setBackgroundColor(getColor(R.color.white));
                 mIsButtonBackArrow = true;
                 break;
             case MODE_SECURITY:
                 settingsItems = SettingsUtil.getSecuritySettings(this);
                 title.setText(getString(R.string.MenuButton_security));
+                viewGroup.setBackgroundColor(getColor(R.color.white));
                 mIsButtonBackArrow = true;
                 break;
             case MODE_CURRENCY_SETTINGS:
@@ -69,8 +76,11 @@ public class SettingsActivity extends BaseSettingsActivity {
                 settingsItems = walletManager.getSettingsConfiguration().getSettingsList();
                 String currencySettingsLabel = String.format("%s %s", walletManager.getName(), getString(R.string.Settings_title));
                 title.setText(currencySettingsLabel);
+                viewGroup.setBackgroundColor(getColor(R.color.white));
                 mIsButtonBackArrow = true;
                 break;
+            default:
+                viewGroup.setBackgroundColor(getColor(R.color.primary_background));
         }
 
         settingsList.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, settingsItems));

@@ -28,6 +28,6 @@ public class Outputs {
 
     public String addr;
 
-    public long amt;
+    public double amt;
 
 }

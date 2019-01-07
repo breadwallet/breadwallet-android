@@ -16,6 +16,7 @@ import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -95,6 +96,12 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     @Override
+    public void wipeData(Context app) {
+        super.wipeData(app);
+        mInstance = null;
+    }
+
+    @Override
     protected String getTag() {
         return TAG;
     }
@@ -127,6 +134,11 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
+        return null;
     }
 
     @Override

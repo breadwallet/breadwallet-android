@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.SmartValidator;
 
 import java.io.BufferedReader;
@@ -120,16 +121,18 @@ public class Bip39Reader {
         if (Utils.isNullOrEmpty(paperKey)) {
             return null;
         }
+        String lang = "en";
         String cleanPaperKey = SmartValidator.cleanPaperKey(app, paperKey);
         String firstWord = cleanPaperKey.split(" ")[0];
 
         for (String s : LANGS) {
             List<String> words = getList(app, s);
             if (words.contains(firstWord)) {
-                return s;
+                lang = s;
+                break;
             }
         }
-        return "en";
+        return lang;
     }
 
     public static String cleanWord(String word) {

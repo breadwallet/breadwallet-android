@@ -46,6 +46,7 @@ import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -202,6 +203,71 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void setListeners() {
+        mCurrencyCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAmountEdit.setFocusable(true);
+                mAmountEdit.requestFocus();
+                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                showKeyboard(true);
+                if (mIsAmountLabelShown) { //only first time
+                    mIsAmountLabelShown = false;
+                    mAmountEdit.setHint("0");
+                    mAmountEdit.setTextSize(24);
+                    mBalanceText.setVisibility(View.VISIBLE);
+                    mEditFeeIcon.setVisibility(View.VISIBLE);
+                    mFeeText.setVisibility(View.VISIBLE);
+                    mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
+                    mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
+                    mCurrencyCode.setTextSize(28);
+                    final float scaleX = mAmountEdit.getScaleX();
+                    mAmountEdit.setScaleX(0);
+
+                    AutoTransition tr = new AutoTransition();
+                    tr.setInterpolator(new OvershootInterpolator());
+                    tr.addListener(new android.support.transition.Transition.TransitionListener() {
+                        @Override
+                        public void onTransitionStart(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
+                            mAmountEdit.requestLayout();
+                            mAmountEdit.animate().setDuration(100).scaleX(scaleX);
+                        }
+
+                        @Override
+                        public void onTransitionCancel(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionPause(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionResume(@NonNull android.support.transition.Transition transition) {
+
+                        }
+                    });
+
+                    ConstraintSet set = new ConstraintSet();
+                    set.clone(mAmountLayout);
+                    TransitionManager.beginDelayedTransition(mAmountLayout, tr);
+
+                    int px4 = Utils.getPixelsFromDps(getContext(), 4);
+                    set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+                    set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
+                    set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
+                    set.applyTo(mAmountLayout);
+                }
+            }
+        });
+
         mAmountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,7 +278,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     mAmountEdit.setHint("0");
                     mAmountEdit.setTextSize(24);
                     mBalanceText.setVisibility(View.VISIBLE);
-                    mEditFeeIcon.setVisibility(View.VISIBLE);
+//                    mEditFeeIcon.setVisibility(View.VISIBLE);
                     mFeeText.setVisibility(View.VISIBLE);
                     mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
                     mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
@@ -349,9 +415,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        String title = String.format("%1$s addresses are intended for single use only.", wm.getName());
+                                        String title = String.format(getString(R.string.Address_isused_Hint), wm.getName());
+
                                         BRDialog.showCustomDialog(getActivity(), title, getString(R.string.Send_UsedAddress_secondLIne),
-                                                "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                                getString(R.string.Send_dialog_ignore), getString(R.string.Send_dialog_cancle), new BRDialogView.BROnClickListener() {
                                                     @Override
                                                     public void onClick(BRDialogView brDialogView) {
                                                         brDialogView.dismiss();
@@ -427,6 +494,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 String amountStr = mViewModel.getAmount();
                 String comment = mCommentEdit.getText().toString();
 
+                Log.i("cary", "amountStr:"+amountStr);
                 //inserted amount
                 BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
                 //is the chosen ISO a crypto (could be a fiat currency)
@@ -835,6 +903,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             if (!Utils.isNullOrEmpty(mViewModel.getChosenCode())) {
                 mSelectedCurrencyCode = mViewModel.getChosenCode().toUpperCase();
             }
+            if(!Utils.isNullOrEmpty(mViewModel.getAmount())){
+                mAmountEdit.setText(mViewModel.getAmount());
+            }
         }
     }
 
@@ -855,7 +926,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             memo = request.message;
             code = request.iso;
 
-            if (request.amount != null) {
+            if(code.equalsIgnoreCase("ELA") && request.amount!=null) {
+                amount = request.amount.toString();
+            } else if (request.amount != null) {
                 BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
                 amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
             } else if (request.value != null) {
@@ -864,6 +937,65 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
                 amount = fiatAmount.toPlainString();
             }
+            if(!StringUtil.isNullOrEmpty(amount)) {
+                showKeyboard(true);
+                mIsAmountLabelShown = false;
+                mAmountEdit.setHint("0");
+                mAmountEdit.setTextSize(24);
+                mBalanceText.setVisibility(View.VISIBLE);
+//                    mEditFeeIcon.setVisibility(View.VISIBLE);
+                mFeeText.setVisibility(View.VISIBLE);
+                mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
+                mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
+                mCurrencyCode.setTextSize(28);
+                final float scaleX = mAmountEdit.getScaleX();
+                mAmountEdit.setScaleX(0);
+
+                AutoTransition tr = new AutoTransition();
+                tr.setInterpolator(new OvershootInterpolator());
+                tr.addListener(new android.support.transition.Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(@NonNull android.support.transition.Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
+                        mAmountEdit.requestLayout();
+                        mAmountEdit.animate().setDuration(100).scaleX(scaleX);
+                    }
+
+                    @Override
+                    public void onTransitionCancel(@NonNull android.support.transition.Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionPause(@NonNull android.support.transition.Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(@NonNull android.support.transition.Transition transition) {
+
+                    }
+                });
+
+                ConstraintSet set = new ConstraintSet();
+                set.clone(mAmountLayout);
+                TransitionManager.beginDelayedTransition(mAmountLayout, tr);
+
+                int px4 = Utils.getPixelsFromDps(getContext(), 4);
+                set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
+                set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
+                set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+                set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
+                set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
+                set.applyTo(mAmountLayout);
+            }
+        }
+        if(!Utils.isNullOrEmpty(code)){
+            mCurrencyCodeButton.setText(code.toUpperCase());
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);

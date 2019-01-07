@@ -93,6 +93,13 @@ public class AddWalletsActivity extends BRActivity {
             }
         }
 
+//        BREthereumToken brdToken = WalletEthManager.getInstance(this).node.tokenBRD;
+//        TokenItem brdTokenItem = null;
+//        if(brdToken != null){
+//            brdTokenItem = new TokenItem(brdToken.getAddress(), brdToken.getSymbol(), brdToken.getName(), null);
+//            if(brdToken != null) tokenItems.add(brdTokenItem);
+//        }
+
         mAdapter = new AddTokenListAdapter(this, tokenItems, new AddTokenListAdapter.OnTokenAddOrRemovedListener() {
             @Override
             public void onTokenAdded(TokenItem token) {

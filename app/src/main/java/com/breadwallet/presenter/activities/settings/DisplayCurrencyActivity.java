@@ -132,20 +132,24 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         CurrencyEntity entity = RatesDataSource.getInstance(this).getCurrencyByCode(this, "BTC", iso);//hard code BTC for this one
         if (entity != null) {
-            String formattedExchangeRate = CurrencyUtils.getFormattedAmount(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            mExchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(100000000)), formattedExchangeRate));
+            String s1 = new BigDecimal(entity.rate).toString();
+            String s2 = Float.toString(entity.rate);
+            mExchangeText.setText(String.format("%s = %s", isBits?"1,000,000Bits":"1BTC", iso+" "+(isBits? s1:s2)));
         }
         mAdapter.notifyDataSetChanged();
     }
 
+    private boolean isBits = false;
     private void setButton(boolean left) {
         if (left) {
-            BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITS);
+            isBits = true;
+            BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
             mLeftButton.setTextColor(getColor(R.color.white));
             mLeftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
             mRightButton.setTextColor(getColor(R.color.dark_blue));
             mRightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
+            isBits = false;
             BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
             mLeftButton.setTextColor(getColor(R.color.dark_blue));
             mLeftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));

@@ -148,6 +148,7 @@ public class SyncService extends IntentService {
      */
     private void startSyncPolling(Context context, String walletIso) {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
+        if(walletManager == null) return;
         final double progress = walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(context,
                 BRSharedPrefs.getCurrentWalletIso(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);

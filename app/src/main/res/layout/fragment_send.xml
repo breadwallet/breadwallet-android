@@ -53,7 +53,7 @@
                 android:text="@string/Send.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/header"
-                app:customTFont="BioSans-SemiBold.otf"
+                app:customTFont="CircularPro-Bold.otf"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
 
@@ -67,6 +67,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginLeft="@dimen/bread_margin"
                 android:layout_marginRight="@dimen/bread_margin"
+                android:visibility="gone"
                 android:background="@drawable/faq_question_black"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
@@ -169,8 +170,9 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:text="$"
+                android:visibility="invisible"
                 android:textSize="28sp"
-                app:customTFont="BioSans-Regular.otf"
+                app:customTFont="CircularPro-Medium.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -180,20 +182,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="4dp"
                 android:layout_toEndOf="@id/iso_text"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:ems="10"
+                android:hint="@string/Send.balance.hint"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:inputType="numberDecimal"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/iso_text"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintLeft_toRightOf="@+id/iso_text"
+                app:layout_constraintLeft_toLeftOf="@+id/iso_text"
                 app:layout_constraintRight_toLeftOf="@+id/iso_button"
                 app:layout_constraintTop_toTopOf="@+id/iso_text"
                 app:layout_constraintVertical_bias="0.5"/>
@@ -314,7 +315,7 @@
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:customBFont="BioSans-Regular.otf"
+                    app:customBFont="CircularPro-Medium.otf"
                     app:isBreadButton="false"
                     />
 
@@ -328,7 +329,7 @@
                     android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    app:customBFont="BioSans-Regular.otf"
+                    app:customBFont="CircularPro-Medium.otf"
                     app:isBreadButton="false"
                     />
             </LinearLayout>
@@ -337,12 +338,13 @@
                 android:id="@+id/warning_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
+                android:textSize="@dimen/paragraph"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/FeeSelector.economyWarning"
                 android:textColor="@color/red_text"
-                android:textSize="@dimen/paragraph" />
+                />
 
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
@@ -375,25 +377,17 @@
                 />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp">
-
-            <com.breadwallet.presenter.customviews.BREdit
-                android:id="@+id/comment_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/Send.descriptionLabel"
-                android:inputType="textPersonName"
-                android:maxLength="250"
-                android:textSize="@dimen/sub_header"
-                app:customEFont="BioSans-SemiBold.otf" />
-
-        </LinearLayout>
+        <com.breadwallet.presenter.customviews.BREdit
+            android:id="@+id/comment_edit"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:minHeight="70dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:maxLength="50"
+            android:hint="@string/Send.descriptionLabel"/>
 
         <View
             android:id="@+id/separator4"

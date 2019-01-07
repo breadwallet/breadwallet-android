@@ -11,17 +11,21 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -98,6 +103,7 @@ public class BRApiManager {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         try {
             JSONArray arr = fetchRates(context, walletManager);
+
             if (arr != null) {
                 int length = arr.length();
                 for (int i = 0; i < length; i++) {
@@ -198,6 +204,24 @@ public class BRApiManager {
 
     }
 
+    static class BGXEntity {
+        public Data data;
+    }
+
+    static class Data {
+        public Rate rate;
+    }
+
+    static class Rate {
+        public EN_US en_US;
+    }
+
+    static class EN_US {
+        public float BTC;
+        public float BGX;
+    }
+
+
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
@@ -232,6 +256,20 @@ public class BRApiManager {
                 tmp.add(ent);
 
             }
+
+            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
+            String reuslt = null;
+            try {
+                reuslt = urlGET2(context, urlBgx);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
+            if(bgxEntity != null) {
+                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
+                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
+                tmp.add(bgxCurrencyEntity);
+            }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
@@ -240,6 +278,31 @@ public class BRApiManager {
             e.printStackTrace();
         }
 
+    }
+
+    public String urlGET2(Context context, String myURL) throws IOException {
+        Map<String, String> headers = BreadApp.getBreadHeaders();
+
+        Request.Builder builder = new Request.Builder()
+                .url(myURL)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("User-agent", Utils.getAgentString(context, "android/HttpURLConnection"))
+                .get();
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            builder.header((String) pair.getKey(), (String) pair.getValue());
+        }
+
+        Request request = builder.build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
     }
 
     public void startTimer(Context context) {

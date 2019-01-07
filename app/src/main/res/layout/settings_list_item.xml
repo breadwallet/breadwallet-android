@@ -15,7 +15,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black_666666"
         android:textSize="@dimen/sub_header"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -33,8 +33,8 @@
     <ImageButton
         android:id="@+id/setting_icon"
         android:layout_centerVertical="true"
-        android:visibility="gone"
         android:layout_marginStart="16dp"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -71,9 +71,12 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         mUnlockedImage = findViewById(R.id.unlocked_image);
         mUnlockedText = findViewById(R.id.unlocked_text);
 
+        mPinDigitViews.setEmptyDotResource(R.drawable.ic_pin_dot_empty_white);
+        mPinDigitViews.setFillDotResource(R.drawable.ic_pin_dot_filled_white);
+
         mKeyboard.setShowDecimal(false);
         mKeyboard.setDeleteButtonBackgroundColor(getColor(android.R.color.transparent));
-        mKeyboard.setDeleteImage(R.drawable.ic_delete_dark);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_white);
 
         int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
         mKeyboard.setButtonTextColor(pinDigitButtonColors);
@@ -153,32 +156,42 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     }
 
     private void unlockWallet() {
-        mFingerPrint.setVisibility(View.INVISIBLE);
-        mPinLayout.animate().translationY(-R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
-        mKeyboard.animate().translationY(R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
-        mUnlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+        boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this))
+                || BRSharedPrefs.isNewWallet(LoginActivity.this);
 
-                        boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this))
-                                || BRSharedPrefs.isNewWallet(LoginActivity.this);
-
-                        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
-                        Intent intent = new Intent(LoginActivity.this, toGo);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-                        if (!LoginActivity.this.isDestroyed()) {
-                            LoginActivity.this.finish();
-                        }
-                    }
-                }, DateUtils.SECOND_IN_MILLIS / 2);
-            }
-        });
-        mUnlockedText.animate().alpha(1f);
+        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
+        Intent intent = new Intent(LoginActivity.this, toGo);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+        if (!LoginActivity.this.isDestroyed()) {
+            LoginActivity.this.finish();
+        }
+//        mFingerPrint.setVisibility(View.INVISIBLE);
+//        mPinLayout.animate().translationY(-R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
+//        mKeyboard.animate().translationY(R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
+//        mUnlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                super.onAnimationEnd(animation);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this))
+//                                || BRSharedPrefs.isNewWallet(LoginActivity.this);
+//
+//                        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
+//                        Intent intent = new Intent(LoginActivity.this, toGo);
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+//                        if (!LoginActivity.this.isDestroyed()) {
+//                            LoginActivity.this.finish();
+//                        }
+//                    }
+//                }, DateUtils.SECOND_IN_MILLIS / 2);
+//            }
+//        });
+//        mUnlockedText.animate().alpha(1f);
     }
 
     private void showFailedToUnlock() {

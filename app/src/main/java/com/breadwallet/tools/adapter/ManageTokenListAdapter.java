@@ -81,7 +81,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             holder.showHide.setTypeface(typeface);
 
             try {
-                holder.tokenIcon.setBackground(mContext.getDrawable(iconResourceId));
+                holder.tokenIcon.setImageDrawable(mContext.getDrawable(iconResourceId));
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "Error finding icon for -> " + iconResourceName);
@@ -89,15 +89,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
             boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
-            TypedValue showWalletTypedValue = new TypedValue();
-            TypedValue hideWalletTypedValue = new TypedValue();
-
-            mContext.getTheme().resolveAttribute(R.attr.show_wallet_button_background, showWalletTypedValue, true);
-            mContext.getTheme().resolveAttribute(R.attr.hide_wallet_button_background, hideWalletTypedValue, true);
-
-            holder.showHide.setBackground(mContext.getDrawable(isHidden ? showWalletTypedValue.resourceId : hideWalletTypedValue.resourceId));
-            holder.showHide.setText(isHidden ? mContext.getString(R.string.TokenList_show) : mContext.getString(R.string.TokenList_hide));
-            holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.button_add_wallet_text : R.color.button_cancel_add_wallet_text));
+            holder.showHide.setBackground(mContext.getDrawable(isHidden ? R.drawable.ic_star_normal : R.drawable.ic_star_selected));
 
             holder.showHide.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -164,6 +156,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         } else {
             convertView = inflater.inflate(R.layout.add_wallets_item, parent, false);
+            convertView.setVisibility(View.GONE);
             return new AddWalletItemViewHolder(convertView);
 
         }
@@ -252,6 +245,8 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
+        int bound = currentMd.enabledCurrencies.size();
+        if(fromPosition>=bound || toPosition>=bound) return;
         Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
         Collections.swap(mTokens, fromPosition, toPosition);
 

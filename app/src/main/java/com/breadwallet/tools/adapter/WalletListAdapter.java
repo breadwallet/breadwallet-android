@@ -45,8 +45,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private boolean mObesrverIsStarting;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
 
-    private static final int VIEW_TYPE_WALLET = 0;
-    private static final int VIEW_TYPE_ADD_WALLET = 1;
     public static final String IMAGE_RESOURCE_ID_PREFIX = "white_";
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -63,26 +61,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public WalletItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        View convertView;
-
-        if (viewType == VIEW_TYPE_WALLET) {
-            convertView = inflater.inflate(R.layout.wallet_list_item, parent, false);
-            return new WalletItemViewHolder(convertView);
-        } else {
-            convertView = inflater.inflate(R.layout.add_wallets_item, parent, false);
-            return new AddWalletItemViewHolder(convertView);
-
-        }
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position < mWalletItems.size()) {
-            return VIEW_TYPE_WALLET;
-        } else {
-            return VIEW_TYPE_ADD_WALLET;
-        }
+        View convertView = inflater.inflate(R.layout.wallet_list_item, parent, false);
+        return new WalletItemViewHolder(convertView);
     }
 
     public BaseWalletManager getItemAt(int pos) {
@@ -96,46 +76,44 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
-        if (getItemViewType(position) == VIEW_TYPE_WALLET) {
 
-            WalletItem item = mWalletItems.get(position);
-            final BaseWalletManager wallet = item.walletManager;
-            String name = wallet.getName();
-            String currencyCode = wallet.getIso();
+        WalletItem item = mWalletItems.get(position);
+        final BaseWalletManager wallet = item.walletManager;
+        String name = wallet.getName();
+        String currencyCode = wallet.getIso();
 
-            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
-            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
-            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
+        String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
 
-            // Set wallet fields
-            holder.mWalletName.setText(name);
-            holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, currencyCode));
-            holder.mWalletBalanceFiat.setText(fiatBalance);
-            holder.mWalletBalanceFiat.setTextColor(mContext.getResources().getColor(item.mShowSyncProgress ? R.color.wallet_balance_fiat_syncing : R.color.wallet_balance_fiat));
-            holder.mWalletBalanceCurrency.setText(cryptoBalance);
-            holder.mWalletBalanceCurrency.setVisibility(!item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
-            holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
-            holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
-            holder.mSyncingLabel.setText(item.mLabelText);
+        // Set wallet fields
+        holder.mWalletName.setText(currencyCode);
+        holder.mIso.setText(name);
+        holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso(), ""));
+        holder.mWalletBalanceCurrency.setText(fiatBalance);
+        holder.mWalletBalanceCurrency.setVisibility(!item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
+        holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
+        holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
+        holder.mSyncingLabel.setText(item.mLabelText);
 
-            String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
+//        String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
 
 
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
-            if (iconResourceId > 0) {
-                holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
-            }
-
-            String startColor = wallet.getUiConfiguration().getStartColor();
-            String endColor = wallet.getUiConfiguration().getEndColor();
-
-            Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
-            //create gradient with 2 colors if exist
-            ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
-            ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
-            holder.mParent.setBackground(drawable);
-
+        int iconResourceId = mContext.getResources().getIdentifier(currencyCode.toLowerCase(), BRConstants.DRAWABLE, mContext.getPackageName());
+        if (iconResourceId > 0) {
+//            holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+            holder.mLogoIcon.setImageDrawable(mContext.getDrawable(iconResourceId));
         }
+
+//        String startColor = wallet.getUiConfiguration().getStartColor();
+//        String endColor = wallet.getUiConfiguration().getEndColor();
+
+        Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
+        //create gradient with 2 colors if exist
+//        ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
+        ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF")});
+        ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+        holder.mParent.setBackground(drawable);
+
     }
 
     public void stopObserving() {
@@ -230,13 +208,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public int getItemCount() {
-        return mWalletItems.size() + 1;
+        return mWalletItems.size();
     }
 
     public class WalletItemViewHolder extends RecyclerView.ViewHolder {
 
         private BaseTextView mWalletName;
-        private BaseTextView mTradePrice;
+        private BaseTextView mIso;
         private BaseTextView mWalletBalanceFiat;
         private BaseTextView mWalletBalanceCurrency;
         private RelativeLayout mParent;
@@ -248,7 +226,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             super(view);
 
             mWalletName = view.findViewById(R.id.wallet_name);
-            mTradePrice = view.findViewById(R.id.wallet_trade_price);
+            mIso = view.findViewById(R.id.wallet_trade_price);
             mWalletBalanceFiat = view.findViewById(R.id.wallet_balance_fiat);
             mWalletBalanceCurrency = view.findViewById(R.id.wallet_balance_currency);
             mParent = view.findViewById(R.id.wallet_card);
@@ -258,12 +236,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         }
     }
 
-    public class AddWalletItemViewHolder extends WalletItemViewHolder {
-
-        public AddWalletItemViewHolder(View view) {
-            super(view);
-        }
-    }
 
     private class WalletItem {
         public BaseWalletManager walletManager;

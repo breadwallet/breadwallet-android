@@ -223,8 +223,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
-                        BreadApp.mLang = Bip39Reader.detectLang(app, cleanPhrase);
-                        Utility.initLanguage(InputWordsActivity.this);
 
                         //Disallow BTC and BCH sending.
                         BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);

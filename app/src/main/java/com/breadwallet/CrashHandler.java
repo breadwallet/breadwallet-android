@@ -1,6 +1,9 @@
 package com.breadwallet;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -9,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import java.io.File;
@@ -29,7 +33,7 @@ import java.util.Map;
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
-    public static final String TAG = "CrashHandler";
+    public static final String TAG = "CrashHandler_test";
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     private static CrashHandler INSTANCE = new CrashHandler();
@@ -58,13 +62,24 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             return false;
         }
 
-        collectDeviceInfo(mContext);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                saveCrashInfo2File(ex);
-            }
-        });
+        Log.i(TAG, "handleException");
+        AlarmManager mgr = (AlarmManager) BreadApp.getBreadContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(BreadApp.getBreadContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("crash", true);
+        PendingIntent restartIntent = PendingIntent.getActivity(BreadApp.getBreadContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
+
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
+        System.gc();
+//        collectDeviceInfo(mContext);
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                saveCrashInfo2File(ex);
+//            }
+//        });
         return true;
     }
 

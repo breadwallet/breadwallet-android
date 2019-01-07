@@ -59,6 +59,7 @@ public final class BRConstants {
      */
     public static final int SCANNER_REQUEST = 201;
     public static final int REQUEST_IMAGE_CAPTURE = 203;
+    public static final int SCANNER_DID_REQUEST = 204;
 
     public static final String CANARY_STRING = "canary";
 
@@ -125,12 +126,10 @@ public final class BRConstants {
      *
      */
 
-    public static final String URL_PRIVACY_POLICY = "https://elastos.org/privacy/";
-    public static final String URL_TELEGRAM = "https://t.me/elastosgroup";
-    public static final String URL_DISCORD = "https://discord.gg/MHSUVZN";
-    public static final String URL_REDDIT = "https://reddit.com/r/elastos/";
-    public static final String URL_BLOG  = "https://elastos.org/";
-    public static final String URL_CR  = "https://cyberrepublic.org/";
+    public static final String URL_PRIVACY_POLICY = "https://github.com/elastos/Elastos.Developer.Doc/blob/master/Ignore/Doc/Privacy_Policy.md";
+    public static final String URL_TWITTER = "https://twitter.com/breadapp";
+    public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
+    public static final String URL_BLOG  = "https://t.me/elastoswalletelephant";
 
 
     private BRConstants() {

@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Elastos</string>
+  <string name="About.appName.android">Elephant</string>
   <!-- About screen blog label -->
-  <string name="About.site">Elastos.org</string>
-  <string name="About.cr">CyberRepublic.org</string>
+  <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Made by the Elastos Foundation. Version %1$s Build %2$s</string>
+  <string name="About.footer">Made by the Elastos Application Lab. Version %1$s Build %2$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
+  <!-- About screen reddit label -->
+  <string name="About.reddit">Reddit</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">Terms of Use</string>
   <!-- About screen title -->
   <string name="About.title">About</string>
-  <!-- About screen social labels -->
-  <string name="About.discord">Discord</string>
-  <string name="About.telegram">Telegram</string>
-  <string name="About.reddit">Reddit</string>
+  <!-- About screen twitter label -->
   <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
-  <string name="About.walletID">BRD Rewards ID</string>
+  <string name="About.walletID">Elephant Rewards ID</string>
   <!-- Close modal button accessibility label -->
   <string name="AccessibilityLabels.close">Close</string>
   <!-- Support center accessibiliy label -->
@@ -31,15 +29,15 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">Loading Wallet</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">My BRD</string>
+  <string name="AccountHeader.defaultWalletName">My Elephant</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Error</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@Elephantwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
+  <string name="Alert.keystore.invalidated.android">Your Elephant encrypted data was recently invalidated because your Android lock screen was disabled.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Android KeyStore Error</string>
   <!-- No internet alert message -->
@@ -65,11 +63,11 @@
   <!-- Fingerprint was recognized by the scanner -->
   <string name="Alerts.touchIdSucceeded.android">Fingerprint recognized</string>
   <!-- Tell the user where they can enable permissions to access device storage. -->
-  <string name="Android.allowFileSystemAccess">Please enable storage permissions in your device settings: \"Settings\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Permissions\".</string>
+  <string name="Android.allowFileSystemAccess">Please enable storage permissions in your device settings: \"Settings\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Permissions\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Any BCH in your wallet can be accessed through the home screen.</string>
   <!-- Warning about using apps that can alter the screen -->
-  <string name="Android.screenAlteringMessage">BRD will not function properly unless screen-altering apps (such as Twilight) are disabled.</string>
+  <string name="Android.screenAlteringMessage">Elephant will not function properly unless screen-altering apps (such as Twilight) are disabled.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Screen-Altering App Detected</string>
   <!-- JSON Serialization error message -->
@@ -145,9 +143,9 @@
   <!-- Camera plugin instruction -->
   <string name="CameraPlugin.centerInstruction">Center your ID in the box</string>
   <!-- Amount to Send: ($1.00) -->
-  <string name="Confirmation.amountLabel">Amount to Send:</string>
+  <string name="Confirmation.amountLabel">Amount to Send</string>
   <!-- Network Fee: ($1.00) -->
-  <string name="Confirmation.feeLabel">Network Fee:</string>
+  <string name="Confirmation.feeLabel">Network Fee</string>
   <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
   <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
   <!-- Label for "send" button on final confirmation screen -->
@@ -157,7 +155,7 @@
   <!-- To: (address) -->
   <string name="Confirmation.to">To</string>
   <!-- Total Cost: ($5.00) -->
-  <string name="Confirmation.totalLabel">Total Cost:</string>
+  <string name="Confirmation.totalLabel">Total Cost</string>
   <!-- Confirm paper phrase error message -->
   <string name="ConfirmPaperPhrase.error">The words entered do not match your paper key. Please try again.</string>
   <!-- Confirm paper phrase view label. -->
@@ -185,7 +183,7 @@
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">Email Unavailable</string>
   <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">Bread can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
+  <string name="ErrorMessages.loopingLockScreen.android">Elephant can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">This device isn\'t configured to send messages.</string>
   <!-- Messaging unavailable alert title -->
@@ -195,11 +193,11 @@
   <!-- You can customize your Face ID Spending Limit from the [menu] -->
   <string name="FaceIDSettings.customizeText">You can customize your Face ID spending limit from the %1$s.</string>
   <!-- Face Id screen label -->
-  <string name="FaceIDSettings.label">Use your face to unlock your BRD and send money up to a set limit.</string>
+  <string name="FaceIDSettings.label">Use your face to unlock your Elephant and send money up to a set limit.</string>
   <!-- Title of the screen for setting the Face ID Spending Limit -->
   <string name="FaceIDSettings.linkText">Face ID Spending Limit Screen</string>
-  <!-- Setting to turn on Face ID for BRD -->
-  <string name="FaceIDSettings.switchLabel">Enable Face ID for BRD</string>
+  <!-- Setting to turn on Face ID for Elephant -->
+  <string name="FaceIDSettings.switchLabel">Enable Face ID for Elephant</string>
   <!-- Face ID settings view title -->
   <string name="FaceIDSettings.title">Face ID</string>
   <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
@@ -229,13 +227,13 @@
   <!-- Home screen menu button to buy some bitcoin -->
   <string name="HomeScreen.buy">Buy Bitcoin</string>
   <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
+  <string name="HomeScreen.menu">Setting</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Wallets</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Total Assets</string>
   <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Trade</string>
+  <string name="HomeScreen.trade">My wallet</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Checking private key balance...</string>
   <!-- Sweep private key confirmation message -->
@@ -257,13 +255,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Wallet to be imported</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Importing a wallet transfers all the money from your other wallet into your BRD wallet using a single transaction.</string>
+  <string name="Import.message">Importing a wallet transfers all the money from your other wallet into your Elephant wallet using a single transaction.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">This private key is password protected.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">password</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Your BRD Wallet</string>
+  <string name="Import.rightCaption">Your Elephant Wallet</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Scan Private Key</string>
   <!-- Import wallet success alert title -->
@@ -283,9 +281,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignore</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
+  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Elephant\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin. Please only use BRD on a non-jailbroken device.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Elephant\'s keychain data and steal your bitcoin. Please only use Elephant on a non-jailbroken device.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WARNING</string>
   <!-- Wipe wallet button -->
@@ -293,7 +291,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Location services are disabled.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">BRD does not have permission to access location services.</string>
+  <string name="LocationPlugin.notAuthorized">Elephant does not have permission to access location services.</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">You created your wallet on %1$s</string>
   <!-- Manage wallet description text -->
@@ -306,6 +304,8 @@
   <string name="MenuButton.addWallet">Add Wallet</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lock Wallet</string>
+  <!-- Did Authorizations -->
+  <string name="MenuButton.authorizations">Authorizations</string>
   <!-- (Click here to) manage (your list of) wallets -->
   <string name="MenuButton.manageWallets">Manage Wallets</string>
   <!-- (press here to) scan (a) QR code -->
@@ -329,11 +329,13 @@
   <!-- Node is connecting label -->
   <string name="NodeSelector.connecting">Connecting</string>
   <!-- Enter node ip address view body -->
-  <string name="NodeSelector.enterBody">Enter Node IP address and port (optional)</string>
+  <string name="NodeSelector.enterBody">Enter Node address</string>
   <!-- Enter Node ip address view title -->
   <string name="NodeSelector.enterTitle">Enter Node</string>
   <!-- Switch to manual mode button label -->
   <string name="NodeSelector.manualButton">Switch to Manual Mode</string>
+  <!-- Select node from list -->
+  <string name="NodeSelector.nodesButton">Nodes List</string>
   <!-- Node address label -->
   <string name="NodeSelector.nodeLabel">Current Primary Node</string>
   <!-- Node is not connected label -->
@@ -382,7 +384,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transaction Rejected</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Help improve BRD by sharing your anonymous data with us</string>
+  <string name="Prompts.ShareData.body">Help improve Elephant by sharing your anonymous data with us</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Share Anonymous Data</string>
   <!-- Enable touch ID prompt body -->
@@ -396,11 +398,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">BRD has upgraded to using a 6-digit PIN. Tap Continue to upgrade.</string>
+  <string name="Prompts.UpgradePin.body">Elephant has upgraded to using a 6-digit PIN. Tap Continue to upgrade.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Turn on notifications to receive special messages from BRD in the future.</string>
+  <string name="PushNotifications.body">Turn on notifications to receive special messages from Elephant in the future.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push Notifications</string>
   <!-- Push notifications are off label -->
@@ -430,7 +432,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Enter Paper Key</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Recover your BRD with your paper key.</string>
+  <string name="RecoverWallet.intro">Recover your Wallet with your paper key.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
   <!-- Previous button accessibility label -->
@@ -458,7 +460,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minutes</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">If a transaction shows as completed on the network but not in your BRD.</string>
+  <string name="ReScan.body2">If a transaction shows as completed on the network but not in your Elephant.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">You repeatedly get an error saying your transaction was rejected.</string>
   <!-- Start Sync button label -->
@@ -492,13 +494,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Paper Key</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Protects your BRD from unauthorized users.</string>
+  <string name="SecurityCenter.pinDescription">Protects your Elephant from unauthorized users.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6-Digit PIN</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Security Center</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Conveniently unlock your BRD and send money up to a set limit.</string>
+  <string name="SecurityCenter.touchIdDescription">Conveniently unlock your Elephant and send money up to a set limit.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -508,13 +510,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balance: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Permissions\"</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread is not allowed to access the camera</string>
+  <string name="Send.cameraUnavailabeTitle.android">Elephant is not allowed to access the camera</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Go to Settings to allow camera access.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">BRD is not allowed to access the camera</string>
+  <string name="Send.cameraUnavailableTitle">Elephant is not allowed to access the camera</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">The destination is your own address. You cannot send to yourself.</string>
   <!-- Could not create transaction alert title -->
@@ -526,7 +528,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">Can\'t send to self.</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">Network Fee: %1$s</string>
+  <string name="Send.fee">Network Fee %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
   <!-- Insufficient funds error -->
@@ -589,8 +591,8 @@
   <string name="Settings.currencySettings">Currency Settings</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Are you enjoying BRD?</string>
+  <!-- Are you enjoying Elephant alert message body -->
+  <string name="Settings.enjoying">Are you enjoying Elephant?</string>
   <!-- Face ID spending limit label -->
   <string name="Settings.faceIdLimit">Face ID Spending Limit</string>
   <!-- Redeem the funds stored on this private key. -->
@@ -612,7 +614,7 @@
   <!-- Sync blockchain label -->
   <string name="Settings.sync">Sync Blockchain</string>
   <!-- Settings title -->
-  <string name="Settings.title">Menu</string>
+  <string name="Settings.title">Settings</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Touch ID Spending Limit</string>
   <!-- The fingerprint spending limit -->
@@ -622,7 +624,7 @@
   <!-- Unlink/delete your wallet from the current device. -->
   <string name="Settings.wipe">Unlink from this device</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Help improve BRD by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
+  <string name="ShareData.body">Help improve Elephant by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Share Data?</string>
   <!-- Share data switch label. -->
@@ -630,7 +632,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your Elephant if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
   <!-- Argument is date -->
@@ -676,20 +678,20 @@
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">You can customize your Touch ID spending limit from the %1$s.</string>
   <!-- Fingerprint enabling description body -->
-  <string name="TouchIdSettings.customizeText.android">You can customize your Fingerprint Authentication Spending Limit from the Fingerprint Authorization Spending Limit screen</string>
+  <string name="TouchIdSettings.customizeText.android">You can customize your Fingerprint Authentication Spending Limit from the Fingerprint Authorization Spending Limit Screen</string>
   <!-- Instruction for the fingerprint setup -->
   <string name="TouchIdSettings.disabledWarning.body.android">You have not enabled fingerprint authentication on this device. Go to Settings -&gt; Security to set up fingerprint authentication.</string>
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Fingerprint Authentication Not Enabled</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Use your fingerprint to unlock your BRD and send money up to a set limit.</string>
+  <string name="TouchIdSettings.label">Use your fingerprint to unlock your Elephant and send money up to a set limit.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Spending limit: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Enable Touch ID for BRD</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">Enable Touch ID for Elephant</string>
+  <!-- Enable fingerprint for this wallet called Elephant -->
   <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -710,7 +712,7 @@
   <!-- Availability status text -->
   <string name="Transaction.available">Available to Spend</string>
   <!-- Transaction complete label -->
-  <string name="Transaction.complete">Complete</string>
+  <string name="Transaction.complete">Transaction Time</string>
   <!-- Transaction is confirming status text -->
   <string name="Transaction.confirming">In Progress</string>
   <!-- eg. Ending balance: $50.00 -->
@@ -739,7 +741,7 @@
   <string name="Transaction.sentTo">sent to %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Starting balance: %1$s</string>
-  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
   <string name="Transaction.tokenTransfer">Fee for token transfer: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Waiting to be confirmed. Some merchants require confirmation to complete a transaction. Estimated time: 1-2 hours.</string>
@@ -848,7 +850,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Touch Sensor</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Unlock your BRD.</string>
+  <string name="UnlockScreen.touchIdPrompt">Unlock your Elephant.</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">Please unlock your Android device to continue.</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -860,7 +862,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Remember this PIN. If you forget it, you won\'t be able to access your assets.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Your PIN will be used to unlock your BRD and send money.</string>
+  <string name="UpdatePin.createInstruction">Your PIN will be used to unlock your Elephant and send money.</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">Set PIN</string>
   <!-- Update PIN title -->
@@ -894,7 +896,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Open the BRD iPhone app to set up your wallet.</string>
+  <string name="Watch.noWalletWarning">Open the Elephant iPhone app to set up your wallet.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Dismiss</string>
   <!-- Webview loading error message -->
@@ -902,9 +904,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Updating...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet has changed its name to BRD, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
+  <string name="Welcome.body">Elephantwallet has changed its name to Elephant, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Welcome to BRD!</string>
+  <string name="Welcome.title">Welcome to Elephant!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Are you sure you want to delete this wallet?</string>
   <!-- Wipe wallet alert title -->
@@ -916,7 +918,7 @@
   <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
   <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s Paper Key.</string>
   <!-- Instructions for unlinking the wallet -->
-  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different BRD wallet on this device.</string>
+  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Elephant wallet on this device.</string>
   <!-- Start wipe wallet view warning -->
   <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Paper Key.</string>
   <!-- Unlink this wallet from this device. -->
@@ -933,4 +935,26 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+
+  <!--elastos strings-->
+  <string name="SendTransacton.failed">send transaction failed</string>
+  <string name="SendTransacton.sending">transaction is sending</string>
+  <string name="Transaction.rate">Exchange Rate at Time</string>
+  <string name="Confirm.block">Confirmed in Block</string>
+  <string name="Transaction.id">Transaction ID</string>
+
+
+  <string name="Token.list">Token List</string>
+  <string name="Intro_title">Moving Cryptocurrency forward.</string>
+  <string name="Address.isused.Hint">%1$s addresses are intended for single use only.</string>
+  <string name="Send.balance.hint">Amount</string>
+  <string name="Send.max.body">Send max?</string>
+  <string name="Send.dialog.ignore">Ignore</string>
+  <string name="Send.dialog.cancle">Cancel</string>
+  <string name="Upgrade.title">Check Upgrade</string>
+  <string name="My.wallet.title">My Wallet</string>
+  <string name="Setting.title">Settings</string>
+
+  <string name="Gas.price">Gas Price</string>
+  <string name="Gas.limit">Gas Limit</string>
 </resources>

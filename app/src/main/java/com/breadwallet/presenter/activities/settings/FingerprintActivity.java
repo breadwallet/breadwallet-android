@@ -35,7 +35,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import java.math.BigDecimal;
 
 
-public class FingerprintActivity extends BRActivity {
+public class FingerprintActivity extends BaseSettingsActivity {
     private static final String TAG = FingerprintActivity.class.getName();
 
     public RelativeLayout layout;
@@ -50,28 +50,16 @@ public class FingerprintActivity extends BRActivity {
         return app;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public int getBackButtonId() {
+        return R.id.back_button;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fingerprint);
         toggleButton = findViewById(R.id.toggleButton);
         limitExchange = findViewById(R.id.limit_exchange);
         limitInfo = findViewById(R.id.limit_info);
-
-        ImageButton faq = findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
-                UiUtils.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
-            }
-        });
 
         toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 
@@ -128,7 +116,7 @@ public class FingerprintActivity extends BRActivity {
         //start index of the last space (beginning of the last word)
         int indexOfSpace = limitInfo.getText().toString().lastIndexOf(" ");
         // make the whole text clickable if failed to select the last word
-        ss.setSpan(clickableSpan, indexOfSpace == -1 ? 0 : indexOfSpace, limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(clickableSpan, 0 , limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         limitInfo.setText(ss);
         limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
@@ -167,6 +155,11 @@ public class FingerprintActivity extends BRActivity {
     public void onPause() {
         super.onPause();
         appVisible = false;
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_fingerprint;
     }
 
 }

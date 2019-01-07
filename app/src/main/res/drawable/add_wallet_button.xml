@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="15dp"
-    android:height="15dp"
-    android:viewportWidth="15"
-    android:viewportHeight="15">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners
+        android:radius="4dp"
+        />
 
-    <path
-        android:fillColor="#F6F9FE"
-        android:fillType="evenOdd"
-        android:pathData="M0 0H15V15H0V0ZM6.5 4.75C6.5 4.19772 6.94772 3.75 7.5 3.75C8.05229 3.75 8.5 4.19772 8.5 4.75V6.5H10.25C10.8023 6.5 11.25 6.94772 11.25 7.5C11.25 8.05229 10.8023 8.5 10.25 8.5H8.5V10.25C8.5 10.8023 8.05229 11.25 7.5 11.25C6.94772 11.25 6.5 10.8023 6.5 10.25V8.5H4.75C4.19772 8.5 3.75 8.05229 3.75 7.5C3.75 6.94772 4.19772 6.5 4.75 6.5H6.5V4.75Z" />
-</vector>
+    <solid android:color="?attr/secondary_background"/>
+    <stroke android:color="@color/dialog_button_positive" android:width="2px"/>
+</shape>

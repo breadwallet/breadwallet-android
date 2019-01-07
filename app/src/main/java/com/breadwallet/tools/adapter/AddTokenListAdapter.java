@@ -69,21 +69,13 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
         try {
-            holder.logo.setBackground(mContext.getDrawable(iconResourceId));
+            holder.logo.setImageDrawable(mContext.getDrawable(iconResourceId));
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Error finding icon for -> " + iconResourceName);
         }
 
-        TypedValue addWalletTypedValue = new TypedValue();
-        TypedValue removeWalletTypedValue = new TypedValue();
-
-        mContext.getTheme().resolveAttribute(R.attr.add_wallet_button_background, addWalletTypedValue, true);
-        mContext.getTheme().resolveAttribute(R.attr.remove_wallet_button_background, removeWalletTypedValue, true);
-
-        holder.addRemoveButton.setText(mContext.getString(item.isAdded ? R.string.TokenList_remove : R.string.TokenList_add));
-        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? removeWalletTypedValue.resourceId : addWalletTypedValue.resourceId));
-        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.button_cancel_add_wallet_text : R.color.button_add_wallet_text));
+        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? R.drawable.ic_star_selected : R.drawable.ic_star_normal));
 
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,9 +130,6 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             symbol = view.findViewById(R.id.token_symbol);
             name = view.findViewById(R.id.token_name);
             addRemoveButton = view.findViewById(R.id.add_remove_button);
-
-            Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
-            addRemoveButton.setTypeface(typeface);
         }
     }
 

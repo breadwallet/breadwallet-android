@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Elastos</string>
+  <string name="About.appName.android">Elephant</string>
   <!-- About screen blog label -->
-  <string name="About.site">Elastos.org</string>
-  <string name="About.cr">CyberRepublic.org</string>
+  <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Criada pela equipa Bread global. Versão %1$s</string>
+  <string name="About.footer">Criada pela equipa Elephant global. Versão %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Política de Privacidade</string>
-  <!-- About screen social labels -->
-  <string name="About.discord">Discord</string>
-  <string name="About.telegram">Telegram</string>
+  <!-- About screen reddit label -->
   <string name="About.reddit">Reddit</string>
-  <string name="About.twitter">Twitter</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">Termos de Uso</string>
   <!-- About screen title -->
   <string name="About.title">Sobre</string>
+  <!-- About screen twitter label -->
+  <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
-  <string name="About.walletID">ID de Recompensas do BRD</string>
+  <string name="About.walletID">ID de Recompensas do Elephant</string>
   <!-- Close modal button accessibility label -->
   <string name="AccessibilityLabels.close">Fechar</string>
   <!-- Support center accessibiliy label -->
@@ -31,15 +29,15 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">A Carregar Carteira</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">Minha Bread</string>
+  <string name="AccountHeader.defaultWalletName">Minha Elephant</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">Ao que parece, está a utilizar um teclado de terceiros, o qual pode gravar aquilo que digita e furtar a sua Paper Key. Por favor, mude para o teclado predefinido do Android, a fim de ficar mais protegido.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Erro</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">Há um problema com a KeyStore do seu SO Android. Por favor, contacte support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">Há um problema com a KeyStore do seu SO Android. Por favor, contacte support@Elephantwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Os seus dados encriptados pelo Bread foram recentemente invalidados porque o seu ecrã de bloqueio do Android estava desativado.</string>
+  <string name="Alert.keystore.invalidated.android">Os seus dados encriptados pelo Elephant foram recentemente invalidados porque o seu ecrã de bloqueio do Android estava desativado.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Erro na KeyStore do Android</string>
   <!-- No internet alert message -->
@@ -65,11 +63,11 @@
   <!-- Fingerprint was recognized by the scanner -->
   <string name="Alerts.touchIdSucceeded.android">Impressão digital reconhecida</string>
   <!-- Tell the user where they can enable permissions to access device storage. -->
-  <string name="Android.allowFileSystemAccess">Agradecemos que ative as permissões de armazenamento nas definições do seu dispositivo: \"Definições\" &gt; \"Aplicações\" &gt; \"BRD\" &gt; \"Permissões\".</string>
+  <string name="Android.allowFileSystemAccess">Agradecemos que ative as permissões de armazenamento nas definições do seu dispositivo: \"Definições\" &gt; \"Aplicações\" &gt; \"Elephant\" &gt; \"Permissões\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Qualquer BCH existente na sua carteira pode ser acedido através do ecrã principal.</string>
   <!-- Warning about using apps that can alter the screen -->
-  <string name="Android.screenAlteringMessage">O BRD não vai funcionar adequadamente se não forem desativadas as aplicações que alteram o ecrã (tais como a Twilight).</string>
+  <string name="Android.screenAlteringMessage">O Elephant não vai funcionar adequadamente se não forem desativadas as aplicações que alteram o ecrã (tais como a Twilight).</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Foi Detetada uma Aplicação que Altera o Ecrã</string>
   <!-- JSON Serialization error message -->
@@ -185,7 +183,7 @@
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">Email Indisponível</string>
   <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">Devido a um erro existente na sua versão do Android, o Bread não pode ser autenticado. [Por favor, toque aqui, a fim de obter mais informações.]</string>
+  <string name="ErrorMessages.loopingLockScreen.android">Devido a um erro existente na sua versão do Android, o Elephant não pode ser autenticado. [Por favor, toque aqui, a fim de obter mais informações.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">Este dispositivo não está configurado para enviar mensagens.</string>
   <!-- Messaging unavailable alert title -->
@@ -195,11 +193,11 @@
   <!-- You can customize your Face ID Spending Limit from the [menu] -->
   <string name="FaceIDSettings.customizeText">Pode personalizar o seu limite de gastos do Face ID a partir de %1$s.</string>
   <!-- Face Id screen label -->
-  <string name="FaceIDSettings.label">Utilize o seu rosto para desbloquear o seu BRD e enviar dinheiro até certo limite definido.</string>
+  <string name="FaceIDSettings.label">Utilize o seu rosto para desbloquear o seu Elephant e enviar dinheiro até certo limite definido.</string>
   <!-- Title of the screen for setting the Face ID Spending Limit -->
   <string name="FaceIDSettings.linkText">Ecrã de limite de gastos do Face ID</string>
-  <!-- Setting to turn on Face ID for BRD -->
-  <string name="FaceIDSettings.switchLabel">Ativar o Face ID para o BRD</string>
+  <!-- Setting to turn on Face ID for Elephant -->
+  <string name="FaceIDSettings.switchLabel">Ativar o Face ID para o Elephant</string>
   <!-- Face ID settings view title -->
   <string name="FaceIDSettings.title">Face ID</string>
   <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
@@ -257,13 +255,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Chave Privada</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">As chaves privadas são frequentemente impressas em papel sob a forma de código QR e utilizadas para armazenar os fundos offline. Resgate uma chave privada, a fim de transferir todo o dinheiro que controla para o seu Bread através de uma só transação.</string>
+  <string name="Import.message">As chaves privadas são frequentemente impressas em papel sob a forma de código QR e utilizadas para armazenar os fundos offline. Resgate uma chave privada, a fim de transferir todo o dinheiro que controla para o seu Elephant através de uma só transação.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Esta chave privada está protegida com uma palavra-passe.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">palavra-passe</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">A Sua Carteira Bread</string>
+  <string name="Import.rightCaption">A Sua Carteira Elephant</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Digitalizar Chave Privada</string>
   <!-- Import wallet success alert title -->
@@ -285,7 +283,7 @@
   <!-- Jailbreak warning message -->
   <string name="JailbreakWarnings.messageWithBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA\n Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves e roubar as suas bitcoins! Apague esta carteira imediatamente e restaure-a num dispositivo seguro.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA\n Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves da Bread e roubar as suas bitcoins. Por favor, use a Bread somente num dispositivo não desbloqueado.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA\n Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves da Elephant e roubar as suas bitcoins. Por favor, use a Elephant somente num dispositivo não desbloqueado.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">AVISO</string>
   <!-- Wipe wallet button -->
@@ -293,7 +291,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Os serviços de localização estão desativados.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">A Bread não tem permissão para aceder aos serviços de localização.</string>
+  <string name="LocationPlugin.notAuthorized">A Elephant não tem permissão para aceder aos serviços de localização.</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">Criou a sua carteira em %1$s</string>
   <!-- Manage wallet description text -->
@@ -381,7 +379,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transação Rejeitada</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Ajude a melhorar a Bread, partilhando connosco os seus dados anónimos</string>
+  <string name="Prompts.ShareData.body">Ajude a melhorar a Elephant, partilhando connosco os seus dados anónimos</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Partilhar dados anónimos</string>
   <!-- Enable touch ID prompt body -->
@@ -395,11 +393,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">A Bread foi atualizada para usar um PIN de 6-dígitos. Toque aqui para atualizar.</string>
+  <string name="Prompts.UpgradePin.body">A Elephant foi atualizada para usar um PIN de 6-dígitos. Toque aqui para atualizar.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Atualizar PIN</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Ative as notificações para receber mensagens especiais da Bread no futuro.</string>
+  <string name="PushNotifications.body">Ative as notificações para receber mensagens especiais da Elephant no futuro.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Notificações Push</string>
   <!-- Push notifications are off label -->
@@ -429,7 +427,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Introduzir Chave de Papel</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Recupere a sua Bread com a sua chave de papel.</string>
+  <string name="RecoverWallet.intro">Recupere a sua Elephant com a sua chave de papel.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">A chave de papel que introduziu é inválida. Por favor verifique cada palavra e tente novamente.</string>
   <!-- Previous button accessibility label -->
@@ -457,7 +455,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minutos</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Se uma transação aparece como concluída na sua rede bitcoin mas não na sua Bread.</string>
+  <string name="ReScan.body2">Se uma transação aparece como concluída na sua rede bitcoin mas não na sua Elephant.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Recebe repetidamente uma mensagem de erro dizendo que a sua transação foi rejeitada.</string>
   <!-- Start Sync button label -->
@@ -491,13 +489,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Chave de Papel</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Protege a sua Bread de utilizadores não autorizados.</string>
+  <string name="SecurityCenter.pinDescription">Protege a sua Elephant de utilizadores não autorizados.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">PIN de 6-Dígitos</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Centro de Segurança</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Desbloqueie convenientemente a sua Bread e envie dinheiro até um limite definido</string>
+  <string name="SecurityCenter.touchIdDescription">Desbloqueie convenientemente a sua Elephant e envie dinheiro até um limite definido</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -507,13 +505,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Saldo: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Permita o acesso à câmara em \"Definições\" &gt; \"Aplicações\" &gt; \"Bread\" &gt; \"Permissões\"</string>
+  <string name="Send.cameraUnavailabeMessage.android">Permita o acesso à câmara em \"Definições\" &gt; \"Aplicações\" &gt; \"Elephant\" &gt; \"Permissões\"</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">O Bread não tem autorização para aceder à câmara</string>
+  <string name="Send.cameraUnavailabeTitle.android">O Elephant não tem autorização para aceder à câmara</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Vá às Definições para permitir acesso à câmara.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">A Bread não tem autorização para aceder à câmara</string>
+  <string name="Send.cameraUnavailableTitle">A Elephant não tem autorização para aceder à câmara</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">O destino é o seu próprio endereço. Não pode enviar a si mesmo.</string>
   <!-- Could not create transaction alert title -->
@@ -588,8 +586,8 @@
   <string name="Settings.currencySettings">Definições da Moeda</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Registe-se no Acesso Antecipado</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Está a gostar da Bread?</string>
+  <!-- Are you enjoying Elephant alert message body -->
+  <string name="Settings.enjoying">Está a gostar da Elephant?</string>
   <!-- Face ID spending limit label -->
   <string name="Settings.faceIdLimit">Limite de Gastos do Face ID</string>
   <!-- Redeem the funds stored on this private key. -->
@@ -621,7 +619,7 @@
   <!-- Unlink/delete your wallet from the current device. -->
   <string name="Settings.wipe">Eliminar a Ligação a Partir Deste Dispositivo</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Ajude a melhorar a Bread partilhando os seus dados anónimos connosco. Isto não inclui quaisquer informações financeiras. Respeitamos a sua privacidade financeira.</string>
+  <string name="ShareData.body">Ajude a melhorar a Elephant partilhando os seus dados anónimos connosco. Isto não inclui quaisquer informações financeiras. Respeitamos a sua privacidade financeira.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Partilhar Dados?</string>
   <!-- Share data switch label. -->
@@ -629,7 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Escrever Novamente Chave de Papel</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">A chave de papel é a única forma de restaurar a sua Bread se o seu telefone for perdido, roubado, partido ou atualizado.\n\nVamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
+  <string name="StartPaperPhrase.body">A chave de papel é a única forma de restaurar a sua Elephant se o seu telefone for perdido, roubado, partido ou atualizado.\n\nVamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Escrever Chave de Papel</string>
   <!-- Argument is date -->
@@ -681,14 +679,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Autenticação por Impressão Digital não Ativada</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Utilize a impressão digital para desbloquear a sua Bread e enviar dinheiro até um limite definido.</string>
+  <string name="TouchIdSettings.label">Utilize a impressão digital para desbloquear a sua Elephant e enviar dinheiro até um limite definido.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Ecrã de limite dos gastos do Touch ID</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Limite de Gastos: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Ativar Touch ID para a Bread</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">Ativar Touch ID para a Elephant</string>
+  <!-- Enable fingerprint for this wallet called Elephant -->
   <string name="TouchIdSettings.switchLabel.android">Ativar a Autenticação por Impressão Digital</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -738,7 +736,7 @@
   <string name="Transaction.sentTo">enviado para %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Saldo inicial: %1$s</string>
-  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
   <string name="Transaction.tokenTransfer">Taxa para transferência de token: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">À espera de confirmação. Alguns comerciantes necessitam de confirmação para concluir uma transação. Tempo estimado: 1-2 horas.</string>
@@ -847,7 +845,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Sensor de Toque</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Desbloqueie a sua Bread.</string>
+  <string name="UnlockScreen.touchIdPrompt">Desbloqueie a sua Elephant.</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">Desbloqueie o seu dispositivo Android para continuar.</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -859,7 +857,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Lembre-se deste PIN. Se o esquecer, não será capaz de aceder às suas bitcoins.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">O seu PIN será usado para desbloquear a sua Bread e para enviar dinheiro.</string>
+  <string name="UpdatePin.createInstruction">O seu PIN será usado para desbloquear a sua Elephant e para enviar dinheiro.</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">Definir PIN</string>
   <!-- Update PIN title -->
@@ -893,7 +891,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Autorizar esta transação</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Abra a aplicação Bread para iPhone para configurar a sua carteira.</string>
+  <string name="Watch.noWalletWarning">Abra a aplicação Elephant para iPhone para configurar a sua carteira.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Ignorar</string>
   <!-- Webview loading error message -->
@@ -901,9 +899,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">A Atualizar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">As Breadwallets mudaram de nome para Bread, com um visual completamente novo e algumas características novas. \n\nSe precisar de ajuda, procure o (?) no canto superior direito da maioria das telas.</string>
+  <string name="Welcome.body">As Elephantwallets mudaram de nome para Elephant, com um visual completamente novo e algumas características novas. \n\nSe precisar de ajuda, procure o (?) no canto superior direito da maioria das telas.</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Bem-vindo ao Bread!</string>
+  <string name="Welcome.title">Bem-vindo ao Elephant!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Tem a certeza de que quer eliminar esta carteira?</string>
   <!-- Wipe wallet alert title -->
@@ -917,7 +915,7 @@
   <!-- Instructions for unlinking the wallet -->
   <string name="WipeWallet.startMessage">Elimine a ligação à sua carteira, a fim de a remover deste dispositivo. Assim que a ligação à carteira tiver sido eliminada, pode iniciar uma nova carteira ou recuperar outra carteira neste dispositivo.</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">Não poderá mais aceder à sua Breadwallet a partir deste dispositivo. O saldo permanecerá na frase.</string>
+  <string name="WipeWallet.startWarning">Não poderá mais aceder à sua Elephantwallet a partir deste dispositivo. O saldo permanecerá na frase.</string>
   <!-- Unlink this wallet from this device. -->
   <string name="WipeWallet.title">Eliminar a ligação à carteira</string>
   <!-- Wipe wallet button title -->

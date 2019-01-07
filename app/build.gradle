@@ -7,11 +7,11 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-        applicationId = 'com.breadwallet'
+        applicationId = 'com.elastos.wallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 291
-        versionName "3.2.0"
+        versionCode 24
+        versionName "1.0.24"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -53,11 +53,12 @@ android {
     flavorDimensions "mode"
 
     productFlavors {
-        brd {
-            applicationId = "com.breadwallet"
+        ela {
+            applicationId = "com.elastos.wallet"
             dimension "mode"
-            resValue "string", "app_name", "ElephantWallet"
+            resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
+            buildConfigField "boolean", "UPGRADE_TESTNET", "false"
 
             externalNativeBuild {
                 cmake {
@@ -70,11 +71,30 @@ android {
             }
         }
 
-        brdTestnet {
-            applicationId = "com.breadtestnet"
+        elaUpgradeTest {
+            applicationId = "com.elastos.wallet"
             dimension "mode"
-            resValue "string", "app_name", "ElephantWallet-testnet"
+            resValue "string", "app_name", "Elephant"
+            buildConfigField "boolean", "BITCOIN_TESTNET", "false"
+            buildConfigField "boolean", "UPGRADE_TESTNET", "true"
+
+            externalNativeBuild {
+                cmake {
+                    // When you specify a version of CMake, as shown below,
+                    // the Android plugin searches for its binary within your
+                    // PATH environmental variable.
+                    cFlags "-DBITCOIN_TESTNET=0"
+                    targets "core"
+                }
+            }
+        }
+
+        elaTestnet {
+            applicationId = "com.elastos.wallet"
+            dimension "mode"
+            resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
+            buildConfigField "boolean", "UPGRADE_TESTNET", "false"
 
             externalNativeBuild {
                 cmake {
@@ -175,7 +195,7 @@ dependencies {
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'org.kie.modules:com-google-code-gson:6.5.0.Final'
-    implementation 'com.tencent.bugly:crashreport:latest.release'
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
 }
 

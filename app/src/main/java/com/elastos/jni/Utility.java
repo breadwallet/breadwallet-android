@@ -2,14 +2,13 @@ package com.elastos.jni;
 
 import android.content.Context;
 
-import com.breadwallet.BreadApp;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Bip39Reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Locale;
 
 /**
  * BreadWallet
@@ -37,37 +36,36 @@ import java.util.Locale;
  */
 public class Utility {
 
-    public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
-
     private static Utility mInstance;
     private static String mWords = null;
+    private static String mLang = null;
+    private static Context mContext;
 
     static {
         System.loadLibrary("utility");
     }
 
     private Utility(Context context){
-        initLanguage(context);
+        this.mContext = context;
     }
 
     public static Utility getInstance(Context context){
         if(mInstance == null){
             mInstance = new Utility(context);
         }
-        initLanguage(context);
         return mInstance;
     }
 
-    public static void initLanguage(Context context){
-        mWords = getWords(context, BreadApp.mLang +"-BIP39Words.txt");
-    }
-
     public String getSinglePrivateKey(String mnemonic){
-        return getSinglePrivateKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
+        mLang = Bip39Reader.detectLang(mContext, mnemonic);
+        mWords = getWords(mContext, mLang +"-BIP39Words.txt");
+        return getSinglePrivateKey(Bip39Reader.getLanguage(mLang), mnemonic, mWords, "");
     }
 
     public String getSinglePublicKey(String mnemonic){
-        return getSinglePublicKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
+        mLang = Bip39Reader.detectLang(mContext, mnemonic);
+        mWords = getWords(mContext, mLang +"-BIP39Words.txt");
+        return getSinglePublicKey(Bip39Reader.getLanguage(mLang), mnemonic, mWords, "");
     }
 
     public String generateMnemonic(String language, String words){
@@ -90,7 +88,27 @@ public class Utility {
         return nativeGenerateRawTransaction(transaction);
     }
 
-    private static native String nativeGenerateMnemonic(String language, String words);
+    public byte[] sign(String jprivateKey, byte[] data){
+        return nativeSign(jprivateKey, data);
+    }
+
+    public boolean verify(String publicKey, byte[] data, byte[] signedData){
+        return nativeVerify(publicKey, data, signedData);
+    }
+
+    public String getDid(String publicKey){
+        return nativeGetDid(publicKey);
+    }
+
+    public String getPublicKeyFromPrivateKey(String privateKey){
+        return nativeGetPublicKeyFromPrivateKey(privateKey);
+    }
+
+    public boolean isAddressValid(String address){
+        return nativeIsAddressValid(address);
+    }
+
+    private static native String nativeGenerateMnemonic(String jlanguage, String jwords);
 
     private static native String nativeGetSinglePrivateKey(String jlanguage, String jmnemonic, String jwords, String jpassword);
 
@@ -99,6 +117,16 @@ public class Utility {
     private static native String nativeGetAddress(String jpublickey);
 
     private static native String nativeGenerateRawTransaction(String jtransaction);
+
+    private static native byte[] nativeSign(String jprivateKey, byte[] jdata);
+
+    private static native boolean nativeVerify(String jpublicKey, byte[] jdata, byte[] jsignedData);
+
+    private static native String nativeGetDid(String jpublicKey);
+
+    private static native String nativeGetPublicKeyFromPrivateKey(String jprivateKey);
+
+    private static native boolean nativeIsAddressValid(String jaddress);
 
     public static String getWords(Context context, String name) {
         if (name == null) return null;

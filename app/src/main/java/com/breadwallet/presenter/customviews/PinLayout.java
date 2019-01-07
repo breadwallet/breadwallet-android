@@ -138,7 +138,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         }
     }
 
-    private void setPinDigitViewResourceId(int resId) {
+    public void setPinDigitViewResourceId(int resId) {
         for (View view : mPinDigitViews) {
             view.setBackgroundResource(resId);
         }
@@ -167,6 +167,15 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
             mLastInsertedPin = pin;
 
         }
+    }
+
+    public void setEmptyDotResource(int resource){
+        mBaseResourceID = resource;
+        updatePinUi(0);
+    }
+
+    public void setFillDotResource(int resource){
+        mPinDotBackground = resource;
     }
 
     private void updatePinUi(int pinLength) {

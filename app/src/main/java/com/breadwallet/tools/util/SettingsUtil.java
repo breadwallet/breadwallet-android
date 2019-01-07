@@ -3,21 +3,20 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
+import com.breadwallet.presenter.activities.did.DidAuthListActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
+import com.breadwallet.presenter.activities.settings.ElaNodeActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.NodesActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
-import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.UnlinkActivity;
@@ -31,6 +30,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.tencent.bugly.beta.Beta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +80,15 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_camera)); */
 
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, DidAuthListActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, R.drawable.ic_auth));
+
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,12 +118,19 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_security_settings));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_support), "", new View.OnClickListener() {
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_support), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
+//            }
+//        }, false, R.drawable.ic_support));
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
+                Beta.checkUpgrade(true, false);
             }
-        }, false, R.drawable.ic_support));
+        }, false, R.drawable.ic_upgrade));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
             @Override
@@ -125,20 +141,20 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_about));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent appStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URI));
-                    appStoreIntent.setPackage(APP_STORE_PACKAGE);
-
-                    activity.startActivity(appStoreIntent);
-                } catch (android.content.ActivityNotFoundException exception) {
-                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_URI)));
-                }
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_review));
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    Intent appStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URI));
+//                    appStoreIntent.setPackage(APP_STORE_PACKAGE);
+//
+//                    activity.startActivity(appStoreIntent);
+//                } catch (android.content.ActivityNotFoundException exception) {
+//                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_URI)));
+//                }
+//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            }
+//        }, false, R.drawable.ic_review));
         return settingsItems;
     }
 
@@ -250,7 +266,7 @@ public final class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
-                Intent intent = new Intent(currentActivity, NodesActivity.class);
+                Intent intent = new Intent(currentActivity, ElaNodeActivity.class);
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -28,8 +26,8 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.FontManager;
@@ -38,7 +36,6 @@ import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
@@ -249,42 +246,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wm.getIso(), wm.getCachedBalance(this), wm.getUiConfiguration().getMaxDecimalPlacesForUi());
 
-        mCurrencyTitle.setText(wm.getName());
-        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wm.getIso()));
+        mCurrencyTitle.setText(wm.getIso());
+        mCurrencyPriceUsd.setText(String.format("%s / %s", fiatExchangeRate, wm.getIso()));
         mBalancePrimary.setText(fiatBalance);
-        mBalanceSecondary.setText(cryptoBalance);
-
-        String startColor = wm.getUiConfiguration().getStartColor();
-        String endColor = wm.getUiConfiguration().getEndColor();
-        int currentTheme = UiUtils.getThemeId(this);
-
-        if (currentTheme == R.style.AppTheme_Dark) {
-            mSendButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
-            mReceiveButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
-            mSellButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
-
-            if (endColor != null) {
-                mWalletFooter.setBackgroundColor(Color.parseColor(endColor));
-            }
-        } else {
-            if (endColor != null) {
-                mSendButton.setColor(Color.parseColor(endColor));
-                mReceiveButton.setColor(Color.parseColor(endColor));
-                mSellButton.setColor(Color.parseColor(endColor));
-            }
-        }
-
-        if (endColor != null) {
-            //it's a gradient
-            GradientDrawable gd = new GradientDrawable(
-                    GradientDrawable.Orientation.LEFT_RIGHT,
-                    new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
-            gd.setCornerRadius(0f);
-            mToolbar.setBackground(gd);
-        } else {
-            //it's a solid color
-            mToolbar.setBackgroundColor(Color.parseColor(startColor));
-        }
+        mBalanceSecondary.setText(cryptoBalance.replace(wm.getIso(), ""));
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -311,51 +276,41 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (animate) {
             TransitionManager.beginDelayedTransition(mToolBarConstraintLayout);
         }
-        int px8 = Utils.getPixelsFromDps(this, 8);
 
-        // CRYPTO on RIGHT
-        if (cryptoPreferred) {
-            // Align crypto balance to the right parent
-            set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
-            mBalancePrimary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
-            mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 12), 0, 0);
+        if(cryptoPreferred){
+            set.connect(R.id.balance_secondary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
+            set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, R.id.anchor, ConstraintSet.TOP, 0);
 
-            // Align swap icon to left of crypto balance
-            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, px8);
 
-            // Align usd balance to left of swap icon
-            set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+            set.connect(R.id.balance_primary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
+            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, R.id.anchor, ConstraintSet.BOTTOM, 0);
+
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, 0);
 
             mBalanceSecondary.setTextSize(PRIMARY_TEXT_SIZE);
             mBalancePrimary.setTextSize(SECONDARY_TEXT_SIZE);
-
-            set.applyTo(mToolBarConstraintLayout);
-
         } else {
-            // CRYPTO on LEFT
-            // Align primary to right of parent
-            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
+            set.connect(R.id.balance_primary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
+            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, R.id.anchor, ConstraintSet.TOP, 0);
 
-            // Align swap icon to left of usd balance
-            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, px8);
+            set.connect(R.id.balance_secondary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
+            set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, R.id.anchor, ConstraintSet.BOTTOM, 0);
 
-
-            // Align secondary currency to the left of swap icon
-            set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 12), 0, 0);
-            mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
-
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, 0);
 
             mBalanceSecondary.setTextSize(SECONDARY_TEXT_SIZE);
             mBalancePrimary.setTextSize(PRIMARY_TEXT_SIZE);
-
-            set.applyTo(mToolBarConstraintLayout);
         }
+
+        set.applyTo(mToolBarConstraintLayout);
         mBalanceSecondary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.white : R.color.currency_subheading_color, null));
         mBalancePrimary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.currency_subheading_color : R.color.white, null));
-        mBalanceSecondary.setTypeface(FontManager.get(this, cryptoPreferred ? "BioSans-SemiBold.otf" : "BioSans-Regular.otf"));
-        mBalancePrimary.setTypeface(FontManager.get(this, !cryptoPreferred ? "BioSans-SemiBold.otf" : "BioSans-Regular.otf"));
-
+        mBalanceSecondary.setTypeface(FontManager.get(this, cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
+        mBalancePrimary.setTypeface(FontManager.get(this, !cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
         updateUi();
     }
 

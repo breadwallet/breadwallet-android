@@ -4,14 +4,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="66dp">
 
-    <ImageView
+    <com.breadwallet.presenter.customviews.RoundImageView
         android:id="@+id/token_icon"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:src="@mipmap/ic_launcher"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/token_name"
@@ -20,8 +21,8 @@
         android:layout_marginStart="11dp"
         android:layout_marginTop="12dp"
         android:layout_toEndOf="@id/token_icon"
-        android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf" />
+        android:textColor="@color/black_333333"
+        android:textSize="20sp" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/token_symbol"
@@ -49,15 +50,12 @@
 
     <Button
         android:id="@+id/show_hide_button"
-        android:layout_width="70dp"
-        android:layout_height="32dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_toStartOf="@id/drag_icon"
         android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"
-        android:background="?attr/show_wallet_button_background"
-        android:text="@string/TokenList.show"
-        android:textColor="@color/button_add_wallet_text"
-        android:textSize="14sp" />
+        android:background="@null" />
 
     <ImageButton
         android:id="@+id/drag_icon"

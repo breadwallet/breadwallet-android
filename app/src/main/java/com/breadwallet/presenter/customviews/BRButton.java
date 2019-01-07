@@ -67,7 +67,7 @@ public class BRButton extends Button {
     private static final float SHADOW_PRESSED = 0.88f;
     private static final float SHADOW_UNPRESSED = 0.95f;
     private float shadowOffSet = SHADOW_UNPRESSED;
-    private static final int ROUND_PIXELS = 0;
+    private static final int ROUND_PIXELS = 100;
     private boolean isBreadButton; //meaning is has the special animation and shadow
     private boolean hasShadow; // allows us to add/remove the drop shadow from the button without affecting the animation
 
@@ -99,7 +99,7 @@ public class BRButton extends Button {
         bRect = new RectF(0, 0, 100, 100);
         TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
         String customFont = attributes.getString(R.styleable.BRButton_customBFont);
-        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "BioSans-SemiBold.otf" : customFont);
+        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
         int[] attributeArray = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
@@ -204,7 +204,7 @@ public class BRButton extends Button {
         this.type = type;
 
         if (type == 1) { //blue
-            bPaint.setColor(getContext().getColor(R.color.button_primary_normal));
+            bPaint.setColor(getContext().getColor(R.color.create_new_wallet_button_dark));
             setTextColor(getContext().getColor(R.color.white));
         } else if (type == 2) { //gray stroke
             bPaintStroke.setColor(getContext().getColor(R.color.extra_light_gray));
@@ -214,10 +214,10 @@ public class BRButton extends Button {
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
             bPaint.setStyle(Paint.Style.FILL);
         } else if (type == 3) { //blue stroke
-            bPaintStroke.setColor(getContext().getColor(R.color.button_primary_normal));
+            bPaintStroke.setColor(getContext().getColor(R.color.create_new_wallet_button_dark));
             bPaintStroke.setStyle(Paint.Style.STROKE);
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
-            setTextColor(getContext().getColor(R.color.button_primary_normal));
+            setTextColor(getContext().getColor(R.color.create_new_wallet_button_dark));
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
             bPaint.setStyle(Paint.Style.FILL);
         } else if (type == 4) {
@@ -228,10 +228,10 @@ public class BRButton extends Button {
             bPaint.setColor(getContext().getColor(R.color.currency_buttons_color));
             bPaint.setStyle(Paint.Style.FILL);
         } else if (type == 5) {
-            bPaintStroke.setColor(getContext().getColor(R.color.blue));
+            bPaintStroke.setColor(getContext().getColor(R.color.create_new_wallet_button_dark));
             bPaintStroke.setStyle(Paint.Style.STROKE);
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
-            setTextColor(getContext().getColor(R.color.blue));
+            setTextColor(getContext().getColor(R.color.create_new_wallet_button_dark));
             bPaint.setColor(getContext().getColor(R.color.white));
             bPaint.setStyle(Paint.Style.FILL);
 

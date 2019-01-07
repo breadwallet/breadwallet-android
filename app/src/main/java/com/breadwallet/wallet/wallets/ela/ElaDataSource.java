@@ -1,13 +1,17 @@
 package com.breadwallet.wallet.wallets.ela;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.R;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
@@ -17,6 +21,7 @@ import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
+import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.elastos.jni.Utility;
@@ -65,9 +70,13 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
-    private static final String ELA_SERVER_URL = "http://18.179.207.38:8080";
-
-    private static final String ELA_HISTORY_URL = "http://54.64.220.165:8080";
+    public static final String ELA_NODE_KEY = "elaNodeKey";
+//    https://api-wallet-ela.elastos.org
+//    https://api-wallet-did.elastos.org
+//    hw-ela-api-test.elastos.org
+//    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
+//    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
+    public static final String ELA_NODE = "api-wallet-ela.elastos.org";
 
     private static ElaDataSource mInstance;
 
@@ -77,8 +86,11 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private static Context mContext;
 
+    private static Activity mActivity;
+
     private ElaDataSource(Context context){
         mContext = context;
+        if(context instanceof Activity) mActivity = (Activity) context;
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
@@ -88,6 +100,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return mInstance;
+    }
+
+    public static String getUrl(String api){
+        String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
+        if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
+        return new StringBuilder("https://").append(node).append("/").append(api).toString();
     }
 
     private final String[] allColumns = {
@@ -102,8 +120,31 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_BALANCEAFTERTX,
             BRSQLiteHelper.ELA_COLUMN_TXSIZE,
             BRSQLiteHelper.ELA_COLUMN_AMOUNT,
+            BRSQLiteHelper.ELA_COLUMN_MENO,
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
     };
+
+    public void deleteElaTable(){
+        try {
+            database = openDatabase();
+            database.execSQL("drop table " + BRSQLiteHelper.ELA_TX_TABLE_NAME);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeDatabase();
+        }
+
+    }
+
+    public void deleteAllTransactions() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, null);
+        } finally {
+            closeDatabase();
+        }
+    }
+
 
     public void cacheSingleTx(ElaTransactionEntity entity){
         List<ElaTransactionEntity> entities = new ArrayList<>();
@@ -114,14 +155,14 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public synchronized void cacheMultTx(List<ElaTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
-        Cursor cursor = null;
+//        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
             for(ElaTransactionEntity entity : elaTransactionEntities){
-                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
-                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed}, null, null, null);
+//                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
+//                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed}, null, null, null);
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
@@ -135,21 +176,11 @@ public class ElaDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ELA_COLUMN_BALANCEAFTERTX, entity.balanceAfterTx);
                 value.put(BRSQLiteHelper.ELA_COLUMN_TXSIZE, entity.txSize);
                 value.put(BRSQLiteHelper.ELA_COLUMN_AMOUNT, entity.amount);
+                value.put(BRSQLiteHelper.ELA_COLUMN_MENO, entity.memo);
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
 
-                long count = cursor.getCount();
-                if(cursor!=null && count>=1) {
-                    if(cursor.moveToFirst()){
-                        ElaTransactionEntity curEntity = cursorToCurrency(cursor);
-                        if(curEntity.blockHeight <= 0) {
-                            int l = database.update(BRSQLiteHelper.ELA_TX_TABLE_NAME, value,BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed});
-                            Log.i(TAG, "l:" + l);
-                        }
-                    }
-                } else {
-                    long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                    Log.i(TAG, "l:"+l);
-                }
+                long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                Log.i(TAG, "l:"+l);
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
@@ -157,7 +188,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             closeDatabase();
             e.printStackTrace();
         } finally {
-            cursor.close();
+//            cursor.close();
             database.endTransaction();
             closeDatabase();
         }
@@ -202,7 +233,18 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getLong(8),
                 cursor.getInt(9),
                 cursor.getLong(10),
-                cursor.getInt(11)==1);
+                cursor.getString(11),
+                cursor.getInt(12)==1);
+    }
+
+    private void toast(final String message){
+        if(mActivity !=null)
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     @WorkerThread
@@ -210,9 +252,17 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(address==null || address.isEmpty()) return null;
         String balance = null;
         try {
-            String url = ELA_SERVER_URL +"/api/1/balance/"+address;
-            String result = urlGET(url);JSONObject object = new JSONObject(result);
+            String url = getUrl("api/1/balance/"+address);
+            Log.i(TAG, "balance url:"+url);
+            String result = urlGET(url);
+            JSONObject object = new JSONObject(result);
             balance = object.getString("result");
+            Log.i(TAG, "balance:"+balance);
+            int status = object.getInt("status");
+            if(result==null || !result.contains("result") || !result.contains("status") || balance==null || status!=200) {
+                toast("balance crash result:");
+                throw new Exception("address:"+ address + "\n" + "result:" +result);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -222,7 +272,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     public void getHistory(String address){
         if(address == null) return;
         try {
-            String url = ELA_HISTORY_URL+"/history/"+address+"?pageNum=10&pageSize=1";
+            String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
+            Log.i(TAG, "history url:"+url);
             String result = urlGET(url)/*getTxHistory()*/;
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
@@ -235,16 +286,17 @@ public class ElaDataSource implements BRDataSourceInterface {
                 ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
                 elaTransactionEntity.txReversed = history.Txid;
                 elaTransactionEntity.isReceived = isReceived(history.Type);
-                elaTransactionEntity.fromAddress = history.Inputs.get(0);
-                elaTransactionEntity.toAddress = history.Outputs.get(0);
-                elaTransactionEntity.fee = /*new BigDecimal(history.Fee).multiply(new BigDecimal(1000000000)).longValue()*/100;
+                elaTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                elaTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                elaTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
                 elaTransactionEntity.blockHeight = history.Height;
                 elaTransactionEntity.hash = history.Txid.getBytes();
                 elaTransactionEntity.txSize = 0;
-                elaTransactionEntity.amount = new BigDecimal(history.Value).multiply(new BigDecimal(100000000)).longValue();
+                elaTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
                 elaTransactionEntity.balanceAfterTx = 0;
                 elaTransactionEntity.isValid = true;
                 elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+                elaTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(elaTransactionEntity);
             }
             cacheMultTx(elaTransactionEntities);
@@ -253,6 +305,18 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
+    private String getMeno(String value){
+        if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
+        if(value.contains("msg:")){
+            String[] msg = value.split("msg:");
+            if(msg!=null && msg.length==2){
+                return msg[1];
+            }
+        }
+        return "";
+    }
+
+    //true is receive
     private boolean isReceived(String type){
         if(type==null || type.equals("")) return false;
         if(type.equals("spend")) return false;
@@ -265,9 +329,10 @@ public class ElaDataSource implements BRDataSourceInterface {
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
+        if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
-            String url = ELA_SERVER_URL +"/api/1/createTx";
-
+            String url = getUrl("api/1/createTx");
+            Log.i(TAG, "create tx url:"+url);
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
 
@@ -283,6 +348,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
+            if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
                 ElaUTXOInputs utxoInputs = inputs.get(i);
@@ -299,15 +365,17 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.fromAddress = inputAddress;
             elaTransactionEntity.toAddress = outputsAddress;
             elaTransactionEntity.isReceived = false;
-            elaTransactionEntity.fee = new BigDecimal(res.Transactions.get(0).Fee).multiply(new BigDecimal(1000000000)).longValue();
+            elaTransactionEntity.fee = new BigDecimal("4860").longValue();
             elaTransactionEntity.blockHeight = 0;
             elaTransactionEntity.hash = new byte[1];
             elaTransactionEntity.txSize = 0;
-            elaTransactionEntity.amount = amount;
+            elaTransactionEntity.amount = new BigDecimal(amount).longValue();
             elaTransactionEntity.balanceAfterTx = 0;
             elaTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
             elaTransactionEntity.isValid = true;
+            elaTransactionEntity.memo = memo;
         } catch (Exception e) {
+            toast(/*mActivity.getResources().getString(R.string.SendTransacton_failed)*/e.getMessage());
             e.printStackTrace();
         }
 
@@ -319,18 +387,23 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         String result = null;
         try {
-            String url = ELA_SERVER_URL +"/api/1/sendRawTx";
+            String url = getUrl("api/1/sendRawTx");
+            Log.i(TAG, "send raw url:"+url);
             String rawTransaction = Utility.getInstance(mContext).generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
             String tmp = urlPost(url, json);
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
-            if(result==null || result.contains("ERROR") || result.contains(" ")) return null;
+            if(result==null || result.contains("ERROR") || result.contains(" ")) {
+                toast(result);
+                return null;
+            }
             elaTransactionEntity.txReversed = result;
             cacheSingleTx(elaTransactionEntity);
             Log.i("rawTx", "result:"+result);
         } catch (Exception e) {
+            toast(/*mActivity.getResources().getString(R.string.SendTransacton_failed)*/e.getMessage());
             e.printStackTrace();
         }
 
@@ -376,447 +449,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         } else {
             throw new IOException("Unexpected code " + response);
         }
-    }
-
-
-
-    //TODO test
-    private String getCreateTx(){
-        return "{\n" +
-                "    \"result\": {\n" +
-                "        \"Transactions\": [\n" +
-                "            {\n" +
-                "                \"UTXOInputs\": [\n" +
-                "                    {\n" +
-                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\",\n" +
-                "                        \"txid\": \"fa9bcb8b2f3a3a1e627284ad8425faf70fa64146b88a3aceac538af8bfeffd91\",\n" +
-                "                        \"index\": 1\n" +
-                "                    }\n" +
-                "                ],\n" +
-                "                \"Fee\": 100,\n" +
-                "                \"Outputs\": [\n" +
-                "                    {\n" +
-                "                        \"amount\": 1000,\n" +
-                "                        \"address\": \"EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"amount\": 99997800,\n" +
-                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\"\n" +
-                "                    }\n" +
-                "                ]\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    },\n" +
-                "    \"status\": 200\n" +
-                "}";
-    }
-
-    private String getTranactions(){
-        return "{\n" +
-                "    \"result\": [\n" +
-                "        {\n" +
-                "            \"vsize\": 288,\n" +
-                "            \"locktime\": 0,\n" +
-                "            \"txid\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\",\n" +
-                "            \"confirmations\": 13,\n" +
-                "            \"type\": 2,\n" +
-                "            \"version\": 0,\n" +
-                "            \"vout\": [\n" +
-                "                {\n" +
-                "                    \"outputlock\": 0,\n" +
-                "                    \"address\": \"8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG\",\n" +
-                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                    \"value\": \"1\",\n" +
-                "                    \"n\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"outputlock\": 0,\n" +
-                "                    \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
-                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                    \"value\": \"977.89999500\",\n" +
-                "                    \"n\": 1\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"blockhash\": \"75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612\",\n" +
-                "            \"size\": 288,\n" +
-                "            \"blocktime\": 1539919032,\n" +
-                "            \"vin\": [\n" +
-                "                {\n" +
-                "                    \"sequence\": 0,\n" +
-                "                    \"txid\": \"f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54\",\n" +
-                "                    \"vout\": 1\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"payloadversion\": 0,\n" +
-                "            \"attributes\": [\n" +
-                "                {\n" +
-                "                    \"data\": \"e6b58be8af95\",\n" +
-                "                    \"usage\": 129\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"time\": 1539919032,\n" +
-                "            \"programs\": [\n" +
-                "                {\n" +
-                "                    \"code\": \"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac\",\n" +
-                "                    \"parameter\": \"403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1\"\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"hash\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\"\n" +
-                "        },\n" +
-                "        \"Unknown Transaction\",\n" +
-                "        {\n" +
-                "            \"vsize\": 288,\n" +
-                "            \"locktime\": 0,\n" +
-                "            \"txid\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\",\n" +
-                "            \"confirmations\": 13,\n" +
-                "            \"type\": 2,\n" +
-                "            \"version\": 0,\n" +
-                "            \"vout\": [\n" +
-                "                {\n" +
-                "                    \"outputlock\": 0,\n" +
-                "                    \"address\": \"8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG\",\n" +
-                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                    \"value\": \"1\",\n" +
-                "                    \"n\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"outputlock\": 0,\n" +
-                "                    \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
-                "                    \"assetid\": \"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0\",\n" +
-                "                    \"value\": \"977.89999500\",\n" +
-                "                    \"n\": 1\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"blockhash\": \"75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612\",\n" +
-                "            \"size\": 288,\n" +
-                "            \"blocktime\": 1539919032,\n" +
-                "            \"vin\": [\n" +
-                "                {\n" +
-                "                    \"sequence\": 0,\n" +
-                "                    \"txid\": \"f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54\",\n" +
-                "                    \"vout\": 1\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"payloadversion\": 0,\n" +
-                "            \"attributes\": [\n" +
-                "                {\n" +
-                "                    \"data\": \"e6b58be8af95\",\n" +
-                "                    \"usage\": 129\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"time\": 1539919032,\n" +
-                "            \"programs\": [\n" +
-                "                {\n" +
-                "                    \"code\": \"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac\",\n" +
-                "                    \"parameter\": \"403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1\"\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"hash\": \"64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8\"\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"status\": 200\n" +
-                "}";
-    }
-
-    private String getRawTx(){
-        return "{\n" +
-                "    \"result\": \"1f4432635bcf8c347f2bc20b7906c8c6c195f51beb3426e5f8d6a9e4cc073cf3\",\n" +
-                "    \"status\": 200\n" +
-                "}";
-    }
-
-
-    private String getTxHistory(){
-        return "{\n" +
-                "    \"result\":{\n" +
-                "        \"History\":[\n" +
-                "            {\n" +
-                "                \"Txid\":\"9769f250d46eeb0342fcb34b74debe403e5c865b450e8fd3322e3540f2d1d9c7\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541567799\",\n" +
-                "                \"Height\":156007,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"f96c2130021a41239ae064fc906ef1c73954c744278518e0a778ccdfc9408f2d\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541568324\",\n" +
-                "                \"Height\":156012,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"bae9a5c6e4383fb3561ad8a21806e07cd8e6fcfea549fee771353cc0c93520b4\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541568639\",\n" +
-                "                \"Height\":156017,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"c7dbd8ccda7118230d6f100746713f284adea64a636e44f4eeac71dbce18c3bf\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541569179\",\n" +
-                "                \"Height\":156022,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"4677796dfa3b4d6531ad3cef5312efa93d23de376a7ec1c9963f36edbfb33068\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541569770\",\n" +
-                "                \"Height\":156027,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"cb36cb4e6680f935bdd2254b1b811010e829f60e1b0dfea3575752e6ab796748\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541570397\",\n" +
-                "                \"Height\":156037,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"1caf9a96dab101eee6e13f410e145bfdf4cd4caf792a9d0c3c9cb3a3baf35f6c\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541570904\",\n" +
-                "                \"Height\":156042,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"9fb993922da03a97a901d07c6b8b02c54dedb5d0e0e0694328e5a72c6a8ea4f0\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541571444\",\n" +
-                "                \"Height\":156047,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"072687994c76c3748cb59c593a5a69875582fa7fea3ad51b2567e8c1d602a9bd\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541571727\",\n" +
-                "                \"Height\":156052,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"a73cffc87c8954527be16dea9ce2da59a95072c93629ddeaa9b0796b034d273e\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541572899\",\n" +
-                "                \"Height\":156062,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"b8ddc126502bba37bcfbacfd3dadb75614cd072fc34a0abf92d638c1c820b6a6\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541573109\",\n" +
-                "                \"Height\":156067,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"00227bd552df86a286849dfd166e345dc9b0ce882f63c610a0856348fbc2e5bf\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541573469\",\n" +
-                "                \"Height\":156077,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"9aac13199e059258c4813c4ff0d373c1e62a23f0b31b01b47d85091cf7dafc46\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541573939\",\n" +
-                "                \"Height\":156082,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"a60eb024765403ec41c2bef2c90b7c211697da5553fcd80e2f6278d459d4d46f\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541574129\",\n" +
-                "                \"Height\":156087,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\",\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"8108a5875f8378ba3ec5553480c3568a934cffd8fe7175707c626c68da72c55d\",\n" +
-                "                \"Type\":\"income\",\n" +
-                "                \"Value\":\"0.01\",\n" +
-                "                \"CreateTime\":\"1541574168\",\n" +
-                "                \"Height\":156088,\n" +
-                "                \"Fee\":\"0.001\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"ER1ouzeLNKQTqPrDHxgAGw2eiCXPhgznVy\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\",\n" +
-                "                    \"ER1ouzeLNKQTqPrDHxgAGw2eiCXPhgznVy\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"4d79ce0da3292d3a4852e6a541b98ee8fdf07c4c67898283b74ac27b7572a8b4\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541574384\",\n" +
-                "                \"Height\":156092,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"1e1ae04b87987b3872c5b33cd767601af6027be164e00ea81431b8f0eb6d6693\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541574804\",\n" +
-                "                \"Height\":156097,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"bc3588b0fd110f558038bfa4b0ebac066fdf534064713a891d4ea02ba6c4f5cb\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541575437\",\n" +
-                "                \"Height\":156102,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"a93aec9c3cb82bb52ba21ed152b3fecac117f8a94dfa952b696e9818bf7d3987\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541575584\",\n" +
-                "                \"Height\":156107,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"Txid\":\"31164c6ebb9eaadc92b3b7310c2ea162ebc51af00668e2821b6e5e84a1e485e9\",\n" +
-                "                \"Type\":\"spend\",\n" +
-                "                \"Value\":\"0.0005\",\n" +
-                "                \"CreateTime\":\"1541576218\",\n" +
-                "                \"Height\":156112,\n" +
-                "                \"Fee\":\"0.0005\",\n" +
-                "                \"Inputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ],\n" +
-                "                \"Outputs\":[\n" +
-                "                    \"EN8WSL4Wt1gM3YjTcHgG7ckBiadtcaNgx4\"\n" +
-                "                ]\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"TotalNum\":216\n" +
-                "    },\n" +
-                "    \"status\":200\n" +
-                "}";
     }
 
 

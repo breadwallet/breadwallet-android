@@ -6,6 +6,7 @@ import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
@@ -28,11 +29,14 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,10 +86,8 @@ public class BreadApp extends Application {
     private static Timer isBackgroundChecker;
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
-    private static Context mContext;
+    public static Context mContext;
     private ApplicationLifecycleObserver mObserver;
-
-    public static String mLang = "en";
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -112,7 +114,6 @@ public class BreadApp extends Application {
         if (BuildConfig.DEBUG) {
             HOST = "stage2.breadwallet.com";
         }
-
 
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(this);
@@ -151,7 +152,25 @@ public class BreadApp extends Application {
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
-        CrashReport.initCrashReport(getApplicationContext(), "d20fa2f1b9", true);
+        Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", true);
+        upgradeAction();
+    }
+
+
+    private void upgradeAction(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
+        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
+        if(oldVerson != newVersion){
+            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
+            ElaDataSource.getInstance(this).deleteAllTransactions();
+            BRSharedPrefs.putVersionCode(this, "version", newVersion);
+        }
 
     }
 

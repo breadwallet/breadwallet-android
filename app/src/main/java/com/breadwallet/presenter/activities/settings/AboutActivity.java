@@ -23,8 +23,6 @@ public class AboutActivity extends BaseSettingsActivity {
     private static final String TAG = AboutActivity.class.getName();
 
     private static AboutActivity app;
-    private BaseTextView mCopy;
-    private BaseTextView mRewardsId;
     private static final int DEFAULT_VERSION_CODE = 0;
     private static final String DEFAULT_VERSION_NAME = "0";
 
@@ -39,7 +37,7 @@ public class AboutActivity extends BaseSettingsActivity {
 
     @Override
     public int getBackButtonId() {
-        return R.id.back_button;
+        return R.id.back_arrow;
     }
 
     @Override
@@ -60,46 +58,9 @@ public class AboutActivity extends BaseSettingsActivity {
         String versionName = packageInfo != null ? packageInfo.versionName : DEFAULT_VERSION_NAME;
 
         infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), versionName, versionCode));
+        ImageView blogShare = findViewById(R.id.blog_share_button);
 
-        ImageView redditLink = findViewById(R.id.reddit_share_button);
-        ImageView telegramLink = findViewById(R.id.telegram_share_button);
-        ImageView discordLink = findViewById(R.id.discord_share_button);
-        ImageView siteLink = findViewById(R.id.site_share_button);
-        ImageView crLink = findViewById(R.id.cr_share_button);
-
-        redditLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_REDDIT));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-        discordLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_DISCORD));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-        telegramLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TELEGRAM));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-        siteLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-        crLink.setOnClickListener(new View.OnClickListener() {
+        blogShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG));
@@ -115,6 +76,7 @@ public class AboutActivity extends BaseSettingsActivity {
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
+
     }
 
     @Override

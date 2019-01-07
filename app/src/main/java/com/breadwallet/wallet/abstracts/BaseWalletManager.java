@@ -177,6 +177,8 @@ public interface BaseWalletManager {
 
     CryptoTransaction createTransaction(BigDecimal amount, String address);
 
+    CryptoTransaction createTransaction(BigDecimal amount, String address, String meno);
+
     //decorate an address to a particular currency, if needed (like BCH address format)
     String decorateAddress(String addr);
 

@@ -41,6 +41,7 @@ public class TxUiHolder {
     private String to;
     private String from;
     public String txReversed;
+    public String memo;
     private BigDecimal balanceAfterTx;
     private BigDecimal amount;
     private boolean isValid;

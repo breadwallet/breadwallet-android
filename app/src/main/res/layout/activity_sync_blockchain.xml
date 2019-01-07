@@ -102,6 +102,7 @@
         android:layout_marginBottom="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="0dp"
+        android:visibility="gone"
         android:background="?attr/faq_button_primary_color"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"

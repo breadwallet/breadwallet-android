@@ -466,6 +466,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     }
 
     @Override
+    public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
+        return null;
+    }
+
+    @Override
     public String decorateAddress(String addr) {
         return addr;
     }
@@ -492,6 +497,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void wipeData(Context app) {
+        mInstance = null;
         Log.e(TAG, "wipeData: ");
     }
 

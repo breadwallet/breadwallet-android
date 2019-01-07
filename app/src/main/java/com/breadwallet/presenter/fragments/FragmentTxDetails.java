@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -59,7 +59,7 @@ public class FragmentTxDetails extends DialogFragment {
     private BaseTextView mTxDate;
     private BaseTextView mToFrom;
     private BaseTextView mToFromAddress;
-    private BREdit mMemoText;
+    private BaseTextView mMemoText;
 
     private BaseTextView mGasPrice;
     private BaseTextView mGasLimit;
@@ -231,11 +231,13 @@ public class FragmentTxDetails extends DialogFragment {
 
                 }
 
-                BigDecimal fee = isCryptoPreferred ? rawFee.abs() : walletManager.getFiatForSmallestCrypto(app, rawFee, null).abs();
+                BigDecimal fee = /*isCryptoPreferred ? rawFee.abs() : walletManager.getFiatForSmallestCrypto(app, rawFee, null).abs()*/ rawFee.abs();
+                Log.i("fee", "fee:"+fee.longValue());
                 BigDecimal rawTotalSent = mTransaction.getAmount().abs().add(rawFee.abs());
-                BigDecimal totalSent = isCryptoPreferred ? rawTotalSent : walletManager.getFiatForSmallestCrypto(app, rawTotalSent, null);
-                mFeeSecondary.setText(CurrencyUtils.getFormattedAmount(app, iso, totalSent));
-                mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
+                BigDecimal totalSent = /*isCryptoPreferred ? rawTotalSent : walletManager.getFiatForSmallestCrypto(app, rawTotalSent, null)*/rawTotalSent;
+                mFeeSecondary.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), totalSent));
+//                mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
+                mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), fee));
                 mFeePrimaryLabel.setText(String.format(getString(R.string.Send_fee), ""));
                 mFeeSecondaryLabel.setText(getString(R.string.Confirmation_totalLabel));
 
@@ -298,7 +300,7 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
-            mToFromAddress.setText(walletManager.decorateAddress(mTransaction.getTo())); //showing only the destination address
+            mToFromAddress.setText(walletManager.decorateAddress(received?mTransaction.getFrom():mTransaction.getTo())); //showing only the destination address
 
             // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
@@ -329,7 +331,9 @@ public class FragmentTxDetails extends DialogFragment {
             String memo;
             mTxMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
-            if (mTxMetaData != null) {
+            if(walletManager.getIso().equalsIgnoreCase("ELA")){
+                mMemoText.setText(mTransaction.memo);
+            } else if (mTxMetaData != null) {
                 if (mTxMetaData.comment != null) {
                     memo = mTxMetaData.comment;
                     mMemoText.setText(memo);
@@ -359,6 +363,10 @@ public class FragmentTxDetails extends DialogFragment {
             mTransactionId.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+//                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ElaDataSource.getUrl("/tx/"+mTransactionId.getText().toString())));
+//                    startActivity(browserIntent);
+//                    getActivity().overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
 
                     // Get the default color based on theme
                     final int color = mTransactionId.getCurrentTextColor();

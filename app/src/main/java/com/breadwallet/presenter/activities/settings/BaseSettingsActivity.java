@@ -40,6 +40,7 @@ public abstract class BaseSettingsActivity extends BRActivity implements View.On
     @Override
     public void onClick(View v) {
         onBackPressed();
+        finish();
     }
 
     public abstract int getLayoutId();

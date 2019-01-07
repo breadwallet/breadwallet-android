@@ -63,8 +63,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             String tokenSymbol = mTokens.get(i).symbol;
 
             if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
-                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")
-                    && !tokenSymbol.equalsIgnoreCase("ela")) {
+                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("ela")) {
 
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
@@ -81,8 +80,6 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
             else if (tokenSymbol.equalsIgnoreCase("eth"))
                 tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
-            else if (tokenSymbol.equalsIgnoreCase("brd"))
-                tokenItem = new TokenItem(null, "BRD", "BRD", null);
             else if(tokenSymbol.equalsIgnoreCase("ela"))
                 tokenItem = new TokenItem(null, "ELA", "Elastos", null);
 

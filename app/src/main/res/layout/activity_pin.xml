@@ -27,19 +27,20 @@
     <ImageView
         android:id="@+id/title"
         android:layout_width="132dp"
-        android:layout_height="132dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:gravity="center_horizontal"
-        android:src="@drawable/elastos_logo_white_bg"
+        android:src="@drawable/brd_logo_gradient"
         android:textColor="@color/white"
         android:textSize="48sp"
         app:customTFont="Celevenia.otf"
+        android:layout_marginTop="130dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 
@@ -63,24 +64,23 @@
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:showAlphabet="true" />
+        app:showAlphabet="true"/>
 
     <LinearLayout
         android:id="@+id/buttons_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:orientation="horizontal"
-        android:visibility="gone"
         android:weightSum="2.0"
+        android:visibility="gone"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -92,13 +92,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_left_white"
-            android:paddingTop="8dp"
             android:paddingBottom="0dp"
+            android:paddingTop="8dp"
             android:text="@string/UnlockScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:customBFont="CircularPro-Medium.otf"
-            app:isBreadButton="false" />
+            app:isBreadButton="false"
+            />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/right_button"
@@ -106,28 +107,30 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_right_white"
-            android:paddingTop="8dp"
             android:paddingBottom="0dp"
+            android:paddingTop="8dp"
             android:text="@string/UnlockScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customBFont="CircularPro-Medium.otf" />
+            app:customBFont="CircularPro-Medium.otf"
+            />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/unlocked_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginTop="0dp"
         android:alpha="0"
+        android:visibility="gone"
         android:src="@drawable/ic_unlocked"
         app:layout_constraintBottom_toBottomOf="@+id/brkeyboard"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/unlocked_text"
@@ -138,8 +141,9 @@
         android:layout_marginStart="0dp"
         android:alpha="0"
         android:text="@string/UnlockScreen.unlocked"
-        android:textColor="@color/white"
+        android:textColor="@color/black_999999"
         android:textSize="18sp"
+        android:visibility="gone"
         app:customTFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_image"
         app:layout_constraintHorizontal_bias="0.461"
@@ -150,11 +154,11 @@
         android:id="@+id/fingerprint_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginEnd="48dp"
         android:background="@android:color/transparent"
         android:src="?attr/fingerprint_icon_background"
         app:layout_constraintBottom_toBottomOf="@+id/brkeyboard"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>

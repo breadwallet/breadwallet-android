@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 
 import org.json.JSONArray;
 
 import java.math.BigDecimal;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -210,6 +212,30 @@ public class BRSharedPrefs {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong("feeTime_" + iso.toUpperCase(), feeTime);
         editor.apply();
+    }
+
+    public static void putElaNode(Context context, String key, String value){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public static String getElaNode(Context context, String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(key, ElaDataSource.ELA_NODE);
+    }
+
+    public static void putVersionCode(Context context, String key, int value) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public static int getVersionCode(Context context, String key){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(key, 0);
     }
 
     public static List<Integer> getBitIdNonces(Context activity, String key) {

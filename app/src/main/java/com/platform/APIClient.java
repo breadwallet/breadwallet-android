@@ -488,8 +488,12 @@ public class APIClient {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
         String httpDate = DATE_FORMAT.format(new Date());
 
-        if(httpDate != null)
-        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
+        String[] gmt = httpDate.split("GMT");
+        Log.i(TAG, "httpDate:"+httpDate);
+        if(httpDate!=null && gmt.length>0) {
+            request = modifiedRequest.header("Date", gmt[0].trim()+" GMT").build();
+            Log.i(TAG, "Date:"+gmt[0].trim()+" GMT");
+        }
 
         String queryString = request.url().encodedQuery();
 
@@ -777,18 +781,18 @@ public class APIClient {
         mIsPlatformUpdating = true;
 
         //update Bundle
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("UpdateBundle");
-                final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(mContext);
-                apiClient.updateBundle();
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + mBundleName + ": DONE in " + (endTime - startTime) + "ms");
-                itemFinished();
-            }
-        });
+//        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                Thread.currentThread().setName("UpdateBundle");
+//                final long startTime = System.currentTimeMillis();
+//                APIClient apiClient = APIClient.getInstance(mContext);
+//                apiClient.updateBundle();
+//                long endTime = System.currentTimeMillis();
+//                Log.d(TAG, "updateBundle " + mBundleName + ": DONE in " + (endTime - startTime) + "ms");
+//                itemFinished();
+//            }
+//        });
 
         //update feature flags
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

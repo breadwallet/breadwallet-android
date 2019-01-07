@@ -228,7 +228,7 @@ public class SendManager {
 
             item.amount = maxAmountDouble;
 
-            BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError), "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError), app.getString(R.string.Send_max_body), posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
@@ -295,17 +295,17 @@ public class SendManager {
         AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), message, forcePin, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        UiUtils.killAllFragments((Activity) ctx);
+                    }
+                });
+
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         PostAuth.getInstance().onPublishTxAuth(ctx, wm, false, completion);
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                UiUtils.killAllFragments((Activity) ctx);
-                            }
-                        });
-
                     }
                 });
 
@@ -384,7 +384,7 @@ public class SendManager {
         String line2 = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
         String line3 = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
         String line4 = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
-        String line5 = Utils.isNullOrEmpty(request.message) ? "" : "\n\n" + request.message;
+        String line5 = /*Utils.isNullOrEmpty(request.message) ? "" : "\n\n" + request.message*/ "\n\n";
 
         //formatted text
         return line1 + line2 + line3 + (isErc20 ? "" : line4) + line5;

@@ -31,17 +31,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
                     android:text="@string/Receive.title"
                     android:textColor="@color/almost_black"
                     android:textSize="@dimen/header"
-                    app:customTFont="BioSans-SemiBold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <View
                     android:id="@+id/view"
@@ -58,6 +60,7 @@
                     android:id="@+id/faq_button"
                     android:layout_width="@dimen/faq_dimen"
                     android:layout_height="@dimen/faq_dimen"
+                    android:visibility="gone"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/faq_question_black"
                     app:layout_constraintBottom_toBottomOf="@+id/title"
@@ -237,76 +240,20 @@
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/share_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="72dp"
-                android:layout_marginStart="72dp"
-                android:drawableStart="@drawable/ic_share_vertical_gray"
-                android:paddingBottom="12dp"
-                android:paddingLeft="48dp"
-                android:paddingRight="48dp"
-                android:paddingTop="12dp"
+                android:layout_height="@dimen/big_button_height"
+                android:layout_marginBottom="0dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:padding="10dp"
                 android:text="@string/Receive.share"
-                android:textColor="@color/light_gray"
+                android:textColor="@color/almost_black"
                 android:textSize="18sp"
-                app:buttonType="2"
+                app:buttonType="1"
                 app:isBreadButton="true"
                 />
-
-            <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/share_buttons_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2.0"
-                app:backgroundColor="@color/extra_light_blue_background"
-                app:strokeColor="@color/extra_light_gray"
-                app:withStroke="true">
-
-                <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/share_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_weight="1.0"
-                    android:paddingBottom="12dp"
-                    android:paddingTop="12dp"
-                    android:text="@string/Receive.emailButton"
-                    android:textColor="@color/light_gray"
-                    android:textSize="14sp"
-                    app:buttonType="2"
-                    app:isBreadButton="true"
-                    />
-
-                <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/share_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_weight="1.0"
-                    android:paddingBottom="12dp"
-                    android:paddingTop="12dp"
-                    android:text="@string/Receive.textButton"
-                    android:textColor="@color/light_gray"
-                    android:textSize="14sp"
-                    app:buttonType="2"
-                    app:isBreadButton="true"
-                    />
-
-            </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
-
-            <View
-                android:id="@+id/separator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/separator_gray"/>
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/request_button"
@@ -322,7 +269,7 @@
                 android:text="@string/Receive.request"
                 android:textColor="@color/almost_black"
                 android:textSize="18sp"
-                app:buttonType="2"
+                app:buttonType="3"
                 app:isBreadButton="true"/>
 
         </LinearLayout>

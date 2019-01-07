@@ -57,10 +57,13 @@ public class TokenListMetaData {
             this.enabledCurrencies = new ArrayList<>();
             this.enabledCurrencies.add(new TokenInfo("ELA", false, null));
             this.enabledCurrencies.add(new TokenInfo("BTC", false, null));
-            this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
+//            this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
             this.enabledCurrencies.add(new TokenInfo("ETH", false, null));
         }
-        if (this.hiddenCurrencies == null) this.hiddenCurrencies = new ArrayList<>();
+        if (this.hiddenCurrencies == null) {
+            this.hiddenCurrencies = new ArrayList<>();
+            this.hiddenCurrencies.add(new TokenInfo("BCH", false, null));
+        }
     }
 
     public synchronized boolean isCurrencyHidden(String symbol) {

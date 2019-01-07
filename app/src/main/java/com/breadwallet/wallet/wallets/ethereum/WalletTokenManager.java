@@ -112,7 +112,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
         if (address == null) {
-            if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH"))
+            if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH") && !iso.equalsIgnoreCase("ELA"))
                 BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
             return null;
         }
@@ -314,7 +314,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public String getScheme() {
-        return null;
+        return "ethereum";
     }
 
     @Override
@@ -336,6 +336,11 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_DECIMAL);
         return new CryptoTransaction(tx);
+    }
+
+    @Override
+    public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
+        return null;
     }
 
     @Override
@@ -369,6 +374,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public void wipeData(Context app) {
         //Not needed for Tokens
+        mTokenWallets.clear();
     }
 
     @Override

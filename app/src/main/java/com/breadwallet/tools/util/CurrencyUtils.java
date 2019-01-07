@@ -69,7 +69,7 @@ public class CurrencyUtils {
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
             decimalFormatSymbols.setCurrencySymbol("");
             currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-            currencyFormat.setMaximumFractionDigits(maxDecimalPlacesForCrypto == -1 ? wallet.getMaxDecimalPlaces(app) : maxDecimalPlacesForCrypto);
+            currencyFormat.setMaximumFractionDigits(8);
             currencyFormat.setMinimumFractionDigits(0);
             return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
         } else {
@@ -79,8 +79,8 @@ public class CurrencyUtils {
                 decimalFormatSymbols.setCurrencySymbol(symbol);
                 currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
                 currencyFormat.setNegativePrefix("-" + symbol);
-                currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-                currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+                currencyFormat.setMaximumFractionDigits(8);
+                currencyFormat.setMinimumFractionDigits(0);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 BRReportsManager.reportBug(new IllegalArgumentException("illegal iso: " + iso));

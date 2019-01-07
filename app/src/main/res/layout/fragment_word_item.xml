@@ -5,18 +5,19 @@
                 android:filterTouchesWhenObscured="true"
                 android:orientation="horizontal">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/word_button"
-        android:layout_width="136dp"
-        android:layout_height="96dp"
+        android:layout_width="210dp"
+        android:layout_height="112dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_phrase_word"
         android:clickable="false"
         android:focusable="false"
         android:gravity="center"
+        android:elevation="5dp"
         android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sub_header"/>
+        android:background="@color/white"
+        android:textColor="@color/black_333333"
+        android:textSize="24sp"/>
 
 </RelativeLayout>

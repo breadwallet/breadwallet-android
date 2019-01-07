@@ -30,9 +30,10 @@ public class History {
     public String Txid;
     public String Type;
     public String Value;
-    public String CreateTime;
+    public int CreateTime;
     public int Height;
-    public String Fee;
+    public long Fee;
+    public String Memo;
     public List<String> Inputs;
     public List<String> Outputs;
 

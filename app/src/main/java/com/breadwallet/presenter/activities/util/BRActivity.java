@@ -15,6 +15,8 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
+import com.breadwallet.presenter.activities.did.DidQuestionActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -258,6 +260,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
                     }
 
+                }
+                break;
+
+            case BRConstants.SCANNER_DID_REQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    Intent intent = new Intent(this, DidAuthorizeActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
                 break;
 

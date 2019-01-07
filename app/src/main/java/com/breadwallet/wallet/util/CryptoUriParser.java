@@ -20,6 +20,7 @@ import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -176,7 +177,12 @@ public class CryptoUriParser {
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
+                    if(scheme.equalsIgnoreCase("elastos")) {
+                        obj.amount = bigDecimal;
+                    } else {
+                        obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
+                    }
+
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -281,12 +287,18 @@ public class CryptoUriParser {
                 return true;
             }
 
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    SendManager.sendTransaction(app, requestObject, wallet, null);
+                    UiUtils.showSendFragment((FragmentActivity) app, requestObject);
                 }
             });
+//            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SendManager.sendTransaction(app, requestObject, wallet, null);
+//                }
+//            });
 
         }
 
@@ -296,6 +308,7 @@ public class CryptoUriParser {
 
     public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String
             addr, BigDecimal cryptoAmount, String label, String message, String rURL) {
+        if(wm==null || StringUtil.isNullOrEmpty(addr)) return null;
         String iso = wm.getIso();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
@@ -307,7 +320,7 @@ public class CryptoUriParser {
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }
-        if (cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
+        if (cryptoAmount!=null && cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
             if (iso.equalsIgnoreCase("ETH")) {
                 BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(WalletEthManager.ETHER_WEI), 3, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
@@ -315,10 +328,10 @@ public class CryptoUriParser {
                 BigDecimal amount = cryptoAmount.divide(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS), 8, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else if(iso.equalsIgnoreCase("ELA")) {
-                BigDecimal amount = cryptoAmount.divide(new BigDecimal(WalletElaManager.ONE_ELA_IN_SALA), 8, BRConstants.ROUNDING_MODE);
-                builder = builder.appendQueryParameter("amount", amount.toPlainString());
+                builder = builder.appendQueryParameter("amount", cryptoAmount.toPlainString());
             } else {
-                throw new RuntimeException("URI not supported for: " + iso);
+                builder = builder.appendQueryParameter("amount", cryptoAmount.toPlainString());
+//                throw new RuntimeException("URI not supported for: " + iso);
             }
         }
         if (label != null && !label.isEmpty()) {

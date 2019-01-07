@@ -75,21 +75,23 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_BALANCEAFTERTX ="balanceAfterTx";
     public static final String ELA_COLUMN_TXSIZE ="txSize";
     public static final String ELA_COLUMN_AMOUNT ="amount";
+    public static final String ELA_COLUMN_MENO ="meno";
     public static final String ELA_COLUMN_ISVALID ="isValid";
 
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
-            ELA_COLUMN_ID + " integer primary key autoincrement, " +
+            ELA_COLUMN_ID + " integer, " +
             ELA_COLUMN_ISRECEIVED + " integer, " +
             ELA_COLUMN_TIMESTAMP + " integer DEFAULT '0' , " +
             ELA_COLUMN_BLOCKHEIGHT + " interger, " +
             ELA_COLUMN_HASH + " blob, " +
-            ELA_COLUMN_TXREVERSED+ " text DEFAULT 'ELA' , " +
-            ELA_COLUMN_FEE + " integer, " +
+            ELA_COLUMN_TXREVERSED+ " text primary key , " +
+            ELA_COLUMN_FEE + " real, " +
             ELA_COLUMN_TO + " text, " +
             ELA_COLUMN_FROM + " text, " +
             ELA_COLUMN_BALANCEAFTERTX + " integer, " +
             ELA_COLUMN_TXSIZE + " integer, " +
-            ELA_COLUMN_AMOUNT + " integer, " +
+            ELA_COLUMN_AMOUNT + " real, " +
+            ELA_COLUMN_MENO + " text, " +
             ELA_COLUMN_ISVALID +" integer);";
 
     /**

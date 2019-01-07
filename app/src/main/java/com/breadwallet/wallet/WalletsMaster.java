@@ -80,6 +80,7 @@ public class WalletsMaster {
     private TokenListMetaData mTokenListMetaData;
 
     private WalletsMaster(Context app) {
+
     }
 
     public synchronized static WalletsMaster getInstance(Context app) {
@@ -100,18 +101,22 @@ public class WalletsMaster {
         mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
-            enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
-            enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("BGX", true, "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb"));
+            enabled.add(new TokenListMetaData.TokenInfo("HSC", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f"));
+            enabled.add(new TokenListMetaData.TokenInfo("IOEX", true, "0x000000000000000000000000000000000000000"));
+            enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             if(ethWallet!=null && ethWallet.node!=null){
-                BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
-                enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
+//                BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
+//                enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
                 mTokenListMetaData = new TokenListMetaData(enabled, null);
                 KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
             }
         }
 
+        if(mTokenListMetaData==null || mTokenListMetaData.enabledCurrencies==null) return;
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
 
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
@@ -185,14 +190,10 @@ public class WalletsMaster {
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
-        BreadApp.mLang = languageCode;
-        Utility.initLanguage(ctx);
         if (languageCode == null) languageCode = "en";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
-        BreadApp.mLang = languageCode;
         final byte[] randomSeed = sr.generateSeed(16);//128bit
-        String seedTest = new String(randomSeed);
         if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
             return false;
@@ -200,6 +201,7 @@ public class WalletsMaster {
         if (randomSeed.length != 16)
             throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
         byte[] paperKeyBytes = BRCoreMasterPubKey.generatePaperKey(randomSeed, words);//生成助记词
+//        Bip39Reader.detectLang(ctx, new String(paperKeyBytes));
         if (paperKeyBytes == null || paperKeyBytes.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
             return false;
@@ -257,7 +259,7 @@ public class WalletsMaster {
     }
 
     public boolean isIsoErc20(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso)) return false;
+        if (Utils.isNullOrEmpty(iso) || WalletEthManager.getInstance(app).node==null) return false;
         BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {

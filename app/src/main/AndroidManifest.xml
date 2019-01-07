@@ -50,7 +50,7 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="ElephantWallet"
+        android:label="Elephant"
         android:largeHeap="true"
         android:launchMode="singleTask"
         android:supportsRtl="true"
@@ -59,7 +59,7 @@
         android:windowSoftInputMode="stateVisible|adjustResize">
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.breadwallet"
+            android:authorities="com.elastos.wallet"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -229,9 +229,12 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".presenter.activities.ManageWalletsActivity"
-
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".presenter.activities.settings.ElaNodeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".tools.listeners.SyncReceiver"
@@ -242,6 +245,46 @@
             android:name=".tools.services.SyncService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <activity
+            android:name=".presenter.activities.did.DidAuthorizeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".presenter.activities.did.DidAuthListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".presenter.activities.did.DidDetailActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".presenter.activities.did.DidNickActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".presenter.activities.did.DidQuestionActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name=".presenter.provider.BuglyFileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/bugly_path" />
+        </provider>
 
  <!--       <meta-data
             android:name="io.fabric.ApiKey"

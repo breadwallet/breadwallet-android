@@ -216,7 +216,13 @@ public class PostAuth {
             if (rawPhrase.length > 0) {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
-                    CryptoTransaction tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                    CryptoTransaction tx = null;
+                    if(mWalletManager.getIso().equalsIgnoreCase("ELA")){
+                        tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address, mCryptoRequest.message);
+                    } else {
+                        tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                    }
+
 
                     if (tx == null) {
                         BRDialog.showCustomDialog(activity, activity.getString(R.string.Alert_error), activity.getString(R.string.Send_insufficientFunds),

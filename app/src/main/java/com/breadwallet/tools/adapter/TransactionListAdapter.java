@@ -183,6 +183,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
+        if(wm.getIso().equalsIgnoreCase("ELA")){
+            commentString = item.memo==null ? "": item.memo;
+        }
+
         boolean received = item.isReceived();
         int amountColor = received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color;
 
@@ -192,7 +196,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        BigDecimal cryptoAmount = item.getAmount().abs();
+        BigDecimal cryptoAmount = item.getAmount()/*.abs()*/;
 
         BREthereumToken tkn = null;
         if (wm.getIso().equalsIgnoreCase("ETH"))
@@ -231,16 +235,26 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (level > 0 && level < 5) {
             showTransactionProgress(convertView, level * 20);
         }
+        //已发送至
         String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getTo()));
-        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getTo()));
-
+        //已通过
+        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getFrom()));
+        //正在发送至
         String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getTo()));
-        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getTo()));
+        //正在通过 接收
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getFrom()));
 
         if (level > 4) {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
+        }
+        if(wm.getIso().equalsIgnoreCase("ELA")) {
+            if(level == 0) {
+                convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
+            } else {
+                convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
+            }
         }
         if (tkn != null) // it's a token transfer ETH tx
             convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));

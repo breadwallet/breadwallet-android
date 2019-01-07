@@ -74,7 +74,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
 
         mKeyboard.setShowDecimal(false);
 
-        int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
+        int[] pinDigitButtonColors = getResources().getIntArray(R.array.input_pin_digit_button_colors);
         mKeyboard.setButtonTextColor(pinDigitButtonColors);
 
     }

@@ -133,7 +133,7 @@ public class FragmentFingerprint extends Fragment
 
         animateBackgroundDim(true);
         animateSignalSlide(true);
-        if (!authSucceeded)
+        if (completion!=null && !authSucceeded)
             completion.onCancel();
     }
 
@@ -226,7 +226,7 @@ public class FragmentFingerprint extends Fragment
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     if (getActivity() != null)
-                        getActivity().getFragmentManager().beginTransaction().remove(FragmentFingerprint.this).commit();
+                        getActivity().getFragmentManager().beginTransaction().remove(FragmentFingerprint.this).commitAllowingStateLoss();
                 }
             });
 

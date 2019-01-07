@@ -847,6 +847,7 @@ public class BRKeyStore {
         return Base64.decode(base64, Base64.DEFAULT);
     }
 
+
     public synchronized static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
@@ -871,6 +872,7 @@ public class BRKeyStore {
             if (Utils.isEmulatorOrDebug(context))
                 intent = mKeyguardManager.createConfirmDeviceCredentialIntent(alias, context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 app.startActivityForResult(intent, requestCode);
             } else {
                 Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");

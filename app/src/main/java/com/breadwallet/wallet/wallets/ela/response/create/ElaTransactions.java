@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class ElaTransactions {
     public List<ElaOutputs> Outputs;
-    public float Fee;
+    public long Fee;
+    public String Memo;
     public List<ElaUTXOInputs> UTXOInputs;
 }

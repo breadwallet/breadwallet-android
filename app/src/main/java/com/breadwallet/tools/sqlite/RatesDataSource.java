@@ -89,8 +89,8 @@ public class RatesDataSource implements BRDataSourceInterface {
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
                 values.put(BRSQLiteHelper.CURRENCY_ISO, c.iso);
-                database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-
+                long length = database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                Log.i(TAG, "length:"+length);
             }
             if (failed != 0) Log.e(TAG, "putCurrencies: failed:" + failed);
             database.setTransactionSuccessful();

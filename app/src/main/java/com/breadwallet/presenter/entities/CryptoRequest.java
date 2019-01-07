@@ -94,6 +94,9 @@ public class CryptoRequest {
         if (isErc20) {
             BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
             return amount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0;
+        } if(walletManager.getIso().equalsIgnoreCase("ELA")) {
+            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            return balance.compareTo(feeForTx) < 0;
         } else {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
             BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);

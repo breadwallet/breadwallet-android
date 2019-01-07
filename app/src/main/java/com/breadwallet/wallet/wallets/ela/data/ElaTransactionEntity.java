@@ -38,16 +38,18 @@ public class ElaTransactionEntity implements Serializable {
     public long fee;
     public String toAddress;
     public String fromAddress;
+    public String memo;
     public long balanceAfterTx;
     public int txSize;
     public long amount;
+    public String meno;
     public boolean isValid;
 
     public ElaTransactionEntity(){}
 
     public ElaTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
                                 String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
-                                int txSize, long amount, boolean isValid){
+                                int txSize, long amount, String meno,boolean isValid){
         this.isReceived = isReceived;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
@@ -59,6 +61,7 @@ public class ElaTransactionEntity implements Serializable {
         this.balanceAfterTx = balanceAfterTx;
         this.txSize = txSize;
         this.amount = amount;
+        this.memo = meno;
         this.isValid = isValid;
     }
 }

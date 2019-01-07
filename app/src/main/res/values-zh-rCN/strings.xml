@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Elastos</string>
+  <string name="About.appName.android">Elephant</string>
   <!-- About screen blog label -->
-  <string name="About.site">Elastos.org</string>
-  <string name="About.cr">CyberRepublic.org</string>
+  <string name="About.blog">博客</string>
   <!-- About screen footer -->
-  <string name="About.footer">由全球 Bread 团队制作。版本%1$s</string>
+  <string name="About.footer">由 Elastos Application Lab制作。版本%1$s Build %2$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">隐私政策</string>
-  <!-- About screen social labels -->
-  <string name="About.discord">Discord</string>
-  <string name="About.telegram">Telegram</string>
+  <!-- About screen reddit label -->
   <string name="About.reddit">Reddit</string>
-  <string name="About.twitter">Twitter</string>
   <!-- Terms of Use button label -->
   <string name="About.terms">使用条款</string>
   <!-- About screen title -->
   <string name="About.title">关于</string>
+  <!-- About screen twitter label -->
+  <string name="About.twitter">Twitter</string>
   <!-- About screen wallet ID label -->
-  <string name="About.walletID">BRD 奖励 ID</string>
+  <string name="About.walletID">Elephant 奖励 ID</string>
   <!-- Close modal button accessibility label -->
   <string name="AccessibilityLabels.close">关闭</string>
   <!-- Support center accessibiliy label -->
@@ -31,15 +29,15 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">正在加载钱包</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">我的 Bread</string>
+  <string name="AccountHeader.defaultWalletName">我的 Elephant</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">看起来您正在使用第三方键盘，它可以记录您键入的内容并窃取您的密钥（Paper Key）。请切换到默认的安卓键盘以便获得额外保护。</string>
   <!-- Error alert title -->
   <string name="Alert.error">错误</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">您的安卓操作系统密钥库存在问题，请联系support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">您的安卓操作系统密钥库存在问题，请联系support@Elephantwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">您的 Bread 加密数据最近因为您的安卓系统屏幕锁定被禁用而失效。</string>
+  <string name="Alert.keystore.invalidated.android">您的 Elephant 加密数据最近因为您的安卓系统屏幕锁定被禁用而失效。</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">安卓系统密钥库错误</string>
   <!-- No internet alert message -->
@@ -65,11 +63,11 @@
   <!-- Fingerprint was recognized by the scanner -->
   <string name="Alerts.touchIdSucceeded.android">已识别指纹</string>
   <!-- Tell the user where they can enable permissions to access device storage. -->
-  <string name="Android.allowFileSystemAccess">请在您的设备设置中启用存储空间使用权限：“设置” &gt; “应用” &gt; “BRD” &gt; “权限”。</string>
+  <string name="Android.allowFileSystemAccess">请在您的设备设置中启用存储空间使用权限：“设置” &gt; “应用” &gt; “Elephant” &gt; “权限”。</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">您钱包中的任何比特币现金 (BCH) 均可通过主屏幕访问。</string>
   <!-- Warning about using apps that can alter the screen -->
-  <string name="Android.screenAlteringMessage">您应禁用屏幕更改应用（如 Twilight），否则 BRD 将无法正常工作。</string>
+  <string name="Android.screenAlteringMessage">您应禁用屏幕更改应用（如 Twilight），否则 Elephant 将无法正常工作。</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">检测到屏幕更改应用</string>
   <!-- JSON Serialization error message -->
@@ -131,11 +129,11 @@
   <!-- OK button label -->
   <string name="Button.ok">好</string>
   <!-- receive button -->
-  <string name="Button.receive">收到</string>
+  <string name="Button.receive">收款</string>
   <!-- Click this button to sell an asset -->
   <string name="Button.sell">出售</string>
   <!-- send button -->
-  <string name="Button.send">发送</string>
+  <string name="Button.send">付款</string>
   <!-- Settings button label -->
   <string name="Button.settings">设置</string>
   <!-- Settings button label -->
@@ -145,9 +143,9 @@
   <!-- Camera plugin instruction -->
   <string name="CameraPlugin.centerInstruction">将您的身份证号集中在方框中</string>
   <!-- Amount to Send: ($1.00) -->
-  <string name="Confirmation.amountLabel">发送金额：</string>
+  <string name="Confirmation.amountLabel">发送金额</string>
   <!-- Network Fee: ($1.00) -->
-  <string name="Confirmation.feeLabel">网络费：</string>
+  <string name="Confirmation.feeLabel">网络费</string>
   <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
   <string name="Confirmation.processingTime">处理时间：预计此交易将在 %1$s 后完成。</string>
   <!-- Label for "send" button on final confirmation screen -->
@@ -157,7 +155,7 @@
   <!-- To: (address) -->
   <string name="Confirmation.to">至</string>
   <!-- Total Cost: ($5.00) -->
-  <string name="Confirmation.totalLabel">费用总计：</string>
+  <string name="Confirmation.totalLabel">费用总计</string>
   <!-- Confirm paper phrase error message -->
   <string name="ConfirmPaperPhrase.error">您输入的单词与纸密钥 (Paper Key) 不匹配。请重试。</string>
   <!-- Confirm paper phrase view label. -->
@@ -185,7 +183,7 @@
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">电子邮箱不可用</string>
   <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">由于您的 Android 版本错误，Bread 无法验证。[Please tap here for more information.]</string>
+  <string name="ErrorMessages.loopingLockScreen.android">由于您的 Android 版本错误，Elephant 无法验证。[Please tap here for more information.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">本设备未被配置来发送消息。</string>
   <!-- Messaging unavailable alert title -->
@@ -195,11 +193,11 @@
   <!-- You can customize your Face ID Spending Limit from the [menu] -->
   <string name="FaceIDSettings.customizeText">您可以在 %1$s 自定义面部识别支出限额。</string>
   <!-- Face Id screen label -->
-  <string name="FaceIDSettings.label">使用面部识别解锁 BRD，在设置的限额内汇款。</string>
+  <string name="FaceIDSettings.label">使用面部识别解锁 Elephant，在设置的限额内汇款。</string>
   <!-- Title of the screen for setting the Face ID Spending Limit -->
   <string name="FaceIDSettings.linkText">面部识别支出限额页</string>
-  <!-- Setting to turn on Face ID for BRD -->
-  <string name="FaceIDSettings.switchLabel">为 BRD 启用面部识别</string>
+  <!-- Setting to turn on Face ID for Elephant -->
+  <string name="FaceIDSettings.switchLabel">为 Elephant 启用面部识别</string>
   <!-- Face ID settings view title -->
   <string name="FaceIDSettings.title">面部识别</string>
   <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
@@ -229,13 +227,13 @@
   <!-- Home screen menu button to buy some bitcoin -->
   <string name="HomeScreen.buy">购买比特币</string>
   <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">菜单</string>
+  <string name="HomeScreen.menu">设置</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">钱包</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">总资产</string>
   <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">换</string>
+  <string name="HomeScreen.trade">首页</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在查看私人密钥余额...</string>
   <!-- Sweep private key confirmation message -->
@@ -257,13 +255,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">私钥</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">私钥通常以 QR 码形式打印在纸上，用于离线存储资金。 兑换私钥，用一笔交易将其控制的全部资金转入 Bread。</string>
+  <string name="Import.message">私钥通常以 QR 码形式打印在纸上，用于离线存储资金。 兑换私钥，用一笔交易将其控制的全部资金转入 Elephant。</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">本私钥受到密码保护。</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">密码</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">您的 Bread 钱包</string>
+  <string name="Import.rightCaption">您的 Elephant 钱包</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">扫描私钥</string>
   <!-- Import wallet success alert title -->
@@ -283,9 +281,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">忽略</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
+  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Elephant 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Bread 。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Elephant 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Elephant 。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
   <!-- Wipe wallet button -->
@@ -293,7 +291,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">位置服务被禁用。</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread 无权限访问位置服务。</string>
+  <string name="LocationPlugin.notAuthorized">Elephant 无权限访问位置服务。</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">您在%1$s上创建了您的钱包</string>
   <!-- Manage wallet description text -->
@@ -329,11 +327,13 @@
   <!-- Node is connecting label -->
   <string name="NodeSelector.connecting">正在连接</string>
   <!-- Enter node ip address view body -->
-  <string name="NodeSelector.enterBody">输入节点 IP 地址和端口（可选）</string>
+  <string name="NodeSelector.enterBody">输入节点地址</string>
   <!-- Enter Node ip address view title -->
   <string name="NodeSelector.enterTitle">输入节点</string>
   <!-- Switch to manual mode button label -->
   <string name="NodeSelector.manualButton">切换到手动模式</string>
+  <!-- Select node from list -->
+  <string name="NodeSelector.nodesButton">节点列表</string>
   <!-- Node address label -->
   <string name="NodeSelector.nodeLabel">当前主要节点</string>
   <!-- Node is not connected label -->
@@ -382,7 +382,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">交易被拒</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">与我们分享您的匿名数据来帮助改善 Bread。</string>
+  <string name="Prompts.ShareData.body">与我们分享您的匿名数据来帮助改善 Elephant。</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">分享匿名数据</string>
   <!-- Enable touch ID prompt body -->
@@ -396,11 +396,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">密码</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread 已升级到使用 6 位 PIN。点击此处升级。</string>
+  <string name="Prompts.UpgradePin.body">Elephant 已升级到使用 6 位 PIN。点击此处升级。</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">升级 PIN</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">打开推送通知，以便将来从 Bread 接收特殊消息。</string>
+  <string name="PushNotifications.body">打开推送通知，以便将来从 Elephant 接收特殊消息。</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">推送通知</string>
   <!-- Push notifications are off label -->
@@ -430,7 +430,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">输入纸键</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">用您的纸键恢复您的 Bread。</string>
+  <string name="RecoverWallet.intro">用您的纸键恢复您的钱包</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">您输入的纸键无效。请仔细检查每个单词并重试。</string>
   <!-- Previous button accessibility label -->
@@ -458,7 +458,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 分钟</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">如果某次交易在比特币网络上显示为已完成，却不在您的 Bread 里。</string>
+  <string name="ReScan.body2">如果某次交易在比特币网络上显示为已完成，却不在您的 Elephant 里。</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">你反复得到交易被拒绝的出错信息。</string>
   <!-- Start Sync button label -->
@@ -492,13 +492,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">纸键</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">保护您的 Bread 免遭未授权用户盗用。</string>
+  <string name="SecurityCenter.pinDescription">保护您的 Elephant 免遭未授权用户盗用。</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6 位 PIN</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">安全中心</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">方便地解锁 Bread，在设定限额下汇钱。</string>
+  <string name="SecurityCenter.touchIdDescription">方便地解锁 Elephant，在设定限额下汇钱。</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">触摸 ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -508,13 +508,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">余额：%1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">在“设置”&gt;“应用”&gt;“Bread”&gt;“权限”中允许访问相机</string>
+  <string name="Send.cameraUnavailabeMessage.android">在“设置”&gt;“应用”&gt;“Elephant”&gt;“权限”中允许访问相机</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread 没有访问相机的权限</string>
+  <string name="Send.cameraUnavailabeTitle.android">Elephant 没有访问相机的权限</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">前往“设置”以允许访问照相机。</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread 不允许访问照相机</string>
+  <string name="Send.cameraUnavailableTitle">Elephant 不允许访问照相机</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">目标是您自己的地址。您不能发送给您自己。</string>
   <!-- Could not create transaction alert title -->
@@ -526,7 +526,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">不能发给自己</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">网络费：%1$s</string>
+  <string name="Send.fee">网络费%1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">收款人身份未经认证。</string>
   <!-- Insufficient funds error -->
@@ -589,8 +589,8 @@
   <string name="Settings.currencySettings">货币设置</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">加入早期访问</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">您喜欢 Bread 吗？</string>
+  <!-- Are you enjoying Elephant alert message body -->
+  <string name="Settings.enjoying">您喜欢 Elephant 吗？</string>
   <!-- Face ID spending limit label -->
   <string name="Settings.faceIdLimit">面部识别支出限额</string>
   <!-- Redeem the funds stored on this private key. -->
@@ -622,7 +622,7 @@
   <!-- Unlink/delete your wallet from the current device. -->
   <string name="Settings.wipe">取消与此设备的链接</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">同我们分享您的匿名数据来帮助改善 Bread。这不包括任何财务信息。我们尊重您的财务隐私。</string>
+  <string name="ShareData.body">同我们分享您的匿名数据来帮助改善 Elephant。这不包括任何财务信息。我们尊重您的财务隐私。</string>
   <!-- Share data header -->
   <string name="ShareData.header">共享数据？</string>
   <!-- Share data switch label. -->
@@ -630,7 +630,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">再次书写纸键</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Bread 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
+  <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Elephant 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">写下纸键</string>
   <!-- Argument is date -->
@@ -682,14 +682,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">指纹认证未启用</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">请用指纹解锁 Bread 并在设定限额下汇钱。</string>
+  <string name="TouchIdSettings.label">请用指纹解锁 Elephant 并在设定限额下汇钱。</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID 支出限额屏幕</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">支出限制：%1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">针对 Bread 启用触摸 ID</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">针对 Elephant 启用触摸 ID</string>
+  <!-- Enable fingerprint for this wallet called Elephant -->
   <string name="TouchIdSettings.switchLabel.android">指纹认证</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">触摸 ID</string>
@@ -710,7 +710,7 @@
   <!-- Availability status text -->
   <string name="Transaction.available">可供支出</string>
   <!-- Transaction complete label -->
-  <string name="Transaction.complete">完成</string>
+  <string name="Transaction.complete">交易时间</string>
   <!-- Transaction is confirming status text -->
   <string name="Transaction.confirming">进行中</string>
   <!-- eg. Ending balance: $50.00 -->
@@ -739,7 +739,7 @@
   <string name="Transaction.sentTo">已发送至 %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">期初余额：%1$s</string>
-  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
   <string name="Transaction.tokenTransfer">代币转让费用： %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">等待确认中。部分商家需要进行确认以完成交易。预估时间：1-2 小时。</string>
@@ -848,7 +848,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">触控感应器</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">解锁您的 Bread。</string>
+  <string name="UnlockScreen.touchIdPrompt">解锁您的 Elephant。</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">请解锁您的安卓设备以便继续。</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -860,7 +860,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">请牢记此 PIN 码。如果您忘记，您将无法访问您的比特币。</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">您的 PIN 码将用于解锁您的 Bread 并发送款项。</string>
+  <string name="UpdatePin.createInstruction">您的 PIN 码将用于解锁您的 Elephant 并发送款项。</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">设置 PIN 码</string>
   <!-- Update PIN title -->
@@ -894,7 +894,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">授权此交易</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">打开 Bread iPhone app 以设置您的钱包。</string>
+  <string name="Watch.noWalletWarning">打开 Elephant iPhone app 以设置您的钱包。</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">忽略</string>
   <!-- Webview loading error message -->
@@ -902,9 +902,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet 更名为 Bread， 并增加了全新的界面和功能。如果您需要帮助，请使用在大多数设备屏幕右上角的(?)</string>
+  <string name="Welcome.body">Elephantwallet 更名为 Elephant， 并增加了全新的界面和功能。如果您需要帮助，请使用在大多数设备屏幕右上角的(?)</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">欢迎使用bread！</string>
+  <string name="Welcome.title">欢迎使用Elephant！</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">您确认要删除此钱包吗？</string>
   <!-- Wipe wallet alert title -->
@@ -918,7 +918,7 @@
   <!-- Instructions for unlinking the wallet -->
   <string name="WipeWallet.startMessage">取消钱包链接可将其从本设备移除。一旦钱包链接被取消，您可以启用新钱包，或恢复本设备的其他钱包。</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">您无法再在这个设备上使用现在的Bread钱包。 现在的一切资金都留在纸键上。</string>
+  <string name="WipeWallet.startWarning">您无法再在这个设备上使用现在的Elephant钱包。 现在的一切资金都留在纸键上。</string>
   <!-- Unlink this wallet from this device. -->
   <string name="WipeWallet.title">取消钱包的链接</string>
   <!-- Wipe wallet button title -->
@@ -933,4 +933,24 @@
   <string name="WritePaperPhrase.previous">上一步</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d / %2$d</string>
+
+  <!--elastos strings-->
+  <string name="SendTransacton.failed">发送交易失败</string>
+  <string name="SendTransacton.sending">交易正在发送</string>
+  <string name="Transaction.rate">交易时价格</string>
+  <string name="Confirm.block">确认块</string>
+  <string name="Transaction.id">交易ID</string>
+
+  <string name="Token.list"> 币列表</string>
+  <string name="Intro_title">使用加密货币最安全且最可靠的方式。</string>
+  <string name="Address.isused.Hint">%1$s 地址已被重复使用过。</string>
+  <string name="Send.balance.hint">金额</string>
+  <string name="Send.max.body">发送最大金额?</string>
+  <string name="Upgrade.title">检测升级</string>
+  <string name="Send.dialog.ignore">忽略</string>
+  <string name="Send.dialog.cancle">取消</string>
+  <string name="My.wallet.title">我的钱包</string>
+  <string name="Setting.title">设置</string>
+  <string name="Gas.price">燃料价格</string>
+  <string name="Gas.limit">燃料上限</string>
 </resources>
