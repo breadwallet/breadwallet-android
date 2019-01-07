@@ -28,7 +28,6 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
@@ -116,8 +115,8 @@ public final class TokenUtil {
     private static APIClient.BRResponse fetchTokensFromServer(Context context, String tokenUrl) {
         Request request = new Request.Builder()
                 .url(tokenUrl)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).get().build();
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON).get().build();
 
         return APIClient.getInstance(context).sendRequest(request, true);
     }

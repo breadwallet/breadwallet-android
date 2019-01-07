@@ -26,8 +26,6 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -41,7 +39,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -211,11 +208,11 @@ public final class EventUtils {
                     return;
                 }
 
-                RequestBody requestBody = RequestBody.create(MediaType.parse(BRConstants.CONTENT_TYPE_JSON), jsonObject.toString());
+                RequestBody requestBody = RequestBody.create(MediaType.parse(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8), jsonObject.toString());
                 Request request = new Request.Builder()
                         .url(APIClient.getBaseURL() + EVENTS_PATH)
-                        .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                        .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
+                        .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                        .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
                         .post(requestBody).build();
 
                 APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
