@@ -215,9 +215,9 @@ public class CameraPlugin implements Plugin {
                             continuation.complete();
                             return;
                         }
-                        continuation.getServletResponse().setContentType(BRConstants.CONTENT_TYPE_JSON);
+                        continuation.getServletResponse().setContentType(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-                        APIClient.BRResponse brResp = new APIClient.BRResponse(respJson.toString().getBytes(), 200, BRConstants.CONTENT_TYPE_JSON);
+                        APIClient.BRResponse brResp = new APIClient.BRResponse(respJson.toString().getBytes(), 200, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         BRHTTPHelper.handleSuccess(brResp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                         continuation.complete();
 

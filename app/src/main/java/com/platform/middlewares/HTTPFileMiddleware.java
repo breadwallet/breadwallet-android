@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -23,9 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import okhttp3.Request;
-import okhttp3.Response;
 
-import static com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON;
 
 
 /**
@@ -216,7 +215,7 @@ public class HTTPFileMiddleware implements Middleware {
             case "js":
                 return "application/javascript";
             case "json":
-                return CONTENT_TYPE_JSON;
+                return BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8;
             default:
                 break;
         }
