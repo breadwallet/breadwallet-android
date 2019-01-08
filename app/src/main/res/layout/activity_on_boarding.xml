@@ -5,7 +5,6 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/on_boarding"
     tools:context="com.breadwallet.presenter.activities.intro.OnBoardingActivity">
 
     <ImageButton
