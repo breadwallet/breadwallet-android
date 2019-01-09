@@ -11,11 +11,11 @@
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/scan_button"
         android:layout_width="0dp"
-        android:layout_height="@dimen/big_button_height"
+        android:layout_height="@dimen/button_height"
         android:layout_margin="@dimen/bread_margin"
         android:padding="10dp"
         android:text="@string/Import.scan"
-        android:textSize="18sp"
+        android:textSize="@dimen/button_text_size"
         app:buttonType="1"
         app:customBFont="CircularPro-Medium.otf"
         app:isBreadButton="true"
