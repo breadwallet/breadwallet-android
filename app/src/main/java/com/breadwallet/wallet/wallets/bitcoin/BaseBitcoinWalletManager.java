@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
@@ -916,15 +917,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         super.syncStarted();
         Log.d(getTag(), "syncStarted: ");
         final Context app = BreadApp.getBreadContext();
-        if (Utils.isEmulatorOrDebug(app)) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(app, "syncStarted " + getCurrencyCode(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
         onSyncStarted();
     }
 
@@ -940,15 +932,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         }
 
         onSyncStopped(error);
-
-        if (Utils.isEmulatorOrDebug(context)) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, "SyncStopped " + getCurrencyCode() + " err(" + error + ") ", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
 
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {
@@ -1000,7 +983,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                         @Override
                         public void run() {
                             if (!BRToast.isToastShown()) {
-                                if (Utils.isEmulatorOrDebug(ctx))
+                                if (BuildConfig.DEBUG)
                                     BRToast.showCustomToast(ctx, strToShow,
                                             BreadApp.mDisplayHeightPx / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                 AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);

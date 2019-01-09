@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -308,7 +309,7 @@ public class SendManager {
         }
         boolean forcePin = false;
 
-        if (Utils.isEmulatorOrDebug(ctx)) {
+        if (BuildConfig.DEBUG) {
             Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
             Log.e(TAG, "confirmPay: request.amount: " + request.getAmount());
             Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode()));
