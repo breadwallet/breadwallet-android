@@ -15,6 +15,7 @@ import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -23,6 +24,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -129,12 +131,23 @@ public class WalletsMaster {
         }
     }
 
-    public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+    public synchronized List<BaseWalletManager> getAllWallets(Context context) {
         if (mWallets == null || mWallets.size() == 0) {
-            updateWallets(app);
+            updateWallets(context);
         }
         return mWallets;
 
+    }
+
+    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
+        List<String> currencyCodes = new ArrayList<>();
+        currencyCodes.add(WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        currencyCodes.add(WalletBitcoinManager.BITCASH_CURRENCY_CODE);
+        currencyCodes.add(WalletEthManager.ETH_CURRENCY_CODE);
+        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
+            currencyCodes.add(tokenItem.symbol.toUpperCase());
+        }
+        return currencyCodes;
     }
 
     //return the needed wallet for the iso
