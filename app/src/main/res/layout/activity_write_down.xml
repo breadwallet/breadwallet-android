@@ -69,7 +69,7 @@
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_write_down"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/big_button_height"
+        android:layout_height="@dimen/button_height"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
         android:layout_marginBottom="16dp"
@@ -79,7 +79,7 @@
         android:padding="10dp"
         android:text="@string/StartPaperPhrase.buttonTitle"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="@dimen/button_text_size"
         app:isBreadButton="true"/>
 
 </RelativeLayout>
