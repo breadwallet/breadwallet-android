@@ -406,7 +406,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
@@ -415,7 +415,7 @@
             android:padding="10dp"
             android:text="@string/Send.sendLabel"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="@dimen/button_text_size"
             app:buttonType="1"
             app:isBreadButton="true"
             />

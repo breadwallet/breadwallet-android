@@ -94,7 +94,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/previous_button"
             android:layout_width="0dp"
-            android:layout_height="72dp"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="32dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="@dimen/bread_margin"
@@ -106,14 +106,14 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/WritePaperPhrase.previous"
-            android:textSize="18sp"
+            android:textSize="@dimen/button_text_size"
             app:isBreadButton="true"
             />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/next_button"
             android:layout_width="0dp"
-            android:layout_height="72dp"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="32dp"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="8dp"
@@ -124,7 +124,7 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/RecoverWallet.next"
-            android:textSize="18sp"
+            android:textSize="@dimen/button_text_size"
             app:isBreadButton="true"/>
 
     </LinearLayout>
