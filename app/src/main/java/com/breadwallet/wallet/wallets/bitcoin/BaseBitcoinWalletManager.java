@@ -438,11 +438,12 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(app));
-        if (ent == null) {
+        CurrencyEntity btcFiatRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, BRSharedPrefs.getPreferredFiatIso(app));
+        CurrencyEntity currencyBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        if (btcFiatRate == null || currencyBtcRate == null) {
             return BigDecimal.ZERO;
         }
-        return new BigDecimal(ent.rate); //dollars
+        return new BigDecimal(btcFiatRate.rate).multiply(new BigDecimal(currencyBtcRate.rate));
     }
 
     @Override
