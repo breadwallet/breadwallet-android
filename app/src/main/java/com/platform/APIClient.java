@@ -450,7 +450,7 @@ public class APIClient {
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
                     return createBrResponse(response);
-                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
+                } else if (!BuildConfig.DEBUG && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                     return createBrResponse(new Response.Builder().code(HttpStatus.INTERNAL_SERVER_ERROR_500).request(request)
