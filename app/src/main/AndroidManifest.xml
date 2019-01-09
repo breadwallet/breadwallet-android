@@ -276,6 +276,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".presenter.activities.did.AuthorQrActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".presenter.provider.BuglyFileProvider"
             android:authorities="${applicationId}.fileProvider"

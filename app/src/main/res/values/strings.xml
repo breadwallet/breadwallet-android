@@ -305,6 +305,8 @@
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lock Wallet</string>
   <!-- Did Authorizations -->
+  <string name="MenuButton.authorizations.qr">Authorizations QR</string>
+  <!-- Did Authorizations -->
   <string name="MenuButton.authorizations">Authorizations</string>
   <!-- (Click here to) manage (your list of) wallets -->
   <string name="MenuButton.manageWallets">Manage Wallets</string>
