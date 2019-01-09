@@ -81,7 +81,7 @@ public class RatesDataSource implements BRDataSourceInterface {
             int failed = 0;
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
-                if (Utils.isNullOrEmpty(c.code) || Utils.isNullOrEmpty(c.name) || c.rate <= 0) {
+                if (Utils.isNullOrEmpty(c.code) || c.rate <= 0) {
                     failed++;
                     continue;
                 }
@@ -90,11 +90,16 @@ public class RatesDataSource implements BRDataSourceInterface {
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
                 values.put(BRSQLiteHelper.CURRENCY_ISO, c.iso);
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-
             }
-            if (failed != 0) Log.e(TAG, "putCurrencies: failed:" + failed);
+            if (failed != 0) {
+                Log.e(TAG, "putCurrencies: failed:" + failed);
+            }
             database.setTransactionSuccessful();
-            for (OnDataChanged list : onDataChangedListeners) if (list != null) list.onChanged();
+            for (OnDataChanged list : onDataChangedListeners) {
+                if (list != null) {
+                    list.onChanged();
+                }
+            }
         } catch (Exception ex) {
             Log.e(TAG, "putCurrencies: failed: ", ex);
             BRReportsManager.reportBug(ex);
