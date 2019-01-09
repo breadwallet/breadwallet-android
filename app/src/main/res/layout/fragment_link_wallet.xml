@@ -158,11 +158,12 @@
                 <com.breadwallet.presenter.customviews.BRButton
                     android:id="@+id/negative_button"
                     android:layout_width="200dp"
-                    android:layout_height="60dp"
+                    android:layout_height="@dimen/button_height"
                     android:layout_marginStart="6dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="3dp"
                     android:layout_weight="1"
+                    android:textSize="@dimen/button_text_size"
                     android:text="@string/LinkWallet.decline"
                     app:buttonType="8"
                     app:isBreadButton="true" />
@@ -170,11 +171,12 @@
                 <com.breadwallet.presenter.customviews.BRButton
                     android:id="@+id/positive_button"
                     android:layout_width="200dp"
-                    android:layout_height="60dp"
+                    android:layout_height="@dimen/button_height"
                     android:layout_marginEnd="6dp"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@id/negative_button"
                     android:layout_weight="1"
+                    android:textSize="@dimen/button_text_size"
                     android:text="@string/LinkWallet.approve"
                     app:buttonType="9"
                     app:isBreadButton="true" />
