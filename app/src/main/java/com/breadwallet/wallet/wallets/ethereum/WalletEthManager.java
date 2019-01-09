@@ -822,7 +822,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
-        if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+        if (BuildConfig.DEBUG) {
             Log.e(TAG, "submitTransaction: wid:" + wid);
             Log.e(TAG, "submitTransaction: tid:" + tid);
             Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
