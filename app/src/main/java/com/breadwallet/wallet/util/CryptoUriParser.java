@@ -336,7 +336,18 @@ public class CryptoUriParser {
         return true;
     }
 
-    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, CryptoRequest request) {
+    /**
+     * Generate an Uri for a given CryptoRequest.
+     * @param context       Context were was called.
+     * @param wm            Wallet manager.
+     * @param request       Request information to be included in the Uri.
+     * @param includeSchema True if the schema has to be included.
+     * @return  An Uri with the request information.
+     */
+    public static Uri createCryptoUrl(Context context,
+                                      BaseWalletManager wm,
+                                      CryptoRequest request,
+                                      boolean includeSchema) {
         String currencyCode = wm.getCurrencyCode();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
@@ -344,16 +355,18 @@ public class CryptoUriParser {
         if (request.getAddress().contains(":")) {
             cleanAddress = request.getAddress().split(":")[1];
         }
-        builder = builder.scheme(walletScheme);
+        if (includeSchema) {
+            builder = builder.scheme(walletScheme);
+        }
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }
         if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             if (currencyCode.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletEthManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                BigDecimal amount = WalletEthManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());
                 builder = builder.appendQueryParameter(VALUE, amount.toPlainString());
             } else if (currencyCode.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || currencyCode.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletBitcoinManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                BigDecimal amount = WalletBitcoinManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());
                 builder = builder.appendQueryParameter(AMOUNT, amount.toPlainString());
             } else {
                 throw new RuntimeException("URI not supported for: " + currencyCode);
