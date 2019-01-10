@@ -44,11 +44,13 @@ import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentOnBoarding;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.util.ArrayList;
@@ -71,7 +73,6 @@ public class OnBoardingActivity extends BRActivity {
         COINS_PAGE_APPEARED,
         FINAL_PAGE_APPEARED;
     }
-
 
     public enum NextScreen {
         BUY_SCREEN,
@@ -99,7 +100,7 @@ public class OnBoardingActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 EventUtils.pushEvent(EventUtils.EVENT_SKIP_BUTTON);
-                viewPager.setCurrentItem(OnBoardingPagerAdapter.COUNT - 1);
+                progressToBrowse(OnBoardingActivity.this);
             }
         });
 
@@ -187,6 +188,28 @@ public class OnBoardingActivity extends BRActivity {
                 EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_APPEARED);
                 break;
         }
+    }
+
+    public static void progressToBrowse(Activity activity) {
+        EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST);
+        if (BRKeyStore.getPinCode(activity).length() > 0) {
+            UiUtils.startBreadActivity(activity, true);
+        } else {
+            OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.HOME_SCREEN);
+            setupPin(activity);
+        }
+    }
+
+    public static void setupPin(final Activity activity) {
+        PostAuth.getInstance().onCreateWalletAuth(activity, false, new PostAuth.AuthenticationSuccessListener() {
+            @Override
+            public void onAuthenticatedSuccess() {
+                APIClient.getInstance(activity).updatePlatform(activity);
+                Intent intent = new Intent(activity, InputPinActivity.class);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+            }
+        });
     }
 
     private void setActiveIndicator(int position) {
