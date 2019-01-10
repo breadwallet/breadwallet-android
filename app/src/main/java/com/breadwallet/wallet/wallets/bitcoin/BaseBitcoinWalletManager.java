@@ -294,8 +294,12 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 }
             }
 
-            if (myAddress == null || otherAddress == null) {
-                throw new IllegalArgumentException("Failed to retrieve output address for transaction " + tx.getReverseHash());
+            String outputAddress = (getWallet().getTransactionAmount(tx) < 0
+                    ? otherAddress   // sent transaction
+                    : myAddress);    // received transaction
+
+            if (outputAddress == null) {
+                throw new IllegalArgumentException("Failed to retrieve outputAddress");
             }
 
             boolean isReceived = getWallet().getTransactionAmount(tx) > 0;
@@ -305,7 +309,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             }
             uiTxs.add(new TxUiHolder(tx, isReceived, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
-                    otherAddress, myAddress,
+                    outputAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
         }
