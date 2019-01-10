@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRDialog;
@@ -32,6 +33,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
+
+import org.wallet.library.AuthorizeManager;
 
 
 /**
@@ -116,6 +119,8 @@ public class IntroActivity extends BRActivity {
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
         checkPermisson();
+
+        AuthorizeManager.Server.init(this, DidAuthorizeActivity.class);
     }
 
     private void checkPermisson(){

@@ -36,6 +36,8 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
+import org.wallet.library.AuthorizeManager;
+
 /**
  * BreadWallet
  * <p/>
@@ -265,9 +267,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
             case BRConstants.SCANNER_DID_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    Intent intent = new Intent(this, DidAuthorizeActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    String result = data.getStringExtra("result");
+                    AuthorizeManager.Server.receiveScanAuthor(result);
                 }
                 break;
 
