@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,15 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.EventUtils;
-import com.platform.APIClient;
 
 public class FragmentOnBoarding extends Fragment {
     private static final String ARGUMENT_POSITION = "com.breadwallet.presenter.fragments.FragmentOnBoarding.POSITION";
@@ -77,40 +71,19 @@ public class FragmentOnBoarding extends Fragment {
                             OnBoardingActivity.showBuyScreen(getActivity());
                         } else {
                             OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.BUY_SCREEN);
-                            setupPin();
+                            OnBoardingActivity.setupPin(getActivity());
                         }
                     }
                 });
                 buttonBrowse.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST);
-                        if (BRKeyStore.getPinCode(getActivity()).length() > 0) {
-                            UiUtils.startBreadActivity(getActivity(), true);
-                        } else {
-                            OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.HOME_SCREEN);
-                            setupPin();
-                        }
+                        OnBoardingActivity.progressToBrowse(getActivity());
                     }
                 });
                 break;
         }
         return rootLayout;
-    }
-
-    private void setupPin() {
-        PostAuth.getInstance().onCreateWalletAuth(getActivity(), false, new PostAuth.AuthenticationSuccessListener() {
-            @Override
-            public void onAuthenticatedSuccess() {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    APIClient.getInstance(activity).updatePlatform(getActivity());
-                    Intent intent = new Intent(activity, InputPinActivity.class);
-                    activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-                }
-            }
-        });
     }
 
 }
