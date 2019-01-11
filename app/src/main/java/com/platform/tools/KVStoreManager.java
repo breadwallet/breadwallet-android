@@ -540,97 +540,62 @@ public class KVStoreManager {
         return result;
     }
 
-    public static void putTxMetaData(Context context, TxMetaData data, byte[] txHash) {
+    /**
+     * In this method we ONLY update the data if the comment was changed.
+     * Populate other fields only if they're empty.
+     *
+     * @param context       The context in which we are operating.
+     * @param newTxMetaData The transaction data to be used for insert or update.
+     * @param txHash        The transaction hash for this transaction data.
+     */
+    public static void putTxMetaData(Context context, TxMetaData newTxMetaData, byte[] txHash) {
         String key = txKey(txHash);
-        TxMetaData old = getTxMetaData(context, txHash);
+        TxMetaData oldTxMetaData = getTxMetaData(context, txHash);
 
         boolean needsUpdate = false;
-        if (old == null) {
+        if (oldTxMetaData == null) {
             needsUpdate = true;
-            old = data;
-        } else if (data != null) {
-            String finalExchangeCurrency = getFinalValue(data.exchangeCurrency, old.exchangeCurrency);
-            if (finalExchangeCurrency != null) {
-                Log.e(TAG, "putTxMetaData: finalExchangeCurrency:" + finalExchangeCurrency);
-                old.exchangeCurrency = finalExchangeCurrency;
-                needsUpdate = true;
-            }
-            String finalDeviceId = getFinalValue(data.deviceId, old.deviceId);
-            if (finalDeviceId != null) {
-                Log.e(TAG, "putTxMetaData: finalDeviceId:" + finalDeviceId);
-                old.deviceId = finalDeviceId;
-                needsUpdate = true;
-            }
-            String finalComment = getFinalValue(data.comment, old.comment);
+            oldTxMetaData = newTxMetaData;
+        } else if (newTxMetaData != null) {
+            String finalComment = getFinalValue(newTxMetaData.comment, oldTxMetaData.comment);
+            //We might need to update this if it changed
             if (finalComment != null) {
-                Log.e(TAG, "putTxMetaData: comment:" + finalComment);
-                old.comment = finalComment;
+                oldTxMetaData.comment = finalComment;
                 needsUpdate = true;
             }
-            int finalClassVersion = getFinalValue(data.classVersion, old.classVersion);
-            if (finalClassVersion != -1) {
-                old.classVersion = finalClassVersion;
-                needsUpdate = true;
-            }
-            int finalCreationTime = getFinalValue(data.creationTime, old.creationTime);
-            if (finalCreationTime != -1) {
-                old.creationTime = finalCreationTime;
-                needsUpdate = true;
-            }
-            double finalExchangeRate = getFinalValue(data.exchangeRate, old.exchangeRate);
-            if (finalExchangeRate != -1) {
-                old.exchangeRate = finalExchangeRate;
-                needsUpdate = true;
-            }
-            int finalBlockHeight = getFinalValue(data.blockHeight, old.blockHeight);
-            if (finalBlockHeight != -1) {
-                old.blockHeight = finalBlockHeight;
-                needsUpdate = true;
-            }
-            int finalTxSize = getFinalValue(data.txSize, old.txSize);
-            if (finalTxSize != -1) {
-                old.txSize = finalTxSize;
-                needsUpdate = true;
-            }
-            String finalFee = getFinalValue(data.fee, old.fee);
-            if (finalFee != null) {
-                old.fee = finalFee;
+            //We might need to update this if we didn't have a rate at the time of creating the tx.
+            if (oldTxMetaData.exchangeRate == 0 && newTxMetaData.exchangeRate != 0) {
+                oldTxMetaData.exchangeRate = newTxMetaData.exchangeRate;
                 needsUpdate = true;
             }
         }
 
-        if (!needsUpdate) {
-            return;
-        }
+        if (needsUpdate) {
+            Log.d(TAG, "putTxMetaData: updating txMetadata for : " + key);
 
-        Log.d(TAG, "putTxMetaData: updating txMetadata for : " + key);
-
-        JSONObject obj = new JSONObject();
-        byte[] result;
-        try {
-            obj.put(CLASS_VERSION, old.classVersion);
-            obj.put(BLOCK_HEIGHT, old.blockHeight);
-            obj.put(EXCHANGE_RATE, old.exchangeRate);
-            obj.put(EXCHANGE_CURRENCY, old.exchangeCurrency == null ? "" : old.exchangeCurrency);
-            obj.put(FEE_RATE, old.fee);
-            obj.put(TX_SIZE, old.txSize);
-            obj.put(CREATION_TIME, old.creationTime);
-            obj.put(DEVICE_ID, old.deviceId == null ? "" : old.deviceId);
-            obj.put(COMMENT, old.comment == null ? "" : old.comment);
-            result = obj.toString().getBytes();
-
-        } catch (JSONException e) {
-            Log.e(TAG, "putTxMetaData: ", e);
-            return;
-        }
-
-        if (result.length == 0) {
-            Log.e(TAG, "putTxMetaData: FAILED: result is empty");
-            return;
-        }
-        CompletionObject completionObject = setData(context, result, key);
-        if (completionObject != null && completionObject.err != null) {
-            Log.e(TAG, "putTxMetaData: Error setting value for key: " + key + ", err: " + completionObject.err);
+            JSONObject txMetadataJsonObject = new JSONObject();
+            byte[] result;
+            try {
+                txMetadataJsonObject.put(CLASS_VERSION, oldTxMetaData.classVersion);
+                txMetadataJsonObject.put(BLOCK_HEIGHT, oldTxMetaData.blockHeight);
+                txMetadataJsonObject.put(EXCHANGE_RATE, oldTxMetaData.exchangeRate);
+                txMetadataJsonObject.put(EXCHANGE_CURRENCY, oldTxMetaData.exchangeCurrency == null ? "" : oldTxMetaData.exchangeCurrency);
+                txMetadataJsonObject.put(FEE_RATE, oldTxMetaData.fee);
+                txMetadataJsonObject.put(TX_SIZE, oldTxMetaData.txSize);
+                txMetadataJsonObject.put(CREATION_TIME, oldTxMetaData.creationTime);
+                txMetadataJsonObject.put(DEVICE_ID, oldTxMetaData.deviceId == null ? "" : oldTxMetaData.deviceId);
+                txMetadataJsonObject.put(COMMENT, oldTxMetaData.comment == null ? "" : oldTxMetaData.comment);
+                result = txMetadataJsonObject.toString().getBytes();
+                if (result.length == 0) {
+                    Log.e(TAG, "putTxMetaData: FAILED: result is empty");
+                }
+                CompletionObject completionObject = setData(context, result, key);
+                if (completionObject != null && completionObject.err != null) {
+                    Log.e(TAG, "putTxMetaData: Error setting value for key: " + key + ", err: " + completionObject.err);
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "putTxMetaData: ", e);
+            }
         }
 
     }
