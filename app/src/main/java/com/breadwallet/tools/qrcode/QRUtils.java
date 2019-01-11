@@ -65,7 +65,8 @@ public class QRUtils {
     public static final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID = 1133;
     private static final int BITMAP_SIZE = 500;
     private static final int BITMAP_QUALITY = 100;
-    private static String mDataToShare; // TODO to fix this later in the code.
+    private static String mQrDataToShare; // TODO to fix this later in the code.
+    private static String mTextToShare; // TODO same as above
 
     private static Bitmap encodeAsBitmap(String content, int dimension) {
         if (content == null) {
@@ -133,12 +134,20 @@ public class QRUtils {
         return null;
     }
 
-    public static void sendShareIntent(Activity context, String qrData) {
+    /**
+     * Send a share intent with a QR code and a text.
+     * @param context       The context in which we are operating.
+     * @param qrData        Uri used to generate the QR code.
+     * @param text          Uri to be include in the message.
+     */
+    public static void sendShareIntent(Activity context, String qrData, String text) {
         if (context == null) {
             Log.e(TAG, "sendShareIntent: context is null");
             return;
         }
-        mDataToShare = qrData;
+        mQrDataToShare = qrData;
+        mTextToShare = text;
+        // todo Permission check should be done before calling this method to avoid storing data in static variables
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -150,7 +159,7 @@ public class QRUtils {
     }
 
     public static void share(Context context) {
-        Bitmap qrImage = QRUtils.encodeAsBitmap(mDataToShare, BITMAP_SIZE);
+        Bitmap qrImage = QRUtils.encodeAsBitmap(mQrDataToShare, BITMAP_SIZE);
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType(SHARE_IMAGE_TYPE);
         ContentValues values = new ContentValues();
@@ -165,7 +174,7 @@ public class QRUtils {
             }
             shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
             shareIntent.setType(INTENT_TYPE);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, mDataToShare);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mTextToShare);
             String emailSubject = context.getString(R.string.Email_address_subject,
                     WalletsMaster.getInstance(context).getCurrentWallet(context).getName());
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
