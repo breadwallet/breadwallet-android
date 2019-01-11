@@ -196,7 +196,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 }
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, true);
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoUri.toString());
                 showKeyboard(false);
             }
@@ -367,8 +367,11 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
 
         BigDecimal amount = isCrypto ? walletManager.getSmallestCryptoForCrypto(getActivity(), bigAmount) : walletManager.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
-        CryptoRequest request = new CryptoRequest.Builder().setAddress(address).setAmount(amount).build();
-        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, request, true);
+        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                new CryptoRequest.Builder()
+                        .setAddress(address)
+                        .setAmount(amount)
+                        .build());
 
         return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }
