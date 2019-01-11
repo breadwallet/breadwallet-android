@@ -197,7 +197,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
-                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoUri.toString());
                 showKeyboard(false);
             }
         });
