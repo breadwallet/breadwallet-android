@@ -138,15 +138,15 @@ public class QRUtils {
      * Send a share intent with a QR code and a text.
      * @param context       The context in which we are operating.
      * @param qrData        Uri used to generate the QR code.
-     * @param textToShare   Uri to be include in the message.
+     * @param text          Uri to be include in the message.
      */
-    public static void sendShareIntent(Activity context, String qrData, String textToShare) {
+    public static void sendShareIntent(Activity context, String qrData, String text) {
         if (context == null) {
             Log.e(TAG, "sendShareIntent: context is null");
             return;
         }
         mQrDataToShare = qrData;
-        mTextToShare = textToShare;
+        mTextToShare = text;
         // todo Permission check should be done before calling this method to avoid storing data in static variables
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)

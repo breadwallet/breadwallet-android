@@ -339,16 +339,16 @@ public class CryptoUriParser {
     /**
      * Generate an Uri for a given CryptoRequest including the wallet schema.
      * @param context       Context were was called.
-     * @param wm            Wallet manager.
+     * @param walletManager Wallet manager.
      * @param request       Request information to be included in the Uri.
      * @return  An Uri with the request information.
      */
     public static Uri createCryptoUrl(Context context,
-                                      BaseWalletManager wm,
+                                      BaseWalletManager walletManager,
                                       CryptoRequest request) {
-        String currencyCode = wm.getCurrencyCode();
+        String currencyCode = walletManager.getCurrencyCode();
         Uri.Builder builder = new Uri.Builder();
-        String walletScheme = wm.getScheme();
+        String walletScheme = walletManager.getScheme();
         String cleanAddress = request.getAddress(false);
         builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress)) {
