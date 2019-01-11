@@ -145,9 +145,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 }
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
-                Uri textUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, false);
-                Uri qrUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, true);
-                QRUtils.sendShareIntent(getActivity(), qrUri.toString(), textUri.toString());
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoRequest.getAddress());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -238,8 +237,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                         String decoratedReceiveAddress = walletManager.decorateAddress(mReceiveAddress);
                         mAddress.setText(decoratedReceiveAddress);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(decoratedReceiveAddress).build();
-                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, true);
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, new CryptoRequest.Builder().setAddress(decoratedReceiveAddress).build());
                         boolean generated = QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
                         if (!QRUtils.generateQR(getContext(), uri.toString(), mQrImage)) {
                             throw new RuntimeException("failed to generate qr image for address");

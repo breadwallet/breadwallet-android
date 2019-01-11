@@ -337,27 +337,20 @@ public class CryptoUriParser {
     }
 
     /**
-     * Generate an Uri for a given CryptoRequest.
+     * Generate an Uri for a given CryptoRequest including the wallet schema.
      * @param context       Context were was called.
      * @param wm            Wallet manager.
      * @param request       Request information to be included in the Uri.
-     * @param includeSchema True if the schema has to be included.
      * @return  An Uri with the request information.
      */
     public static Uri createCryptoUrl(Context context,
                                       BaseWalletManager wm,
-                                      CryptoRequest request,
-                                      boolean includeSchema) {
+                                      CryptoRequest request) {
         String currencyCode = wm.getCurrencyCode();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
-        String cleanAddress = request.getAddress();
-        if (request.getAddress().contains(":")) {
-            cleanAddress = request.getAddress().split(":")[1];
-        }
-        if (includeSchema) {
-            builder = builder.scheme(walletScheme);
-        }
+        String cleanAddress = request.getAddress(false);
+        builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }

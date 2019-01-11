@@ -66,7 +66,7 @@ public class QRUtils {
     private static final int BITMAP_SIZE = 500;
     private static final int BITMAP_QUALITY = 100;
     private static String mQrDataToShare; // TODO to fix this later in the code.
-    private static String mTextToSare; // TODO same as above
+    private static String mTextToShare; // TODO same as above
 
     private static Bitmap encodeAsBitmap(String content, int dimension) {
         if (content == null) {
@@ -146,7 +146,7 @@ public class QRUtils {
             return;
         }
         mQrDataToShare = qrData;
-        mTextToSare = textToShare;
+        mTextToShare = textToShare;
         // todo Permission check should be done before calling this method to avoid storing data in static variables
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -174,7 +174,7 @@ public class QRUtils {
             }
             shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
             shareIntent.setType(INTENT_TYPE);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, mTextToSare);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mTextToShare);
             String emailSubject = context.getString(R.string.Email_address_subject,
                     WalletsMaster.getInstance(context).getCurrentWallet(context).getName());
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);

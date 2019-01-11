@@ -135,6 +135,19 @@ public class CryptoRequest implements Serializable {
         return mAddress;
     }
 
+    /**
+     * Return the adrress of the crypto request removing the schema if required.
+     * @param includeSchema If true the schema will be removed from the address when present.
+     * @return The address of the request.
+     */
+    public String getAddress(boolean includeSchema) {
+        if (mAddress.contains(":") && !includeSchema) {
+            return mAddress.split(":")[1];
+        } else {
+            return mAddress;
+        }
+    }
+
     public String getScheme() {
         return mScheme;
     }

@@ -98,9 +98,8 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
             public void onClick(View view) {
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
-                Uri textUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, false);
-                Uri qrUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest, true);
-                QRUtils.sendShareIntent(getActivity(), qrUri.toString(), textUri.toString());
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoRequest.getAddress(false));
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +171,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
                         CryptoRequest request = new CryptoRequest.Builder().setAddress(decorated).setAmount(BigDecimal.ZERO).build();
-                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, request, false);
+                        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), walletBitcoinManager, request);
                         if (!QRUtils.generateQR(getActivity(), uri.toString(), mQrImage)) {
                             throw new IllegalStateException("failed to generate qr image for address");
                         }
