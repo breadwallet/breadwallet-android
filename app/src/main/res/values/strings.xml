@@ -1027,4 +1027,6 @@
     <string name="FileChooser.selectImageSource.android">Select Image Source</string>
     <!--Rewards menu item-->
     <string name="Settings.rewards">Rewards</string>
+    <!-- Share e-mail subject -->
+    <string name="Email.address_subject">%1$s Address</string>
 </resources>
