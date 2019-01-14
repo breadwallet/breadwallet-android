@@ -119,8 +119,6 @@ public class IntroActivity extends BRActivity {
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
         checkPermisson();
-
-        AuthorizeManager.Server.init(this, DidAuthorizeActivity.class);
     }
 
     private void checkPermisson(){

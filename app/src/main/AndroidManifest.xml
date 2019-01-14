@@ -254,6 +254,7 @@
         <activity
             android:name=".presenter.activities.did.DidAuthorizeActivity"
             android:launchMode="singleTask"
+            android:exported="true"
             android:screenOrientation="portrait" />
 
         <activity

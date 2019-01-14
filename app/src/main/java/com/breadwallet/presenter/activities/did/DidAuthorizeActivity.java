@@ -31,17 +31,17 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         String value = intent.getStringExtra("result");
-        AuthorizeManager.Server.verifyAuthorize(value, new VerifyCallback() {
+        AuthorizeManager.Server.verifyAuthorize(this, value, new VerifyCallback() {
             @Override
             public void callBack(Request request, boolean b) {
                 LoginRequest loginRequest = (LoginRequest) request;
-                Log.i(TAG, "name:"+loginRequest.name);
+                Log.i(TAG, "server name:"+loginRequest.name);
             }
         });
-        AuthorizeManager.Server.verifyAuthorize(value, new VerifyCallback<LoginRequest>() {
+        AuthorizeManager.Server.verifyAuthorize(this, value, new VerifyCallback<LoginRequest>() {
             @Override
             public void callBack(LoginRequest request, boolean b) {
-                Log.i(TAG, "did:"+request.did);
+                Log.i(TAG, "server did:"+request.did);
             }
         });
     }

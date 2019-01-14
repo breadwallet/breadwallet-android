@@ -125,6 +125,7 @@
     <color name="black_333333">#333333</color>
     <color name="black_999999">#999999</color>
     <color name="black_666666">#666666</color>
+    <color name="black_cccccc">#cccccc</color>
 
     <array name="pin_digit_button_colors">
         <item>#ffffff</item>
