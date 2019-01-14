@@ -67,6 +67,7 @@ public class BRDialogView extends DialogFragment {
     private LinearLayout mButtonsLayout;
     private ImageButton mHelpButton;
     private LinearLayout mMainLayout;
+    private boolean mAlignTextToStart = false;
 
     //provide the way to have clickable span in the message
     private SpannableString mSpanMessage;
@@ -113,6 +114,9 @@ public class BRDialogView extends DialogFragment {
 
         if (messageText.getLineCount() > MAX_LINE_COUNT) {
             messageText.setTextSize(SMALLER_TEXT_SIZE);
+        }
+        if (mAlignTextToStart) {
+            messageText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
 
         if (Utils.isNullOrEmpty(mPositiveButtonText)) {
@@ -251,6 +255,10 @@ public class BRDialogView extends DialogFragment {
 
     public void setDismissListener(DialogInterface.OnDismissListener dismissListener) {
         this.mDismissListener = dismissListener;
+    }
+
+    public void setAlignTextToStart(boolean alignTextToStart) {
+        mAlignTextToStart = alignTextToStart;
     }
 
     public interface BROnClickListener {
