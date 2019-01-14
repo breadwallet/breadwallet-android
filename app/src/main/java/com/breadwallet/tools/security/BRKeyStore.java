@@ -35,6 +35,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
+import com.google.common.collect.Lists;
 import com.platform.entities.WalletInfoData;
 import com.platform.tools.KVStoreManager;
 
@@ -56,6 +57,7 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -155,8 +157,12 @@ public class BRKeyStore {
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
     public static final int AUTH_DURATION_SEC = 300;
     private static final ReentrantLock lock = new ReentrantLock();
+    private static final int MAX_KEY_STORE_ERRORS = 5;
+    private static final int KEY_STORE_ERROR_PERIOD_SEC = 15;
 
     private static boolean bugMessageShowing;
+    private static boolean keyStoreErrorShowing = false;
+    private static List<Long> keyStoreErrors = Lists.newArrayList();
 
     public static Map<String, AliasObject> aliasObjectMap;
 
@@ -304,7 +310,7 @@ public class BRKeyStore {
                     BRReportsManager.reportBug(e);
 
                     // This issue refers to DROID-1019.
-                    showErrorMessage(context, 1019);
+                    showErrorMessage(context);
                     return null;
                 }
             }
@@ -400,7 +406,7 @@ public class BRKeyStore {
             BRReportsManager.reportBug(e);
 
             // This issue refers to DROID-1019.
-            showErrorMessage(context, 1019);
+            showErrorMessage(context);
             return null;
         } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
             e.printStackTrace();
@@ -410,15 +416,27 @@ public class BRKeyStore {
         }
     }
 
-    private static void showErrorMessage(Context context, int issueNumber) {
+    private static synchronized void showErrorMessage(Context context) {
         // HACK: We are just ignoring the cases where this error is called from an application context because
         // at present this method is only used by DROID-1019 which if it happens will happen so much that we can
         // ignore these cases. In reality we should not be showing any UI in the BRKeystore. The error should
         // be passed up the stack and some caller higher up should handle it.
-        if (context instanceof Activity) {
+        // The error will be shown only when we get into an unrecoverable state. We consider that we got into an
+        // unrecoverable state when the key store fails 5 times and the time elapsed between errors was less than
+        // 15 seconds. When the time elapsed between errors is bigger we clear the error counter.
+        long currentTime = System.currentTimeMillis();
+        if (!keyStoreErrors.isEmpty()
+                && (keyStoreErrors.get(keyStoreErrors.size() - 1) - currentTime) > KEY_STORE_ERROR_PERIOD_SEC * 1000) {
+            keyStoreErrors.clear();
+        }
+        keyStoreErrors.add(currentTime);
+        Log.e(TAG, "Key store failed " + keyStoreErrors.size() + " times in the last "
+                + KEY_STORE_ERROR_PERIOD_SEC + " seconds");
+        if (context instanceof Activity && keyStoreErrors.size() > MAX_KEY_STORE_ERRORS && !keyStoreErrorShowing) {
+            keyStoreErrorShowing = true;
             BRDialog.showCustomDialog(context, context.getString(R.string.JailbreakWarnings_title),
-                    String.format(context.getString(R.string.ErrorMessages_ContactSupportBug_android), issueNumber),
-                    null, null, null, null, null, 0);
+                    context.getString(R.string.ErrorMessages_BadKeyStore_android),
+                    null, null, null, null, null, true);
         }
     }
 
