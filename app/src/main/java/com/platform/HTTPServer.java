@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -26,6 +25,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,28 +61,37 @@ import javax.servlet.http.HttpServletResponse;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPServer {
-    public static final String TAG = HTTPServer.class.getName();
+public class HTTPServer extends AbstractLifeCycle {
+    public static final String TAG = HTTPServer.class.getSimpleName();
 
-    private static Set<Middleware> middlewares;
-    private static Server server;
     private static final int PORT = 31120;
     public static final String PLATFORM_BASE_URL = "http://localhost:" + PORT;
     public static final String URL_BUY = PLATFORM_BASE_URL + "/buy";
     public static final String URL_TRADE = PLATFORM_BASE_URL + "/trade";
     public static final String URL_SELL = PLATFORM_BASE_URL + "/sell";
     public static final String URL_SUPPORT = PLATFORM_BASE_URL + "/support";
+
+    private static HTTPServer mInstance;
+    private Server mServer;
+    private static Set<Middleware> middlewares;
     private static OnCloseListener mOnCloseListener;
 
-    public HTTPServer() {
-        init();
+    private HTTPServer() {
     }
 
-    private synchronized static void init() {
+    public static synchronized HTTPServer getInstance() {
+        if (mInstance == null) {
+            mInstance = new HTTPServer();
+        }
+
+        return mInstance;
+    }
+
+    private void init() {
         middlewares = new LinkedHashSet<>();
-        server = new Server(PORT);
+        mServer = new Server(PORT);
         try {
-            server.dump(System.err);
+            mServer.dump(System.err);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,51 +109,64 @@ public class HTTPServer {
         handlerCollection.addHandler(serverHandler);
         handlerCollection.addHandler(wsHandler);
 
-        server.setHandler(handlerCollection);
+        mServer.setHandler(handlerCollection);
 
         setupIntegrations();
-
     }
 
-    public synchronized static void startServer() {
-        Log.d(TAG, "startServer");
-        if (!isStarted()) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (server == null) {
-                            init();
-                        }
-                        server.start();
-                        server.join();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error starting the local server", e);
-                    }
-                }
-            });
+    public void startServer() {
+        try {
+            mInstance.start();
+        } catch (Exception e) {
+            Log.e(TAG, "startServer: Error starting the local server.", e);
         }
     }
 
-    public static void stopServer() {
-        Log.d(TAG, "stopServer");
+    public void stopServer() {
+        try {
+            mInstance.stop();
+        } catch (Exception e) {
+            Log.e(TAG, "stopServer: Error stopping the local server.", e);
+        }
+    }
+
+    @Override
+    protected void doStart() {
+        Log.d(TAG, "doStart");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    if (isStarted()) {
-                        server.stop();
+                    if (mServer == null) {
+                        init();
                     }
-                    server = null;
+                    mServer.start();
+                    mServer.join();
                 } catch (Exception e) {
-                    Log.e(TAG, "Error stopping the local server", e);
+                    Log.e(TAG, "doStart: Error starting the local server.", e);
                 }
             }
         });
     }
 
-    public static boolean isStarted() {
-        return server != null && server.isStarted();
+    @Override
+    protected void doStop()  {
+        Log.d(TAG, "doStop");
+        if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mServer != null) {
+                            mServer.stop();
+                            mServer = null;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "doStop: Error stopping the local server.", e);
+                    }
+                }
+            });
+        }
     }
 
     private static class ServerHandler extends AbstractHandler {
@@ -203,8 +224,9 @@ public class HTTPServer {
             result = m.handle(target, baseRequest, request, response);
             if (result) {
                 String className = m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1);
-                if (!className.contains("HTTPRouter"))
+                if (!className.contains("HTTPRouter")) {
                     Log.d(TAG, "dispatch: " + className + " succeeded:" + request.getRequestURL());
+                }
                 break;
             }
         }
