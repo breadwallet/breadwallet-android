@@ -1,17 +1,25 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
+import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -24,6 +32,7 @@ import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.UnlinkActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
@@ -62,12 +71,15 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public final class SettingsUtil {
-
+    private static final String TAG = SettingsUtil.class.getSimpleName();
     private static final String MARKET_URI = "market://details?id=com.breadwallet";
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
     private static final String DEVELOPER_OPTIONS_TITLE = "Developer Options";
     private static final String SEND_LOGS = "Send Logs";
+    private static final String API_SERVER = "API Server";
+    private static final String API_SERVER_SET_FORMAT = "Api server %s set!";
+    private static final String ONBOARDING_FLOW = "Onboarding flow";
 
     private SettingsUtil() {
     }
@@ -79,7 +91,7 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.openScanner(activity, BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(activity);
             }
         }, false, R.drawable.ic_camera));
 
@@ -255,7 +267,52 @@ public final class SettingsUtil {
                 LogsUtils.shareLogs(activity);
             }
         }, false, 0));
+        items.add(new BRSettingsItem(API_SERVER, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInputDialog(activity);
+            }
+        }, false, 0));
+        items.add(new BRSettingsItem(ONBOARDING_FLOW, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, OnBoardingActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, 0));
         return items;
+    }
+
+    private static void showInputDialog(final Context context) {
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        View promptView = layoutInflater.inflate(R.layout.input_api_server_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptView);
+        final EditText editText = promptView.findViewById(R.id.server_input);
+        editText.setText(BreadApp.getHost());
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton(context.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String host = editText.getText().toString().trim();
+                        if (Utils.isNullOrEmpty(host)) {
+                            BreadApp.setDebugHost(null);
+                        } else {
+                            BreadApp.setDebugHost(host);
+                        }
+                        BRToast.showCustomToast(context, String.format(API_SERVER_SET_FORMAT, BreadApp.getHost().toUpperCase()), 0, Toast.LENGTH_LONG, 0);
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.Button_cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 
     public static List<BRSettingsItem> getBitcoinSettings(final Context context) {

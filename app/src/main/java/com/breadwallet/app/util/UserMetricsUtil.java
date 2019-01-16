@@ -58,8 +58,8 @@ public final class UserMetricsUtil {
     private static final String TAG = UserMetricsUtil.class.getSimpleName();
 
     /* Url fields */
-    private static final String ME_METRICS_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/metrics";
-    private static final String ME_MAILING_LIST_SUBSCRIBE_URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + "/me/mailing-list-subscribe";
+    private static final String ME_METRICS_URL = APIClient.getBaseURL() + "/me/metrics";
+    private static final String ME_MAILING_LIST_SUBSCRIBE_URL = APIClient.getBaseURL() + "/me/mailing-list-subscribe";
 
     /* Metric field key */
     private static final String FIELD_METRIC = "metric";
@@ -75,7 +75,6 @@ public final class UserMetricsUtil {
     private static final String FIELD_BUNDLES = "bundles";
     private static final String FIELD_OS_VERSION = "os_version";
     private static final String FIELD_USER_AGENT = "user_agent";
-    private static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
     private static final String FIELD_DEVICE_TYPE = "device_type";
     private static final String DEVICE_TYPE = Build.MANUFACTURER + " " + Build.MODEL;
     private static final String FIELD_APPLICATION_ID = "application_id";
@@ -125,7 +124,7 @@ public final class UserMetricsUtil {
             JSONObject data = new JSONObject();
             data.put(FIELD_BUNDLES, bundles);
             data.put(FIELD_OS_VERSION, Build.VERSION.RELEASE);
-            data.put(FIELD_USER_AGENT, System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
+            data.put(FIELD_USER_AGENT, System.getProperty(APIClient.SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
             data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
 
@@ -243,7 +242,7 @@ public final class UserMetricsUtil {
      * Makes request to metrics endpoint.
      *
      * @param context The context in which we are operating.
-     * @param url The URL endpoint to send the specified payload to.
+     * @param url     The URL endpoint to send the specified payload to.
      * @param payload The payload to send.
      */
     private static void sendMetricsRequestWithPayload(final Context context, String url, final JSONObject payload) {
@@ -251,7 +250,7 @@ public final class UserMetricsUtil {
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         Request request = new Request.Builder()
                 .url(url)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
         APIClient.getInstance(context).sendRequest(request, true);
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,6 +36,8 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.HTTPServer;
 
 /**
  * BreadWallet
@@ -111,7 +114,7 @@ public class BRActivity extends FragmentActivity {
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Camera permission has been granted, preview can be displayed.
                     Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                    UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner(this);
                 } else {
                     Log.i(TAG, "CAMERA permission was NOT granted.");
                     BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
@@ -130,7 +133,7 @@ public class BRActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
@@ -151,7 +154,6 @@ public class BRActivity extends FragmentActivity {
                             PostAuth.getInstance().onBitIDAuth(BRActivity.this, true);
                         }
                     });
-
                 }
                 break;
 
@@ -185,7 +187,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true, null);
                         }
                     });
                 }
@@ -196,7 +198,7 @@ public class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true, null);
                         }
                     });
                 }
@@ -214,29 +216,14 @@ public class BRActivity extends FragmentActivity {
                     finish();
                 }
                 break;
-
-            case BRConstants.SCANNER_REQUEST:
-                if (resultCode == Activity.RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            String result = data.getStringExtra(ScanQRActivity.EXTRA_RESULT);
-                            AppEntryPointHandler.processQrResult(BRActivity.this, result);
-                        }
-                    });
-
-                }
-                break;
-
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, null);
                         }
                     });
-
                 } else {
                     Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
                     // TODO: Should this be BreadApp.clearApplicationUserData();?
@@ -245,29 +232,15 @@ public class BRActivity extends FragmentActivity {
                     finish();
                 }
                 break;
-            case InputPinActivity.SET_PIN_REQUEST_CODE:
-                if (data != null) {
-                    boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
-                    if (isPinAccepted) {
-                        if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
-                            PostAuth.getInstance().onCreateWalletAuth(this, false);
-                        } else {
-                            UiUtils.startBreadActivity(this, false);
-                        }
-
-                    }
-
-                }
-                break;
-
         }
     }
 
     public void init() {
         //set status bar color
         InternetManager.getInstance();
-        if (!(this instanceof IntroActivity || this instanceof RecoverActivity || this instanceof WriteDownActivity))
+        if (WalletsMaster.isBrdWalletCreated(this)) {
             BRApiManager.getInstance().startTimer(this);
+        }
         //show wallet locked if it is and we're not in an illegal activity.
         if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {

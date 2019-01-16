@@ -130,7 +130,7 @@ public final class TokenUtil {
      */
     public static TokenItem getTokenItem(Context context, String saleAddress) {
         APIClient.BRResponse response = fetchTokensFromServer(context,
-                BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES_SALE_ADDRESS + saleAddress);
+                APIClient.getBaseURL() + ENDPOINT_CURRENCIES_SALE_ADDRESS + saleAddress);
         if (response != null && !response.getBodyText().isEmpty()) {
             ArrayList<TokenItem> tokenItems = parseJsonToTokenList(context, response.getBodyText());
 
@@ -150,7 +150,7 @@ public final class TokenUtil {
 
     public static void fetchTokensFromServer(Context context) {
         APIClient.BRResponse response = fetchTokensFromServer(context,
-                BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES);
+                APIClient.getBaseURL() + ENDPOINT_CURRENCIES);
 
         if (response != null && !response.getBodyText().isEmpty()) {
             // Synchronize on the class object since getTokenItems is static and also synchronizes on the class object

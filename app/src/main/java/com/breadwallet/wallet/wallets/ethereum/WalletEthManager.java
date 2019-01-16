@@ -10,17 +10,16 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -31,17 +30,17 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,7 +94,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
     public static final String NAME = "Ethereum";
-    private static final String FEE_URL_FORMAT = "https://%s/fee-per-kb?currency=%s";
+    private static final String FEE_URL_FORMAT = "%s/fee-per-kb?currency=%s";
 
     private static WalletEthManager mInstance;
 
@@ -301,15 +300,14 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        BigDecimal fee;
         if (amount == null) {
             return null;
         }
-        if (amount.compareTo(BigDecimal.ZERO) == 0) {
-            fee = BigDecimal.ZERO;
-        } else {
+        BigDecimal fee = BigDecimal.ZERO;
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
             fee = new BigDecimal(mWallet.transactionEstimatedFee(amount.toPlainString()));
         }
+
         return fee;
     }
 
@@ -361,7 +359,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, BreadApp.HOST, getCurrencyCode()));
+        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, APIClient.getBaseURL(), getCurrencyCode()));
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
@@ -521,7 +519,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public BigDecimal getFiatExchangeRate(Context app) {
         BigDecimal fiatData = getFiatForEth(app, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(app));
         if (fiatData == null) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return fiatData; //fiat, e.g. dollars
     }
@@ -592,7 +590,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(),  WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -609,9 +607,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app,  WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(),  WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -878,15 +876,16 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                final Context app = BreadApp.getBreadContext();
-                                if (app != null && app instanceof Activity) {
+                                final Context context = BreadApp.getBreadContext();
+                                if (context instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
-                                        PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        UiUtils.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
-                                                app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                                        PostAuth.stampMetaData(context, finalTxHash.getBytes());
+                                        EventUtils.sendTransactionEvent(null);
+                                        UiUtils.showBreadSignal((Activity) context, context.getString(R.string.Alerts_sendSuccess),
+                                                context.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                                     @Override
                                                     public void onComplete() {
-                                                        UiUtils.killAllFragments((Activity) app);
+                                                        UiUtils.killAllFragments((Activity) context);
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
@@ -897,7 +896,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                                 });
                                     } else {
                                         String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
-                                        BRDialog.showSimpleDialog(app, app.getString(R.string.WipeWallet_failedTitle), message);
+                                        EventUtils.sendTransactionEvent(message);
+                                        BRDialog.showSimpleDialog(context, context.getString(R.string.WipeWallet_failedTitle), message);
                                     }
                                 } else {
                                     Log.e(TAG, "submitTransaction: app is null or not an activity");

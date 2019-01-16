@@ -126,10 +126,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     : ACCEPT_HEADER_BITPAY;
             Request request = new Request.Builder().url(url).get().addHeader(BRConstants.HEADER_ACCEPT, acceptHeaderValue).build();
             final APIClient.BRResponse response = APIClient.getInstance(mContext).sendRequest(request, false);
-            if (!walletManager.getCurrencyCode().equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)
-                    && !walletManager.getCurrencyCode().equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE)) {
-                throw new RuntimeException("Can't happen, Payment protocol for: " + walletManager.getCurrencyCode());
-            }
 
             if (!response.isSuccessful()) {
                 Log.e(TAG, "doInBackground: The response is empty");
@@ -260,7 +256,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
             List<X509Certificate> certificateChain = X509CertificateValidator.validateCertificateChain(response.getBody());
-            if (certificateChain != null) {
+            if (certificateChain != null && certificateChain.size() > 0) {
                 distinguishedName = X509CertificateValidator.certificateValidation(certificateChain, mPaymentProtocolRequest);
             }
 
@@ -285,8 +281,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                             mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest) + ":" + e.getMessage());
                 }
             }
-        } finally {
-            mPaymentProtocolRequest = null;
         }
         if (mPaymentProtocolRequest == null) {
             return null;
@@ -339,12 +333,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
     }
 
-    private String getAttributeFromDistinguishedName(String distinguishedName, String
-            attributeKey) {
-        String[] distinguishedNameAttributes = distinguishedName.split(",");
-        for (String distinguishedNameAttribute : distinguishedNameAttributes) {
-            if (distinguishedNameAttribute.contains(attributeKey)) {
-                return distinguishedNameAttribute.split(attributeKey)[0];
+    private String getAttributeFromDistinguishedName(String distinguishedName, String attributeKey) {
+        if (distinguishedName != null) {
+            String[] distinguishedNameAttributes = distinguishedName.split(",");
+            for (String distinguishedNameAttribute : distinguishedNameAttributes) {
+                if (distinguishedNameAttribute.contains(attributeKey)) {
+                    return distinguishedNameAttribute.split(attributeKey)[0];
+                }
             }
         }
         return null;

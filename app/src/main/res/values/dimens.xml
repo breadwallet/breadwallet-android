@@ -3,6 +3,7 @@
     <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
     <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin_small">16dp</dimen>
     <dimen name="transaction_item_margin">10dp</dimen>
 
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
@@ -36,6 +37,7 @@
     <dimen name="permissions_scrollview_max_height">700dp</dimen>
 
     <!-- Delisted token alpha values (for Home Screen) -->
-    <item name="token_background_with_alpha" type="dimen" format="float">.25</item>
-    <item name="token_background_no_alpha" type="dimen" format="float">1</item>
+    <item name="token_background_with_alpha" format="float" type="dimen">.25</item>
+    <item name="token_background_no_alpha" format="float" type="dimen">1</item>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

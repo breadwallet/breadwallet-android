@@ -2,8 +2,10 @@ package com.platform;
 
 
 import android.accounts.AuthenticatorException;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -54,8 +56,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.breadwallet.tools.manager.BRApiManager.HEADER_WALLET_ID;
-
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -102,7 +102,7 @@ public class APIClient {
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
-
+    private static final String HTTPS_SCHEME = "https://";
     private static final String GMT = "GMT";
     private static final String BREAD = "bread";
     private static final int NETWORK_ERROR_CODE = 599;
@@ -114,7 +114,7 @@ public class APIClient {
     private static final String DEVICE_ID = "deviceID";
 
     // convenience getter for the API endpoint
-    public static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
+    private static final String BASE_URL = HTTPS_SCHEME + BreadApp.getHost();
     //Fee per kb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token path
@@ -122,7 +122,20 @@ public class APIClient {
     private static final String TOKEN = "token";
     //me path
     private static final String ME = "/me";
-    //singleton instance
+
+    // Http Header constants
+    private static final String HEADER_WALLET_ID = "X-Wallet-Id";
+    private static final String HEADER_IS_INTERNAL = "X-Is-Internal";
+    private static final String HEADER_TESTFLIGHT = "X-Testflight";
+    private static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
+    private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+    private static final String HEADER_USER_AGENT = "User-agent";
+
+    // User Agent constants
+    public static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
+    private static final String USER_AGENT_APP_NAME = "breadwallet/";
+    private static final String USER_AGENT_PLATFORM_NAME = "android/";
+
     private static APIClient ourInstance;
 
     private byte[] mCachedAuthKey;
@@ -130,13 +143,16 @@ public class APIClient {
     private boolean mIsFetchingToken;
 
     private OkHttpClient mHTTPClient;
+    private static final Map<String, String> mHttpHeaders = new HashMap<>();
+
 
     private static final String BUNDLES_FOLDER = "/bundles";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    public static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
-    public static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
+    private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
+    private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
+    private static final String BUY_NOTIFICATION_KEY = "buy-notification";
 
     public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
     public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
@@ -153,24 +169,17 @@ public class APIClient {
     private Context mContext;
 
     public enum FeatureFlags {
-        BUY_BITCOIN("buy-bitcoin"),
-        EARLY_ACCESS("early-access");
+        BUY_NOTIFICATION(BUY_NOTIFICATION_KEY);
 
-        private final String text;
+        private final String mText;
 
-        /**
-         * @param text
-         */
         FeatureFlags(final String text) {
-            this.text = text;
+            mText = text;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Enum#toString()
-         */
         @Override
         public String toString() {
-            return text;
+            return mText;
         }
     }
 
@@ -184,6 +193,37 @@ public class APIClient {
 
     private APIClient(Context context) {
         mContext = context;
+
+        // Split the default device user agent string by spaces and take the first string.
+        // Example user agent string: "Dalvik/1.6.0 (Linux; U;Android 5.1; LG-F320SBuild/KOT49I.F320S22g) Android/9"
+        // We only want: "Dalvik/1.6.0"
+        String deviceUserAgent = System.getProperty(SYSTEM_PROPERTY_USER_AGENT).split(BRConstants.SPACE_REGEX)[0];
+
+        // The BRD server expects the following user agent: appName/appVersion engine/engineVersion plaform/plaformVersion
+        String brdUserAgent = (new StringBuffer()).append(USER_AGENT_APP_NAME).append(BuildConfig.VERSION_CODE).append(' ')
+                .append(deviceUserAgent).append(' ')
+                .append(USER_AGENT_PLATFORM_NAME).append(Build.VERSION.RELEASE).toString();
+
+        mHttpHeaders.put(HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_TESTFLIGHT, BuildConfig.DEBUG ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? TRUE : FALSE);
+        mHttpHeaders.put(HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode(context));
+        mHttpHeaders.put(HEADER_USER_AGENT, brdUserAgent);
+    }
+
+    /**
+     * Return the current language code i.e. "en_US" for US English.
+     *
+     * @return The current language code.
+     */
+    @TargetApi(Build.VERSION_CODES.N)
+    private String getCurrentLanguageCode(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0).toString();
+        } else {
+            // No inspection deprecation.
+            return context.getResources().getConfiguration().locale.toString();
+        }
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -192,7 +232,7 @@ public class APIClient {
             throw new NetworkOnMainThreadException();
         }
         try {
-            String strUtl = BASE_URL + FEE_PER_KB_URL;
+            String strUtl = getBaseURL() + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
             BRResponse response = sendRequest(request, false);
             JSONObject object = new JSONObject(response.getBodyText());
@@ -214,7 +254,7 @@ public class APIClient {
         if (mContext == null) {
             return null;
         }
-        String strUtl = BASE_URL + ME;
+        String strUtl = getBaseURL() + ME;
         Request request = new Request.Builder()
                 .url(strUtl)
                 .get()
@@ -240,14 +280,14 @@ public class APIClient {
             return null;
         }
         try {
-            String strUtl = BASE_URL + TOKEN_PATH;
+            String strUtl = getBaseURL() + TOKEN_PATH;
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(getCachedAuthKey());
             requestMessageJSON.put(PUBKEY, base58PubKey);
             requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
 
-            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
+            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON);
             RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
             Request request = new Request.Builder()
                     .url(strUtl)
@@ -309,11 +349,10 @@ public class APIClient {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
         }
-        Map<String, String> headers = new HashMap<>(BreadApp.getBreadHeaders());
 
         Request.Builder newBuilder = locRequest.newBuilder();
-        for (String key : headers.keySet()) {
-            String value = headers.get(key);
+        for (String key : mHttpHeaders.keySet()) {
+            String value = mHttpHeaders.get(key);
             newBuilder.header(key, value);
         }
 
@@ -349,7 +388,7 @@ public class APIClient {
                         .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
             }
-            request = request.newBuilder().header(USER_AGENT, Utils.getAgentString(mContext, OkHttpClient.class.getSimpleName())).build();
+
             rawResponse = mHTTPClient.newCall(request).execute();
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
@@ -402,13 +441,16 @@ public class APIClient {
             if (response.code() == 401) {
                 BRReportsManager.reportBug(new AuthenticatorException("Request: " + request.url() + " returned 401!"));
             }
+            if (!response.isSuccessful()) {
+                logRequestAndResponse(request, response);
+            }
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
                     return createBrResponse(response);
-                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST)
+                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                     return createBrResponse(new Response.Builder().code(HttpStatus.INTERNAL_SERVER_ERROR_500).request(request)
@@ -570,7 +612,7 @@ public class APIClient {
                 Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
                 long startTime = System.currentTimeMillis();
                 Request request = new Request.Builder()
-                        .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
+                        .url(String.format("%s/assets/bundles/%s/download", getBaseURL(), bundleName))
                         .get().build();
                 byte[] body;
                 BRResponse response = sendRequest(request, false);
@@ -610,7 +652,7 @@ public class APIClient {
         String latestVersion = null;
         Request request = new Request.Builder()
                 .get()
-                .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, bundleName))
+                .url(String.format("%s/assets/bundles/%s/versions", getBaseURL(), bundleName))
                 .build();
 
         BRResponse response = sendRequest(request, false);
@@ -633,7 +675,7 @@ public class APIClient {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
-        Request diffRequest = new Request.Builder().url(String.format(BUNDLES_FORMAT, BASE_URL, bundleName, currentTarVersion)).get().build();
+        Request diffRequest = new Request.Builder().url(String.format(BUNDLES_FORMAT, getBaseURL(), bundleName, currentTarVersion)).get().build();
         BRResponse resp = sendRequest(diffRequest, false);
         if (Utils.isNullOrEmpty(resp.getBodyText())) {
             Log.e(TAG, "downloadDiff: no response");
@@ -770,12 +812,8 @@ public class APIClient {
         return challenge != null && challenge.startsWith(BREAD);
     }
 
-    public boolean isFeatureEnabled(String feature) {
-        return BRSharedPrefs.getFeatureEnabled(mContext, feature);
-    }
-
     public String buildUrl(String path) {
-        return BASE_URL + path;
+        return getBaseURL() + path;
     }
 
     private class LoggingInterceptor implements Interceptor {
@@ -1042,6 +1080,54 @@ public class APIClient {
 
         public void setCode(int code) {
             mCode = code;
+        }
+    }
+
+    public static String getBaseURL() {
+        if (BuildConfig.DEBUG) {
+            // In the debug case, the user may have changed the host.
+            return HTTPS_SCHEME + BreadApp.getHost();
+        }
+        return BASE_URL;
+    }
+
+    private void logRequestAndResponse(Request request, Response response) {
+        StringBuffer reportStringBuffer = new StringBuffer();
+        reportStringBuffer.append("Request:\n");
+        reportStringBuffer.append(request.url());
+        reportStringBuffer.append("\n");
+        reportStringBuffer.append(request.headers().toString());
+        reportStringBuffer.append(bodyToString(request));
+        reportStringBuffer.append("\n\n");
+        reportStringBuffer.append("Response:\n");
+        reportStringBuffer.append(response.code());
+        reportStringBuffer.append(response.message());
+        reportStringBuffer.append("\n");
+        reportStringBuffer.append(response.headers().toString());
+        reportStringBuffer.append("\n");
+        Log.e(TAG, "sendRequest: Not successful: \n" + reportStringBuffer.toString());
+    }
+
+    /**
+     * Convert {@link Request} to a {@link String}.
+     *
+     * Reference: <a href="https://stackoverflow.com/a/29033727/3211679">stackoverflow</a>
+     *
+     * @param request The request to convert to a {@link String}.
+     * @return The {@link String} version of the specified {@link Request}.
+     */
+
+    private static String bodyToString(final Request request) {
+        try {
+            final Request copy = request.newBuilder().build();
+            final Buffer buffer = new Buffer();
+            RequestBody body = copy.body();
+            if (body != null) {
+                body.writeTo(buffer);
+            }
+            return buffer.readUtf8();
+        } catch (final IOException e) {
+            return null;
         }
     }
 

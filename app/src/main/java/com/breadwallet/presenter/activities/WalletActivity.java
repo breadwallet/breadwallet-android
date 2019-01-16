@@ -44,6 +44,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
@@ -255,14 +256,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        AppEntryPointHandler.processDeepLink(this, intent);
-        showSendIfNeeded(intent);
-    }
-
     private void updateUi() {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (walletManager == null) {
@@ -333,6 +326,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (!UiUtils.isClickAllowed()) {
             return;
         }
+        EventUtils.pushEvent(EventUtils.EVENT_AMOUNT_SWAP_CURRENCY);
         BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
         setPriceTags(BRSharedPrefs.isCryptoPreferred(WalletActivity.this), true);
     }
@@ -398,8 +392,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         InternetManager.registerConnectionReceiver(this, this);
 
-        TxManager.getInstance().onResume(this);
-
         RatesDataSource.getInstance(this).addOnDataChangedListener(this);
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (wallet != null) {
@@ -436,18 +428,22 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(getApplicationContext(), mCurrentWalletIso);
 
-        AppEntryPointHandler.processDeepLink(this, getIntent());
         showSendIfNeeded(getIntent());
 
     }
 
-    private void showSendIfNeeded(final Intent intent) {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        showSendIfNeeded(intent);
+    }
+
+    private synchronized void showSendIfNeeded(final Intent intent) {
         final CryptoRequest request = (CryptoRequest) intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST);
         intent.removeExtra(EXTRA_CRYPTO_REQUEST);
         if (request != null) {
             showSendFragment(request);
         }
-
     }
 
     @Override
