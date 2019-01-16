@@ -2,29 +2,23 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
-
 
 /**
  * BreadWallet
@@ -60,16 +54,6 @@ public class IntroActivity extends BRActivity {
         setContentView(R.layout.activity_intro);
         setOnClickListeners();
         updateBundles();
-
-        Shader shader = new LinearGradient(
-                90, 0, 100, 100,
-                getColor(R.color.button_gradient_start_color),
-                getColor(R.color.button_gradient_end_color),
-                Shader.TileMode.CLAMP);
-
-        TextView subtitle = findViewById(R.id.intro_subtitle);
-        subtitle.getPaint().setShader(shader);
-
         ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,8 +69,12 @@ public class IntroActivity extends BRActivity {
         }
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
+    }
 
-        findViewById(R.id.splash_screen).setVisibility(View.GONE);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_APPEARED);
     }
 
     private void updateBundles() {
@@ -103,29 +91,33 @@ public class IntroActivity extends BRActivity {
     }
 
     private void setOnClickListeners() {
-        findViewById(R.id.button_new_wallet).setOnClickListener(new View.OnClickListener() {
+        BRButton buttonNewWallet = findViewById(R.id.button_new_wallet);
+        BRButton buttonRecoverWallet = findViewById(R.id.button_recover_wallet);
+        buttonNewWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED);
+                Intent intent = new Intent(IntroActivity.this, OnBoardingActivity.class);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                startActivity(intent);
             }
         });
 
-        findViewById(R.id.button_recover_wallet).setOnClickListener(new View.OnClickListener() {
+        buttonRecoverWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET);
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
     }
+
 }

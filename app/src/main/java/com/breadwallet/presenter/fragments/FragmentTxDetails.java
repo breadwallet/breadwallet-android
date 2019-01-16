@@ -35,6 +35,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -93,7 +94,6 @@ public class FragmentTxDetails extends DialogFragment {
 
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
-
     boolean mDetailsShowing = false;
 
     @Override
@@ -215,11 +215,13 @@ public class FragmentTxDetails extends DialogFragment {
             String amountNow;
             String exchangeRateFormatted;
 
-            if (received) hideSentViews();
-            else {
+            if (received) {
+                hideSentViews();
+            } else {
                 BREthereumTransaction ethTx = null;
-                if (mTransaction.getTransaction() instanceof BREthereumTransaction)
+                if (mTransaction.getTransaction() instanceof BREthereumTransaction) {
                     ethTx = (BREthereumTransaction) mTransaction.getTransaction();
+                }
                 BigDecimal rawFee = mTransaction.getFee();
                 //meaning ETH
                 if (ethTx != null && !isErc20) {
@@ -257,9 +259,12 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
-            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
-            if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
+            }
+            if (tkn != null) {
+                cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
+            }
 
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);
 
@@ -373,6 +378,16 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the transaction block number
             mConfirmedInBlock.setText(String.valueOf(mTransaction.getBlockHeight()));
+
+            // Calculate the number of confirmations for this transaction and set its status
+            int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(getContext(), walletManager.getCurrencyCode());
+            int confirmations = mTransaction.getBlockHeight() == 0 ? 0 : lastBlockHeight - mTransaction.getBlockHeight() + 1;
+
+            if (walletManager.checkConfirmations(confirmations)) {
+                mTxStatus.setText(getText(R.string.Transaction_complete));
+            } else {
+                mTxStatus.setText(getText(R.string.Transaction_confirming));
+            }
 
         } else {
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();

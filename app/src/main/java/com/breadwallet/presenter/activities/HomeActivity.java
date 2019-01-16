@@ -1,28 +1,27 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
@@ -30,14 +29,19 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.EventUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -48,6 +52,7 @@ import java.util.ArrayList;
 public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged, BalanceUpdateListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
+    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
 
     public static final String CCC_CURRENCY_CODE = "CCC";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
@@ -56,7 +61,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private WalletListAdapter mAdapter;
     private BaseTextView mFiatTotal;
     private BRNotificationBar mNotificationBar;
-    private LinearLayout mBuyLayout;
+    private ConstraintLayout mBuyLayout;
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
@@ -77,7 +82,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY, WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
+                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY,
+                        WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
                 UiUtils.startWebActivity(HomeActivity.this, url);
             }
         });
@@ -117,6 +123,28 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onLongItemClick(View view, int position) {
             }
         }));
+        processIntentData(getIntent());
+
+        ImageView buyBell = findViewById(R.id.buy_bell);
+        boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.toString())
+                && CurrencyUtils.isBuyNotificationNeeded(this);
+        buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        processIntentData(intent);
+    }
+
+    private synchronized void processIntentData(Intent intent) {
+        String data = intent.getStringExtra(EXTRA_DATA);
+        if (Utils.isNullOrEmpty(data)) {
+            data = intent.getDataString();
+        }
+        if (data != null) {
+            AppEntryPointHandler.processDeepLink(this, data);
+        }
     }
 
     private void showNextPromptIfNeeded() {
@@ -127,6 +155,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 mListGroupLayout.removeViewAt(0);
             }
             mListGroupLayout.addView(promptView, 0);
+            EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX
+                    + PromptManager.getPromptName(toShow) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED);
         } else {
             Log.i(TAG, "showNextPrompt: nothing to show");
         }

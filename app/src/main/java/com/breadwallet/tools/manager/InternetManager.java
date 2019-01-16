@@ -8,6 +8,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.breadwallet.tools.util.EventUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +95,7 @@ public class InternetManager extends BroadcastReceiver {
                 connected = false;
             }
 
-            BREventManager.getInstance().pushEvent(connected ? "reachability.isReachble" : "reachability.isNotReachable");
+            EventUtils.pushEvent(connected ? EventUtils.EVENT_REACHABLE :  EventUtils.EVENT_NOT_REACHABLE);
             for (ConnectionReceiverListener listener : mConnectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
             }

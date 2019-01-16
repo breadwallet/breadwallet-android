@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -23,7 +22,6 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
@@ -397,7 +395,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public BigDecimal getFiatExchangeRate(Context context) {
         BigDecimal fiatData = getFiatForToken(context, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(context));
         if (fiatData == null) {
-            return null;
+            return BigDecimal.ZERO;
         }
         return fiatData; //fiat, e.g. dollars
     }

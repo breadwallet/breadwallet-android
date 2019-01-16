@@ -256,7 +256,7 @@ public class SendManager {
             item.setAmount(maxAmountDouble);
 
             BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError),
-                    app.getString(R.string.Send_SendMax), posButtonText, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                    app.getString(R.string.Send_sendMaximum), posButtonText, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -288,7 +288,8 @@ public class SendManager {
         BigDecimal minOutput = request.isAmountRequested() ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
         //amount can't be less than the min
-        if (minOutput != null && request.getAmount().abs().compareTo(minOutput) <= 0) {
+        if (minOutput != null && request.getAmount().abs().compareTo(minOutput) <= 0
+                && request.getGenericTransactionMetaData() == null) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), minOutput));
 
@@ -352,7 +353,7 @@ public class SendManager {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BigDecimal feeForTx = wm.getEstimatedFee(request.getAmount(), request.getAddress());
-        if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
+        if (feeForTx.compareTo(BigDecimal.ZERO) <= 0 && request.getGenericTransactionMetaData() == null) {
             BigDecimal maxAmount = wm.getMaxOutputAmount(ctx);
             if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
@@ -368,17 +369,18 @@ public class SendManager {
 
                 return null;
             }
+            if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
+                BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Send_nilFeeError),
+                        ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                            }
+                        }, null, null, 0);
+                return null;
+            }
         }
-        if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
-            BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Send_nilFeeError),
-                    ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
-            return null;
-        }
+
         BigDecimal amount = request.getAmount().abs();
         final BigDecimal total = amount.add(feeForTx);
         String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), amount);

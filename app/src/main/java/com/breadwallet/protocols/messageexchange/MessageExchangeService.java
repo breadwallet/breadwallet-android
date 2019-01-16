@@ -985,7 +985,6 @@ public final class MessageExchangeService extends JobIntentService {
                     KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
                     WalletsMaster.getInstance(this).updateWallets(this);
                 }
-
             }
         }
     }
