@@ -13,7 +13,6 @@ import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BREdit;
@@ -21,6 +20,7 @@ import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -60,9 +60,6 @@ public final class PromptManager {
     private static final String PROMPT_UPGRADE_PIN = "upgradePinPrompt";
     private static final String PROMPT_RECOMMEND_RESCAN = "recommendRescanPrompt";
     private static final String PROMPT_NO_PASSCODE = "noPasscodePrompt";
-    private static final String EVENT_PROMPT_PREFIX = "prompt";
-    private static final String EVENT_PROMPT_SUFFIX = "dismissed";
-    private static final String EVENT_FORMAT = "%s.%s.%s";
     private static final int HIDE_PROMPT_DELAY_MILLISECONDS = 3000;
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -130,7 +127,7 @@ public final class PromptManager {
         return null;
     }
 
-    public static View promptInfo(final Activity context, PromptItem promptItem) {
+    public static View promptInfo(final Activity context, final PromptItem promptItem) {
         final View baseLayout = context.getLayoutInflater().inflate(R.layout.base_prompt, null);
         BaseTextView title = baseLayout.findViewById(R.id.prompt_title);
         BaseTextView description = baseLayout.findViewById(R.id.prompt_description);
@@ -154,6 +151,7 @@ public final class PromptManager {
                         Intent intent = new Intent(context, FingerprintActivity.class);
                         context.startActivity(intent);
                         context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        sendPromptClickedEvent(promptItem);
                     }
                 });
                 break;
@@ -167,6 +165,7 @@ public final class PromptManager {
                         intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
                         context.startActivity(intent);
                         context.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                        sendPromptClickedEvent(promptItem);
                     }
                 });
                 break;
@@ -180,6 +179,7 @@ public final class PromptManager {
                         intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
                         context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         context.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                        sendPromptClickedEvent(promptItem);
                     }
                 });
                 break;
@@ -196,6 +196,7 @@ public final class PromptManager {
                                 BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
                                 wallet.rescan(context);
                                 BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletIso(context), false);
+                                sendPromptClickedEvent(promptItem);
                             }
                         });
                     }
@@ -211,8 +212,8 @@ public final class PromptManager {
                 final ImageView promptIcon = customLayout.findViewById(R.id.prompt_icon);
                 final BREdit emailEditText = customLayout.findViewById(R.id.email_edit);
                 submitButton.setColor(context.getColor(R.color.create_new_wallet_button_dark));
-                customTitle.setText(context.getString(R.string.Prompts_EmailOptIn_title));
-                customDescription.setText(context.getString(R.string.Prompts_EmailOptIn_body));
+                customTitle.setText(context.getString(R.string.Prompts_Email_title));
+                customDescription.setText(context.getString(R.string.Prompts_Email_body));
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -240,6 +241,7 @@ public final class PromptManager {
                                 }
                             }, HIDE_PROMPT_DELAY_MILLISECONDS);
                             BRSharedPrefs.putEmailOptIn(context, true);
+                            sendPromptClickedEvent(promptItem);
                         } else {
                             SpringAnimator.failShakeAnimation(context, emailEditText);
                         }
@@ -248,6 +250,11 @@ public final class PromptManager {
                 return customLayout;
         }
         return baseLayout;
+    }
+
+    private static void sendPromptClickedEvent(PromptItem promptItem) {
+        EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX
+                + PromptManager.getPromptName(promptItem) + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER);
     }
 
     private static boolean isEmailValid(String email) {
@@ -264,7 +271,8 @@ public final class PromptManager {
             BRSharedPrefs.putPromptDismissed(context, PromptManager.PROMPT_DISMISSED_FINGERPRINT, true);
         }
         if (mCurrentPrompt != null) {
-            BREventManager.getInstance().pushEvent(String.format(EVENT_FORMAT, EVENT_PROMPT_PREFIX, PromptManager.getPromptName(mCurrentPrompt), EVENT_PROMPT_SUFFIX));
+            EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX
+                    + getPromptName(mCurrentPrompt) + EventUtils.EVENT_PROMPT_SUFFIX_DISMISSED);
         }
         mCurrentPrompt = null;
     }

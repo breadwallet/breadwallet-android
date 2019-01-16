@@ -71,7 +71,7 @@ public class GeoLocationPlugin implements Plugin {
                 try {
                     if (granted) {
                         Log.e(TAG, "handleGeoPermission: granted");
-                        APIClient.BRResponse resp = new APIClient.BRResponse(null, 204, "application/json");
+                        APIClient.BRResponse resp = new APIClient.BRResponse(null, 204, BRConstants.CONTENT_TYPE_JSON);
                         BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                         globalBaseRequest.setHandled(true);
 
@@ -132,7 +132,7 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, "application/json");
+                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, BRConstants.CONTENT_TYPE_JSON);
                         return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                     } catch (JSONException e) {
                         e.printStackTrace();

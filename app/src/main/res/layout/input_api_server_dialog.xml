@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="10dp">
+
+  <com.breadwallet.presenter.customviews.BaseTextView
+    android:id="@+id/textView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="API Server:"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="@color/almost_black" />
+
+  <com.breadwallet.presenter.customviews.BREdit
+    android:id="@+id/server_input"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:hint="something.com"
+    android:padding="10dp" />
+</LinearLayout>

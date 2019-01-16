@@ -9,17 +9,15 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.WalletActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -37,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
 import static com.breadwallet.tools.util.BRConstants.BREAD;
 
@@ -117,7 +116,7 @@ public class CryptoUriParser {
         attr.put("scheme", u == null ? "null" : u.getScheme());
         attr.put("host", u == null ? "null" : u.getHost());
         attr.put("path", u == null ? "null" : u.getPath());
-        BREventManager.getInstance().pushEvent("send.handleURL", attr);
+        EventUtils.pushEvent(EventUtils.EVENT_SEND_HANDLE_URL, attr);
     }
 
     public static boolean isCryptoUrl(Context app, String url) {
@@ -290,7 +289,7 @@ public class CryptoUriParser {
 
             switch (host) {
                 case SCAN_QR:
-                    UiUtils.openScanner((Activity) context, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner((Activity) context);
                     break;
                 case ADDRESS_LIST:
                     //todo implement
@@ -323,27 +322,13 @@ public class CryptoUriParser {
     private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
         if (requestObject == null || requestObject.getAddress() == null || requestObject.getAddress().isEmpty())
             return false;
-        final BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
-        if (requestObject.getCurrencyCode() != null && !requestObject.getCurrencyCode().equalsIgnoreCase(wallet.getCurrencyCode())) {
-            if (!(WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, wallet.getCurrencyCode())
-                    && requestObject.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE))) {
-                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_error),
-                        String.format(context.getString(R.string.Send_invalidAddressMessage), wallet.getName()), context.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, null, 0);
-                return true; //true since it's a crypto url but different iso than the currently chosen one
-            } //  else ->   //allow tokens to scan ETH so continue ..
-        }
         BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
-
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
                 Intent newIntent = new Intent(context, WalletActivity.class);
+                newIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
                 newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
                 context.startActivity(newIntent);
             }

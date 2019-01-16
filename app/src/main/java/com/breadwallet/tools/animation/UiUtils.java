@@ -163,7 +163,7 @@ public class UiUtils {
 
     }
 
-    public static void openScanner(Activity app, int requestID) {
+    public static void openScanner(Activity app) {
         try {
             if (app == null) {
                 return;
@@ -192,7 +192,7 @@ public class UiUtils {
             } else {
                 // Permission is granted, open camera
                 Intent intent = new Intent(app, ScanQRActivity.class);
-                app.startActivityForResult(intent, requestID);
+                app.startActivity(intent);
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
             }
         } catch (Exception e) {

@@ -6,6 +6,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.PaperKeyActivity;
+import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
@@ -25,6 +27,9 @@ public class WriteDownActivity extends BRActivity {
 
         /* Activity was shown from settings.  */
         SETTINGS(1),
+
+        /* Activity was shown from settings.  */
+        ON_BOARDING(2),
 
         /* Invalid reason.  */
         ERROR(-1);
@@ -58,20 +63,30 @@ public class WriteDownActivity extends BRActivity {
         Button writeButton = findViewById(R.id.button_write_down);
         ImageButton close = findViewById(R.id.close_button);
         final ViewReason viewReason = ViewReason.valueOf(getIntent().getIntExtra(EXTRA_VIEW_REASON, ViewReason.ERROR.getValue()));
+        final String doneAction = getIntent().getStringExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (viewReason) {
-                    case NEW_WALLET:
-                        UiUtils.startBreadActivity(WriteDownActivity.this, false);
-                        break;
-                    case SETTINGS:
-                        // Fall through
-                    default:
-                        onBackPressed();
-                        break;
+                if (PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name().equals(doneAction)) {
+                    OnBoardingActivity.showBuyScreen(WriteDownActivity.this);
+                    WriteDownActivity.this.finishAffinity();
+                } else {
+                    switch (viewReason) {
+                        case NEW_WALLET:
+                            UiUtils.startBreadActivity(WriteDownActivity.this, false);
+                            break;
+                        case ON_BOARDING:
+                            UiUtils.startBreadActivity(WriteDownActivity.this, false);
+                            break;
+                        case SETTINGS:
+                            // Fall through
+                        default:
+                            onBackPressed();
+                            break;
+                    }
                 }
+
             }
         });
 
@@ -93,7 +108,10 @@ public class WriteDownActivity extends BRActivity {
                         getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
-                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                                String extraDoneAction = getIntent().getExtras() == null
+                                        ? null
+                                        : getIntent().getStringExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION);
+                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false, extraDoneAction);
                             }
 
                             @Override

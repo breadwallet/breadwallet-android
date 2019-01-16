@@ -115,7 +115,6 @@
                 android:layout_marginTop="14dp"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/checkmark_circled"
-                android:text="@string/Transaction.complete"
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 

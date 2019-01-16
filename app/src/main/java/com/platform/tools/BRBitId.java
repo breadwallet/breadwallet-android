@@ -321,7 +321,7 @@ public class BRBitId {
         Request request = new Request.Builder()
                 .url(callbackUrl + "?x=" + nonce)
                 .post(requestBody)
-                .header("Content-Type", "application/json")
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .build();
         APIClient.BRResponse res = APIClient.getInstance(context).sendRequest(request, true);
     }

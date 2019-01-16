@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -40,6 +41,9 @@ import java.util.Locale;
 
 public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
+    private static final String KRONE = "DKK";
+    private static final String POUND = "GBP";
+    private static final String EURO = "EUR";
 
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
         //Use default (wallet's maxDecimal places)
@@ -117,6 +121,11 @@ public class CurrencyUtils {
             return wallet.getMaxDecimalPlaces(app);
         }
 
+    }
+
+    public static boolean isBuyNotificationNeeded(Context context) {
+        String fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso(context);
+        return KRONE.equalsIgnoreCase(fiatCurrencyCode) || POUND.equalsIgnoreCase(fiatCurrencyCode) || EURO.equalsIgnoreCase(fiatCurrencyCode);
     }
 
 }

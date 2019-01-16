@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">Справочный центр</string>
     <!-- Account balance -->
     <string name="Account.balance">Баланс</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">Регистрация этого токена была отменена из-за того, что эмитент решил прекратить поддержку ERC20. \n\nВероятно, вы все равно можете отправлять эти токены на другую платформу. Для получения дополнительной информации посетите нашу страницу поддержки.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s за %2$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">Ошибка хранилища ключей Android</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">Интернет-подключение не обнаружено. Проверьте подключение и повторите попытку.</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">Что-то пошло не так. Повторите попытку.</string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">Истекло время запроса. Проверьте подключение и повторите попытку.</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">Игнорировать</string>
     <!-- menu button -->
     <string name="Button.menu">Меню</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">Подробнее</string>
     <!-- No button -->
     <string name="Button.no">Нет</string>
     <!-- OK button label -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">Состояние подключения узла</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">Биткойн-узлы</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">Я сначала прогляну</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">Купить немного монет</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">Начать</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">Далее</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">Восстановить кошелек</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">Пропустить</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">Начинайте инвестировать уже сегодня всего с 50 долларами США!</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">Добро пожаловать в ваш новый глобальный кошелек!</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">Инвестируйте и диверсифицируйте c BRD, просто и безопасно.</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">Покупайте и торгуйте биткойном, токенами и прочими цифровыми валютами.</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">Под нашей защитой находятся активы общей суммой более 6 миллиардов долларов США.</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">Присоединяйтесь к 1,5 миллиона человек, которые доверяют BRD.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Отправить %1$s, чтобы купить %2$s</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">неподдерживаемый тип подписи</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">недостоверный сертификат</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">Станьте первым, кто получит существенную поддержку и обновления продукта</string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">введите ваш адрес электронной почты</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">Вы успешно подписались на получение обновлений</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">Мы ценим вашу непрерывную поддержку</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">Спасибо!</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">Войти в узкий круг</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">Нажмите \"Продолжить\", чтобы включить Идентификацию по лицу</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">Аутентификация по отпечаткам пальцев</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">Вы активировали SegWit!</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">Благодарим вас за продвижение биткоина.</string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">Поддержка SegWit еще является бета-функцией.\nС момента активации функции SegWit ее нельзя будет отключить. Вы сможете найти унаследованный адрес в Настройках. \nНекоторые услуги третьей стороны, включая крипто-трейдинг, могут быть недоступными для пользователей, которые активировали SegWit. В случае крайней необходимости, вы сможете генерировать унаследованный адрес, зайдя в Preferences (Параметры) &gt; Bitcoin Settings (Настройки биткоина). \nВ будущем обновлении SegWit будет автоматически активирована для всех пользователей.</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">Активация SegWit является необратимой функцией. Вы уверены, что хотите продолжить?</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">Активировать</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Сумма</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">Сканировать</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Отправить</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">Отправить максимальную сумму?</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">Отправить</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">Настройки валюты</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">Присоединитесь к пользователям с ранним доступом</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Активировать Segwit</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">Нравится ли вам использовать BRD?</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">Лимит на расходы Touch ID</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">Расходный лимит с аутентификацией по отпечаткам пальцев</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">Просмотреть унаследованный адрес</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">Отправляйте на этот адрес только биткоин (BTC). Любые другие активы, отправленные на этот адрес, будут безвозвратно потеряны.</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Получить биткоин</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">Кошелек</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">Перемещено %1$s</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[Перемещено <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[Перемещено <b>%1$s</b>]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">Не подтверждено</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">Получено %1$s</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[Получено <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Получено <b>%1$s</b>]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">получено от %1$s</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Отправить %1$s</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[Отправлено <b>%1$s</b>]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[Отправлено <b>%1$s</b>]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">Показать подробности</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -929,7 +985,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">Идет обновление...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">BRDwallet сменил свое название на BRD и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+    <string name="Welcome.body">Breadwallet сменил свое название на BRD и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">Добро пожаловать в BRD!</string>
     <!-- Wipe wallet alert message -->

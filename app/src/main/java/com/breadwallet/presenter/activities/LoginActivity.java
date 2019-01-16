@@ -27,6 +27,7 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.wallet.WalletsMaster;
 
 
@@ -168,10 +169,12 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
                 }, DateUtils.SECOND_IN_MILLIS / 2);
             }
         });
+        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_SUCCESS);
     }
 
     private void showFailedToUnlock() {
         SpringAnimator.failShakeAnimation(LoginActivity.this, mPinLayout);
+        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_FAILED);
     }
 
     @Override
@@ -195,7 +198,7 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(this);
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
             } else {

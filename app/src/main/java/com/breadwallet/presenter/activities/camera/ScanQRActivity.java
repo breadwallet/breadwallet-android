@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -14,13 +15,17 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 
 /**
@@ -57,7 +62,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
 
     private ImageView mCameraGuide;
     private long mLastUpdated;
-    //    private boolean mIsQrProcessing;
+    private boolean mIsQrProcessing;
     private Timer mCameraGuideTimer;
     private TimerTask mCameraGuideTask;
     private Handler mCameraGuideHandler;
@@ -163,32 +168,37 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     }
 
     @Override
-    public boolean onQRCodeRead(final String text, PointF[] points) {
+    public synchronized boolean onQRCodeRead(final String url, PointF[] points) {
         mLastUpdated = System.currentTimeMillis();
-        if (AppEntryPointHandler.isSupportedQRCode(this, text)) {
-            Log.d(TAG, "onQRCodeRead: isCrypto");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mCameraGuide.setImageResource(R.drawable.cameraguide);
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra(EXTRA_RESULT, text);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
-                }
-            });
-            return true;
-        } else {
-            Log.d(TAG, "onQRCodeRead: not a crypto url");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mCameraGuide.setImageResource(R.drawable.cameraguide_red);
-                    mLastUpdated = System.currentTimeMillis();
-                }
-            });
-            return false;
+        if (!mIsQrProcessing) {
+            if (AppEntryPointHandler.isSupportedQRCode(this, url)) {
+                mIsQrProcessing = true;
+                Log.d(TAG, "onQRCodeRead: crypto url: " + url);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraGuide.setImageResource(R.drawable.cameraguide);
+                        Intent intent = new Intent(ScanQRActivity.this, HomeActivity.class);
+                        intent.putExtra(HomeActivity.EXTRA_DATA, url);
+                        intent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                return true;
+            } else {
+                Log.d(TAG, "onQRCodeRead: not a crypto url: " + url);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCameraGuide.setImageResource(R.drawable.cameraguide_red);
+                        mLastUpdated = System.currentTimeMillis();
+                    }
+                });
+                return false;
+            }
         }
+        return false;
     }
 
     private void initQRCodeReaderView() {

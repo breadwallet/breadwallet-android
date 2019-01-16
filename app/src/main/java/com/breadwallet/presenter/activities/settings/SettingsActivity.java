@@ -9,7 +9,6 @@ import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +71,7 @@ public class SettingsActivity extends BaseSettingsActivity {
                 break;
             case MODE_CURRENCY_SETTINGS:
                 BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
-                settingsItems = walletManager.getSettingsConfiguration().getSettingsList();
+                settingsItems = walletManager.getSettingsList(this);
                 String currencySettingsLabel = String.format("%s %s", walletManager.getName(), getString(R.string.Settings_title));
                 title.setText(currencySettingsLabel);
                 mIsButtonBackArrow = true;
