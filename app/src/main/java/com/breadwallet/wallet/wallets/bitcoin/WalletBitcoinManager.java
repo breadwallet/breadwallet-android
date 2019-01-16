@@ -1,15 +1,14 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -86,7 +85,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
                 BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getCurrencyCode());
                 if (fee.compareTo(BigDecimal.ZERO) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
-                    BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+                    EventUtils.pushEvent(EventUtils.EVENT_WALLET_DID_USE_DEFAULT_FEE_PER_KB);
                 }
                 getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
                 WalletsMaster.getInstance(context).updateFixedPeer(context, WalletBitcoinManager.this);
@@ -154,4 +153,8 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         updateCachedAddress(context, address.stringify());
     }
 
+    @Override
+    public List<BRSettingsItem> getSettingsList(Context context) {
+        return SettingsUtil.getBitcoinSettings(context);
+    }
 }

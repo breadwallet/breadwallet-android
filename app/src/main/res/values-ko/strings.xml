@@ -24,6 +24,8 @@
     <string name="AccessibilityLabels.faq">고객지원 센터</string>
     <!-- Account balance -->
     <string name="Account.balance">잔액</string>
+    <!-- Delisted token alert banner message -->
+    <string name="Account.delistedToken">발행자가 ERC20 지원을 중단하기로 결정했기 때문에 이 토큰은 목록에서 제외되었습니다. \n\n하지만 이 토큰을 다른 플랫폼으로 보낼 수는 있습니다. 자세한 내용은 지원 페이지를 방문하십시오.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%2$s 당 %1$s</string>
     <!-- Loading Wallet Message -->
@@ -42,6 +44,8 @@
     <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">인터넷이 연결되지 않았습니다. 연결을 확인하시고 다시 시도해 주세요.</string>
+    <!-- General error message -->
+    <string name="Alert.somethingWentWrong">뭔가 잘못됐습니다. 다시 시도해 주세요.</string>
     <!-- Request timed out error message -->
     <string name="Alert.timedOut">요청이 시간 초과 되었습니다. 인터넷 연결을 확인하고 다시 시도하세요.</string>
     <!-- Warning alert title -->
@@ -126,6 +130,8 @@
     <string name="Button.ignore">무시</string>
     <!-- menu button -->
     <string name="Button.menu">메뉴</string>
+    <!-- More information button -->
+    <string name="Button.moreInfo">자세한 정보</string>
     <!-- No button -->
     <string name="Button.no">아니오</string>
     <!-- OK button label -->
@@ -362,6 +368,30 @@
     <string name="NodeSelector.statusLabel">노드 연결 상태</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">비트코인 노드</string>
+    <!-- Onboarding screen 'I'll browse first' button -->
+    <string name="Onboarding.browseFirst">먼저 둘러볼게요</string>
+    <!-- Onboarding screen 'Buy some coin' button -->
+    <string name="Onboarding.buyCoin">코인을 조금 구매</string>
+    <!-- Onboarding screen 'Get started' (create new wallet) button -->
+    <string name="Onboarding.getStarted">시작</string>
+    <!-- Onboarding screen 'Next' button -->
+    <string name="Onboarding.next">다음</string>
+    <!-- Onboarding screen restore an existing wallet. -->
+    <string name="Onboarding.restoreWallet">월렛 복구</string>
+    <!-- Onboarding screen Skip button title that allows the user to exit the onboarding process. -->
+    <string name="Onboarding.skip">넘어가기</string>
+    <!-- Onboarding screen Page 4 title -->
+    <string name="OnboardingPageFour.title">50달러 소액부터 오늘 투자를 시작해 보세요!</string>
+    <!-- Onboarding screen Page 1 title -->
+    <string name="OnboardingPageOne.title">새로운 글로벌 월렛에 오신 것을 환영합니다!</string>
+    <!-- Onboarding screen Page 3 subtitle -->
+    <string name="OnboardingPageThree.subtitle">BRD와 함께 쉽고 안전하게 투자하고 다양하게 분산시키세요.</string>
+    <!-- Onboarding screen Page 3 title -->
+    <string name="OnboardingPageThree.title">비트코인, 토큰, 그리고 그 외 다른 가상 화폐들을 구매하고 거래하세요.</string>
+    <!-- Onboarding screen Page 2 subtitle -->
+    <string name="OnboardingPageTwo.subtitle">저희는 60억 달러 넘는 가치의 자산을 안전하게 보유하고 있습니다.</string>
+    <!-- Onboarding screen Page 2 title -->
+    <string name="OnboardingPageTwo.title">BRD를 신용하는 전 세계 150만 명의 사람들과 함께 하세요.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">%2$s 구매를 위해 %1$s 전송</string>
     <!-- Payment confirmation view title -->
@@ -384,6 +414,18 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">지원되지 않는 서명 형태</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">신용할 수 없는 증명서</string>
+    <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.body">주요 지원 및 제품 업데이트르 받을 첫 주인공이 되어 보세요.</string>
+    <!-- Placeholder text for an email address text field. -->
+    <string name="Prompts.Email.placeholder">이메일 입력</string>
+    <!-- Body text that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successBody">업데이트를 받기 위한 구독이 완료되었습니다.</string>
+    <!-- Text that is displayed as a footnote when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successFootnote">계속해서 지지해 주셔서 감사합니다.</string>
+    <!-- Title that is shown when the user successfully subscribes to email updates. -->
+    <string name="Prompts.Email.successTitle">감사합니다!</string>
+    <!-- Title for a prompt that asks the user to subscribe to email updates to find out product updates. -->
+    <string name="Prompts.Email.title">일원 되기</string>
     <!-- Enable face ID prompt body -->
     <string name="Prompts.FaceId.body">페이스 ID를 사용하시려면 계속하기를 탭하세요</string>
     <!-- Enable face ID prompt title -->
@@ -526,6 +568,16 @@
     <string name="SecurityCenter.touchIdTitle">터치 ID</string>
     <!-- Security center fingerprint authentication button -->
     <string name="SecurityCenter.touchIdTitle.android">지문 본인확인</string>
+    <!-- Segwit enabled confirmation title -->
+    <string name="Segwit.ConfirmationConfirmationTitle">SegWit을 활성화했습니다!</string>
+    <!-- Segwit enabled confirmation description -->
+    <string name="Segwit.ConfirmationInstructionsDescription">Bitcoin 발전에 일조해 주셔서 감사합니다.</string>
+    <!-- Segwit instructions -->
+    <string name="Segwit.ConfirmationInstructionsInstructions">SegWit 지원은 아직 베타 기능입니다.\nSegWit이 활성화되면 비활성화할 수\n없습니다. 유산 주소는 아래 설정에서 찾을 수 있습니다.\nSegWit를 활성화하면 암호화 거래 등 일부 제3자 서비스를 이용할 수 없을 수도 있습니다. 비상 시에는 선호도 &gt; Bitcoin 설정에서 유산 주소를 생성할 수 있습니다.\nSegWit는 향후 업데이트 시 모든 사용자에게 \n자동으로 활성화됩니다.</string>
+    <!-- Segwit extra confirmation title. -->
+    <string name="Segwit.ConfirmChoiceLayout">SegWit을 활성화는 취소할 수 없는 기능입니다. 계속하시겠습니까?</string>
+    <!-- Segwit enableButton -->
+    <string name="Segwit.Enable">활성화</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">금액</string>
     <!-- Balance: $4.00 -->
@@ -588,6 +640,8 @@
     <string name="Send.scanLabel">스캔</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">보내기</string>
+    <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
+    <string name="Send.sendMaximum">최고 한도 금액을 보내겠습니까?</string>
     <!-- Send screen title (as in "this is the screen for sending money") -->
     <string name="Send.title">보내기</string>
     <!-- Send money to label -->
@@ -612,6 +666,8 @@
     <string name="Settings.currencySettings">통화 설정</string>
     <!-- Join Early access label -->
     <string name="Settings.earlyAccess">초기 버전을 사용해 보세요</string>
+    <!-- Enable segwit. -->
+    <string name="Settings.EnableSegwit">Segwit 활성화</string>
     <!-- Are you enjoying bread alert message body -->
     <string name="Settings.enjoying">브레드를 사용하고 있으신가요?</string>
     <!-- Face ID spending limit label -->
@@ -640,6 +696,12 @@
     <string name="Settings.touchIdLimit">Touch ID 지출 한도</string>
     <!-- The fingerprint spending limit -->
     <string name="Settings.touchIdLimit.android">지문 본인확인 사용 한계</string>
+    <!-- View legacy address (old format). -->
+    <string name="Settings.ViewLegacyAddress">유산 수령 주소 보기</string>
+    <!-- Receive Bitcoin instructions -->
+    <string name="Settings.ViewLegacyAddressReceiveDescription">이 주소에는 Bitcoin(BTC)만 보낼 수 있습니다. 이 주소로 다른 자산을 보낼 경우 모두 영구 소실됩니다.</string>
+    <!-- Receive Bitcoin -->
+    <string name="Settings.ViewLegacyAddressReceiveTitle">Bitcoin 수령</string>
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">지갑</string>
     <!-- Unlink/delete your wallet from the current device. -->
@@ -809,17 +871,13 @@
     <!-- Moved $5.00 (as in "I moved $5 to another location") -->
     <string name="TransactionDetails.moved">%1$s 이동함</string>
     <!-- Moved $5.00 -->
-    <string name="TransactionDetails.movedAmountDescription">
-        <![CDATA[<b>%1$s</b> 이동됨]]>
-    </string>
+    <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
     <!-- eg. Confirmed in Block: Not Confirmed -->
     <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
     <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
     <string name="TransactionDetails.received">%1$s 받음</string>
     <!-- Received $5.00 -->
-    <string name="TransactionDetails.receivedAmountDescription">
-        <![CDATA[<b>%1$s</b> 수신됨]]>
-    </string>
+    <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
     <!-- received via <address> -->
@@ -831,9 +889,7 @@
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">%1$s 보냄</string>
     <!-- Sent $5.00 -->
-    <string name="TransactionDetails.sentAmountDescription">
-        <![CDATA[<b>%1$s</b> 전송됨]]>
-    </string>
+    <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
     <!-- Show Details button -->
     <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
     <!-- The balance the user started with before the transaction completed -->
@@ -929,7 +985,7 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">업데이트 중...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">BRDwallet이 이름을 BRD로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+    <string name="Welcome.body">Breadwallet이 이름을 BRD로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
     <!-- Top title of welcome screen -->
     <string name="Welcome.title">BRD에 환영합니다!</string>
     <!-- Wipe wallet alert message -->

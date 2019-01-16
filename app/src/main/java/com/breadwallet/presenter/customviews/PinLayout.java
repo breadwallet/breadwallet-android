@@ -15,6 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -247,6 +248,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
             BRKeyStore.putFailCount(failCount + 1, app);
         }
         if (BRKeyStore.getFailCount(app) >= LOCK_FAIL_ATTEMPT_COUNT) {
+            EventUtils.pushEvent(EventUtils.EVENT_LOGIN_LOCKED);
             AuthManager.getInstance().setWalletDisabled((Activity) app);
         }
     }

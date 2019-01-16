@@ -93,7 +93,7 @@ public final class MessageExchangeNetworkHelper {
     // TODO if 100 entries received, then fetch again.
     public static List<InboxEntry> fetchInbox(Context context, String afterCursor) {
         List<InboxEntry> inboxEntries = new ArrayList<>();
-        String inboxUrl = APIClient.BASE_URL + INBOX_PATH;
+        String inboxUrl = APIClient.getBaseURL() + INBOX_PATH;
 
         if (afterCursor != null) {
             inboxUrl = String.format(INBOX_PATH_AFTER_PARAMETER, inboxUrl, afterCursor);
@@ -152,7 +152,7 @@ public final class MessageExchangeNetworkHelper {
     }
 
     public static void sendEnvelope(Context context, byte[] data) {
-        String messageUrl = APIClient.BASE_URL + MESSAGE_PATH;
+        String messageUrl = APIClient.getBaseURL() + MESSAGE_PATH;
         MediaType contentType = MediaType.parse(CONTENT_TYPE_PROTOBUF);
         RequestBody requestBody = RequestBody.create(contentType, data);
         Request request = new Request.Builder()
@@ -171,7 +171,7 @@ public final class MessageExchangeNetworkHelper {
         for (String cursor : cursors) {
             ackJsonArray.put(cursor);
         }
-        String ackUrl = APIClient.BASE_URL + ACK_PATH;
+        String ackUrl = APIClient.getBaseURL() + ACK_PATH;
         RequestBody requestBody = RequestBody.create(null, ackJsonArray.toString());
         Request request = new Request.Builder()
                 .url(ackUrl)
@@ -184,7 +184,7 @@ public final class MessageExchangeNetworkHelper {
     }
 
     public static void sendAssociatedKey(Context context, byte[] publicKey) {
-        String associatedUrl = APIClient.BASE_URL + ASSOCIATED_KEYS;
+        String associatedUrl = APIClient.getBaseURL() + ASSOCIATED_KEYS;
         String base58PublicKey = BRCoreKey.encodeBase58(publicKey);
         RequestBody requestBody = RequestBody.create(null, base58PublicKey);
         Request request = new Request.Builder()
@@ -198,7 +198,7 @@ public final class MessageExchangeNetworkHelper {
     }
 
     public static void getAssociatedKeys(Context context) {
-        String associatedUrl = APIClient.BASE_URL + ASSOCIATED_KEYS;
+        String associatedUrl = APIClient.getBaseURL() + ASSOCIATED_KEYS;
         Request request = new Request.Builder()
                 .url(associatedUrl)
                 .get()
@@ -211,7 +211,7 @@ public final class MessageExchangeNetworkHelper {
     }
 
     public static ServiceMetaData getService(Context context, String serviceId) {
-        String serviceUrl = APIClient.BASE_URL + SERVICE_PATH + "/" + serviceId;
+        String serviceUrl = APIClient.getBaseURL() + SERVICE_PATH + "/" + serviceId;
         Request request = new Request.Builder()
                 .url(serviceUrl)
                 .get()

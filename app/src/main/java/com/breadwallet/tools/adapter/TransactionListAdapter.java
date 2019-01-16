@@ -1,44 +1,3 @@
-package com.breadwallet.tools.adapter;
-
-import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.breadwallet.R;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRDateUtil;
-import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.platform.entities.TxMetaData;
-import com.platform.tools.KVStoreManager;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
 /**
  * BreadWallet
  * <p>
@@ -64,23 +23,67 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
+package com.breadwallet.tools.adapter;
+
+import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+
+import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRDateUtil;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.platform.entities.TxMetaData;
+import com.platform.tools.KVStoreManager;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String TAG = TransactionListAdapter.class.getName();
-
+    private static final int DP_120 = 120;
+    private static final int DP_36 = 36;
+    private static final int DP_16 = 16;
+    private static final int CONFIRMED_BLOCKS_NUMBER = 6;
+    private static final int PROGRESS_FULL = 100;
+    private static final int PROGRESS_PACE = 20;
+    private static final int FOUR_CONFIRMATIONS = 4;
+    private static final int FIVE_CONFIRMATIONS = 5;
     private final Context mContext;
     private final int mTxResourceId;
-    private List<TxUiHolder> backUpFeed;
-    private List<TxUiHolder> itemFeed;
+    private List<TxUiHolder> mBackUpFeed;
+    private List<TxUiHolder> mItemFeed;
     private Map<Integer, TxMetaData> mMetaDatas;
-
-    private final int TX_TYPE = 0;
+    private static final int TX_TYPE = 0;
     private boolean mIsUpdatingData;
 
     public TransactionListAdapter(Context context, List<TxUiHolder> items) {
         this.mTxResourceId = R.layout.tx_item;
         this.mContext = context;
-        backUpFeed = items;
-        itemFeed = items;
+        mBackUpFeed = items;
+        mItemFeed = items;
         mMetaDatas = new HashMap<>();
         items = new ArrayList<>();
         init(items);
@@ -94,57 +97,57 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (items == null) {
             items = new ArrayList<>();
         }
-        if (itemFeed == null) {
-            itemFeed = new ArrayList<>();
+        if (mItemFeed == null) {
+            mItemFeed = new ArrayList<>();
         }
-        if (backUpFeed == null) {
-            backUpFeed = new ArrayList<>();
+        if (mBackUpFeed == null) {
+            mBackUpFeed = new ArrayList<>();
         }
-        this.itemFeed = items;
-        this.backUpFeed = items;
-
+        //In case we're in the middle of filtering transactions.
+        if (mBackUpFeed.size() == mItemFeed.size()) {
+            this.mItemFeed = items;
+        }
+        this.mBackUpFeed = items;
     }
 
     public void updateData() {
-        if (mIsUpdatingData) {
-            return;
-        }
-        Map<Integer, TxMetaData> localMDs = new HashMap<>();
-        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        for (int i = 0; i < backUpFeed.size(); i++) {
-            TxUiHolder item = backUpFeed.get(i);
-            TxMetaData md = KVStoreManager.getTxMetaData(mContext, item.getTxHash());
-            if (System.currentTimeMillis() - item.getTimeStamp() < DateUtils.HOUR_IN_MILLIS) {
-                if (md == null) {
-                    md = KVStoreManager.createMetadata(mContext, wm,
-                            new CryptoTransaction(item.getTransaction()));
-                    KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
-                } else if (md.exchangeRate == 0) {
-                    md.exchangeRate = wm.getFiatExchangeRate(mContext).doubleValue();
-                    md.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(mContext);
-                    Log.d(TAG, "MetaData not null");
-                    KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
+        if (!mIsUpdatingData) {
+            Map<Integer, TxMetaData> localMDs = new HashMap<>();
+            BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+            for (int i = 0; i < mBackUpFeed.size(); i++) {
+                TxUiHolder item = mBackUpFeed.get(i);
+                TxMetaData md = KVStoreManager.getTxMetaData(mContext, item.getTxHash());
+                if (System.currentTimeMillis() - item.getTimeStamp() < DateUtils.HOUR_IN_MILLIS) {
+                    if (md == null) {
+                        md = KVStoreManager.createMetadata(mContext, wm,
+                                new CryptoTransaction(item.getTransaction()));
+                        KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
+                    } else if (md.exchangeRate == 0) {
+                        md.exchangeRate = wm.getFiatExchangeRate(mContext).doubleValue();
+                        md.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(mContext);
+                        Log.d(TAG, "MetaData not null");
+                        KVStoreManager.putTxMetaData(mContext, md, item.getTxHash());
+                    }
                 }
+                localMDs.put(i, md);
             }
-            localMDs.put(i, md);
-
+            mMetaDatas.clear();
+            mMetaDatas.putAll(localMDs);
+            mIsUpdatingData = false;
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
         }
-        mMetaDatas.clear();
-        mMetaDatas.putAll(localMDs);
-        mIsUpdatingData = false;
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
-
     }
 
     public List<TxUiHolder> getItems() {
-        return itemFeed;
+        return mItemFeed;
     }
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // inflate the layout
@@ -158,7 +161,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             holder.setIsRecyclable(false);
             setTexts((TxHolder) holder, position);
         }
-
     }
 
     @Override
@@ -168,12 +170,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return itemFeed.size();
+        return mItemFeed.size();
     }
 
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        TxUiHolder item = itemFeed.get(position);
+        TxUiHolder item = mItemFeed.get(position);
 
         String commentString = "";
         TxMetaData md = mMetaDatas.size() > position ? mMetaDatas.get(position) : null;
@@ -186,17 +188,19 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         boolean received = item.isReceived();
         int amountColor = received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color;
 
-        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(amountColor, null));
+        convertView.getTransactionAmount().setTextColor(mContext.getResources().getColor(amountColor, null));
 
         // If this transaction failed, show the "FAILED" indicator in the cell
-        if (!item.isValid())
+        if (!item.isValid()) {
             showTransactionFailed(convertView, item, received);
+        }
 
         BigDecimal cryptoAmount = item.getAmount().abs();
 
         BREthereumToken tkn = null;
-        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getTo()))
+        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getTo())) {
             tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
+        }
         // it's a token transfer ETH tx
         if (tkn != null) {
             cryptoAmount = item.getFee();
@@ -208,28 +212,29 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             amount = amount.negate();
         }
         String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredCurrencyCode, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
-        convertView.transactionAmount.setText(formattedAmount);
+        convertView.getTransactionAmount().setText(formattedAmount);
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getCurrencyCode());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
         int level;
         if (confirms <= 0) {
             long relayCount = wm.getRelayCount(item.getTxHash());
-            if (relayCount <= 0)
+            if (relayCount <= 0) {
                 level = 0;
-            else if (relayCount == 1)
+            } else if (relayCount == 1) {
                 level = 1;
-            else
+            } else {
                 level = 2;
+            }
         } else {
-            if (confirms >= 4) {
-                level = 6;
+            if (confirms >= FOUR_CONFIRMATIONS) {
+                level = CONFIRMED_BLOCKS_NUMBER;
             } else {
                 level = confirms + 2;
             }
         }
-        if (level > 0 && level < 5) {
-            showTransactionProgress(convertView, level * 20);
+        if (level > 0 && level < FIVE_CONFIRMATIONS) {
+            showTransactionProgress(convertView, level * PROGRESS_PACE);
         }
         String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getTo()));
         String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getTo()));
@@ -237,70 +242,69 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getTo()));
         String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getTo()));
 
-        if (level > 4) {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
+        if (level > FOUR_CONFIRMATIONS) {
+            convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
+            convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
         }
-        if (tkn != null) // it's a token transfer ETH tx
-            convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
+        // it's a token transfer ETH tx
+        if (tkn != null) {
+            convertView.getTransactionDetail()
+                    .setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
+        }
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * DateUtils.SECOND_IN_MILLIS;
 
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 
-        convertView.transactionDate.setText(shortDate);
+        convertView.getTransactionDate().setText(shortDate);
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
-        if (progress < 100) {
-            holder.transactionProgress.setVisibility(View.VISIBLE);
-            holder.transactionDate.setVisibility(View.GONE);
-            holder.transactionProgress.setProgress(progress);
+        if (progress < PROGRESS_FULL) {
+            holder.getTransactionProgress().setVisibility(View.VISIBLE);
+            holder.getTransactionDate().setVisibility(View.GONE);
+            holder.getTransactionProgress().setProgress(progress);
             RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            detailParams.addRule(RelativeLayout.RIGHT_OF, holder.transactionProgress.getId());
+            detailParams.addRule(RelativeLayout.RIGHT_OF, holder.getTransactionProgress().getId());
             detailParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            detailParams.setMargins(Utils.getPixelsFromDps(mContext, 16), Utils.getPixelsFromDps(mContext, 36), 0, 0);
-            holder.transactionDetail.setLayoutParams(detailParams);
-            holder.transactionDetail.setMaxWidth(Utils.getPixelsFromDps(mContext, 120));
+            detailParams.setMargins(Utils.getPixelsFromDps(mContext, DP_16), Utils.getPixelsFromDps(mContext, DP_36), 0, 0);
+            holder.getTransactionDetail().setLayoutParams(detailParams);
+            holder.getTransactionDetail().setMaxWidth(Utils.getPixelsFromDps(mContext, DP_120));
         } else {
-            holder.transactionProgress.setVisibility(View.INVISIBLE);
-            holder.transactionDate.setVisibility(View.VISIBLE);
+            holder.getTransactionProgress().setVisibility(View.INVISIBLE);
+            holder.getTransactionDate().setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams startingParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             startingParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             startingParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            startingParams.setMargins(Utils.getPixelsFromDps(mContext, 16), 0, 0, 0);
-            holder.transactionDetail.setLayoutParams(startingParams);
+            startingParams.setMargins(Utils.getPixelsFromDps(mContext, DP_16), 0, 0, 0);
+            holder.getTransactionDetail().setLayoutParams(startingParams);
             holder.setIsRecyclable(true);
         }
     }
 
     private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
-        holder.transactionDate.setVisibility(View.INVISIBLE);
+        holder.getTransactionDate().setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.RIGHT_OF, holder.transactionFailed.getId());
-        params.setMargins(16, 0, 0, 0);
-        params.addRule(RelativeLayout.CENTER_VERTICAL, holder.transactionFailed.getId());
-        holder.transactionDetail.setLayoutParams(params);
+        params.addRule(RelativeLayout.RIGHT_OF, holder.getTransactionFailed().getId());
+        params.setMargins(DP_16, 0, 0, 0);
+        params.addRule(RelativeLayout.CENTER_VERTICAL, holder.getTransactionFailed().getId());
+        holder.getTransactionDetail().setLayoutParams(params);
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
         if (!received) {
-            holder.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(tx.getTo())));
+            holder.getTransactionDetail().setText(String.format(mContext.getString(R.string.Transaction_sendingTo),
+                    wm.decorateAddress(tx.getTo())));
         }
-
-    }
-
-    public void filterBy(String query, boolean[] switches) {
-        filter(query, switches);
     }
 
     public void resetFilter() {
-        itemFeed = backUpFeed;
+        mItemFeed = mBackUpFeed;
         notifyDataSetChanged();
     }
 
-    private void filter(final String query, final boolean[] switches) {
+    public void filterBy(final String query, final boolean[] switches) {
         String lowerQuery = query.toLowerCase().trim();
         if (Utils.isNullOrEmpty(lowerQuery) && !switches[0] && !switches[1] && !switches[2] && !switches[3]) {
             return;
@@ -314,11 +318,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         final List<TxUiHolder> filteredList = new ArrayList<>();
         TxUiHolder item;
-        for (int i = 0; i < backUpFeed.size(); i++) {
-            item = backUpFeed.get(i);
+        for (int i = 0; i < mBackUpFeed.size(); i++) {
+            item = mBackUpFeed.get(i);
             boolean matchesHash = item.getHashReversed() != null && item.getHashReversed().contains(lowerQuery);
             boolean matchesAddress = item.getFrom().contains(lowerQuery) || item.getTo().contains(lowerQuery);
-            boolean matchesMemo = item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery);
+            boolean matchesMemo = item.metaData != null && item.metaData.comment != null
+                    && item.metaData.comment.toLowerCase().contains(lowerQuery);
             if (matchesHash || matchesAddress || matchesMemo) {
                 if (switchesON == 0) {
                     filteredList.add(item);
@@ -337,53 +342,59 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0
                             : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getCurrencyCode()) - item.getBlockHeight() + 1;
                     //complete
-                    if (switches[2] && confirms >= 6) {
+                    if (switches[2] && confirms >= CONFIRMED_BLOCKS_NUMBER) {
                         willAdd = false;
                     }
 
                     //pending
-                    if (switches[3] && confirms < 6) {
+                    if (switches[3] && confirms < CONFIRMED_BLOCKS_NUMBER) {
                         willAdd = false;
                     }
 
-                    if (willAdd) filteredList.add(item);
+                    if (willAdd) {
+                        filteredList.add(item);
+                    }
                 }
-
             }
-
         }
-        itemFeed = filteredList;
+        mItemFeed = filteredList;
         notifyDataSetChanged();
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout mainLayout;
-        public ConstraintLayout constraintLayout;
-        public TextView sentReceived;
-        public TextView amount;
-        public TextView account;
-        public TextView status;
-        public TextView status_2;
-        public TextView timestamp;
-        public TextView comment;
-        public ImageView arrowIcon;
+        private BaseTextView mTransactionDate;
+        private BaseTextView mTransactionAmount;
+        private BaseTextView mTransactionDetail;
+        private Button mTransactionFailed;
+        private ProgressBar mTransactionProgress;
 
-        public BaseTextView transactionDate;
-        public BaseTextView transactionAmount;
-        public BaseTextView transactionDetail;
-        public Button transactionFailed;
-        public ProgressBar transactionProgress;
+        BaseTextView getTransactionDate() {
+            return mTransactionDate;
+        }
 
+        BaseTextView getTransactionAmount() {
+            return mTransactionAmount;
+        }
 
-        public TxHolder(View view) {
+        BaseTextView getTransactionDetail() {
+            return mTransactionDetail;
+        }
+
+        Button getTransactionFailed() {
+            return mTransactionFailed;
+        }
+
+        ProgressBar getTransactionProgress() {
+            return mTransactionProgress;
+        }
+
+        TxHolder(View view) {
             super(view);
-
-            transactionDate = view.findViewById(R.id.tx_date);
-            transactionAmount = view.findViewById(R.id.tx_amount);
-            transactionDetail = view.findViewById(R.id.tx_description);
-            transactionFailed = view.findViewById(R.id.tx_failed_button);
-            transactionProgress = view.findViewById(R.id.tx_progress);
-
+            mTransactionDate = view.findViewById(R.id.tx_date);
+            mTransactionAmount = view.findViewById(R.id.tx_amount);
+            mTransactionDetail = view.findViewById(R.id.tx_description);
+            mTransactionFailed = view.findViewById(R.id.tx_failed_button);
+            mTransactionProgress = view.findViewById(R.id.tx_progress);
         }
     }
 

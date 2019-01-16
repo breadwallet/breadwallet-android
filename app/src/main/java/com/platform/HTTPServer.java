@@ -68,17 +68,18 @@ public class HTTPServer {
     private static Set<Middleware> middlewares;
     private static Server server;
     private static final int PORT = 31120;
-    public static final String URL_BUY = "http://localhost:" + PORT + "/buy";
-    public static final String URL_TRADE = "http://localhost:" + PORT + "/trade";
-    public static final String URL_SELL = "http://localhost:" + PORT + "/sell";
-    public static final String URL_SUPPORT = "http://localhost:" + PORT + "/support";
+    public static final String PLATFORM_BASE_URL = "http://localhost:" + PORT;
+    public static final String URL_BUY = PLATFORM_BASE_URL + "/buy";
+    public static final String URL_TRADE = PLATFORM_BASE_URL + "/trade";
+    public static final String URL_SELL = PLATFORM_BASE_URL + "/sell";
+    public static final String URL_SUPPORT = PLATFORM_BASE_URL + "/support";
     private static OnCloseListener mOnCloseListener;
 
     public HTTPServer() {
         init();
     }
 
-    private static void init() {
+    private synchronized static void init() {
         middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
         try {
@@ -108,21 +109,22 @@ public class HTTPServer {
 
     public synchronized static void startServer() {
         Log.d(TAG, "startServer");
-        if (isStarted()) {
-            return;
-        }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (server == null) init();
-                    server.start();
-                    server.join();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error starting the local server", e);
+        if (!isStarted()) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (server == null) {
+                            init();
+                        }
+                        server.start();
+                        server.join();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error starting the local server", e);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public static void stopServer() {

@@ -64,22 +64,6 @@ public class PlatformTests {
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(
             TestActivity.class);
 
-    // proto is the transport protocol to use for talking to the API (either http or https)
-    private static final String PROTO = "https";
-    // host is the server(s) on which the API is hosted
-//    private static final String HOST = "api.breadwallet.com";
-    // convenience getter for the API endpoint
-    private static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
-    //feePerKb url
-    private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
-    //token
-    private static final String TOKEN = "/token";
-    //me
-    private static final String ME = "/me";
-
-    private static final String GET = "GET";
-    private static final String POST = "POST";
-
     //loading the native library
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);

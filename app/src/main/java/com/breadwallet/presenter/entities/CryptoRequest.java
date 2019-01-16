@@ -78,7 +78,7 @@ public class CryptoRequest implements Serializable {
         BigDecimal minAmount = walletManager.getMinOutputAmount(app);
         BigDecimal absAmt = mAmount.abs();
         Log.e(TAG, "isSmallerThanMin: " + absAmt);
-        return minAmount != null && absAmt.compareTo(minAmount) < 0;
+        return minAmount != null && absAmt.compareTo(minAmount) < 0 && mGenericTransactionMetaData == null;
     }
 
     public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {

@@ -19,6 +19,9 @@ public class WalletManagerHelper {
     //Show this number of decimal places in transaction info.
     public static final int MAX_DECIMAL_PLACES_FOR_UI = 5;
 
+    //Number of confirmations needed to consider transaction as "Complete" in the UI.
+    private static final int CONFIRMATIONS_COMPLETE_MINIMUM = 6;
+
     private List<BalanceUpdateListener> mOnBalanceChangedListeners = new ArrayList<>();
     //    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> mSyncListeners = new ArrayList<>();
@@ -84,5 +87,10 @@ public class WalletManagerHelper {
             }
         }
     }
+
+    public boolean checkConfirmations(int confirmations) {
+        return confirmations >= CONFIRMATIONS_COMPLETE_MINIMUM;
+    }
+
 
 }

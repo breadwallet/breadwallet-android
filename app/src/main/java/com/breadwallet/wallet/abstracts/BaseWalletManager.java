@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -191,6 +192,8 @@ public interface BaseWalletManager {
     //get the total amount sent in the smallest crypto unit:  satoshis.
     BigDecimal getTotalSent(Context app);
 
+    List<BRSettingsItem> getSettingsList(Context context);
+
     //wipe all wallet data
     void wipeData(Context app);
 
@@ -199,6 +202,8 @@ public interface BaseWalletManager {
     void syncStopped(String error);
 
     boolean networkIsReachable();
+
+    boolean checkConfirmations(int conformations);
 
     //return the maximum amount for this currency
     BigDecimal getMaxAmount(Context app);
@@ -256,6 +261,5 @@ public interface BaseWalletManager {
      * or null if there is no fiat exchange data from the API yet
      */
     BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount);
-
 
 }
