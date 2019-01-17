@@ -12,6 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.util.BundlesHelper;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -82,6 +83,7 @@ public class IntroActivity extends BRActivity {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                BundlesHelper.getInstance().extractBundlesIfNeeded(IntroActivity.this);
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();

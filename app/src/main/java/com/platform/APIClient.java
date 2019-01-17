@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BundlesHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -146,17 +148,8 @@ public class APIClient {
     private static final Map<String, String> mHttpHeaders = new HashMap<>();
 
 
-    private static final String BUNDLES_FOLDER = "/bundles";
-    private static final String BRD_WEB = "brd-web-3";
-    private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
-    private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
     private static final String BUY_NOTIFICATION_KEY = "buy-notification";
-
-    public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
-    public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
-    public static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
     private static final boolean PRINT_FILES = false;
@@ -586,7 +579,7 @@ public class APIClient {
     }
 
     public synchronized void updateBundle() {
-        for (String bundleName : BUNDLE_NAMES) {
+        for (String bundleName : BundlesHelper.BUNDLE_NAMES) {
             File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
             String currentTarVersion = BRSharedPrefs.getBundleHash(mContext, bundleName);
             if (bundleFile.exists()) {
