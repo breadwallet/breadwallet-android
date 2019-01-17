@@ -843,7 +843,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(mContext);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + BundlesHelper.WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -914,7 +914,7 @@ public class APIClient {
 
     //returns the resource at bundles/path, if path is null then the bundle folder
     private String getBundleResource(Context app, String path) {
-        String bundle = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
+        String bundle = app.getFilesDir().getAbsolutePath() + BundlesHelper.BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
             return bundle;
         } else {

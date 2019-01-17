@@ -6,6 +6,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BundlesHelper;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -80,7 +81,7 @@ public class HTTPFileMiddleware implements Middleware {
         APIClient.BRResponse brResp = new APIClient.BRResponse();
         if (DEBUG_URL == null) {
             // fetch the file locally
-            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, APIClient.WEB_BUNDLE_NAME, target);
+            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, BundlesHelper.WEB_BUNDLE_NAME, target);
             Log.d(TAG, "Request local file -> " + requestedFile);
             Log.d(TAG, "Request local file target -> " + target);
 

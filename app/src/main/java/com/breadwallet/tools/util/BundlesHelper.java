@@ -44,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 /**
  * Helper class responsible for extracting bundles from the raw resources and keep them updated.
  */
@@ -51,28 +52,19 @@ public final class BundlesHelper {
     private static final String TAG = BundlesHelper.class.getName();
 
     private static final String TAR = "tar";
-    private static final String BUNDLES_FOLDER = "/bundles";
+    private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
-    private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
+    public static final String BUNDLES_FOLDER = "/bundles";
 
     private static final boolean PRINT_FILES = false;
 
-    private static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
-    private static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
+    public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
+    public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
             ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
     public static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
-
-    private static BundlesHelper mInstance;
-
-    public static synchronized BundlesHelper getInstance() {
-        if (mInstance == null) {
-            mInstance = new BundlesHelper();
-        }
-        return mInstance;
-    }
 
     private BundlesHelper() {
     }
@@ -80,15 +72,15 @@ public final class BundlesHelper {
     /**
      * Extract bundles from apk into the device storage if there is no bundle already available.
      */
-    public void extractBundlesIfNeeded(Context context) {
+    public static void extractBundlesIfNeeded(Context context) {
         for (String bundleName : BUNDLE_NAMES) {
             String fileName = String.format(TAR_FILE_NAME_FORMAT, bundleName);
             File bundleFile = new File(getBundleResource(context, fileName));
             if (!bundleFile.exists()) {
                 Log.d("tag", "Missing files " + bundleName);
                 String resName = bundleName.replace('-', '_');
-                // move write file from resources/raw to bundles directory
-                // extract
+                // Move files from resources/raw to bundles directory extract the resources and
+                // update bundle version in shared preferences.
                 try {
                     int resource = context.getResources().getIdentifier(resName, "raw", context.getPackageName());
                     InputStream inputStream = context.getResources().openRawResource(resource);
@@ -116,7 +108,7 @@ public final class BundlesHelper {
      */
 
     //returns the resource at bundles/path, if path is null then the bundle folder
-    private String getBundleResource(Context context, String path) {
+    private static String getBundleResource(Context context, String path) {
         String bundle = context.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
             return bundle;
@@ -128,7 +120,7 @@ public final class BundlesHelper {
         }
     }
 
-    private boolean tryExtractTar(Context context, String bundleName) {
+    private static boolean tryExtractTar(Context context, String bundleName) {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
@@ -171,7 +163,7 @@ public final class BundlesHelper {
     }
 
     //returns the extracted folder or the path in it
-    private String getExtractedPath(Context context, String bundleName, String path) {
+    private static String getExtractedPath(Context context, String bundleName, String path) {
         String extractedBundleFolder = String.format("%s-extracted", bundleName);
         String extracted = context.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
         if (Utils.isNullOrEmpty(path)) {
@@ -184,7 +176,7 @@ public final class BundlesHelper {
         }
     }
 
-    private void logFiles(String tag, String bundleName, Context context) {
+    private static void logFiles(String tag, String bundleName, Context context) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
             String path = getExtractedPath(context, bundleName, null);
@@ -205,7 +197,7 @@ public final class BundlesHelper {
      * @param bundleFile the file the bundle resides in.
      * @return The bundle version of the specified bundle that is currently on the device.
      */
-    private String getCurrentBundleVersion(File bundleFile) {
+    private static String getCurrentBundleVersion(File bundleFile) {
         byte[] bundleBytes;
         FileInputStream fileInputStream = null;
         try {

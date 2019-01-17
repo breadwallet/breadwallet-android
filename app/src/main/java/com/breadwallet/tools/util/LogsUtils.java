@@ -83,7 +83,7 @@ public class LogsUtils {
         stringBuilder.append("\nBuild Type: " + BuildConfig.BUILD_TYPE);
         stringBuilder.append("\nBuild Flavor: " + BuildConfig.FLAVOR);
         stringBuilder.append("\nApp Version: " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_VERSION));
-        for (String bundleName : APIClient.BUNDLE_NAMES) {
+        for (String bundleName : BundlesHelper.BUNDLE_NAMES) {
             stringBuilder.append(String.format("\n Bundle %s - Version: %s", bundleName, BRSharedPrefs.getBundleHash(context, bundleName)));
         }
         stringBuilder.append("\nNetwork: " + (BuildConfig.BITCOIN_TESTNET ? "Testnet" : "Mainnet"));
