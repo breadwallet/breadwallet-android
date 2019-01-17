@@ -83,7 +83,7 @@ public class IntroActivity extends BRActivity {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BundlesHelper.getInstance().extractBundlesIfNeeded(IntroActivity.this);
+                BundlesHelper.extractBundlesIfNeeded(IntroActivity.this);
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();
