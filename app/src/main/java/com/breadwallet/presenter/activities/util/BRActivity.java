@@ -268,7 +268,6 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
             case BRConstants.SCANNER_DID_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     String result = data.getStringExtra("result");
-                    AuthorizeManager.Server.receiveScanAuthor(this, result);
                 }
                 break;
 

@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -921,7 +922,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 code = mSelectedCurrencyCode;
             }
         } else {
-            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(BreadApp.mContext);
             address = request.address;
             memo = request.message;
             code = request.iso;

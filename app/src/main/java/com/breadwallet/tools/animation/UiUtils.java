@@ -117,7 +117,7 @@ public class UiUtils {
             app.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
+                    .addToBackStack(FragmentSend.class.getName()).commitAllowingStateLoss();
         }
 
     }
