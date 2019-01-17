@@ -165,6 +165,29 @@ android {
                             '${protobuf.generatedFilesBaseDir}/main/javalite']
         }
     }
+
+    task downloadBundles() {
+        def bundles
+        def host
+        if(gradle.startParameter.taskNames.contains("assembleRelease")) {
+            println("release mode")
+            bundles = ["brd-web-3", "brd-tokens"]
+            host = "api.breadwallet.com"
+        } else {
+            bundles = ["brd-web-3-staging", "brd-tokens-staging"]
+            host = "stage2.breadwallet.com"
+        }
+        def rootPath = new File( "." ).getCanonicalPath()
+        for (String bundle_name : bundles) {
+            def fileUrl = "https://${host}/assets/bundles/${bundle_name}/download"
+            println("Downloading: " + fileUrl)
+            def localFilePath = rootPath +"/app/src/main/res/raw/${bundle_name.replace("-","_")}.tar"
+            new File(localFilePath).withOutputStream { out ->
+                new URL(fileUrl).withInputStream { from ->  out << from; }
+            }
+        }
+    }
+    preBuild.dependsOn(downloadBundle)
 }
 
 protobuf {
@@ -197,6 +220,8 @@ protobuf {
 clean {
     delete protobuf.generatedFilesBaseDir
 }
+
+
 
 repositories {
     mavenCentral()
