@@ -57,7 +57,26 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 15;
 
+    /**
+     * DID author table
+     */
+    public static final String DID_AUTHOR_TABLE_NAME = "didAuthorTable";
+    public static final String DID_AUTHOR_COLUMN_ID = "_id";
+    public static final String DID_AUTHOR_NICKNAME = "nickname";
+    public static final String DID_AUTHOR_DID = "did";
+    public static final String DID_AUTHOR_PK = "PK";
+    public static final String DID_AUTHOR_AUTHOR_TIME = "authortime";
+    public static final String DID_AUTHOR_APP_NAME = "appname";
+    public static final String DID_AUTHOR_APP_ICON = "appicon";
 
+    private static final String DID_AUTHOR_DATABASE_CREATE = "create table if not exists " + DID_AUTHOR_TABLE_NAME + " (" +
+            DID_AUTHOR_COLUMN_ID + " integer, " +
+            DID_AUTHOR_NICKNAME + " text, " +
+            DID_AUTHOR_DID + " text primary key , " +
+            DID_AUTHOR_PK + " text, " +
+            DID_AUTHOR_APP_NAME + " text, " +
+            DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
+            DID_AUTHOR_APP_ICON +" text);";
     /**
      * ELA transaction table
      */
@@ -175,6 +194,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(DID_AUTHOR_DATABASE_CREATE);
         database.execSQL(ELA_TX_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);

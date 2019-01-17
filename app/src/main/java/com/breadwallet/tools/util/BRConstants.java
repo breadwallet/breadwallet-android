@@ -129,7 +129,7 @@ public final class BRConstants {
     public static final String URL_PRIVACY_POLICY = "https://github.com/elastos/Elastos.Developer.Doc/blob/master/Ignore/Doc/Privacy_Policy.md";
     public static final String URL_TWITTER = "https://twitter.com/breadapp";
     public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
-    public static final String URL_BLOG  = "https://t.me/elastoswalletelephant";
+    public static final String URL_BLOG  = "http://t.me/elastoswalletelephant";
 
 
     private BRConstants() {

@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -90,7 +92,15 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
                 if(isValid){
                     String response = getResponseJson(isValid);
-                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
+//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
+                    AuthorInfo authorInfo = new AuthorInfo();
+                    authorInfo.setAppIcon("www.client.icon");
+                    authorInfo.setAppName(packageName);
+                    authorInfo.setDid(did);
+                    authorInfo.setNickName("default");
+                    authorInfo.setPK(PK);
+                    authorInfo.setAuthorTime(System.currentTimeMillis()/1000);
+                    DidDataSource.getInstance(DidAuthorizeActivity.this).putAuthorApp(authorInfo);
                 }
                 finish();
             }

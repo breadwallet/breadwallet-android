@@ -154,9 +154,9 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, tx.getBlockheight());
             args.put(BRSQLiteHelper.TX_TIME_STAMP, tx.getTimestamp());
 
-//            Log.e(TAG, "updateTransaction: size before updating: " + getAllTransactions().size());
+//            Log.e(TAG, "updateTransaction: size before updating: " + getAllInfos().size());
             int r = database.update(BRSQLiteHelper.TX_TABLE_NAME, args, "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{tx.getTxHash(), iso.toUpperCase()});
-//            Log.e(TAG, "updateTransaction: size after updating: " + getAllTransactions().size());
+//            Log.e(TAG, "updateTransaction: size after updating: " + getAllInfos().size());
             if (r > 0)
                 Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
             else Log.e(TAG, "updateTransaction: Warning: r:" + r);

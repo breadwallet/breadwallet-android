@@ -127,7 +127,7 @@
         android:lineSpacingExtra="9sp"
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/auth_info"
-        android:text="-Nick name"/>
+        android:text="- Nick name"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/did"
@@ -138,7 +138,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/nick_name"
         android:lineSpacingExtra="9sp"
-        android:text="-DID"/>
+        android:text="- DID"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/pub_key"
@@ -149,6 +149,6 @@
         android:lineSpacingExtra="9sp"
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/did"
-        android:text="-Public key"/>
+        android:text="- Public key"/>
 
 </android.support.constraint.ConstraintLayout>

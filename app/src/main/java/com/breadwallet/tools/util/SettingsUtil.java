@@ -81,14 +81,14 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_camera)); */
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations_qr), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, AuthorQrActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_auth));
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations_qr), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(activity, AuthorQrActivity.class);
+//                activity.startActivity(intent);
+//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            }
+//        }, false, R.drawable.ic_auth));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
             @Override
