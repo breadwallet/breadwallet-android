@@ -406,6 +406,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                                         WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
                             else if (BRBitId.isBitId(result))
                                 BRBitId.signBitID(WalletActivity.this, result, null);
+
+                            mUri = null;
                         }
                     });
                 }
