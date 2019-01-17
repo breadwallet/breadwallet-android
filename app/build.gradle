@@ -18,6 +18,7 @@ android {
         }
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
+
     }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
@@ -177,17 +178,16 @@ android {
             bundles = ["brd-web-3-staging", "brd-tokens-staging"]
             host = "stage2.breadwallet.com"
         }
-        def rootPath = new File( "." ).getCanonicalPath()
         for (String bundle_name : bundles) {
             def fileUrl = "https://${host}/assets/bundles/${bundle_name}/download"
-            println("Downloading: " + fileUrl)
-            def localFilePath = rootPath +"/app/src/main/res/raw/${bundle_name.replace("-","_")}.tar"
+            def localFilePath = "${projectDir}/src/main/res/raw/${bundle_name.replace("-","_")}.tar"
+            println("Downloading: ${fileUrl} into ${localFilePath}")
             new File(localFilePath).withOutputStream { out ->
                 new URL(fileUrl).withInputStream { from ->  out << from; }
             }
         }
     }
-    preBuild.dependsOn(downloadBundle)
+    preBuild.dependsOn(downloadBundles)
 }
 
 protobuf {
