@@ -154,6 +154,19 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+
+    public static String getNickname(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("nickname", "default");
+    }
+
+    public static void putNickname(Context context, String firstAddress) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("nickname", firstAddress);
+        editor.apply();
+    }
+
     public static long getSecureTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("secureTime", System.currentTimeMillis() / 1000);

@@ -118,7 +118,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         Intent intent = getIntent();
         if (intent != null) {
-            mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.URI_EXTRA);
+            mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
             Log.i("author_test", "mUri:"+mUri);
             if (!StringUtil.isNullOrEmpty(mUri)) {
                 BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, "ELA");
@@ -380,24 +380,34 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    UiUtils.showSendFragment(WalletActivity.this, null);
-                    UriFactory factory = new UriFactory();
-                    factory.parse(mUri);
-                    String did = factory.getDID();
-                    String appId = factory.getAppID();
-                    String signed = factory.getSignature();
-                    String PK = factory.getPublicKey();
-                    Log.i(TAG, "did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
-                    boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
-                    Log.i(TAG, "isValide: "+isValide);
-                    if(!isValide) return;
-                    String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount();
-                    Log.i(TAG, "server result: "+result);
-                    if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result))
-                        CryptoUriParser.processRequest(WalletActivity.this, result,
-                                WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
-                    else if (BRBitId.isBitId(result))
-                        BRBitId.signBitID(WalletActivity.this, result, null);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            UiUtils.showSendFragment(WalletActivity.this, null);
+                            UriFactory factory = new UriFactory();
+                            factory.parse(mUri);
+                            String did = factory.getDID();
+                            String appId = factory.getAppID();
+                            String signed = factory.getSignature();
+                            String PK = factory.getPublicKey();
+                            Log.i(TAG, "did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
+                            boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
+                            Log.i(TAG, "isValide: "+isValide);
+                            if(!isValide) return;
+                            String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount();
+                            Log.i(TAG, "server result: "+result);
+                            if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result))
+                                CryptoUriParser.processRequest(WalletActivity.this, result,
+                                        WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
+                            else if (BRBitId.isBitId(result))
+                                BRBitId.signBitID(WalletActivity.this, result, null);
+                        }
+                    });
                 }
             }, 10);
         }
