@@ -8,7 +8,8 @@ android {
     ext {
         brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 8     // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdEngineeringVersion = 0
+        // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
@@ -18,7 +19,6 @@ android {
         }
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
-
     }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
@@ -168,22 +168,27 @@ android {
     }
 
     task downloadBundles() {
-        def bundles
-        def host
-        if(gradle.startParameter.taskNames.contains("assembleRelease")) {
-            println("release mode")
-            bundles = ["brd-web-3", "brd-tokens"]
-            host = "api.breadwallet.com"
-        } else {
-            bundles = ["brd-web-3-staging", "brd-tokens-staging"]
-            host = "stage2.breadwallet.com"
-        }
-        for (String bundle_name : bundles) {
-            def fileUrl = "https://${host}/assets/bundles/${bundle_name}/download"
-            def localFilePath = "${projectDir}/src/main/res/raw/${bundle_name.replace("-","_")}.tar"
-            println("Downloading: ${fileUrl} into ${localFilePath}")
-            new File(localFilePath).withOutputStream { out ->
-                new URL(fileUrl).withInputStream { from ->  out << from; }
+        def bundles = ["brd-web-3", "brd-tokens", "brd-web-3-staging", "brd-tokens-staging"]
+        def stagingHost = "api.breadwallet.com"
+        def releaseHost = "stage2.breadwallet.com"
+        for (String bundleName : bundles) {
+            def fileUrl
+            def resFolder
+            if (bundleName.contains("staging")) {
+                fileUrl = "https://${stagingHost}/assets/bundles/${bundleName}/download"
+                resFolder = "${projectDir}/src/debug/res/raw/"
+            } else {
+                fileUrl = "https://${releaseHost}/assets/bundles/${bundleName}/download"
+                resFolder = "${projectDir}/src/main/res/raw/"
+            }
+
+            def folder = file(resFolder)
+            if( !folder.exists() ) {
+                folder.mkdirs()
+            }
+            println("Downloading: ${fileUrl} into ${resFolder}")
+            new File("${resFolder}${bundleName.replace("-", "_")}.tar").withOutputStream { out ->
+                new URL(fileUrl).withInputStream { from -> out << from }
             }
         }
     }
@@ -220,8 +225,6 @@ protobuf {
 clean {
     delete protobuf.generatedFilesBaseDir
 }
-
-
 
 repositories {
     mavenCentral()
