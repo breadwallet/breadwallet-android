@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -23,7 +22,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BundlesHelper;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -579,7 +578,7 @@ public class APIClient {
     }
 
     public synchronized void updateBundle() {
-        for (String bundleName : BundlesHelper.BUNDLE_NAMES) {
+        for (String bundleName : ServerBundlesHelper.BUNDLE_NAMES) {
             File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
             String currentTarVersion = BRSharedPrefs.getBundleHash(mContext, bundleName);
             if (bundleFile.exists()) {
@@ -843,7 +842,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(mContext);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + BundlesHelper.WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + ServerBundlesHelper.WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -914,7 +913,7 @@ public class APIClient {
 
     //returns the resource at bundles/path, if path is null then the bundle folder
     private String getBundleResource(Context app, String path) {
-        String bundle = app.getFilesDir().getAbsolutePath() + BundlesHelper.BUNDLES_FOLDER;
+        String bundle = app.getFilesDir().getAbsolutePath() + ServerBundlesHelper.BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
             return bundle;
         } else {
