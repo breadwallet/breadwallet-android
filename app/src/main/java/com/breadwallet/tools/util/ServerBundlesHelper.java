@@ -26,6 +26,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
@@ -118,14 +119,7 @@ public final class ServerBundlesHelper {
      */
     private static String getBundleResource(Context context, String path) {
         String bundle = context.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
-        if (Utils.isNullOrEmpty(path)) {
-            return bundle;
-        } else {
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-            return bundle + path;
-        }
+        return concatPaths(path, bundle);
     }
 
     private static boolean tryExtractTar(Context context, String bundleName) {
@@ -133,8 +127,9 @@ public final class ServerBundlesHelper {
         Log.d(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
         boolean result = false;
         try (InputStream inputStream = new FileInputStream(bundleFile)) {
+            ArchiveStreamFactory streamFactory = new ArchiveStreamFactory();
             try (TarArchiveInputStream debInputStream
-                         = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(TAR, inputStream)) {
+                         = (TarArchiveInputStream) streamFactory.createArchiveInputStream(TAR, inputStream)) {
                 TarArchiveEntry entry;
                 while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
                     final String outputFileName = entry.getName().replace("./", "");
@@ -157,18 +152,22 @@ public final class ServerBundlesHelper {
 
     //returns the extracted folder or the path in it
     private static String getExtractedPath(Context context, String bundleName, String path) {
-        String extracted = new StringBuffer().append(context.getFilesDir().getAbsolutePath())
+        String extractedPath = new StringBuffer().append(context.getFilesDir().getAbsolutePath())
                 .append("/")
                 .append(bundleName)
                 .append(EXTRACTED)
                 .toString();
-        if (Utils.isNullOrEmpty(path)) {
-            return extracted;
+        return concatPaths(path, extractedPath);
+    }
+
+    private static String concatPaths(String rootPath, String endPath) {
+        if (Utils.isNullOrEmpty(rootPath)) {
+            return endPath;
         } else {
-            if (!path.startsWith("/")) {
-                path = "/" + path;
+            if (!rootPath.startsWith("/")) {
+                rootPath = "/" + rootPath;
             }
-            return extracted + path;
+            return endPath + rootPath;
         }
     }
 
