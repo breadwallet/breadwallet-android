@@ -1,14 +1,12 @@
 package com.platform.middlewares;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.util.BundlesHelper;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
-import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
 
 import junit.framework.Assert;
@@ -58,7 +56,7 @@ public class HTTPIndexMiddleware implements Middleware {
             return true;
         }
 
-        String indexFile = APIClient.getInstance(app).getExtractedPath(app, BundlesHelper.WEB_BUNDLE_NAME, rTrim(target, "/") + "/index.html");
+        String indexFile = APIClient.getInstance(app).getExtractedPath(app, ServerBundlesHelper.WEB_BUNDLE_NAME, rTrim(target, "/") + "/index.html");
 
         File temp = new File(indexFile);
         if (!temp.exists()) {

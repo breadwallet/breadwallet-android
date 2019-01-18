@@ -28,11 +28,11 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
+import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -48,11 +48,13 @@ import java.io.InputStream;
 /**
  * Helper class responsible for extracting bundles from the raw resources and keep them updated.
  */
-public final class BundlesHelper {
-    private static final String TAG = BundlesHelper.class.getName();
+public final class ServerBundlesHelper {
+    private static final String TAG = ServerBundlesHelper.class.getName();
 
+    private static final String RAW = "raw";
     private static final String TAR = "tar";
-    private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
+    private static final String EXTRACTED = "-extracted";
+    private static final String TAR_EXTENSION = ".tar";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
@@ -66,7 +68,7 @@ public final class BundlesHelper {
             ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
     public static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
 
-    private BundlesHelper() {
+    private ServerBundlesHelper() {
     }
 
     /**
@@ -74,40 +76,46 @@ public final class BundlesHelper {
      */
     public static void extractBundlesIfNeeded(Context context) {
         for (String bundleName : BUNDLE_NAMES) {
-            String fileName = String.format(TAR_FILE_NAME_FORMAT, bundleName);
+            String fileName = bundleName + TAR_EXTENSION;
             File bundleFile = new File(getBundleResource(context, fileName));
             if (!bundleFile.exists()) {
-                Log.d("tag", "Missing files " + bundleName);
-                String resName = bundleName.replace('-', '_');
-                // Move files from resources/raw to bundles directory extract the resources and
-                // update bundle version in shared preferences.
+                Log.d(TAG, "Missing files " + bundleName);
+                String resourceName = bundleName.replace('-', '_');
                 try {
-                    int resource = context.getResources().getIdentifier(resName, "raw", context.getPackageName());
+                    // Move files from resources/raw to bundles directory and extract the resources
+                    int resource = context.getResources().getIdentifier(resourceName, RAW, context.getPackageName());
                     InputStream inputStream = context.getResources().openRawResource(resource);
                     FileUtils.copyInputStreamToFile(inputStream, bundleFile);
                     boolean extracted = tryExtractTar(context, bundleName);
                     if (!extracted) {
-                        Log.e(TAG, "updateBundle: Failed to extract tar");
+                        Log.e(TAG, "Failed to extract tar: " + resourceName);
                     } else {
+                        // Update bundle version in shared preferences, this is used to check if we have latest version.
                         String currentBundleVersion = getCurrentBundleVersion(bundleFile);
                         if (!Utils.isNullOrEmpty(currentBundleVersion)) {
                             BRSharedPrefs.putBundleHash(context, bundleName, currentBundleVersion);
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException exception) {
+                    Log.e(TAG, "Failed to extract bundles from resources", exception);
                 }
             } else {
-                Log.d("tag", "Bundle is there " + bundleFile.getAbsolutePath());
+                Log.d(TAG, "Bundle is already there " + bundleFile.getAbsolutePath());
             }
         }
     }
 
     /**
-     *  Methods copied from APIClient, the duplicate code must be removed from APIClient soon after refactor 01/17/19
+     *  Methods copied from APIClient, duplicate code must be removed from APIClient after refactor 01/17/19 DROID-1133
      */
 
-    //returns the resource at bundles/path, if path is null then the bundle folder
+    /**
+     * Returns the resource at bundles/path, if path is null then the bundle folder.
+     *
+     * @param context Execution context.
+     * @param path    Bundle's path.
+     * @return Resource path or the bundle folder if the path is null.
+     */
     private static String getBundleResource(Context context, String path) {
         String bundle = context.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
@@ -121,51 +129,39 @@ public final class BundlesHelper {
     }
 
     private static boolean tryExtractTar(Context context, String bundleName) {
-        Context app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "tryExtractTar: failed to extract, app is null");
-            return false;
-        }
-        File bundleFile = new File(getBundleResource(context, bundleName + "." + TAR));
-        Log.e(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
+        File bundleFile = new File(getBundleResource(context, bundleName + TAR_EXTENSION));
+        Log.d(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
         boolean result = false;
-        TarArchiveInputStream debInputStream = null;
-        try {
-            final InputStream is = new FileInputStream(bundleFile);
-            debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(TAR, is);
-            TarArchiveEntry entry = null;
-            while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
-
-                final String outPutFileName = entry.getName().replace("./", "");
-                final File outputFile = new File(getExtractedPath(context, bundleName, null), outPutFileName);
-                if (!entry.isDirectory()) {
-                    FileUtils.writeByteArrayToFile(
-                            outputFile,
-                            org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
+        try (InputStream inputStream = new FileInputStream(bundleFile)) {
+            try (TarArchiveInputStream debInputStream
+                         = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(TAR, inputStream)) {
+                TarArchiveEntry entry;
+                while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
+                    final String outputFileName = entry.getName().replace("./", "");
+                    final File outputFile = new File(getExtractedPath(context, bundleName, null), outputFileName);
+                    if (!entry.isDirectory()) {
+                        FileUtils.writeByteArrayToFile(outputFile, IOUtils.toByteArray(debInputStream));
+                    }
                 }
-            }
 
-            result = true;
-        } catch (Exception e) {
-            Log.e(TAG, "tryExtractTar: ", e);
-        } finally {
-            try {
-                if (debInputStream != null) {
-                    debInputStream.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "tryExtractTar: ", e);
+                result = true;
+            } catch (IOException | ArchiveException exception) {
+                Log.e(TAG, "tryExtractTar: ", exception);
             }
+        } catch (IOException exception) {
+            Log.e(TAG, "tryExtractTar: ", exception);
         }
         logFiles("tryExtractTar", bundleName, context);
         return result;
-
     }
 
     //returns the extracted folder or the path in it
     private static String getExtractedPath(Context context, String bundleName, String path) {
-        String extractedBundleFolder = String.format("%s-extracted", bundleName);
-        String extracted = context.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
+        String extracted = new StringBuffer().append(context.getFilesDir().getAbsolutePath())
+                .append("/")
+                .append(bundleName)
+                .append(EXTRACTED)
+                .toString();
         if (Utils.isNullOrEmpty(path)) {
             return extracted;
         } else {
@@ -183,11 +179,11 @@ public final class BundlesHelper {
 
             File directory = new File(path);
             File[] files = directory.listFiles();
-            Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
+            Log.d("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
             for (int i = 0; files != null && i < files.length; i++) {
-                Log.e("Files", "FileName:" + files[i].getName());
+                Log.d("Files", "FileName:" + files[i].getName());
             }
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+            Log.d(TAG, "logFiles " + tag + " : START LOGGING");
         }
     }
 
@@ -199,22 +195,12 @@ public final class BundlesHelper {
      */
     private static String getCurrentBundleVersion(File bundleFile) {
         byte[] bundleBytes;
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(bundleFile);
+        try (FileInputStream fileInputStream = new FileInputStream(bundleFile)) {
             bundleBytes = IOUtils.toByteArray(fileInputStream);
             byte[] hash = CryptoHelper.sha256(bundleBytes);
             return Utils.isNullOrEmpty(hash) ? null : Utils.bytesToHex(hash);
-        } catch (IOException e) {
-            Log.e(TAG, "getCurrentBundleVersion: ", e);
-        } finally {
-            try {
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "getCurrentBundleVersion: ", e);
-            }
+        } catch (IOException exception) {
+            Log.e(TAG, "getCurrentBundleVersion: ", exception);
         }
         return null;
     }
