@@ -66,6 +66,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DID_AUTHOR_DID = "did";
     public static final String DID_AUTHOR_PK = "PK";
     public static final String DID_AUTHOR_AUTHOR_TIME = "authortime";
+    public static final String DID_AUTHOR_EXP_TIME = "exptime";
     public static final String DID_AUTHOR_APP_NAME = "appname";
     public static final String DID_AUTHOR_APP_ICON = "appicon";
 
@@ -76,6 +77,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             DID_AUTHOR_PK + " text, " +
             DID_AUTHOR_APP_NAME + " text, " +
             DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
+            DID_AUTHOR_EXP_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_APP_ICON +" text);";
     /**
      * ELA transaction table

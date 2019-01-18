@@ -109,12 +109,13 @@ public class DidDataSource implements BRDataSourceInterface {
     }
 
     private final String[] allColumns = {
-            BRSQLiteHelper.DID_AUTHOR_NICKNAME,
-            BRSQLiteHelper.DID_AUTHOR_DID,
-            BRSQLiteHelper.DID_AUTHOR_PK,
-            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,
-            BRSQLiteHelper.DID_AUTHOR_APP_NAME,
-            BRSQLiteHelper.DID_AUTHOR_APP_ICON
+            BRSQLiteHelper.DID_AUTHOR_NICKNAME,//0
+            BRSQLiteHelper.DID_AUTHOR_DID,//1
+            BRSQLiteHelper.DID_AUTHOR_PK,//2
+            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//3
+            BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//4
+            BRSQLiteHelper.DID_AUTHOR_APP_NAME,//5
+            BRSQLiteHelper.DID_AUTHOR_APP_ICON//6
     };
 
     private AuthorInfo cursorToInfo(Cursor cursor) {
@@ -123,8 +124,9 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setDid(cursor.getString(1));
         authorInfo.setPK(cursor.getString(2));
         authorInfo.setAuthorTime(cursor.getLong(3));
-        authorInfo.setAppName(cursor.getString(4));
-        authorInfo.setAppIcon(cursor.getString(5));
+        authorInfo.setAuthorTime(cursor.getLong(4));
+        authorInfo.setAppName(cursor.getString(5));
+        authorInfo.setAppIcon(cursor.getString(6));
         return authorInfo;
     }
 

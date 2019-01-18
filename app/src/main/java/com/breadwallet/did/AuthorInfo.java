@@ -5,6 +5,7 @@ public class AuthorInfo {
     private String did;
     private String PK;
     private long authorTime;
+    private long expTime;
     private String appName;
     private String appIcon;
 
@@ -38,6 +39,15 @@ public class AuthorInfo {
 
     public void setAuthorTime(long authorTime) {
         this.authorTime = authorTime;
+    }
+
+
+    public long getExpTime() {
+        return expTime;
+    }
+
+    public void setExpTime(long expTime) {
+        this.expTime = expTime;
     }
 
     public String getAppName() {

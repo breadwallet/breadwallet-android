@@ -3,12 +3,14 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 
 import java.text.ParseException;
@@ -30,6 +32,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private AuthorInfo mAuthorInfo;
     private BaseTextView mAppNameTx;
     private BaseTextView mAuthorTimeTx;
+    private BaseTextView mExpTimeTx;
     private BaseTextView mNicknameTx;
     private BaseTextView mPublickeyTx;
     private BaseTextView mDidTx;
@@ -50,6 +53,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mAppNameTx = findViewById(R.id.app_name);
         mAuthorTimeTx = findViewById(R.id.auth_time);
         mNicknameTx = findViewById(R.id.nick_name);
+        mExpTimeTx = findViewById(R.id.expiration);
         mPublickeyTx = findViewById(R.id.pub_key);
         mDidTx = findViewById(R.id.did);
     }
@@ -57,17 +61,10 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private void initData(){
         if(mAuthorInfo == null) return;
         mAppNameTx.setText(mAuthorInfo.getAppName());
-        mAuthorTimeTx.setText(longToStr(mAuthorInfo.getAuthorTime()));
-//
-//        mDidTx.setText("- DID "+mAuthorInfo.getDid());
-//        mPublickeyTx.setText(""mAuthorInfo.getPK());
+        mAuthorTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getAuthorTime() == 0 ? System.currentTimeMillis() : (mAuthorInfo.getAuthorTime()  * DateUtils.SECOND_IN_MILLIS)));
+        mExpTimeTx.setText(BRDateUtil.getAuthorDate(System.currentTimeMillis()));
     }
 
-    public static String longToStr(long ms){
-        Date date = new Date(ms);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        return format.format(date);
-    }
 
 
 

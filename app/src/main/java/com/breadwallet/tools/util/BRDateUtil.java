@@ -89,4 +89,13 @@ public class BRDateUtil {
         return dateString;
 
     }
+
+    public static String getAuthorDate(long timestamp){
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTimeInMillis(timestamp);
+
+        String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());
+
+        return dateString;
+    }
 }

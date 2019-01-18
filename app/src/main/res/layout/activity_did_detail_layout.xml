@@ -31,7 +31,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="320dp"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -97,12 +97,33 @@
         android:textColor="@color/black_333333"
         android:text="2019-12-31 23:59"/>
 
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/expiration_lable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/app_icon"
+        app:layout_constraintTop_toBottomOf="@+id/auth_time"
+        android:layout_marginTop="16dp"
+        android:textSize="14sp"
+        android:textColor="@color/black_999999"
+        android:text="Expiration:"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/expiration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/app_icon"
+        app:layout_constraintTop_toBottomOf="@+id/expiration_lable"
+        android:textSize="14sp"
+        android:textColor="@color/black_333333"
+        android:text="2019-12-31 23:59"/>
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#ececed"
-        app:layout_constraintTop_toBottomOf="@id/auth_time"
+        app:layout_constraintTop_toBottomOf="@id/expiration"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"/>

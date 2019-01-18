@@ -1,5 +1,8 @@
 package com.breadwallet.presenter.activities.did;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -7,14 +10,18 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
@@ -82,6 +89,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             @Override
             public void onClick(View view) {
 
+                if(StringUtil.isNullOrEmpty(pk)) {
+                    Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 UriFactory uriFactory = new UriFactory();
                 uriFactory.parse(mUri);
                 String did = uriFactory.getDID();
@@ -92,7 +104,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
                 if(isValid){
                     String response = getResponseJson(isValid);
-//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
                     AuthorInfo authorInfo = new AuthorInfo();
                     authorInfo.setAppIcon("www.client.icon");
                     authorInfo.setAppName(packageName);
@@ -101,6 +112,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                     authorInfo.setPK(PK);
                     authorInfo.setAuthorTime(System.currentTimeMillis()/1000);
                     DidDataSource.getInstance(DidAuthorizeActivity.this).putAuthorApp(authorInfo);
+
+                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
                 }
                 finish();
             }
