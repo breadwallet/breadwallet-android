@@ -26,6 +26,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
@@ -60,8 +61,6 @@ public final class ServerBundlesHelper {
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     public static final String BUNDLES_FOLDER = "/bundles";
-
-    private static final boolean PRINT_FILES = false;
 
     public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
     public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
@@ -149,8 +148,14 @@ public final class ServerBundlesHelper {
         return result;
     }
 
-    //returns the extracted folder or the path in it
-    private static String getExtractedPath(Context context, String bundleName, String path) {
+    /**
+     * Returns the extracted folder or the path in it
+     * @param context       Execution context.
+     * @param bundleName    Name of the bundle from which we want to get the path.
+     * @param path          Path into the extracted folder.
+     * @return Path of the extracted bundle.
+     */
+    private static String getExtractedPath(Context context, String bundleName, @Nullable String path) {
         String extractedPath = new StringBuffer().append(context.getFilesDir().getAbsolutePath())
                 .append("/")
                 .append(bundleName)
@@ -171,8 +176,8 @@ public final class ServerBundlesHelper {
     }
 
     private static void logFiles(String tag, String bundleName, Context context) {
-        if (PRINT_FILES) {
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "logFiles " + tag + " : START LOGGING");
             String path = getExtractedPath(context, bundleName, null);
 
             File directory = new File(path);

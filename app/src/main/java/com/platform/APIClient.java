@@ -555,6 +555,7 @@ public class APIClient {
      * @param bundleFile the file the bundle resides in.
      * @return The bundle version of the specified bundle that is currently on the device.
      */
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private String getCurrentBundleVersion(File bundleFile) {
         byte[] bundleBytes;
         FileInputStream fileInputStream = null;
@@ -577,6 +578,7 @@ public class APIClient {
         return null;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public synchronized void updateBundle() {
         for (String bundleName : ServerBundlesHelper.BUNDLE_NAMES) {
             File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
@@ -663,6 +665,7 @@ public class APIClient {
         return latestVersion;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133, only keep the request to the API here.
     public void downloadDiff(String bundleName, String currentTarVersion) {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
@@ -706,6 +709,7 @@ public class APIClient {
         logFiles("downloadDiff", bundleName, mContext);
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public byte[] writeBundleToFile(String bundleName, byte[] response) {
         try {
             if (response == null) {
@@ -722,6 +726,7 @@ public class APIClient {
         return null;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public boolean tryExtractTar(String bundleName) {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
@@ -827,6 +832,7 @@ public class APIClient {
         }
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public void updatePlatform(final Context app) {
         if (mIsPlatformUpdating) {
             Log.e(TAG, "updatePlatform: platform already Updating!");
@@ -912,6 +918,7 @@ public class APIClient {
     }
 
     //returns the resource at bundles/path, if path is null then the bundle folder
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private String getBundleResource(Context app, String path) {
         String bundle = app.getFilesDir().getAbsolutePath() + ServerBundlesHelper.BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
@@ -925,6 +932,7 @@ public class APIClient {
     }
 
     //returns the extracted folder or the path in it
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public String getExtractedPath(Context app, String bundleName, String path) {
         String extractedBundleFolder = String.format("%s-extracted", bundleName);
         String extracted = app.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
@@ -946,6 +954,7 @@ public class APIClient {
         return mCachedAuthKey;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private void logFiles(String tag, String bundleName, Context ctx) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
