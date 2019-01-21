@@ -22,6 +22,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -146,17 +147,8 @@ public class APIClient {
     private static final Map<String, String> mHttpHeaders = new HashMap<>();
 
 
-    private static final String BUNDLES_FOLDER = "/bundles";
-    private static final String BRD_WEB = "brd-web-3";
-    private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
-    private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
     private static final String BUY_NOTIFICATION_KEY = "buy-notification";
-
-    public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
-    public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
-    public static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
     private static final boolean PRINT_FILES = false;
@@ -563,6 +555,7 @@ public class APIClient {
      * @param bundleFile the file the bundle resides in.
      * @return The bundle version of the specified bundle that is currently on the device.
      */
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private String getCurrentBundleVersion(File bundleFile) {
         byte[] bundleBytes;
         FileInputStream fileInputStream = null;
@@ -585,8 +578,9 @@ public class APIClient {
         return null;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public synchronized void updateBundle() {
-        for (String bundleName : BUNDLE_NAMES) {
+        for (String bundleName : ServerBundlesHelper.BUNDLE_NAMES) {
             File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
             String currentTarVersion = BRSharedPrefs.getBundleHash(mContext, bundleName);
             if (bundleFile.exists()) {
@@ -671,6 +665,7 @@ public class APIClient {
         return latestVersion;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133, only keep the request to the API here.
     public void downloadDiff(String bundleName, String currentTarVersion) {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
@@ -714,6 +709,7 @@ public class APIClient {
         logFiles("downloadDiff", bundleName, mContext);
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public byte[] writeBundleToFile(String bundleName, byte[] response) {
         try {
             if (response == null) {
@@ -730,6 +726,7 @@ public class APIClient {
         return null;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public boolean tryExtractTar(String bundleName) {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
@@ -835,6 +832,7 @@ public class APIClient {
         }
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public void updatePlatform(final Context app) {
         if (mIsPlatformUpdating) {
             Log.e(TAG, "updatePlatform: platform already Updating!");
@@ -850,7 +848,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(mContext);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + ServerBundlesHelper.WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -920,8 +918,9 @@ public class APIClient {
     }
 
     //returns the resource at bundles/path, if path is null then the bundle folder
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private String getBundleResource(Context app, String path) {
-        String bundle = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
+        String bundle = app.getFilesDir().getAbsolutePath() + ServerBundlesHelper.BUNDLES_FOLDER;
         if (Utils.isNullOrEmpty(path)) {
             return bundle;
         } else {
@@ -933,6 +932,7 @@ public class APIClient {
     }
 
     //returns the extracted folder or the path in it
+    // TODO: Move to ServerBundlesHelper DROID-1133
     public String getExtractedPath(Context app, String bundleName, String path) {
         String extractedBundleFolder = String.format("%s-extracted", bundleName);
         String extracted = app.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
@@ -954,6 +954,7 @@ public class APIClient {
         return mCachedAuthKey;
     }
 
+    // TODO: Move to ServerBundlesHelper DROID-1133
     private void logFiles(String tag, String bundleName, Context ctx) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
