@@ -120,6 +120,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
 
+    public static boolean mFromRedPackage = true;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -620,7 +622,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void showKeyboard(boolean b) {
-        if (!b) {
+        if (!b || mFromRedPackage) {
             mSignalLayout.removeView(mKeyboardLayout);
 
         } else {
@@ -704,6 +706,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onResume() {
         super.onResume();
         loadViewModelData();
+        mAmountEdit.setEnabled(!mFromRedPackage);
     }
 
     @Override

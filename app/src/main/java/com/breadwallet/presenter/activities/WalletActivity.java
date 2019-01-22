@@ -29,6 +29,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -109,6 +110,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BaseWalletManager mWallet;
 
     private String mUri;
+
+    public static String mCallbackUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -341,8 +344,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         updateUi();
     }
 
-    public static String mCallbackUrl;
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -396,6 +397,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            FragmentSend.mFromRedPackage = true;
                             UiUtils.showSendFragment(WalletActivity.this, null);
                             UriFactory factory = new UriFactory();
                             factory.parse(mUri);

@@ -111,7 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:drawableLeft="@drawable/ic_did_what"
-        android:text="What is DID?"
+        android:text="@string/Did.What.Did"
         android:textSize="14sp"
         android:layout_marginTop="8dp"
         android:drawablePadding="5dp"

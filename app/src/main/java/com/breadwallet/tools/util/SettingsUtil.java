@@ -134,7 +134,7 @@ public final class SettingsUtil {
 //            }
 //        }, false, R.drawable.ic_support));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Red_package_title), "", new View.OnClickListener() {
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                String url = "http://192.168.1.124:8081/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";

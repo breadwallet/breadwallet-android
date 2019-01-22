@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Questions"
+            android:text="@string/Did.Quest"
             android:textColor="@color/black_333333"
             android:textSize="20sp"
             android:layout_centerInParent="true"/>
@@ -38,7 +38,7 @@
         android:layout_marginLeft="25dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:text="What is DID?"/>
+        android:text="@string/Did.What.Did"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:textSize="15sp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:text="DID is the virtual personal identity in blockchain world, it is decentralized stored and secure, it can identify any thing in the real world, like person, asset, thing."
+        android:text="@string/Did.Description"
         />
 
     <com.breadwallet.presenter.customviews.BRButton
@@ -66,6 +66,7 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:buttonType="6"
+        android:visibility="gone"
         app:isBreadButton="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

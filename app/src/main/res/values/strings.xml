@@ -306,8 +306,6 @@
   <string name="MenuButton.lock">Lock Wallet</string>
   <!-- Did Authorizations -->
   <string name="MenuButton.authorizations.qr">Authorizations QR</string>
-  <!-- Did Authorizations -->
-  <string name="MenuButton.authorizations">Authorizations</string>
   <!-- (Click here to) manage (your list of) wallets -->
   <string name="MenuButton.manageWallets">Manage Wallets</string>
   <!-- (press here to) scan (a) QR code -->
@@ -953,11 +951,27 @@
   <string name="Send.max.body">Send max?</string>
   <string name="Send.dialog.ignore">Ignore</string>
   <string name="Send.dialog.cancle">Cancel</string>
-  <string name="Red.package.title">Create a ELA red packet</string>
   <string name="Upgrade.title">Check Upgrade</string>
   <string name="My.wallet.title">My Wallet</string>
   <string name="Setting.title">Settings</string>
 
   <string name="Gas.price">Gas Price</string>
   <string name="Gas.limit">Gas Limit</string>
+
+  <!-- Did Authorizations -->
+  <string name="MenuButton.authorizations">Authorizations</string>
+  <string name="Did.Authorized">Authorized</string>
+  <string name="Did.Authorize.time">Auth time</string>
+  <string name="Did.Expiration">Expiration</string>
+  <string name="Did.Author.Info">Auth information</string>
+  <string name="Did.Nick.Name">Nick name</string>
+  <string name="Did.Public.Key">Public key</string>
+  <string name="Did.What.Did">What is DID?</string>
+  <string name="Did.Quest">Questions</string>
+  <string name="Did.Required">Required</string>
+  <string name="Did.Receive.Address">Wallet receive address</string>
+  <string name="Did.Deny">Deny</string>
+  <string name="Did.Save">Save</string>
+  <string name="Did.Create.Ela.Red.Package">Create a ELA red packet</string>
+  <string name="Did.Description">DID is the virtual personal identity in blockchain world, it is decentralized stored and secure, it can identify any thing in the real world, like person, asset, thing.</string>
 </resources>
