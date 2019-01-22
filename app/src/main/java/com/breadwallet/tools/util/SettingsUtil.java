@@ -8,7 +8,6 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
-import com.breadwallet.presenter.activities.did.AuthorQrActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
@@ -134,6 +133,14 @@ public final class SettingsUtil {
 //                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
 //            }
 //        }, false, R.drawable.ic_support));
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Red_package_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://192.168.1.124:8081/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";
+                UiUtils.openUrlByBrowser(activity, url);
+            }
+        }, false, R.drawable.ic_red_package));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override

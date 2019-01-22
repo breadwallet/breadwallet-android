@@ -2,6 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;

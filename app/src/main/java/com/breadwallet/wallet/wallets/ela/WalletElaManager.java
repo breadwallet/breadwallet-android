@@ -9,8 +9,10 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -135,18 +137,17 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mPrivateKey;
     }
 
+    public static String getPublicKey(){
+        return Utility.getInstance(mContext).getPublicKeyFromPrivateKey(getPrivateKey());
+    }
+
     private static String mAddress;
     @Override
     public String getAddress() {
         if (StringUtil.isNullOrEmpty(mAddress)) {
-            try {
-                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                String publickey = Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
-                if(publickey != null) {
-                    mAddress = Utility.getInstance(mContext).getAddress(publickey);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            String publickey = getPublicKey();
+            if(publickey != null) {
+                mAddress = Utility.getInstance(mContext).getAddress(publickey);
             }
         }
 
@@ -167,8 +168,11 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         BRElaTransaction raw = tx.getElaTx();
         if(raw == null) return new byte[1];
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
-        if(mRwTxid == null) return new byte[1];
+
+        if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl))
+            UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl);
         return mRwTxid.getBytes();
     }
 

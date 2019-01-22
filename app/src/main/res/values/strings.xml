@@ -953,6 +953,7 @@
   <string name="Send.max.body">Send max?</string>
   <string name="Send.dialog.ignore">Ignore</string>
   <string name="Send.dialog.cancle">Cancel</string>
+  <string name="Red.package.title">Create a ELA red packet</string>
   <string name="Upgrade.title">Check Upgrade</string>
   <string name="My.wallet.title">My Wallet</string>
   <string name="Setting.title">Settings</string>

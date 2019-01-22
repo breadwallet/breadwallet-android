@@ -1,9 +1,7 @@
 package com.breadwallet.presenter.activities.did;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
@@ -12,15 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -56,19 +54,35 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private String packageName;
     private String activityCls;
 
+    private String mn;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         if(intent != null) {
-            mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
-            packageName = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.PACKAGE_NAME);
-            activityCls = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.ACTIVITY_CLASS);
-
-            Log.i(TAG, "server mUri: "+ mUri);
+            String action = intent.getAction();
+            if(action.equals(Intent.ACTION_VIEW)){
+                Uri uri = intent.getData();
+                Log.i(TAG, "server mUri: "+ uri.toString());
+                mUri = uri.toString();
+            } else {
+                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
+                packageName = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.PACKAGE_NAME);
+                activityCls = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.ACTIVITY_CLASS);
+            }
         }
         initView();
         initListener();
+
+
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+            if(phrase != null) mn = new String(phrase);
+            pk = Utility.getInstance(this).getSinglePrivateKey(mn);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initView(){
@@ -88,78 +102,57 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorizeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(StringUtil.isNullOrEmpty(pk)) {
+                if(StringUtil.isNullOrEmpty(mn)) {
                     Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 UriFactory uriFactory = new UriFactory();
                 uriFactory.parse(mUri);
-                String did = uriFactory.getDID();
+                final String did = uriFactory.getDID();
                 String appId = uriFactory.getAppID();
                 String sign = uriFactory.getSignature();
                 String PK = uriFactory.getPublicKey();
+                final String backurl = uriFactory.getCallbackUrl();
+                final String returnUrl = uriFactory.getReturnUrl();
                 boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
 
                 if(isValid){
-                    String response = getResponseJson(isValid);
-                    AuthorInfo authorInfo = new AuthorInfo();
-                    authorInfo.setAppIcon("www.client.icon");
-                    authorInfo.setAppName(packageName);
-                    authorInfo.setDid(did);
-                    authorInfo.setNickName("default");
-                    authorInfo.setPK(PK);
-                    authorInfo.setAuthorTime(System.currentTimeMillis()/1000);
-                    DidDataSource.getInstance(DidAuthorizeActivity.this).putAuthorApp(authorInfo);
+                    if(!StringUtil.isNullOrEmpty(backurl)){
+                        final CallbackEntity entity = new CallbackEntity();
+                        pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
+                        String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
+                        String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
+                        String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+                        entity.Data.ELAAddress = myAddress;
+                        entity.Data.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
+                        entity.PublicKey = myPK;
+                        entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, new Gson().toJson(entity.Data));
 
-                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
+
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
+                                if(!StringUtil.isNullOrEmpty(ret)) {
+                                    if(ret.contains("err code:")) {
+                                        Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Uri uri = Uri.parse(returnUrl+"?did="+did);
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                        startActivity(intent);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
                 }
                 finish();
             }
         });
     }
 
-    String pk;
-    private String getResponseJson(boolean isValid){
-        LoginResponse loginResponse = new LoginResponse();
-        SignWrapper signWrapper = new SignWrapper();
-        byte[] phrase;
-        String mn;
-        String did = null;
-        String PK = null;
-        String addr = null;
-        try {
-            phrase = BRKeyStore.getPhrase(this, 0);
-            mn = new String(phrase);
-            pk = Utility.getInstance(this).getSinglePrivateKey(mn);
-            PK = Utility.getInstance(this).getSinglePublicKey(mn);
-            did = Utility.getInstance(this).getDid(PK);
-            addr = Utility.getInstance(this).getAddress(PK);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        if(isValid) {
-            loginResponse.setStatus(200);
-            loginResponse.setDID(did);
-            loginResponse.setPublicKey(PK);
-            loginResponse.setELAAddress(mAddressSb.isChecked()?addr:null);
-            loginResponse.setNickName(mNickNameSb.isChecked()?BRSharedPrefs.getNickname(this):null);
-
-            String loginJson = new Gson().toJson(loginResponse);
-            String sign = AuthorizeManager.sign(this, pk, loginJson);
-            signWrapper.setData(loginJson);
-            signWrapper.setSign(sign);
-        } else {
-            loginResponse.setStatus(400);
-            loginResponse.setMsg("参数错误");
-            loginResponse.setDID(did);
-            loginResponse.setPublicKey(PK);
-            String loginJson = new Gson().toJson(loginResponse);
-            String sign = AuthorizeManager.sign(this, pk, loginJson);
-            signWrapper.setData(loginJson);
-            signWrapper.setSign(sign);
-        }
-        return new Gson().toJson(signWrapper);
-    }
+    private String pk;
 }
