@@ -139,6 +139,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                validateAllWords();
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) {
@@ -292,6 +293,13 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         view.setTextColor(getColor(valid ? mTypedValue.resourceId : R.color.red_text));
         if (!valid) {
             SpringAnimator.failShakeAnimation(this, view);
+        }
+    }
+
+    private void validateAllWords() {
+        for (int i = 0; i < mEditTextWords.size(); i++) {
+            BREdit editText = mEditTextWords.get(i);
+            validateWord(editText);
         }
     }
 
