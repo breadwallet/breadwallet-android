@@ -417,8 +417,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                                 CryptoUriParser.processRequest(WalletActivity.this, result,
                                         WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
                             }
-
-                            mUri = null;
                         }
                     });
                 }

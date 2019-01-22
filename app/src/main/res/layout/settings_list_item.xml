@@ -37,6 +37,17 @@
         android:layout_height="wrap_content" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/new_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff3365"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="35dp"
+        android:visibility="gone"
+        android:text="New"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="7dp"
         android:layout_height="12dp"
         android:background="@drawable/ic_arrow_right"

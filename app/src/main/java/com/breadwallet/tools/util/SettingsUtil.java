@@ -141,7 +141,7 @@ public final class SettingsUtil {
                 String url = "https://redpacket.elastos.org/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";
                 UiUtils.openUrlByBrowser(activity, url);
             }
-        }, false, R.drawable.ic_red_package));
+        }, false, R.drawable.ic_red_package, true));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override

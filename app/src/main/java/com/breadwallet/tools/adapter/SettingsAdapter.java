@@ -83,6 +83,8 @@ public class SettingsAdapter extends ArrayAdapter<String> {
             v.setOnClickListener(item.listener);
         }
 
+        TextView newTv = v.findViewById(R.id.new_tv);
+        newTv.setVisibility(item.isNew?View.VISIBLE : View.GONE);
         TextView title = v.findViewById(R.id.item_title);
         title.setText(item.title);
 
