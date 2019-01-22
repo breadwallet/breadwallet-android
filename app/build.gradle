@@ -141,7 +141,6 @@ android {
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
 
-            ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
 
             externalNativeBuild {
