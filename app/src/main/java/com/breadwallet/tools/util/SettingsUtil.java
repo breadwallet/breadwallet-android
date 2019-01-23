@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
@@ -137,8 +138,9 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String url = BuildConfig.UPGRADE_TESTNET? "https://redpacket.elastos.org" : "http://192.168.1.124:8081";
 //                String url = "http://192.168.1.124:8081";
-                String url = "https://redpacket.elastos.org";
+//                String url = "https://redpacket.elastos.org/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";
                 UiUtils.openUrlByBrowser(activity, url);
             }
         }, false, R.drawable.ic_red_package, true));

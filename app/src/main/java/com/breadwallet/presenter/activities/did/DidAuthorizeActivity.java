@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
@@ -95,9 +96,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 if(StringUtil.isNullOrEmpty(mn)) {
                     Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
                     return;
-                } else if(StringUtil.isNullOrEmpty(mUri)){
-                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
-                    return;
                 }
 
                 UriFactory uriFactory = new UriFactory();
@@ -117,10 +115,12 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
                         String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
                         final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
-                        entity.Data.ELAAddress = myAddress;
-                        entity.Data.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
+                        CallbackData callbackData = new CallbackData();
+                        callbackData.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
+                        callbackData.ELAAddress = myAddress;
+                        entity.Data = new Gson().toJson(callbackData);
                         entity.PublicKey = myPK;
-                        entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, new Gson().toJson(entity.Data));
+                        entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
 
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -131,8 +131,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                     if(ret.contains("err code:")) {
                                         Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Uri uri = Uri.parse(returnUrl+"?did="+myDid);
-                                        Log.i("return_url", uri.getPath());
+                                        Uri uri = Uri.parse(returnUrl+"&did="+myDid);
+                                        Log.i("xidaokun", "did:"+uri.toString());
                                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                         startActivity(intent);
                                     }

@@ -35,7 +35,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginStart="@dimen/bread_margin"
-                android:text="@string/Setting.title"
+                android:text="DID"
                 android:textColor="@color/black_333333"
                 android:textSize="20sp" />
 
