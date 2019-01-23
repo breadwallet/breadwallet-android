@@ -54,7 +54,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private String packageName;
     private String activityCls;
 
-    private String mn;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,16 +72,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         }
         initView();
         initListener();
-
-
-        byte[] phrase = null;
-        try {
-            phrase = BRKeyStore.getPhrase(this, 0);
-            if(phrase != null) mn = new String(phrase);
-            pk = Utility.getInstance(this).getSinglePrivateKey(mn);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void initView(){
@@ -102,8 +91,12 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorizeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String mn = getMn();
                 if(StringUtil.isNullOrEmpty(mn)) {
                     Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if(StringUtil.isNullOrEmpty(mUri)){
+                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -120,7 +113,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 if(isValid){
                     if(!StringUtil.isNullOrEmpty(backurl)){
                         final CallbackEntity entity = new CallbackEntity();
-                        pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
+                        String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
                         String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
                         String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
                         final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
@@ -139,6 +132,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                         Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
                                     } else {
                                         Uri uri = Uri.parse(returnUrl+"?did="+myDid);
+                                        Log.i("return_url", uri.getPath());
                                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                         startActivity(intent);
                                     }
@@ -154,5 +148,16 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         });
     }
 
-    private String pk;
+    private String getMn(){
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+            if(phrase != null) {
+               return new String(phrase);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -137,8 +137,8 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String url = "http://192.168.1.124:8081/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";
-                String url = "https://redpacket.elastos.org/wechat?headimgurl=xxx&openid=xxx&nickname=xxx&_locale=en_US";
+//                String url = "http://192.168.1.124:8081";
+                String url = "https://redpacket.elastos.org";
                 UiUtils.openUrlByBrowser(activity, url);
             }
         }, false, R.drawable.ic_red_package, true));

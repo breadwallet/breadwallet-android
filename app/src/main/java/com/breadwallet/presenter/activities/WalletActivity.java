@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.BreadApp;
@@ -387,6 +388,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         DeepLinkingManager.handleUrlClick(this, getIntent());
 
         if (!StringUtil.isNullOrEmpty(mUri)) {
+            Toast.makeText(WalletActivity.this, "show fragment", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -418,10 +420,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                                 CryptoUriParser.processRequest(WalletActivity.this, result,
                                         WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
                             }
+
+                            mUri = null;
                         }
                     });
                 }
             }, 10);
+        } else {
+            Toast.makeText(WalletActivity.this, "mUri is null", Toast.LENGTH_SHORT).show();
         }
     }
 
