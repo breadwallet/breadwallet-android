@@ -123,7 +123,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
                         String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
                         String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
-                        String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+                        final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
                         entity.Data.ELAAddress = myAddress;
                         entity.Data.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
                         entity.PublicKey = myPK;
@@ -138,7 +138,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                     if(ret.contains("err code:")) {
                                         Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Uri uri = Uri.parse(returnUrl+"?did="+did);
+                                        Uri uri = Uri.parse(returnUrl+"?did="+myDid);
                                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                         startActivity(intent);
                                     }

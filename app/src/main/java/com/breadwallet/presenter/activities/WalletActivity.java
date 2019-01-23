@@ -264,6 +264,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
         DeepLinkingManager.handleUrlClick(this, intent);
+
     }
 
     private void updateUi() {
@@ -389,6 +390,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    UiUtils.showSendFragment(WalletActivity.this, null);
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -398,7 +400,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                                 e.printStackTrace();
                             }
                             FragmentSend.mFromRedPackage = true;
-                            UiUtils.showSendFragment(WalletActivity.this, null);
                             UriFactory factory = new UriFactory();
                             factory.parse(mUri);
                             String did = factory.getDID();
