@@ -79,6 +79,9 @@ public final class SettingsUtil {
     private static final String API_SERVER = "API Server";
     private static final String API_SERVER_SET_FORMAT = "Api server %s set!";
     private static final String ONBOARDING_FLOW = "Onboarding flow";
+    private static final String WEB_BUNDLE = "Select web bundle";
+    private static final String TOKEN_BUNDLE = "Select token bundle";
+    private static final String BUNDLE_SET = "Bundle set: ";
 
     private SettingsUtil() {
     }
@@ -285,6 +288,18 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
+        items.add(new BRSettingsItem(WEB_BUNDLE, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBundlePickerDialog(activity, ServerBundlesHelper.Type.WEB, ServerBundlesHelper.BRD_WEB_BUNDLES);
+            }
+        }, false, 0));
+        items.add(new BRSettingsItem(TOKEN_BUNDLE, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBundlePickerDialog(activity, ServerBundlesHelper.Type.TOKEN, ServerBundlesHelper.BRD_TOKEN_BUNDLES);
+            }
+        }, false, 0));
         return items;
     }
 
@@ -423,6 +438,21 @@ public final class SettingsUtil {
         }, false, 0));
 
         return items;
+    }
+
+    private static void showBundlePickerDialog(final Context context,
+                                              final ServerBundlesHelper.Type bundleType,
+                                              final String[] options) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String selectedBundle = options[which];
+                Toast.makeText(context, BUNDLE_SET + selectedBundle, Toast.LENGTH_LONG).show();
+                ServerBundlesHelper.setDebugBundle(context.getApplicationContext(), bundleType, selectedBundle);
+            }
+        });
+        dialogBuilder.show();
     }
 
 }
