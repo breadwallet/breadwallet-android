@@ -265,7 +265,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
         DeepLinkingManager.handleUrlClick(this, intent);
-
+        if (intent != null) {
+            String action = intent.getAction();
+            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                mUri = uri.toString();
+                sendRedPackage();
+            }
+        }
+        Log.i("xidaokun", "onNewIntent");
     }
 
     private void updateUi() {
@@ -387,48 +395,43 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
 
-        if (!StringUtil.isNullOrEmpty(mUri)) {
-            Toast.makeText(WalletActivity.this, "show fragment", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    UiUtils.showSendFragment(WalletActivity.this, null);
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            FragmentSend.mFromRedPackage = true;
-                            UriFactory factory = new UriFactory();
-                            factory.parse(mUri);
-                            String did = factory.getDID();
-                            String appId = factory.getAppID();
-                            String signed = factory.getSignature();
-                            String PK = factory.getPublicKey();
-                            mCallbackUrl = factory.getCallbackUrl();
-                            Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
-                            Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
-                            boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
-                            Log.i(TAG, "walletActivity1 isValide: "+isValide);
-                            if(!isValide) return;
-                            String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount();
-                            Log.i(TAG, "walletActivity1 server result: "+result);
-                            if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
-                                CryptoUriParser.processRequest(WalletActivity.this, result,
-                                        WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
-                            }
+        sendRedPackage();
+    }
 
-                            mUri = null;
+    private void sendRedPackage(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(StringUtil.isNullOrEmpty(mUri)) return;
+                FragmentSend.mFromRedPackage = true;
+                UiUtils.showSendFragment(WalletActivity.this, null);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(StringUtil.isNullOrEmpty(mUri)) return;
+                        UriFactory factory = new UriFactory();
+                        factory.parse(mUri);
+                        mUri = null;
+                        String did = factory.getDID();
+                        String appId = factory.getAppID();
+                        String signed = factory.getSignature();
+                        String PK = factory.getPublicKey();
+                        mCallbackUrl = factory.getCallbackUrl();
+                        Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
+                        Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
+                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
+                        Log.i(TAG, "walletActivity1 isValide: "+isValide);
+                        if(!isValide) return;
+                        String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount();
+                        Log.i(TAG, "walletActivity1 server result: "+result);
+                        if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
+                            CryptoUriParser.processRequest(WalletActivity.this, result,
+                                    WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
                         }
-                    });
-                }
-            }, 500);
-        } else {
-            Toast.makeText(WalletActivity.this, "mUri is null", Toast.LENGTH_SHORT).show();
-        }
+                    }
+                });
+            }
+        }, 500);
     }
 
     @Override

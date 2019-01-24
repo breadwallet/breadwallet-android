@@ -59,6 +59,7 @@ public class DidDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.DID_AUTHOR_DID, info.getDid());
             value.put(BRSQLiteHelper.DID_AUTHOR_PK, info.getPK());
             value.put(BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME, info.getAuthorTime());
+            value.put(BRSQLiteHelper.DID_AUTHOR_EXP_TIME, info.getExpTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_NAME, info.getAppName());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_ICON, info.getAppIcon());
 

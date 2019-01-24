@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,19 +16,25 @@ import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
 import org.wallet.library.AuthorizeManager;
 import org.wallet.library.Constants;
-import org.wallet.library.entity.LoginResponse;
-import org.wallet.library.entity.SignWrapper;
 import org.wallet.library.entity.UriFactory;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class DidAuthorizeActivity extends BaseSettingsActivity {
     private static final String TAG = "author_test";
@@ -53,8 +58,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     }
 
     private String mUri;
-    private String packageName;
-    private String activityCls;
+
+
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,12 +74,28 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 mUri = uri.toString();
             } else {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
-                packageName = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.PACKAGE_NAME);
-                activityCls = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.ACTIVITY_CLASS);
             }
         }
         initView();
         initListener();
+
+        mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
+        mLoadingDialog.setCanceledOnTouchOutside(false);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent != null) {
+            String action = intent.getAction();
+            if(action.equals(Intent.ACTION_VIEW)){
+                Uri uri = intent.getData();
+                Log.i(TAG, "server mUri: "+ uri.toString());
+                mUri = uri.toString();
+            } else {
+                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
+            }
+        }
     }
 
     private void initView(){
@@ -81,6 +103,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAddressSb = findViewById(R.id.receive_switch_btn);
         mDenyBtn = findViewById(R.id.deny_btn);
         mAuthorizeBtn = findViewById(R.id.authorize_btn);
+    }
+
+    private static long dateToMillisecond(String date) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+0000");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date dt = sdf.parse(date);
+        return dt.getTime();
     }
 
     private void initListener(){
@@ -101,6 +130,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
                 if(!mAddressSb.isChecked()){
                     Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(StringUtil.isNullOrEmpty(mUri)){
+                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -130,6 +164,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
 
 
+                        mLoadingDialog.show();
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -137,11 +172,14 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                 if(!StringUtil.isNullOrEmpty(ret)) {
                                     if(ret.contains("err code:")) {
                                         Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
+                                        mLoadingDialog.dismiss();
                                     } else {
                                         Uri uri = Uri.parse(returnUrl+"&did="+myDid);
                                         Log.i("xidaokun", "did:"+uri.toString());
                                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                         startActivity(intent);
+                                        finish();
+                                        mLoadingDialog.dismiss();
                                     }
                                 }
                             }
@@ -150,7 +188,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
 //                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
                 }
-                finish();
             }
         });
     }
@@ -158,14 +195,25 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private void cacheAuthorInfo(UriFactory uriFactory){
         if(uriFactory == null) return;
         AuthorInfo info = new AuthorInfo();
-        info.setAuthorTime(System.currentTimeMillis()/1000);
+        info.setAuthorTime(System.currentTimeMillis());
         info.setPK(uriFactory.getPublicKey());
         info.setNickName(uriFactory.getAppName());
         info.setDid(uriFactory.getDID());
         info.setAppName(uriFactory.getAppName());
-        info.setExpTime((System.currentTimeMillis()+30*24*60*60*1000)/1000);
+        info.setExpTime(getExpTime());
         info.setAppIcon("www.elstos.org");
         DidDataSource.getInstance(this).putAuthorApp(info);
+    }
+
+    private long getExpTime(){
+        Date date = new Date();
+        Calendar calendar  =   Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(calendar.DATE, -30);
+        date=calendar.getTime();
+        long time = date.getTime();
+
+        return time;
     }
 
     private String getMn(){
