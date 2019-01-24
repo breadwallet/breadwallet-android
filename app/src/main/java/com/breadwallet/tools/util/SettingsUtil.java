@@ -130,15 +130,6 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_support));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, AboutActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_about));
-
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,7 +149,15 @@ public final class SettingsUtil {
             public void onClick(View view) {
                 UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.URL_REWARDS);
             }
-        }, false, R.drawable.ic_star));
+        }, false, R.drawable.ic_reward));
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, AboutActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, R.drawable.ic_about));
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
