@@ -285,6 +285,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     // TODO: Refactor so this does not store the current activity like this.
+    @Deprecated
     public static Context getBreadContext() {
         Context app = mCurrentActivity;
         if (app == null) {
