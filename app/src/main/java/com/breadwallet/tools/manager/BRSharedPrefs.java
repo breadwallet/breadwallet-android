@@ -305,6 +305,20 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    //if the user prefers all in crypto units, not fiat currencies
+    public static boolean isAuthorAuto(Context activity, String did) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(did, false);
+    }
+
+    //if the user prefers all in crypto units, not fiat currencies
+    public static void setIsAuthorAuto(Context activity, String did, boolean b) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(did, b);
+        editor.apply();
+    }
+
     public static boolean getUseFingerprint(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("useFingerprint", false);

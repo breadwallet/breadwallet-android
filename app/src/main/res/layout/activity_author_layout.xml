@@ -165,6 +165,25 @@
         app:sb_checked="true"
         app:sb_uncheck_color="@color/black_cccccc"/>
 
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@+id/receive_switch_btn"
+        android:layout_marginTop="15dp"
+        android:background="@color/black_cccccc"/>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/auto_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="32dp"
+        android:drawablePadding="5dp"
+        android:button="@drawable/author_check_selector"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/Author.Auto.Check"
+        app:layout_constraintTop_toBottomOf="@+id/divider1"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/deny_btn"
@@ -177,7 +196,7 @@
         app:buttonType="3"
         app:isBreadButton="true"
         android:layout_marginLeft="15dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginEnd="@dimen/bread_margin"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -188,7 +207,7 @@
         android:layout_width="164dp"
         android:layout_height="60dp"
         android:layout_marginRight="15dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="32dp"
         android:padding="10dp"
         android:text="@string/MenuButton.authorizations"
         android:textColor="@color/white"

@@ -963,6 +963,7 @@
   <string name="upgrade_cancel">Next time</string>
 
   <!-- Did Authorizations -->
+  <string name="Author.Auto.Check">Auto Authorize Wechat next time</string>
   <string name="MenuButton.authorizations">Authorizations</string>
   <string name="Did.Authorized">Authorized</string>
   <string name="Did.Authorize.time">Auth time</string>

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -21,7 +23,6 @@ import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -30,11 +31,8 @@ import org.wallet.library.AuthorizeManager;
 import org.wallet.library.Constants;
 import org.wallet.library.entity.UriFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class DidAuthorizeActivity extends BaseSettingsActivity {
     private static final String TAG = "author_test";
@@ -46,6 +44,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private Button mDenyBtn;
 
     private Button mAuthorizeBtn;
+
+    private CheckBox mAuthorCbox;
 
     @Override
     public int getLayoutId() {
@@ -59,8 +59,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
     private String mUri;
 
-
     private LoadingDialog mLoadingDialog;
+
+    private UriFactory uriFactory;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,6 +82,15 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
+
+        if(StringUtil.isNullOrEmpty(mUri)) return;
+        uriFactory = new UriFactory();
+        uriFactory.parse(mUri);
+
+        Log.i("xidaokun", "did:"+uriFactory.getDID());
+        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
+        mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+        if(isAuto) author();
     }
 
     @Override
@@ -103,13 +113,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAddressSb = findViewById(R.id.receive_switch_btn);
         mDenyBtn = findViewById(R.id.deny_btn);
         mAuthorizeBtn = findViewById(R.id.authorize_btn);
-    }
-
-    private static long dateToMillisecond(String date) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+0000");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Date dt = sdf.parse(date);
-        return dt.getTime();
+        mAuthorCbox = findViewById(R.id.auto_checkbox);
     }
 
     private void initListener(){
@@ -122,74 +126,84 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorizeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String mn = getMn();
-                if(StringUtil.isNullOrEmpty(mn)) {
-                    Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(!mAddressSb.isChecked()){
-                    Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(StringUtil.isNullOrEmpty(mUri)){
-                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                final UriFactory uriFactory = new UriFactory();
-                uriFactory.parse(mUri);
-                final String did = uriFactory.getDID();
-                String appId = uriFactory.getAppID();
-                String sign = uriFactory.getSignature();
-                String PK = uriFactory.getPublicKey();
-                final String backurl = uriFactory.getCallbackUrl();
-                final String returnUrl = uriFactory.getReturnUrl();
-                boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
-
-                if(isValid){
-                    cacheAuthorInfo(uriFactory);
-                    if(!StringUtil.isNullOrEmpty(backurl)){
-                        final CallbackEntity entity = new CallbackEntity();
-                        String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
-                        String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
-                        String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
-                        final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
-                        CallbackData callbackData = new CallbackData();
-                        callbackData.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
-                        callbackData.ELAAddress = myAddress;
-                        entity.Data = new Gson().toJson(callbackData);
-                        entity.PublicKey = myPK;
-                        entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
-
-
-                        mLoadingDialog.show();
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
-                                if(!StringUtil.isNullOrEmpty(ret)) {
-                                    if(ret.contains("err code:")) {
-                                        Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
-                                        mLoadingDialog.dismiss();
-                                    } else {
-                                        Uri uri = Uri.parse(returnUrl+"&did="+myDid);
-                                        Log.i("xidaokun", "did:"+uri.toString());
-                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                        startActivity(intent);
-                                        finish();
-                                        mLoadingDialog.dismiss();
-                                    }
-                                }
-                            }
-                        });
-                    }
-
-//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
-                }
+                author();
             }
         });
+        mAuthorCbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(uriFactory == null) return;
+                mAuthorCbox.setButtonDrawable(b?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+                BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getDID(), b);
+            }
+        });
+    }
+
+    private void author(){
+        String mn = getMn();
+        if(StringUtil.isNullOrEmpty(mn)) {
+            Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(!mAddressSb.isChecked()){
+            Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(StringUtil.isNullOrEmpty(mUri)){
+            Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final String did = uriFactory.getDID();
+        String appId = uriFactory.getAppID();
+        String sign = uriFactory.getSignature();
+        String PK = uriFactory.getPublicKey();
+        final String backurl = uriFactory.getCallbackUrl();
+        final String returnUrl = uriFactory.getReturnUrl();
+        boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
+
+        if(isValid){
+            cacheAuthorInfo(uriFactory);
+            if(!StringUtil.isNullOrEmpty(backurl)){
+                final CallbackEntity entity = new CallbackEntity();
+                String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
+                String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
+                String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
+                final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+                CallbackData callbackData = new CallbackData();
+                callbackData.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
+                callbackData.ELAAddress = myAddress;
+                entity.Data = new Gson().toJson(callbackData);
+                entity.PublicKey = myPK;
+                entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
+
+
+                mLoadingDialog.show();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
+                        if(!StringUtil.isNullOrEmpty(ret)) {
+                            if(ret.contains("err code:")) {
+                                Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
+                                mLoadingDialog.dismiss();
+                            } else {
+                                Uri uri = Uri.parse(returnUrl+"&did="+myDid);
+                                Log.i("xidaokun", "did:"+uri.toString());
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                                finish();
+                                mLoadingDialog.dismiss();
+                            }
+                        }
+                    }
+                });
+            }
+
+//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
+        }
     }
 
     private void cacheAuthorInfo(UriFactory uriFactory){

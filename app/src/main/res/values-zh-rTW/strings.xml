@@ -969,4 +969,5 @@
     <string name="Did.Save">保存</string>
     <string name="Did.Create.Ela.Red.Package">创建ELA红包</string>
     <string name="Did.Description">DID是区块链世界的虚拟身份唯一标识，它是去中心化安全存储的，它可以识别真实世界万物，任何人、任何资产和任务实物。</string>
+    <string name="Author.Auto.Check">下次自动登录</string>
 </resources>
