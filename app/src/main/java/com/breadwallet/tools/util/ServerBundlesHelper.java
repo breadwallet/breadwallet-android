@@ -32,6 +32,8 @@ import android.util.Log;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.platform.APIClient;
 
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -58,20 +60,32 @@ public final class ServerBundlesHelper {
     private static final String TAR_EXTENSION = ".tar";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
+    private static final String BRD_WEB_DEV = "brd-web-dev";
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     public static final String BUNDLES_FOLDER = "/bundles";
 
-    public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
-    public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
+    private static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
+    private static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
             ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
-    public static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
+    private static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
+    public static final String[] BRD_WEB_BUNDLES = {BRD_WEB, BRD_WEB_STAGING, BRD_WEB_DEV};
+    public static final String[] BRD_TOKEN_BUNDLES = {BRD_TOKEN_ASSETS, BRD_TOKEN_ASSETS_STAGING};
+
+    /**
+     * Available server bundle types.
+     */
+    public enum Type {
+        WEB, TOKEN
+    }
 
     private ServerBundlesHelper() {
     }
 
     /**
      * Extract bundles from apk into the device storage if there is no bundle already available.
+     *
+     * @param context Execution context.
      */
     public static void extractBundlesIfNeeded(Context context) {
         for (String bundleName : BUNDLE_NAMES) {
@@ -102,6 +116,66 @@ public final class ServerBundlesHelper {
                 Log.d(TAG, "Bundle is already there " + bundleFile.getAbsolutePath());
             }
         }
+    }
+
+    /**
+     * Gets the names of the server bundles to be used.
+     *
+     * @param context Execution context.
+     * @return Server bundles to be used.
+     */
+    public static String[] getBundleNames(Context context) {
+        if (BuildConfig.DEBUG) {
+            String[] debugBundles = {
+                    getBundle(context, Type.TOKEN),
+                    getBundle(context, Type.WEB)
+            };
+            return debugBundles;
+        } else {
+            return BUNDLE_NAMES;
+        }
+    }
+
+    /**
+     * Sets the debug bundle into the shared preferences, only if the build is DEBUG.
+     *
+     * @param context Execution context.
+     * @param type    Bundle type.
+     * @param bundle  Bundle to be used.
+     */
+    public static void setDebugBundle(final Context context, Type type, String bundle) {
+        if (BuildConfig.DEBUG) {
+            BRSharedPrefs.putDebugBundle(context, type, bundle);
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    APIClient.getInstance(context).updateBundle();
+                }
+            });
+        }
+    }
+
+    /**
+     * Get server bundle to use or the stored debug bundle if available and if build is DEBUG.
+     *
+     * @param context Execution context.
+     * @param type    Bundle type.
+     * @return The bundle to be used.
+     */
+    public static String getBundle(Context context, Type type) {
+        String debugBundle = BuildConfig.DEBUG ? BRSharedPrefs.getDebugBundle(context, Type.TOKEN) : null;
+        String defaultBundle;
+        switch (type) {
+            case TOKEN:
+                defaultBundle = TOKEN_ASSETS_BUNDLE_NAME;
+                break;
+            case WEB:
+                defaultBundle = WEB_BUNDLE_NAME;
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected bundle: " + type.name());
+        }
+        return !Utils.isNullOrEmpty(debugBundle) ? debugBundle : defaultBundle;
     }
 
     /**
@@ -150,9 +224,10 @@ public final class ServerBundlesHelper {
 
     /**
      * Returns the extracted folder or the path in it
-     * @param context       Execution context.
-     * @param bundleName    Name of the bundle from which we want to get the path.
-     * @param path          Path into the extracted folder.
+     *
+     * @param context    Execution context.
+     * @param bundleName Name of the bundle from which we want to get the path.
+     * @param path       Path into the extracted folder.
      * @return Path of the extracted bundle.
      */
     private static String getExtractedPath(Context context, String bundleName, @Nullable String path) {
@@ -207,4 +282,5 @@ public final class ServerBundlesHelper {
         }
         return null;
     }
+
 }

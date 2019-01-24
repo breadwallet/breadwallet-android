@@ -580,7 +580,7 @@ public class APIClient {
 
     // TODO: Move to ServerBundlesHelper DROID-1133
     public synchronized void updateBundle() {
-        for (String bundleName : ServerBundlesHelper.BUNDLE_NAMES) {
+        for (String bundleName : ServerBundlesHelper.getBundleNames(mContext)) {
             File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
             String currentTarVersion = BRSharedPrefs.getBundleHash(mContext, bundleName);
             if (bundleFile.exists()) {
@@ -848,7 +848,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(mContext);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + ServerBundlesHelper.WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + ServerBundlesHelper.getBundle(mContext, ServerBundlesHelper.Type.WEB) + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
