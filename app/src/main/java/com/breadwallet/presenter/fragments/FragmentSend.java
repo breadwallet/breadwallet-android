@@ -708,6 +708,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         loadViewModelData();
         mAmountEdit.setEnabled(!mFromRedPackage);
         mAddressEdit.setEnabled(!mFromRedPackage);
+        mCommentEdit.setEnabled(!mFromRedPackage);
         mScan.setClickable(false);
         mPaste.setClickable(false);
         mCurrencyCodeButton.setClickable(false);
@@ -719,6 +720,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         Utils.hideKeyboard(getActivity());
         mAmountEdit.setEnabled(true);
         mAddressEdit.setEnabled(true);
+        mCommentEdit.setEnabled(true);
         mScan.setClickable(true);
         mPaste.setClickable(true);
         mCurrencyCodeButton.setClickable(true);

@@ -86,7 +86,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private WalletManagerHelper mWalletManagerHelper;
 
-    protected static String mPrivateKey;
+    protected String mPrivateKey;
 
     private static Context mContext;
 
@@ -125,7 +125,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         throw new RuntimeException("stub");
     }
 
-    public static String getPrivateKey() {
+    public String getPrivateKey() {
         if (mPrivateKey == null) {
             try {
                 byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
@@ -137,11 +137,11 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mPrivateKey;
     }
 
-    public static String getPublicKey(){
+    public String getPublicKey(){
         return Utility.getInstance(mContext).getPublicKeyFromPrivateKey(getPrivateKey());
     }
 
-    private static String mAddress;
+    private String mAddress;
     @Override
     public String getAddress() {
         if (StringUtil.isNullOrEmpty(mAddress)) {
@@ -458,7 +458,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public void wipeData(Context app) {
         BRSharedPrefs.putCachedBalance(app, getIso(),  new BigDecimal(0));
         ElaDataSource.getInstance(app).deleteAllTransactions();
-        mAddress = null;
+        mInstance = null;
     }
 
     @Override

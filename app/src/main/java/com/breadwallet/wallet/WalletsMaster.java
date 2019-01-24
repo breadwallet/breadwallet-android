@@ -259,7 +259,7 @@ public class WalletsMaster {
     }
 
     public boolean isIsoErc20(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso) || WalletEthManager.getInstance(app).node==null) return false;
+        if (Utils.isNullOrEmpty(iso) || WalletEthManager.getInstance(app)==null || WalletEthManager.getInstance(app).node==null) return false;
         BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
