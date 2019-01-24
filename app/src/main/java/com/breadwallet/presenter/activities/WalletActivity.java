@@ -425,7 +425,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         }
                     });
                 }
-            }, 10);
+            }, 500);
         } else {
             Toast.makeText(WalletActivity.this, "mUri is null", Toast.LENGTH_SHORT).show();
         }

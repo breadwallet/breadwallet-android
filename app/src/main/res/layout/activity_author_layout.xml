@@ -35,7 +35,7 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginTop="32dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/redpackage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -137,6 +137,7 @@
         android:layout_marginEnd="15dp"
         app:sb_show_indicator="false"
         app:sb_checked_color="#ff3365"
+        app:sb_checked="true"
         app:sb_uncheck_color="@color/black_cccccc"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -161,6 +162,7 @@
         android:layout_marginEnd="15dp"
         app:sb_show_indicator="false"
         app:sb_checked_color="#ff3365"
+        app:sb_checked="true"
         app:sb_uncheck_color="@color/black_cccccc"/>
 
 

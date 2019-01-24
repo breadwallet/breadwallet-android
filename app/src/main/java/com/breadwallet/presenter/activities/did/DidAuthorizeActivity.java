@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -98,7 +99,12 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                     return;
                 }
 
-                UriFactory uriFactory = new UriFactory();
+                if(!mAddressSb.isChecked()){
+                    Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                final UriFactory uriFactory = new UriFactory();
                 uriFactory.parse(mUri);
                 final String did = uriFactory.getDID();
                 String appId = uriFactory.getAppID();
@@ -109,6 +115,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
 
                 if(isValid){
+                    cacheAuthorInfo(uriFactory);
                     if(!StringUtil.isNullOrEmpty(backurl)){
                         final CallbackEntity entity = new CallbackEntity();
                         String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
@@ -146,6 +153,19 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 finish();
             }
         });
+    }
+
+    private void cacheAuthorInfo(UriFactory uriFactory){
+        if(uriFactory == null) return;
+        AuthorInfo info = new AuthorInfo();
+        info.setAuthorTime(System.currentTimeMillis()/1000);
+        info.setPK(uriFactory.getPublicKey());
+        info.setNickName(uriFactory.getAppName());
+        info.setDid(uriFactory.getDID());
+        info.setAppName(uriFactory.getAppName());
+        info.setExpTime((System.currentTimeMillis()+30*24*60*60*1000)/1000);
+        info.setAppIcon("www.elstos.org");
+        DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
     private String getMn(){

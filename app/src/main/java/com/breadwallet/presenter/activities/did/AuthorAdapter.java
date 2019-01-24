@@ -10,16 +10,19 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.List;
 
 public class AuthorAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<AuthorInfo>  mData;
+    private Context mContext;
 
     public AuthorAdapter(Context context, List<AuthorInfo> data) {
         mData = data;
         mInflater = LayoutInflater.from(context);
+        this.mContext = context;
     }
 
     @Override
@@ -52,7 +55,8 @@ public class AuthorAdapter extends BaseAdapter {
         }
 
         AuthorInfo info = mData.get(i);
-        holder.iconTv.setImageResource(R.mipmap.ic_launcher);
+        int iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
+        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
         holder.nameTv.setText(info.getAppName());
 
         return convertView;

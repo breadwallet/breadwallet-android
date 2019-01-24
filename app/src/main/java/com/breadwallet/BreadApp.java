@@ -33,6 +33,7 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.UnsupportedEncodingException;
@@ -152,7 +153,8 @@ public class BreadApp extends Application {
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
-        Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", true);
+        Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
+        Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
         upgradeAction();
     }
 

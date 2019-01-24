@@ -954,6 +954,10 @@
   <string name="Gas.price">燃料价格</string>
   <string name="Gas.limit">燃料上限</string>
 
+  <!--upgrade-->
+  <string name="upgrade_confirm">更新</string>
+  <string name="upgrade_cancel">下次</string>
+
   <string name="MenuButton.authorizations">授权</string>
   <string name="Did.Authorized">已授权</string>
   <string name="Did.Authorize.time">授权时间</string>

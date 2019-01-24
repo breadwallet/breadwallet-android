@@ -958,6 +958,10 @@
   <string name="Gas.price">Gas Price</string>
   <string name="Gas.limit">Gas Limit</string>
 
+  <!--upgrade-->
+  <string name="upgrade_confirm">Upgrade</string>
+  <string name="upgrade_cancel">Next time</string>
+
   <!-- Did Authorizations -->
   <string name="MenuButton.authorizations">Authorizations</string>
   <string name="Did.Authorized">Authorized</string>

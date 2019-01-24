@@ -91,7 +91,7 @@ public class FragmentSetting extends Fragment {
         switch (mode) {
             case MODE_SETTINGS:
                 settingsItems = SettingsUtil.getMainSettings(getActivity());
-                title.setText(getString(R.string.Settings_title));
+                title.setText(/*getString(R.string.Settings_title)*/"DID");
                 mIsButtonBackArrow = false;
                 break;
             case MODE_PREFERENCES:

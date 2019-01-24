@@ -282,10 +282,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presenter.activities.RedPackageActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-
         <activity
             android:name=".presenter.activities.did.DidAuthListActivity"
             android:launchMode="singleTask"

@@ -19,18 +19,18 @@
     <item name="dark_blue" type="color">#4C98FD</item>
     <item name="notification_gradient_start" type="color">#63BCFF</item>
     <item name="notification_gradient_end" type="color">#378DFD</item>
-    <item name="wallet_orange" type="color">#ff8000</item>
+    <item name="wallet_orange" type="color">#FF5193</item>
     <item name="white_trans" type="color">#32ffffff</item>
     <item name="black_trans" type="color">#b5000000</item>
     <item name="red_text" type="color">#FF5454</item>
     <item name="green_text" type="color">#00BF00</item>
     <item name="pink" type="color">#68ffc0c1</item>
     <item name="status_bar" type="color">#000000</item>
-    <item name="intro_status_bar" type="color">#ffbf7f</item>
-    <item name="warning_status_bar" type="color">#7f5225</item>
+    <item name="intro_status_bar" type="color">#FF5193</item>
+    <item name="warning_status_bar" type="color">#FF5193</item>
     <item name="camera_guideline" type="color">#50636363</item>
 
-    <item name="logo_gradient_start" type="color">#F8A445</item>
+    <item name="logo_gradient_start" type="color">#FF5193</item>
     <item name="logo_gradient_end" type="color">#fc5394</item>
 
     <item name="finger_gradient_start" type="color">#9c7ee2</item>
@@ -39,8 +39,8 @@
     <item name="recover_gradient_start" type="color">#e5affc</item>
     <item name="recover_gradient_end" type="color">#d17df5</item>
 
-    <item name="restore_gradient_start" type="color">#fabe7a</item>
-    <item name="restore_gradient_end" type="color">#F8A445</item>
+    <item name="restore_gradient_start" type="color">#FF5193</item>
+    <item name="restore_gradient_end" type="color">#FF5193</item>
 
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
@@ -66,9 +66,9 @@
     <color name="viewfinder_border">#ffafed44</color>
 
     //Currency screen
-    <color name="currency_header_background">#f29500</color>
+    <color name="currency_header_background">#FF5193</color>
     <color name="currency_subheading_color">#F0E5D7</color>
-    <color name="currency_buttons_color">#ffac26</color>
+    <color name="currency_buttons_color">#FF5193</color>
 
     //Home screen
     <color name="total_assets_label_color">#788f9e</color>
@@ -77,7 +77,7 @@
     <color name="admin_row_color">#e0e5e8</color>
     <color name="settings_chevron_right">#b3c0c8</color>
     <color name="transaction_amount_received_color">#4cbf2c</color>
-    <color name="transaction_failed_button_color">#f46b41</color>
+    <color name="transaction_failed_button_color">#FF5193</color>
     <color name="trans_white">#70ffffff</color>
     <color name="balance_crypto_color">#b7ffffff</color>
     <color name="wallet_balance_fiat">#ffffff</color>
@@ -104,15 +104,15 @@
     <color name="secondary_background">#302442</color>
     <color name="tertiary_background">#2E2540</color>
     <color name="button_gradient_start_color">#FF5193</color>
-    <color name="button_gradient_end_color">#F29500</color>
+    <color name="button_gradient_end_color">#FF5193</color>
     <color name="button_add_wallet_background">#444b77f3</color>
     <color name="button_cancel_add_wallet_background">#44E7AA41</color>
     <color name="button_add_wallet_text">#4b77f3</color>
-    <color name="button_cancel_add_wallet_text">#E7AA41</color>
+    <color name="button_cancel_add_wallet_text">#FF5193</color>
     <color name="text_total_assets_label">#bfffffff</color>
     <color name="pin_pad_delete">#FF548D</color>
     <color name="pin_dot_filled_dark">#FF5193</color>
-    <color name="pin_dot_filled_light">#F29500</color>
+    <color name="pin_dot_filled_light">#FF5193</color>
     <color name="create_new_wallet_button_dark">#ff3365</color>
     <color name="create_new_wallet_button_light">#ff3365</color>
     <color name="recover_wallet_button_dark">#ffffff</color>
