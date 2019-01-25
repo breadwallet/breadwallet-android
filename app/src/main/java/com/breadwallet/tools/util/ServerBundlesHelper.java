@@ -97,16 +97,18 @@ public final class ServerBundlesHelper {
                 try {
                     // Move files from resources/raw to bundles directory and extract the resources
                     int resource = context.getResources().getIdentifier(resourceName, RAW, context.getPackageName());
-                    InputStream inputStream = context.getResources().openRawResource(resource);
-                    FileUtils.copyInputStreamToFile(inputStream, bundleFile);
-                    boolean extracted = tryExtractTar(context, bundleName);
-                    if (!extracted) {
-                        Log.e(TAG, "Failed to extract tar: " + resourceName);
-                    } else {
-                        // Update bundle version in shared preferences, this is used to check if we have latest version.
-                        String currentBundleVersion = getCurrentBundleVersion(bundleFile);
-                        if (!Utils.isNullOrEmpty(currentBundleVersion)) {
-                            BRSharedPrefs.putBundleHash(context, bundleName, currentBundleVersion);
+                    if (resource != 0) {
+                        InputStream inputStream = context.getResources().openRawResource(resource);
+                        FileUtils.copyInputStreamToFile(inputStream, bundleFile);
+                        boolean extracted = tryExtractTar(context, bundleName);
+                        if (!extracted) {
+                            Log.e(TAG, "Failed to extract tar: " + resourceName);
+                        } else {
+                            // Update bundle version in shared preferences, this is used to check if we have latest version.
+                            String currentBundleVersion = getCurrentBundleVersion(bundleFile);
+                            if (!Utils.isNullOrEmpty(currentBundleVersion)) {
+                                BRSharedPrefs.putBundleHash(context, bundleName, currentBundleVersion);
+                            }
                         }
                     }
                 } catch (IOException exception) {
