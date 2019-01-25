@@ -127,12 +127,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mDenyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long time0 = getAuthorTime(0);
-                long time1 = getAuthorTime(30);
-                timeTest(time0);
-                timeTest(time1);
-                Log.i("xidaokun", "time0:"+timeTest(time0)+" time1:"+timeTest(time1));
-//                finish();
+                finish();
             }
         });
         mAuthorizeBtn.setOnClickListener(new View.OnClickListener() {
