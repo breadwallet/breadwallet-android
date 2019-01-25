@@ -46,6 +46,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
 
 import java.util.List;
@@ -118,9 +119,16 @@ public class UiUtils {
                 return;
             }
 
-            String url = HTTPServer.URL_SUPPORT + ARTICLE_QUERY_STRING + articleId + CURRENCY_QUERY_STRING + walletManager.getCurrencyCode().toLowerCase();
+            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.URL_SUPPORT);
+            if (!Utils.isNullOrEmpty(articleId)) {
+                urlBuilder.append(ARTICLE_QUERY_STRING);
+                urlBuilder.append(articleId);
+                // If no wallet is provided, we don't need to pass the current code as a parameter.
+                String currencyQuery = walletManager == null ? "" : CURRENCY_QUERY_STRING + walletManager.getCurrencyCode();
+                urlBuilder.append(currencyQuery.toLowerCase());
+            }
 
-            showWebModal(fragmentActivity, url);
+            showWebModal(fragmentActivity, urlBuilder.toString());
         } finally {
             mSupportIsShowing = false;
         }
