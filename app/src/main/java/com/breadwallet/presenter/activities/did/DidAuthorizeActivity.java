@@ -73,7 +73,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         Intent intent = getIntent();
         if(intent != null) {
             String action = intent.getAction();
-            if(action.equals(Intent.ACTION_VIEW)){
+            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)){
                 Uri uri = intent.getData();
                 Log.i(TAG, "server mUri: "+ uri.toString());
                 mUri = uri.toString();
@@ -202,12 +202,22 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                 Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
                                 mLoadingDialog.dismiss();
                             } else {
-                                Uri uri = Uri.parse(returnUrl+"&did="+myDid);
-                                Log.i("xidaokun", "did:"+uri.toString());
-                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(intent);
-                                finish();
-                                mLoadingDialog.dismiss();
+                                try {
+                                    if(StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
+                                        mLoadingDialog.dismiss();
+                                        return;
+                                    }
+                                    Uri uri = Uri.parse(returnUrl+"&did="+myDid);
+                                    Log.i("xidaokun", "did:"+uri.toString());
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                    startActivity(intent);
+                                    finish();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    mLoadingDialog.dismiss();
+                                }
                             }
                         }
                     }

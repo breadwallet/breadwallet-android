@@ -150,14 +150,9 @@ public class DidDataSource implements BRDataSourceInterface {
         if(entity==null || StringUtil.isNullOrEmpty(url)) return null;
         String params = new Gson().toJson(entity);
         Log.i("DidDataSource", "callBackUrl: "+"url:"+url+" params:"+params);
-        try {
-            String tmp = urlPost(url, params);
-            Log.i("DidDataSource", "callBackUrl: result:"+tmp);
-            return tmp;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String tmp = urlPost(url, params);
+        Log.i("DidDataSource", "callBackUrl: result:"+tmp);
+        return tmp;
     }
 
     // "http://localhost:8081/packet/grabed/12-1-0?did=ihKwfxiFpYme8mb11roShjjpZcHt1Ru5VB"
@@ -165,55 +160,63 @@ public class DidDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(url)) return null;
         String returnUrl = url+"?did="+did;
         Log.i("DidDataSource", "returnUrl: "+returnUrl);
+        return urlGET(returnUrl);
+    }
+
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public String urlPost(String url, String json) {
+        int code;
         try {
-            return urlGET(returnUrl);
-        } catch (IOException e) {
+            RequestBody body = RequestBody.create(JSON, json);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            Response response = APIClient.elaClient.newCall(request).execute();
+            code = response.code();
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                return "err code:" + code;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public String urlPost(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        Response response = APIClient.elaClient.newCall(request).execute();
-        int code = response.code();
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            return "err code:" + code;
-        }
-    }
-
     @WorkerThread
-    public String urlGET(String myURL) throws IOException {
-        Map<String, String> headers = BreadApp.getBreadHeaders();
+    public String urlGET(String myURL) {
 
-        Request.Builder builder = new Request.Builder()
-                .url(myURL)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(mContext, "android/HttpURLConnection"))
-                .get();
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            builder.header((String) pair.getKey(), (String) pair.getValue());
+        try {
+            Map<String, String> headers = BreadApp.getBreadHeaders();
+
+            Request.Builder builder = new Request.Builder()
+                    .url(myURL)
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .header("User-agent", Utils.getAgentString(mContext, "android/HttpURLConnection"))
+                    .get();
+            Iterator it = headers.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                builder.header((String) pair.getKey(), (String) pair.getValue());
+            }
+
+            Request request = builder.build();
+            Response response = APIClient.elaClient.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                throw new IOException("Unexpected code " + response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        Request request = builder.build();
-        Response response = APIClient.elaClient.newCall(request).execute();
-
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
+        return null;
     }
 
     @Override
