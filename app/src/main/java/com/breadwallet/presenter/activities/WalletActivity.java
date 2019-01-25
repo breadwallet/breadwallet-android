@@ -121,18 +121,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         Intent intent = getIntent();
         if (intent != null) {
             String action = intent.getAction();
-            if(!StringUtil.isNullOrEmpty(action)) {
-                if(action.equals(Intent.ACTION_VIEW)) {
-                    Uri uri = intent.getData();
-                    mUri = uri.toString();
-                } else {
-                    mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
-                }
-                if (!StringUtil.isNullOrEmpty(mUri)) {
-                    BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, "ELA");
-                }
-                Log.i("author_test", "walletActivity1 mUri:"+mUri);
+            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                mUri = uri.toString();
+            } else {
+                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
             }
+            if (!StringUtil.isNullOrEmpty(mUri)) {
+                BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, "ELA");
+            }
+            Log.i("author_test", "walletActivity1 mUri:"+mUri);
         }
 
         BRSharedPrefs.putIsNewWallet(this, false);
@@ -416,13 +414,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         String appId = factory.getAppID();
                         String signed = factory.getSignature();
                         String PK = factory.getPublicKey();
+                        String des = factory.getDescription();
                         mCallbackUrl = factory.getCallbackUrl();
                         Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
                         Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
                         boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
                         if(!isValide) return;
-                        String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount();
+                        String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount()
+                                +((StringUtil.isNullOrEmpty(des)||des.equals("null"))?"":"&message="+des);
                         Log.i(TAG, "walletActivity1 server result: "+result);
                         if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
                             CryptoUriParser.processRequest(WalletActivity.this, result,

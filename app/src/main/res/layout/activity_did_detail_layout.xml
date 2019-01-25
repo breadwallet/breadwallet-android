@@ -47,7 +47,7 @@
        android:layout_marginLeft="32dp"
        app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-       android:src="@mipmap/ic_launcher"/>
+       android:src="@drawable/redpackage"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/app_name"

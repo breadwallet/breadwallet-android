@@ -93,8 +93,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/did_alias"
             android:layout_marginTop="12dp"
-            android:textColor="#ccffffff"
-            android:text="did:ela:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+            android:textColor="#ccffffff" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/did_copy"

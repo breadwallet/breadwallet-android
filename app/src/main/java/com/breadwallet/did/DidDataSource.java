@@ -140,7 +140,7 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setDid(cursor.getString(1));
         authorInfo.setPK(cursor.getString(2));
         authorInfo.setAuthorTime(cursor.getLong(3));
-        authorInfo.setAuthorTime(cursor.getLong(4));
+        authorInfo.setExpTime(cursor.getLong(4));
         authorInfo.setAppName(cursor.getString(5));
         authorInfo.setAppIcon(cursor.getString(6));
         return authorInfo;

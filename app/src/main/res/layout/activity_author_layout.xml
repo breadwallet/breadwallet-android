@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
-        android:text="Wechat will get your:"
+        android:text="@string/Did.Will.Get"
         android:textColor="@color/black_cccccc"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/will_get_your_bg"

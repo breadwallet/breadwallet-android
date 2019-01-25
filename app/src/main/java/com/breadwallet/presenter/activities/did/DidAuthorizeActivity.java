@@ -18,11 +18,13 @@ import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -46,6 +48,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private Button mAuthorizeBtn;
 
     private CheckBox mAuthorCbox;
+
+    private BaseTextView mWillTv;
 
     @Override
     public int getLayoutId() {
@@ -87,6 +91,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
 
+        mWillTv.setText(String.format(getString(R.string.Did_Will_Get), uriFactory.getAppName()));
+
         Log.i("xidaokun", "did:"+uriFactory.getDID());
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
         mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
@@ -114,13 +120,19 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mDenyBtn = findViewById(R.id.deny_btn);
         mAuthorizeBtn = findViewById(R.id.authorize_btn);
         mAuthorCbox = findViewById(R.id.auto_checkbox);
+        mWillTv = findViewById(R.id.auth_info);
     }
 
     private void initListener(){
         mDenyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                long time0 = getAuthorTime(0);
+                long time1 = getAuthorTime(30);
+                timeTest(time0);
+                timeTest(time1);
+                Log.i("xidaokun", "time0:"+timeTest(time0)+" time1:"+timeTest(time1));
+//                finish();
             }
         });
         mAuthorizeBtn.setOnClickListener(new View.OnClickListener() {
@@ -209,25 +221,30 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private void cacheAuthorInfo(UriFactory uriFactory){
         if(uriFactory == null) return;
         AuthorInfo info = new AuthorInfo();
-        info.setAuthorTime(System.currentTimeMillis());
+        info.setAuthorTime(getAuthorTime(0));
         info.setPK(uriFactory.getPublicKey());
         info.setNickName(uriFactory.getAppName());
         info.setDid(uriFactory.getDID());
         info.setAppName(uriFactory.getAppName());
-        info.setExpTime(getExpTime());
+        info.setExpTime(getAuthorTime(30));
         info.setAppIcon("www.elstos.org");
+        Log.i("xidaokun", "cache AuthorTime:"+getAuthorTime(0)+ " ExpTime:"+getAuthorTime(30));
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
-    private long getExpTime(){
+    private long getAuthorTime(int day){
         Date date = new Date();
         Calendar calendar  =   Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(calendar.DATE, -30);
+        calendar.add(calendar.DATE, day);
         date=calendar.getTime();
         long time = date.getTime();
 
         return time;
+    }
+
+    private String timeTest(long time){
+        return BRDateUtil.getAuthorDate(time);
     }
 
     private String getMn(){
