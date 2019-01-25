@@ -114,18 +114,26 @@
         android:textSize="14sp"
         android:layout_marginTop="8dp"
         android:drawablePadding="5dp"
+        android:layout_below="@+id/did_card"
         android:textColor="@color/black_999999"
-        android:layout_marginRight="16dp"
-        android:layout_below="@+id/did_card"/>
+        android:layout_marginRight="16dp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#f7f8fb"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/what_did"/>
 
     <ListView
         android:id="@+id/settings_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/what_did"
         android:layout_marginTop="2dp"
         android:divider="@null"
         android:dividerHeight="0dp"
+        android:layout_below="@+id/divider"
         android:footerDividersEnabled="true"
         android:headerDividersEnabled="true"
         android:background="@color/white"/>
