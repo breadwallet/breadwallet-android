@@ -123,8 +123,19 @@ public class UiUtils {
             if (!Utils.isNullOrEmpty(articleId)) {
                 urlBuilder.append(ARTICLE_QUERY_STRING);
                 urlBuilder.append(articleId);
+
                 // If no wallet is provided, we don't need to pass the current code as a parameter.
-                String currencyQuery = walletManager == null ? "" : CURRENCY_QUERY_STRING + walletManager.getCurrencyCode();
+                String currencyQuery;
+                if (walletManager == null) {
+                    currencyQuery = "";
+                } else {
+                    String currencyCode = walletManager.getCurrencyCode();
+                    WalletsMaster walletsMaster = WalletsMaster.getInstance(fragmentActivity.getApplicationContext());
+                    if (walletsMaster.isCurrencyCodeErc20(fragmentActivity.getApplicationContext(), currencyCode)) {
+                        currencyCode = BRConstants.CURRENCY_ERC20;
+                    }
+                    currencyQuery = CURRENCY_QUERY_STRING + currencyCode;
+                }
                 urlBuilder.append(currencyQuery.toLowerCase());
             }
 
