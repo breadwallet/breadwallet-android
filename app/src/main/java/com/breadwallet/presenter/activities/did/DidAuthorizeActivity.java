@@ -97,6 +97,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
         mAppNameTv.setText(uriFactory.getAppName());
         mWillTv.setText(String.format(getString(R.string.Did_Will_Get), uriFactory.getAppName()));
+        mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
         Log.i("xidaokun", "did:"+uriFactory.getDID());
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());

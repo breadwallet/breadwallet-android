@@ -964,9 +964,10 @@
 
   <!-- Did Authorizations -->
   <string name="Did.Will.Get">%1$s will get your:</string>
-  <string name="Author.Auto.Check">Auto Authorize next time</string>
+  <string name="Author.Auto.Check">Auto Authorize %1$s next time</string>
   <string name="MenuButton.authorizations">Authorizations</string>
   <string name="Did.Authorized">Authorized</string>
+  <string name="Did.Authorize">Authorize</string>
   <string name="Did.Authorize.time">Auth time</string>
   <string name="Did.Expiration">Expiration</string>
   <string name="Did.Author.Info">Auth information</string>

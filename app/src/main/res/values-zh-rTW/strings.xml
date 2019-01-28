@@ -956,6 +956,7 @@
     <string name="upgrade_cancel">下次</string>
 
     <string name="Did.Authorized">已授权</string>
+    <string name="Did.Authorize">授权</string>
     <string name="Did.Authorize.time">授权时间</string>
     <string name="Did.Expiration">过期时间</string>
     <string name="Did.Author.Info">授权信息</string>
@@ -969,7 +970,7 @@
     <string name="Did.Save">保存</string>
     <string name="Did.Create.Ela.Red.Package">创建ELA红包</string>
     <string name="Did.Description">DID是区块链世界的虚拟身份唯一标识，它是去中心化安全存储的，它可以识别真实世界万物，任何人、任何资产和任务实物。</string>
-    <string name="Author.Auto.Check">下次自动登录</string>
+    <string name="Author.Auto.Check">下次自动授权%1$s</string>
 
     <string name="Did.Detail.Tile">详情</string>
     <string name="Did.Detail.Authorized">已授权</string>

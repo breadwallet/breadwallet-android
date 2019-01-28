@@ -143,13 +143,13 @@
         android:id="@+id/receive_address"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:gravity="center_vertical"
         android:lineSpacingExtra="9sp"
         android:text="@string/Did.Receive.Address"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="373dp" />
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="@+id/auth_info"
+        app:layout_constraintTop_toBottomOf="@+id/nick_name"  />
 
     <com.breadwallet.presenter.customviews.SwitchButton
         android:id="@+id/receive_switch_btn"
@@ -208,7 +208,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="32dp"
         android:padding="10dp"
-        android:text="@string/MenuButton.authorizations"
+        android:text="@string/Did.Authorize"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:buttonType="6"
