@@ -963,6 +963,7 @@
   <string name="upgrade_cancel">Next time</string>
 
   <!-- Did Authorizations -->
+  <string name="Did.Elastos.DID">Elastos DID</string>
   <string name="Did.Will.Get">%1$s will get your:</string>
   <string name="Author.Auto.Check">Auto Authorize %1$s next time</string>
   <string name="MenuButton.authorizations">Authorizations</string>
