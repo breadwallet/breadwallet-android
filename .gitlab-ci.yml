@@ -35,6 +35,7 @@ lintDebug:
     - ./gradlew -Pci --console=plain :app:lintBrdDebug -PbuildDir=lint
   only:
     - develop
+    - /^release.*$/
   artifacts:
     paths:
     - app/lint/reports/
@@ -45,6 +46,7 @@ assembleDebug:
     - ./gradlew assembleDebug
   only:
     - develop
+    - /^release.*$/
   artifacts:
     paths:
     - app/build/outputs/
