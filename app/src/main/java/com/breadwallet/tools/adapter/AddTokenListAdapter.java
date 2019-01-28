@@ -65,7 +65,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
 
     @Override
-    public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, int position) {
 
         TokenItem item = mTokens.get(position);
         String currencyCode = item.symbol.toLowerCase();
@@ -103,7 +103,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int position = holder.getAdapterPosition();
                 // Set button to "Remove"
                 if (!mTokens.get(position).mIsAdded) {
                     mTokens.get(position).mIsAdded = true;
@@ -117,8 +117,6 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
             }
         });
-
-
     }
 
     @Override
