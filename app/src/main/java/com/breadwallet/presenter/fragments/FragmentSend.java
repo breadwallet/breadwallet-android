@@ -946,7 +946,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             code = request.iso;
 
             if(code.equalsIgnoreCase("ELA") && request.amount!=null) {
-                amount = request.amount.toString();
+                amount = request.amount.toPlainString();
             } else if (request.amount != null) {
                 BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
                 amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
