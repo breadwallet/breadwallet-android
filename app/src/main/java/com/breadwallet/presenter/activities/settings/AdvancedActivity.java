@@ -77,10 +77,6 @@ public class AdvancedActivity extends BaseSettingsActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         appVisible = false;
