@@ -57,7 +57,4 @@ public class RecoverActivity extends BRActivity {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 }

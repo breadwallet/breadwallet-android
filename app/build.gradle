@@ -108,6 +108,7 @@ android {
         }
     }
     lintOptions {
+        lintConfig file("lint.xml")
         // set to true to turn off analysis progress reporting by lint
         quiet false
 
@@ -258,11 +259,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'junit:junit:4.12'
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty:jetty-continuation:9.2.19.v20160908' //do not update
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty:jetty-webapp:9.2.19.v20160908' //do not update
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908' //do not update
     implementation 'org.slf4j:slf4j-api:1.7.22'
     implementation 'tools.fastlane:screengrab:1.1.0'
