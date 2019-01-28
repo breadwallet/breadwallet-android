@@ -175,6 +175,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         TxManager.getInstance().updateTxList(mContext);
         if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl))
             UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl);
+        WalletActivity.mCallbackUrl = null;
         return mRwTxid.getBytes();
     }
 

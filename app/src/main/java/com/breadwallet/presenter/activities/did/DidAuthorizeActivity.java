@@ -47,6 +47,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
     private Button mAuthorizeBtn;
 
+    private BaseTextView mAppNameTv;
+
     private CheckBox mAuthorCbox;
 
     private BaseTextView mWillTv;
@@ -93,6 +95,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
 
+        mAppNameTv.setText(uriFactory.getAppName());
         mWillTv.setText(String.format(getString(R.string.Did_Will_Get), uriFactory.getAppName()));
 
         Log.i("xidaokun", "did:"+uriFactory.getDID());
@@ -118,6 +121,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     }
 
     private void initView(){
+        mAppNameTv = findViewById(R.id.app_name);
         mNickNameSb = findViewById(R.id.nickname_switch_btn);
         mAddressSb = findViewById(R.id.receive_switch_btn);
         mDenyBtn = findViewById(R.id.deny_btn);

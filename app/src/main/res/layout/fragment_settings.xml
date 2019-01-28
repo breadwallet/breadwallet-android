@@ -77,6 +77,16 @@
             android:layout_marginTop="24dp"
             android:text="Default"/>
 
+        <View
+            android:id="@+id/enter_nick_view"
+            android:layout_width="57dp"
+            android:layout_height="15dp"
+            android:padding="10dp"
+            android:background="#00000000"
+            app:layout_constraintTop_toTopOf="@+id/did_alias"
+            app:layout_constraintBottom_toBottomOf="@+id/did_alias"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/enter_nick"
             android:layout_width="7dp"

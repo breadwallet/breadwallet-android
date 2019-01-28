@@ -978,6 +978,6 @@
   <string name="Did.Receive.Address">Wallet receive address</string>
   <string name="Did.Deny">Deny</string>
   <string name="Did.Save">Save</string>
-  <string name="Did.Create.Ela.Red.Package">Create a ELA red packet</string>
+  <string name="Did.Create.Ela.Red.Package">Create an ELA Red Packet</string>
   <string name="Did.Description">DID is the virtual personal identity in blockchain world, it is decentralized stored and secure, it can identify any thing in the real world, like person, asset, thing.</string>
 </resources>

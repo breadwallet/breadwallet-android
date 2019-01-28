@@ -158,7 +158,7 @@ public class BRSharedPrefs {
 
     public static String getNickname(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString("nickname", "Nickname");
+        return prefs.getString("nickname", "Your Nickname");
     }
 
     public static void putNickname(Context context, String firstAddress) {

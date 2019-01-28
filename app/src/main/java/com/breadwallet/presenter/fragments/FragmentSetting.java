@@ -122,7 +122,7 @@ public class FragmentSetting extends Fragment {
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
-        rootView.findViewById(R.id.enter_nick).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.enter_nick_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DidNickActivity.class);

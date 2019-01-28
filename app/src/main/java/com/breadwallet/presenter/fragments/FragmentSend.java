@@ -121,6 +121,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mSignalLayout;
 
     public static boolean mFromRedPackage = false;
+    public static boolean mIsSend = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -552,11 +553,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                 if (allFilled) {
                     final CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
+                    mIsSend = true;
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             SendManager.sendTransaction(getActivity(), item, wm, null);
-
                         }
                     });
 
@@ -726,7 +727,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mPaste.setClickable(true);
         mCurrencyCodeButton.setClickable(true);
         mFromRedPackage = false;
-        WalletActivity.mCallbackUrl = null;
+        if(!mIsSend) WalletActivity.mCallbackUrl = null;
     }
 
     private void handleClick(String key) {
