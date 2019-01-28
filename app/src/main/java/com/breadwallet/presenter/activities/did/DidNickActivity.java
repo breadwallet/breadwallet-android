@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.StringUtil;
 
 public class DidNickActivity extends BaseSettingsActivity {
     @Override
@@ -51,7 +52,10 @@ public class DidNickActivity extends BaseSettingsActivity {
         mSaveTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putNickname(DidNickActivity.this, mNicknameEdt.getText().toString());
+                String nickName = mNicknameEdt.getText().toString();
+                if(StringUtil.isNullOrEmpty(nickName)) nickName = "Your Nickname";
+                BRSharedPrefs.putNickname(DidNickActivity.this, nickName);
+                mNicknameEdt.setText(BRSharedPrefs.getNickname(DidNickActivity.this));
                 finish();
             }
         });

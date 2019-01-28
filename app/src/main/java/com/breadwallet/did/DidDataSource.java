@@ -165,7 +165,7 @@ public class DidDataSource implements BRDataSourceInterface {
 
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public String urlPost(String url, String json) {
+    public synchronized String urlPost(String url, String json) {
         int code;
         try {
             RequestBody body = RequestBody.create(JSON, json);
@@ -187,7 +187,7 @@ public class DidDataSource implements BRDataSourceInterface {
     }
 
     @WorkerThread
-    public String urlGET(String myURL) {
+    public synchronized String urlGET(String myURL) {
 
         try {
             Map<String, String> headers = BreadApp.getBreadHeaders();
