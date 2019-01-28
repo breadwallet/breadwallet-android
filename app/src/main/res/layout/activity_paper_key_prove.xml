@@ -174,7 +174,6 @@
             android:layout_marginTop="0dp"
             android:background="@android:color/transparent"
             android:ems="10"
-            android:imeActionId="@+id/submit"
             android:imeOptions="actionSend"
             android:inputType="textPersonName"
             app:layout_constraintHorizontal_bias="0.0"
