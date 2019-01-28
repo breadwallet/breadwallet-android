@@ -23,13 +23,14 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Details"
+            android:text="@string/Did.Detail.Tile"
             android:textColor="@color/black_333333"
             android:textSize="20sp"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 
     <View
+        android:id="@+id/did_detail_bg"
         android:layout_width="match_parent"
         android:layout_height="320dp"
         android:layout_marginTop="30dp"
@@ -54,7 +55,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:text="Elastos"
         android:textSize="20sp"
         android:textColor="@color/black_333333"
         app:layout_constraintLeft_toRightOf="@+id/app_icon"
@@ -64,7 +64,7 @@
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Authorized"
+        android:text="@string/Did.Detail.Authorized"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="6dp"
@@ -85,7 +85,7 @@
         android:layout_marginTop="16dp"
         android:textSize="14sp"
         android:textColor="@color/black_999999"
-        android:text="Auth time:"/>
+        android:text="@string/Did.Detail.Author.Time"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/auth_time"
@@ -94,8 +94,8 @@
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/auth_time_label"
         android:textSize="14sp"
-        android:textColor="@color/black_333333"
-        android:text="2019-12-31 23:59"/>
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black_333333" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/expiration_lable"
@@ -106,7 +106,7 @@
         android:layout_marginTop="16dp"
         android:textSize="14sp"
         android:textColor="@color/black_999999"
-        android:text="Expiration:"/>
+        android:text="@string/Did.Detail.Expiration"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/expiration"
@@ -115,8 +115,8 @@
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/expiration_lable"
         android:textSize="14sp"
-        android:textColor="@color/black_333333"
-        android:text="2019-12-31 23:59"/>
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black_333333" />
 
     <View
         android:id="@+id/divider"
@@ -137,7 +137,7 @@
         android:layout_marginTop="17dp"
         android:textSize="14sp"
         android:textColor="@color/black_999999"
-        android:text="Auth information:"/>
+        android:text="@string/Did.Detail.Auth.Info"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/nick_name"
@@ -146,9 +146,10 @@
         android:textColor="@color/black_333333"
         android:textSize="14sp"
         android:lineSpacingExtra="9sp"
+        android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/auth_info"
-        android:text="- Nick name"/>
+        android:text="@string/Did.Detail.Nick.Name"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/did"
@@ -156,10 +157,11 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
+        android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/nick_name"
         android:lineSpacingExtra="9sp"
-        android:text="- DID"/>
+        android:text="@string/Did.Detail.DID"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/pub_key"
@@ -167,9 +169,22 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
+        android:layout_marginTop="5dp"
         android:lineSpacingExtra="9sp"
         app:layout_constraintLeft_toLeftOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/did"
-        android:text="- Public key"/>
+        android:text="@string/Did.Detail.Public.Key"/>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/auto_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="32dp"
+        android:drawablePadding="5dp"
+        android:button="@drawable/author_check_selector"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/Author.Auto.Check"
+        app:layout_constraintTop_toBottomOf="@+id/did_detail_bg"/>
 
 </android.support.constraint.ConstraintLayout>

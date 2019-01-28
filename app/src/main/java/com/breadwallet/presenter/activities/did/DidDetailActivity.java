@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -37,6 +40,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private BaseTextView mNicknameTx;
     private BaseTextView mPublickeyTx;
     private BaseTextView mDidTx;
+    private CheckBox mAuthorCbox;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +61,18 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mExpTimeTx = findViewById(R.id.expiration);
         mPublickeyTx = findViewById(R.id.pub_key);
         mDidTx = findViewById(R.id.did);
+        mAuthorCbox = findViewById(R.id.auto_checkbox);
+        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo.getDid());
+        mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+
+        mAuthorCbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(mAuthorInfo == null) return;
+                mAuthorCbox.setButtonDrawable(b?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+                BRSharedPrefs.setIsAuthorAuto(DidDetailActivity.this, mAuthorInfo.getDid(), b);
+            }
+        });
     }
 
     private void initData(){
