@@ -46,7 +46,7 @@ public class UpgradeHandler implements BRDataSourceInterface {
     public synchronized void deleteAllKVs() {
         try {
             SQLiteDatabase db = getWritable();
-            db.delete(KV_STORE_TABLE_NAME, null, null);
+            db.execSQL("DROP TABLE IF EXISTS " + KV_STORE_TABLE_NAME);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

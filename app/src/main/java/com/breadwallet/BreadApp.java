@@ -156,7 +156,7 @@ public class BreadApp extends Application {
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-//        upgradeAction();
+        upgradeAction();
     }
 
 
