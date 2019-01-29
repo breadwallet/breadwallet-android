@@ -958,6 +958,7 @@
     <string name="upgrade_confirm">更新</string>
     <string name="upgrade_cancel">下次</string>
 
+    <string name="Did.Will.Get">%1$s 将要获取您的:</string>
     <string name="MenuButton.authorizations">授权</string>
     <string name="Did.Authorized">已授权</string>
     <string name="Did.Authorize">授权</string>
