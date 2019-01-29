@@ -55,7 +55,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
 
     /**
      * DID author table
@@ -214,14 +214,15 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion < 13 && (newVersion >= 13)) {
+        Log.i("xidaokun_db", "oldVersion:"+oldVersion+"newVersion:"+newVersion);
+        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 
             if (migrationNeeded)
                 migrateDatabases(db);
         } else {
-            //drop everything maybe?
+//            drop everything maybe?
 //            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
 //            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
 //            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
