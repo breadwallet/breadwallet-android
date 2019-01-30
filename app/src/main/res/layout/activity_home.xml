@@ -22,12 +22,13 @@
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:background="@color/white"
         app:itemIconTint="@color/home_nav_selector"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-20dp"
         app:menu="@menu/navigation" />
 
 </RelativeLayout>

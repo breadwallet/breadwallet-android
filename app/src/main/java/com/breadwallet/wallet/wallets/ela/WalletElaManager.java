@@ -9,8 +9,10 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -84,7 +86,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private WalletManagerHelper mWalletManagerHelper;
 
-    protected static String mPrivateKey;
+    protected String mPrivateKey;
 
     private static Context mContext;
 
@@ -123,7 +125,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         throw new RuntimeException("stub");
     }
 
-    public static String getPrivateKey() {
+    public String getPrivateKey() {
         if (mPrivateKey == null) {
             try {
                 byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
@@ -135,18 +137,19 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mPrivateKey;
     }
 
-    private static String mAddress;
+    public String getPublicKey(){
+        String pk = getPrivateKey();
+        if(StringUtil.isNullOrEmpty(pk)) return null;
+        return Utility.getInstance(mContext).getPublicKeyFromPrivateKey(pk);
+    }
+
+    private String mAddress;
     @Override
     public String getAddress() {
         if (StringUtil.isNullOrEmpty(mAddress)) {
-            try {
-                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                String publickey = Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
-                if(publickey != null) {
-                    mAddress = Utility.getInstance(mContext).getAddress(publickey);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            String publickey = getPublicKey();
+            if(publickey != null) {
+                mAddress = Utility.getInstance(mContext).getAddress(publickey);
             }
         }
 
@@ -167,8 +170,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         BRElaTransaction raw = tx.getElaTx();
         if(raw == null) return new byte[1];
         String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
-        if(mRwTxid == null) return new byte[1];
+
+        if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl))
+            UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl);
+        WalletActivity.mCallbackUrl = null;
         return mRwTxid.getBytes();
     }
 
@@ -454,7 +461,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public void wipeData(Context app) {
         BRSharedPrefs.putCachedBalance(app, getIso(),  new BigDecimal(0));
         ElaDataSource.getInstance(app).deleteAllTransactions();
-        mAddress = null;
+        mInstance = null;
     }
 
     @Override

@@ -51,6 +51,7 @@ public class DeepLinkingManager {
             if (data.getScheme().equalsIgnoreCase(SCHEME_HTTPS)) {
                 //todo encrypted messages next.
             } else {
+                if(data.toString().contains("elaphant")) return;
                 CryptoUriParser.processRequest(context, data.toString(), WalletsMaster.getInstance(context).getCurrentWallet(context));
             }
         }

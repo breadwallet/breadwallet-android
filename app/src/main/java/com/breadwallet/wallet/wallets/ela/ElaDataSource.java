@@ -352,7 +352,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
                 ElaUTXOInputs utxoInputs = inputs.get(i);
-                utxoInputs.privateKey  = WalletElaManager.getPrivateKey();
+                utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
             }
 
             String transactionJson =new Gson().toJson(res);

@@ -8,7 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.breadwallet.R;
+import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+
+import java.util.List;
 
 public class DidAuthListActivity extends BaseSettingsActivity {
 
@@ -33,9 +37,11 @@ public class DidAuthListActivity extends BaseSettingsActivity {
         initListener();
     }
 
+    List<AuthorInfo> infos;
     private void initView(){
+        infos = DidDataSource.getInstance(this).getAllInfos();
         mAuthorList = findViewById(R.id.author_app_list);
-        mAuthorList.setAdapter(new AuthorAdapter(this));
+        mAuthorList.setAdapter(new AuthorAdapter(this, infos));
     }
 
     private void initListener(){
@@ -43,6 +49,7 @@ public class DidAuthListActivity extends BaseSettingsActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(DidAuthListActivity.this, DidDetailActivity.class);
+                intent.putExtra("did", infos.get(i).getDid());
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

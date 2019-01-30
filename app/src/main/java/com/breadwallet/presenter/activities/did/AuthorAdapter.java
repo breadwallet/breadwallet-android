@@ -9,27 +9,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.did.AuthorInfo;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.List;
 
 public class AuthorAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
+    private List<AuthorInfo>  mData;
     private Context mContext;
-    private List  mData;
 
-    public AuthorAdapter(Context context) {
-        this.mContext = context;
+    public AuthorAdapter(Context context, List<AuthorInfo> data) {
+        mData = data;
         mInflater = LayoutInflater.from(context);
+        this.mContext = context;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return (mData!=null)?mData.size():0;
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public AuthorInfo getItem(int position) {
+        return mData.get(position);
     }
 
     @Override
@@ -51,8 +54,10 @@ public class AuthorAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.iconTv.setImageResource(R.mipmap.ic_launcher);
-        holder.nameTv.setText("Elastos Developer website");
+        AuthorInfo info = mData.get(i);
+        int iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
+        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
+        holder.nameTv.setText(info.getAppName());
 
         return convertView;
     }

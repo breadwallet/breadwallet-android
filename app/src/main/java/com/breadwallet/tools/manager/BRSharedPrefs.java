@@ -2,6 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
@@ -154,6 +155,19 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+
+    public static String getNickname(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("nickname", "Your Nickname");
+    }
+
+    public static void putNickname(Context context, String firstAddress) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("nickname", firstAddress);
+        editor.apply();
+    }
+
     public static long getSecureTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("secureTime", System.currentTimeMillis() / 1000);
@@ -288,6 +302,20 @@ public class BRSharedPrefs {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("priceInCrypto", b);
+        editor.apply();
+    }
+
+    //if the user prefers all in crypto units, not fiat currencies
+    public static boolean isAuthorAuto(Context activity, String did) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(did, false);
+    }
+
+    //if the user prefers all in crypto units, not fiat currencies
+    public static void setIsAuthorAuto(Context activity, String did, boolean b) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(did, b);
         editor.apply();
     }
 

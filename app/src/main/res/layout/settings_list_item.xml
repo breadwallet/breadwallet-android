@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:filterTouchesWhenObscured="true"
@@ -15,7 +14,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:textColor="@color/black_666666"
+        android:textColor="@color/black_333333"
         android:textSize="@dimen/sub_header"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -27,8 +26,7 @@
         android:layout_marginEnd="28dp"
         android:textColor="@color/total_assets_label_color"
         android:textSize="@dimen/sub_header"
-        android:visibility="visible"
-        app:customTFont="CircularPro-Medium.otf"/>
+        android:visibility="visible" />
 
     <ImageButton
         android:id="@+id/setting_icon"
@@ -37,4 +35,23 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/new_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff3365"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="35dp"
+        android:visibility="gone"
+        android:text="New"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:layout_width="7dp"
+        android:layout_height="12dp"
+        android:background="@drawable/ic_arrow_right"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="18dp"/>
 </RelativeLayout>

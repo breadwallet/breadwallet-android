@@ -242,6 +242,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
             @Override
             public void run() {
                 final BaseWalletManager wm = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+                if(wm == null) return;
                 wm.refreshAddress(ctx);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -25,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Authorization"
+            android:text="@string/MenuButton.authorizations"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -35,7 +36,7 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginTop="32dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/redpackage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -44,7 +45,6 @@
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Elastos"
         android:textColor="@color/black_333333"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
-        android:text="Wechat will get your:"
+        android:text="@string/Did.Will.Get"
         android:textColor="@color/black_cccccc"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/will_get_your_bg"
@@ -77,16 +77,16 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:lineSpacingExtra="9sp"
-        android:text="Elastos DID"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
+        android:text="@string/Did.Elastos.DID"
         app:layout_constraintLeft_toLeftOf="@+id/auth_info"
         app:layout_constraintTop_toBottomOf="@+id/will_get_your_bg" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Required"
+        android:text="@string/Did.Required"
         app:layout_constraintTop_toTopOf="@+id/did"
         app:layout_constraintBottom_toBottomOf="@+id/did"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +99,7 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:lineSpacingExtra="9sp"
-        android:text="Public key"
+        android:text="@string/Did.Public.Key"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="@+id/auth_info"
@@ -108,7 +108,7 @@
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Required"
+        android:text="@string/Did.Required"
         android:textColor="@color/black_cccccc"
         app:layout_constraintTop_toTopOf="@+id/pub_key"
         app:layout_constraintBottom_toBottomOf="@+id/pub_key"
@@ -121,13 +121,14 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:lineSpacingExtra="9sp"
-        android:text="Nick name"
+        android:text="@string/Did.Nick.Name"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="@+id/auth_info"
         app:layout_constraintTop_toBottomOf="@+id/pub_key" />
     
     <com.breadwallet.presenter.customviews.SwitchButton
+        android:id="@+id/nickname_switch_btn"
         android:layout_width="50dp"
         android:layout_height="25dp"
         app:layout_constraintTop_toTopOf="@+id/nick_name"
@@ -136,6 +137,7 @@
         android:layout_marginEnd="15dp"
         app:sb_show_indicator="false"
         app:sb_checked_color="#ff3365"
+        app:sb_checked="true"
         app:sb_uncheck_color="@color/black_cccccc"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -143,14 +145,15 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:lineSpacingExtra="9sp"
-        android:text="Wallet receive address"
+        android:text="@string/Did.Receive.Address"
         android:textColor="@color/black_333333"
         android:textSize="14sp"
         android:gravity="center_vertical"
         app:layout_constraintLeft_toLeftOf="@+id/auth_info"
-        app:layout_constraintTop_toBottomOf="@+id/nick_name" />
+        app:layout_constraintTop_toBottomOf="@+id/nick_name"  />
 
     <com.breadwallet.presenter.customviews.SwitchButton
+        android:id="@+id/receive_switch_btn"
         android:layout_width="50dp"
         android:layout_height="25dp"
         app:layout_constraintTop_toTopOf="@+id/receive_address"
@@ -159,34 +162,54 @@
         android:layout_marginEnd="15dp"
         app:sb_show_indicator="false"
         app:sb_checked_color="#ff3365"
+        app:sb_checked="true"
         app:sb_uncheck_color="@color/black_cccccc"/>
 
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@+id/receive_switch_btn"
+        android:layout_marginTop="15dp"
+        android:background="@color/black_cccccc"/>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/auto_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="32dp"
+        android:drawablePadding="5dp"
+        android:button="@drawable/author_check_selector"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/Author.Auto.Check"
+        app:layout_constraintTop_toBottomOf="@+id/divider1"/>
 
     <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/deny"
+        android:id="@+id/deny_btn"
         android:layout_width="164dp"
         android:layout_height="60dp"
         android:padding="10dp"
-        android:text="Deny"
+        android:text="@string/Did.Deny"
         android:textColor="#ff3365"
         android:textSize="18sp"
         app:buttonType="3"
         app:isBreadButton="true"
         android:layout_marginLeft="15dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginEnd="@dimen/bread_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/authorize"
+        android:id="@+id/authorize_btn"
         android:layout_width="164dp"
         android:layout_height="60dp"
         android:layout_marginRight="15dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="32dp"
         android:padding="10dp"
-        android:text="Authorize"
+        android:text="@string/Did.Authorize"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:buttonType="6"

@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Nickname"
+            android:text="@string/Did.Nick.Name"
             android:textColor="@color/black_333333"
             android:textSize="20sp"
             android:layout_centerInParent="true"/>
@@ -38,7 +38,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="15sp"
             android:textColor="#ff3365"
-            android:text="Save"/>
+            android:text="@string/Did.Save"/>
     </RelativeLayout>
     
     
@@ -49,7 +49,7 @@
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:hint="Nickname"/>
+        android:hint="@string/Did.Nick.Name"/>
     
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/did_nickname_clean"

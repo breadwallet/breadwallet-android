@@ -306,8 +306,6 @@
   <string name="MenuButton.lock">Lock Wallet</string>
   <!-- Did Authorizations -->
   <string name="MenuButton.authorizations.qr">Authorizations QR</string>
-  <!-- Did Authorizations -->
-  <string name="MenuButton.authorizations">Authorizations</string>
   <!-- (Click here to) manage (your list of) wallets -->
   <string name="MenuButton.manageWallets">Manage Wallets</string>
   <!-- (press here to) scan (a) QR code -->
@@ -959,4 +957,39 @@
 
   <string name="Gas.price">Gas Price</string>
   <string name="Gas.limit">Gas Limit</string>
+
+  <!--upgrade-->
+  <string name="upgrade_confirm">Upgrade</string>
+  <string name="upgrade_cancel">Next time</string>
+
+  <!-- Did Authorizations -->
+  <string name="Did.Elastos.DID">Elastos DID</string>
+  <string name="Did.Will.Get">%1$s will get your:</string>
+  <string name="Author.Auto.Check">Auto authorize %1$s next time</string>
+  <string name="MenuButton.authorizations">Authorizations</string>
+  <string name="Did.Authorized">Authorized</string>
+  <string name="Did.Authorize">Authorize</string>
+  <string name="Did.Authorize.time">Auth time</string>
+  <string name="Did.Expiration">Expiration</string>
+  <string name="Did.Author.Info">Auth information</string>
+  <string name="Did.Nick.Name">Nick name</string>
+  <string name="Did.Public.Key">Public key</string>
+  <string name="Did.What.Did">What is DID?</string>
+  <string name="Did.Quest">Questions</string>
+  <string name="Did.Required">Required</string>
+  <string name="Did.Receive.Address">Wallet receive address</string>
+  <string name="Did.Deny">Deny</string>
+  <string name="Did.Save">Save</string>
+  <string name="Did.Create.Ela.Red.Package">Create an ELA Red Packet</string>
+  <string name="Did.Description">DID is the virtual personal identity in blockchain world, it is decentralized stored and secure, it can identify any thing in the real world, like person, asset, thing.</string>
+
+  <string name="Did.Detail.Tile">Details</string>
+  <string name="Did.Detail.Authorized">Authorized</string>
+  <string name="Did.Detail.Author.Time">Auth time:</string>
+  <string name="Did.Detail.Expiration">Expiration:</string>
+  <string name="Did.Detail.Auth.Info">Auth information:</string>
+  <string name="Did.Detail.Nick.Name">- Nick name</string>
+  <string name="Did.Detail.DID">- DID</string>
+  <string name="Did.Detail.Public.Key">- Public key</string>
+
 </resources>

@@ -67,7 +67,7 @@ public class ElaNodeActivity extends BRActivity {
                 showList();
             }
         });
-        final String[] nodes = {"api-wallet-ela.elastos.org", "api-wallet-ela-testnet.elastos.org", "default node"};
+        final String[] nodes = {"api-wallet-ela.elastos.org", /*"api-wallet-ela-testnet.elastos.org", */"default node"};
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.node_item_layout, nodes);
         mNodeLv.setAdapter(adapter);
         mNodeLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {

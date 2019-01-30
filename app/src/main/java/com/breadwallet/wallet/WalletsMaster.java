@@ -106,7 +106,7 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BGX", true, "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb"));
             enabled.add(new TokenListMetaData.TokenInfo("HSC", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f"));
-            enabled.add(new TokenListMetaData.TokenInfo("IOEX", true, "0x000000000000000000000000000000000000000"));
+            enabled.add(new TokenListMetaData.TokenInfo("IOEX", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7d"));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             if(ethWallet!=null && ethWallet.node!=null){
 //                BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
@@ -259,7 +259,7 @@ public class WalletsMaster {
     }
 
     public boolean isIsoErc20(Context app, String iso) {
-        if (Utils.isNullOrEmpty(iso) || WalletEthManager.getInstance(app).node==null) return false;
+        if (Utils.isNullOrEmpty(iso) || WalletEthManager.getInstance(app)==null || WalletEthManager.getInstance(app).node==null) return false;
         BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {

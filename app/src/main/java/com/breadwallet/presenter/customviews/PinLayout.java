@@ -162,10 +162,9 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                     authFailed(getContext(), pin);
                 }
             }
-            updatePinUi(0);
             mPinStringBuilder = new StringBuilder();
             mLastInsertedPin = pin;
-
+            updatePinUi(0);
         }
     }
 

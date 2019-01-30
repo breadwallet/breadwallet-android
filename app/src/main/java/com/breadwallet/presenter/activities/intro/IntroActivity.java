@@ -118,16 +118,16 @@ public class IntroActivity extends BRActivity {
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
-        checkPermisson();
+//        checkPermisson();
     }
 
-    private void checkPermisson(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    0x01);
-        }
-    }
+//    private void checkPermisson(){
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    0x01);
+//        }
+//    }
 
 //    private void updateBundles() {
 //        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {

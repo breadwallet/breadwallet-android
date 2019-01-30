@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_intro_set_pit"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.breadwallet.presenter.activities.settings.SettingsActivity">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_did_scan"/>
+
+            <com.breadwallet.presenter.customviews.BaseTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/bread_margin"
+                android:layout_marginStart="@dimen/bread_margin"
+                android:text="@string/Setting.title"
+                android:textColor="@color/black_333333"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/ic_close_blue_24dp"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/did_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/toolbar"
+        android:background="@drawable/did_mask_bg">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/did_alias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Default"/>
+
+        <View
+            android:id="@+id/enter_nick_view"
+            android:layout_width="57dp"
+            android:layout_height="15dp"
+            android:padding="10dp"
+            android:background="#00000000"
+            app:layout_constraintTop_toTopOf="@+id/did_alias"
+            app:layout_constraintBottom_toBottomOf="@+id/did_alias"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/enter_nick"
+            android:layout_width="7dp"
+            android:layout_height="12dp"
+            android:padding="10dp"
+            android:background="@drawable/ic_did_enter_left"
+            app:layout_constraintTop_toTopOf="@+id/did_alias"
+            app:layout_constraintBottom_toBottomOf="@+id/did_alias"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/did_content"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/did_alias"
+            android:layout_marginTop="12dp"
+            android:textColor="#ccffffff" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/did_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/did_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/ic_did_copy"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/what_did"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:drawableLeft="@drawable/ic_did_what"
+        android:text="@string/Did.What.Did"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:drawablePadding="5dp"
+        android:layout_below="@+id/did_card"
+        android:textColor="@color/black_999999"
+        android:layout_marginRight="16dp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#f7f8fb"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/what_did"/>
+
+    <ListView
+        android:id="@+id/settings_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_below="@+id/divider"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:background="@color/white"/>
+
+</RelativeLayout>

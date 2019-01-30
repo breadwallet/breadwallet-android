@@ -23,11 +23,14 @@ import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.elastos.jni.Utility;
 
 import org.w3c.dom.Text;
 
@@ -48,7 +51,7 @@ public class FragmentSetting extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootview = inflater.inflate(R.layout.activity_settings, container, false);
+        mRootview = inflater.inflate(R.layout.fragment_settings, container, false);
         return mRootview;
     }
 
@@ -59,8 +62,25 @@ public class FragmentSetting extends Fragment {
     }
 
     private TextView mDidContent;
+    private TextView mNickname;
     private void setTitleAndList(View rootView) {
         mDidContent = rootView.findViewById(R.id.did_content);
+        String did = "";
+        try {
+            byte[] phrase = BRKeyStore.getPhrase(getContext(), 0);
+            String publickey = Utility.getInstance(getContext()).getSinglePublicKey(new String(phrase));
+            if(publickey != null) {
+                did = Utility.getInstance(getContext()).getDid(publickey);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mDidContent.setText(did);
+
+        mNickname = rootView.findViewById(R.id.did_alias);
+        String nickname = BRSharedPrefs.getNickname(getContext());
+        mNickname.setText(nickname);
+
         BaseTextView title = rootView.findViewById(R.id.title);
         ListView settingsList = rootView.findViewById(R.id.settings_list);
         List<BRSettingsItem> settingsItems = new ArrayList<>();
@@ -71,7 +91,7 @@ public class FragmentSetting extends Fragment {
         switch (mode) {
             case MODE_SETTINGS:
                 settingsItems = SettingsUtil.getMainSettings(getActivity());
-                title.setText(getString(R.string.Settings_title));
+                title.setText(/*getString(R.string.Settings_title)*/"DID");
                 mIsButtonBackArrow = false;
                 break;
             case MODE_PREFERENCES:
@@ -102,7 +122,7 @@ public class FragmentSetting extends Fragment {
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
-        rootView.findViewById(R.id.enter_nick).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.enter_nick_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DidNickActivity.class);

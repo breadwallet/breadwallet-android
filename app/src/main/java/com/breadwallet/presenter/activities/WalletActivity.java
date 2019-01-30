@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -19,13 +21,16 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -37,6 +42,7 @@ import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -44,10 +50,16 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
+import com.platform.tools.BRBitId;
+
+import org.wallet.library.AuthorizeManager;
+import org.wallet.library.Constants;
+import org.wallet.library.entity.UriFactory;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -98,11 +110,28 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private BaseWalletManager mWallet;
 
+    private String mUri;
+
+    public static String mCallbackUrl;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_wallet);
+        Intent intent = getIntent();
+        if (intent != null) {
+            String action = intent.getAction();
+            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                mUri = uri.toString();
+            } else {
+                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
+            }
+            if (!StringUtil.isNullOrEmpty(mUri)) {
+                BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, "ELA");
+            }
+            Log.i("author_test", "walletActivity1 mUri:"+mUri);
+        }
 
         BRSharedPrefs.putIsNewWallet(this, false);
 
@@ -218,6 +247,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
+
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
             if (mTestLogger != null) {
@@ -233,6 +263,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
         DeepLinkingManager.handleUrlClick(this, intent);
+        if (intent != null) {
+            String action = intent.getAction();
+            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                mUri = uri.toString();
+                sendRedPackage();
+            }
+        }
+        Log.i("xidaokun", "onNewIntent");
     }
 
     private void updateUi() {
@@ -258,7 +297,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 TxManager.getInstance().updateTxList(WalletActivity.this);
             }
         });
-
     }
 
     private void swap() {
@@ -277,7 +315,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             TransitionManager.beginDelayedTransition(mToolBarConstraintLayout);
         }
 
-        if(cryptoPreferred){
+        if (cryptoPreferred) {
             set.connect(R.id.balance_secondary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
             set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
             set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, R.id.anchor, ConstraintSet.TOP, 0);
@@ -355,6 +393,45 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
 
+        sendRedPackage();
+    }
+
+    private void sendRedPackage(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(StringUtil.isNullOrEmpty(mUri)) return;
+                FragmentSend.mFromRedPackage = true;
+                UiUtils.showSendFragment(WalletActivity.this, null);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(StringUtil.isNullOrEmpty(mUri)) return;
+                        UriFactory factory = new UriFactory();
+                        factory.parse(mUri);
+                        mUri = null;
+                        String did = factory.getDID();
+                        String appId = factory.getAppID();
+                        String signed = factory.getSignature();
+                        String PK = factory.getPublicKey();
+                        String des = factory.getDescription();
+                        mCallbackUrl = factory.getCallbackUrl();
+                        Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
+                        Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
+                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
+                        Log.i(TAG, "walletActivity1 isValide: "+isValide);
+                        if(!isValide) return;
+                        String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount()
+                                +((StringUtil.isNullOrEmpty(des)||des.equals("null"))?"":"&message="+des);
+                        Log.i(TAG, "walletActivity1 server result: "+result);
+                        if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
+                            CryptoUriParser.processRequest(WalletActivity.this, result,
+                                    WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
+                        }
+                    }
+                });
+            }
+        }, 500);
     }
 
     @Override

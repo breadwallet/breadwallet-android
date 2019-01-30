@@ -30,6 +30,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -37,6 +38,7 @@ import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
 import org.wallet.library.AuthorizeManager;
+import org.wallet.library.entity.UriFactory;
 
 /**
  * BreadWallet
@@ -267,8 +269,16 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
             case BRConstants.SCANNER_DID_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    String result = data.getStringExtra("result");
-                    AuthorizeManager.Server.receiveScanAuthor(this, result);
+                    final String mUri = data.getStringExtra("result");
+                    if(StringUtil.isNullOrEmpty(mUri)) return;
+                    if(mUri.contains("redpacket")){
+                        String url = "https://redpacket.elastos.org";
+                        UiUtils.openUrlByBrowser(this, url);
+                    } else if(mUri.contains("identity")) {
+                        AuthorizeManager.startWalletActivity(BRActivity.this, mUri, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
+                    } else if(mUri.contains("elapay")) {
+                        AuthorizeManager.startWalletActivity(BRActivity.this, mUri, "com.breadwallet.presenter.activities.WalletActivity");
+                    }
                 }
                 break;
 

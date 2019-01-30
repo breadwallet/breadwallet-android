@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
-import com.breadwallet.presenter.activities.did.AuthorQrActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
@@ -81,14 +81,14 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_camera)); */
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations_qr), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, AuthorQrActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_auth));
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations_qr), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(activity, AuthorQrActivity.class);
+//                activity.startActivity(intent);
+//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            }
+//        }, false, R.drawable.ic_auth));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
             @Override
@@ -134,6 +134,16 @@ public final class SettingsUtil {
 //                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
 //            }
 //        }, false, R.drawable.ic_support));
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                String url = BuildConfig.RED_PACKAGE_TEST ? "http://192.168.1.124:8081" : "https://redpacket.elastos.org";
+//                String url = "http://192.168.1.124:8081";
+                String url = "https://redpacket.elastos.org";
+                UiUtils.openUrlByBrowser(activity, url);
+            }
+        }, false, R.drawable.ic_red_package, true));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override
