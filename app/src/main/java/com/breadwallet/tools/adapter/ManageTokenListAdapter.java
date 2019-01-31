@@ -245,7 +245,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
-        int bound = currentMd.enabledCurrencies.size()-1;
+        int bound = currentMd.enabledCurrencies.size();
         if(fromPosition>=bound || toPosition>=bound) return;
         Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
         Collections.swap(mTokens, fromPosition, toPosition);
