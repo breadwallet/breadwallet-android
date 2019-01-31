@@ -1,0 +1,121 @@
+# ----------
+#
+# For Android use, update your CMakeLists.txt to have something like this:
+#
+add_library( # Sets the name of the library.
+             native-lib
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+            src/main/cpp/breadwallet-core/BRAddress.c
+            src/main/cpp/breadwallet-core/BRAddress.h
+            src/main/cpp/breadwallet-core/BRArray.h
+            src/main/cpp/breadwallet-core/BRBase58.c
+            src/main/cpp/breadwallet-core/BRBase58.h
+            src/main/cpp/breadwallet-core/BRBIP32Sequence.c
+            src/main/cpp/breadwallet-core/BRBIP32Sequence.h
+            src/main/cpp/breadwallet-core/BRBIP38Key.c
+            src/main/cpp/breadwallet-core/BRBIP38Key.h
+            src/main/cpp/breadwallet-core/BRBIP39Mnemonic.c
+            src/main/cpp/breadwallet-core/BRBIP39Mnemonic.h
+            src/main/cpp/breadwallet-core/BRBIP39WordsEn.h
+            src/main/cpp/breadwallet-core/BRBloomFilter.c
+            src/main/cpp/breadwallet-core/BRBloomFilter.h
+            src/main/cpp/breadwallet-core/BRCrypto.c
+            src/main/cpp/breadwallet-core/BRCrypto.h
+            src/main/cpp/breadwallet-core/BRInt.h
+            src/main/cpp/breadwallet-core/BRKey.c
+            src/main/cpp/breadwallet-core/BRKey.h
+            src/main/cpp/breadwallet-core/BRMerkleBlock.c
+            src/main/cpp/breadwallet-core/BRMerkleBlock.h
+            src/main/cpp/breadwallet-core/BRPaymentProtocol.c
+            src/main/cpp/breadwallet-core/BRPaymentProtocol.h
+            src/main/cpp/breadwallet-core/BRPeer.c
+            src/main/cpp/breadwallet-core/BRPeer.h
+            src/main/cpp/breadwallet-core/BRPeerManager.c
+            src/main/cpp/breadwallet-core/BRPeerManager.h
+            src/main/cpp/breadwallet-core/BRSet.c
+            src/main/cpp/breadwallet-core/BRSet.h
+            src/main/cpp/breadwallet-core/BRTransaction.c
+            src/main/cpp/breadwallet-core/BRTransaction.h
+            src/main/cpp/breadwallet-core/BRWallet.c
+            src/main/cpp/breadwallet-core/BRWallet.h
+
+                           src/main/cpp/breadwallet-core/Java/BRCoreJni.h
+                           src/main/cpp/breadwallet-core/Java/BRCoreJni.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.h
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.c
+                           src/main/cpp/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.h
+            )
+
+
+include_directories(src/main/cpp/breadwallet-core/Java)
+include_directories(src/main/cpp/breadwallet-core/)
+include_directories(src/main/cpp/breadwallet-core/secp256k1/include)
+include_directories(src/main/cpp/breadwallet-core/secp256k1/src)
+include_directories(src/main/cpp/breadwallet-core/secp256k1)
+
+# -----------
+#
+# To generate headers:
+#   Assume you've compiled the Java code, say as part of an Android project
+#
+PROJECT_DIR=<....>/app
+JNI_DIR=${PROJECT_DIR}/src/main/cpp/breadwallet-core/Java/
+CLASSPATH=${PROJECT_DIR}/build/intermediates/classes/debug/
+
+(cd ~/Bread/CoreJNI/app/build/intermediates/classes/debug/com/breadwallet/core; \
+ for class in BRCore*.class; \
+   do javah -jni -d ${JNI_DIR} -classpath ${CLASSPATH} com.breadwallet.core.${class%%.class}; \
+   done)
+   
+# Some headers will be generated that are empty - particularly for private interfaces/class.
+
+# -----------
+#
+# To build the core tests
+#
+CINC_DIR=/Applications/Xcode.app//Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+cc -Wno-format-extra-args -Wno-nullability-completeness -Wno-unknown-warning-option \
+    -Isecp256k1 -I${CINC_DIR} \
+    -o test *.c
+
+# -----------
+#
+# Makefile
+#
+
+# Create one wallet and connect to testnet
+make clean; make test
+
+# Create one wallet and connect to mainnet.  Use any of -main, -test, -cash to specify the network.
+make clean; make test ARGS="-main"
+
+# Create four wallets; connect to the specified network; all simultaneously
+make clean; make test ARGS="-test -main -test -test"
+

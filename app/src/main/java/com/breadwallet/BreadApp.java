@@ -172,7 +172,7 @@ public class BreadApp extends Application {
         if(oldVerson != newVersion){
             BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
             UpgradeHandler.getInstance(this).deleteAllTransactions();
-            UpgradeHandler.getInstance(this).deleteAllKVs();
+//            UpgradeHandler.getInstance(this).deleteAllKVs();
             BRSharedPrefs.putVersionCode(this, "version", newVersion);
         }
 
