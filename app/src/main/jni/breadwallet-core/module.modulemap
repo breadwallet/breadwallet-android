@@ -1,0 +1,32 @@
+module BRCore [system] [extern_c] {
+    textual header "secp256k1/src/basic-config.h"
+    textual header "secp256k1/src/secp256k1.c"
+    header "BRInt.h"
+    header "BRArray.h"
+    header "BRSet.h"
+    header "BRBloomFilter.h"
+    header "BRMerkleBlock.h"
+    header "BRPeer.h"
+    header "BRCrypto.h"
+    header "BRBase58.h"
+    header "BRBech32.h"
+    header "BRKey.h"
+    header "BRBIP38Key.h"
+    header "BRBIP39Mnemonic.h"
+    header "BRBIP32Sequence.h"
+    header "BRTransaction.h"
+    header "BRPaymentProtocol.h"
+    header "BRAddress.h"
+    header "BRWallet.h"
+    header "BRPeerManager.h"
+    header "BRChainParams.h"
+    header "bcash/BRBCashParams.h"
+    header "bcash/BRBCashAddr.h"
+    export *
+
+    explicit module Ethereum {
+      header "ethereum/BREthereum.h"
+      header "ethereum/BREthereumToken.h"
+      export *
+    }
+}
