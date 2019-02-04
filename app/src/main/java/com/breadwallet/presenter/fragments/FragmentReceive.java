@@ -26,7 +26,6 @@ import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -36,10 +35,9 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 /**
@@ -118,7 +116,8 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
             public void onClick(View view) {
                 Activity app = getActivity();
                 if (app == null) {
-                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: "
+                            + HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT));
                     return;
                 }
 

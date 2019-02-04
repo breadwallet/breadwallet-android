@@ -150,7 +150,7 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.URL_REWARDS);
+                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS));
             }
         }, false, R.drawable.ic_reward));
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {

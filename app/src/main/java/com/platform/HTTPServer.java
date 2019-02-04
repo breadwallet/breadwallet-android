@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
+import com.crashlytics.android.Crashlytics;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -31,6 +32,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,15 +66,18 @@ import javax.servlet.http.HttpServletResponse;
 public class HTTPServer extends AbstractLifeCycle {
     public static final String TAG = HTTPServer.class.getSimpleName();
 
-    private static final int PORT = 31120;
-    public static final String PLATFORM_BASE_URL = "http://localhost:" + PORT;
-    public static final String URL_BUY = PLATFORM_BASE_URL + "/buy";
-    public static final String URL_TRADE = PLATFORM_BASE_URL + "/trade";
-    public static final String URL_SELL = PLATFORM_BASE_URL + "/sell";
-    public static final String URL_SUPPORT = PLATFORM_BASE_URL + "/support";
-    public static final String URL_REWARDS = PLATFORM_BASE_URL + "/rewards";
+    private static final String PLATFORM_BASE_URL = "http://localhost:";
+    public static final String URL_BUY = "/buy";
+    public static final String URL_TRADE = "/trade";
+    public static final String URL_SELL = "/sell";
+    public static final String URL_SUPPORT = "/support";
+    public static final String URL_REWARDS = "/rewards";
+    private static final int MIN_PORT = 8000;
+    private static final int MAX_PORT = 49152;
+    private static final int MAX_RETRIES = 10;
 
     private static HTTPServer mInstance;
+    private int mPort;
     private Server mServer;
     private static Set<Middleware> middlewares;
     private static OnCloseListener mOnCloseListener;
@@ -88,9 +93,28 @@ public class HTTPServer extends AbstractLifeCycle {
         return mInstance;
     }
 
+    /**
+     * Get base url where the platform is hosted.
+     *
+     * @return Platform's base url.
+     */
+    public static String getPlatformBaseUrl() {
+        return PLATFORM_BASE_URL + mInstance.mPort;
+    }
+
+    /**
+     * Get the platform's url for a given endpoint.
+     *
+     * @param endpoint The platform's endpoint.
+     * @return The url where the endpoint is hosted.
+     */
+    public static String getPlatformUrl(String endpoint) {
+        return getPlatformBaseUrl() + endpoint;
+    }
+
     private void init() {
         middlewares = new LinkedHashSet<>();
-        mServer = new Server(PORT);
+        mServer = new Server(mPort);
         try {
             mServer.dump(System.err);
         } catch (IOException e) {
@@ -115,11 +139,13 @@ public class HTTPServer extends AbstractLifeCycle {
         setupIntegrations();
     }
 
-    public void startServer() {
+    public void startServer(int preferredPort) {
         try {
+            mInstance.mPort = preferredPort;
             mInstance.start();
         } catch (Exception e) {
             Log.e(TAG, "startServer: Error starting the local server.", e);
+            Crashlytics.logException(e);
         }
     }
 
@@ -128,6 +154,7 @@ public class HTTPServer extends AbstractLifeCycle {
             mInstance.stop();
         } catch (Exception e) {
             Log.e(TAG, "stopServer: Error stopping the local server.", e);
+            Crashlytics.logException(e);
         }
     }
 
@@ -137,21 +164,24 @@ public class HTTPServer extends AbstractLifeCycle {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (mServer == null) {
-                        init();
-                    }
-                    mServer.start();
-                    mServer.join();
-                } catch (Exception e) {
-                    Log.e(TAG, "doStart: Error starting the local server.", e);
+                Random rand = new Random();
+                if (mPort < MIN_PORT || mPort > MAX_PORT) {
+                    mPort = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
+                }
+                int retries = 0;
+                while (!doStartServer() && retries < MAX_RETRIES) { // if failed to start the server retry with new port
+                    retries++;
+                    mPort = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
+                }
+                if (retries == MAX_RETRIES) {
+                    Log.e(TAG, "doStart: Failed to start local server, MAX_RETRIES reached.");
                 }
             }
         });
     }
 
     @Override
-    protected void doStop()  {
+    protected void doStop() {
         Log.d(TAG, "doStop");
         if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -164,9 +194,30 @@ public class HTTPServer extends AbstractLifeCycle {
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "doStop: Error stopping the local server.", e);
+                        Crashlytics.logException(e);
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Attempt to start the server on the current port, returns true if a retry is required.
+     *
+     * @return True if server was started; false, otherwise.
+     */
+    private boolean doStartServer() {
+        Log.d(TAG, "doStartServer: Starting the server in port: " + mPort);
+        try {
+            init();
+            mServer.start();
+            mServer.join();
+            Log.d(TAG, "doStartServer: Server started in port " + mPort);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "doStart: Error starting the local server. Trying again on new port.", e);
+            Crashlytics.logException(e);
+            return false;
         }
     }
 
@@ -270,6 +321,10 @@ public class HTTPServer extends AbstractLifeCycle {
         // kvstore plugin provides access to the shared replicated kv store
         Plugin kvStorePlugin = new KVStorePlugin();
         httpRouter.appendPlugin(kvStorePlugin);
+    }
+
+    public int getPort() {
+        return mPort;
     }
 
     public static void setOnCloseListener(OnCloseListener listener) {
