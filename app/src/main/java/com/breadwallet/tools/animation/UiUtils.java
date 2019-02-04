@@ -46,7 +46,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
 
 import java.util.List;
@@ -119,7 +118,7 @@ public class UiUtils {
                 return;
             }
 
-            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.URL_SUPPORT);
+            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT));
             if (!Utils.isNullOrEmpty(articleId)) {
                 urlBuilder.append(ARTICLE_QUERY_STRING);
                 urlBuilder.append(articleId);
