@@ -184,7 +184,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startWebActivity(WalletActivity.this, HTTPServer.URL_SELL);
+                UiUtils.startWebActivity(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL));
             }
         });
 
