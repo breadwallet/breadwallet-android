@@ -192,10 +192,10 @@ public final class PromptManager {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletIso(context), 0);
+                                BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), 0);
                                 BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
                                 wallet.rescan(context);
-                                BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletIso(context), false);
+                                BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), false);
                                 sendPromptClickedEvent(promptItem);
                             }
                         });

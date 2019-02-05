@@ -103,15 +103,6 @@ public class Utils {
         Log.e(specsTag, "");
     }
 
-    public static boolean isEmulatorOrDebug(Context app) {
-        String fing = Build.FINGERPRINT;
-        boolean isEmulator = false;
-        if (fing != null) {
-            isEmulator = fing.contains("vbox") || fing.contains("generic");
-        }
-        return isEmulator || (0 != (app.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-    }
-
     public static String getFormattedDateFromLong(Context app, long time) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("M/d@ha", Locale.getDefault());

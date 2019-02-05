@@ -1,6 +1,5 @@
 package com.platform.middlewares.plugins;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -91,7 +90,7 @@ public class KVStorePlugin implements Plugin {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.version, kv.time, response));
                     }
-                    APIClient.BRResponse resp = new APIClient.BRResponse(kv.value, 200, BRConstants.CONTENT_TYPE_JSON);
+                    APIClient.BRResponse resp = new APIClient.BRResponse(kv.value, 200, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
 
                     return BRHTTPHelper.handleSuccess(resp, baseRequest, decorateResponse(kv.version, kv.time, response));
                 case "PUT":
@@ -176,7 +175,7 @@ public class KVStorePlugin implements Plugin {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         String rfc1123 = dateFormat.format(time);
-        response.setHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON);
+        response.setHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
         response.addHeader("Last-Modified", rfc1123);
         return response;
     }

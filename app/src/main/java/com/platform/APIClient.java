@@ -287,12 +287,12 @@ public class APIClient {
             requestMessageJSON.put(PUBKEY, base58PubKey);
             requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
 
-            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON);
+            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
             RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
             Request request = new Request.Builder()
                     .url(strUtl)
-                    .header(HEADER_CONTENT_TYPE, CONTENT_TYPE_JSON)
-                    .header(HEADER_ACCEPT, CONTENT_TYPE_JSON)
+                    .header(HEADER_CONTENT_TYPE, CONTENT_TYPE_JSON_CHARSET_UTF8)
+                    .header(HEADER_ACCEPT, CONTENT_TYPE_JSON_CHARSET_UTF8)
                     .post(requestBody).build();
             BRResponse response = sendRequest(request, false);
             if (Utils.isNullOrEmpty(response.getBodyText())) {
@@ -450,7 +450,7 @@ public class APIClient {
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
                     return createBrResponse(response);
-                } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
+                } else if (!BuildConfig.DEBUG && (!newUri.getHost().equalsIgnoreCase(BreadApp.getHost())
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                     return createBrResponse(new Response.Builder().code(HttpStatus.INTERNAL_SERVER_ERROR_500).request(request)
@@ -1004,7 +1004,7 @@ public class APIClient {
                 if (headers != null && headers.containsKey(BRConstants.HEADER_CONTENT_TYPE)) {
                     contentType = headers.get(BRConstants.HEADER_CONTENT_TYPE);
                     if (Utils.isNullOrEmpty(contentType)) {
-                        contentType = BRConstants.CONTENT_TYPE_JSON;
+                        contentType = BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8;
                     }
                 }
             }

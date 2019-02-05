@@ -52,21 +52,29 @@ public class Bip39Reader {
 
 
     public enum SupportedLanguage {
-        EN,
-        ES,
-        FR,
-        IT,
-        JA,
-        KO,
-        ZH_HANS,
-        ZH_HANT;
+        EN("en"),
+        ES("es"),
+        FR("fr"),
+        IT("it"),
+        JA("ja"),
+        KO("ko"),
+        ZH_HANS("zh-Hans"),
+        ZH_HANT("zh-Hant");
+
+        private final String mLanguage;
+
+        SupportedLanguage(String language) {
+            mLanguage = language;
+        }
+
+        public String toString() {
+            return mLanguage;
+        }
 
         public static SupportedLanguage getSupportedLanguage(String targetLanguage) {
-            // valueOf() expects upper case since we have defined the enums in upper case.
-            String targetLanguageUpperCase = targetLanguage.toUpperCase();
             for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
-                if (supportedLanguage.name().equals(targetLanguageUpperCase)) {
-                    return valueOf(targetLanguageUpperCase);
+                if (supportedLanguage.toString().equals(targetLanguage)) {
+                    return supportedLanguage;
                 }
             }
 
@@ -96,7 +104,7 @@ public class Bip39Reader {
     }
 
     private static List<String> getBip39WordsByLanguage(Context context, SupportedLanguage language) {
-        String fileName = FILE_PREFIX + language.name().toLowerCase() + FILE_SUFFIX;
+        String fileName = FILE_PREFIX + language.toString() + FILE_SUFFIX;
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
         try {
