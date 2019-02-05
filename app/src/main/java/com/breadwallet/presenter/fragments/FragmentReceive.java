@@ -146,7 +146,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
-                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString());
+                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoRequest.getAddress());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {

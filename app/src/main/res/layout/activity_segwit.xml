@@ -70,7 +70,7 @@
   <com.breadwallet.presenter.customviews.BRButton
     android:id="@+id/enable_button"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="@dimen/button_height"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="16dp"
@@ -78,7 +78,7 @@
     android:padding="10dp"
     android:text="@string/common_google_play_services_enable_button"
     android:textColor="@color/white"
-    android:textSize="20sp"
+    android:textSize="@dimen/button_text_size"
     app:buttonType="1"
     app:hasShadow="false"
     app:isBreadButton="true"
