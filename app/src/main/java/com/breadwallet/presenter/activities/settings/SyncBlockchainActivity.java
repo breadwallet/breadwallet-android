@@ -72,8 +72,8 @@ public class SyncBlockchainActivity extends BRActivity {
             @Override
             public void run() {
                 Activity thisApp = SyncBlockchainActivity.this;
-                BRSharedPrefs.putStartHeight(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), 0);
-                BRSharedPrefs.putAllowSpend(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), false);
+                BRSharedPrefs.putStartHeight(thisApp, BRSharedPrefs.getCurrentWalletCurrencyCode(thisApp), 0);
+                BRSharedPrefs.putAllowSpend(thisApp, BRSharedPrefs.getCurrentWalletCurrencyCode(thisApp), false);
                 WalletsMaster.getInstance(thisApp).getCurrentWallet(thisApp).rescan(thisApp);
                 UiUtils.startBreadActivity(thisApp, false);
 

@@ -5,6 +5,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_small">16dp</dimen>
     <dimen name="transaction_item_margin">10dp</dimen>
+    <dimen name="button_height">60dp</dimen>
+    <dimen name="button_text_size">14sp</dimen>
 
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
     <dimen name="separator_height">1px</dimen>
@@ -12,7 +14,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="pin_par_text_size">32sp</dimen>
-    <dimen name="big_button_height">80dp</dimen>
     <dimen name="bread_margin">16dp</dimen>
     <dimen name="faq_dimen">24dp</dimen>
     <dimen name="close_dimen">24dp</dimen>

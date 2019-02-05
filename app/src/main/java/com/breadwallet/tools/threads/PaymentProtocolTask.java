@@ -29,7 +29,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.google.protobuf.ByteString;
@@ -150,7 +149,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     if (walletsMaster.hasWallet(currency)) {
                         walletManager = walletsMaster.getWalletByIso(mContext, currency);
                         if (walletManager != null) {
-                            BRSharedPrefs.putCurrentWalletIso(mContext, currency);
+                            BRSharedPrefs.putCurrentWalletCurrencyCode(mContext, currency);
                         }
                     }
                     String requiredFeeRate = jsonObject.has(REQUIRED_FEE_RATE) ? jsonObject.getString(REQUIRED_FEE_RATE) : null;

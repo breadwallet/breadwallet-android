@@ -113,9 +113,11 @@ public final class BRConstants {
 
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_ACCEPT = "Accept";
-    public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
+    // OkHttp standard; use for all outgoing HTTP requests.
+    public static final String CONTENT_TYPE_JSON_CHARSET_UTF8 = "application/json; charset=utf-8";
+    // Server response content type; user to verify all incoming HTTP responses.
+    public static final String CONTENT_TYPE_JSON = "application/json";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
-    public static final String HEADER_VALUE_ACCEPT = "application/json";
     public static final String AUTHORIZATION = "Authorization";
 
 
@@ -196,7 +198,7 @@ public final class BRConstants {
     public static final String IS_ERROR = "isError";
     public static final String TOPICS = "topics";
     public static final String DATA = "data";
-    public static final String DATE = "Date";
+    public static final String DATE = "date";
     public static final String TRANSACTION_HASH = "transactionHash";
     public static final String CHECKOUT = "checkout";
     public static final String GET = "GET";
@@ -214,6 +216,7 @@ public final class BRConstants {
     public static final String CURRENCY_ERC20 = "erc20";
     public static final String RATES = "rates";
     public static final String CURRENCY = "currency";
+    public static final String UTF_8 = "UTF-8";
 
     /**
      * Commonly used regular expressions.

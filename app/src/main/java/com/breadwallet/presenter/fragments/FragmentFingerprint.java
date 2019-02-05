@@ -23,7 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
@@ -104,7 +103,6 @@ public class FragmentFingerprint extends Fragment
             @Override
             public void onClick(View view) {
                 if (!UiUtils.isClickAllowed()) return;
-                closeMe();
                 goToBackup();
             }
         });
@@ -131,9 +129,6 @@ public class FragmentFingerprint extends Fragment
     @Override
     public void onStop() {
         super.onStop();
-
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
         if (!authSucceeded)
             completion.onCancel();
     }

@@ -152,7 +152,7 @@ public class SyncService extends /*Job*/ IntentService {
     private void startSyncPolling(Context context, String walletIso) {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
         final double progress = walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(context,
-                BRSharedPrefs.getCurrentWalletIso(context)));
+                BRSharedPrefs.getCurrentWalletCurrencyCode(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);
 
         if (progress > PROGRESS_START && progress < PROGRESS_FINISH) {

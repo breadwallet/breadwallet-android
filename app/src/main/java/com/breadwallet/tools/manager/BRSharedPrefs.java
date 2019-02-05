@@ -319,12 +319,12 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static String getCurrentWalletIso(Context activity) {
+    public static String getCurrentWalletCurrencyCode(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(CURRENT_WALLET_CURRENCY_CODE, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
     }
 
-    public static void putCurrentWalletIso(Context activity, String currencyCode) {
+    public static void putCurrentWalletCurrencyCode(Context activity, String currencyCode) {
         if (currencyCode == null) {
             throw new NullPointerException("cannot be null");
         }

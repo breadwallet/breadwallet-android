@@ -43,7 +43,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON;
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.eclipse.jetty.http.HttpMethod.GET;
 import static org.eclipse.jetty.http.HttpMethod.POST;
@@ -156,7 +155,8 @@ public class WalletPlugin implements Plugin {
                 /**the user's native fiat currency symbol*/
                 jsonResp.put(KEY_LOCAL_CURRENCY_SYMBOL, fiatCurrency.getSymbol());
 
-                APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(), SC_OK, CONTENT_TYPE_JSON);
+                APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(),
+                        SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
 
                 return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             } catch (JSONException e) {
@@ -221,7 +221,7 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "context is null", baseRequest, response);
             }
             String contentType = request.getHeader(BRConstants.HEADER_CONTENT_TYPE);
-            if (contentType == null || !contentType.equalsIgnoreCase(CONTENT_TYPE_JSON)) {
+            if (contentType == null || !contentType.equalsIgnoreCase(BRConstants.CONTENT_TYPE_JSON)) {
                 Log.e(TAG, "handle: content type is not application/json: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(SC_BAD_REQUEST, null, baseRequest, response);
             }
@@ -289,7 +289,7 @@ public class WalletPlugin implements Plugin {
                                     e.printStackTrace();
                                 }
                                 if (continuation != null) {
-                                    APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, CONTENT_TYPE_JSON);
+                                    APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                                     BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                                 }
                                 cleanUp();
@@ -308,7 +308,7 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, CONTENT_TYPE_JSON);
+                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK,  BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                                 BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                                 cleanUp();
                             }
@@ -328,7 +328,7 @@ public class WalletPlugin implements Plugin {
                 BRReportsManager.reportBug(new IllegalArgumentException("_wallet/currencies created an empty json"));
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "Failed to create json", baseRequest, response);
             }
-            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), SC_OK, CONTENT_TYPE_JSON);
+            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), SC_OK,  BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.startsWith(PATH_BASE + PATH_TRANSACTION)) {
             String reqBody = null;
@@ -372,8 +372,7 @@ public class WalletPlugin implements Plugin {
                 e.printStackTrace();
             }
 
-            APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, CONTENT_TYPE_JSON);
-
+            APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
@@ -518,7 +517,7 @@ public class WalletPlugin implements Plugin {
                     }
 
                     try {
-                        continuation.getServletResponse().setContentType(CONTENT_TYPE_JSON);
+                        continuation.getServletResponse().setContentType(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         continuation.getServletResponse().setCharacterEncoding(StandardCharsets.UTF_8.name());
                         continuation.getServletResponse().getWriter().print(result.toString());
                         Log.d(TAG, "finalizeTx: finished with writing to the response: " + result);
@@ -565,7 +564,7 @@ public class WalletPlugin implements Plugin {
                     }
 
                     try {
-                        continuation.getServletResponse().setContentType(CONTENT_TYPE_JSON);
+                        continuation.getServletResponse().setContentType(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
                         continuation.getServletResponse().setCharacterEncoding(StandardCharsets.UTF_8.name());
                         continuation.getServletResponse().getWriter().print(restJson);
                         Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
