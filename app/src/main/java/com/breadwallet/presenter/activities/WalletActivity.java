@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -247,7 +248,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void startSyncLoggerIfNeeded() {
-        if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
+        if (BuildConfig.DEBUG && RUN_LOGGER) {
             if (mTestLogger != null) {
                 mTestLogger.interrupt();
             }

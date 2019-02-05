@@ -132,6 +132,46 @@ public class BRDialog {
         });
     }
 
+    /**
+     * Safe from any threads
+     *
+     * @param context needs to be activity
+     */
+    public static void showCustomDialog(@NonNull final Context context,
+                                        @NonNull final String title,
+                                        @NonNull final String message,
+                                        @NonNull final String posButton,
+                                        final String negButton,
+                                        final BRDialogView.BROnClickListener posListener,
+                                        final BRDialogView.BROnClickListener negListener,
+                                        final DialogInterface.OnDismissListener dismissListener,
+                                        final boolean mAlignTextToStart) {
+        final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
+        if (activity.isDestroyed()) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
+            return;
+        }
+        Log.e(TAG, "showCustomDialog: Title:" + title + ", message: " + message);
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                dialog = new BRDialogView();
+                dialog.setTitle(title);
+                dialog.setMessage(message);
+                dialog.setPosButton(posButton);
+                dialog.setNegButton(negButton);
+                dialog.setPosListener(posListener);
+                dialog.setNegListener(negListener);
+                dialog.setDismissListener(dismissListener);
+                dialog.setAlignTextToStart(mAlignTextToStart);
+                if (!activity.isDestroyed()) {
+                    activity.getFragmentManager().beginTransaction().add(dialog, dialog.getTag()).commitAllowingStateLoss();
+                }
+            }
+        });
+
+    }
+
     public static void hideDialog() {
         if (dialog != null) dialog.dismiss();
     }

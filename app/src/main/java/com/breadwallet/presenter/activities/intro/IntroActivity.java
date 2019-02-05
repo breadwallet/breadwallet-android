@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -64,7 +65,7 @@ public class IntroActivity extends BRActivity {
             }
         });
 
-        if (Utils.isEmulatorOrDebug(this)) {
+        if (BuildConfig.DEBUG) {
             Utils.printPhoneSpecs(this);
         }
 

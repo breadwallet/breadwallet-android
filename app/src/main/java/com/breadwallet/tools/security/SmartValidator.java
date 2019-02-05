@@ -47,7 +47,7 @@ public class SmartValidator {
         if (!isValid(ctx, paperKey, Locale.getDefault().getLanguage())) {
             //try all languages
             for (Bip39Reader.SupportedLanguage supportedLanguage : Bip39Reader.SupportedLanguage.values()) {
-                if (isValid(ctx, paperKey, supportedLanguage.name())) {
+                if (isValid(ctx, paperKey, supportedLanguage.toString())) {
                     return true;
                 }
             }
@@ -61,6 +61,7 @@ public class SmartValidator {
     private static boolean isValid(Context ctx, String paperKey, String language) {
         List<String> list = Bip39Reader.getBip39Words(ctx, language);
         String[] words = list.toArray(new String[list.size()]);
+        Log.e(TAG, "isValid: " + words.length);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
             Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
             BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);

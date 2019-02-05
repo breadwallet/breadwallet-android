@@ -167,7 +167,7 @@ public class WalletsMaster {
     }
 
     public BaseWalletManager getCurrentWallet(Context app) {
-        return getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
+        return getWalletByIso(app, BRSharedPrefs.getCurrentWalletCurrencyCode(app));
     }
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
@@ -360,7 +360,7 @@ public class WalletsMaster {
                 return;
             }
         }
-        BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
+        BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletCurrencyCode(app));
         if (wallet == null) {
             wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
         }

@@ -322,11 +322,11 @@ public class CryptoUriParser {
     private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
         if (requestObject == null || requestObject.getAddress() == null || requestObject.getAddress().isEmpty())
             return false;
-        BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
+        BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BRSharedPrefs.putCurrentWalletIso(context, requestObject.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
                 Intent newIntent = new Intent(context, WalletActivity.class);
                 newIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
                 newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
@@ -336,24 +336,30 @@ public class CryptoUriParser {
         return true;
     }
 
-    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, CryptoRequest request) {
-        String currencyCode = wm.getCurrencyCode();
+    /**
+     * Generate an Uri for a given CryptoRequest including the wallet schema.
+     * @param context       Context were was called.
+     * @param walletManager Wallet manager.
+     * @param request       Request information to be included in the Uri.
+     * @return  An Uri with the request information.
+     */
+    public static Uri createCryptoUrl(Context context,
+                                      BaseWalletManager walletManager,
+                                      CryptoRequest request) {
+        String currencyCode = walletManager.getCurrencyCode();
         Uri.Builder builder = new Uri.Builder();
-        String walletScheme = wm.getScheme();
-        String cleanAddress = request.getAddress();
-        if (request.getAddress().contains(":")) {
-            cleanAddress = request.getAddress().split(":")[1];
-        }
+        String walletScheme = walletManager.getScheme();
+        String cleanAddress = request.getAddress(false);
         builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }
         if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             if (currencyCode.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletEthManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                BigDecimal amount = WalletEthManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());
                 builder = builder.appendQueryParameter(VALUE, amount.toPlainString());
             } else if (currencyCode.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || currencyCode.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletBitcoinManager.getInstance(app).getCryptoForSmallestCrypto(app, request.getAmount());
+                BigDecimal amount = WalletBitcoinManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());
                 builder = builder.appendQueryParameter(AMOUNT, amount.toPlainString());
             } else {
                 throw new RuntimeException("URI not supported for: " + currencyCode);

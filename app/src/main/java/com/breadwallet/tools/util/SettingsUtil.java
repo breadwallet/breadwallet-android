@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
@@ -42,6 +40,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +153,12 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_review));
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.URL_REWARDS);
+            }
+        }, false, R.drawable.ic_star));
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
@@ -186,7 +191,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBitcoinManager.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));
@@ -196,7 +201,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(bchSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(activity, walletBchManager.getCurrencyCode());
+                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBchManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));

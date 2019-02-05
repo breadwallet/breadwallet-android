@@ -264,7 +264,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
 
-                if (Utils.isEmulatorOrDebug(getActivity()) && BuildConfig.BITCOIN_TESTNET) {
+                if (BuildConfig.DEBUG && BuildConfig.BITCOIN_TESTNET) {
                     theUrl = wm.decorateAddress(theUrl);
                 }
 
@@ -274,7 +274,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     sayInvalidClipboardData();
                     return;
                 }
-                if (Utils.isEmulatorOrDebug(getActivity())) {
+                if (BuildConfig.DEBUG) {
                     Log.d(TAG, "Send Address -> " + obj.getAddress());
                     Log.d(TAG, "Send Value -> " + obj.getValue());
                     Log.d(TAG, "Send Amount -> " + obj.getAmount());
@@ -560,7 +560,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void sayInvalidAddress() {
-        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage),
+        BRDialog.showCustomDialog(getActivity(), "", String.format(getResources().getString(R.string.Send_invalidAddressMessage), BRSharedPrefs.getCurrentWalletCurrencyCode(getActivity())),
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {

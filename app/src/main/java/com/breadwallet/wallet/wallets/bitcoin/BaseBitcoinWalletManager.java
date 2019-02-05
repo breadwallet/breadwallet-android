@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
@@ -32,8 +33,8 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -51,8 +52,8 @@ import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -69,10 +70,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -917,15 +915,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         super.syncStarted();
         Log.d(getTag(), "syncStarted: ");
         final Context app = BreadApp.getBreadContext();
-        if (Utils.isEmulatorOrDebug(app)) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(app, "syncStarted " + getCurrencyCode(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
         onSyncStarted();
     }
 
@@ -941,15 +930,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         }
 
         onSyncStopped(error);
-
-        if (Utils.isEmulatorOrDebug(context)) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, "SyncStopped " + getCurrencyCode() + " err(" + error + ") ", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
 
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {
@@ -1001,7 +981,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                         @Override
                         public void run() {
                             if (!BRToast.isToastShown()) {
-                                if (Utils.isEmulatorOrDebug(ctx))
+                                if (BuildConfig.DEBUG)
                                     BRToast.showCustomToast(ctx, strToShow,
                                             BreadApp.mDisplayHeightPx / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                 AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);

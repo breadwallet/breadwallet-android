@@ -26,8 +26,6 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -41,7 +39,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,6 +129,8 @@ public final class EventUtils {
     private static final String DEVICE_TYPE = "deviceType";
     private static final String EVENTS = "events";
     private static final String ERROR_MESSAGE_ATTRIBUTE_KEY = "errorMessage";
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
 
     private static final String EVENTS_FOLDER_NAME = "events";
 
@@ -165,7 +164,8 @@ public final class EventUtils {
                     JSONObject metadataJsonObject = new JSONObject();
                     if (event.getAttributes() != null && event.getAttributes().size() > 0) {
                         for (Map.Entry<String, String> entry : event.getAttributes().entrySet()) {
-                            metadataJsonObject.put(entry.getKey(), entry.getValue());
+                            metadataJsonObject.put(KEY, entry.getKey());
+                            metadataJsonObject.put(VALUE, entry.getValue());
                         }
                         eventJsonObject.put(METADATA, metadataJsonObject);
                     }
@@ -208,11 +208,11 @@ public final class EventUtils {
                     return;
                 }
 
-                RequestBody requestBody = RequestBody.create(MediaType.parse(BRConstants.CONTENT_TYPE_JSON), jsonObject.toString());
+                RequestBody requestBody = RequestBody.create(MediaType.parse(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8), jsonObject.toString());
                 Request request = new Request.Builder()
                         .url(APIClient.getBaseURL() + EVENTS_PATH)
-                        .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                        .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
+                        .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+                        .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
                         .post(requestBody).build();
 
                 APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
