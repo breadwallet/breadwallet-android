@@ -30,6 +30,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
+import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
 import org.apache.commons.io.IOUtils;
@@ -216,7 +217,7 @@ public final class EventUtils {
                         .post(requestBody).build();
 
                 APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
-                Log.e(TAG, "pushToServer: response: " + response.getCode() + ", " + response.getBodyText());
+                Log.d(TAG, "pushToServer: response: " + response.getCode() + ", " + response.getBodyText());
 
                 if (response.isSuccessful()) {
                     //if sent then remove the local files.
@@ -276,12 +277,14 @@ public final class EventUtils {
         for (File file : fileList) {
             if (file.isFile()) {
                 String fileName = file.getName();
-                try {
-                    String fileData = readFile(directory, file.getName());
-                    JSONArray jsonArray = new JSONArray(fileData);
-                    resultMap.put(fileName, jsonArray);
-                } catch (JSONException e) {
-                    Log.e(TAG, "getEventsFromDisk: ", e);
+                String fileData = readFile(directory, file.getName());
+                if (!Utils.isNullOrEmpty(fileData)) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(fileData);
+                        resultMap.put(fileName, jsonArray);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "getEventsFromDisk: ", e);
+                    }
                 }
             } else {
                 Log.e(TAG, "getEventsFromDisk: Unexpected directory where file is expected: " + file.getName());
@@ -301,7 +304,8 @@ public final class EventUtils {
         try (FileInputStream inputStream = new FileInputStream(file)) {
             return IOUtils.toString(inputStream);
         } catch (IOException e) {
-            Log.e("TAG", "Error in Reading: " + e.getLocalizedMessage());
+            Log.e(TAG, "readFile: Error in Reading: " + directory + "/" + fileName, e);
+            Crashlytics.logException(e);
             return null;
         }
     }
