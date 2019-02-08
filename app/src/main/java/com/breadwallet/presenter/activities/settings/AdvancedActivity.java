@@ -125,16 +125,6 @@ public class AdvancedActivity extends BRActivity {
 
             }
         }, false));
-        items.add(new BRSettingsItem(getString(R.string.BCH_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
-            }
-        }, false));
-
-
     }
 
     @Override
