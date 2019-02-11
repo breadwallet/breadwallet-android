@@ -770,7 +770,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     }
 
     @Override
-    public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
+    public void getGasEstimate(final int wid, final int tid, final String from, final String to, final String amount, final String data, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -782,6 +782,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONObject param1 = new JSONObject();
 
                 try {
+                    param1.put(BRConstants.FROM, from);
                     param1.put(BRConstants.TO, to);
                     if (!amount.equalsIgnoreCase(HEX_PREFIX)) {
                         param1.put(BRConstants.VALUE, amount);
