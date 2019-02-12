@@ -156,7 +156,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         // Start our local server as soon as the application instance is created, since we need to
         // display support WebViews during onboarding.
-        HTTPServer.getInstance().startServer(BRSharedPrefs.getHttpServerPort(this));
+        HTTPServer.getInstance().startServer(this);
 
     }
 
@@ -308,7 +308,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                HTTPServer.getInstance().startServer(BRSharedPrefs.getHttpServerPort(this));
+                HTTPServer.getInstance().startServer(this);
 
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
@@ -330,9 +330,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         EventUtils.pushToServer(BreadApp.this);
                     }
                 });
-                BRSharedPrefs.putHttpServerPort(this, HTTPServer.getInstance().getPort());
                 HTTPServer.getInstance().stopServer();
-
+                break;
+            default:
                 break;
         }
     }
