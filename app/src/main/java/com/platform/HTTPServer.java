@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
@@ -81,6 +82,7 @@ public class HTTPServer extends AbstractLifeCycle {
     private Server mServer;
     private static Set<Middleware> middlewares;
     private static OnCloseListener mOnCloseListener;
+    private Context mContext; // TODO Inject when implementing dependency injection.
 
     private HTTPServer() {
     }
@@ -112,9 +114,9 @@ public class HTTPServer extends AbstractLifeCycle {
         return getPlatformBaseUrl() + endpoint;
     }
 
-    private void init() {
+    private void init(int port) {
         middlewares = new LinkedHashSet<>();
-        mServer = new Server(mPort);
+        mServer = new Server(port);
         try {
             mServer.dump(System.err);
         } catch (IOException e) {
@@ -139,9 +141,14 @@ public class HTTPServer extends AbstractLifeCycle {
         setupIntegrations();
     }
 
-    public void startServer(int preferredPort) {
+    /**
+     * Start the server.
+     *
+     * @param context Application context.
+     */
+    public void startServer(Context context) {
+        mContext = context;
         try {
-            mInstance.mPort = preferredPort;
             mInstance.start();
         } catch (Exception e) {
             Log.e(TAG, "startServer: Error starting the local server.", e);
@@ -164,14 +171,9 @@ public class HTTPServer extends AbstractLifeCycle {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Random rand = new Random();
-                if (mPort < MIN_PORT || mPort > MAX_PORT) {
-                    mPort = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
-                }
                 int retries = 0;
                 while (!doStartServer() && retries < MAX_RETRIES) { // if failed to start the server retry with new port
                     retries++;
-                    mPort = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
                 }
                 if (retries == MAX_RETRIES) {
                     Log.e(TAG, "doStart: Failed to start local server, MAX_RETRIES reached.");
@@ -209,8 +211,20 @@ public class HTTPServer extends AbstractLifeCycle {
     private boolean doStartServer() {
         Log.d(TAG, "doStartServer: Starting the server in port: " + mPort);
         try {
-            init();
+            // Get the last port used in case we are restarting the server.
+            int port = BRSharedPrefs.getHttpServerPort(mContext);
+            if (port < MIN_PORT || port > MAX_PORT) {
+                Random rand = new Random();
+                port = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
+            }
+
+            init(port);
             mServer.start();
+
+            // Save the port for future restarts.
+            mPort = port;
+            BRSharedPrefs.putHttpServerPort(mContext, port);
+
             mServer.join();
             Log.d(TAG, "doStartServer: Server started in port " + mPort);
             return true;
