@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.platform.interfaces.Middleware;
@@ -248,7 +249,7 @@ public class HTTPServer extends AbstractLifeCycle {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         final Context app = BreadApp.getBreadContext();
         boolean result = false;
-        if (target.equalsIgnoreCase("/_close")) {
+        if (target.equalsIgnoreCase(BRConstants.CLOSE)) {
             if (app != null) {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override

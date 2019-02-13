@@ -125,7 +125,7 @@ public class WebViewActivity extends BRActivity {
                 Log.d(TAG, "onPageStarted: url:" + url);
                 String trimmedUrl = rTrim(url, '/');
                 Uri toUri = Uri.parse(trimmedUrl);
-                if (closeOnMatch(toUri) || toUri.toString().contains(BRConstants.CLOSE)) {
+                if (closeOnMatch(toUri)) {
                     Log.d(TAG, "onPageStarted: close Uri found: " + toUri);
                     onBackPressed();
                     mOnCloseUrl = null;
@@ -350,8 +350,7 @@ public class WebViewActivity extends BRActivity {
             Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
             Uri toUri = Uri.parse(trimmedUrl);
 
-//                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
-            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains(BRConstants.CLOSE)) {
+            if (closeOnMatch(toUri)) {
                 Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
                 onBackPressed();
                 mOnCloseUrl = null;
