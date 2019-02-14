@@ -1,23 +1,25 @@
 package com.breadwallet.presenter.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.viewmodels.MainViewModel;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -25,21 +27,16 @@ import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -47,12 +44,10 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged, BalanceUpdateListener {
-
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
     private static final String TAG = HomeActivity.class.getSimpleName();
-    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
 
-    public static final String CCC_CURRENCY_CODE = "CCC";
+    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
 
     private RecyclerView mWalletRecycler;
@@ -128,6 +123,30 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.toString())
                 && CurrencyUtils.isBuyNotificationNeeded(this);
         buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
+
+        mAdapter = new WalletListAdapter(this);
+        mWalletRecycler.setAdapter(mAdapter);
+
+        // Get ViewModel, observe updates to Wallet and aggregated balance data
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getWallets().observe(this, new Observer<List<Wallet>>() {
+            @Override
+            public void onChanged(@Nullable List<Wallet> wallets) {
+                mAdapter.setWallets(wallets);
+            }
+        });
+
+        viewModel.getAggregatedFiatBalance().observe(this, new Observer<BigDecimal>() {
+            @Override
+            public void onChanged(@Nullable BigDecimal aggregatedFiatBalance) {
+                if (aggregatedFiatBalance == null) {
+                    Log.e(TAG, "fiatTotalAmount is null");
+                    return;
+                }
+                mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
+                        BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), aggregatedFiatBalance));
+            }
+        });
     }
 
     @Override
@@ -165,65 +184,14 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onResume() {
         super.onResume();
         showNextPromptIfNeeded();
-        WalletsMaster.getInstance(this).addBalanceUpdateListener(this);
-        populateWallets();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.startObserving();
-            }
-        }, DateUtils.SECOND_IN_MILLIS / 2);
         InternetManager.registerConnectionReceiver(this, this);
-        updateUi();
-        RatesDataSource.getInstance(this).addOnDataChangedListener(this);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
-                WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
-                BaseWalletManager walletManager = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-                if (walletManager != null) {
-                    walletManager.refreshAddress(HomeActivity.this);
-                }
-            }
-        });
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-    }
-
-    private void populateWallets() {
-        ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
-        mAdapter = new WalletListAdapter(this, list);
-        mWalletRecycler.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         InternetManager.unregisterConnectionReceiver(this, this);
-        mAdapter.stopObserving();
-        WalletsMaster.getInstance(this).removeBalanceUpdateListener(this);
-    }
-
-    private void updateUi() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final BigDecimal fiatTotalAmount = WalletsMaster.getInstance(HomeActivity.this).getAggregatedFiatBalance(HomeActivity.this);
-                if (fiatTotalAmount == null) {
-                    Log.e(TAG, "updateUi: fiatTotalAmount is null");
-                    return;
-                }
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
-                                BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -232,9 +200,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if (isConnected) {
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.GONE);
-            }
-            if (mAdapter != null) {
-                mAdapter.startObserving();
             }
         } else {
             if (mNotificationBar != null) {
@@ -246,15 +211,5 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void closeNotificationBar() {
         mNotificationBar.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onChanged() {
-        updateUi();
-    }
-
-    @Override
-    public void onBalanceChanged(BigDecimal balance) {
-        updateUi();
     }
 }
