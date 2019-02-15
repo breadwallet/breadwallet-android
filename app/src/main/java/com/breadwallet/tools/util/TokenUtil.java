@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Request;
 
@@ -70,7 +71,7 @@ public final class TokenUtil {
     private static final String TOKENS_FILENAME = "tokens.json";
 
     // TODO: In DROID-878 fix this so we don't have to store this mTokenItems... (Should be stored in appropriate wallet.)
-    private static ArrayList<TokenItem> mTokenItems;
+    private static List<TokenItem> mTokenItems = new ArrayList<>();
 
     private TokenUtil() {
     }
@@ -140,7 +141,7 @@ public final class TokenUtil {
         return null;
     }
 
-    public static synchronized ArrayList<TokenItem> getTokenItems(Context context) {
+    public static synchronized List<TokenItem> getTokenItems(Context context) {
         if (mTokenItems == null || mTokenItems.isEmpty()) {
             mTokenItems = getTokensFromFile(context);
         }
@@ -243,7 +244,7 @@ public final class TokenUtil {
         }
     }
 
-    private static ArrayList<TokenItem> getTokensFromFile(Context context) {
+    private static List<TokenItem> getTokensFromFile(Context context) {
         try {
             File tokensFile = new File(context.getFilesDir().getPath() + File.separator + TOKENS_FILENAME);
             FileInputStream fileInputStream = new FileInputStream(tokensFile);
