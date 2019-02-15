@@ -165,7 +165,7 @@ public final class ServerBundlesHelper {
      * @return The bundle to be used.
      */
     public static String getBundle(Context context, Type type) {
-        String debugBundle = BuildConfig.DEBUG ? BRSharedPrefs.getDebugBundle(context, Type.TOKEN) : null;
+        String debugBundle = BuildConfig.DEBUG ? BRSharedPrefs.getDebugBundle(context, type) : null;
         String defaultBundle;
         switch (type) {
             case TOKEN:
