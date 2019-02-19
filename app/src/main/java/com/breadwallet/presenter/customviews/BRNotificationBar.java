@@ -85,7 +85,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
                 if (activity instanceof WalletActivity) {
                     ((WalletActivity) activity).resetFlipper();
                 } else if (activity instanceof HomeActivity) {
-//                    ((HomeActivity) activity).closeNotificationBar();
+                    setVisibility(View.INVISIBLE);
                 }
             }
         });
