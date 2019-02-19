@@ -203,11 +203,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         if(ret != null) {
                             if(ret.contains("err code:")) {
                                 Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
-                                mLoadingDialog.dismiss();
+                                dialogDismiss();
                             } else {
                                 try {
                                     if(StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
-                                        mLoadingDialog.dismiss();
+                                        dialogDismiss();
                                         return;
                                     }
                                     Uri uri = Uri.parse(returnUrl+"&did="+myDid);
@@ -219,7 +219,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                     e.printStackTrace();
                                     Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
                                 } finally {
-                                    mLoadingDialog.dismiss();
+                                    dialogDismiss();
                                 }
                             }
                         }
@@ -229,6 +229,15 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
 //                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
         }
+    }
+
+    private void dialogDismiss(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingDialog.dismiss();
+            }
+        });
     }
 
     private void cacheAuthorInfo(UriFactory uriFactory){
