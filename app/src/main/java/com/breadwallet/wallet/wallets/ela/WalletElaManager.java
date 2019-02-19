@@ -329,6 +329,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "refreshCachedBalance");
         try {
             String address = getAddress();
+            Log.i("balance_test", "address:"+address);
             if(address == null) return;
             String balance = ElaDataSource.getInstance(mContext).getElaBalance(address);
             if(balance == null) return;
@@ -461,6 +462,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public void wipeData(Context app) {
         BRSharedPrefs.putCachedBalance(app, getIso(),  new BigDecimal(0));
         ElaDataSource.getInstance(app).deleteAllTransactions();
+        mPrivateKey = null;
+        mAddress = null;
         mInstance = null;
     }
 

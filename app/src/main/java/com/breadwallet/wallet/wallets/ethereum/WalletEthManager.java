@@ -498,6 +498,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     @Override
     public void wipeData(Context app) {
         mInstance = null;
+        mAddress = null;
+        BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal(0));
         Log.e(TAG, "wipeData: ");
     }
 
@@ -639,6 +641,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getBalance(final int wid, final String address, final int rid) {
+        Log.i("eth_balance", "address:"+address);
         BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
         BREthereumToken token = wallet.getToken();
         if (null == token)
