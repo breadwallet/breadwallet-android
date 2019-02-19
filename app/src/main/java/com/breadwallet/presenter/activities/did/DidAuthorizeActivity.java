@@ -202,7 +202,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
                         if(ret != null) {
                             if(ret.contains("err code:")) {
-                                Toast.makeText(DidAuthorizeActivity.this, ret, Toast.LENGTH_SHORT).show();
                                 dialogDismiss();
                             } else {
                                 try {
@@ -217,7 +216,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                     finish();
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
                                 } finally {
                                     dialogDismiss();
                                 }
