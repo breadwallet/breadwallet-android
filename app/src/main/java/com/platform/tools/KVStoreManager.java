@@ -483,7 +483,7 @@ public class KVStoreManager {
         return mds;
     }
 
-    public static TxMetaData valueToMetaData(byte[] value) {
+    private static TxMetaData valueToMetaData(byte[] value) {
         TxMetaData result = new TxMetaData();
         JSONObject json;
         if (value == null) {
