@@ -66,7 +66,9 @@ public class InternetManager extends BroadcastReceiver {
 
     public static void unregisterConnectionReceiver(Context context, ConnectionReceiverListener connectionReceiverListener) {
         removeConnectionListener(connectionReceiverListener);
-        context.getApplicationContext().unregisterReceiver(InternetManager.getInstance());
+        if (mConnectionReceiverListeners.size() == 0) {
+            context.getApplicationContext().unregisterReceiver(InternetManager.getInstance());
+        }
     }
 
     private static void addConnectionListener(ConnectionReceiverListener listener) {
@@ -76,9 +78,7 @@ public class InternetManager extends BroadcastReceiver {
     }
 
     private static void removeConnectionListener(ConnectionReceiverListener listener) {
-        if (mConnectionReceiverListeners.contains(listener)) {
-            mConnectionReceiverListeners.remove(listener);
-        }
+        mConnectionReceiverListeners.remove(listener);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class InternetManager extends BroadcastReceiver {
                 connected = false;
             }
 
-            EventUtils.pushEvent(connected ? EventUtils.EVENT_REACHABLE :  EventUtils.EVENT_NOT_REACHABLE);
+            EventUtils.pushEvent(connected ? EventUtils.EVENT_REACHABLE : EventUtils.EVENT_NOT_REACHABLE);
             for (ConnectionReceiverListener listener : mConnectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
             }
