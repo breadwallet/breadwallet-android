@@ -953,12 +953,14 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 //Give up
                 Log.e(getTag(), "syncStopped: Giving up: " + mSyncRetryCount);
                 mSyncRetryCount = 0;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                if (BuildConfig.DEBUG) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         }
 
