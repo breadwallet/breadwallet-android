@@ -1,3 +1,28 @@
+/**
+ * BreadWallet
+ * <p/>
+ * Created by byfieldj on <jade@breadwallet.com> 1/17/18.
+ * Copyright (c) 2019 breadwallet LLC
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package com.breadwallet.presenter.activities;
 
 import android.arch.lifecycle.Observer;
@@ -32,6 +57,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -46,7 +72,6 @@ import java.util.List;
 
 public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
     private static final String TAG = HomeActivity.class.getSimpleName();
-
     public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
 
@@ -100,10 +125,21 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                if (position >= mAdapter.getItemCount() || position < 0) return;
+                if (position >= mAdapter.getItemCount() || position < 0) {
+                    return;
+                }
                 if (mAdapter.getItemViewType(position) == 0) {
-                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this, mAdapter.getItemAt(position).getCurrencyCode());
-                    Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this,
+                            mAdapter.getItemAt(position).getCurrencyCode());
+                    Intent newIntent;
+                    // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
+                    if (mAdapter.getItemAt(position).getCurrencyCode()
+                            .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)
+                            && !BRSharedPrefs.getRewardsViewClicked(HomeActivity.this)) {
+                        newIntent = new Intent(HomeActivity.this, BrdWalletActivity.class);
+                    } else {
+                        newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    }
                     startActivity(newIntent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 } else {
@@ -166,7 +202,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private void showNextPromptIfNeeded() {
-        PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(this);
+        PromptManager.PromptItem toShow = PromptManager.nextPrompt(this);
         if (toShow != null) {
             View promptView = PromptManager.promptInfo(this, toShow);
             if (mListGroupLayout.getChildCount() >= MAX_NUMBER_OF_CHILDREN) {

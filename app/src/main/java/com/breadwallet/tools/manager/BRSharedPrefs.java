@@ -90,6 +90,8 @@ public class BRSharedPrefs {
     private static final String DEBUG_HOST = "debug_host";
     private static final String DEBUG_SERVER_BUNDLE = "debug_server_bundle";
     private static final String HTTP_SERVER_PORT = "http_server_port";
+    private static final String REWARDS_ANIMATION_SHOWN = "rewardsAnimationShown";
+    private static final String REWARDS_VIEW_CLICKED = "rewardsViewClicked";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -627,6 +629,30 @@ public class BRSharedPrefs {
     public static boolean getEmailOptIn(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(EMAIL_OPT_IN, false);
+    }
+
+    public static void putRewardsAnimationShown(Context context, boolean wasShown) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(REWARDS_ANIMATION_SHOWN, wasShown);
+        editor.apply();
+    }
+
+    public static boolean getRewardsAnimationShown(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(REWARDS_ANIMATION_SHOWN, false);
+    }
+
+    public static void putRewardsViewClicked(Context context, boolean wasClicked) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(REWARDS_VIEW_CLICKED, wasClicked);
+        editor.apply();
+    }
+
+    public static boolean getRewardsViewClicked(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(REWARDS_VIEW_CLICKED, false);
     }
 
     public static void putEmailOptInDismissed(Context context, boolean dismissed) {

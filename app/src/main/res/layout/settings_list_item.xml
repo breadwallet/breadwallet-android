@@ -28,7 +28,7 @@
         android:textColor="@color/total_assets_label_color"
         android:textSize="@dimen/sub_header"
         android:visibility="visible"
-        app:customTFont="CircularPro-Medium.otf"/>
+        app:brdFont="@string/Font.CircularPro_Medium"/>
 
     <ImageButton
         android:id="@+id/setting_icon"

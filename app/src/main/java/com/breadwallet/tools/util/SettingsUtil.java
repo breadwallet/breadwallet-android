@@ -40,7 +40,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +149,7 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS));
+                UiUtils.openRewardsWebView(activity);
             }
         }, false, R.drawable.ic_reward));
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
@@ -441,8 +440,8 @@ public final class SettingsUtil {
     }
 
     private static void showBundlePickerDialog(final Context context,
-                                              final ServerBundlesHelper.Type bundleType,
-                                              final String[] options) {
+                                               final ServerBundlesHelper.Type bundleType,
+                                               final String[] options) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
