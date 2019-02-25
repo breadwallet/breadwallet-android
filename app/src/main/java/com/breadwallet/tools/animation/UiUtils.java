@@ -346,6 +346,17 @@ public class UiUtils {
         window.setStatusBarColor(app.getColor(color));
     }
 
+    /**
+     * Opens WebView with platform formatted rewards url.
+     * Reuse this method in Preferences.
+     *
+     * @param activity The Activity.
+     */
+    public static void openRewardsWebView(Activity activity) {
+        startWebActivity(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
+                R.anim.empty_300, R.anim.fade_up, R.anim.exit_to_right);
+    }
+
     public static void showWalletDisabled(Activity app) {
         Intent intent = new Intent(app, DisabledActivity.class);
         app.startActivity(intent);
@@ -367,10 +378,21 @@ public class UiUtils {
     }
 
     public static void startWebActivity(Activity activity, String url) {
+        startWebActivity(activity, url, R.anim.enter_from_bottom, R.anim.fade_down, 0, 0);
+    }
+
+    public static void startWebActivity(Activity activity, String url, int enterAnimation,
+                                        int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
         Intent intent = new Intent(activity, WebViewActivity.class);
         intent.putExtra(BRConstants.EXTRA_URL, url);
+        if (returnEnterAnimation != 0 && returnExitAnimation != 0) {
+            intent.putExtra(WebViewActivity.EXTRA_ENTER_TRANSITION, returnEnterAnimation);
+            intent.putExtra(WebViewActivity.EXTRA_EXIT_TRANSITION, returnExitAnimation);
+        }
         activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+        if (enterAnimation != 0 && exitAnimation != 0) {
+            activity.overridePendingTransition(enterAnimation, exitAnimation);
+        }
     }
 
     public static boolean isMainThread() {

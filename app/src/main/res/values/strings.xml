@@ -1027,8 +1027,23 @@
     <string name="FileChooser.selectImageSource.android">Select Image Source</string>
     <!--Rewards menu item-->
     <string name="Settings.rewards">Rewards</string>
+
+    <!--Rewards view expanded title.-->
+    <string name="RewardsView.expandedTitle">Introducing BRD\nRewards.</string>
+    <!--Rewards view expanded body.-->
+    <string name="RewardsView.expandedBody">Learn how you can save on trading fees and unlock future rewards</string>
+    <!--Rewards view title-->
+    <string name="RewardsView.normalTitle">Rewards</string>
+    <!--Screen Altering App Detected-->
+    <string name="Alert.ScreenAlteringAppDetected">Screen Altering App Detected</string>
     <!-- Share e-mail subject -->
     <string name="Email.address_subject">%1$s Address</string>
     <!-- Message shown when failing to recover key from key store -->
     <string name="ErrorMessages.BadKeyStore.android">BRD cannot proceed due to an error your device is encountering. Don\'t worry, your funds are safe! To ensure successful recovery, please do the following:\n\n1. Confirm that you have your paper key written down.\n2. Uninstall the BRD app.\n3. Disable the Android lock screen and fingerprints (if applicable). \n4. Enable the Android lock screen and fingerprints (if applicable).\n5. Install BRD app.\n6. Recover your wallet using your paper key.\n\nIf you have any questions, please contact our customer support at support@brd.com.</string>
+
+    <!--Font file names-->
+    <string name="Font.CircularPro_Bold">CircularPro-Bold.otf</string>
+    <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
+    <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
+    <string name="Font.Celevenia">Celevenia.otf</string>
 </resources>
