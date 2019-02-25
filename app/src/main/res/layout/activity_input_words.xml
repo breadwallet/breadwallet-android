@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/activity_intro_set_pit"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/bread_margin"
         android:text="@string/RecoverWallet.header"
         android:textSize="@dimen/header"
-        app:customTFont="CircularPro-Bold.otf"
+        app:brdFont="@string/Font.CircularPro_Bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,8 +24,8 @@
         android:id="@+id/faq_button"
         android:layout_width="@dimen/faq_dimen"
         android:layout_height="@dimen/faq_dimen"
-        android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
         android:background="?attr/faq_button_primary_color"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,26 +34,26 @@
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="42dp"
-        android:layout_marginTop="42dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="42dp"
         android:lineSpacingMultiplier="1.3"
-        android:textAlignment="center"
         android:text="@string/RecoverWallet.subheader"
+        android:textAlignment="center"
         android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Bold.otf"
+        app:brdFont="@string/Font.CircularPro_Bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/send_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/button_height"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/b_blue"
         android:elevation="8dp"
         android:padding="10dp"
@@ -67,433 +67,433 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <GridLayout
-      android:id="@+id/gridLayout"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="16dp"
-      android:layout_marginRight="16dp"
-      android:background="@drawable/phrase_field"
-      android:columnCount="1"
-      android:padding="6dp"
-      android:paddingBottom="16dp"
-      android:rowCount="4"
-      app:layout_constraintBottom_toTopOf="@+id/send_button"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/description">
+        android:id="@+id/gridLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/phrase_field"
+        android:columnCount="1"
+        android:padding="6dp"
+        android:paddingBottom="16dp"
+        android:rowCount="4"
+        app:layout_constraintBottom_toTopOf="@+id/send_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description">
 
         <LinearLayout
-          android:layout_width="match_parent"
-          android:orientation="horizontal"
-          android:weightSum="3">
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2">
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word1"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word2"
-                  android:textAlignment="center"
-                  android:textCursorDrawable="@null"
-                  app:customEFont="CircularPro-Medium.otf" />
+                    android:id="@+id/word1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word2"
+                    android:textAlignment="center"
+                    android:textCursorDrawable="@null"
+                    app:customEFont="CircularPro-Medium.otf" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="1"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word2"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word3"
-                  android:textAlignment="center" />
+                    android:id="@+id/word2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word3"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="2"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word3"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word4"
-                  android:textAlignment="center" />
+                    android:id="@+id/word3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word4"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="3"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-          android:layout_width="match_parent"
-          android:orientation="horizontal"
-          android:weightSum="3">
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word4"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word5"
-                  android:textAlignment="center" />
+                    android:id="@+id/word4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word5"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="4"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word5"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word6"
-                  android:textAlignment="center" />
+                    android:id="@+id/word5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word6"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="5"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="5"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
-
-                <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word6"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word7"
-                  android:textAlignment="center" />
-
-                <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="6"
-                  android:textColor="@color/light_gray" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-          android:layout_width="match_parent"
-          android:orientation="horizontal"
-          android:weightSum="3">
-
-            <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
-
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word7"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word8"
-                  android:textAlignment="center" />
+                    android:id="@+id/word6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word7"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="7"
-                  android:textColor="@color/light_gray" />
-            </LinearLayout>
-
-            <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
-
-              >
-
-                <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word8"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word9"
-                  android:textAlignment="center" />
-
-                <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="8"
-                  android:textColor="@color/light_gray" />
-            </LinearLayout>
-
-            <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
-
-              >
-
-                <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word9"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word10"
-                  android:textAlignment="center" />
-
-                <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="9"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="6"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:weightSum="3">
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_marginBottom="16dp"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word10"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word11"
-                  android:textAlignment="center" />
+                    android:id="@+id/word7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word8"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="10"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="7"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_marginBottom="16dp"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word11"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionNext"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:nextFocusForward="@+id/word12"
-                  android:textAlignment="center" />
+                    android:id="@+id/word8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word9"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="11"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="8"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_marginBottom="16dp"
-              android:layout_weight="1"
-              android:orientation="vertical"
-              android:weightSum="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
 
-              >
+                >
 
                 <com.breadwallet.presenter.customviews.BREdit
-                  android:id="@+id/word12"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="fill_horizontal"
-                  android:layout_weight="0.5"
-                  android:backgroundTint="@color/extra_light_gray"
-                  android:imeOptions="actionDone"
-                  android:inputType="textVisiblePassword"
-                  android:lines="1"
-                  android:textAlignment="center" />
+                    android:id="@+id/word9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word10"
+                    android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_weight="1.5"
-                  android:gravity="center"
-                  android:text="12"
-                  android:textColor="@color/light_gray" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="9"
+                    android:textColor="@color/light_gray" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
+
+                >
+
+                <com.breadwallet.presenter.customviews.BREdit
+                    android:id="@+id/word10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word11"
+                    android:textAlignment="center" />
+
+                <com.breadwallet.presenter.customviews.BaseTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="10"
+                    android:textColor="@color/light_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
+
+                >
+
+                <com.breadwallet.presenter.customviews.BREdit
+                    android:id="@+id/word11"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:nextFocusForward="@+id/word12"
+                    android:textAlignment="center" />
+
+                <com.breadwallet.presenter.customviews.BaseTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="11"
+                    android:textColor="@color/light_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
+
+                >
+
+                <com.breadwallet.presenter.customviews.BREdit
+                    android:id="@+id/word12"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill_horizontal"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/extra_light_gray"
+                    android:imeOptions="actionDone"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:textAlignment="center" />
+
+                <com.breadwallet.presenter.customviews.BaseTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="12"
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>

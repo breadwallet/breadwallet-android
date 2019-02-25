@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="BaseTextView">
-        <attr name="customTFont" format="string"/>
+        <attr name="brdFont" format="string"/>
     </declare-styleable>
     <declare-styleable name="BREdit">
         <attr name="customEFont" format="string"/>
