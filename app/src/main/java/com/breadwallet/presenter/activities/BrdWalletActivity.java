@@ -69,8 +69,6 @@ public class BrdWalletActivity extends WalletActivity {
         appBarLayoutRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                coordinatorLayout.removeView(appBarLayout);
-                BRSharedPrefs.putRewardsViewClicked(BrdWalletActivity.this, true);
                 UiUtils.openRewardsWebView(BrdWalletActivity.this);
             }
         });
@@ -129,9 +127,7 @@ public class BrdWalletActivity extends WalletActivity {
         } else {
             lockRewardsViewToCollapsed(appBarLayout, transactionListRecyclerView);
         }
-
     }
-
 
     /**
      * Locks the AppBarLayout to collapsed and does not allow expanding.
