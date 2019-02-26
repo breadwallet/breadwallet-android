@@ -135,8 +135,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     Intent newIntent;
                     // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
                     if (mAdapter.getItemAt(position).getCurrencyCode()
-                            .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)
-                            && !BRSharedPrefs.getRewardsViewClicked(HomeActivity.this)) {
+                            .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
                         newIntent = new Intent(HomeActivity.this, BrdWalletActivity.class);
                     } else {
                         newIntent = new Intent(HomeActivity.this, WalletActivity.class);
