@@ -83,6 +83,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
+    private MainViewModel mViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,15 +165,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mWalletRecycler.setAdapter(mAdapter);
 
         // Get ViewModel, observe updates to Wallet and aggregated balance data
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.getWallets().observe(this, new Observer<List<Wallet>>() {
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel.getWallets().observe(this, new Observer<List<Wallet>>() {
             @Override
             public void onChanged(@Nullable List<Wallet> wallets) {
                 mAdapter.setWallets(wallets);
             }
         });
 
-        viewModel.getAggregatedFiatBalance().observe(this, new Observer<BigDecimal>() {
+        mViewModel.getAggregatedFiatBalance().observe(this, new Observer<BigDecimal>() {
             @Override
             public void onChanged(@Nullable BigDecimal aggregatedFiatBalance) {
                 if (aggregatedFiatBalance == null) {
@@ -222,6 +223,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         showNextPromptIfNeeded();
         InternetManager.registerConnectionReceiver(this, this);
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
+        mViewModel.refreshWallets();
     }
 
     @Override
