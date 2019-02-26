@@ -121,6 +121,14 @@ public class MainViewModel extends AndroidViewModel {
         return mAggregatedFiatBalance;
     }
 
+    /**
+     * Refresh the list of wallets.
+     */
+    public void refreshWallets() {
+        initializeWalletsAndManagers();
+        refreshBalances();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
