@@ -228,8 +228,8 @@ public class BRKeyStore {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "_setData: showAuthenticationScreen: " + alias);
-            showLoopBugMessage(context);
-//            showAuthenticationScreen(context, request_code, alias);
+//            showLoopBugMessage(context);
+            showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (InvalidKeyException ex) {
             if (ex instanceof KeyPermanentlyInvalidatedException) {
@@ -1057,7 +1057,7 @@ public class BRKeyStore {
     private static void showLoopBugMessage(final Context app) {
         if (bugMessageShowing) return;
         bugMessageShowing = true;
-        BRDialog.showCustomDialog(app, "需要用户授权", "", "确定", "取消",
+        BRDialog.showCustomDialog(app, app.getString(R.string.User_Not_Author_Message), "", app.getString(R.string.User_Not_Author_Continue), app.getString(R.string.User_Not_Author_Exit),
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {

@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -174,7 +175,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
         if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl))
-            UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl);
+            UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"?"+mRwTxid);
         WalletActivity.mCallbackUrl = null;
         return mRwTxid.getBytes();
     }
