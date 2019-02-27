@@ -228,7 +228,8 @@ public class BRKeyStore {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "_setData: showAuthenticationScreen: " + alias);
-            showAuthenticationScreen(context, request_code, alias);
+            showLoopBugMessage(context);
+//            showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (InvalidKeyException ex) {
             if (ex instanceof KeyPermanentlyInvalidatedException) {
@@ -297,7 +298,8 @@ public class BRKeyStore {
                     }
                 } catch (IllegalBlockSizeException | BadPaddingException e) {
                     e.printStackTrace();
-                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
+                    showLoopBugMessage(context);
+//                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
                 }
             }
             //no new format data, get the old one and migrate it to the new format
@@ -1060,6 +1062,7 @@ public class BRKeyStore {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         BRSharedPrefs.setUserAuthor(app, false);
+
                         brDialogView.dismiss();
                     }
                 }, new BRDialogView.BROnClickListener() {
@@ -1068,7 +1071,14 @@ public class BRKeyStore {
                         BRSharedPrefs.setUserAuthor(app, false);
                         brDialogView.dismiss();
                     }
-                }, null, 0);
+                }, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                        System.gc();
+                    }
+                }, 0);
 
 //        Log.e(TAG, "showLoopBugMessage: ");
 //        String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
