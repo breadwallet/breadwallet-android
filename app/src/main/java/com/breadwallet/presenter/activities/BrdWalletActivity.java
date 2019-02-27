@@ -48,7 +48,7 @@ import java.io.File;
  * Sub class of Wallet Activity for additional views needed.
  */
 public class BrdWalletActivity extends WalletActivity {
-    private static final Uri CONFETTI_VIDEO_URI =  Uri.parse("android.resource://"
+    private static final Uri CONFETTI_VIDEO_URI = Uri.parse("android.resource://"
             + BuildConfig.APPLICATION_ID + File.separator + R.raw.confetti);
     private static final int UNINITIALIZED_POSITION = -1;
 
@@ -65,14 +65,16 @@ public class BrdWalletActivity extends WalletActivity {
         final AppBarLayout appBarLayout = findViewById(R.id.app_bar);
         final ViewGroup expandedRewardsView = findViewById(R.id.expanded_rewards_layout);
         final ViewGroup collapsedRewardsView = findViewById(R.id.collapsed_rewards_toolbar);
-
+        final RecyclerView transactionListRecyclerView = findViewById(R.id.tx_list);
         appBarLayoutRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Collapse without animation before showing the rewards webview.
+                appBarLayout.setExpanded(false, false);
                 UiUtils.openRewardsWebView(BrdWalletActivity.this);
             }
         });
-        final RecyclerView transactionListRecyclerView = findViewById(R.id.tx_list);
+
         if (!BRSharedPrefs.getRewardsAnimationShown(BrdWalletActivity.this)) {
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 private int mScrollRange = UNINITIALIZED_POSITION;
@@ -110,8 +112,8 @@ public class BrdWalletActivity extends WalletActivity {
             videoView.start();
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                         @Override
                         public boolean onInfo(MediaPlayer mp, int what, int extra) {
                             if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
@@ -136,7 +138,7 @@ public class BrdWalletActivity extends WalletActivity {
      * @param transactionListRecyclerView The list view that affects the AppBarLayout while scrolling.
      */
     private void lockRewardsViewToCollapsed(AppBarLayout appBarLayout,
-                                                   RecyclerView transactionListRecyclerView) {
+                                            RecyclerView transactionListRecyclerView) {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
         if (behavior == null) {
@@ -152,5 +154,4 @@ public class BrdWalletActivity extends WalletActivity {
         });
         transactionListRecyclerView.setNestedScrollingEnabled(false);
     }
-
 }
