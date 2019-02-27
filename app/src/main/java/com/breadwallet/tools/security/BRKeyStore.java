@@ -228,6 +228,7 @@ public class BRKeyStore {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "_setData: showAuthenticationScreen: " + alias);
+//            showLoopBugMessage(context);
             showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (InvalidKeyException ex) {
@@ -297,7 +298,8 @@ public class BRKeyStore {
                     }
                 } catch (IllegalBlockSizeException | BadPaddingException e) {
                     e.printStackTrace();
-                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
+                    showLoopBugMessage(context);
+//                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
                 }
             }
             //no new format data, get the old one and migrate it to the new format
@@ -448,7 +450,7 @@ public class BRKeyStore {
             throw new UserNotAuthenticatedException();
         }
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
-        return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, BRSharedPrefs.isUserAuthor(context));
     }
 
     public static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
@@ -473,7 +475,7 @@ public class BRKeyStore {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, BRSharedPrefs.isUserAuthor(context));
     }
 
     public static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
@@ -1055,44 +1057,67 @@ public class BRKeyStore {
     private static void showLoopBugMessage(final Context app) {
         if (bugMessageShowing) return;
         bugMessageShowing = true;
-        Log.e(TAG, "showLoopBugMessage: ");
-        String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
-
-        SpannableString ss = new SpannableString(mess.replace("[", "").replace("]", ""));
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View textView) {
-                Log.e(TAG, "onClick: clicked on span!");
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRDialog.hideDialog();
-                        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
-                    }
-                });
-
-            }
-
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setUnderlineText(false);
-            }
-        };
-        ss.setSpan(clickableSpan, mess.indexOf("[") - 1, mess.indexOf("]") - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), ss, app.getString(R.string.AccessibilityLabels_close), null,
+        BRDialog.showCustomDialog(app, app.getString(R.string.User_Not_Author_Message), "", app.getString(R.string.User_Not_Author_Continue), app.getString(R.string.User_Not_Author_Exit),
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        if (app instanceof Activity) ((Activity) app).finish();
+                        BRSharedPrefs.setUserAuthor(app, false);
+
+                        brDialogView.dismiss();
                     }
-                }, null, new DialogInterface.OnDismissListener() {
+                }, new BRDialogView.BROnClickListener() {
                     @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        bugMessageShowing = false;
+                    public void onClick(BRDialogView brDialogView) {
+                        BRSharedPrefs.setUserAuthor(app, false);
+                        brDialogView.dismiss();
+                    }
+                }, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                        System.gc();
                     }
                 }, 0);
+
+//        Log.e(TAG, "showLoopBugMessage: ");
+//        String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
+//
+//        SpannableString ss = new SpannableString(mess.replace("[", "").replace("]", ""));
+//        ClickableSpan clickableSpan = new ClickableSpan() {
+//            @Override
+//            public void onClick(View textView) {
+//                Log.e(TAG, "onClick: clicked on span!");
+//                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        BRDialog.hideDialog();
+//                        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+//                        UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void updateDrawState(TextPaint ds) {
+//                super.updateDrawState(ds);
+//                ds.setUnderlineText(false);
+//            }
+//        };
+//        ss.setSpan(clickableSpan, mess.indexOf("[") - 1, mess.indexOf("]") - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), ss, app.getString(R.string.AccessibilityLabels_close), null,
+//                new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+//                        if (app instanceof Activity) ((Activity) app).finish();
+//                    }
+//                }, null, new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        bugMessageShowing = false;
+//                    }
+//                }, 0);
 
     }
 

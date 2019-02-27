@@ -97,7 +97,7 @@ public class UiUtils {
         transaction.add(android.R.id.content, mFragmentSignal, mFragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         if (!activity.isDestroyed()) {
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
         }
     }
 
@@ -153,7 +153,7 @@ public class UiUtils {
             app.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
+                    .addToBackStack(FragmentSend.class.getName()).commitAllowingStateLoss();
         } finally {
             mSupportIsShowing = false;
         }
@@ -258,7 +258,7 @@ public class UiUtils {
         app.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
-                .addToBackStack(FragmentRequestAmount.class.getName()).commit();
+                .addToBackStack(FragmentRequestAmount.class.getName()).commitAllowingStateLoss();
 
     }
 
@@ -279,7 +279,7 @@ public class UiUtils {
         app.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
-                .addToBackStack(FragmentReceive.class.getName()).commit();
+                .addToBackStack(FragmentReceive.class.getName()).commitAllowingStateLoss();
 
     }
 

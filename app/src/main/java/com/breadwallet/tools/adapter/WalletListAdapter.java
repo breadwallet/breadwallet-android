@@ -98,7 +98,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 //        String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
 
 
-        int iconResourceId = mContext.getResources().getIdentifier(currencyCode.toLowerCase(), BRConstants.DRAWABLE, mContext.getPackageName());
+        int iconResourceId = 0;
+        if(currencyCode.equalsIgnoreCase("1st")){
+            iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
+        } else {
+            iconResourceId = mContext.getResources().getIdentifier(currencyCode.toLowerCase(), BRConstants.DRAWABLE, mContext.getPackageName());
+        }
         if (iconResourceId > 0) {
 //            holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
             holder.mLogoIcon.setImageDrawable(mContext.getDrawable(iconResourceId));

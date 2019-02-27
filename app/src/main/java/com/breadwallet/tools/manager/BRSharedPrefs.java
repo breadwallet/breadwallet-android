@@ -291,6 +291,18 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    public static boolean isUserAuthor(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("userAuthor", true);
+    }
+
+    public static void setUserAuthor(Context activity, boolean b) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("userAuthor", b);
+        editor.apply();
+    }
+
     //if the user prefers all in crypto units, not fiat currencies
     public static boolean isCryptoPreferred(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

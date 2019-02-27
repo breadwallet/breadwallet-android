@@ -78,7 +78,7 @@ public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
         mMainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().remove(PinFragment.this).commit();
+                getActivity().getFragmentManager().beginTransaction().remove(PinFragment.this).commitAllowingStateLoss();
             }
         });
 

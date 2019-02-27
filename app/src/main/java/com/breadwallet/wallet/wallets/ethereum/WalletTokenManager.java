@@ -374,6 +374,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public void wipeData(Context app) {
         //Not needed for Tokens
+        mAddress = null;
         mTokenWallets.clear();
     }
 

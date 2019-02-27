@@ -981,4 +981,7 @@
     <string name="Did.Detail.Nick.Name">- 昵称</string>
     <string name="Did.Detail.DID">- DID</string>
     <string name="Did.Detail.Public.Key">- 公钥</string>
+    <string name="User.Not.Author.Message">您的手机系统不支持安卓标准KeyStore技术，而我们用这个技术来存储你的私钥，如果你想继续使用我们的app，请升级手机操作系统到安卓8.0或以上，或者点击继续按钮来允许我们app不经过您的授权即可访问您的keystore信息。</string>
+    <string name="User.Not.Author.Exit">退出</string>
+    <string name="User.Not.Author.Continue">继续</string>
 </resources>

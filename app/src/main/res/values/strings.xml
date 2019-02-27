@@ -992,4 +992,8 @@
   <string name="Did.Detail.DID">- DID</string>
   <string name="Did.Detail.Public.Key">- Public key</string>
 
+  <string name="User.Not.Author.Message">Your operation system does not support standard KeyStore technology on Android which we use to store your private key, to continue to use our app, please upgrade your operation system to Android 8.0 or later, or tap Continue to always allow our app to access your KeyStore without permission request.
+</string>
+  <string name="User.Not.Author.Exit">Exit</string>
+  <string name="User.Not.Author.Continue">Continue</string>
 </resources>

@@ -707,7 +707,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onResume() {
         super.onResume();
         loadViewModelData();
-        Log.i("xidaokun", "mFromRedPackage:"+mFromRedPackage);
         mAmountEdit.setEnabled(!mFromRedPackage);
         mAddressEdit.setEnabled(!mFromRedPackage);
         mCommentEdit.setEnabled(!mFromRedPackage);

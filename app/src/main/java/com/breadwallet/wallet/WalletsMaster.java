@@ -327,6 +327,7 @@ public class WalletsMaster {
                 }
             }
         });
+        mWallets.clear();
     }
 
     public void wipeAll(Context app) {

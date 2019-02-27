@@ -61,7 +61,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mCurrentFragment = mWalletFragment;
 //        clearFragment();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commit();
+        transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
     }
 
     @Override
@@ -86,9 +86,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             transaction.hide(mCurrentFragment);
             mCurrentFragment = fragment;
             if (!fragment.isAdded()) {
-                transaction.add(R.id.frame_layout, fragment).show(fragment).commit();
+                transaction.add(R.id.frame_layout, fragment).show(fragment).commitAllowingStateLoss();
             } else {
-                transaction.show(fragment).commit();
+                transaction.show(fragment).commitAllowingStateLoss();
             }
         }
     }

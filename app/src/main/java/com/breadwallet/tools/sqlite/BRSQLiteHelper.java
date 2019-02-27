@@ -214,7 +214,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Log.i("xidaokun_db", "oldVersion:"+oldVersion+"newVersion:"+newVersion);
         if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables

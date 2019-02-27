@@ -380,6 +380,9 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
 
         Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
 
+        if(StringUtil.isNullOrEmpty(uri.toString())){
+            return false;
+        }
         return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }
 

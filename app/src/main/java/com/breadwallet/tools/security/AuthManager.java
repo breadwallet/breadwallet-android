@@ -128,7 +128,7 @@ public class AuthManager {
                 transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed()) {
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             } else {
                 breadPin = new PinFragment();
@@ -142,7 +142,7 @@ public class AuthManager {
                 transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed()) {
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             }
         } else {

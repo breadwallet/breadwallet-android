@@ -88,8 +88,9 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             public void run() {
                 Activity activity = getActivity();
                 if(activity == null) return;
+                BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
                 WalletsMaster.getInstance(activity).refreshBalances(activity);
-                WalletsMaster.getInstance(activity).getCurrentWallet(activity).refreshAddress(activity);
+                if(walletManager != null) WalletsMaster.getInstance(activity).getCurrentWallet(activity).refreshAddress(activity);
             }
         });
 

@@ -128,7 +128,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
             }
             if (!StringUtil.isNullOrEmpty(mUri)) {
-                BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, "ELA");
+                UriFactory factory = new UriFactory();
+                factory.parse(mUri);
+                BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, factory.getCoinName());
             }
             Log.i("author_test", "walletActivity1 mUri:"+mUri);
         }
@@ -271,7 +273,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 sendRedPackage();
             }
         }
-        Log.i("xidaokun", "onNewIntent");
     }
 
     private void updateUi() {

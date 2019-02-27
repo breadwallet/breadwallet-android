@@ -7,6 +7,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -23,9 +24,12 @@ import com.platform.APIClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wallet.library.utils.HexUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -225,7 +229,8 @@ public class BRApiManager {
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
-        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+//        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+        String url = "https://api-wallet-ela-testnet.elastos.org/api/1/cmc?limit=1000";
         String result = urlGET(context, url);
         try {
             if (Utils.isNullOrEmpty(result)) {
@@ -257,19 +262,19 @@ public class BRApiManager {
 
             }
 
-            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
-            String reuslt = null;
-            try {
-                reuslt = urlGET2(context, urlBgx);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
-            if(bgxEntity != null) {
-                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
-                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
-                tmp.add(bgxCurrencyEntity);
-            }
+//            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
+//            String reuslt = null;
+//            try {
+//                reuslt = urlGET2(context, urlBgx);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
+//            if(bgxEntity != null) {
+//                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
+//                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
+//                tmp.add(bgxCurrencyEntity);
+//            }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
@@ -362,15 +367,41 @@ public class BRApiManager {
         return jsonArray;
     }
 
+    public static String Encrypt(String strSrc) {
+        MessageDigest md;
+        String strDes;
+        byte[] bt = strSrc.getBytes();
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(bt);
+            strDes = HexUtils.bytesToHex(md.digest()); // to HexString
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        return strDes;
+    }
+
+    private static String getApiKey(String timestamp){
+        String data = BuildConfig.API_KEY + timestamp;
+        return Encrypt(data);
+    }
+
+    private static String getTimestamp(){
+        return String.valueOf(System.currentTimeMillis());
+    }
+
     @WorkerThread
     public static String urlGET(Context app, String myURL) {
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
+        String stamp = getTimestamp();
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .header("Apikey", getApiKey(stamp))
+                .header("Timestamp", stamp)
                 .get();
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
