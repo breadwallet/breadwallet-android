@@ -261,19 +261,19 @@ public class BRApiManager {
 
             }
 
-            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
-            String reuslt = null;
-            try {
-                reuslt = urlGET2(context, urlBgx);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
-            if(bgxEntity != null) {
-                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
-                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
-                tmp.add(bgxCurrencyEntity);
-            }
+//            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
+//            String reuslt = null;
+//            try {
+//                reuslt = urlGET2(context, urlBgx);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
+//            if(bgxEntity != null) {
+//                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
+//                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
+//                tmp.add(bgxCurrencyEntity);
+//            }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
