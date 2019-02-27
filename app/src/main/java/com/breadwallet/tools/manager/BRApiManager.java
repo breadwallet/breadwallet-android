@@ -7,6 +7,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -381,7 +382,7 @@ public class BRApiManager {
     }
 
     private static String getApiKey(String timestamp){
-        String data = "729E2BB0AEEC048FF9DC7996D394889687BF76AFA832F07E011AA5A3BE272310" + timestamp;
+        String data = BuildConfig.API_KEY + timestamp;
         return Encrypt(data);
     }
 
