@@ -23,9 +23,12 @@ import com.platform.APIClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wallet.library.utils.HexUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -225,7 +228,8 @@ public class BRApiManager {
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
-        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+//        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+        String url = "https://api-wallet-ela-testnet.elastos.org/api/1/cmc?limit=1000";
         String result = urlGET(context, url);
         try {
             if (Utils.isNullOrEmpty(result)) {
@@ -362,15 +366,41 @@ public class BRApiManager {
         return jsonArray;
     }
 
+    public static String Encrypt(String strSrc) {
+        MessageDigest md;
+        String strDes;
+        byte[] bt = strSrc.getBytes();
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(bt);
+            strDes = HexUtils.bytesToHex(md.digest()); // to HexString
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        return strDes;
+    }
+
+    private static String getApiKey(String timestamp){
+        String data = "729E2BB0AEEC048FF9DC7996D394889687BF76AFA832F07E011AA5A3BE272310" + timestamp;
+        return Encrypt(data);
+    }
+
+    private static String getTimestamp(){
+        return String.valueOf(System.currentTimeMillis());
+    }
+
     @WorkerThread
     public static String urlGET(Context app, String myURL) {
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
+        String stamp = getTimestamp();
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .header("Apikey", getApiKey(stamp))
+                .header("Timestamp", stamp)
                 .get();
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {

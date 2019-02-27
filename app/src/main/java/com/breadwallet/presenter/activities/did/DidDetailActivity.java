@@ -78,8 +78,6 @@ public class DidDetailActivity extends BaseSettingsActivity {
 
     private void initData(){
         if(mAuthorInfo == null) return;
-        Log.i("xidaokun", "authorTime:"+mAuthorInfo.getAuthorTime());
-        Log.i("xidaokun", "expTime:"+mAuthorInfo.getExpTime());
         mAppNameTx.setText(mAuthorInfo.getAppName());
         mAuthorTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getAuthorTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getAuthorTime())));
         mExpTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getExpTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getExpTime())));

@@ -99,7 +99,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mWillTv.setText(String.format(getString(R.string.Did_Will_Get), uriFactory.getAppName()));
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
-        Log.i("xidaokun", "did:"+uriFactory.getDID());
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
         mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
 
@@ -210,7 +209,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                         return;
                                     }
                                     Uri uri = Uri.parse(returnUrl+"&did="+myDid);
-                                    Log.i("xidaokun", "did:"+uri.toString());
                                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                     startActivity(intent);
                                     finish();
@@ -248,7 +246,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         info.setAppName(uriFactory.getAppName());
         info.setExpTime(getAuthorTime(30));
         info.setAppIcon("www.elstos.org");
-        Log.i("xidaokun", "cache AuthorTime:"+getAuthorTime(0)+ " ExpTime:"+getAuthorTime(30));
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 

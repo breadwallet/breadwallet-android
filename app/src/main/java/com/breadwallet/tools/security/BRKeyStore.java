@@ -1055,7 +1055,7 @@ public class BRKeyStore {
     private static void showLoopBugMessage(final Context app) {
         if (bugMessageShowing) return;
         bugMessageShowing = true;
-        BRDialog.showCustomDialog(app, "授权失败", "", "确定", "取消",
+        BRDialog.showCustomDialog(app, "需要用户授权", "", "确定", "取消",
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
