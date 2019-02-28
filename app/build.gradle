@@ -10,8 +10,8 @@ android {
         applicationId = 'com.elastos.wallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 25
-        versionName "1.2.0"
+        versionCode 27
+        versionName "1.2.1"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -60,6 +60,7 @@ android {
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
             buildConfigField "boolean", "UPGRADE_TESTNET", "false"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "false"
+            buildConfigField "String", "API_KEY", "\"729E2BB0AEEC048FF9DC7996D394889687BF76AFA832F07E011AA5A3BE272310\""
 
             externalNativeBuild {
                 cmake {
@@ -79,6 +80,7 @@ android {
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
             buildConfigField "boolean", "UPGRADE_TESTNET", "true"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "true"
+            buildConfigField "String", "API_KEY", ""
 
             externalNativeBuild {
                 cmake {
@@ -98,6 +100,7 @@ android {
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             buildConfigField "boolean", "UPGRADE_TESTNET", "false"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "true"
+            buildConfigField "String", "API_KEY", ""
 
             externalNativeBuild {
                 cmake {
