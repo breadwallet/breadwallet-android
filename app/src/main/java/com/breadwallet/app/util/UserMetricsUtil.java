@@ -33,6 +33,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -117,7 +118,7 @@ public final class UserMetricsUtil {
     private static void makeUserMetricsRequest(Context context) {
         try {
             JSONObject bundles = new JSONObject();
-            for (String bundleName : APIClient.BUNDLE_NAMES) {
+            for (String bundleName : ServerBundlesHelper.getBundleNames(context)) {
                 bundles.put(bundleName, BRSharedPrefs.getBundleHash(context, bundleName));
             }
 

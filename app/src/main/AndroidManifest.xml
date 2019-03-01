@@ -21,8 +21,6 @@
 
     <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <!-- Allows changing locales -->
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <uses-feature
         android:name="android.hardware.location.gps"

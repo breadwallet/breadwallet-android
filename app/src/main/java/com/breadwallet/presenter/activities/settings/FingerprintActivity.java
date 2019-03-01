@@ -51,10 +51,6 @@ public class FingerprintActivity extends BRActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);

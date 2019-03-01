@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InvalidPackage">
+        <ignore regexp="javax.servlet-api-3.1.0.jar" />
+        <ignore regexp="jetty-server-9.2.19.v20160908.jar" />
+        <ignore regexp="jetty-util-9.2.19.v20160908.jar" />
+        <ignore regexp="jetty-servlet-9.2.19.v20160908.jar" />
+        <ignore regexp="jetty-webapp-9.2.19.v20160908.jar" />
+    </issue>
+</lint>
