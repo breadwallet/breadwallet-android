@@ -1,10 +1,10 @@
 package com.breadwallet.view.dialog;
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,8 +81,11 @@ public class DialogActivity extends AppCompatActivity {
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        // Open security settings so the user can enable a password.
-                        startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        // Open password settings so the user can enable a password easily.
+                        Intent intent = new Intent(DevicePolicyManager.ACTION_SET_NEW_PASSWORD);
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
                     }
                 },
                 new BRDialogView.BROnClickListener() {
