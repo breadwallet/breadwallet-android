@@ -38,13 +38,11 @@ import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -60,26 +58,24 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
-import com.google.common.collect.Lists;
 import com.platform.entities.WalletInfoData;
 import com.platform.tools.KVStoreManager;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -88,7 +84,6 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
@@ -164,12 +159,7 @@ public final class BRKeyStore {
     public static final int AUTH_DURATION_SEC = 300;
     private static final int GMC_TAG_LENGTH = 128;
 
-    private static final int MAX_KEY_STORE_ERRORS = 5;
-    private static final int KEY_STORE_ERROR_PERIOD_SEC = 15;
-
     private static boolean bugMessageShowing;
-    private static boolean keyStoreErrorShowing = false;
-    private static List<Long> keyStoreErrors = Lists.newArrayList();
 
     public static final Map<String, AliasObject> ALIAS_OBJECT_MAP;
 
@@ -193,6 +183,48 @@ public final class BRKeyStore {
         ALIAS_OBJECT_MAP.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         ALIAS_OBJECT_MAP.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
         ALIAS_OBJECT_MAP.put(ETH_PUBKEY_ALIAS, new AliasObject(ETH_PUBKEY_ALIAS, ETH_PUBKEY_FILENAME, ETH_PUBKEY_IV));
+    }
+
+    /**
+     * Returns true if Android key store is valid. We test if the paper key encryption key can no longer be used
+     * because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
+     * Android key store has been invalidated, our entire app data should be wiped and the app should be
+     * re-initialized.  We cannot recover from this otherwise.
+     *
+     * See {@link KeyPermanentlyInvalidatedException} for further details.
+     *
+     * @return True, if the Android key store is valid; false, otherwise.
+     */
+    public static boolean isValid() {
+        try {
+            // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            Key key = keyStore.getKey(PHRASE_ALIAS, null);
+
+            // If there is no key, then it has not been initialized yet. The key store is still considered valid.
+            if (key != null) {
+                Cipher cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+            }
+        } catch (KeyPermanentlyInvalidatedException | UnrecoverableKeyException e) {
+            // If KeyPermanentlyInvalidatedException
+            //  -> with no cause happens, then the password was disabled. See DROID-1019.
+            // If UnrecoverableKeyException
+            //  -> with cause "Key blob corrupted" happens then the password was disabled & re-enabled. See DROID-1207.
+            //  -> with cause "Key blob corrupted" happens then after DROID-1019 the app was opened again while password is on.
+            //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
+            // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
+
+            Log.e(TAG, "The key store has been invalidated. ", e);
+            return false;
+        } catch (GeneralSecurityException | IOException e) {
+            // We can safely ignore these exceptions, because we are only concerned with
+            // KeyPermanentlyInvalidatedException here.
+            Log.e(TAG, "Error while checking if key store is still valid. Ignoring. ", e);
+        }
+
+        return true;
     }
 
     /**
@@ -271,16 +303,9 @@ public final class BRKeyStore {
             Log.e(TAG, "setData: showAuthenticationScreen: " + alias);
             showAuthenticationScreen(context, requestCode, alias);
             throw e;
-        } catch (InvalidKeyException e) {
-            if (e instanceof KeyPermanentlyInvalidatedException) {
-                showKeyInvalidated(context);
-                throw new UserNotAuthenticatedException(); // just to make the flow stop
-            }
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e(TAG, "setData: Error setting: " + alias, e);
             BRReportsManager.reportBug(e);
-            return false;
-        } catch (Exception e) {
-            BRReportsManager.reportBug(e);
-            e.printStackTrace();
             return false;
         } finally {
             LOCK.unlock();
@@ -361,8 +386,6 @@ public final class BRKeyStore {
                 } catch (IllegalBlockSizeException | BadPaddingException e) {
                     Log.e(TAG, "Failed to decrypt the following data: " + alias, e);
                     BRReportsManager.reportBug(e);
-                    // This issue refers to DROID-1019.
-                    showErrorMessage(context);
                     return null;
                 }
             }
@@ -428,71 +451,17 @@ public final class BRKeyStore {
             // Store the new data.
             storeEncryptedData(context, encryptedData, alias);
             return result;
-        } catch (InvalidKeyException e) {
-            if (e instanceof UserNotAuthenticatedException) {
-                // User not authenticated, ask the system for authentication.
-                Log.e(TAG, "getData: showAuthenticationScreen: " + alias);
-                showAuthenticationScreen(context, requestCode, alias);
-                throw (UserNotAuthenticatedException) e;
-            } else {
-                Log.e(TAG, "getData: InvalidKeyException", e);
-                BRReportsManager.reportBug(e);
-                if (e instanceof KeyPermanentlyInvalidatedException) {
-                    showKeyInvalidated(context);
-                }
-                // Just to not go any further without authentication.
-                throw new UserNotAuthenticatedException();
-            }
-        } catch (IOException | CertificateException | KeyStoreException e) {
-            // KeyStore.load(null) threw the Exception, meaning the keystore is unavailable.
-            Log.e(TAG, "getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
+        } catch (UserNotAuthenticatedException e) {
+            // User not authenticated, ask the system for authentication.
+            Log.e(TAG, "getData: showAuthenticationScreen: " + alias);
+            showAuthenticationScreen(context, requestCode, alias);
+            throw e;
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e(TAG, "getData: Error retrieving: " + alias, e);
             BRReportsManager.reportBug(e);
-            if (e instanceof FileNotFoundException) {
-                Log.e(TAG, "getData: File not found exception", e);
-                RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no");
-                BRReportsManager.reportBug(ex);
-                throw new RuntimeException(e.getMessage());
-            } else {
-                BRReportsManager.reportBug(e);
-                throw new RuntimeException(e.getMessage());
-            }
-        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException e) {
-            // If for any other reason the keystore fails, ask user to contact support.
-            Log.e(TAG, "getData: Issue with keystore while getting the following data: " + alias, e);
-            BRReportsManager.reportBug(e);
-            // This issue refers to DROID-1019.
-            showErrorMessage(context);
-            return null;
-        } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new IllegalStateException(e);
         } finally {
             LOCK.unlock();
-        }
-    }
-
-    private static synchronized void showErrorMessage(Context context) {
-        // HACK: We are just ignoring the cases where this error is called from an application context because
-        // at present this method is only used by DROID-1019 which if it happens will happen so much that we can
-        // ignore these cases. In reality we should not be showing any UI in the BRKeystore. The error should
-        // be passed up the stack and some caller higher up should handle it.
-        // The error will be shown only when we get into an unrecoverable state. We consider that we got into an
-        // unrecoverable state when the key store fails 5 times and the time elapsed between errors was less than
-        // 15 seconds. When the time elapsed between errors is bigger we clear the error counter.
-        long currentTime = System.currentTimeMillis();
-        if (!keyStoreErrors.isEmpty()
-                && (keyStoreErrors.get(keyStoreErrors.size() - 1) - currentTime)
-                > KEY_STORE_ERROR_PERIOD_SEC * DateUtils.SECOND_IN_MILLIS) {
-            keyStoreErrors.clear();
-        }
-        keyStoreErrors.add(currentTime);
-        Log.e(TAG, "Key store failed " + keyStoreErrors.size() + " times in the last "
-                + KEY_STORE_ERROR_PERIOD_SEC + " seconds");
-        if (context instanceof Activity && keyStoreErrors.size() > MAX_KEY_STORE_ERRORS && !keyStoreErrorShowing) {
-            keyStoreErrorShowing = true;
-            BRDialog.showCustomDialog(context, context.getString(R.string.JailbreakWarnings_title),
-                    context.getString(R.string.ErrorMessages_BadKeyStore_android),
-                    null, null, null, null, null, true);
         }
     }
 
@@ -523,27 +492,6 @@ public final class BRKeyStore {
                 throw new IllegalArgumentException("keystore auth_required is true but mAlias is: " + alias);
             }
         }
-    }
-
-    /**
-     * Show a message to the user that the keys are invalidated due to device lock removal.
-     *
-     * @param context The context.
-     */
-    // TODO this should be in a UI Class.
-    private static void showKeyInvalidated(final Context context) {
-        BRDialog.showCustomDialog(context, context.getString(R.string.Alert_keystore_title_android), context.getString(R.string.Alert_keystore_invalidated_android), context.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismissWithAnimation();
-            }
-        }, null, new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                Log.e(TAG, "Device password was disabled. Clearing all user data now.");
-                BreadApp.clearApplicationUserData();
-            }
-        }, 0);
     }
 
     /**

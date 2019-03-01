@@ -155,6 +155,7 @@ public class AuthManager {
     }
 
     private void sayNoScreenLock(final Activity app) {
+        // TODO: Use DialogActivity instead.
         BRDialog.showCustomDialog(app,
                 "",
                 app.getString(R.string.Prompts_NoScreenLock_body_android),

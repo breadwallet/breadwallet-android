@@ -3,6 +3,7 @@ package com.breadwallet;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.view.dialog.DialogActivity;
+import com.breadwallet.view.dialog.DialogActivity.DialogType;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
 import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
@@ -304,19 +307,23 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         switch (event) {
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
-                mBackgroundedTime = 0;
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                HTTPServer.getInstance().startServer(this);
+                // Each time the app resumes, check to see if the device state is valid.
+                if (isDeviceStateValid()) {
+                    mBackgroundedTime = 0;
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        TokenUtil.fetchTokensFromServer(mInstance);
-                    }
-                });
-                APIClient.getInstance(this).updatePlatform(this);
+                    HTTPServer.getInstance().startServer(this);
+
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            TokenUtil.fetchTokensFromServer(mInstance);
+                        }
+                    });
+                    APIClient.getInstance(this).updatePlatform(this);
+                }
                 break;
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");
@@ -373,4 +380,24 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
     }
 
+    /**
+     * Returns true if the device state is valid. The device state is considered valid, if the device password
+     * is enabled and if the Android key store state is valid.  The Android key store can be invalided if the
+     * device password was removed or if fingerprints are added/removed.
+     *
+     * @return True, if the device state is valid; false, otherwise.
+     */
+    //TODO make this private non-static once it's only used in this class.
+    public static boolean isDeviceStateValid() {
+        KeyguardManager keyguardManager = (KeyguardManager) mInstance.getSystemService(Activity.KEYGUARD_SERVICE);
+        if (!keyguardManager.isKeyguardSecure()) {
+            DialogActivity.startDialogActivity(mInstance, DialogType.ENABLE_DEVICE_PASSWORD);
+            return false;
+        } else if (!BRKeyStore.isValid()) {
+            DialogActivity.startDialogActivity(mInstance, DialogType.KEY_STORE_INVALID);
+            return false;
+        }
+
+        return true;
+    }
 }

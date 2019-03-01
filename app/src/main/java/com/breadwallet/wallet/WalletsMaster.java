@@ -301,6 +301,7 @@ public class WalletsMaster {
     /**
      * true if device passcode is enabled
      */
+    // TODO Remove this. It should no longer be needed after DROID-1207. Needs to be tested though.
     public boolean isPasscodeEnabled(Context ctx) {
         KeyguardManager keyguardManager = (KeyguardManager) ctx.getSystemService(Activity.KEYGUARD_SERVICE);
         return keyguardManager.isKeyguardSecure();
@@ -393,6 +394,7 @@ public class WalletsMaster {
     public void startTheWalletIfExists(final Activity app) {
         final WalletsMaster m = WalletsMaster.getInstance(app);
         if (!m.isPasscodeEnabled(app)) {
+            // TODO: Use DialogActivity instead
             //Device passcode/password should be enabled for the app to work
             BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                     app.getString(R.string.Prompts_NoScreenLock_body_android),
