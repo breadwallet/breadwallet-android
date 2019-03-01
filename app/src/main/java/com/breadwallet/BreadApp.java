@@ -138,7 +138,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         mInstance = this;
 
         final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
+                .kits(new Crashlytics.Builder().build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
@@ -156,7 +156,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         // Start our local server as soon as the application instance is created, since we need to
         // display support WebViews during onboarding.
-        HTTPServer.getInstance().startServer();
+        HTTPServer.getInstance().startServer(this);
 
     }
 
@@ -285,6 +285,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     // TODO: Refactor so this does not store the current activity like this.
+    @Deprecated
     public static Context getBreadContext() {
         Context app = mCurrentActivity;
         if (app == null) {
@@ -307,7 +308,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                HTTPServer.getInstance().startServer();
+                HTTPServer.getInstance().startServer(this);
 
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
@@ -330,7 +331,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                     }
                 });
                 HTTPServer.getInstance().stopServer();
-
+                break;
+            default:
                 break;
         }
     }

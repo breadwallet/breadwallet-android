@@ -37,10 +37,9 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.R;
+import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 /**
@@ -127,7 +126,8 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 if (!UiUtils.isClickAllowed()) return;
                 Activity app = getActivity();
                 if (app == null) {
-                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: "
+                            + (HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT)));
                     return;
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);

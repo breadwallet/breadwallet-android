@@ -37,7 +37,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
     private LinearLayout mPinLayout;
     private ImageView mUnlockedImage;
     private ImageButton mFingerPrint;
-    private static final int DELETE_BUTTON_INDEX = 10;
     private PinLayout mPinDigitViews;
 
 
@@ -45,6 +44,13 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
+
+        mPinDigitViews = findViewById(R.id.pin_digits);
+        mKeyboard = findViewById(R.id.brkeyboard);
+        mPinLayout = findViewById(R.id.pinLayout);
+        mFingerPrint = findViewById(R.id.fingerprint_icon);
+        mUnlockedImage = findViewById(R.id.unlocked_image);
+
         String pin = BRKeyStore.getPinCode(this);
         if (pin.isEmpty()) {
             Intent intent = new Intent(LoginActivity.this, InputPinActivity.class);
@@ -56,13 +62,6 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         if (!PinLayout.isPinLengthValid(pin.length())) {
             throw new IllegalArgumentException("Pin length illegal: " + pin.length());
         }
-
-        mPinDigitViews = findViewById(R.id.pin_digits);
-        mKeyboard = findViewById(R.id.brkeyboard);
-        mPinLayout = findViewById(R.id.pinLayout);
-        mFingerPrint = findViewById(R.id.fingerprint_icon);
-
-        mUnlockedImage = findViewById(R.id.unlocked_image);
 
         mKeyboard.setShowDecimal(false);
         mKeyboard.setDeleteButtonBackgroundColor(getColor(android.R.color.transparent));

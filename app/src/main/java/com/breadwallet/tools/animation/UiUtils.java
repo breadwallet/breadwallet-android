@@ -119,7 +119,7 @@ public class UiUtils {
                 return;
             }
 
-            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.URL_SUPPORT);
+            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT));
             if (!Utils.isNullOrEmpty(articleId)) {
                 urlBuilder.append(ARTICLE_QUERY_STRING);
                 urlBuilder.append(articleId);

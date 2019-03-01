@@ -79,6 +79,9 @@ public final class SettingsUtil {
     private static final String API_SERVER = "API Server";
     private static final String API_SERVER_SET_FORMAT = "Api server %s set!";
     private static final String ONBOARDING_FLOW = "Onboarding flow";
+    private static final String WEB_BUNDLE = "Select web bundle";
+    private static final String TOKEN_BUNDLE = "Select token bundle";
+    private static final String BUNDLE_SET = "Bundle set: ";
 
     private SettingsUtil() {
     }
@@ -130,15 +133,6 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_support));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, AboutActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_about));
-
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,9 +150,17 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.URL_REWARDS);
+                UiUtils.showWebModal((FragmentActivity) activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS));
             }
-        }, false, R.drawable.ic_star));
+        }, false, R.drawable.ic_reward));
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, AboutActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, R.drawable.ic_about));
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
@@ -284,6 +286,18 @@ public final class SettingsUtil {
                 Intent intent = new Intent(activity, OnBoardingActivity.class);
                 activity.startActivity(intent);
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, 0));
+        items.add(new BRSettingsItem(WEB_BUNDLE, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBundlePickerDialog(activity, ServerBundlesHelper.Type.WEB, ServerBundlesHelper.BRD_WEB_BUNDLES);
+            }
+        }, false, 0));
+        items.add(new BRSettingsItem(TOKEN_BUNDLE, "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBundlePickerDialog(activity, ServerBundlesHelper.Type.TOKEN, ServerBundlesHelper.BRD_TOKEN_BUNDLES);
             }
         }, false, 0));
         return items;
@@ -424,6 +438,21 @@ public final class SettingsUtil {
         }, false, 0));
 
         return items;
+    }
+
+    private static void showBundlePickerDialog(final Context context,
+                                              final ServerBundlesHelper.Type bundleType,
+                                              final String[] options) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String selectedBundle = options[which];
+                Toast.makeText(context, BUNDLE_SET + selectedBundle, Toast.LENGTH_LONG).show();
+                ServerBundlesHelper.setDebugBundle(context.getApplicationContext(), bundleType, selectedBundle);
+            }
+        });
+        dialogBuilder.show();
     }
 
 }
