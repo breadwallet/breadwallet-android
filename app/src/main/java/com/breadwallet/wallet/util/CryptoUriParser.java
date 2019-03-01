@@ -186,6 +186,9 @@ public class CryptoUriParser {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
+
+            } else if(keyValue[0].trim().equals("elapay")) {
+                obj.elapay = new BigDecimal(keyValue[1].trim());
                 // ETH payment request amounts are called `value`
             } else if (keyValue[0].trim().equals("value")) {
                 obj.value = new BigDecimal(keyValue[1].trim());
@@ -304,6 +307,18 @@ public class CryptoUriParser {
 
         return true;
 
+    }
+
+    public static String createElapayUrl(BaseWalletManager wm, String amount, String address, String message){
+        if(wm==null || StringUtil.isNullOrEmpty(address)) return null;
+        String walletScheme = wm.getScheme();
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(walletScheme);
+        builder.appendPath(address);
+        builder = builder.appendQueryParameter("elapay", amount);
+        builder = builder.appendQueryParameter("message", message);
+
+        return Uri.parse(builder.build().toString().replace("/", "")).toString();
     }
 
     public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String

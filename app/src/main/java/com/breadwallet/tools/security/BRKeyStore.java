@@ -1,6 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -1062,18 +1063,19 @@ public class BRKeyStore {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         BRSharedPrefs.setUserAuthor(app, false);
-
                         brDialogView.dismiss();
                     }
                 }, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        BRSharedPrefs.setUserAuthor(app, false);
+                        BRSharedPrefs.setUserAuthor(app, true);
                         brDialogView.dismiss();
                     }
                 }, new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
+                        ActivityManager activityManager = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
+                        activityManager.getAppTasks().clear();
                         android.os.Process.killProcess(android.os.Process.myPid());
                         System.exit(0);
                         System.gc();

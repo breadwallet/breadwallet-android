@@ -1,0 +1,94 @@
+language: android
+
+sudo: required
+
+#jdk: oraclejdk8
+
+#before_cache:
+# - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+# - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+#cache:
+# directories:
+# - $HOME/.gradle/caches/
+# - $HOME/.gradle/wrapper/
+
+# env:
+#  global:
+#  - ANDROID_API=28
+#  - EMULATOR_API=28
+#  - ANDROID_BUILD_TOOLS=28.0.3
+#  - ADB_INSTALL_TIMEOUT=5 # minutes
+#  - secure: "kYQFW12wY9zzMNqtor4sTeE4k/877t0igpS/AaPon7MNr+ebqEkeg9z6L1sE+81bopDX+0K62AxO4mKVxOiGGGVU5JS1ZFWg/BhPyKCThm1tUzXCBs5s8AxWU9s9MudfTHgPLwsOhvpKogivA0ZXt5iEFrkv57A51qZFMQ0Irl8iAaMiwjzv+FRT26jCCBCKB5jlRwocwOB7wEujlUN289i5y9o/wcWhBmA5YY7y64hdlZEs/bmF7RXXFpsRzmpvcm9rbnffBfSgDXAmnM1U7S9BLNgxtEoXraXlVlejnkti8+7aBmAqbQTto69eLPJlnGZ917BQLuhPqdapMNvLOwGP/CUVkzAMYsIndQafJsleRTYIRTlH2I+/ZMmaCZVUE4dxO97j1Nrbbksqb5zTzxKVJjgF5FpgZoa8KZeKh5TvFzWP5ZON53UcKM34J2D9juV6iNt34yffYq5OPkCblDHPiL9SbK01fGYlgVhdO9w9O/D+ybdsPC32syHnQgNQTH7GZlIJdJzamv9dN4zB/Hqk3LlECMHXWdYxCP/2EnEIFWO9P0TPw+Fb2B0t7hi/8ksvd7O2PaK3JL9i39prR4ZGeNkrJ3EmmM4dOV8CVZpTLrx+FshHgEszkmkn/nuiMrEqdz/4LK0fRsPLXkr9RFd2HJGrW6ng/lPYkVBT60w="
+#  - secure: "0Pm10LgXvYeSTGpK6QD3+BCMQv2C5OrBubk67im9R1r9HnxBViyGihZrnOzOdUDnP/j3VwCiuRmWBjmXVmG3c1K+vSpba14H3G9FFKQAwaXcKx3fsMVrXc2NFINjwL8tjKYWAQOPrXC2c1GDQiPOYgWP0YNK17UkAX0nRDZ7nCXZRvlG9xV+TF7lHKgsg7Twjp9hvXZaPJYnGPSyuko6JkBtuGstdptaO7OjfaRCrotiWT848Q/KzOQdVAzTmxMARInMRMXEP+XFkzEh7MKCx1rfz6xVvnA4iTEK8XHmk+/iqpTMFRHr2TpfT0QAF/+4hBpnJ6460ySqybUYd5kgJap+v+lL6w3s8o6gISR6m7YltqelwDeku51ZmgDtOPVmsfJIAd+XQ0SwD0gYd8r//wnNPKssGoGgDqp56g9lVlhzo9ZAkRk2PZh+o8G6vZpARIPnG2a/ENx8tC4QqoiGoR4swrgqDtqU6eruB0dfoNkkr+RiNTKsfJPs4ktQ31dF/qRJW/uLHSPWWrzonn2TE2+wf4pq1lYXadGfl+GhMcuXxTaWP9mEviS2BliGwVHQ8hn2yI40dXfIjZ0yZJPujQfRW/9tbAuKPGFdUm8RcglOpHOdNczMnodq0WfkbIVi/ohYEWmlK8LLvrhafNsevy+gP+c2Fqxw5mI3WnY/T1o="
+
+android:
+  components:
+    - build-tools-28.0.3
+    - android-28
+    - extra-android-m2repository
+    - extra-android-support
+
+# - tools
+# - platform-tools
+# - build-tools-$ANDROID_BUILD_TOOLS
+# - android-$ANDROID_API
+# - android-$EMULATOR_API_LEVEL
+# - extra-google-m2repository
+# - extra-android-m2repository # for design library
+# - addon-google_apis-google-28 # google play services
+# - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
+# - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+
+licenses:
+  - 'android-sdk-preview-license-.+'
+  - 'android-sdk-license-.+'
+  - 'google-gdk-license-.+'
+
+before_install:
+- echo "y" | sdkmanager "cmake;3.6.4111459"
+#- openssl aes-256-cbc -K $encrypted_c0801aa05af4_key -iv $encrypted_c0801aa05af4_iv -in example_keystore.jks.enc -out example_keystore.jks -d
+#- mkdir "$ANDROID_HOME/licenses" || true
+#- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+#- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+- chmod +x gradlew
+- ./gradlew dependencies || true # DON'T ADD unless you are getting "Install missing components using SDK manager"
+#Source: https://medium.com/@oldergod/constraint-layout-and-circleci-travis-d50342696d2
+
+before_script:
+  - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+  - unzip -qq android-ndk-r16b-linux-x86_64.zip
+  - export ANDROID_NDK_HOME=`pwd`/android-ndk-r16b
+  - export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME"
+  - export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
+  - export PATH=$PATH:${ANDROID_NDK_HOME}
+  - env
+
+script:
+#- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+- "./gradlew assembleRelease"
+
+#before_deploy:
+#- cp $TRAVIS_BUILD_DIR/example_keystore.jks $HOME
+#- cd app/build/outputs/apk/
+#- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/example_keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk ExampleKeystoreAlias
+
+# Verification
+#- jarsigner -verify app-release-unsigned.apk
+#- "${ANDROID_HOME}/build-tools/24.0.2/zipalign -v 4 app-release-unsigned.apk TravisExample.apk"
+
+
+deploy:
+  provider: releases
+  file: elephant_wallet.apk
+  skip_cleanup: true
+
+#  on:
+#    repo: harmittaa/travis-example-android
+#    tags: true
+#    jdk: oraclejdk8
+#  api_key:
+#    secure: "ShxzZffSJIrdwKSLbyBl8u9GLjo7kAT0a1FkAeD187qSZV4rUqM/tvNDeH6ySR/YxLvRg/UyfGyidcmh1z98heq5aBCfZj3xHn8rLi8HBfrTsMFs/NqhnJXKVzjbEGHe3hw9XghPV1QqWkZl9DGb5Bgptpz0wuF9m9X3C5ywKBFUdLbIKKgwv/6Qx3ByROECndKvkhwtNdXcO3NVPm68TIuGU5AMhyNFhbyattyDY8TyCDnSOQXoFSto71lYyKY5WafFiS4b92HgIHTZxOV2FBnWIaHTIDKdtHcBj/eNYRVb8CVjjxu2xoBcmgWVtxl/04RDq+mZX/lZuLLyIN0UN0h9Zj0Ks9ywmWRQQYKPm2qMJeCBDpBAqXTU6m0AeY3CdHTwvM4lx5gAO/exBe257Dk+TpvUdVH1auu9df3V7ERgfOkoUC9bRyy1E/kzK7p5dtEoyIJtGq+dqL5iMvaDbmrqFpUxtPShJupaaXHiSjD1gcusd+r7BklpbAWIDoLm7q3iuOzA/L86fB7VGkTOUaVYpJQ2AJRx8GfqcxxDAzQDfW7Ev7qsQmjUMjE1ck1XVlZmXgMmvCgnAve9yph0mPPma6iHsaocoE9SDJi07x6NFVfAEWLQupZufYBCsc8VCFUDrx2g/YsxoAecF+AEPkQ45eG9YRp2r6nayB1S864="
+
+
+

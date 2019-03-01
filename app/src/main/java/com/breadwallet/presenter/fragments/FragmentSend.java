@@ -954,6 +954,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), request.value, null);
                 fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
                 amount = fiatAmount.toPlainString();
+            } else if(request.elapay != null){
+                amount = request.elapay.toPlainString();
             }
             if(!StringUtil.isNullOrEmpty(amount)) {
                 showKeyboard(true);

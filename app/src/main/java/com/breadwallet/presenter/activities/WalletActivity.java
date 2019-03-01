@@ -422,9 +422,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
                         if(!isValide) return;
-                        String result = "elastos:"+factory.getPaymentAddress()+"?amount="+factory.getAmount()
-                                +((StringUtil.isNullOrEmpty(des)||des.equals("null"))?"":"&message="+des);
-                        Log.i(TAG, "walletActivity1 server result: "+result);
+                        BaseWalletManager walletManager = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
+                        String result = CryptoUriParser.createElapayUrl(walletManager, factory.getAmount(), factory.getPaymentAddress(), des);
                         if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
                             CryptoUriParser.processRequest(WalletActivity.this, result,
                                     WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));
