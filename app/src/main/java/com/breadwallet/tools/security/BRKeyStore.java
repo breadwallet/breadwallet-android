@@ -1068,7 +1068,7 @@ public class BRKeyStore {
                 }, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        BRSharedPrefs.setUserAuthor(app, false);
+                        BRSharedPrefs.setUserAuthor(app, true);
                         brDialogView.dismiss();
                     }
                 }, new DialogInterface.OnDismissListener() {
