@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -53,24 +54,28 @@ public class IntroActivity extends BRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
-        setOnClickListeners();
-        updateBundles();
-        ImageButton faq = findViewById(R.id.faq_button);
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
-                UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
+
+        // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
+        if (BreadApp.isDeviceStateValid()) {
+            setContentView(R.layout.activity_intro);
+            setOnClickListeners();
+            updateBundles();
+            ImageButton faq = findViewById(R.id.faq_button);
+            faq.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!UiUtils.isClickAllowed()) return;
+                    BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
+                    UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
+                }
+            });
+
+            if (BuildConfig.DEBUG) {
+                Utils.printPhoneSpecs(this);
             }
-        });
 
-        if (BuildConfig.DEBUG) {
-            Utils.printPhoneSpecs(this);
+            PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
         }
-
-        PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
     }
 
     @Override
