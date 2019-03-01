@@ -8,7 +8,7 @@ android {
     ext {
         brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 7     // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdEngineeringVersion = 3 // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 9       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
@@ -108,6 +108,7 @@ android {
         }
     }
     lintOptions {
+        lintConfig file("lint.xml")
         // set to true to turn off analysis progress reporting by lint
         quiet false
 
@@ -141,7 +142,6 @@ android {
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
 
-            ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
 
             externalNativeBuild {
@@ -165,6 +165,33 @@ android {
                             '${protobuf.generatedFilesBaseDir}/main/javalite']
         }
     }
+
+    task downloadBundles() {
+        def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
+        def stagingHost = "api.breadwallet.com"
+        def releaseHost = "stage2.breadwallet.com"
+        for (String bundleName : bundles) {
+            def fileUrl
+            def resFolder
+            if (bundleName.contains("staging")) {
+                fileUrl = "https://${stagingHost}/assets/bundles/${bundleName}/download"
+                resFolder = "${projectDir}/src/debug/res/raw/"
+            } else {
+                fileUrl = "https://${releaseHost}/assets/bundles/${bundleName}/download"
+                resFolder = "${projectDir}/src/main/res/raw/"
+            }
+
+            def folder = file(resFolder)
+            if( !folder.exists() ) {
+                folder.mkdirs()
+            }
+            println("Downloading: ${fileUrl} into ${resFolder}")
+            new File("${resFolder}${bundleName.replace("-", "_")}.tar").withOutputStream { out ->
+                new URL(fileUrl).withInputStream { from -> out << from }
+            }
+        }
+    }
+    preBuild.dependsOn(downloadBundles)
 }
 
 protobuf {
@@ -232,11 +259,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'junit:junit:4.12'
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty:jetty-continuation:9.2.19.v20160908' //do not update
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty:jetty-webapp:9.2.19.v20160908' //do not update
-    // noinspection GradleDependency
     implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908' //do not update
     implementation 'org.slf4j:slf4j-api:1.7.22'
     implementation 'tools.fastlane:screengrab:1.1.0'

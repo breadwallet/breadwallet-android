@@ -6,6 +6,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import org.json.JSONArray;
@@ -87,6 +88,8 @@ public class BRSharedPrefs {
     private static final String TRUST_NODE_PREFIX = "trustNode_";
     private static final String APP_BACKGROUNDED_FROM_HOME = "appBackgroundedFromHome";
     private static final String DEBUG_HOST = "debug_host";
+    private static final String DEBUG_SERVER_BUNDLE = "debug_server_bundle";
+    private static final String HTTP_SERVER_PORT = "http_server_port";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -636,6 +639,52 @@ public class BRSharedPrefs {
     public static boolean getEmailOptInDismissed(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(EMAIL_OPT_IN_DISMISSED, false);
+    }
+
+    /**
+     * Get the debug bundle from shared preferences or empty if not available.
+     *
+     * @param context    Execution context.
+     * @param bundleType Bundle type.
+     * @return Saved debug bundle or empty.
+     */
+    public static String getDebugBundle(Context context, ServerBundlesHelper.Type bundleType) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(DEBUG_SERVER_BUNDLE + bundleType.name(), "");
+    }
+
+    /**
+     * Save the bundle to use in debug mode.
+     *
+     * @param context    Execution context.
+     * @param bundleType Bundle type.
+     * @param bundle     Debug bundle.
+     */
+    public static void putDebugBundle(Context context, ServerBundlesHelper.Type bundleType, String bundle) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putString(DEBUG_SERVER_BUNDLE + bundleType.name(), bundle).apply();
+    }
+
+    /**
+     * Get the port that was used to start the HTTPServer.
+     *
+     * @param context Execution context.
+     * @return The last port used to start the HTTPServer.
+     */
+    public static int getHttpServerPort(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(HTTP_SERVER_PORT, 0);
+    }
+
+    /**
+     * Save the port used to start the HTTPServer.
+     *
+     * @param context Execution context.
+     * @param port    Port used when starting the HTTPServer
+     */
+    public static void putHttpServerPort(Context context, int port) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putInt(HTTP_SERVER_PORT, port).apply();
     }
 
 }
