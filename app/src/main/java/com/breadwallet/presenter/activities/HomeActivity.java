@@ -62,7 +62,9 @@ import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -136,6 +138,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
                     if (mAdapter.getItemAt(position).getCurrencyCode()
                             .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
+                        if (!BRSharedPrefs.getRewardsAnimationShown(HomeActivity.this)) {
+                            Map<String, String> attributes = new HashMap<>();
+                            attributes.put(EventUtils.EVENT_ATTRIBUTE_CURRENCY, WalletTokenManager.BRD_CURRENCY_CODE);
+                            EventUtils.pushEvent(EventUtils.EVENT_REWARDS_OPEN_WALLET, attributes);
+                        }
                         newIntent = new Intent(HomeActivity.this, BrdWalletActivity.class);
                     } else {
                         newIntent = new Intent(HomeActivity.this, WalletActivity.class);
