@@ -13,6 +13,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.util.BRConstants;
 
 /**
  * This is a transparent activity used to host dialog fragments. {@link DialogActivity#startDialogActivity} should
@@ -23,6 +24,7 @@ public class DialogActivity extends AppCompatActivity {
     private static final String TAG = DialogActivity.class.getName();
 
     private static final String DIALOG_TYPE_EXTRA = "com.breadwallet.view.dialog.DialogActivity";
+    private static final String BRD_SUPPORT_EMAIL = "support@brd.com";
 
     public enum DialogType {
         ENABLE_DEVICE_PASSWORD,
@@ -74,7 +76,7 @@ public class DialogActivity extends AppCompatActivity {
         BRDialogView dialog = showDialog(
                 getString(R.string.JailbreakWarnings_title),
                 getString(R.string.Prompts_NoScreenLock_body_android),
-                getString(R.string.Button_securitySettings),
+                getString(R.string.Button_securitySettings_android),
                 getString(R.string.AccessibilityLabels_close),
                 new BRDialogView.BROnClickListener() {
                     @Override
@@ -100,8 +102,8 @@ public class DialogActivity extends AppCompatActivity {
         BRDialogView dialog = showDialog(
                 getString(R.string.Alert_keystore_title_android),
                 getString(R.string.Alert_keystore_invalidated_android),
-                getString(R.string.Button_ok),
-                null,
+                getString(R.string.Button_wipe_android),
+                getString(R.string.Button_contactSupport_android),
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -109,7 +111,18 @@ public class DialogActivity extends AppCompatActivity {
                         BreadApp.clearApplicationUserData();
                     }
                 },
-                null,
+                new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType(BRConstants.CONTENT_TYPE_TEXT);
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{BRD_SUPPORT_EMAIL});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Alert_keystore_title_android));
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                },
                 null
         );
 
