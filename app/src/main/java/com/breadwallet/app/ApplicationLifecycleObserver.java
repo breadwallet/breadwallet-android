@@ -29,8 +29,6 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.util.Log;
 
-import com.breadwallet.app.util.UserMetricsUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +56,6 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
     public void onStart() {
         Log.d(TAG, "onStart");
         onLifeCycleEvent(Lifecycle.Event.ON_START);
-
-        UserMetricsUtil.sendUserMetricsRequest(); //TODO: move out to more appropriate class who listens for these events.
     }
 
     /**

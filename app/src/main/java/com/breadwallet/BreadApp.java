@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.view.dialog.DialogActivity;
 import com.breadwallet.view.dialog.DialogActivity.DialogType;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
 import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
@@ -323,6 +324,13 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         }
                     });
                     APIClient.getInstance(this).updatePlatform(this);
+
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserMetricsUtil.makeUserMetricsRequest(mInstance);
+                        }
+                    });
                 }
                 break;
             case ON_STOP:
