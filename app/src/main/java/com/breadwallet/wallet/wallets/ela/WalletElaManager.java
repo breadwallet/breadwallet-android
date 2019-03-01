@@ -74,6 +74,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     private static final String NAME = "Elastos";
     private static final String ELA_ADDRESS_PREFIX = "E";
 
+
     public static final BigDecimal ONE_ELA_TO_SALA = new BigDecimal(ONE_ELA_IN_SALA);
 
     private static WalletElaManager mInstance;
@@ -161,7 +162,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public boolean isAddressValid(String address) {
         Log.i(TAG, "isAddressValid");
-        return !Utils.isNullOrEmpty(address) && address.startsWith(ELA_ADDRESS_PREFIX);
+        return !Utils.isNullOrEmpty(address) && (address.startsWith(ELA_ADDRESS_PREFIX)
+                || address.startsWith("8"));
     }
 
     @Override
