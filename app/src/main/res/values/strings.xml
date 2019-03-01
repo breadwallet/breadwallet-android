@@ -38,10 +38,6 @@
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Your BRD encrypted data was recently invalidated because your Android lock screen was disabled.</string>
-    <!-- Keystore error title -->
-    <string name="Alert.keystore.title.android">Android KeyStore Error</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">No internet connection found. Check your connection and try again.</string>
     <!-- General error message -->
@@ -1043,8 +1039,21 @@
     <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
     <string name="Font.Celevenia">Celevenia.otf</string>
 
+    <!-- Updates native.strings once design team confirms copy -->
+
+    <!-- New -->
+    <!-- Open Security Settings -->
+    <string name="Button.securitySettings.android">Security Settings</string>
+    <!-- Opens a email compose window with our support email in the to field.-->
+    <string name="Button.contactSupport.android">Contact Support</string>
+    <!-- Wipes the user's application data.-->
+    <string name="Button.wipe.android">Wipe</string>
+
+    <!-- Modified -->
     <!-- Instruction how to enable device encryption -->
     <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Enable screen lock in your settings to continue.</string>
-    <!-- Open Security Settings -->
-    <string name="Button.securitySettings">Security Settings</string>
+    <!-- Key store error title -->
+    <string name="Alert.keystore.title.android">Android Key Store Error</string>
+    <!-- Warn user key store data has been invalidate because the user change their security settings. -->
+    <string name="Alert.keystore.invalidated.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your paper key.</string>
 </resources>
