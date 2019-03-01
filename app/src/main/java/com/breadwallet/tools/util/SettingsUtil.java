@@ -143,7 +143,7 @@ public final class SettingsUtil {
                 String url = "https://redpacket.elastos.org";
                 UiUtils.openUrlByBrowser(activity, url);
             }
-        }, false, R.drawable.ic_red_package, true));
+        }, false, R.drawable.ic_red_package, false));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override
