@@ -56,7 +56,6 @@ before_install:
 #Source: https://medium.com/@oldergod/constraint-layout-and-circleci-travis-d50342696d2
 
 before_script:
-before_script:
   - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
   - unzip -qq android-ndk-r16b-linux-x86_64.zip
   - export ANDROID_NDK_HOME=`pwd`/android-ndk-r16b
