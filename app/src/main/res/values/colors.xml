@@ -11,7 +11,7 @@
     <item name="light_gray" type="color">#ff9d9d9d</item>
     <item name="separator_gray" type="color">#c6c6c6</item>
     <item name="gray_shadow" type="color">#41484848</item>
-    <item name="page_indicator_gray" type="color">#221f3f</item>
+    <item name="page_indicator_gray" type="color">#9791A0</item>
     <item name="extra_light_gray" type="color">#D6DAE1</item>
     <item name="dark_gray" type="color">#65696e</item>
     <item name="almost_black" type="color">#303030</item>
@@ -32,6 +32,7 @@
     <item name="intro_status_bar" type="color">#ffbf7f</item>
     <item name="warning_status_bar" type="color">#7f5225</item>
     <item name="camera_guideline" type="color">#50636363</item>
+    <item name="menu_icons" type="color">#29ABE2</item>
 
     <item name="logo_gradient_start" type="color">#F8A445</item>
     <item name="logo_gradient_end" type="color">#fc5394</item>

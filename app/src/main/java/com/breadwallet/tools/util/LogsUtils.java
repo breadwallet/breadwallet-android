@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.platform.APIClient;
 
 import org.apache.commons.io.IOUtils;
 
@@ -83,7 +81,7 @@ public class LogsUtils {
         stringBuilder.append("\nBuild Type: " + BuildConfig.BUILD_TYPE);
         stringBuilder.append("\nBuild Flavor: " + BuildConfig.FLAVOR);
         stringBuilder.append("\nApp Version: " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_VERSION));
-        for (String bundleName : APIClient.BUNDLE_NAMES) {
+        for (String bundleName : ServerBundlesHelper.getBundleNames(context)) {
             stringBuilder.append(String.format("\n Bundle %s - Version: %s", bundleName, BRSharedPrefs.getBundleHash(context, bundleName)));
         }
         stringBuilder.append("\nNetwork: " + (BuildConfig.BITCOIN_TESTNET ? "Testnet" : "Mainnet"));

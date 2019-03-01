@@ -57,3 +57,9 @@ fastlane/
 Release_checklist
 
 /app/.externalNativeBuild/
+
+# Build bundles
+app/src/main/res/raw/brd_tokens_prod.tar
+app/src/debug/res/raw/brd_tokens_staging.tar
+app/src/main/res/raw/brd_web_3.tar
+app/src/debug/res/raw/brd_web_3_staging.tar

@@ -80,7 +80,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY,
+                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+                        HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                         WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
                 UiUtils.startWebActivity(HomeActivity.this, url);
             }
@@ -88,7 +89,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mTradeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.URL_TRADE);
+                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE));
             }
         });
         mMenuLayout.setOnClickListener(new View.OnClickListener() {

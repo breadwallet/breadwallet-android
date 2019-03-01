@@ -106,7 +106,7 @@ public final class AppEntryPointHandler {
         try {
             String encodedPlatformPath = URLEncoder.encode(platformPath, PATH_ENCODING);
             String platformUrl = String.format(PLATFORM_URL_FORMAT, encodedPlatformPath);
-            String fullPlatformUrl = String.format("%s%s", HTTPServer.PLATFORM_BASE_URL, platformUrl);
+            String fullPlatformUrl = HTTPServer.getPlatformBaseUrl() + platformUrl;
             UiUtils.startWebActivity((Activity) context, fullPlatformUrl);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "processPlatformDeepLinkingUrl: ", e);

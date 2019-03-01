@@ -100,7 +100,7 @@
                 android:ems="10"
                 android:hint="@string/Send.toLabel"
                 android:inputType="textPersonName"
-                android:maxLines="1"
+                android:singleLine="true"
                 />
 
             <com.breadwallet.presenter.customviews.BRButton

@@ -1032,8 +1032,4 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
         super.onBackPressed();
     }
 
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 }

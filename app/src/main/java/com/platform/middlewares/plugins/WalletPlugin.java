@@ -412,11 +412,7 @@ public class WalletPlugin implements Plugin {
             BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
             return;
         }
-        BigDecimal bigAmount =
-                WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, currency)
-                        ? new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE)
-                        : new BigDecimal(numerator);
-        final CryptoRequest item = new CryptoRequest.Builder().setAddress(addr).setAmount(bigAmount).build();
+        final CryptoRequest item = new CryptoRequest.Builder().setAddress(addr).setAmount(new BigDecimal(numerator)).build();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -429,15 +425,6 @@ public class WalletPlugin implements Plugin {
             }
         });
 
-    }
-
-    private static int nrOfZeros(String n) {
-        int count = 0;
-        while (n.charAt(n.length() - 1) == '0') {
-            n = new BigDecimal(n).divide(new BigDecimal(10)).toPlainString();
-            count++;
-        }
-        return count;
     }
 
     private JSONArray getCurrencyData(Context app) {

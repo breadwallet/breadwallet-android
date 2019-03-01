@@ -143,7 +143,8 @@ public class OnBoardingActivity extends BRActivity {
     }
 
     public static void showBuyScreen(Activity activity) {
-        String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY,
+        String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+                HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                 WalletBitcoinManager.getInstance(activity).getCurrencyCode());
         UiUtils.startWebActivity(activity, url);
     }
