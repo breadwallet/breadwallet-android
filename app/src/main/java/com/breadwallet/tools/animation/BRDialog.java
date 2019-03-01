@@ -45,6 +45,7 @@ public class BRDialog {
      *
      * @param context needs to be activity
      */
+    // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
     public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
