@@ -41,6 +41,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.EventUtils;
 
 import java.io.File;
 
@@ -70,6 +71,7 @@ public class BrdWalletActivity extends WalletActivity {
             @Override
             public void onClick(View v) {
                 //Collapse without animation before showing the rewards webview.
+                EventUtils.pushEvent(EventUtils.EVENT_REWARDS_BANNER);
                 appBarLayout.setExpanded(false, false);
                 UiUtils.openRewardsWebView(BrdWalletActivity.this);
             }
