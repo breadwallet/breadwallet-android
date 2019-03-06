@@ -47,7 +47,7 @@ licenses:
 
 before_install:
 - echo "y" | sdkmanager "cmake;3.6.4111459"
-#- openssl aes-256-cbc -K $encrypted_c0801aa05af4_key -iv $encrypted_c0801aa05af4_iv -in example_keystore.jks.enc -out example_keystore.jks -d
+openssl aes-256-cbc -K $encrypted_b486aef5df92_key -iv $encrypted_b486aef5df92_iv -in walletlibrary.jks.enc -out walletlibrary.jks -d
 #- mkdir "$ANDROID_HOME/licenses" || true
 #- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
 #- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
@@ -66,7 +66,7 @@ before_script:
 
 script:
 #- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
-- "./gradlew assembleRelease"
+  - "./gradlew assembleRelease"
 
 #before_deploy:
 #- cp $TRAVIS_BUILD_DIR/example_keystore.jks $HOME
@@ -82,6 +82,8 @@ deploy:
   provider: releases
   file: elephant_wallet.apk
   skip_cleanup: true
+  on:
+    branch: dev
 
 #  on:
 #    repo: harmittaa/travis-example-android
