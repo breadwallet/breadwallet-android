@@ -166,13 +166,15 @@ public final class EventUtils {
                     eventJsonObject.put(SESSION_ID, mSessionId);
                     eventJsonObject.put(TIME, event.getTime());
                     eventJsonObject.put(EVENT_NAME, event.getEventName());
-                    JSONObject metadataJsonObject = new JSONObject();
                     if (event.getAttributes() != null && event.getAttributes().size() > 0) {
+                        JSONArray metadataJsonArray = new JSONArray();
                         for (Map.Entry<String, String> entry : event.getAttributes().entrySet()) {
+                            JSONObject metadataJsonObject = new JSONObject();
                             metadataJsonObject.put(KEY, entry.getKey());
                             metadataJsonObject.put(VALUE, entry.getValue());
+                            metadataJsonArray.put(metadataJsonObject);
                         }
-                        eventJsonObject.put(METADATA, metadataJsonObject);
+                        eventJsonObject.put(METADATA, metadataJsonArray);
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "saveEvents: ", e);
