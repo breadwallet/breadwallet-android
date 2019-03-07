@@ -996,4 +996,7 @@
 </string>
   <string name="User.Not.Author.Exit">Exit</string>
   <string name="User.Not.Author.Continue">Continue</string>
+
+  <!--profile-->
+  <string name="My.Profile.Title">My Profile</string>
 </resources>
