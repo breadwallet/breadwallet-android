@@ -999,4 +999,13 @@
 
   <!--profile-->
   <string name="My.Profile.Title">My Profile</string>
+  <string name="My.Profile.Nickname">Nickname</string>
+  <string name="My.Profile.Email">Email</string>
+  <string name="My.Profile.Mobile">Mobile</string>
+  <string name="My.Profile.ID">ID（China）</string>
+
+  <string name="My.Profile.New">New</string>
+  <string name="My.Profile.Pending">Pending</string>
+  <string name="My.Profile.Completed">Completed</string>
+
 </resources>

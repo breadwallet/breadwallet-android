@@ -66,6 +66,11 @@ public final class SettingsUtil {
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
 
+    public static final int NONE = -1;
+    public static final int IS_NEW = 0;
+    public static final int IS_PENDING = 1;
+    public static final int IS_COMPLETED = 2;
+
     private SettingsUtil() {
     }
 
@@ -143,7 +148,7 @@ public final class SettingsUtil {
                 String url = "https://redpacket.elastos.org";
                 UiUtils.openUrlByBrowser(activity, url);
             }
-        }, false, R.drawable.ic_red_package, false));
+        }, false, R.drawable.ic_red_package));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
             @Override
@@ -377,6 +382,39 @@ public final class SettingsUtil {
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
+
+        return items;
+    }
+
+    public static List<BRSettingsItem> getProfileSettings(final Context activity){
+        List<BRSettingsItem> items = new ArrayList<>();
+        items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Nickname), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        }, false, R.drawable.ic_profile_nickname, SettingsUtil.IS_COMPLETED));
+
+        items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Email), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        }, false, R.drawable.ic_profile_email, SettingsUtil.IS_PENDING));
+
+        items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Mobile), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        }, false, R.drawable.ic_profile_mobile, SettingsUtil.IS_PENDING));
+
+        items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_ID), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        }, false, R.drawable.ic_profile_id, SettingsUtil.IS_PENDING));
 
         return items;
     }

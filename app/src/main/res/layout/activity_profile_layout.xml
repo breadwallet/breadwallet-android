@@ -31,7 +31,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
             android:text="@string/My.Profile.Title"
-            android:textColor="@color/black_333333"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
@@ -92,7 +92,7 @@
         app:layout_constraintTop_toTopOf="@+id/profile_head_bg"
         android:layout_marginTop="17dp"
         android:layout_marginRight="30dp"
-        android:background="@drawable/ic_profile_credits_unnormal_icon"/>
+        android:background="@drawable/ic_profile_credits_normal_icon"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="wrap_content"
@@ -102,5 +102,28 @@
         app:layout_constraintRight_toRightOf="@+id/profile_head_bg"
         android:textColor="@color/black_999999"
         android:text="-Complete your profile, build your own credits-"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/profile_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/black_999999"
+        app:layout_constraintLeft_toLeftOf="@+id/profile_head_bg"
+        app:layout_constraintTop_toBottomOf="@+id/profile_head_bg"
+        android:layout_marginTop="24dp"
+        android:text="Profile"/>
+
+    <ListView
+        android:id="@+id/profile_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_below="@+id/divider"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/profile_list_title"/>
 
 </android.support.constraint.ConstraintLayout>
