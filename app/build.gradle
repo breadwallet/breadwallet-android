@@ -141,9 +141,7 @@ android {
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
-
-            ext.alwaysUpdateBuildId = false
-
+            
             externalNativeBuild {
                 cmake {
                     cFlags "-DBITCOIN_DEBUG=1"
