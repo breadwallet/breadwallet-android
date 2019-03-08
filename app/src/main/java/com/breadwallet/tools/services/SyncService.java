@@ -3,6 +3,8 @@ package com.breadwallet.tools.services;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -139,8 +141,12 @@ public class SyncService extends /*Job*/ IntentService {
      * @param currencyCode    The currency code of the wallet that is syncing.
      */
     public static void startService(Context context, String currencyCode) {
-//        enqueueWork(context, SyncService.class, JOB_ID, createIntent(context, SyncService.ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
-        context.startService(createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
+        // Check if the app is in foreground before starting the service to avoid getting a ISE
+        if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            context.startService(createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
+        } else {
+            Log.e(TAG, "startService: the app is in background, service not started");
+        }
     }
 
     /**
