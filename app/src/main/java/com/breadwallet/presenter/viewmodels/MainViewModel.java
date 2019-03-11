@@ -44,6 +44,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.google.common.collect.Maps;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -169,7 +170,7 @@ public class MainViewModel extends AndroidViewModel {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                WalletsMaster.getInstance(getApplication()).refreshBalances(getApplication());
+                WalletsMaster.getInstance(getApplication()).refreshBalances();
 
                 // Also, invoke refresh of "current" wallet's address
                 BaseWalletManager currentWalletManager =
@@ -200,7 +201,7 @@ public class MainViewModel extends AndroidViewModel {
             if (walletManager != null) {
                 wallet.setExchangeRate(walletManager.getFiatExchangeRate(getApplication()));
                 wallet.setFiatBalance(walletManager.getFiatBalance(getApplication()));
-                wallet.setCryptoBalance(walletManager.getCachedBalance(getApplication()));
+                wallet.setCryptoBalance(walletManager.getBalance());
             } else {
                 Log.e(TAG, "No wallet manager for currency code: " + wallet.getCurrencyCode());
             }
@@ -364,11 +365,41 @@ public class MainViewModel extends AndroidViewModel {
         /**
          * Handler method for balance updates.
          *
-         * @param newBalance The updated balance (NOTE: actual balance is not being propagated.)
+         * @param newBalance The updated balance.
          */
         @Override
-        public void onBalanceChanged(BigDecimal newBalance) {
-            updateWallets();
+        public void onBalanceChanged(String currencyCode, BigDecimal newBalance) {
+            Log.w(TAG, "onBalanceChanged: new update for " + currencyCode + " with balance " + newBalance);
+            Map<String, BigDecimal> mapBalance = new HashMap<>();
+            mapBalance.put(currencyCode, newBalance);
+            onBalancesChanged(mapBalance);
+        }
+
+        @Override
+        public void onBalancesChanged(Map<String, BigDecimal> balanceMap) {
+            List<Wallet> wallets = mWallets.getValue();
+            if (wallets == null) {
+                return;
+            }
+            for (Wallet wallet : wallets) {
+                if (balanceMap.containsKey(wallet.getCurrencyCode())) {
+                    BaseWalletManager walletManager = mCurrencyToWalletManager.get(wallet.getCurrencyCode());
+                    if (walletManager != null) {
+                        wallet.setExchangeRate(walletManager.getFiatExchangeRate(getApplication()));
+                        wallet.setFiatBalance(walletManager.getFiatBalance(getApplication()));
+                        wallet.setCryptoBalance(balanceMap.get(wallet.getCurrencyCode()));
+                    } else {
+                        Log.e(TAG, "onBalancesChanged: No wallet manager for currency code: " + wallet.getCurrencyCode());
+                    }
+                }
+            }
+
+            // Get aggregated fiat balance
+            BigDecimal fiatTotalAmount =
+                    WalletsMaster.getInstance(getApplication()).getAggregatedFiatBalance(getApplication());
+
+            setWalletsLiveData(wallets);
+            setAggregatedFiatBalanceLiveData(fiatTotalAmount);
         }
     }
 
