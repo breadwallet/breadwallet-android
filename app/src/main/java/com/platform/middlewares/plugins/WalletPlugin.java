@@ -446,7 +446,7 @@ public class WalletPlugin implements Plugin {
 
                 JSONObject balance = new JSONObject();
 
-                BigDecimal rawBalance = walletManager.getCachedBalance(app);
+                BigDecimal rawBalance = walletManager.getBalance();
                 String denominator = walletManager.getDenominator();
                 balance.put(KEY_CURRENCY, walletManager.getCurrencyCode());
                 balance.put(KEY_NUMERATOR, rawBalance.toPlainString());

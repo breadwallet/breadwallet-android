@@ -38,6 +38,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 
 /**
@@ -273,7 +274,12 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     }
 
     @Override
-    public void onBalanceChanged(BigDecimal newBalance) {
+    public void onBalanceChanged(String currencyCode, BigDecimal newBalance) {
+        updateQr();
+    }
+
+    @Override
+    public void onBalancesChanged(Map<String, BigDecimal> balanceMap) {
         updateQr();
     }
 }

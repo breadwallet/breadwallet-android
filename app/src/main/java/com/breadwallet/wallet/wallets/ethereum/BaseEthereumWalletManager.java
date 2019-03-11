@@ -70,8 +70,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     }
 
     @Override
-    public void onBalanceChanged(Context context, BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(context, getCurrencyCode(), balance);
+    public void onBalanceChanged(BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(getCurrencyCode(), balance);
     }
 
     // TODO not used by ETH, ERC20

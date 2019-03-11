@@ -61,6 +61,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -212,7 +213,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             @Override
             public void run() {
                 Activity app = WalletActivity.this;
-                WalletsMaster.getInstance(app).refreshBalances(app);
+                WalletsMaster.getInstance(app).refreshBalances();
                 if (mWallet != null) {
                     mWallet.refreshAddress(app);
                 }
@@ -269,7 +270,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         String fiatBalance = CurrencyUtils.getFormattedAmount(this,
                 BRSharedPrefs.getPreferredFiatIso(this), walletManager.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this,
-                walletManager.getCurrencyCode(), walletManager.getCachedBalance(this),
+                walletManager.getCurrencyCode(), walletManager.getBalance(),
                 walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
 
         mCurrencyTitle.setText(walletManager.getName());
@@ -411,7 +412,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 @Override
                 public void run() {
                     WalletEthManager.getInstance(WalletActivity.this).estimateGasPrice();
-                    wallet.refreshCachedBalance(WalletActivity.this);
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -577,13 +577,27 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     @Override
-    public void onBalanceChanged(BigDecimal newBalance) {
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateUi();
-            }
-        });
+    public void onBalanceChanged(String currencyCode, BigDecimal newBalance) {
+        if (currencyCode.equals(mCurrentWalletIso)) {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    updateUi();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onBalancesChanged(Map<String, BigDecimal> balanceMap) {
+        if (balanceMap.containsKey(mCurrentWalletIso)) {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    updateUi();
+                }
+            });
+        }
     }
 
     /**

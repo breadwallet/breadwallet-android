@@ -420,7 +420,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     SpringAnimator.failShakeAnimation(getActivity(), mAmountEdit);
                 }
 
-                if (cryptoAmount.compareTo(wm.getCachedBalance(getActivity())) > 0) {
+                if (cryptoAmount.compareTo(wm.getBalance()) > 0) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), mBalanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), mFeeText);
@@ -430,7 +430,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
-                    BigDecimal balance = ethWm.getCachedBalance(app);
+                    BigDecimal balance = ethWm.getBalance();
                     if (rawFee.compareTo(balance) > 0) {
                         if (allFilled) {
                             BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, rawFee);
@@ -671,7 +671,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String balanceString;
         if (mSelectedCurrencyCode == null)
             mSelectedCurrencyCode = wm.getCurrencyCode();
-        BigDecimal mCurrentBalance = wm.getCachedBalance(context);
+        BigDecimal mCurrentBalance = wm.getBalance();
         if (!mIsAmountLabelShown) {
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(context, mSelectedCurrencyCode));
         }

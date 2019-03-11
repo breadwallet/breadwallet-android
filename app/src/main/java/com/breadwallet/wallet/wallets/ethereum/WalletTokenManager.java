@@ -269,13 +269,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         //no need
     }
 
-    @WorkerThread
-    @Override
-    public void refreshCachedBalance(final Context context) {
-        final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_INTEGER));
-        onBalanceChanged(context, balance);
-    }
-
     @Override
     public boolean containsAddress(String address) {
         return mWalletEthManager.containsAddress(address);
@@ -346,8 +339,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     }
 
     @Override
-    public BigDecimal getCachedBalance(Context context) {
-        return BRSharedPrefs.getCachedBalance(context, getCurrencyCode());
+    public BigDecimal getBalance() {
+        return new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_INTEGER));
     }
 
     @Override
@@ -405,7 +398,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (context == null) {
             return null;
         }
-        return getFiatForSmallestCrypto(context, getCachedBalance(context), null);
+        return getFiatForSmallestCrypto(context, getBalance(), null);
     }
 
     @Override
