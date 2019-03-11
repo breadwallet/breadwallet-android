@@ -67,7 +67,7 @@ public interface BaseWalletManager {
 
     void removeBalanceChangedListener(BalanceUpdateListener list);
 
-    void onBalanceChanged(Context context, BigDecimal balance);
+    void onBalanceChanged(BigDecimal balance);
 
     void addSyncListener(SyncListener listener);
 
@@ -140,9 +140,6 @@ public interface BaseWalletManager {
     //get the core address and store it locally
     void refreshAddress(Context app);
 
-    //get the core balance and store it locally
-    void refreshCachedBalance(Context app);
-
     //get a list of all the transactions UI holders sorted by timestamp
     List<TxUiHolder> getTxUiHolders(Context app);
 
@@ -186,8 +183,11 @@ public interface BaseWalletManager {
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
 
-    //get the cached balance in the smallest unit:  satoshis.
-    BigDecimal getCachedBalance(Context app);
+    /**
+     * Get the current balance of the wallet.
+     * @return The current balance.
+     */
+    BigDecimal getBalance();
 
     //get the total amount sent in the smallest crypto unit:  satoshis.
     BigDecimal getTotalSent(Context app);
