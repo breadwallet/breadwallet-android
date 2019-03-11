@@ -57,6 +57,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class FragmentShowLegacyAddress extends ModalDialogFragment implements BalanceUpdateListener {
     private static final String TAG = FragmentShowLegacyAddress.class.getName();
@@ -205,7 +206,12 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     }
 
     @Override
-    public void onBalanceChanged(BigDecimal newBalance) {
+    public void onBalanceChanged(String currencyCode, BigDecimal newBalance) {
+        updateQr();
+    }
+
+    @Override
+    public void onBalancesChanged(Map<String, BigDecimal> balanceMap) {
         updateQr();
     }
 }
