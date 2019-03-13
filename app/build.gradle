@@ -203,6 +203,7 @@ dependencies {
     implementation 'org.kie.modules:com-google-code-gson:6.5.0.Final'
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    implementation project(':authorizelibrary')
     implementation project(':walletlibrary')
 }
 

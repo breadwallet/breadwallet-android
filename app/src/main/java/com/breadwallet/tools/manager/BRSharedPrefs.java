@@ -161,10 +161,46 @@ public class BRSharedPrefs {
         return prefs.getString("nickname", "Your Nickname");
     }
 
-    public static void putNickname(Context context, String firstAddress) {
+    public static void putNickname(Context context, String nickname) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("nickname", firstAddress);
+        editor.putString("nickname", nickname);
+        editor.apply();
+    }
+
+    public static String getEmail(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("email", "");
+    }
+
+    public static void putEmail(Context context, String email) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("email", email);
+        editor.apply();
+    }
+
+    public static String getMobile(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("mobile", "");
+    }
+
+    public static void putMobile(Context context, String mobile) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("mobile", mobile);
+        editor.apply();
+    }
+
+    public static String getID(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("ID", "");
+    }
+
+    public static void putID(Context context, String firstAddress) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ID", firstAddress);
         editor.apply();
     }
 
@@ -562,5 +598,22 @@ public class BRSharedPrefs {
         editor.putBoolean("appBackgroundedFromHome", fromHome);
         editor.apply();
 
+    }
+
+
+    public static final String NICKNAME_STATE = "nickname_state";
+    public static final String EMAIL_STATE = "email_state";
+    public static final String MOBILE_STATE  = "mobile_state";
+    public static final String ID_STATE  = "id_state";
+    public static int getProfileState(Context context, String key) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(key, 1);
+    }
+
+    public static void putProfileState(Context context, String key, int state) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, state);
+        editor.apply();
     }
 }

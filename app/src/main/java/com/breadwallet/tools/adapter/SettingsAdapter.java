@@ -107,6 +107,11 @@ public class SettingsAdapter extends ArrayAdapter<String> {
                 typeTv.setTextColor(mContext.getColor(R.color.setting_type_pending));
                 typeTv.setText(mContext.getString(R.string.My_Profile_Pending));
                 break;
+            case SettingsUtil.IS_SAVING :
+                typeTv.setVisibility(View.VISIBLE);
+                typeTv.setTextColor(mContext.getColor(R.color.setting_type_pending));
+                typeTv.setText(mContext.getString(R.string.My_Profile_Saving));
+                break;
             case SettingsUtil.IS_COMPLETED :
                 typeTv.setVisibility(View.VISIBLE);
                 typeTv.setTextColor(mContext.getColor(R.color.setting_type_completed));

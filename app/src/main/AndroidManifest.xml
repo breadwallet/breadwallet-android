@@ -296,7 +296,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presenter.activities.did.DidNickActivity"
+            android:name=".presenter.activities.did.KYCEditActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

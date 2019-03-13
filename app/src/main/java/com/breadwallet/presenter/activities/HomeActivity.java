@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
 import com.breadwallet.tools.manager.InternetManager;
@@ -21,10 +22,11 @@ import com.breadwallet.tools.manager.InternetManager;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener{
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
 
-    private static final String TAG = HomeActivity.class.getSimpleName()+"_test";
+    private static final String TAG = HomeActivity.class.getSimpleName() + "_test";
     private FragmentWallet mWalletFragment;
+    private FragmentExplore mExploreFragment;
     private Fragment mSettingFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
@@ -37,6 +39,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     showFragment(mWalletFragment);
+                    return true;
+                case R.id.navigation_explore:
+                    showFragment(mExploreFragment);
                     return true;
                 case R.id.navigation_notifications:
                     showFragment(mSettingFragment);
@@ -56,6 +61,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");
+        mExploreFragment = FragmentExplore.newInstance("Explore");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
         mCurrentFragment = mWalletFragment;
@@ -68,8 +74,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onResume() {
         super.onResume();
         boolean iscrash = getIntent().getBooleanExtra("crash", false);
-        Log.i(TAG, "iscrash:"+ iscrash);
-        if(iscrash) navigation.setSelectedItemId(R.id.navigation_home);
+        Log.i(TAG, "iscrash:" + iscrash);
+        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
         InternetManager.registerConnectionReceiver(this, this);
     }
 
@@ -80,6 +86,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private Fragment mCurrentFragment;
+
     private void showFragment(Fragment fragment) {
         if (mCurrentFragment != fragment) {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -95,7 +102,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
-        if(mWalletFragment != null)
+        if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
     }
 }

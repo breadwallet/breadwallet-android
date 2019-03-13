@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
+import com.breadwallet.presenter.activities.did.KYCEditActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -69,7 +69,13 @@ public final class SettingsUtil {
     public static final int NONE = -1;
     public static final int IS_NEW = 0;
     public static final int IS_PENDING = 1;
-    public static final int IS_COMPLETED = 2;
+    public static final int IS_SAVING = 2;
+    public static final int IS_COMPLETED = 3;
+    public static final String KYC_FROME_KEY = "KYC_FROM";
+    public static final int KYC_FROME_NICKNAME = 0;
+    public static final int KYC_FROME_EMAIL = 1;
+    public static final int KYC_FROME_MOBILE = 2;
+    public static final int KYC_FROME_ID = 3;
 
     private SettingsUtil() {
     }
@@ -391,30 +397,46 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Nickname), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                Activity currentActivity = (Activity) v.getContext();
+                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                intent.putExtra(KYC_FROME_KEY, KYC_FROME_NICKNAME);
+                currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_NICKNAME);
+                currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_profile_nickname, SettingsUtil.IS_COMPLETED));
+        }, false, R.drawable.ic_profile_nickname, BRSharedPrefs.getProfileState(activity, BRSharedPrefs.NICKNAME_STATE)));
 
         items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Email), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                Activity currentActivity = (Activity) v.getContext();
+                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                intent.putExtra(KYC_FROME_KEY, KYC_FROME_EMAIL);
+                currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_EMAIL);
+                currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_profile_email, SettingsUtil.IS_PENDING));
+        }, false, R.drawable.ic_profile_email, BRSharedPrefs.getProfileState(activity, BRSharedPrefs.EMAIL_STATE)));
 
         items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_Mobile), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                Activity currentActivity = (Activity) v.getContext();
+                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                intent.putExtra(KYC_FROME_KEY, KYC_FROME_MOBILE);
+                currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
+                currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_profile_mobile, SettingsUtil.IS_PENDING));
+        }, false, R.drawable.ic_profile_mobile, BRSharedPrefs.getProfileState(activity, BRSharedPrefs.MOBILE_STATE)));
 
         items.add(new BRSettingsItem(activity.getString(R.string.My_Profile_ID), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                Activity currentActivity = (Activity) v.getContext();
+                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                intent.putExtra(KYC_FROME_KEY, KYC_FROME_ID);
+                currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_ID);
+                currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_profile_id, SettingsUtil.IS_PENDING));
+        }, false, R.drawable.ic_profile_id, BRSharedPrefs.getProfileState(activity, BRSharedPrefs.ID_STATE)));
 
         return items;
     }
