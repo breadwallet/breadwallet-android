@@ -17,11 +17,13 @@ import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
+import com.google.gson.Gson;
 
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
@@ -34,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends BRActivity {
+
+    private static final String TAG = ProfileActivity.class.getSimpleName();
 
     private Handler mHandler = new Handler(){
         @Override
@@ -68,6 +72,8 @@ public class ProfileActivity extends BRActivity {
         mCountTv = findViewById(R.id.profile_complete_count);
 
         mCountTv.setText(String.valueOf(getCompleteCount()));
+
+        checkTx();
     }
 
     private String getMn(){
@@ -83,6 +89,21 @@ public class ProfileActivity extends BRActivity {
         return null;
     }
 
+    private String getKeyVale(String path, String value){
+        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
+        class Key {
+            public String Key;
+            public String Value;
+        }
+
+        Key key = new Key();
+        key.Key = appId + "/" + value;
+        key.Value = value;
+        List<Key> keys = new ArrayList<>();
+        keys.add(key);
+        return new Gson().toJson(keys);
+    }
+
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -92,7 +113,6 @@ public class ProfileActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                refreshState(requestCode, SettingsUtil.IS_SAVING);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -106,29 +126,41 @@ public class ProfileActivity extends BRActivity {
                 String words = Utility.getWords(ProfileActivity.this, Utility.detectLang(ProfileActivity.this, mnemonic));
                 String seed = IdentityManager.getSeed(mnemonic, "chinese", words, "");
                 Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-                BlockChainNode node = new BlockChainNode("https://api-wallet-ela-testnet.elastos.org");
-                HDWallet singleWallet = identity.createSingleAddressWallet(seed, node);
                 DidManager didManager = identity.createDidManager(seed);
                 Did did = didManager.createDid(0);
-                String json = "[{\"Key\":\"name\", \"Value\":\"bob\"}]";
+
+                String json = null;
+                if(BRConstants.PROFILE_REQUEST_NICKNAME == requestCode){
+                    String value = BRSharedPrefs.getNickname(ProfileActivity.this);
+                    json = getKeyVale("nickName", value);
+                } else if(BRConstants.PROFILE_REQUEST_EMAIL == requestCode){
+                    String value = BRSharedPrefs.getEmail(ProfileActivity.this);
+                    json = getKeyVale("email", value);
+                } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
+                    String value = BRSharedPrefs.getMobile(ProfileActivity.this);
+                    json = getKeyVale("mobile", value);
+                } else if(BRConstants.PROFILE_REQUEST_ID == requestCode){
+                    String value = BRSharedPrefs.getID(ProfileActivity.this);
+                    json = getKeyVale("idCard", value);
+                }
+
+                //此处需要判断类型
                 String info = did.signInfo(seed, json);
+                String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
+                if(!StringUtil.isNullOrEmpty(txid)){
+                    //TODO refresh UI
+                    refreshState(requestCode, SettingsUtil.IS_SAVING, txid);
+                    if(mHandler !=null){//null when activity finish
+                        mHandler.sendEmptyMessage(0x01);
+                    }
 
-                String txid = did.setInfo(seed, json, singleWallet);
 
-                did.syncInfo();
-
-
-                //TODO 成功为IS_COMPLETED， 失败为IS_PENDING
-                refreshState(requestCode, SettingsUtil.IS_COMPLETED);
-                Log.i("xidaokun", "5s finish");
-                if(mHandler !=null){//null when activity finish
-                    mHandler.sendEmptyMessage(0x01);
                 }
             }
         });
     }
 
-    private void refreshState(int requestCode, int state){
+    private void refreshState(int requestCode, int state, String txid){
         String key = null;
         if(BRConstants.PROFILE_REQUEST_NICKNAME == requestCode){
             key = BRSharedPrefs.NICKNAME_STATE;
@@ -140,6 +172,7 @@ public class ProfileActivity extends BRActivity {
             key = BRSharedPrefs.ID_STATE;
         }
         if(!StringUtil.isNullOrEmpty(key)) BRSharedPrefs.putProfileState(ProfileActivity.this, key, state);
+        if(!StringUtil.isNullOrEmpty(txid)) BRSharedPrefs.putCacheTxid(ProfileActivity.this, key, txid);
     }
 
     private int getCompleteCount(){
@@ -150,6 +183,41 @@ public class ProfileActivity extends BRActivity {
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_COMPLETED) count++;
 
         return count;
+    }
+
+    private void checkTx(){
+        boolean isExit = false;
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING){
+            String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.NICKNAME_txid);
+            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
+            if(!StringUtil.isNullOrEmpty(txid)) {
+                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+            }
+        }
+
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.EMAIL_STATE) == SettingsUtil.IS_SAVING){
+            String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.EMAIL_txid);
+            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
+            if(!StringUtil.isNullOrEmpty(txid)) {
+                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+            }
+        }
+
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.MOBILE_STATE) == SettingsUtil.IS_SAVING){
+            String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.MOBILE_txid);
+            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
+            if(!StringUtil.isNullOrEmpty(txid)) {
+                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+            }
+        } else if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_SAVING){
+            String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.ID_txid);
+            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
+            if(!StringUtil.isNullOrEmpty(txid)) {
+                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+            }
+        }
+        if(!isExit) return;
+        if(mHandler !=null) mHandler.sendEmptyMessage(0x01);
     }
 
 }

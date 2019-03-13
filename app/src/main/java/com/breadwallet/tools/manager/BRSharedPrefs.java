@@ -605,6 +605,12 @@ public class BRSharedPrefs {
     public static final String EMAIL_STATE = "email_state";
     public static final String MOBILE_STATE  = "mobile_state";
     public static final String ID_STATE  = "id_state";
+
+    public static final String NICKNAME_txid = "nickname_txid";
+    public static final String EMAIL_txid = "email_txid";
+    public static final String MOBILE_txid  = "mobile_txid";
+    public static final String ID_txid  = "id_txid";
+
     public static int getProfileState(Context context, String key) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(key, 1);
@@ -614,6 +620,18 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, state);
+        editor.apply();
+    }
+
+    public static String getCacheTxid(Context context, String key) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(key, null);
+    }
+
+    public static void putCacheTxid(Context context, String key, String txid) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, txid);
         editor.apply();
     }
 }

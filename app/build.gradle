@@ -37,6 +37,7 @@ android {
 
     packagingOptions {
         pickFirst 'protobuf.meta'
+        exclude 'META-INF/DEPENDENCIES'
     }
 
     externalNativeBuild {
@@ -205,6 +206,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation project(':authorizelibrary')
     implementation project(':walletlibrary')
+    implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
