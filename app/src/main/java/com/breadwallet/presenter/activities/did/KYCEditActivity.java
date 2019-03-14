@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ public class KYCEditActivity extends BaseSettingsActivity {
         initView();
         initListener();
         WHRER_FROM = getIntent().getIntExtra(SettingsUtil.KYC_FROME_KEY, -1);
+        Log.i("xidaokun", "WHRER_FROM:"+WHRER_FROM);
         selectView(WHRER_FROM);
     }
 
@@ -69,6 +71,9 @@ public class KYCEditActivity extends BaseSettingsActivity {
 
         mEmailEdt = findViewById(R.id.did_email_edt);
         mEmailCleanTv = findViewById(R.id.did_email_clean);
+
+        mRealNameEdt = findViewById(R.id.did_realname_edt);
+        mRealCleanTv = findViewById(R.id.did_realname_clean);
 
         mIDEdt = findViewById(R.id.did_id_edt);
         mIDCleanTv = findViewById(R.id.did_id_clean);
@@ -93,6 +98,12 @@ public class KYCEditActivity extends BaseSettingsActivity {
                 mEmailEdt.setText("");
             }
         });
+        mRealCleanTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRealNameEdt.setText("");
+            }
+        });
         mIDCleanTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,21 +114,23 @@ public class KYCEditActivity extends BaseSettingsActivity {
         mSaveTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!check(WHRER_FROM)) return;
                 setEditResult(WHRER_FROM);
             }
         });
     }
 
-    private boolean check(int from, String value){
+    private boolean check(int from){
+        Log.i("xidaokun", "check validate");
         boolean is = true;
         if(from == SettingsUtil.KYC_FROME_MOBILE){
-            is = ValidatorUtil.isMobile(value);
+            is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
             if(!is) Toast.makeText(this, "手机号不合法", Toast.LENGTH_SHORT).show();
         } else if(from == SettingsUtil.KYC_FROME_EMAIL){
-            is = ValidatorUtil.isEmail(value);
+            is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
             if(!is) Toast.makeText(this, "邮箱不合法", Toast.LENGTH_SHORT).show();
         } else if(from == SettingsUtil.KYC_FROME_ID){
-            is = ValidatorUtil.isIDCard(value);
+            is = ValidatorUtil.isIDCard(mIDEdt.getText().toString());
             if(!is) Toast.makeText(this, "生份证不合法", Toast.LENGTH_SHORT).show();
         }
 
@@ -125,35 +138,48 @@ public class KYCEditActivity extends BaseSettingsActivity {
     }
 
     private void setEditResult(int from){
-        String oldValue = null;
-        String newValue = null;
+        Log.i("xidaokun", "setEditResult");
+        Intent intent = null;
         switch (from) {
             case SettingsUtil.KYC_FROME_NICKNAME:
-                oldValue = BRSharedPrefs.getNickname(this);
-                newValue = mNicknameEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(newValue))BRSharedPrefs.putNickname(this, newValue);
+                String oNickname = BRSharedPrefs.getNickname(this);
+                String nickname = mNicknameEdt.getText().toString();
+                if(!StringUtil.isNullOrEmpty(nickname) && !nickname.equals(oNickname)){
+                    intent = new Intent();
+                    intent.putExtra("nickname", nickname);
+                }
                 break;
             case SettingsUtil.KYC_FROME_MOBILE:
-                oldValue = BRSharedPrefs.getMobile(this);
-                newValue = mMobileEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(newValue))BRSharedPrefs.putMobile(this, newValue);
+                String oMobile = BRSharedPrefs.getMobile(this);
+                String mobile = mMobileEdt.getText().toString();
+                if(!StringUtil.isNullOrEmpty(mobile) && !mobile.equals(oMobile)){
+                    intent = new Intent();
+                    intent.putExtra("mobile", mobile);
+                }
                 break;
             case SettingsUtil.KYC_FROME_EMAIL:
-                oldValue = BRSharedPrefs.getEmail(this);
-                newValue = mEmailEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(newValue))BRSharedPrefs.putEmail(this, newValue);
+                String oEmial = BRSharedPrefs.getEmail(this);
+                String email = mEmailEdt.getText().toString();
+                if(!StringUtil.isNullOrEmpty(email) && !email.equals(oEmial)){
+                    intent = new Intent();
+                    intent.putExtra("email", email);
+                }
                 break;
             case SettingsUtil.KYC_FROME_ID:
-                oldValue = BRSharedPrefs.getID(this);
-                newValue = mIDEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(newValue))BRSharedPrefs.putID(this, newValue);
+                String oRealname = BRSharedPrefs.getRealname(this);
+                String realname = mRealNameEdt.getText().toString();
+                String oIdcard = BRSharedPrefs.getID(this);
+                String idcard = mIDEdt.getText().toString();
+                if(StringUtil.isNullOrEmpty(realname) || StringUtil.isNullOrEmpty(idcard)) break;
+                if(realname.equals(oRealname) || idcard.equals(oIdcard)) break;
+                intent = new Intent();
+                intent.putExtra("realname", realname);
+                intent.putExtra("idcard", idcard);
                 break;
         }
 
-        if(StringUtil.isNullOrEmpty(newValue)) return;
-        if(!check(from, newValue)) return;
-        if(oldValue!=null && !oldValue.equals(newValue)) {
-            setResult(RESULT_OK);
+        if(null != intent) {
+            setResult(RESULT_OK, intent);
         } else {
             setResult(RESULT_CANCELED);
         }

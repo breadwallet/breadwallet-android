@@ -84,23 +84,6 @@ public final class SettingsUtil {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
         final BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
 
-        // TODO: Implement Scan QR code once the requirements are more clear.  This is for PWB.
-        /* settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UiUtils.openScanner(activity, BRConstants.SCANNER_REQUEST);
-            }
-        }, false, R.drawable.ic_camera)); */
-
-//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations_qr), "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(activity, AuthorQrActivity.class);
-//                activity.startActivity(intent);
-//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false, R.drawable.ic_auth));
-
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,13 +122,6 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_security_settings));
 
-//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_support), "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
-//            }
-//        }, false, R.drawable.ic_support));
-
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,21 +147,6 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_about));
-
-//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    Intent appStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URI));
-//                    appStoreIntent.setPackage(APP_STORE_PACKAGE);
-//
-//                    activity.startActivity(appStoreIntent);
-//                } catch (android.content.ActivityNotFoundException exception) {
-//                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_URI)));
-//                }
-//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false, R.drawable.ic_review));
         return settingsItems;
     }
 
@@ -232,14 +193,6 @@ public final class SettingsUtil {
                 startCurrencySettings(activity);
             }
         }, false, 0));
-//        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), currentFiatCode, new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(activity, ShareDataActivity.class);
-//                activity.startActivity(intent);
-//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false, 0));
         return items;
     }
 

@@ -1,7 +1,7 @@
 package com.breadwallet.tools.sqlite;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.StringUtil;
@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Date;
@@ -25,8 +26,9 @@ public class ProfileDataSource {
 
     private Context mContext;
 
-    //        final String devUrl = "https://api-wallet-did.elastos.org/api/1/blockagent/upchain/data";
-    final String testUrl = "https://api-wallet-did-testnet.elastos.org/";
+    //final String devUrl = "https://api-wallet-did.elastos.org/api/1/blockagent/upchain/data";
+    final String didTestUrl = "https://api-wallet-did-testnet.elastos.org/";
+//    final String elaTestUrl = "https://api-wallet-ela-testnet.elastos.org/";
 
     private static ProfileDataSource instance;
 
@@ -48,9 +50,10 @@ public class ProfileDataSource {
 
     public String upchain(String data){
         try {
-            ProfileResponse result = urlPost("api/1/blockagent/upchain/data", data);
+            ProfileResponse result = urlPost(didTestUrl+"api/1/blockagent/upchain/data", data);
             if(200 == result.status) return result.result;
         } catch (IOException e) {
+            Log.i("xidaokun", "upchain exception");
             e.printStackTrace();
         }
 
@@ -66,17 +69,24 @@ public class ProfileDataSource {
 
     public boolean isTxExit(String txid){
         Transaction transaction = getTransaction(txid);
-        return !(StringUtil.isNullOrEmpty(transaction.txid));
+        boolean is = !(transaction==null || StringUtil.isNullOrEmpty(transaction.txid));
+        Log.i("xidaokun", "isTxExit:"+is);
+        return is;
     }
 
     private Transaction getTransaction(String txid){
-        String url = "/"+txid;
+        Log.i("xidaokun", "getTransaction:"+txid);
+        String url = didTestUrl + "api/1/tx/" + txid;
         String result = null;
         try {
             result = urlGET(url);
-            if(!StringUtil.isNullOrEmpty(result) && result.contains("200"))
+            if(!StringUtil.isNullOrEmpty(result) && result.contains("200")){
+                JSONObject jsonObject = new JSONObject(result);
+                result = jsonObject.getString("result");
                 return new Gson().fromJson(result, Transaction.class);
-        } catch (IOException e) {
+            }
+        } catch (Exception e) {
+            Log.i("xidaokun", "getTransaction IOException");
             e.printStackTrace();
         }
         return null;

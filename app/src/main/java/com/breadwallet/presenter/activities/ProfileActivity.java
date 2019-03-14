@@ -1,8 +1,11 @@
 package com.breadwallet.presenter.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
@@ -34,11 +37,14 @@ import org.elastos.sdk.wallet.IdentityManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ProfileActivity extends BRActivity {
 
     private static final String TAG = ProfileActivity.class.getSimpleName();
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -48,6 +54,11 @@ public class ProfileActivity extends BRActivity {
             mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
             mAdapter.notifyDataSetChanged();
             mCountTv.setText(String.valueOf(getCompleteCount()));
+            if(isSavingExit()) {
+                startTimer();
+            } else {
+                stopTimerTask();
+            }
         }
     };
 
@@ -55,12 +66,40 @@ public class ProfileActivity extends BRActivity {
     private SettingsAdapter mAdapter;
     private TextView mCountTv;
 
+    private Timer timer;
+    private TimerTask timerTask;
+
+    public void startTimer() {
+        Log.i("xidaokun", "startTimer");
+        if (timer != null) return;
+        timer = new Timer();
+        initializeTimerTask();
+        timer.schedule(timerTask, 1000, 30*1000);
+    }
+
+    public void stopTimerTask() {
+        Log.i("xidaokun", "stopTimerTask");
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                Log.i("xidaokun", "isMainThread:"+(Looper.getMainLooper().getThread() == Thread.currentThread()));
+                syncCheckTx();
+            }
+        };
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_layout);
         ListView listView = findViewById(R.id.profile_list);
-        mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
+//        mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
         mAdapter = new SettingsAdapter(this, R.layout.settings_list_item, mData);
         listView.setAdapter(mAdapter);
         findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
@@ -73,7 +112,14 @@ public class ProfileActivity extends BRActivity {
 
         mCountTv.setText(String.valueOf(getCompleteCount()));
 
-        checkTx();
+        mHandler.sendEmptyMessage(0x01);
+        initDid();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopTimerTask();
     }
 
     private String getMn(){
@@ -91,24 +137,69 @@ public class ProfileActivity extends BRActivity {
 
     private String getKeyVale(String path, String value){
         String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
-        class Key {
+        class KeyValue {
             public String Key;
             public String Value;
         }
 
-        Key key = new Key();
-        key.Key = appId + "/" + value;
+        KeyValue key = new KeyValue();
+        key.Key = appId + "/" + path;
         key.Value = value;
-        List<Key> keys = new ArrayList<>();
+        List<KeyValue> keys = new ArrayList<>();
         keys.add(key);
         return new Gson().toJson(keys);
     }
 
+    private String getIdKeyValue(String path, String name, String code){
+        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
+        class IDcard {
+            public String name;
+            public String code;
+        }
+        class KeyValue {
+            public String Key;
+            public IDcard Value;
+        }
+
+        IDcard iDcard = new IDcard();
+        iDcard.name = name;
+        iDcard.code = code;
+
+        KeyValue keyValue = new KeyValue();
+        keyValue.Key = appId + "/" + path;
+        keyValue.Value = iDcard;
+
+        List<KeyValue> keyValues = new ArrayList<>();
+        return new Gson().toJson(keyValues);
+    }
+
+    private Did mDid;
+    private String mSeed;
+    private void initDid(){
+        String mnemonic = getMn();
+        String language = Utility.detectLang(ProfileActivity.this, mnemonic);
+        String words = Utility.getWords(ProfileActivity.this, language);
+        mSeed = IdentityManager.getSeed(mnemonic, language, words, "");
+        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+        DidManager didManager = identity.createDidManager(mSeed);
+        mDid = didManager.createDid(0);
+    }
+
+    private String uploadData(String data){
+        Log.i("xidaokun", "uploadData");
+        String info = mDid.signInfo(mSeed, data);
+        String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
+        Log.i("xidaokun", "txid:"+txid);
+
+        return txid;
+    }
+
     @Override
-    protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.i("xidaokun", "requestCode:"+requestCode);
         if(resultCode != RESULT_OK) return;
+        if(null == data) return;
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -118,61 +209,63 @@ public class ProfileActivity extends BRActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(mHandler !=null){//null when activity finish
-                    mHandler.sendEmptyMessage(0x01);
-                }
 
-                String mnemonic = getMn();
-                String words = Utility.getWords(ProfileActivity.this, Utility.detectLang(ProfileActivity.this, mnemonic));
-                String seed = IdentityManager.getSeed(mnemonic, "chinese", words, "");
-                Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-                DidManager didManager = identity.createDidManager(seed);
-                Did did = didManager.createDid(0);
-
-                String json = null;
+                String txid = null;
                 if(BRConstants.PROFILE_REQUEST_NICKNAME == requestCode){
-                    String value = BRSharedPrefs.getNickname(ProfileActivity.this);
-                    json = getKeyVale("nickName", value);
+                    String nickname = data.getStringExtra("nickname");
+                    if(StringUtil.isNullOrEmpty(nickname)) return;
+                    String data = getKeyVale("NickName", nickname);
+                    txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid)){
+                        BRSharedPrefs.putNickname(ProfileActivity.this, nickname);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid, txid);
+                    }
+
                 } else if(BRConstants.PROFILE_REQUEST_EMAIL == requestCode){
-                    String value = BRSharedPrefs.getEmail(ProfileActivity.this);
-                    json = getKeyVale("email", value);
+                    String email = data.getStringExtra("email");
+                    if(StringUtil.isNullOrEmpty(email)) return;
+                    String data = getKeyVale("Email", email);
+                    txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid)){
+                        BRSharedPrefs.putEmail(ProfileActivity.this, email);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid, txid);
+                    }
+
                 } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
-                    String value = BRSharedPrefs.getMobile(ProfileActivity.this);
-                    json = getKeyVale("mobile", value);
+                    String mobile = data.getStringExtra("mobile");
+                    if(StringUtil.isNullOrEmpty(mobile)) return;
+                    String data = getKeyVale("Mobile", mobile);
+                    txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid)){
+                        BRSharedPrefs.putMobile(ProfileActivity.this, mobile);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid, txid);
+                    }
+
                 } else if(BRConstants.PROFILE_REQUEST_ID == requestCode){
-                    String value = BRSharedPrefs.getID(ProfileActivity.this);
-                    json = getKeyVale("idCard", value);
+                    String realname = data.getStringExtra("realname");
+                    String idcard = data.getStringExtra("idcard");
+                    if(StringUtil.isNullOrEmpty(realname) || StringUtil.isNullOrEmpty(idcard)) return;
+                    String data = getIdKeyValue("/ChineseIDCard", realname, idcard);
+                    txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid)){
+                        BRSharedPrefs.putRealname(ProfileActivity.this, realname);
+                        BRSharedPrefs.putID(ProfileActivity.this, idcard);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid, txid);
+                    }
                 }
 
-                //此处需要判断类型
-                String info = did.signInfo(seed, json);
-                String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
                 if(!StringUtil.isNullOrEmpty(txid)){
                     //TODO refresh UI
-                    refreshState(requestCode, SettingsUtil.IS_SAVING, txid);
                     if(mHandler !=null){//null when activity finish
                         mHandler.sendEmptyMessage(0x01);
                     }
-
-
                 }
             }
         });
-    }
-
-    private void refreshState(int requestCode, int state, String txid){
-        String key = null;
-        if(BRConstants.PROFILE_REQUEST_NICKNAME == requestCode){
-            key = BRSharedPrefs.NICKNAME_STATE;
-        } else if(BRConstants.PROFILE_REQUEST_EMAIL == requestCode){
-            key = BRSharedPrefs.EMAIL_STATE;
-        } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
-            key = BRSharedPrefs.MOBILE_STATE;
-        } else if(BRConstants.PROFILE_REQUEST_ID == requestCode){
-            key = BRSharedPrefs.ID_STATE;
-        }
-        if(!StringUtil.isNullOrEmpty(key)) BRSharedPrefs.putProfileState(ProfileActivity.this, key, state);
-        if(!StringUtil.isNullOrEmpty(txid)) BRSharedPrefs.putCacheTxid(ProfileActivity.this, key, txid);
     }
 
     private int getCompleteCount(){
@@ -185,38 +278,60 @@ public class ProfileActivity extends BRActivity {
         return count;
     }
 
+    private boolean isSavingExit(){
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING) return true;
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.EMAIL_STATE) == SettingsUtil.IS_SAVING) return true;
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.MOBILE_STATE) == SettingsUtil.IS_SAVING) return true;
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_SAVING) return true;
+
+        return false;
+    }
+
+    private void syncCheckTx(){
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                checkTx();
+            }
+        });
+    }
+
     private void checkTx(){
+        Log.i("xidaokun", "checkTx");
         boolean isExit = false;
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.NICKNAME_txid);
-            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
             if(!StringUtil.isNullOrEmpty(txid)) {
                 isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
 
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.EMAIL_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.EMAIL_txid);
-            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
             if(!StringUtil.isNullOrEmpty(txid)) {
                 isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
 
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.MOBILE_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.MOBILE_txid);
-            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
             if(!StringUtil.isNullOrEmpty(txid)) {
                 isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
             }
-        } else if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_SAVING){
+        }
+
+        if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.ID_txid);
-            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
             if(!StringUtil.isNullOrEmpty(txid)) {
                 isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
         if(!isExit) return;
+        Log.i("xidaokun", "tx is exit");
         if(mHandler !=null) mHandler.sendEmptyMessage(0x01);
     }
 

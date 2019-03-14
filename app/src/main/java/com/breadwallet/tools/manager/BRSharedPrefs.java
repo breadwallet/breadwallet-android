@@ -192,15 +192,27 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    public static String getRealname(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("realname", "");
+    }
+
+    public static void putRealname(Context context, String realname) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("realname", realname);
+        editor.apply();
+    }
+
     public static String getID(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("ID", "");
     }
 
-    public static void putID(Context context, String firstAddress) {
+    public static void putID(Context context, String id) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("ID", firstAddress);
+        editor.putString("ID", id);
         editor.apply();
     }
 
