@@ -7,7 +7,7 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="210dp"
         android:background="@drawable/profile_head_bg"/>
 
     <RelativeLayout

@@ -953,6 +953,7 @@
     <string name="Send.dialog.cancle">Cancel</string>
     <string name="Upgrade.title">Check Upgrade</string>
     <string name="My.wallet.title">My Wallet</string>
+    <string name="My.explore.title">Explore</string>
     <string name="Setting.title">Settings</string>
 
     <string name="Gas.price">Gas Price</string>

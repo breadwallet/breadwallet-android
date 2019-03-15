@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.content.Intent;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +19,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ExploreWebActivity;
+import com.breadwallet.presenter.activities.did.KYCEditActivity;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.util.BRConstants;
 
 public class FragmentExplore extends Fragment {
-
-    private WebView webView;
 
     public static FragmentExplore newInstance(String text) {
 
@@ -34,69 +37,46 @@ public class FragmentExplore extends Fragment {
         return f;
     }
 
+    private View mBannerview1;
+    private View mBannerview2;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_webview_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_explore_layout, container, false);
         initView(rootView);
-        webviewSetting();
+        initListener();
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        webView.loadUrl("https://www.baidu.com/");
-
-        webView.loadUrl("https://redpacket.elastos.org/?_locale=zh_CN&offset=-480");
-    }
 
     private void initView(View rootView){
-        webView = rootView.findViewById(R.id.web_view);
+        mBannerview1 = rootView.findViewById(R.id.explore_banner1);
+        mBannerview2 = rootView.findViewById(R.id.explore_banner2);
     }
 
-    private void webviewSetting(){
-        WebSettings webSettings = webView.getSettings();
-
-        webSettings.setUseWideViewPort(true);
-        webSettings.setLoadWithOverviewMode(true);
-
-        webSettings.setSupportZoom(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setDisplayZoomControls(false);
-
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadsImagesAutomatically(true);
-        webSettings.setDefaultTextEncodingName("utf-8");
-
-        webView.setWebViewClient(new WebViewClient(){
-
+    private void initListener(){
+        mBannerview1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
-                Log.i("xidaokun", "onReceivedSslError");
-            }
-
-            @Override
-            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-                super.onReceivedHttpError(view, request, errorResponse);
-                Log.i("xidaokun", "onReceivedHttpError");
-            }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-                Log.i("xidaokun", "onReceivedError");
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                webView.loadUrl(url);
-                return true;
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ExploreWebActivity.class);
+                intent.putExtra("explore_url", "http://app.51aiu.com/elastos/wallet-test/index.html");
+                startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
+                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
 
+        mBannerview2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Intent intent = new Intent(getContext(), ExploreWebActivity.class);
+//                intent.putExtra("explore_url", "https://redpacket.elastos.org/?_locale=zh_CN&offset=-480");
+//                startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
+//                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                String url = "http://app.51aiu.com/elastos/wallet-test/index.html";
+                UiUtils.openUrlByBrowser(getActivity(), url);
+            }
+        });
     }
 }
