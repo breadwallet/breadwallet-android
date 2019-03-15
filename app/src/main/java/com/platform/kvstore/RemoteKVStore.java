@@ -76,10 +76,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .build();
 
         APIClient.BRResponse res = apiClient.sendRequest(request, true);
-        if (Utils.isNullOrEmpty(res.getBodyText())) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
         if (!res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
             return new CompletionObject(0, 0, extractErr(res));
