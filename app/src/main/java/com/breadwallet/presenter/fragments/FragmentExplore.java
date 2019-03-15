@@ -60,7 +60,7 @@ public class FragmentExplore extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ExploreWebActivity.class);
-                intent.putExtra("explore_url", "http://app.51aiu.com/elastos/wallet-test/index.html");
+                intent.putExtra("explore_url", "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
                 startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -69,13 +69,12 @@ public class FragmentExplore extends Fragment {
         mBannerview2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getContext(), ExploreWebActivity.class);
-//                intent.putExtra("explore_url", "https://redpacket.elastos.org/?_locale=zh_CN&offset=-480");
-//                startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
-//                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                Intent intent = new Intent(getContext(), ExploreWebActivity.class);
+                intent.putExtra("explore_url", "https://redpacket.elastos.org");
+                startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
+                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
-                String url = "http://app.51aiu.com/elastos/wallet-test/index.html";
-                UiUtils.openUrlByBrowser(getActivity(), url);
+//                UiUtils.openUrlByBrowser(getActivity(), url);
             }
         });
     }
