@@ -28,6 +28,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -193,13 +194,18 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                     } else {
                         // Recover Wallet
                         Utils.hideKeyboard(app);
-                        WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
                         //Disallow BTC and BCH sending.
                         BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE, false);
                         BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false);
 
-                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
+                        findViewById(R.id.loading_view).setVisibility(View.VISIBLE);
+                        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                PostAuth.getInstance().onRecoverWalletAuth(app, false);
+                            }
+                        });
                     }
 
                 } else {

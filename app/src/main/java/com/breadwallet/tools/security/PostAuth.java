@@ -16,8 +16,6 @@ import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
-import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
@@ -34,6 +32,8 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
@@ -195,7 +195,7 @@ public class PostAuth {
         }
 
         try {
-            boolean success = false;
+            boolean success;
             try {
                 success = BRKeyStore.putPhrase(mCachedPaperKey.getBytes(),
                         activity, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
@@ -209,14 +209,19 @@ public class PostAuth {
             }
 
             if (!success) {
-                if (authAsked)
+                if (authAsked) {
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
+                }
             } else {
                 if (mCachedPaperKey.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(activity, true);
                     byte[] seed = BRCoreKey.getSeedFromPhrase(mCachedPaperKey.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, activity);
+
+                    // Recover wallet-info before starting to sync wallets.
+                    KVStoreManager.syncWalletInfo(activity);
+
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
                     BreadApp.initialize(false);
