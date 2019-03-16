@@ -1048,12 +1048,16 @@
     <string name="Button.contactSupport.android">Contact Support</string>
     <!-- Wipes the user's application data.-->
     <string name="Button.wipe.android">Wipe</string>
+    <!-- Uninstall button label -->
+    <string name="Button.uninstall">Uninstall</string>
 
     <!-- Modified -->
     <!-- Instruction how to enable device encryption -->
     <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Enable screen lock in your settings to continue.</string>
     <!-- Key store error title -->
     <string name="Alert.keystore.title.android">Android Key Store Error</string>
-    <!-- Warn user key store data has been invalidate because the user change their security settings. -->
-    <string name="Alert.keystore.invalidated.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your paper key.</string>
+    <!-- Warn user key store data has been invalidate because the user change their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your paper key.</string>
+    <!-- Warn user key store data has been invalidate because the user change their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped by uninstalling.\n\nDon’t worry, your funds are still secure! Reinstall the app and recover your wallet using your paper key.</string>
 </resources>
