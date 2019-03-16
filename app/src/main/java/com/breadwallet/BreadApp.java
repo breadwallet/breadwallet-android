@@ -401,11 +401,19 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         if (!keyguardManager.isKeyguardSecure()) {
             DialogActivity.startDialogActivity(mInstance, DialogType.ENABLE_DEVICE_PASSWORD);
             return false;
-        } else if (!BRKeyStore.isValid()) {
-            DialogActivity.startDialogActivity(mInstance, DialogType.KEY_STORE_INVALID);
-            return false;
+        } else {
+            switch (BRKeyStore.getValidityStatus()) {
+                case VALID:
+                    return true;
+                case INVALID_WIPE:
+                    DialogActivity.startDialogActivity(mInstance, DialogType.KEY_STORE_INVALID_WIPE);
+                    return false;
+                case INVALID_UNINSTALL:
+                    DialogActivity.startDialogActivity(mInstance, DialogType.KEY_STORE_INVALID_UNINSTALL);
+                    return false;
+                default:
+                    throw new IllegalArgumentException("Invalid key store validity status.");
+            }
         }
-
-        return true;
     }
 }
