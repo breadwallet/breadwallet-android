@@ -17,6 +17,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.util.StringUtil;
 
+import org.wallet.library.AuthorizeManager;
+
 public class ExploreWebActivity extends BRActivity {
 
     private WebView webView;
@@ -52,8 +54,16 @@ public class ExploreWebActivity extends BRActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+                if(StringUtil.isNullOrEmpty(url)) return false;
+                if(url.startsWith("elaphant") && url.contains("identity")) {
+                    AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
+                } else if(url.startsWith("elaphant") && url.contains("elapay")) {
+                    AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
+                } else {
+                    view.loadUrl(url);
+                }
+
+                return false;
             }
 
             @Override
