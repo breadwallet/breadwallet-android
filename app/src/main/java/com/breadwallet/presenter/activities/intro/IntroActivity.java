@@ -56,7 +56,7 @@ public class IntroActivity extends BRActivity {
         super.onCreate(savedInstanceState);
 
         // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
-        if (BreadApp.isDeviceStateValid()) {
+        if (BreadApp.isDeviceStateValid(false)) {
             setContentView(R.layout.activity_intro);
             setOnClickListeners();
             updateBundles();
