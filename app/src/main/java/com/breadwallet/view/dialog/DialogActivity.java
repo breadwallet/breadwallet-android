@@ -30,6 +30,7 @@ public class DialogActivity extends AppCompatActivity {
     private static final String PACKAGE_PREFIX = "package:";
 
     public enum DialogType {
+        DEFAULT,
         ENABLE_DEVICE_PASSWORD,
         KEY_STORE_INVALID_WIPE,
         KEY_STORE_INVALID_UNINSTALL;
@@ -54,6 +55,8 @@ public class DialogActivity extends AppCompatActivity {
                     case KEY_STORE_INVALID_UNINSTALL:
                         showKeyStoreInvalidDialogAndUninstall();
                         break;
+                    case DEFAULT:
+                        // Fall through
                     default:
                         throw new IllegalArgumentException("Invalid dialog type");
                 }
@@ -93,6 +96,8 @@ public class DialogActivity extends AppCompatActivity {
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
                         }
+
+                        finish();
                     }
                 },
                 new BRDialogView.BROnClickListener() {
