@@ -30,10 +30,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
-import com.platform.kvstore.RemoteKVStore;
-import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
@@ -428,45 +425,6 @@ public class PostAuth {
 
     public void setTmpPaymentRequestTx(CryptoTransaction tx) {
         this.mPaymentProtocolTx = tx;
-    }
-
-    public void onCanaryCheck(final Activity activity, boolean authAsked) {
-        String canary = null;
-        try {
-            canary = BRKeyStore.getCanary(activity, BRConstants.CANARY_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
-                mAuthLoopBugHappened = true;
-            }
-            return;
-        }
-        if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-            byte[] phrase;
-            try {
-                phrase = BRKeyStore.getPhrase(activity, BRConstants.CANARY_REQUEST_CODE);
-            } catch (UserNotAuthenticatedException e) {
-                if (authAsked) {
-                    Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
-                    mAuthLoopBugHappened = true;
-                }
-                return;
-            }
-
-            if (phrase != null) {
-                Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
-                try {
-                    BRKeyStore.putCanary(BRConstants.CANARY_STRING, activity, 0);
-                } catch (UserNotAuthenticatedException e) {
-                    if (authAsked) {
-                        Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
-                        mAuthLoopBugHappened = true;
-                    }
-                    return;
-                }
-            }
-        }
-        WalletsMaster.getInstance(activity).startTheWalletIfExists(activity);
     }
 
     public interface AuthenticationSuccessListener {
