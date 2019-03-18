@@ -49,7 +49,7 @@ public class ProfileActivity extends BRActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("xidaokun", "adapter notify");
+            Log.i("ProfileFunction", "adapter notify");
             mData.clear();
             mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
             mAdapter.notifyDataSetChanged();
@@ -70,7 +70,7 @@ public class ProfileActivity extends BRActivity {
     private TimerTask timerTask;
 
     public void startTimer() {
-        Log.i("xidaokun", "startTimer");
+        Log.i("ProfileFunction", "startTimer");
         if (timer != null) return;
         timer = new Timer();
         initializeTimerTask();
@@ -78,7 +78,7 @@ public class ProfileActivity extends BRActivity {
     }
 
     public void stopTimerTask() {
-        Log.i("xidaokun", "stopTimerTask");
+        Log.i("ProfileFunction", "stopTimerTask");
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -88,7 +88,7 @@ public class ProfileActivity extends BRActivity {
     private void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("xidaokun", "isMainThread:"+(Looper.getMainLooper().getThread() == Thread.currentThread()));
+                Log.i("ProfileFunction", "isMainThread:"+(Looper.getMainLooper().getThread() == Thread.currentThread()));
                 syncCheckTx();
             }
         };
@@ -135,15 +135,15 @@ public class ProfileActivity extends BRActivity {
         return null;
     }
 
+    private static final String APPID = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
     private String getKeyVale(String path, String value){
-        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
         class KeyValue {
             public String Key;
             public String Value;
         }
 
         KeyValue key = new KeyValue();
-        key.Key = appId + "/" + path;
+        key.Key = APPID + "/" + path;
         key.Value = value;
         List<KeyValue> keys = new ArrayList<>();
         keys.add(key);
@@ -151,7 +151,6 @@ public class ProfileActivity extends BRActivity {
     }
 
     private String getIdKeyValue(String path, String name, String code){
-        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
         class IDcard {
             public String name;
             public String code;
@@ -166,7 +165,7 @@ public class ProfileActivity extends BRActivity {
         iDcard.code = code;
 
         KeyValue keyValue = new KeyValue();
-        keyValue.Key = appId + "/" + path;
+        keyValue.Key = APPID + "/" + path;
         keyValue.Value = iDcard;
 
         List<KeyValue> keyValues = new ArrayList<>();
@@ -186,10 +185,10 @@ public class ProfileActivity extends BRActivity {
     }
 
     private String uploadData(String data){
-        Log.i("xidaokun", "uploadData");
+        Log.i("ProfileFunction", "uploadData");
         String info = mDid.signInfo(mSeed, data);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
-        Log.i("xidaokun", "txid:"+txid);
+        Log.i("ProfileFunction", "txid:"+txid);
 
         return txid;
     }
@@ -197,7 +196,7 @@ public class ProfileActivity extends BRActivity {
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("xidaokun", "requestCode:"+requestCode);
+        Log.i("ProfileFunction", "requestCode:"+requestCode);
         if(resultCode != RESULT_OK) return;
         if(null == data) return;
 
@@ -259,7 +258,6 @@ public class ProfileActivity extends BRActivity {
                 }
 
                 if(!StringUtil.isNullOrEmpty(txid)){
-                    //TODO refresh UI
                     if(mHandler !=null){//null when activity finish
                         mHandler.sendEmptyMessage(0x01);
                     }
@@ -297,7 +295,7 @@ public class ProfileActivity extends BRActivity {
     }
 
     private void checkTx(){
-        Log.i("xidaokun", "checkTx");
+        Log.i("ProfileFunction", "checkTx");
         boolean isExit = false;
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.NICKNAME_txid);
@@ -331,7 +329,7 @@ public class ProfileActivity extends BRActivity {
             }
         }
         if(!isExit) return;
-        Log.i("xidaokun", "tx is exit");
+        Log.i("ProfileFunction", "tx is exit");
         if(mHandler !=null) mHandler.sendEmptyMessage(0x01);
     }
 

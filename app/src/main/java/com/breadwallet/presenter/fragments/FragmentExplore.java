@@ -1,28 +1,16 @@
 package com.breadwallet.presenter.fragments;
 
 import android.content.Intent;
-import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
-import com.breadwallet.presenter.activities.did.KYCEditActivity;
-import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.util.BRConstants;
 
 public class FragmentExplore extends Fragment {
 
