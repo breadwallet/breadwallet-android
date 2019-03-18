@@ -129,7 +129,7 @@ public class DialogActivity extends AppCompatActivity {
     private void showKeyStoreInvalidDialogAndUninstall() {
         showKeyStoreInvalidDialog(
                 getString(R.string.Alert_keystore_invalidated_uninstall_android),
-                getString(R.string.Button_uninstall),
+                getString(R.string.Button_uninstall_android),
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
