@@ -310,7 +310,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
                 // initialized, we may need tell the user to enable the password.
-                if (isDeviceStateValid(true)) {
+                if (isDeviceStateValid()) {
                     if (isBRDWalletInitialized()) {
                         mBackgroundedTime = 0;
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
@@ -397,15 +397,13 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
      * is enabled and if the Android key store state is valid.  The Android key store can be invalided if the
      * device password was removed or if fingerprints are added/removed.
      *
-     * @param notifyUser True, if the user should be notified if the device state is invalid; false, otherwise.
      * @return True, if the device state is valid; false, otherwise.
      */
-    //TODO make this private non-static once it's only used in this class.
-    public static boolean isDeviceStateValid(boolean notifyUser) {
+    private boolean isDeviceStateValid() {
         boolean isDeviceStateValid;
         DialogType dialogType = DialogType.DEFAULT;
 
-        KeyguardManager keyguardManager = (KeyguardManager) mInstance.getSystemService(Activity.KEYGUARD_SERVICE);
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Activity.KEYGUARD_SERVICE);
         if (!keyguardManager.isKeyguardSecure()) {
             isDeviceStateValid = false;
             dialogType = DialogType.ENABLE_DEVICE_PASSWORD;
@@ -427,8 +425,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
         }
 
-        if (dialogType != DialogType.DEFAULT && notifyUser) {
-            DialogActivity.startDialogActivity(mInstance, dialogType);
+        if (dialogType != DialogType.DEFAULT) {
+            DialogActivity.startDialogActivity(this, dialogType);
         }
 
         return isDeviceStateValid;
