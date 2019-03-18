@@ -29,7 +29,7 @@ import android.view.View;
 public class BRSettingsItem {
 
     public boolean isSection;
-    public boolean isNew = false;
+    public int type = -1;
     public int iconResId;
     public String title;
     public String addonText;
@@ -43,13 +43,13 @@ public class BRSettingsItem {
         this.iconResId = iconResId;
     }
 
-    public BRSettingsItem(String title, String addonText, View.OnClickListener listener, boolean isSection, int iconResId, boolean isNew) {
+    public BRSettingsItem(String title, String addonText, View.OnClickListener listener, boolean isSection, int iconResId, int type) {
         this.title = title;
         this.addonText = addonText;
         this.listener = listener;
         this.isSection = isSection;
         this.iconResId = iconResId;
-        this.isNew = isNew;
+        this.type = type;
     }
 
 }

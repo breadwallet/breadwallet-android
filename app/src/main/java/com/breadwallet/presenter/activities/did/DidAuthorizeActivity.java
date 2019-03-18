@@ -177,6 +177,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
+        if(!isValid) Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
 
         if(isValid){
             cacheAuthorInfo(uriFactory);

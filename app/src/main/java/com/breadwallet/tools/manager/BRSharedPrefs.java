@@ -161,10 +161,58 @@ public class BRSharedPrefs {
         return prefs.getString("nickname", "Your Nickname");
     }
 
-    public static void putNickname(Context context, String firstAddress) {
+    public static void putNickname(Context context, String nickname) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("nickname", firstAddress);
+        editor.putString("nickname", nickname);
+        editor.apply();
+    }
+
+    public static String getEmail(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("email", "");
+    }
+
+    public static void putEmail(Context context, String email) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("email", email);
+        editor.apply();
+    }
+
+    public static String getMobile(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("mobile", "");
+    }
+
+    public static void putMobile(Context context, String mobile) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("mobile", mobile);
+        editor.apply();
+    }
+
+    public static String getRealname(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("realname", "");
+    }
+
+    public static void putRealname(Context context, String realname) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("realname", realname);
+        editor.apply();
+    }
+
+    public static String getID(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("ID", "");
+    }
+
+    public static void putID(Context context, String id) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ID", id);
         editor.apply();
     }
 
@@ -562,5 +610,40 @@ public class BRSharedPrefs {
         editor.putBoolean("appBackgroundedFromHome", fromHome);
         editor.apply();
 
+    }
+
+
+    public static final String NICKNAME_STATE = "nickname_state";
+    public static final String EMAIL_STATE = "email_state";
+    public static final String MOBILE_STATE  = "mobile_state";
+    public static final String ID_STATE  = "id_state";
+
+    public static final String NICKNAME_txid = "nickname_txid";
+    public static final String EMAIL_txid = "email_txid";
+    public static final String MOBILE_txid  = "mobile_txid";
+    public static final String ID_txid  = "id_txid";
+
+    public static int getProfileState(Context context, String key) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(key, 1);
+    }
+
+    public static void putProfileState(Context context, String key, int state) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, state);
+        editor.apply();
+    }
+
+    public static String getCacheTxid(Context context, String key) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(key, null);
+    }
+
+    public static void putCacheTxid(Context context, String key, String txid) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, txid);
+        editor.apply();
     }
 }

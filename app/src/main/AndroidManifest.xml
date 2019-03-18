@@ -12,14 +12,12 @@
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BIND_JOB_SERVICE" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -82,6 +80,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presenter.activities.TestWalletActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <!--<intent-filter android:autoVerify="true">-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+
         <activity
             android:name=".presenter.activities.WalletActivity"
             android:label="@string/app_name"
@@ -270,11 +281,8 @@
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
-                <!--必有项-->
                 <action android:name="android.intent.action.VIEW"/>
-                <!--如果希望该应用可以通过浏览器的连接启动，则添加该项-->
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!--表示该页面可以被隐式调用，必须加上该项-->
                 <category android:name="android.intent.category.DEFAULT"/>
                 <!--协议部分-->
                 <data android:scheme="elaphant"
@@ -288,12 +296,17 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".presenter.activities.ProfileActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".presenter.activities.did.DidDetailActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presenter.activities.did.DidNickActivity"
+            android:name=".presenter.activities.did.KYCEditActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
@@ -306,6 +319,10 @@
             android:name=".presenter.activities.did.AuthorQrActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".presenter.activities.ExploreWebActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

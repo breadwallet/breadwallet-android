@@ -11,24 +11,15 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.v4.app.FragmentActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -49,12 +40,17 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -1162,5 +1158,30 @@ public class BRKeyStore {
             this.ivFileName = ivFileName;
         }
 
+    }
+
+    public static final String RSA = "RSA";
+    public static final String ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding";
+
+    public static void encryptByPublicKey(Context context, byte[] data, byte[] publicKey) throws Exception {
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
+        KeyFactory kf = KeyFactory.getInstance(RSA);
+        PublicKey keyPublic = kf.generatePublic(keySpec);
+        Cipher cp = Cipher.getInstance(ECB_PKCS1_PADDING);
+        cp.init(Cipher.ENCRYPT_MODE, keyPublic);
+
+        byte[] arr = cp.doFinal(data);
+        storeEncryptedData(context, data, "profile_data");
+    }
+
+    public static String decryptByPrivateKey(Context context, byte[] privateKey) throws Exception {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
+        KeyFactory kf = KeyFactory.getInstance(RSA);
+        PrivateKey keyPrivate = kf.generatePrivate(keySpec);
+
+        Cipher cp = Cipher.getInstance(ECB_PKCS1_PADDING);
+        cp.init(Cipher.DECRYPT_MODE, keyPrivate);
+        byte[] encrypted = retrieveEncryptedData(context, "profile_data");
+        return new String(cp.doFinal(encrypted));
     }
 }

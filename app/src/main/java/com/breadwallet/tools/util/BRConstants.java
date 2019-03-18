@@ -63,6 +63,12 @@ public final class BRConstants {
 
     public static final String CANARY_STRING = "canary";
 
+
+    public static final int PROFILE_REQUEST_NICKNAME = 301;
+    public static final int PROFILE_REQUEST_EMAIL = 302;
+    public static final int PROFILE_REQUEST_MOBILE = 303;
+    public static final int PROFILE_REQUEST_ID = 304;
+
     /**
      * Currency units
      */

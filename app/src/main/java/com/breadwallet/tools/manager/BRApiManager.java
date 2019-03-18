@@ -208,30 +208,13 @@ public class BRApiManager {
 
     }
 
-    static class BGXEntity {
-        public Data data;
-    }
-
-    static class Data {
-        public Rate rate;
-    }
-
-    static class Rate {
-        public EN_US en_US;
-    }
-
-    static class EN_US {
-        public float BTC;
-        public float BGX;
-    }
-
-
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
 //        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
         String url = "https://api-wallet-ela.elastos.org/api/1/cmc?limit=1000";
         String result = urlGET(context, url);
+        Log.i(TAG, "updateErc20Rates result:"+result);
         try {
             if (Utils.isNullOrEmpty(result)) {
                 Log.e(TAG, "updateErc20Rates: Failed to fetch");
@@ -262,19 +245,6 @@ public class BRApiManager {
 
             }
 
-//            String urlBgx = "https://www.gaex.com/svc/portal/api/v2/publicinfo";
-//            String reuslt = null;
-//            try {
-//                reuslt = urlGET2(context, urlBgx);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            BGXEntity bgxEntity = new Gson().fromJson(reuslt, BGXEntity.class);
-//            if(bgxEntity != null) {
-//                BigDecimal rate = new BigDecimal(bgxEntity.data.rate.en_US.BGX).divide(new BigDecimal(bgxEntity.data.rate.en_US.BTC), 8, BRConstants.ROUNDING_MODE);
-//                CurrencyEntity bgxCurrencyEntity = new CurrencyEntity("BTC", "BGX", rate.floatValue(), "BGX");
-//                tmp.add(bgxCurrencyEntity);
-//            }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
@@ -283,31 +253,6 @@ public class BRApiManager {
             e.printStackTrace();
         }
 
-    }
-
-    public String urlGET2(Context context, String myURL) throws IOException {
-        Map<String, String> headers = BreadApp.getBreadHeaders();
-
-        Request.Builder builder = new Request.Builder()
-                .url(myURL)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(context, "android/HttpURLConnection"))
-                .get();
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            builder.header((String) pair.getKey(), (String) pair.getValue());
-        }
-
-        Request request = builder.build();
-        Response response = APIClient.elaClient.newCall(request).execute();
-
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
     }
 
     public void startTimer(Context context) {

@@ -1,2 +1,2 @@
 configurations.maybeCreate("default")
-artifacts.add("default", file('walletlibrary-debug.aar'))
+artifacts.add("default", file('walletlibrary.aar'))

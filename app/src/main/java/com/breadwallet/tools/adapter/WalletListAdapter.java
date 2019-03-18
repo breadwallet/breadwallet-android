@@ -27,6 +27,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -94,6 +95,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingLabel.setText(item.mLabelText);
+        if(wallet instanceof WalletTokenManager)
+            holder.mErc20Icon.setVisibility(View.VISIBLE);
+        else
+            holder.mErc20Icon.setVisibility(View.GONE);
 
 //        String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
 
@@ -226,6 +231,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         private BaseTextView mSyncingLabel;
         private ProgressBar mSyncingProgressBar;
         private ImageView mLogoIcon;
+        private BaseTextView mErc20Icon;
 
         public WalletItemViewHolder(View view) {
             super(view);
@@ -238,6 +244,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mSyncingLabel = view.findViewById(R.id.syncing_label);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
             mLogoIcon = view.findViewById(R.id.currency_icon_white);
+            mErc20Icon = view.findViewById(R.id.erc20_flag);
         }
     }
 

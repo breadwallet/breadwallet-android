@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.tools.util.SettingsUtil;
 
 import java.util.List;
 
@@ -82,14 +83,44 @@ public class SettingsAdapter extends ArrayAdapter<String> {
 
             v.setOnClickListener(item.listener);
         }
-
-        TextView newTv = v.findViewById(R.id.new_tv);
-        newTv.setVisibility(item.isNew?View.VISIBLE : View.GONE);
+        setViewByType(item.type, v);
         TextView title = v.findViewById(R.id.item_title);
         title.setText(item.title);
 
         return v;
 
+    }
+
+    private void setViewByType(int type, View v){
+        TextView typeTv = v.findViewById(R.id.type_view);
+        switch (type) {
+            case SettingsUtil.NONE :
+                typeTv.setVisibility(View.GONE);
+                break;
+            case SettingsUtil.IS_NEW :
+                typeTv.setVisibility(View.VISIBLE);
+                typeTv.setTextColor(mContext.getColor(R.color.setting_type_new));
+                typeTv.setText(mContext.getString(R.string.My_Profile_New));
+                break;
+            case SettingsUtil.IS_PENDING :
+                typeTv.setVisibility(View.VISIBLE);
+                typeTv.setTextColor(mContext.getColor(R.color.setting_type_pending));
+                typeTv.setText(mContext.getString(R.string.My_Profile_Pending));
+                break;
+            case SettingsUtil.IS_SAVING :
+                typeTv.setVisibility(View.VISIBLE);
+                typeTv.setTextColor(mContext.getColor(R.color.setting_type_pending));
+                typeTv.setText(mContext.getString(R.string.My_Profile_Saving));
+                break;
+            case SettingsUtil.IS_COMPLETED :
+                typeTv.setVisibility(View.VISIBLE);
+                typeTv.setTextColor(mContext.getColor(R.color.setting_type_completed));
+                typeTv.setText(mContext.getString(R.string.My_Profile_Completed));
+                break;
+            default:
+                typeTv.setVisibility(View.GONE);
+                return;
+        }
     }
 
     @Override
