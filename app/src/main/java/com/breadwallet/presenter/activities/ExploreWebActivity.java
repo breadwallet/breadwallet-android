@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
@@ -23,6 +25,7 @@ public class ExploreWebActivity extends BRActivity {
 
     private WebView webView;
     private String mUrl;
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +36,9 @@ public class ExploreWebActivity extends BRActivity {
 
         webView = findViewById(R.id.web_view);
         webviewSetting();
+
+        mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
+        mLoadingDialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
@@ -64,6 +70,28 @@ public class ExploreWebActivity extends BRActivity {
                 }
 
                 return false;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingDialog.show();
+                    }
+                });
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingDialog.dismiss();
+                    }
+                });
             }
 
             @Override
