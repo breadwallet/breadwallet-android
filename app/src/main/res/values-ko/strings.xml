@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">2019년 3월 31까지 100유로의 비트코인을 구매하시면 20유로 짜리 독일 아마존 기프트 카드를 제공해 드립니다.*</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">기프트 카드를 드립니다.</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">*고객 한 분 당 1장으로 한정됩니다. 오스트리아, 독일, 룩셈부르크, 네덜란드에서만 사용 가능합니다.</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">독일 아마존의 20유로 기프트 카드를 놓치지 마세요!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">당신의 은행을 통해 BTC와 ETH를 구입하면 한도가 더 높으며, 인도가 더 신속할 뿐 아니라 수수료도 더 낮습니다. 지금 가입하여 출시 시점에 알림을 받으십시오.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">변경 사항에 대해 알려드리겠습니다.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">곧 새로운 구입 방식이 등장합니다!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">감사합니다.</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON 직렬화 오류</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">보낼 금액:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">네트워크 수수료:</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">네트워크 요금 (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">처리 시간: 이 거래는 %1$s에 완료될 것으로 예상됩니다.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">예상 시간</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">동기화는 언제 해야 합니까?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">거래 수수료를 절약하고 미래의 보상을 얻을 수 있는 방법을 배우십시오.</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">BRD 리워즈를 소개합니다.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">리워즈</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">카메라 플래시</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">SegWit을 활성화는 취소할 수 없는 기능입니다. 계속하시겠습니까?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">활성화</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">투 더 문</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">금액</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">기본 통화로 초기화</string>
     <!-- Leave review button label -->
     <string name="Settings.review">후기를 남겨주세요</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">보상</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">익명 데이터 공유</string>
     <!-- Sync blockchain label -->
