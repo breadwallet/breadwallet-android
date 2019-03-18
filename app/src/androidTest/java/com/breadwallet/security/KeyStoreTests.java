@@ -7,7 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -83,76 +82,6 @@ public class KeyStoreTests {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshJapGet, japPhrase);
-
-    }
-
-    @Test
-    public void setGetCanary() {
-        String canary = "canary";
-        try {
-            BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-        assertFilesExist(BRKeyStore.CANARY_ALIAS);
-        String freshGet = "";
-        try {
-            freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        Assert.assertEquals(freshGet, canary);
-    }
-
-    @Test
-    public void setGetMultiple() {
-        final String canary = "canary";
-        for (int i = 0; i < 100; i++) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        boolean b = BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
-                        Assert.assertTrue(b);
-                    } catch (UserNotAuthenticatedException e) {
-                        e.printStackTrace();
-                        Assert.fail();
-                    }
-                    try {
-                        String b = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
-                        Assert.assertEquals(b, canary);
-                    } catch (UserNotAuthenticatedException e) {
-                        e.printStackTrace();
-                        Assert.fail();
-                    }
-                }
-            });
-
-        }
-
-        for (int i = 0; i < 100; i++) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    String freshGet = "";
-                    try {
-                        freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
-                    } catch (UserNotAuthenticatedException e) {
-                        e.printStackTrace();
-                    }
-                    Assert.assertEquals(freshGet, canary);
-                }
-            });
-
-        }
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        assertFilesExist(BRKeyStore.CANARY_ALIAS);
 
     }
 
@@ -254,12 +183,6 @@ public class KeyStoreTests {
             e.printStackTrace();
             Assert.fail();
         }
-        try {
-            BRKeyStore.putCanary("canary", mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
 
         BRKeyStore.putMasterPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         BRKeyStore.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
@@ -291,16 +214,7 @@ public class KeyStoreTests {
             e.printStackTrace();
         }
 
-        String canary = "some";
-
-        try {
-            canary = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-
         Assert.assertNull(phrase);
-        Assert.assertEquals(null, canary);
         Assert.assertEquals(null, BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()));
         Assert.assertEquals(null, BRKeyStore.getEthPublicKey(mActivityRule.getActivity()));
         Assert.assertEquals(null, BRKeyStore.getAuthKey(mActivityRule.getActivity()));

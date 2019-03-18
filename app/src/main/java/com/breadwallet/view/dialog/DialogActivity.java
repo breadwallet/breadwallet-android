@@ -5,12 +5,14 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.util.BRConstants;
@@ -25,10 +27,13 @@ public class DialogActivity extends AppCompatActivity {
 
     private static final String DIALOG_TYPE_EXTRA = "com.breadwallet.view.dialog.DialogActivity";
     private static final String BRD_SUPPORT_EMAIL = "support@brd.com";
+    private static final String PACKAGE_PREFIX = "package:";
 
     public enum DialogType {
+        DEFAULT,
         ENABLE_DEVICE_PASSWORD,
-        KEY_STORE_INVALID
+        KEY_STORE_INVALID_WIPE,
+        KEY_STORE_INVALID_UNINSTALL;
     }
 
     @Override
@@ -44,11 +49,16 @@ public class DialogActivity extends AppCompatActivity {
                     case ENABLE_DEVICE_PASSWORD:
                         showEnableDevicePasswordDialog();
                         break;
-                    case KEY_STORE_INVALID:
-                        showKeyStoreInvalidDialog();
+                    case KEY_STORE_INVALID_WIPE:
+                        showKeyStoreInvalidDialogAndWipe();
                         break;
+                    case KEY_STORE_INVALID_UNINSTALL:
+                        showKeyStoreInvalidDialogAndUninstall();
+                        break;
+                    case DEFAULT:
+                        // Fall through
                     default:
-                        throw new IllegalArgumentException();
+                        throw new IllegalArgumentException("Invalid dialog type");
                 }
             }
         }
@@ -86,6 +96,8 @@ public class DialogActivity extends AppCompatActivity {
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
                         }
+
+                        finish();
                     }
                 },
                 new BRDialogView.BROnClickListener() {
@@ -101,19 +113,44 @@ public class DialogActivity extends AppCompatActivity {
         dialog.setCancelable(false);
     }
 
-    private void showKeyStoreInvalidDialog() {
-        BRDialogView dialog = showDialog(
-                getString(R.string.Alert_keystore_title_android),
-                getString(R.string.Alert_keystore_invalidated_android),
+    private void showKeyStoreInvalidDialogAndWipe() {
+        showKeyStoreInvalidDialog(
+                getString(R.string.Alert_keystore_invalidated_wipe_android),
                 getString(R.string.Button_wipe_android),
-                getString(R.string.Button_contactSupport_android),
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        Log.d(TAG, "showKeyStoreInvalidDialog: Clearing app data.");
+                        Log.d(TAG, "showKeyStoreInvalidDialogAndWipe: Clearing app data.");
                         BreadApp.clearApplicationUserData();
                     }
-                },
+                });
+    }
+
+    private void showKeyStoreInvalidDialogAndUninstall() {
+        showKeyStoreInvalidDialog(
+                getString(R.string.Alert_keystore_invalidated_uninstall_android),
+                getString(R.string.Button_uninstall_android),
+                new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        Log.d(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstalling");
+                        Intent intent = new Intent(Intent.ACTION_DELETE);
+                        intent.setData(Uri.parse(PACKAGE_PREFIX + BuildConfig.APPLICATION_ID));
+
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                });
+    }
+
+    private void showKeyStoreInvalidDialog(String message, String positiveButton, BRDialogView.BROnClickListener positiveListener) {
+        BRDialogView dialog = showDialog(
+                getString(R.string.Alert_keystore_title_android),
+                message,
+                positiveButton,
+                getString(R.string.Button_contactSupport_android),
+                positiveListener,
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -131,6 +168,7 @@ public class DialogActivity extends AppCompatActivity {
 
         dialog.setCancelable(false);
     }
+
     //endRegion
 
     //region Generic dialog methods TODO: Move generic BRDialog methods here.

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -15,7 +14,6 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -55,26 +53,26 @@ public class IntroActivity extends BRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
-        if (BreadApp.isDeviceStateValid()) {
-            setContentView(R.layout.activity_intro);
-            setOnClickListeners();
-            updateBundles();
-            ImageButton faq = findViewById(R.id.faq_button);
-            faq.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!UiUtils.isClickAllowed()) return;
-                    BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
-                    UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
-                }
-            });
-
-            if (BuildConfig.DEBUG) {
-                Utils.printPhoneSpecs(this);
+        setContentView(R.layout.activity_intro);
+        setOnClickListeners();
+        updateBundles();
+        ImageButton faq = findViewById(R.id.faq_button);
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!UiUtils.isClickAllowed()) return;
+                BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
+                UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
             }
+        });
 
-            PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
+        if (BuildConfig.DEBUG) {
+            Utils.printPhoneSpecs(this);
+        }
+
+        // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
+        if (!WalletsMaster.getInstance(this).noWallet(this)) {
+                UiUtils.startBreadActivity(this, true);
         }
     }
 

@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
@@ -65,7 +66,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -101,6 +101,7 @@ public final class BRKeyStore {
 
     private static final String KEY_STORE_PREFS_NAME = "keyStorePrefs";
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    private static final String MANUFACTURER_GOOGLE = "Google";
 
     // Old encryption parameters
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
@@ -116,7 +117,6 @@ public final class BRKeyStore {
 
     // Iv names
     private static final String PHRASE_IV = "ivphrase";
-    private static final String CANARY_IV = "ivcanary";
     private static final String PUB_KEY_IV = "ivpubkey";
     private static final String WALLET_CREATION_TIME_IV = "ivtime";
     private static final String PASS_CODE_IV = "ivpasscode";
@@ -130,7 +130,6 @@ public final class BRKeyStore {
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
 
     public static final String PHRASE_ALIAS = "phrase";
-    public static final String CANARY_ALIAS = "canary";
     public static final String PUB_KEY_ALIAS = "pubKey";
     public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     public static final String PASS_CODE_ALIAS = "passCode";
@@ -144,7 +143,6 @@ public final class BRKeyStore {
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
 
     private static final String PHRASE_FILENAME = "my_phrase";
-    private static final String CANARY_FILENAME = "my_canary";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
@@ -165,13 +163,18 @@ public final class BRKeyStore {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
 
+    public enum ValidityStatus {
+        VALID,
+        INVALID_WIPE,
+        INVALID_UNINSTALL;
+    }
+
     // Storing all the Keystore data into a map.
     // TODO Wrong/old implementation, needs refactoring.
     // TODO Create generic functions and remove duplicate code.
     static {
         ALIAS_OBJECT_MAP = new HashMap<>();
         ALIAS_OBJECT_MAP.put(PHRASE_ALIAS, new AliasObject(PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV));
-        ALIAS_OBJECT_MAP.put(CANARY_ALIAS, new AliasObject(CANARY_ALIAS, CANARY_FILENAME, CANARY_IV));
         ALIAS_OBJECT_MAP.put(PUB_KEY_ALIAS, new AliasObject(PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV));
         ALIAS_OBJECT_MAP.put(WALLET_CREATION_TIME_ALIAS, new AliasObject(WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, WALLET_CREATION_TIME_IV));
         ALIAS_OBJECT_MAP.put(PASS_CODE_ALIAS, new AliasObject(PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV));
@@ -186,16 +189,19 @@ public final class BRKeyStore {
     }
 
     /**
-     * Returns true if Android key store is valid. We test if the paper key encryption key can no longer be used
-     * because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
+     * Returns a value based on if Android key store is valid. We test if the paper key encryption key can no longer be
+     * used because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
      * Android key store has been invalidated, our entire app data should be wiped and the app should be
      * re-initialized.  We cannot recover from this otherwise.
      *
+     * We found on Google devices a wipe is sufficient to recover except on Android 8.1 which requires an uninstall.
+     * On non-Google devices a wipe is required on Android 6-7.1 and an uninstall is required on Android 8+.
+     *
      * See {@link KeyPermanentlyInvalidatedException} for further details.
      *
-     * @return True, if the Android key store is valid; false, otherwise.
+     * @return A {@link ValidityStatus} based on the current status of the Android key store.
      */
-    public static boolean isValid() {
+    public static ValidityStatus getValidityStatus() {
         try {
             // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -214,17 +220,27 @@ public final class BRKeyStore {
             //  -> with cause "Key blob corrupted" happens then the password was disabled & re-enabled. See DROID-1207.
             //  -> with cause "Key blob corrupted" happens then after DROID-1019 the app was opened again while password is on.
             //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
+            //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
             // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
 
-            Log.e(TAG, "The key store has been invalidated. ", e);
-            return false;
+            boolean isGoogleDevice = MANUFACTURER_GOOGLE.equals(Build.MANUFACTURER);
+            if ((isGoogleDevice && android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.O_MR1)
+                    || (!isGoogleDevice && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)) {
+                Log.e(TAG, "The key store has been invalidated. Uninstall required. Manufacturer: "
+                        + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
+                return ValidityStatus.INVALID_UNINSTALL;
+            } else {
+                Log.e(TAG, "The key store has been invalidated. Wipe required. Manufacturer: "
+                        + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
+                return ValidityStatus.INVALID_WIPE;
+            }
         } catch (GeneralSecurityException | IOException e) {
             // We can safely ignore these exceptions, because we are only concerned with
             // KeyPermanentlyInvalidatedException here.
             Log.e(TAG, "Error while checking if key store is still valid. Ignoring. ", e);
         }
 
-        return true;
+        return ValidityStatus.VALID;
     }
 
     /**
@@ -436,7 +452,7 @@ public final class BRKeyStore {
             }
 
             // Create the new format key.
-            SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS) || alias.equals(CANARY_ALIAS)));
+            SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS)));
             if (newKey == null) {
                 throw new RuntimeException("Failed to create new key for mAlias " + alias);
             }
@@ -488,7 +504,7 @@ public final class BRKeyStore {
         }
 
         if (authRequired) {
-            if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS)) {
+            if (!alias.equals(PHRASE_ALIAS)) {
                 throw new IllegalArgumentException("keystore auth_required is true but mAlias is: " + alias);
             }
         }
@@ -523,30 +539,6 @@ public final class BRKeyStore {
         }
         AliasObject obj = ALIAS_OBJECT_MAP.get(PHRASE_ALIAS);
         return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
-    }
-
-    public static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
-        if (strToStore == null || strToStore.isEmpty()) {
-            return false;
-        }
-        AliasObject obj = ALIAS_OBJECT_MAP.get(CANARY_ALIAS);
-        byte[] strBytes = strToStore.getBytes(StandardCharsets.UTF_8);
-        return strBytes.length != 0 && setData(context, strBytes, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode, true);
-    }
-
-    public static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
-        AliasObject obj = ALIAS_OBJECT_MAP.get(CANARY_ALIAS);
-        byte[] data;
-        data = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
-        return data == null ? null : new String(data, StandardCharsets.UTF_8);
     }
 
     public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
@@ -897,19 +889,15 @@ public final class BRKeyStore {
     private static synchronized void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
+        if (!alias.equalsIgnoreCase(PHRASE_ALIAS)) {
             BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
         }
         if (context instanceof Activity) {
             Activity app = (Activity) context;
-            KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            if (mKeyguardManager == null) {
-                NullPointerException ex = new NullPointerException("KeyguardManager is null in showAuthenticationScreen");
-                BRReportsManager.reportBug(ex, true);
-                return;
-            }
-            String message = context.getString(R.string.UnlockScreen_touchIdPrompt_android);
-            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), message);
+            KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
+                    context.getString(R.string.UnlockScreen_touchIdTitle_android),
+                    context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {
                 app.startActivityForResult(intent, requestCode);
             } else {
