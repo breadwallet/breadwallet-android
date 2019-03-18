@@ -301,15 +301,6 @@ public class WalletsMaster {
         return pubkey == null || pubkey.length == 0;
     }
 
-    /**
-     * true if device passcode is enabled
-     */
-    // TODO Remove this. It should no longer be needed after DROID-1207. Needs to be tested though.
-    public boolean isPasscodeEnabled(Context ctx) {
-        KeyguardManager keyguardManager = (KeyguardManager) ctx.getSystemService(Activity.KEYGUARD_SERVICE);
-        return keyguardManager.isKeyguardSecure();
-    }
-
     public void wipeWalletButKeystore(final Context ctx) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -409,33 +400,6 @@ public class WalletsMaster {
         }
         wm.connect(app);
 
-    }
-
-    public void startTheWalletIfExists(final Activity app) {
-        final WalletsMaster m = WalletsMaster.getInstance(app);
-        if (!m.isPasscodeEnabled(app)) {
-            // TODO: Use DialogActivity instead
-            //Device passcode/password should be enabled for the app to work
-            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-                    app.getString(R.string.Prompts_NoScreenLock_body_android),
-                    app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            app.finish();
-                        }
-                    }, null, new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            app.finish();
-                        }
-                    }, 0);
-        } else {
-            if (!m.noWallet(app)) {
-                UiUtils.startBreadActivity(app, true);
-            }
-            //else just sit in the intro screen
-
-        }
     }
 
     public boolean hasWallet(String currencyCode) {

@@ -66,7 +66,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -118,7 +117,6 @@ public final class BRKeyStore {
 
     // Iv names
     private static final String PHRASE_IV = "ivphrase";
-    private static final String CANARY_IV = "ivcanary";
     private static final String PUB_KEY_IV = "ivpubkey";
     private static final String WALLET_CREATION_TIME_IV = "ivtime";
     private static final String PASS_CODE_IV = "ivpasscode";
@@ -132,7 +130,6 @@ public final class BRKeyStore {
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
 
     public static final String PHRASE_ALIAS = "phrase";
-    public static final String CANARY_ALIAS = "canary";
     public static final String PUB_KEY_ALIAS = "pubKey";
     public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     public static final String PASS_CODE_ALIAS = "passCode";
@@ -146,7 +143,6 @@ public final class BRKeyStore {
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
 
     private static final String PHRASE_FILENAME = "my_phrase";
-    private static final String CANARY_FILENAME = "my_canary";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
@@ -179,7 +175,6 @@ public final class BRKeyStore {
     static {
         ALIAS_OBJECT_MAP = new HashMap<>();
         ALIAS_OBJECT_MAP.put(PHRASE_ALIAS, new AliasObject(PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV));
-        ALIAS_OBJECT_MAP.put(CANARY_ALIAS, new AliasObject(CANARY_ALIAS, CANARY_FILENAME, CANARY_IV));
         ALIAS_OBJECT_MAP.put(PUB_KEY_ALIAS, new AliasObject(PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV));
         ALIAS_OBJECT_MAP.put(WALLET_CREATION_TIME_ALIAS, new AliasObject(WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, WALLET_CREATION_TIME_IV));
         ALIAS_OBJECT_MAP.put(PASS_CODE_ALIAS, new AliasObject(PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV));
@@ -457,7 +452,7 @@ public final class BRKeyStore {
             }
 
             // Create the new format key.
-            SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS) || alias.equals(CANARY_ALIAS)));
+            SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS)));
             if (newKey == null) {
                 throw new RuntimeException("Failed to create new key for mAlias " + alias);
             }
@@ -509,7 +504,7 @@ public final class BRKeyStore {
         }
 
         if (authRequired) {
-            if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS)) {
+            if (!alias.equals(PHRASE_ALIAS)) {
                 throw new IllegalArgumentException("keystore auth_required is true but mAlias is: " + alias);
             }
         }
@@ -544,30 +539,6 @@ public final class BRKeyStore {
         }
         AliasObject obj = ALIAS_OBJECT_MAP.get(PHRASE_ALIAS);
         return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
-    }
-
-    public static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
-        if (strToStore == null || strToStore.isEmpty()) {
-            return false;
-        }
-        AliasObject obj = ALIAS_OBJECT_MAP.get(CANARY_ALIAS);
-        byte[] strBytes = strToStore.getBytes(StandardCharsets.UTF_8);
-        return strBytes.length != 0 && setData(context, strBytes, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode, true);
-    }
-
-    public static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
-        AliasObject obj = ALIAS_OBJECT_MAP.get(CANARY_ALIAS);
-        byte[] data;
-        data = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
-        return data == null ? null : new String(data, StandardCharsets.UTF_8);
     }
 
     public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
@@ -918,19 +889,15 @@ public final class BRKeyStore {
     private static synchronized void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
+        if (!alias.equalsIgnoreCase(PHRASE_ALIAS)) {
             BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
         }
         if (context instanceof Activity) {
             Activity app = (Activity) context;
-            KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            if (mKeyguardManager == null) {
-                NullPointerException ex = new NullPointerException("KeyguardManager is null in showAuthenticationScreen");
-                BRReportsManager.reportBug(ex, true);
-                return;
-            }
-            String message = context.getString(R.string.UnlockScreen_touchIdPrompt_android);
-            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), message);
+            KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
+                    context.getString(R.string.UnlockScreen_touchIdTitle_android),
+                    context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {
                 app.startActivityForResult(intent, requestCode);
             } else {
