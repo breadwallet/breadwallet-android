@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -24,15 +25,12 @@ import org.wallet.library.AuthorizeManager;
 public class ExploreWebActivity extends BRActivity {
 
     private WebView webView;
-    private String mUrl;
     private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expolre_web_layout);
-
-        mUrl = getIntent().getStringExtra("explore_url");
 
         webView = findViewById(R.id.web_view);
         webviewSetting();
@@ -44,8 +42,17 @@ public class ExploreWebActivity extends BRActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!StringUtil.isNullOrEmpty(mUrl))
-            webView.loadUrl(mUrl);
+        String url = getIntent().getStringExtra("explore_url");
+        Log.i("loadUrl", "onResume url:"+url);
+        loadUrl(url);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String url = getIntent().getStringExtra("explore_url");
+        Log.i("loadUrl", "onNewIntent url:"+url);
+//        loadUrl(url);
     }
 
     private void webviewSetting() {
@@ -60,15 +67,9 @@ public class ExploreWebActivity extends BRActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.i("loadUrl", "shouldOverrideUrl url:"+url);
                 if(StringUtil.isNullOrEmpty(url)) return false;
-                if(url.startsWith("elaphant") && url.contains("identity")) {
-                    AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
-                } else if(url.startsWith("elaphant") && url.contains("elapay")) {
-                    AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
-                } else {
-                    view.loadUrl(url);
-                }
-
+                loadUrl(url);
                 return false;
             }
 
@@ -112,6 +113,19 @@ public class ExploreWebActivity extends BRActivity {
                 Log.i("xidaokun", "onReceivedError");
             }
         });
-        webView.loadUrl(mUrl);
+    }
+
+    private void loadUrl(String url){
+        Log.i("loadUrl", "url:"+url);
+        if(StringUtil.isNullOrEmpty(url)) return;
+        if(url.startsWith("elaphant") && url.contains("identity")) {
+            AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
+            finish();
+        } else if(url.startsWith("elaphant") && url.contains("elapay")) {
+            AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
+            finish();
+        } else {
+            webView.loadUrl(url);
+        }
     }
 }

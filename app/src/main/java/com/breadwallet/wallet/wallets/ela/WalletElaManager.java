@@ -1,15 +1,19 @@
 package com.breadwallet.wallet.wallets.ela;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.R;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -176,11 +180,21 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
         if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
-        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) {
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl) && (mContext instanceof Activity)) {
+            Log.i("redPackage", "start webview");
+            Activity activity = (Activity) mContext;
             if(WalletActivity.mCallbackUrl.contains("?")){
-                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
+                Intent intent = new Intent(mContext, ExploreWebActivity.class);
+                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
             } else {
-                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
+                Intent intent = new Intent(mContext, ExploreWebActivity.class);
+                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
             }
         }
         WalletActivity.mCallbackUrl = null;
