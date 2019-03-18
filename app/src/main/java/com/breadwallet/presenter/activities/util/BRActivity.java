@@ -1,10 +1,8 @@
 package com.breadwallet.presenter.activities.util;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,26 +16,17 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
-import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.intro.RecoverActivity;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.platform.HTTPServer;
 
 /**
  * BreadWallet
@@ -166,19 +155,6 @@ public class BRActivity extends FragmentActivity {
                         }
                     });
 
-                }
-                break;
-
-            case BRConstants.CANARY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuth.getInstance().onCanaryCheck(BRActivity.this, true);
-                        }
-                    });
-                } else {
-                    finish();
                 }
                 break;
 
