@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,21 @@ import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.StringUtil;
+import com.elastos.jni.Utility;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.elastos.sdk.wallet.Did;
+import org.elastos.sdk.wallet.DidManager;
+import org.elastos.sdk.wallet.Identity;
+import org.elastos.sdk.wallet.IdentityManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -68,6 +84,65 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 //        clearFragment();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
+
+        didIsOnchain();
+    }
+
+
+    class KeyValue {
+        public String Key;
+        public String Value;
+    }
+
+    private String getKeyVale(String path, String value){
+        KeyValue key = new KeyValue();
+        key.Key = path;
+        key.Value = value;
+        List<KeyValue> keys = new ArrayList<>();
+        keys.add(key);
+        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
+    }
+
+    private void didIsOnchain(){
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                String seed;
+                String mnemonic = getMn();
+                String language = Utility.detectLang(HomeActivity.this, mnemonic);
+                String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
+                seed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+                Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+                DidManager didManager = identity.createDidManager(seed);
+                Did did = didManager.createDid(0);
+
+                String publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+
+                did.syncInfo();
+                String value = did.getInfo("DID/Publickey");
+                Log.i("publicKey", "value:"+value);
+                if(StringUtil.isNullOrEmpty(value) || !value.contains("DID/Publickey")){
+                    String data = getKeyVale("DID/Publickey", publicKey);
+                    String info = did.signInfo(seed, data);
+                    String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
+                    Log.i("publicKey", "txid:"+txid);
+                }
+            }
+        });
+    }
+
+    private String getMn(){
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+            if(phrase != null) {
+                return new String(phrase);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
