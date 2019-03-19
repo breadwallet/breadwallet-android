@@ -50,10 +50,12 @@ public class ProfileDataSource {
 
     public String upchain(String data){
         try {
+            Log.i("ProfileFunction", "upchain data:"+data);
             ProfileResponse result = urlPost(didTestUrl+"api/1/blockagent/upchain/data", data);
+            Log.i("ProfileFunction", "result:"+result);
             if(200 == result.status) return result.result;
         } catch (IOException e) {
-            Log.i("xidaokun", "upchain exception");
+            Log.i("ProfileFunction", "upchain exception");
             e.printStackTrace();
         }
 
@@ -72,6 +74,24 @@ public class ProfileDataSource {
         boolean is = !(transaction==null || StringUtil.isNullOrEmpty(transaction.txid));
         Log.i("xidaokun", "isTxExit:"+is);
         return is;
+    }
+
+    public String getProfileValue(String did, String key){
+        String url = didTestUrl + "/api/1/did/"+did+"/"+key;
+
+        try {
+            String result = urlGET(url);
+            if(!StringUtil.isNullOrEmpty(result) && result.contains("200")) {
+                JSONObject jsonObject = new JSONObject(result);
+                result = jsonObject.getString("result");
+                return result;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
     }
 
     private Transaction getTransaction(String txid){
