@@ -118,7 +118,7 @@ public class ProfileDataSource {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
-//                .header("X-Elastos-Agent-Auth", author)
+                .header("X-Elastos-Agent-Auth", author)
                 .post(body)
                 .build();
         Response response = APIClient.elaClient.newCall(request).execute();
