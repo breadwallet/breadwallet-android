@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
@@ -27,6 +28,7 @@ import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
@@ -49,7 +51,7 @@ public class ProfileActivity extends BRActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("xidaokun", "adapter notify");
+            Log.i("ProfileFunction", "adapter notify");
             mData.clear();
             mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
             mAdapter.notifyDataSetChanged();
@@ -70,7 +72,7 @@ public class ProfileActivity extends BRActivity {
     private TimerTask timerTask;
 
     public void startTimer() {
-        Log.i("xidaokun", "startTimer");
+        Log.i("ProfileFunction", "startTimer");
         if (timer != null) return;
         timer = new Timer();
         initializeTimerTask();
@@ -78,7 +80,7 @@ public class ProfileActivity extends BRActivity {
     }
 
     public void stopTimerTask() {
-        Log.i("xidaokun", "stopTimerTask");
+        Log.i("ProfileFunction", "stopTimerTask");
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -88,7 +90,7 @@ public class ProfileActivity extends BRActivity {
     private void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("xidaokun", "isMainThread:"+(Looper.getMainLooper().getThread() == Thread.currentThread()));
+                Log.i("ProfileFunction", "isMainThread:"+(Looper.getMainLooper().getThread() == Thread.currentThread()));
                 syncCheckTx();
             }
         };
@@ -114,6 +116,7 @@ public class ProfileActivity extends BRActivity {
 
         mHandler.sendEmptyMessage(0x01);
         initDid();
+        initProfile();
     }
 
     @Override
@@ -135,42 +138,43 @@ public class ProfileActivity extends BRActivity {
         return null;
     }
 
-    private String getKeyVale(String path, String value){
-        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
-        class KeyValue {
-            public String Key;
-            public String Value;
-        }
+    private static final String APPID = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
 
+    class KeyValue {
+        public String Key;
+        public String Value;
+    }
+
+    private String getKeyVale(String path, String value){
         KeyValue key = new KeyValue();
-        key.Key = appId + "/" + path;
+        key.Key = APPID + "/" + path;
         key.Value = value;
         List<KeyValue> keys = new ArrayList<>();
         keys.add(key);
-        return new Gson().toJson(keys);
+
+        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
+    }
+
+    class IDcard {
+        public String name;
+        public String code;
+    }
+    class KeyValueId {
+        public String Key;
+        public IDcard Value;
     }
 
     private String getIdKeyValue(String path, String name, String code){
-        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
-        class IDcard {
-            public String name;
-            public String code;
-        }
-        class KeyValue {
-            public String Key;
-            public IDcard Value;
-        }
-
         IDcard iDcard = new IDcard();
         iDcard.name = name;
         iDcard.code = code;
 
-        KeyValue keyValue = new KeyValue();
-        keyValue.Key = appId + "/" + path;
-        keyValue.Value = iDcard;
+        KeyValueId keyValueId = new KeyValueId();
+        keyValueId.Key = APPID + "/" + path;
+        keyValueId.Value = iDcard;
 
         List<KeyValue> keyValues = new ArrayList<>();
-        return new Gson().toJson(keyValues);
+        return new Gson().toJson(keyValues, new TypeToken<List<KeyValue>>(){}.getType());
     }
 
     private Did mDid;
@@ -178,18 +182,70 @@ public class ProfileActivity extends BRActivity {
     private void initDid(){
         String mnemonic = getMn();
         String language = Utility.detectLang(ProfileActivity.this, mnemonic);
-        String words = Utility.getWords(ProfileActivity.this, language);
-        mSeed = IdentityManager.getSeed(mnemonic, language, words, "");
+        String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
+        mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
         Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
         DidManager didManager = identity.createDidManager(mSeed);
         mDid = didManager.createDid(0);
     }
 
+    class PayloadInfo {
+        public long blockTime;
+        public String did;
+        public String key;
+        public String txid;
+        public String value;
+    }
+
+    class PayloadInfoId {
+        public long blockTime;
+        public String did;
+        public String key;
+        public String txid;
+        public IDcard value;
+    }
+
+    private PayloadInfo getPayloadInfo(String value){
+        if(StringUtil.isNullOrEmpty(value)) return null;
+        return new Gson().fromJson(value, PayloadInfo.class);
+    }
+
+    private PayloadInfoId getPayloadInfoId(String value){
+        if(StringUtil.isNullOrEmpty(value)) return null;
+        return new Gson().fromJson(value, PayloadInfoId.class);
+    }
+
+    private void initProfile(){
+        mDid.syncInfo();
+        PayloadInfo payloadInfo = null;
+        String nickname = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/NickName");
+        payloadInfo = getPayloadInfo(nickname);
+        if(null != payloadInfo) BRSharedPrefs.putNickname(this, payloadInfo.value);
+
+        String email = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Email");
+        payloadInfo = getPayloadInfo(email);
+        if(null != payloadInfo) BRSharedPrefs.putEmail(this, payloadInfo.value);
+
+        String mobile = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Mobile");
+        payloadInfo = getPayloadInfo(mobile);
+        if(null != payloadInfo) BRSharedPrefs.putMobile(this, payloadInfo.value);
+
+        String idCard = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/ChineseIDCard");
+        PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
+        if(null!=payloadInfoId && null!=payloadInfoId.value) {
+            BRSharedPrefs.putRealname(this, payloadInfoId.value.name);
+            BRSharedPrefs.putID(this, payloadInfoId.value.code);
+        }
+
+        payloadInfo = null;
+    }
+
     private String uploadData(String data){
-        Log.i("xidaokun", "uploadData");
+        Log.i("ProfileFunction", "upload Data:"+ data);
         String info = mDid.signInfo(mSeed, data);
+        Log.i("ProfileFunction", "sign info:"+info);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
-        Log.i("xidaokun", "txid:"+txid);
+        Log.i("ProfileFunction", "txid:"+txid);
 
         return txid;
     }
@@ -197,7 +253,7 @@ public class ProfileActivity extends BRActivity {
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("xidaokun", "requestCode:"+requestCode);
+        Log.i("ProfileFunction", "requestCode:"+requestCode);
         if(resultCode != RESULT_OK) return;
         if(null == data) return;
 
@@ -211,14 +267,17 @@ public class ProfileActivity extends BRActivity {
                 }
 
                 String txid = null;
+                boolean canRefresh = false;
                 if(BRConstants.PROFILE_REQUEST_NICKNAME == requestCode){
                     String nickname = data.getStringExtra("nickname");
                     if(StringUtil.isNullOrEmpty(nickname)) return;
                     String data = getKeyVale("NickName", nickname);
-                    txid = uploadData(data);
-                    if(!StringUtil.isNullOrEmpty(txid)){
+                    if(BuildConfig.CAN_UPLOAD.contains("nickname")) txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("nickname")){
+                        canRefresh = true;
                         BRSharedPrefs.putNickname(ProfileActivity.this, nickname);
-                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
+                                BuildConfig.CAN_UPLOAD.contains("nickname")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid, txid);
                     }
 
@@ -226,10 +285,12 @@ public class ProfileActivity extends BRActivity {
                     String email = data.getStringExtra("email");
                     if(StringUtil.isNullOrEmpty(email)) return;
                     String data = getKeyVale("Email", email);
-                    txid = uploadData(data);
-                    if(!StringUtil.isNullOrEmpty(txid)){
+                    if(BuildConfig.CAN_UPLOAD.contains("email")) txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("email")){
+                        canRefresh = true;
                         BRSharedPrefs.putEmail(ProfileActivity.this, email);
-                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
+                                BuildConfig.CAN_UPLOAD.contains("email")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid, txid);
                     }
 
@@ -237,10 +298,12 @@ public class ProfileActivity extends BRActivity {
                     String mobile = data.getStringExtra("mobile");
                     if(StringUtil.isNullOrEmpty(mobile)) return;
                     String data = getKeyVale("Mobile", mobile);
-                    txid = uploadData(data);
-                    if(!StringUtil.isNullOrEmpty(txid)){
+                    if(BuildConfig.CAN_UPLOAD.contains("mobile")) txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("mobile")){
+                        canRefresh = true;
                         BRSharedPrefs.putMobile(ProfileActivity.this, mobile);
-                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
+                                BuildConfig.CAN_UPLOAD.contains("mobile")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid, txid);
                     }
 
@@ -249,17 +312,18 @@ public class ProfileActivity extends BRActivity {
                     String idcard = data.getStringExtra("idcard");
                     if(StringUtil.isNullOrEmpty(realname) || StringUtil.isNullOrEmpty(idcard)) return;
                     String data = getIdKeyValue("/ChineseIDCard", realname, idcard);
-                    txid = uploadData(data);
-                    if(!StringUtil.isNullOrEmpty(txid)){
+                    if(BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")) txid = uploadData(data);
+                    if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")){
+                        canRefresh = true;
                         BRSharedPrefs.putRealname(ProfileActivity.this, realname);
                         BRSharedPrefs.putID(ProfileActivity.this, idcard);
-                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_SAVING);
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
+                                BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid, txid);
                     }
                 }
 
-                if(!StringUtil.isNullOrEmpty(txid)){
-                    //TODO refresh UI
+                if(canRefresh){
                     if(mHandler !=null){//null when activity finish
                         mHandler.sendEmptyMessage(0x01);
                     }
@@ -297,7 +361,7 @@ public class ProfileActivity extends BRActivity {
     }
 
     private void checkTx(){
-        Log.i("xidaokun", "checkTx");
+        Log.i("ProfileFunction", "checkTx");
         boolean isExit = false;
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.NICKNAME_txid);
@@ -331,7 +395,7 @@ public class ProfileActivity extends BRActivity {
             }
         }
         if(!isExit) return;
-        Log.i("xidaokun", "tx is exit");
+        Log.i("ProfileFunction", "tx is exit");
         if(mHandler !=null) mHandler.sendEmptyMessage(0x01);
     }
 

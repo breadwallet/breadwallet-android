@@ -86,11 +86,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-            <!--<intent-filter android:autoVerify="true">-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+        <!--    <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
 
         <activity
@@ -306,7 +306,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presenter.activities.did.KYCEditActivity"
+            android:name=".presenter.activities.did.ProfileEditActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

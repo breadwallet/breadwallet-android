@@ -16,7 +16,7 @@ import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.ValidatorUtil;
 
-public class KYCEditActivity extends BaseSettingsActivity {
+public class ProfileEditActivity extends BaseSettingsActivity {
     @Override
     public int getLayoutId() {
         return R.layout.activity_did_nick_layout;
@@ -54,7 +54,7 @@ public class KYCEditActivity extends BaseSettingsActivity {
         initView();
         initListener();
         WHRER_FROM = getIntent().getIntExtra(SettingsUtil.KYC_FROME_KEY, -1);
-        Log.i("xidaokun", "WHRER_FROM:"+WHRER_FROM);
+        Log.i("ProfileFunction", "WHRER_FROM:"+WHRER_FROM);
         selectView(WHRER_FROM);
     }
 
@@ -121,7 +121,7 @@ public class KYCEditActivity extends BaseSettingsActivity {
     }
 
     private boolean check(int from){
-        Log.i("xidaokun", "check validate");
+        Log.i("ProfileFunction", "check validate");
         boolean is = true;
         if(from == SettingsUtil.KYC_FROME_MOBILE){
             is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
@@ -138,7 +138,7 @@ public class KYCEditActivity extends BaseSettingsActivity {
     }
 
     private void setEditResult(int from){
-        Log.i("xidaokun", "setEditResult");
+        Log.i("ProfileFunction", "setEditResult");
         Intent intent = null;
         switch (from) {
             case SettingsUtil.KYC_FROME_NICKNAME:

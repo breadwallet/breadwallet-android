@@ -6,6 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 
 import org.json.JSONArray;
@@ -162,6 +163,7 @@ public class BRSharedPrefs {
     }
 
     public static void putNickname(Context context, String nickname) {
+        if(StringUtil.isNullOrEmpty(nickname)) nickname = "Your Name";
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("nickname", nickname);

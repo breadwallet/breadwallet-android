@@ -209,7 +209,12 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                         dialogDismiss();
                                         return;
                                     }
-                                    Uri uri = Uri.parse(returnUrl+"&did="+myDid);
+                                    Uri uri = null;
+                                    if(returnUrl.contains("?")){
+                                        uri = Uri.parse(returnUrl+"&did="+myDid);
+                                    } else {
+                                        uri = Uri.parse(returnUrl+"?did="+myDid);
+                                    }
                                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                     startActivity(intent);
                                     finish();

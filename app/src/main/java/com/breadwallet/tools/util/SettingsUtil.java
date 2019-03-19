@@ -9,7 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
-import com.breadwallet.presenter.activities.did.KYCEditActivity;
+import com.breadwallet.presenter.activities.did.ProfileEditActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -351,7 +351,7 @@ public final class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
-                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                Intent intent = new Intent(currentActivity, ProfileEditActivity.class);
                 intent.putExtra(KYC_FROME_KEY, KYC_FROME_NICKNAME);
                 currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_NICKNAME);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -362,7 +362,7 @@ public final class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
-                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                Intent intent = new Intent(currentActivity, ProfileEditActivity.class);
                 intent.putExtra(KYC_FROME_KEY, KYC_FROME_EMAIL);
                 currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_EMAIL);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -373,7 +373,7 @@ public final class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
-                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                Intent intent = new Intent(currentActivity, ProfileEditActivity.class);
                 intent.putExtra(KYC_FROME_KEY, KYC_FROME_MOBILE);
                 currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_MOBILE);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -384,7 +384,7 @@ public final class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
-                Intent intent = new Intent(currentActivity, KYCEditActivity.class);
+                Intent intent = new Intent(currentActivity, ProfileEditActivity.class);
                 intent.putExtra(KYC_FROME_KEY, KYC_FROME_ID);
                 currentActivity.startActivityForResult(intent, BRConstants.PROFILE_REQUEST_ID);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
