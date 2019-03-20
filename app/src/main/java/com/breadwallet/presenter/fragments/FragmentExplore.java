@@ -14,6 +14,9 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.StringUtil;
+
+import java.util.Locale;
 
 public class FragmentExplore extends Fragment {
 
@@ -31,6 +34,7 @@ public class FragmentExplore extends Fragment {
     private View mDisclaimLayout;
     private View mBannerview1;
     private View mBannerview2;
+    private View mBannerview3;
     private View mOkBtn;
 
     @Nullable
@@ -48,7 +52,23 @@ public class FragmentExplore extends Fragment {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
         mBannerview1 = rootView.findViewById(R.id.explore_banner1);
         mBannerview2 = rootView.findViewById(R.id.explore_banner2);
+        mBannerview3 = rootView.findViewById(R.id.explore_banner3);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String languageCode = Locale.getDefault().getLanguage();
+        if(!StringUtil.isNullOrEmpty(languageCode)){
+            mBannerview1.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner1_en): (R.drawable.explore_banner1_zh));
+            mBannerview2.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner2_en): (R.drawable.explore_banner2_zh));
+            mBannerview3.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner3_en): (R.drawable.explore_banner3_zh));
+        } else {
+            mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
+            mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
+            mBannerview3.setBackgroundResource(R.drawable.explore_banner3_en);
+        }
     }
 
     private void initListener(){
