@@ -100,7 +100,7 @@ public class PostAuth {
         if (listener != null) {
             mAuthenticationSuccessListener = listener;
         }
-        boolean success = WalletsMaster.getInstance(context).generateRandomSeed(context);
+        boolean success = WalletsMaster.getInstance().generateRandomSeed(context);
         if (success) {
             BreadApp.initialize(false);
             mAuthenticationSuccessListener.onAuthenticatedSuccess();
@@ -301,7 +301,7 @@ public class PostAuth {
                     // We use dynamic gas for ETH and ERC20 tokens. BUT not when we have a generic transaction CALL_REQUEST.
                     if (mCryptoRequest.getGenericTransactionMetaData() == null
                             && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
-                            || WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
+                            || WalletsMaster.getInstance().isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
                         final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
                         final Timer timeoutTimer = new Timer();
                         final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {
@@ -405,7 +405,7 @@ public class PostAuth {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] txHash = WalletsMaster.getInstance(context).getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
+                byte[] txHash = WalletsMaster.getInstance().getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }

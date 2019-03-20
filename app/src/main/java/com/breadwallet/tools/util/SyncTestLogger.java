@@ -49,7 +49,7 @@ public class SyncTestLogger extends Thread {
         while (true) {
             boolean needsLog = false;
             StringBuilder builder = new StringBuilder();
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(mContext).getAllWallets(mContext));
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(mContext));
             for (BaseWalletManager w : list) {
                 builder.append("   " + w.getCurrencyCode());
                 String connectionStatus = "";

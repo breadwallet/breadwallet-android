@@ -87,7 +87,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(InputWordsActivity.this);
                 UiUtils.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
             }
         });

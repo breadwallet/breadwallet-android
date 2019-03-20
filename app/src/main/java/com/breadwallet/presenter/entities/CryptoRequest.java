@@ -90,7 +90,7 @@ public class CryptoRequest implements Serializable {
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getBalance();
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
+        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
             BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
@@ -107,7 +107,7 @@ public class CryptoRequest implements Serializable {
     public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getBalance();
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
+        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
             return false; //never need adjustment for ERC20s (fee is in ETH)

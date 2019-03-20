@@ -73,7 +73,7 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this);
+                WalletsMaster.getInstance().getAllWallets(LoginActivity.this);
             }
         });
 
@@ -121,7 +121,7 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
             @Override
             public void run() {
                 Thread.currentThread().setName("BG:" + TAG + ":initLastWallet");
-                WalletsMaster.getInstance(LoginActivity.this).initLastWallet(LoginActivity.this);
+                WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
             }
         });
 

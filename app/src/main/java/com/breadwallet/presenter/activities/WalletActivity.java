@@ -207,13 +207,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUi();
-        mWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        mWallet = WalletsMaster.getInstance().getCurrentWallet(this);
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Activity app = WalletActivity.this;
-                WalletsMaster.getInstance(app).refreshBalances();
+                WalletsMaster.getInstance().refreshBalances();
                 if (mWallet != null) {
                     mWallet.refreshAddress(app);
                 }
@@ -257,7 +257,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(this);
         if (walletManager == null) {
             Log.e(TAG, "updateUi: wallet is null");
             return;
@@ -405,7 +405,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         InternetManager.registerConnectionReceiver(this, this);
 
         RatesDataSource.getInstance(this).addOnDataChangedListener(this);
-        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(this);
         if (wallet != null) {
             wallet.addTxListModifiedListener(this);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

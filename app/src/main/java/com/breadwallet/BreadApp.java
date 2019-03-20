@@ -94,7 +94,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
         @Override
         public void run() {
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(BreadApp.this));
             for (final BaseWalletManager walletManager : list) {
                 //TODO Temporary new thread until the core lags are fixed
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -110,7 +110,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private Runnable mConnectWalletsRunnable = new Runnable() {
         @Override
         public void run() {
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(BreadApp.this));
             for (final BaseWalletManager walletManager : list) {
                 //TODO Temporary new thread until the core lags are fixed
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

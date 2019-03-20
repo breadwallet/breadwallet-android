@@ -44,7 +44,7 @@ public class SpendLimitActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(SpendLimitActivity.this);
                 UiUtils.showSupportFragment(SpendLimitActivity.this, BRConstants.FAQ_FINGERPRINT_SPENDING_LIMIT, wm);
             }
         });
@@ -52,7 +52,7 @@ public class SpendLimitActivity extends BRActivity {
         listView = findViewById(R.id.limit_list);
         listView.setFooterDividersEnabled(true);
         adapter = new LimitAdaptor(this);
-        final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(this);
 
         List<BigDecimal> limits = wm.getSettingsConfiguration().getFingerprintLimits();
 
@@ -80,7 +80,7 @@ public class SpendLimitActivity extends BRActivity {
     }
 
     private int getStepFromLimit(BigDecimal limit) {
-        List<BigDecimal> limits = WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().getFingerprintLimits();
+        List<BigDecimal> limits = WalletsMaster.getInstance().getCurrentWallet(this).getSettingsConfiguration().getFingerprintLimits();
         for (int i = 0; i < limits.size(); i++) {
             if (limits.get(i).compareTo(limit) == 0) return i;
         }
@@ -109,7 +109,7 @@ public class SpendLimitActivity extends BRActivity {
 
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            BaseWalletManager wm = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
+            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(SpendLimitActivity.this);
             final BigDecimal limit = BRKeyStore.getSpendLimit(SpendLimitActivity.this, wm.getCurrencyCode());
             if (convertView == null) {
                 // inflate the layout
@@ -119,7 +119,7 @@ public class SpendLimitActivity extends BRActivity {
             // get the TextView and then set the text (item name) and tag (item ID) values
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             BigDecimal item = getItem(position);
-            BaseWalletManager walletManager = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
+            BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(SpendLimitActivity.this);
 
             String cryptoAmount = CurrencyUtils.getFormattedAmount(SpendLimitActivity.this, walletManager.getCurrencyCode(), item);
 
