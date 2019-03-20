@@ -122,7 +122,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                     return;
                 }
 
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(app);
                 UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_RECEIVE, wm);
             }
         });
@@ -143,7 +143,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoRequest.getAddress());
@@ -213,7 +213,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         boolean isReceive = getArguments().getBoolean(EXTRA_RECEIVE);
         mShowRequestAnAmount = isReceive && wm.getUiConfiguration().isShowRequestedAmount();
         if (!mShowRequestAnAmount) {
@@ -228,7 +228,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWalletManager walletManager = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
+                final BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getContext());
                 walletManager.refreshAddress(getContext());
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
@@ -254,7 +254,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         EventUtils.pushEvent(EventUtils.EVENT_RECEIVE_COPIED_ADDRESS);
         // The testnet does not work with the BCH address format so copy the legacy address for testing purposes.
         if (BuildConfig.BITCOIN_TESTNET) {
-            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
+            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance().getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
         }
 
         showCopiedLayout(true);
@@ -264,13 +264,13 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
     @Override
     public void onResume() {
         super.onResume();
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
+        WalletsMaster.getInstance().getCurrentWallet(getActivity()).addBalanceChangedListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
+        WalletsMaster.getInstance().getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
     }
 
     @Override

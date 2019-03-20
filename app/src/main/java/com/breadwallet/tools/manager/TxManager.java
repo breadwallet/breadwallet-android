@@ -98,7 +98,7 @@ public class TxManager {
 
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(app);
         if (wallet == null) {
             Log.e(TAG, "updateTxList: wallet is null");
             return;

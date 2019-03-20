@@ -153,7 +153,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
         String theAddress = coreKey.addressLegacy();
 
-        BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, currencyCode);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(mContext, currencyCode);
 
         String decoratedAddress = walletManager.decorateAddress(theAddress);
 
@@ -192,7 +192,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         super.onPostExecute(s);
         if (mTransaction == null) return;
 
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, mCurrencyCode);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(mContext, mCurrencyCode);
 
         BigDecimal bigAmount = walletManager.getTransactionAmount(mTransaction);
         BigDecimal bigFee = BigDecimal.ZERO;
@@ -263,7 +263,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (jsonString == null || jsonString.isEmpty()) {
             return null;
         }
-        BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, mCurrencyCode);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(app, mCurrencyCode);
         if (walletManager == null) {
             String err = "createSweepingTx: wallet is null for: " + mCurrencyCode;
             BRReportsManager.reportBug(new NullPointerException(err));

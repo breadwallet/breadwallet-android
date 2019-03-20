@@ -39,7 +39,7 @@ public class UnlinkActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(UnlinkActivity.this).getCurrentWallet(UnlinkActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(UnlinkActivity.this);
                 UiUtils.showSupportFragment(UnlinkActivity.this, BRConstants.FAQ_WIPE_WALLET, wm);
             }
         });

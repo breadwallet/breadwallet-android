@@ -68,7 +68,7 @@ public class CurrencyUtils {
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
         if (wallet != null) {
@@ -97,7 +97,7 @@ public class CurrencyUtils {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
         if (wallet != null) {
             symbol = wallet.getSymbol(app);
         } else {
@@ -113,7 +113,7 @@ public class CurrencyUtils {
     }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
         if (wallet == null) {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();

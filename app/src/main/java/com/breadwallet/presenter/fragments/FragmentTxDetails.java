@@ -197,7 +197,7 @@ public class FragmentTxDetails extends DialogFragment {
     private void updateUi() {
         Activity app = getActivity();
 
-        BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(app);
 
         // Set mTransction fields
         if (mTransaction != null) {
@@ -205,7 +205,7 @@ public class FragmentTxDetails extends DialogFragment {
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
             String cryptoIso = walletManager.getCurrencyCode();
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
-            boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, cryptoIso);
+            boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, cryptoIso);
 
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 

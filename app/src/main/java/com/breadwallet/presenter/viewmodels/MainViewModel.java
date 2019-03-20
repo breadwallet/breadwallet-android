@@ -91,7 +91,7 @@ public class MainViewModel extends AndroidViewModel {
         // Register as balance and rate update listeners
         mBalanceUpdater = new BalanceUpdater();
         mExchangeRatesUpdater = new ExchangeRatesUpdater();
-        WalletsMaster.getInstance(app).addBalanceUpdateListener(mBalanceUpdater);
+        WalletsMaster.getInstance().addBalanceUpdateListener(mBalanceUpdater);
         RatesDataSource.getInstance(app).addOnDataChangedListener(mExchangeRatesUpdater);
 
         // Register as sync notification receiver
@@ -135,7 +135,7 @@ public class MainViewModel extends AndroidViewModel {
         super.onCleared();
 
         // De-register listeners
-        WalletsMaster.getInstance(getApplication()).removeBalanceUpdateListener(mBalanceUpdater);
+        WalletsMaster.getInstance().removeBalanceUpdateListener(mBalanceUpdater);
         RatesDataSource.getInstance(getApplication()).removeOnDataChangedListener(mExchangeRatesUpdater);
         SyncService.unregisterSyncNotificationBroadcastReceiver(getApplication(), mSyncReceiver);
         InternetManager.unregisterConnectionReceiver(getApplication(), mConnectionListener);
@@ -147,7 +147,7 @@ public class MainViewModel extends AndroidViewModel {
     private void initializeWalletsAndManagers() {
         // Retrieve the wallets
         List<BaseWalletManager> walletManagerList =
-                WalletsMaster.getInstance(getApplication()).getAllWallets(getApplication());
+                WalletsMaster.getInstance().getAllWallets(getApplication());
 
         mCurrencyToWalletManager = new HashMap<>();
 
@@ -170,11 +170,10 @@ public class MainViewModel extends AndroidViewModel {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                WalletsMaster.getInstance(getApplication()).refreshBalances();
+                WalletsMaster.getInstance().refreshBalances();
 
                 // Also, invoke refresh of "current" wallet's address
-                BaseWalletManager currentWalletManager =
-                        WalletsMaster.getInstance(getApplication()).getCurrentWallet(getApplication());
+                BaseWalletManager currentWalletManager = WalletsMaster.getInstance().getCurrentWallet(getApplication());
                 if (currentWalletManager != null) {
                     currentWalletManager.refreshAddress(getApplication());
                 }
@@ -209,7 +208,7 @@ public class MainViewModel extends AndroidViewModel {
 
         // Get aggregated fiat balance
         BigDecimal fiatTotalAmount =
-                WalletsMaster.getInstance(getApplication()).getAggregatedFiatBalance(getApplication());
+                WalletsMaster.getInstance().getAggregatedFiatBalance(getApplication());
 
         setWalletsLiveData(wallets);
         setAggregatedFiatBalanceLiveData(fiatTotalAmount);
@@ -302,7 +301,7 @@ public class MainViewModel extends AndroidViewModel {
                 // 3. Prioritize the "current" wallet over remaining wallets
                 Wallet syncWallet = null;
                 BaseWalletManager currentWallet =
-                        WalletsMaster.getInstance(getApplication()).getCurrentWallet(getApplication());
+                        WalletsMaster.getInstance().getCurrentWallet(getApplication());
                 for (Wallet wallet : wallets) {
                     if (wallet.isSyncing()) {
                         return; // exit -- do not set next wallet to sync
@@ -396,7 +395,7 @@ public class MainViewModel extends AndroidViewModel {
 
             // Get aggregated fiat balance
             BigDecimal fiatTotalAmount =
-                    WalletsMaster.getInstance(getApplication()).getAggregatedFiatBalance(getApplication());
+                    WalletsMaster.getInstance().getAggregatedFiatBalance(getApplication());
 
             setWalletsLiveData(wallets);
             setAggregatedFiatBalanceLiveData(fiatTotalAmount);

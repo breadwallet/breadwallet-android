@@ -134,7 +134,7 @@ public class CryptoUriParser {
 
         //if the scheme is present, check if it's a valid one.
         if (!Utils.isNullOrEmpty(requestObject.getScheme())) {
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
                 if (requestObject.getScheme().equalsIgnoreCase(walletManager.getScheme())) {
                     return requestObject.isPaymentProtocol() || requestObject.hasAddress();
@@ -162,13 +162,13 @@ public class CryptoUriParser {
         }
         String scheme = uri.getScheme() == null ? "" : uri.getScheme();
         uri = Uri.parse(scheme + "://" + schemeSpecific);
-        BaseWalletManager currentWallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
+        BaseWalletManager currentWallet = WalletsMaster.getInstance().getCurrentWallet(context);
 
         cryptoBuilder = sanitizeData(context, currentWallet, uri, cryptoBuilder);
         if (cryptoBuilder == null) {
             return null;
         }
-        BaseWalletManager matchingWallet = WalletsMaster.getInstance(context).getWalletByIso(context, cryptoBuilder.getCurrencyCode());
+        BaseWalletManager matchingWallet = WalletsMaster.getInstance().getWalletByIso(context, cryptoBuilder.getCurrencyCode());
         //invalid currency code
         if (matchingWallet == null) {
             return null;
@@ -237,7 +237,7 @@ public class CryptoUriParser {
             }
         } else {
             builder = builder.setScheme(uri.getScheme());
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(context));
             for (BaseWalletManager walletManager : list) {
                 if (uri.getScheme().equalsIgnoreCase(walletManager.getScheme())) {
                     builder.setCurrencyCode(walletManager.getCurrencyCode());
@@ -249,7 +249,7 @@ public class CryptoUriParser {
             return null;
         }
         if (builder.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-            boolean isCurrentWalletErc20 = WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, currentWallet.getCurrencyCode());
+            boolean isCurrentWalletErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(context, currentWallet.getCurrencyCode());
             if (!isCurrentWalletErc20) {
                 builder.setCurrencyCode(WalletEthManager.ETH_CURRENCY_CODE);
                 builder.setScheme(walletEthManager.getScheme());
@@ -280,7 +280,7 @@ public class CryptoUriParser {
 
             u = Uri.parse(scheme + "://" + schemeSpecific);
 
-            BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
+            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(context);
 
             String host = u.getHost();
             if (Utils.isNullOrEmpty(host)) {

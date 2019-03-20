@@ -84,7 +84,7 @@ public class NodesActivity extends BRActivity {
                             @Override
                             public void run() {
                                 Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
-                                WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
+                                WalletsMaster.getInstance().updateFixedPeer(app, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
@@ -177,7 +177,7 @@ public class NodesActivity extends BRActivity {
                             @Override
                             public void run() {
                                 Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
-                                WalletsMaster.getInstance(NodesActivity.this).updateFixedPeer(NodesActivity.this, wm);
+                                WalletsMaster.getInstance().updateFixedPeer(NodesActivity.this, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override

@@ -86,7 +86,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
         mCloseButton = rootView.findViewById(R.id.close_button);
         setListeners();
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
+        WalletsMaster.getInstance().getCurrentWallet(getActivity()).addBalanceChangedListener(this);
         mSignalLayout.removeView(mCopiedLayout);
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
@@ -97,7 +97,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(BigDecimal.ZERO).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoRequest.getAddress(false));
@@ -186,7 +186,7 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
         BRClipboardManager.putClipboard(getActivity(), mAddress.getText().toString());
         // The testnet does not work with the BCH address format so copy the legacy address for testing purposes.
         if (BuildConfig.BITCOIN_TESTNET) {
-            BRClipboardManager.putClipboard(getActivity(), WalletsMaster.getInstance(getActivity())
+            BRClipboardManager.putClipboard(getActivity(), WalletsMaster.getInstance()
                     .getCurrentWallet(getActivity()).undecorateAddress(mAddress.getText().toString()));
         }
 
@@ -196,13 +196,13 @@ public class FragmentShowLegacyAddress extends ModalDialogFragment implements Ba
     @Override
     public void onResume() {
         super.onResume();
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
+        WalletsMaster.getInstance().getCurrentWallet(getActivity()).addBalanceChangedListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
+        WalletsMaster.getInstance().getCurrentWallet(getActivity()).removeBalanceChangedListener(this);
     }
 
     @Override

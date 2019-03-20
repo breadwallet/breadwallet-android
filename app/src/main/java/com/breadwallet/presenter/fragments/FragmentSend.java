@@ -142,7 +142,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
         mCloseButton = rootView.findViewById(R.id.close_button);
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
@@ -183,7 +183,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                             + HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT));
                     return;
                 }
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(app);
                 UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_SEND, wm);
             }
         });
@@ -260,7 +260,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 }
                 showKeyboard(false);
 
-                final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                final BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
 
 
                 if (BuildConfig.DEBUG && BuildConfig.BITCOIN_TESTNET) {
@@ -354,7 +354,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 if (mSelectedCurrencyCode.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     Activity app = getActivity();
-                    mSelectedCurrencyCode = WalletsMaster.getInstance(app).getCurrentWallet(app).getCurrencyCode();
+                    mSelectedCurrencyCode = WalletsMaster.getInstance().getCurrentWallet(app).getCurrencyCode();
                 } else {
                     mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
@@ -378,7 +378,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 //not allowed now
                 if (!UiUtils.isClickAllowed()) return;
-                WalletsMaster master = WalletsMaster.getInstance(getActivity());
+                WalletsMaster master = WalletsMaster.getInstance();
                 final BaseWalletManager wm = master.getCurrentWallet(getActivity());
                 //get the current wallet used
                 if (wm == null) {
@@ -426,7 +426,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     SpringAnimator.failShakeAnimation(getActivity(), mFeeText);
                 }
 
-                if (WalletsMaster.getInstance(getActivity()).isCurrencyCodeErc20(getActivity(), wm.getCurrencyCode())) {
+                if (WalletsMaster.getInstance().isCurrencyCodeErc20(getActivity(), wm.getCurrencyCode())) {
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
@@ -628,7 +628,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private void handleDigitClick(Integer digit) {
         String currAmount = mViewModel.getAmount();
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         if (new BigDecimal(currAmount.concat(String.valueOf(digit))).compareTo(wm.getMaxAmount(getActivity())) <= 0) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) {
@@ -667,7 +667,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         String stringAmount = mViewModel.getAmount();
         setAmount();
-        BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(context);
         String balanceString;
         if (mSelectedCurrencyCode == null)
             mSelectedCurrencyCode = wm.getCurrencyCode();
@@ -678,8 +678,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mCurrencyCodeButton.setText(mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
-        boolean isIsoCrypto = WalletsMaster.getInstance(context).isIsoCrypto(context, mSelectedCurrencyCode);
-        boolean isWalletErc20 = WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, wm.getCurrencyCode());
+        boolean isIsoCrypto = WalletsMaster.getInstance().isIsoCrypto(context, mSelectedCurrencyCode);
+        boolean isWalletErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(context, wm.getCurrencyCode());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
@@ -757,7 +757,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void setButton(boolean isRegular) {
-        BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         String iso = wallet.getCurrencyCode();
         if (isRegular) {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);
@@ -798,7 +798,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void loadViewModelData() {
         if (mAddressEdit != null) {
             if (!Utils.isNullOrEmpty(mViewModel.getAddress())) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 mAddressEdit.setText(walletManager.decorateAddress(mViewModel.getAddress()));
             }
             if (!Utils.isNullOrEmpty(mViewModel.getMemo())) {
@@ -827,7 +827,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             address = request.getAddress();
             memo = request.getMessage();
             code = request.getCurrencyCode();
-            BaseWalletManager walletManager = WalletsMaster.getInstance(context).getCurrentWallet(context);
+            BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(context);
             if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) > 0 && !request.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
                 amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.getAmount().toPlainString())).toPlainString();

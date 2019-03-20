@@ -80,12 +80,12 @@ public class WalletsMaster {
     private TokenListMetaData mTokenListMetaData;
     private List<BalanceUpdateListener> mBalancesUpdateListeners = new ArrayList<>();
 
-    private WalletsMaster(Context app) {
+    private WalletsMaster() {
     }
 
-    public synchronized static WalletsMaster getInstance(Context app) {
+    public synchronized static WalletsMaster getInstance() {
         if (instance == null) {
-            instance = new WalletsMaster(app);
+            instance = new WalletsMaster();
         }
         return instance;
     }
@@ -353,7 +353,7 @@ public class WalletsMaster {
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
-                    BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                    BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(app);
                     BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
                     BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getCurrencyCode()));
                     BRKeyStore.putTotalLimit(app, totalLimit, wm.getCurrencyCode());

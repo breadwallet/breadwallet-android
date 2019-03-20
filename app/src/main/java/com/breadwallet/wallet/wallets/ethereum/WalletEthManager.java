@@ -163,7 +163,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
 
-        WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
+        WalletsMaster.getInstance().setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
@@ -1200,9 +1200,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 case BALANCE_UPDATED:
                     if (status == Status.SUCCESS) {
                         // mWallet.getBalance returns the balance of the node that is currently syncing
-                        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
+                        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(context, currencyCode);
                         BigDecimal balance = walletManager.getBalance();
-                        WalletsMaster.getInstance(context).refreshBalance(currencyCode, balance);
+                        WalletsMaster.getInstance().refreshBalance(currencyCode, balance);
                         printInfo("New Balance: " + balance, currencyCode, event.name());
                     } else {
                         BRReportsManager.reportBug(new IllegalArgumentException("BALANCE_UPDATED: Failed to update balance: status:"
