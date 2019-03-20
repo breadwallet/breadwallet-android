@@ -95,6 +95,8 @@ public class DialogActivity extends AppCompatActivity {
                         Intent intent = new Intent(DevicePolicyManager.ACTION_SET_NEW_PASSWORD);
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
+                        } else {
+                            Log.e(TAG, "showEnableDevicePasswordDialog: Security Settings button failed.");
                         }
 
                         finish();
@@ -139,6 +141,8 @@ public class DialogActivity extends AppCompatActivity {
 
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
+                        } else {
+                            Log.e(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstall button failed.");
                         }
                     }
                 });
@@ -160,6 +164,8 @@ public class DialogActivity extends AppCompatActivity {
                         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Alert_keystore_title_android));
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivity(intent);
+                        } else {
+                            Log.e(TAG, "showKeyStoreInvalidDialog: Customer support button failed.");
                         }
                     }
                 },
