@@ -489,7 +489,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">您的手機遺失或升級時，存取您的比特幣唯一的方式。</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle">紙本金鑰</string>
+    <string name="SecurityCenter.paperKeyTitle">備份助記詞</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">保護您的 Elephant，防範未經授權的使用者。</string>
     <!-- PIN button title -->
@@ -619,7 +619,7 @@
     <!-- Wallet Settings section header -->
     <string name="Settings.wallet">錢包</string>
     <!-- Unlink/delete your wallet from the current device. -->
-    <string name="Settings.wipe">移除與此裝置連結</string>
+    <string name="Settings.wipe">解綁錢包</string>
     <!-- Share data view body -->
     <string name="ShareData.body">請跟我們分享您的匿名資料，以協助我們改善 Elephant。其中不會包含財務資訊。我們尊重您的財務隱私。</string>
     <!-- Share data header -->

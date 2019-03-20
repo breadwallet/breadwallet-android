@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -55,7 +56,9 @@ public class ProfileActivity extends BRActivity {
             mData.clear();
             mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
             mAdapter.notifyDataSetChanged();
-            mCountTv.setText(String.valueOf(getCompleteCount()));
+            int count = getCompleteCount();
+            mCountTv.setText(String.valueOf(count));
+            mCreditsTv.setBackgroundResource((count==0)?R.drawable.ic_profile_credits_gray_icon:R.drawable.ic_profile_credits_golden_icon);
             if(isSavingExit()) {
                 startTimer();
             } else {
@@ -70,6 +73,7 @@ public class ProfileActivity extends BRActivity {
 
     private Timer timer;
     private TimerTask timerTask;
+    private BaseTextView mCreditsTv;
 
     public void startTimer() {
         Log.i("ProfileFunction", "startTimer");
@@ -111,8 +115,11 @@ public class ProfileActivity extends BRActivity {
             }
         });
         mCountTv = findViewById(R.id.profile_complete_count);
+        mCreditsTv = findViewById(R.id.profile_credits_icon);
 
-        mCountTv.setText(String.valueOf(getCompleteCount()));
+        int count = getCompleteCount();
+        mCountTv.setText(String.valueOf(count));
+        mCreditsTv.setBackgroundResource((count==0)?R.drawable.ic_profile_credits_gray_icon:R.drawable.ic_profile_credits_golden_icon);
 
         mHandler.sendEmptyMessage(0x01);
     }
