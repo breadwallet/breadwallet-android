@@ -322,7 +322,6 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".presenter.activities.ExploreWebActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <provider
