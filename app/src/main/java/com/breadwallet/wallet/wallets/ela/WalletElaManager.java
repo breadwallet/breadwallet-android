@@ -14,6 +14,7 @@ import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -177,17 +178,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
         if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) {
-            Log.i("redPackage", "start webview");
             if(WalletActivity.mCallbackUrl.contains("?")){
-                Intent intent = new Intent(mContext, ExploreWebActivity.class);
-                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-                mContext.startActivity(intent);
-//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
+                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
             } else {
-                Intent intent = new Intent(mContext, ExploreWebActivity.class);
-                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-                mContext.startActivity(intent);
-//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
+                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
             }
         }
         WalletActivity.mCallbackUrl = null;

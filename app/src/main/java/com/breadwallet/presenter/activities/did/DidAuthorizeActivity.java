@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.SwitchButton;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -211,14 +212,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                         dialogDismiss();
                                         return;
                                     }
-                                    Uri uri = null;
+                                    String url = null;
                                     if(returnUrl.contains("?")){
-                                        uri = Uri.parse(returnUrl+"&did="+myDid);
+                                        url = returnUrl+"&did="+myDid;
                                     } else {
-                                        uri = Uri.parse(returnUrl+"?did="+myDid);
+                                        url = returnUrl+"?did="+myDid;
                                     }
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                    startActivity(intent);
+                                    UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
                                     finish();
                                 } catch (Exception e) {
                                     e.printStackTrace();

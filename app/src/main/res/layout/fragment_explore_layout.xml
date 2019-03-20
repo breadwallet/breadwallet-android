@@ -43,4 +43,9 @@
         app:layout_constraintTop_toBottomOf="@+id/explore_banner1"
         android:background="@drawable/explore_banner2"/>
 
+    <include
+        android:id="@+id/disclaim_layout"
+        android:visibility="gone"
+        layout="@layout/explore_dialog_layout"/>
+
 </android.support.constraint.ConstraintLayout>

@@ -648,4 +648,16 @@ public class BRSharedPrefs {
         editor.putString(key, txid);
         editor.apply();
     }
+
+    public static void setDisclaimshow(Context context, boolean is){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("disclaimshow", is);
+        editor.apply();
+    }
+
+    public static boolean getDisclaimShow(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("disclaimshow", true);
+    }
 }

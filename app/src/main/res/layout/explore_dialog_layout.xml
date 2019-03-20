@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#33000000">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="288dp"
+        android:layout_height="242dp"
+        android:layout_gravity="center"
+        android:background="@drawable/explore_dialog_bg">
+
+        <TextView
+            android:id="@+id/disclaimer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="15dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:text="Disclaimer"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/disclaimer_content"
+            android:layout_width="232dp"
+            android:layout_height="150dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/disclaimer_title"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginTop="20dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_999999"
+            android:text="Applications in Explore are provided by third party vendors. Either Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability."
+            />
+
+        <View
+            android:id="@+id/line"
+            app:layout_constraintTop_toBottomOf="@+id/disclaimer_content"
+            android:layout_marginTop="14dp"
+            android:layout_width="match_parent"
+            android:background="#f7f8fb"
+            android:layout_height="1.5dp"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/disclaim_ok_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/line"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="#ff3365"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:text="OK"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</FrameLayout>

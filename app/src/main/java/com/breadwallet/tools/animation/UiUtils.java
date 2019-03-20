@@ -27,6 +27,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
@@ -177,6 +178,11 @@ public class UiUtils {
 
     }
 
+    public static void startWebviewActivity(Context context, String url){
+        Intent intent = new Intent(context, ExploreWebActivity.class);
+        intent.putExtra("explore_url", url);
+        context.startActivity(intent);
+    }
 
     public static void openUrlByBrowser(Context context, String url){
         Uri uri = Uri.parse(url);
