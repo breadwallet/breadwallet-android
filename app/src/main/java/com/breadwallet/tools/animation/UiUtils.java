@@ -129,7 +129,7 @@ public class UiUtils {
                     currencyQuery = "";
                 } else {
                     String currencyCode = walletManager.getCurrencyCode();
-                    WalletsMaster walletsMaster = WalletsMaster.getInstance(fragmentActivity.getApplicationContext());
+                    WalletsMaster walletsMaster = WalletsMaster.getInstance();
                     if (walletsMaster.isCurrencyCodeErc20(fragmentActivity.getApplicationContext(), currencyCode)) {
                         currencyCode = BRConstants.CURRENCY_ERC20;
                     }

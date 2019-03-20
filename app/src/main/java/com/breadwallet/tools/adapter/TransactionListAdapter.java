@@ -113,7 +113,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void updateData() {
         if (!mIsUpdatingData) {
             Map<Integer, TxMetaData> localMDs = new HashMap<>();
-            BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
             for (int i = 0; i < mBackUpFeed.size(); i++) {
                 TxUiHolder item = mBackUpFeed.get(i);
                 TxMetaData md = KVStoreManager.getTxMetaData(mContext, item.getTxHash());
@@ -174,7 +174,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
         TxUiHolder item = mItemFeed.get(position);
 
         String commentString = "";
@@ -291,7 +291,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         params.setMargins(DP_16, 0, 0, 0);
         params.addRule(RelativeLayout.CENTER_VERTICAL, holder.getTransactionFailed().getId());
         holder.getTransactionDetail().setLayoutParams(params);
-        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
 
         if (!received) {
             holder.getTransactionDetail().setText(String.format(mContext.getString(R.string.Transaction_sendingTo),
@@ -337,7 +337,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if (switches[1] && !item.isReceived()) {
                         willAdd = false;
                     }
-                    BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+                    BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(mContext);
 
                     int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0
                             : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getCurrencyCode()) - item.getBlockHeight() + 1;
