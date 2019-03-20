@@ -241,7 +241,8 @@
         <activity
             android:name=".presenter.activities.HomeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="locale|layoutDirection|keyboard"/>
         <activity
             android:name=".presenter.activities.CurrencySettingsActivity"
             android:launchMode="singleTask"
@@ -321,7 +322,6 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".presenter.activities.ExploreWebActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <provider

@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
@@ -157,6 +159,8 @@ public class TestWalletActivity extends BRActivity {
 //        Log.i("test", "test");
     }
 
+
+
     public void getAppId(View view){
 //        String mn = "刊 属 避 等 非 住 粒 捕 纹 追 岭 索";
         String mn = "血 坝 告 售 代 讨 转 枝 欧 旦 诚 抱";
@@ -165,6 +169,55 @@ public class TestWalletActivity extends BRActivity {
         byte[] signed = Utility.getInstance(this).sign(privateKey, sinInfo.getBytes());
         final String signedStr = HexUtils.bytesToHex(signed);
         Log.i("xidaokun", "signedStr:"+signedStr);
+    }
+
+    public void rsaTest(View view){
+        String mn = "血 坝 告 售 代 讨 转 枝 欧 旦 诚 抱";
+        String privateKey = Utility.getInstance(this).getSinglePrivateKey(mn);
+        String publicKey = Utility.getInstance(this).getPublicKeyFromPrivateKey(privateKey);
+        String did = Utility.getInstance(this).getDid(publicKey);
+
+        try {
+            BRKeyStore.encryptByPublicKey(this, "aaaa".getBytes(), publicKey.getBytes());
+
+            BRKeyStore.decryptByPrivateKey(this, privateKey.getBytes());
+
+            Log.i("xidaokun", "xidaokun");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getValueByKey(View view){
+        String mnemonic = "血 坝 告 售 代 讨 转 枝 欧 旦 诚 抱";
+        String seed = IdentityManager.getSeed(mnemonic, "chinese", mWords, "");
+
+        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+
+        BlockChainNode node = new BlockChainNode("https://api-wallet-ela-testnet.elastos.org");
+        HDWallet singleWallet = identity.createSingleAddressWallet(seed, node);
+
+        DidManager didManager = identity.createDidManager(seed);
+        Did did = didManager.createDid(0);
+
+        String appId = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
+
+        String json = "[{\"Key\":\"" + appId + "/nickName\", \"Value\":\"bob\"}]";
+        final String info = did.signInfo(seed, json);
+
+//        final String devUrl = "https://api-wallet-did.elastos.org/api/1/blockagent/upchain/data";
+        final String testUrl = "https://api-wallet-did-testnet.elastos.org/api/1/blockagent/upchain/data";
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    String result = ProfileDataSource.getInstance(this).;
+//                    Log.i("xidaokun", "result:"+result);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

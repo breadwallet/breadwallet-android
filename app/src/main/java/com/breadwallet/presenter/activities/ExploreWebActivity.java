@@ -68,9 +68,9 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i("loadUrl", "shouldOverrideUrl url:"+url);
-                if(StringUtil.isNullOrEmpty(url)) return false;
+                if(StringUtil.isNullOrEmpty(url)) return true;
                 loadUrl(url);
-                return false;
+                return true;
             }
 
             @Override

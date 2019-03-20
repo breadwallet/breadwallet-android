@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.SwitchButton;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -174,6 +175,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String appId = uriFactory.getAppID();
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
+        String randomNumber = uriFactory.getRandomNumber();
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
@@ -190,6 +192,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 CallbackData callbackData = new CallbackData();
                 callbackData.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
                 callbackData.ELAAddress = myAddress;
+                callbackData.RandomNumber = randomNumber;
                 entity.Data = new Gson().toJson(callbackData);
                 entity.PublicKey = myPK;
                 entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
@@ -209,14 +212,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                         dialogDismiss();
                                         return;
                                     }
-                                    Uri uri = null;
+                                    String url = null;
                                     if(returnUrl.contains("?")){
-                                        uri = Uri.parse(returnUrl+"&did="+myDid);
+                                        url = returnUrl+"&did="+myDid;
                                     } else {
-                                        uri = Uri.parse(returnUrl+"?did="+myDid);
+                                        url = returnUrl+"?did="+myDid;
                                     }
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                    startActivity(intent);
+                                    UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
                                     finish();
                                 } catch (Exception e) {
                                     e.printStackTrace();

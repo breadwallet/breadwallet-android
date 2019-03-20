@@ -2,7 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="66dp">
+                android:minHeight="72dp"
+                android:layout_height="wrap_content">
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/erc20_flag"
+        android:layout_width="36dp"
+        android:layout_height="16dp"
+        android:background="@drawable/ic_erc20_flag"
+        android:textColor="#A2ACB0"
+        android:textSize="10sp"
+        android:visibility="gone"
+        android:text="erc20"/>
 
     <com.breadwallet.presenter.customviews.RoundImageView
         android:id="@+id/token_icon"

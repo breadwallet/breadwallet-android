@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -55,7 +56,9 @@ public class ProfileActivity extends BRActivity {
             mData.clear();
             mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
             mAdapter.notifyDataSetChanged();
-            mCountTv.setText(String.valueOf(getCompleteCount()));
+            int count = getCompleteCount();
+            mCountTv.setText(String.valueOf(count));
+            mCreditsTv.setBackgroundResource((count==0)?R.drawable.ic_profile_credits_gray_icon:R.drawable.ic_profile_credits_golden_icon);
             if(isSavingExit()) {
                 startTimer();
             } else {
@@ -70,6 +73,7 @@ public class ProfileActivity extends BRActivity {
 
     private Timer timer;
     private TimerTask timerTask;
+    private BaseTextView mCreditsTv;
 
     public void startTimer() {
         Log.i("ProfileFunction", "startTimer");
@@ -111,10 +115,18 @@ public class ProfileActivity extends BRActivity {
             }
         });
         mCountTv = findViewById(R.id.profile_complete_count);
+        mCreditsTv = findViewById(R.id.profile_credits_icon);
 
-        mCountTv.setText(String.valueOf(getCompleteCount()));
+        int count = getCompleteCount();
+        mCountTv.setText(String.valueOf(count));
+        mCreditsTv.setBackgroundResource((count==0)?R.drawable.ic_profile_credits_gray_icon:R.drawable.ic_profile_credits_golden_icon);
 
         mHandler.sendEmptyMessage(0x01);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initDid();
         initProfile();
     }
@@ -216,28 +228,31 @@ public class ProfileActivity extends BRActivity {
     }
 
     private void initProfile(){
-        mDid.syncInfo();
-        PayloadInfo payloadInfo = null;
-        String nickname = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/NickName");
-        payloadInfo = getPayloadInfo(nickname);
-        if(null != payloadInfo) BRSharedPrefs.putNickname(this, payloadInfo.value);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDid.syncInfo();
+                PayloadInfo payloadInfo = null;
+                String nickname = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/NickName");
+                payloadInfo = getPayloadInfo(nickname);
+                if(null != payloadInfo) BRSharedPrefs.putNickname(ProfileActivity.this, payloadInfo.value);
 
-        String email = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Email");
-        payloadInfo = getPayloadInfo(email);
-        if(null != payloadInfo) BRSharedPrefs.putEmail(this, payloadInfo.value);
+                String email = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Email");
+                payloadInfo = getPayloadInfo(email);
+                if(null != payloadInfo) BRSharedPrefs.putEmail(ProfileActivity.this, payloadInfo.value);
 
-        String mobile = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Mobile");
-        payloadInfo = getPayloadInfo(mobile);
-        if(null != payloadInfo) BRSharedPrefs.putMobile(this, payloadInfo.value);
+                String mobile = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/Mobile");
+                payloadInfo = getPayloadInfo(mobile);
+                if(null != payloadInfo) BRSharedPrefs.putMobile(ProfileActivity.this, payloadInfo.value);
 
-        String idCard = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/ChineseIDCard");
-        PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
-        if(null!=payloadInfoId && null!=payloadInfoId.value) {
-            BRSharedPrefs.putRealname(this, payloadInfoId.value.name);
-            BRSharedPrefs.putID(this, payloadInfoId.value.code);
-        }
-
-        payloadInfo = null;
+                String idCard = mDid.getInfo("fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a/ChineseIDCard");
+                PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
+                if(null!=payloadInfoId && null!=payloadInfoId.value) {
+                    BRSharedPrefs.putRealname(ProfileActivity.this, payloadInfoId.value.name);
+                    BRSharedPrefs.putID(ProfileActivity.this, payloadInfoId.value.code);
+                }
+            }
+        });
     }
 
     private String uploadData(String data){

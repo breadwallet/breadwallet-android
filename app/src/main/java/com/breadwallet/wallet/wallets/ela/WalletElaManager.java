@@ -1,13 +1,10 @@
 package com.breadwallet.wallet.wallets.ela;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.R;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
@@ -180,21 +177,11 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
         if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
         TxManager.getInstance().updateTxList(mContext);
-        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl) && (mContext instanceof Activity)) {
-            Log.i("redPackage", "start webview");
-            Activity activity = (Activity) mContext;
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) {
             if(WalletActivity.mCallbackUrl.contains("?")){
-                Intent intent = new Intent(mContext, ExploreWebActivity.class);
-                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
+                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
             } else {
-                Intent intent = new Intent(mContext, ExploreWebActivity.class);
-                intent.putExtra("explore_url", WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                UiUtils.openUrlByBrowser(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
+                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
             }
         }
         WalletActivity.mCallbackUrl = null;

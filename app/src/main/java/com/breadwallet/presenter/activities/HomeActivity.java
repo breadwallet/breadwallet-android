@@ -111,6 +111,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 String seed;
                 String mnemonic = getMn();
                 String language = Utility.detectLang(HomeActivity.this, mnemonic);
+                if(StringUtil.isNullOrEmpty(language)) return;
                 String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
                 seed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
                 Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());

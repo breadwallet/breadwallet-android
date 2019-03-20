@@ -11,6 +11,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
@@ -272,8 +273,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     final String mUri = data.getStringExtra("result");
                     if(StringUtil.isNullOrEmpty(mUri)) return;
                     if(mUri.contains("redpacket")){
-                        String url = "https://redpacket.elastos.org";
-                        UiUtils.openUrlByBrowser(this, url);
+                        UiUtils.startWebviewActivity(this, "https://redpacket.elastos.org");
                     } else if(mUri.contains("identity")) {
                         AuthorizeManager.startWalletActivity(BRActivity.this, mUri, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
                     } else if(mUri.contains("elapay")) {

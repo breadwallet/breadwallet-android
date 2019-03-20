@@ -1,96 +1,62 @@
 language: android
-
 sudo: required
-
-#jdk: oraclejdk8
-
-#before_cache:
-# - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-# - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-#cache:
-# directories:
-# - $HOME/.gradle/caches/
-# - $HOME/.gradle/wrapper/
-
-# env:
-#  global:
-#  - ANDROID_API=28
-#  - EMULATOR_API=28
-#  - ANDROID_BUILD_TOOLS=28.0.3
-#  - ADB_INSTALL_TIMEOUT=5 # minutes
-#  - secure: "kYQFW12wY9zzMNqtor4sTeE4k/877t0igpS/AaPon7MNr+ebqEkeg9z6L1sE+81bopDX+0K62AxO4mKVxOiGGGVU5JS1ZFWg/BhPyKCThm1tUzXCBs5s8AxWU9s9MudfTHgPLwsOhvpKogivA0ZXt5iEFrkv57A51qZFMQ0Irl8iAaMiwjzv+FRT26jCCBCKB5jlRwocwOB7wEujlUN289i5y9o/wcWhBmA5YY7y64hdlZEs/bmF7RXXFpsRzmpvcm9rbnffBfSgDXAmnM1U7S9BLNgxtEoXraXlVlejnkti8+7aBmAqbQTto69eLPJlnGZ917BQLuhPqdapMNvLOwGP/CUVkzAMYsIndQafJsleRTYIRTlH2I+/ZMmaCZVUE4dxO97j1Nrbbksqb5zTzxKVJjgF5FpgZoa8KZeKh5TvFzWP5ZON53UcKM34J2D9juV6iNt34yffYq5OPkCblDHPiL9SbK01fGYlgVhdO9w9O/D+ybdsPC32syHnQgNQTH7GZlIJdJzamv9dN4zB/Hqk3LlECMHXWdYxCP/2EnEIFWO9P0TPw+Fb2B0t7hi/8ksvd7O2PaK3JL9i39prR4ZGeNkrJ3EmmM4dOV8CVZpTLrx+FshHgEszkmkn/nuiMrEqdz/4LK0fRsPLXkr9RFd2HJGrW6ng/lPYkVBT60w="
-#  - secure: "0Pm10LgXvYeSTGpK6QD3+BCMQv2C5OrBubk67im9R1r9HnxBViyGihZrnOzOdUDnP/j3VwCiuRmWBjmXVmG3c1K+vSpba14H3G9FFKQAwaXcKx3fsMVrXc2NFINjwL8tjKYWAQOPrXC2c1GDQiPOYgWP0YNK17UkAX0nRDZ7nCXZRvlG9xV+TF7lHKgsg7Twjp9hvXZaPJYnGPSyuko6JkBtuGstdptaO7OjfaRCrotiWT848Q/KzOQdVAzTmxMARInMRMXEP+XFkzEh7MKCx1rfz6xVvnA4iTEK8XHmk+/iqpTMFRHr2TpfT0QAF/+4hBpnJ6460ySqybUYd5kgJap+v+lL6w3s8o6gISR6m7YltqelwDeku51ZmgDtOPVmsfJIAd+XQ0SwD0gYd8r//wnNPKssGoGgDqp56g9lVlhzo9ZAkRk2PZh+o8G6vZpARIPnG2a/ENx8tC4QqoiGoR4swrgqDtqU6eruB0dfoNkkr+RiNTKsfJPs4ktQ31dF/qRJW/uLHSPWWrzonn2TE2+wf4pq1lYXadGfl+GhMcuXxTaWP9mEviS2BliGwVHQ8hn2yI40dXfIjZ0yZJPujQfRW/9tbAuKPGFdUm8RcglOpHOdNczMnodq0WfkbIVi/ohYEWmlK8LLvrhafNsevy+gP+c2Fqxw5mI3WnY/T1o="
-
 android:
   components:
-    - build-tools-28.0.3
-    - android-28
-    - extra-android-m2repository
-    - extra-android-support
-
-# - tools
-# - platform-tools
-# - build-tools-$ANDROID_BUILD_TOOLS
-# - android-$ANDROID_API
-# - android-$EMULATOR_API_LEVEL
-# - extra-google-m2repository
-# - extra-android-m2repository # for design library
-# - addon-google_apis-google-28 # google play services
-# - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
-# - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
-
+  - build-tools-28.0.3
+  - android-28
+  - extra-android-m2repository
+  - extra-android-support
 licenses:
-  - 'android-sdk-preview-license-.+'
-  - 'android-sdk-license-.+'
-  - 'google-gdk-license-.+'
-
+- android-sdk-preview-license-.+
+- android-sdk-license-.+
+- google-gdk-license-.+
 before_install:
+- openssl aes-256-cbc -K $encrypted_57d286c34edd_key -iv $encrypted_57d286c34edd_iv
+  -in elastos.jks.enc -out elastos.jks -d
 - echo "y" | sdkmanager "cmake;3.6.4111459"
-openssl aes-256-cbc -K $encrypted_b486aef5df92_key -iv $encrypted_b486aef5df92_iv -in walletlibrary.jks.enc -out walletlibrary.jks -d
-#- mkdir "$ANDROID_HOME/licenses" || true
-#- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-#- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 - chmod +x gradlew
-- ./gradlew dependencies || true # DON'T ADD unless you are getting "Install missing components using SDK manager"
-#Source: https://medium.com/@oldergod/constraint-layout-and-circleci-travis-d50342696d2
-
-before_script:
-  - wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
-  - unzip -qq android-ndk-r16b-linux-x86_64.zip
-  - export ANDROID_NDK_HOME=`pwd`/android-ndk-r16b
-  - export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME"
-  - export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
-  - export PATH=$PATH:${ANDROID_NDK_HOME}
-  - env
-
+- "./gradlew dependencies || true"
 script:
-#- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
-  - "./gradlew assembleRelease"
-
-#before_deploy:
-#- cp $TRAVIS_BUILD_DIR/example_keystore.jks $HOME
-#- cd app/build/outputs/apk/
-#- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/example_keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk ExampleKeystoreAlias
-
-# Verification
-#- jarsigner -verify app-release-unsigned.apk
-#- "${ANDROID_HOME}/build-tools/24.0.2/zipalign -v 4 app-release-unsigned.apk TravisExample.apk"
-
-
+- "./gradlew assembleRelease"
+before_script:
+- wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+- unzip -qq android-ndk-r16b-linux-x86_64.zip
+- export ANDROID_NDK_HOME=`pwd`/android-ndk-r16b
+- export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME"
+- export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
+- export PATH=$PATH:${ANDROID_NDK_HOME}
+- env
+before_deploy:
+- ls
 deploy:
   provider: releases
-  file: elephant_wallet.apk
+  api_key:
+    secure: oC8TT19HJbQPH8vM4iY4HPQfJ2xhTlpn7OWS56mcojTxZozN70oIhtIhFqo1xUMfcStdD4yJdY7fpqxCDJMd/c5Ue9sWexjv1HYt7i7ffE7K+hzWO9hyG4GgN/RMimAS+EXPii/ZvoKy9OP4WkhGZ2trV3A5EJNuuV++i/brG2MuEw2P6SpNgFBvgiCi13Wv34wpyre3C3XuxrQof7lPePGfkZVjQenj11wpcmpRTyW0QNwr+TGq1plcE68Ual6UqeJisVJbbFoXvgM7h85DeX6Pra6rGhQ0kcwcf9IxEhBY3UVSYAdFMF6YixhS2moitAv1wF5TDsnQb6Ttc3SCQHtUQ/JsnIowhvSESCg5Yl6pHawerPkOhz0+Rh+1x7JvmDnAa6Umyy82bNhFo9qtwnrR+W3U2ejHRVzlq1J/+289Yi3+eSUz2yK6JBL0gkgCKfvjcH6fW1jvJvn+5uFyPNB+dylCx0Qq4CGucBj+O9aPuiBx4l7crxxL1FHZMeZKjDOQMb7Mb5oWmtWQwtjksNLVxm6CJM3h9/g77TtdOcNqXRatFwT/qC6PJICBtIhsBcj2BLKbkGNnOfHKbbwuZlTw9gGBMm+XlpqvuQWwAHuARtMWVKMKYpCruJe+wCF2nq3MkOWywI2fz2Xn8rUvWYwyVN4z6yyu5Gf9MjKoHLc=
+  file: elephant_wallet_test.apk
   skip_cleanup: true
   on:
-    branch: dev
-
-#  on:
-#    repo: harmittaa/travis-example-android
-#    tags: true
-#    jdk: oraclejdk8
-#  api_key:
-#    secure: "ShxzZffSJIrdwKSLbyBl8u9GLjo7kAT0a1FkAeD187qSZV4rUqM/tvNDeH6ySR/YxLvRg/UyfGyidcmh1z98heq5aBCfZj3xHn8rLi8HBfrTsMFs/NqhnJXKVzjbEGHe3hw9XghPV1QqWkZl9DGb5Bgptpz0wuF9m9X3C5ywKBFUdLbIKKgwv/6Qx3ByROECndKvkhwtNdXcO3NVPm68TIuGU5AMhyNFhbyattyDY8TyCDnSOQXoFSto71lYyKY5WafFiS4b92HgIHTZxOV2FBnWIaHTIDKdtHcBj/eNYRVb8CVjjxu2xoBcmgWVtxl/04RDq+mZX/lZuLLyIN0UN0h9Zj0Ks9ywmWRQQYKPm2qMJeCBDpBAqXTU6m0AeY3CdHTwvM4lx5gAO/exBe257Dk+TpvUdVH1auu9df3V7ERgfOkoUC9bRyy1E/kzK7p5dtEoyIJtGq+dqL5iMvaDbmrqFpUxtPShJupaaXHiSjD1gcusd+r7BklpbAWIDoLm7q3iuOzA/L86fB7VGkTOUaVYpJQ2AJRx8GfqcxxDAzQDfW7Ev7qsQmjUMjE1ck1XVlZmXgMmvCgnAve9yph0mPPma6iHsaocoE9SDJi07x6NFVfAEWLQupZufYBCsc8VCFUDrx2g/YsxoAecF+AEPkQ45eG9YRp2r6nayB1S864="
-
-
-
+    repo: xidaokun/Elastos.App.Wallet.Elephant.Android
+    branch: release_v1.3
+    tags: true
+notifications:
+  email:
+  - 15921908346@163.com
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+  - "$HOME/.m2"
+  - "$HOME/.gradle"
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+env:
+  global:
+  - secure: qNCAkKrKBzqqaEkPeP4ibIxVJFGzu8jQt9MPzXbtdICB/ZDG1AO/5At9FlMFoBVwVyVsJimAb2fD5AcrZ+O2EJyxe6RYU5oIAl58ahGVNBcgmuk1WJToR7CJ0///8iB9+Wu4cE/wqQJLEnbQMV9Qma97fqa0BPmw0XfqdpPDS7kKhxQ49Bc4FY+su/HBz8exXyNV52J1gsz6WfNqhVxVlTfljkcJws59eGps8JrptC0o2B4DX5X5AqV6ctf3/qw4hXgFkvZTUHfGRfEECt1oHjniEdLhMp83bVNHPiZKn9EJ808o3GCnzWtfzN73QL9nRjHeiLCmQG0IFZm9nZTJGVObmMBupFm/VzEKeh8SnJxjucZ0/EZHpVsKQbdxOhpTVzA5KgJ/SIHFnDQQ7KcQaIVgabVe8n/099b4UOapVgCMP8D3OokBLyS2Kn6+iNoHgSaodrXuy9/otei2qTCd+Ki1luvjMBxjRDh0ve3NZvbFzEZrcgieFskqbu4TE30aHWfTJvOffZsBTrc7WZOA5+StDqU0OQxBweYkR8wzm/C89xSTBKP121wPK1RrIoRcBqtwmz0vOxX9hgcAWprmpBW6DBXlDRfI57I5llx7/QmW/y4xdHQhiKHrtZ+buImOndmwVsZdDNl4XL1baYzJVaAw7HrooLUNeWEDy0fc1jA=
+  - secure: QEZStob86hH2u9lvKjf/vhak+i4W2IdmqDsN42jpCqz8CE1w83zYlYJRtvNoA2gw6OGuYm3DBNIp1J0ig8SxvAJqpl2v+Qge/rW74Z20fnSXQC80eqG+rNVmBObFNn9cTaNusBBUcGF20TyjSD4fXV5dMARIPFOcqcWsC3BoXM5RSgdomByzRGq2D1TUSp8BuW8Ar5iPpuPR++XP4jXtjnu32RUxSFy9rNX0kjN5POXWr+XFgvw4SHyVAWi4GqnViCdSDGBYpKwYWeD2oSssPhGw0AVeBlnpbc7IolkKAbfINFji3zMa/BFHAB0+gKwKahpmP8xMBr8GbWG5lTR/YcKqkS7T9K1KhAi0x3ZrqlOUflh7dUHdeHCRJG5pBHDmR9gp8FnAxv14apm4A0/qY2evVB3h/aGTbNaKd/lvx4P7UObo68sC9K36XkO6y2VqbBGhXsK75ENlaSCJMuSdOVJGf2CbyVcKAnNu3VtLJjmtBwPYWGXmv1I+xCidAjttGBGNgM0rQ3nkGMZZND9LSXK1LK9kFC5lKFI29Czt3gmTEn/pro4t/ASfBubnRcwtq6eqM61lNI0cH4TSEmmgWuKxACCnMjz0LJKolwLpFD5XUVUX2d5aq8MsJkt8IlJUkGk9YpLlNgAtHEw8ZY3BIyFX2AatQRtubPu4lDuOJ74=
+after_success:
+- cp $TRAVIS_BUILD_DIR/elastos.jks $HOME
+- cd app/build/outputs/apk/ela/release/
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/elastos.jks
+  -storepass $storepass -keypass $keypass app-ela-release-unsigned.apk elastos
+- jarsigner -verify app-ela-release-unsigned.apk
+- "${ANDROID_HOME}/build-tools/28.0.3/zipalign -v 4 app-ela-release-unsigned.apk elephant_wallet_test.apk"
