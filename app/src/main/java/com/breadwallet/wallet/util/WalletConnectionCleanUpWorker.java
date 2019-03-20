@@ -74,7 +74,7 @@ public class WalletConnectionCleanUpWorker extends Worker {
     @Override
     public Result doWork() {
         Log.d(TAG, "doWork for disconnecting all the wallets.");
-        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(getApplicationContext()).getAllWallets(getApplicationContext()));
+        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(getApplicationContext()));
         for (final BaseWalletManager walletManager : list) {
             walletManager.disconnect(getApplicationContext());
         }
