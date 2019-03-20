@@ -203,8 +203,7 @@ public class BRActivity extends FragmentActivity {
                 } else {
                     Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
                     // TODO: Should this be BreadApp.clearApplicationUserData();?
-                    WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
-                    m.wipeWalletButKeystore(this);
+                    WalletsMaster.getInstance().wipeWalletButKeystore(this);
                     finish();
                 }
                 break;

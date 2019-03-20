@@ -99,7 +99,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "current wallet: " + WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext()).getCurrencyCode());
+                Log.d(TAG, "current wallet: " + WalletsMaster.getInstance().getCurrentWallet(getContext()).getCurrencyCode());
                 TxManager.getInstance().updateTxList(breadActivity);
             }
         });

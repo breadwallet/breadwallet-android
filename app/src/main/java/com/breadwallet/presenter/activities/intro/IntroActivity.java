@@ -61,7 +61,7 @@ public class IntroActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(IntroActivity.this);
                 UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
             }
         });
@@ -71,7 +71,7 @@ public class IntroActivity extends BRActivity {
         }
 
         // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
-        if (!WalletsMaster.getInstance(this).noWallet(this)) {
+        if (!WalletsMaster.getInstance().noWallet(this)) {
                 UiUtils.startBreadActivity(this, true);
         }
     }

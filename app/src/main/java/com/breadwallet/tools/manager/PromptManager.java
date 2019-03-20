@@ -97,7 +97,7 @@ public final class PromptManager {
             case UPGRADE_PIN:
                 return BRKeyStore.getPinCode(context).length() != PinLayout.MAX_PIN_DIGITS;
             case RECOMMEND_RESCAN:
-                BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
+                BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(context);
                 return wallet != null && BRSharedPrefs.getScanRecommended(context, wallet.getCurrencyCode());
         }
         return false;
@@ -193,7 +193,7 @@ public final class PromptManager {
                             @Override
                             public void run() {
                                 BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), 0);
-                                BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
+                                BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(context);
                                 wallet.rescan(context);
                                 BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), false);
                                 sendPromptClickedEvent(promptItem);

@@ -56,7 +56,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                BaseWalletManager walletManager = WalletsMaster.getInstance(InputPinActivity.this).getCurrentWallet(InputPinActivity.this);
+                BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(InputPinActivity.this);
                 UiUtils.showSupportFragment(InputPinActivity.this, BRConstants.FAQ_SET_PIN, walletManager);
             }
         });

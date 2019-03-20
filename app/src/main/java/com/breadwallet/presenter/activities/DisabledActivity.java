@@ -49,7 +49,7 @@ public class DisabledActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(DisabledActivity.this).getCurrentWallet(DisabledActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(DisabledActivity.this);
                 UiUtils.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
             }
         });
