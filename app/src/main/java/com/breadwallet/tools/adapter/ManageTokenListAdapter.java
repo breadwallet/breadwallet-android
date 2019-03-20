@@ -27,6 +27,8 @@ import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
@@ -79,6 +81,15 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
             holder.showHide.setTypeface(typeface);
+
+            BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, item.symbol);
+            if(null == wallet) {
+                holder.mErc20Icon.setVisibility(View.GONE);
+            } else if(wallet instanceof WalletTokenManager) {
+                holder.mErc20Icon.setVisibility(View.VISIBLE);
+            } else {
+                holder.mErc20Icon.setVisibility(View.GONE);
+            }
 
             try {
                 holder.tokenIcon.setImageDrawable(mContext.getDrawable(iconResourceId));
@@ -187,6 +198,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         private BaseTextView tokenBalance;
         private Button showHide;
         private ImageView tokenIcon;
+        private View mErc20Icon;
 
         public ManageTokenItemViewHolder(View view) {
             super(view);
@@ -197,7 +209,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             tokenBalance = view.findViewById(R.id.token_balance);
             showHide = view.findViewById(R.id.show_hide_button);
             tokenIcon = view.findViewById(R.id.token_icon);
-
+            mErc20Icon = view.findViewById(R.id.erc20_flag);
         }
 
         @Override

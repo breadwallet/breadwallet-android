@@ -17,6 +17,9 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,6 +68,15 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
         String iconResourceName = currencyCode;
         int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
+
+        BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, item.symbol);
+        if(null == wallet) {
+            holder.mErc20Icon.setVisibility(View.GONE);
+        } else if(wallet instanceof WalletTokenManager) {
+            holder.mErc20Icon.setVisibility(View.VISIBLE);
+        } else {
+            holder.mErc20Icon.setVisibility(View.GONE);
+        }
 
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
@@ -122,6 +134,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         private BaseTextView symbol;
         private BaseTextView name;
         private Button addRemoveButton;
+        private View mErc20Icon;
 
         public TokenItemViewHolder(View view) {
             super(view);
@@ -130,6 +143,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             symbol = view.findViewById(R.id.token_symbol);
             name = view.findViewById(R.id.token_name);
             addRemoveButton = view.findViewById(R.id.add_remove_button);
+            mErc20Icon = view.findViewById(R.id.erc20_flag);
         }
     }
 
