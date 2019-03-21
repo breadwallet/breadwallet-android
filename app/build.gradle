@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.protobuf'
 
@@ -197,6 +199,10 @@ android {
         }
     }
     preBuild.dependsOn(downloadBundles)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 protobuf {
@@ -269,6 +275,7 @@ dependencies {
     implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908' //do not update
     implementation 'org.slf4j:slf4j-api:1.7.22'
     implementation 'tools.fastlane:screengrab:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
