@@ -18,6 +18,7 @@ android {
         }
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
+        brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
     }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
@@ -161,6 +162,12 @@ android {
             java.srcDirs = ['src/main/java', 'src/main/jni/breadwallet-core/Java/root',
                             'src/main/jni/breadwallet-core/ethereum/Java/root',
                             '${protobuf.generatedFilesBaseDir}/main/javalite']
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${output.baseName}-${brdInternalVersionName}.apk"
         }
     }
 
