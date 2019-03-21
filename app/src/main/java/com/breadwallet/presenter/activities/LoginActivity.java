@@ -28,6 +28,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.WalletsMaster;
 
 

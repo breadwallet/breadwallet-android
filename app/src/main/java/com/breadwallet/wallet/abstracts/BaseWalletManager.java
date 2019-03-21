@@ -75,6 +75,8 @@ public interface BaseWalletManager {
 
     void addTxListModifiedListener(OnTxListModified list);
 
+    void removeTxListModifiedListener(OnTxListModified listener);
+
     void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener);
 
     //get confirmation number

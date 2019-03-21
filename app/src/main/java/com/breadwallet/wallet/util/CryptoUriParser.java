@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
+import static com.breadwallet.ui.wallet.WalletActivity.EXTRA_CRYPTO_REQUEST;
 import static com.breadwallet.tools.util.BRConstants.BREAD;
 
 /**
