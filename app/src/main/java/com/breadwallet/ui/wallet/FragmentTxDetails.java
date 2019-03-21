@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.fragments;
+package com.breadwallet.ui.wallet;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -28,14 +28,12 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -154,25 +152,17 @@ public class FragmentTxDetails extends DialogFragment {
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
         mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
-        mCloseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        mCloseButton.setOnClickListener(view -> dismiss());
 
-        mShowHide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!mDetailsShowing) {
-                    mDetailsContainer.setVisibility(View.VISIBLE);
-                    mDetailsShowing = true;
-                    mShowHide.setText(getString(R.string.TransactionDetails_titleFailed));
-                } else {
-                    mDetailsContainer.setVisibility(View.GONE);
-                    mDetailsShowing = false;
-                    mShowHide.setText(getString(R.string.TransactionDetails_showDetails));
-                }
+        mShowHide.setOnClickListener(view -> {
+            if (!mDetailsShowing) {
+                mDetailsContainer.setVisibility(View.VISIBLE);
+                mDetailsShowing = true;
+                mShowHide.setText(getString(R.string.TransactionDetails_titleFailed));
+            } else {
+                mDetailsContainer.setVisibility(View.GONE);
+                mDetailsShowing = false;
+                mShowHide.setText(getString(R.string.TransactionDetails_showDetails));
             }
         });
 
@@ -307,21 +297,16 @@ public class FragmentTxDetails extends DialogFragment {
             mToFromAddress.setText(received ? walletManager.decorateAddress(mTransaction.getFrom()) : walletManager.decorateAddress(mTransaction.getTo()));
 
             // Allow the to/from address to be copyable
-            mToFromAddress.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Get the default color based on theme
-                    final int color = mToFromAddress.getCurrentTextColor();
+            mToFromAddress.setOnClickListener(view -> {
+                // Get the default color based on theme
+                final int color = mToFromAddress.getCurrentTextColor();
 
-                    mToFromAddress.setTextColor(getContext().getColor(R.color.light_gray));
-                    String address = mToFromAddress.getText().toString();
-                    BRClipboardManager.putClipboard(getContext(), address);
-                    Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
+                mToFromAddress.setTextColor(getContext().getColor(R.color.light_gray));
+                String address = mToFromAddress.getText().toString();
+                BRClipboardManager.putClipboard(getContext(), address);
+                Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    mToFromAddress.setTextColor(color);
-
-
-                }
+                mToFromAddress.setTextColor(color);
             });
 
             //this is always crypto amount
@@ -359,21 +344,18 @@ public class FragmentTxDetails extends DialogFragment {
             mTransactionId.setText(mTransaction.getHashReversed());
 
             // Allow the transaction id to be copy-able
-            mTransactionId.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            mTransactionId.setOnClickListener(view -> {
 
-                    // Get the default color based on theme
-                    final int color = mTransactionId.getCurrentTextColor();
+                // Get the default color based on theme
+                final int color = mTransactionId.getCurrentTextColor();
 
-                    mTransactionId.setTextColor(getContext().getColor(R.color.light_gray));
-                    String id = mTransaction.getHashReversed();
-                    BRClipboardManager.putClipboard(getContext(), id);
-                    Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
+                mTransactionId.setTextColor(getContext().getColor(R.color.light_gray));
+                String id = mTransaction.getHashReversed();
+                BRClipboardManager.putClipboard(getContext(), id);
+                Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    mTransactionId.setTextColor(color);
+                mTransactionId.setTextColor(color);
 
-                }
             });
 
             // Set the transaction block number
@@ -438,18 +420,22 @@ public class FragmentTxDetails extends DialogFragment {
         if (!memo.isEmpty()) {
             mTxMetaData.comment = memo;
             KVStoreManager.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+            if (getContext() instanceof TxDetailListener) {
+                ((TxDetailListener) getContext()).onDetailUpdate();
+            }
         }
         mTxMetaData = null;
 
         // Hide softkeyboard if it's visible
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
-
-        // Update Tx list to reflect the memo change
-        TxManager.getInstance().updateTxList(getActivity());
     }
 
-    public interface OnPauseListener {
-        void onPaused();
+    public interface TxDetailListener {
+
+        /**
+         * Callback to notify the host of the fragment that the transaction detail has been updated.
+         */
+        void onDetailUpdate();
     }
 }

@@ -56,6 +56,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.APIClient;
@@ -100,29 +101,18 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mMenuLayout = findViewById(R.id.menu_layout);
         mListGroupLayout = findViewById(R.id.list_group_layout);
 
-        mBuyLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-                        HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-                        WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
-                UiUtils.startWebActivity(HomeActivity.this, url);
-            }
+        mBuyLayout.setOnClickListener(view -> {
+            String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+                    HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+                    WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
+            UiUtils.startWebActivity(HomeActivity.this, url);
         });
-        mTradeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE));
-            }
-        });
-        mMenuLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
+        mTradeLayout.setOnClickListener(view -> UiUtils.startWebActivity(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)));
+        mMenuLayout.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+            intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS);
+            startActivity(intent);
+            overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
         });
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
@@ -132,22 +122,19 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     return;
                 }
                 if (mAdapter.getItemViewType(position) == 0) {
-                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this,
-                            mAdapter.getItemAt(position).getCurrencyCode());
-                    Intent newIntent;
+                    String currencyCode = mAdapter.getItemAt(position).getCurrencyCode();
+                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this, currencyCode);
                     // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
-                    if (mAdapter.getItemAt(position).getCurrencyCode()
-                            .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
+                    if (WalletTokenManager.BRD_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
                         if (!BRSharedPrefs.getRewardsAnimationShown(HomeActivity.this)) {
                             Map<String, String> attributes = new HashMap<>();
                             attributes.put(EventUtils.EVENT_ATTRIBUTE_CURRENCY, WalletTokenManager.BRD_CURRENCY_CODE);
                             EventUtils.pushEvent(EventUtils.EVENT_REWARDS_OPEN_WALLET, attributes);
                         }
-                        newIntent = new Intent(HomeActivity.this, BrdWalletActivity.class);
+                        BrdWalletActivity.start(HomeActivity.this, currencyCode);
                     } else {
-                        newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                        WalletActivity.start(HomeActivity.this, currencyCode);
                     }
-                    startActivity(newIntent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 } else {
                     Intent intent = new Intent(HomeActivity.this, AddWalletsActivity.class);
@@ -172,23 +159,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         // Get ViewModel, observe updates to Wallet and aggregated balance data
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        mViewModel.getWallets().observe(this, new Observer<List<Wallet>>() {
-            @Override
-            public void onChanged(@Nullable List<Wallet> wallets) {
-                mAdapter.setWallets(wallets);
-            }
-        });
+        mViewModel.getWallets().observe(this, wallets -> mAdapter.setWallets(wallets));
 
-        mViewModel.getAggregatedFiatBalance().observe(this, new Observer<BigDecimal>() {
-            @Override
-            public void onChanged(@Nullable BigDecimal aggregatedFiatBalance) {
-                if (aggregatedFiatBalance == null) {
-                    Log.e(TAG, "fiatTotalAmount is null");
-                    return;
-                }
-                mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
-                        BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), aggregatedFiatBalance));
+        mViewModel.getAggregatedFiatBalance().observe(this, aggregatedFiatBalance -> {
+            if (aggregatedFiatBalance == null) {
+                Log.e(TAG, "fiatTotalAmount is null");
+                return;
             }
+            mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
+                    BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), aggregatedFiatBalance));
         });
     }
 

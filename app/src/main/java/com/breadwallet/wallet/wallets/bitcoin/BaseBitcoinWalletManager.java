@@ -873,6 +873,11 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         mWalletManagerHelper.addTxListModifiedListener(listener);
     }
 
+    @Override
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        mWalletManagerHelper.removeTxListModifiedListener(listener);
+    }
+
     public void onTxListModified(String hash) {
         mWalletManagerHelper.onTxListModified(hash);
     }

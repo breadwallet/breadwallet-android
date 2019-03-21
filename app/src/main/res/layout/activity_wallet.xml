@@ -12,7 +12,7 @@
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.breadwallet.presenter.activities.WalletActivity">
+    tools:context="com.breadwallet.ui.wallet.WalletActivity">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -75,7 +75,7 @@
                         android:id="@+id/currency_usd_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$16,904.34 per BTC"
+                        tools:text="$16,904.34 per BTC"
                         android:textColor="@color/trans_white"
                         android:textSize="@dimen/sub_header"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -105,7 +105,7 @@
                         android:layout_marginEnd="16dp"
                         android:minHeight="70dp"
                         android:paddingTop="8dp"
-                        android:text="$26,495.69"
+                        tools:text="$26,495.69"
                         android:textColor="@color/white"
                         android:textSize="22sp"
                         app:brdFont="@string/Font.CircularPro_Bold"
@@ -135,7 +135,7 @@
                         android:minHeight="70dp"
                         android:paddingTop="18dp"
                         android:paddingBottom="20dp"
-                        android:text="1.56739 BTC"
+                        tools:text="1.56739 BTC"
                         android:textColor="@color/trans_white"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -161,7 +161,7 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <com.breadwallet.presenter.customviews.BRSearchBar xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.breadwallet.ui.wallet.BRSearchBar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
