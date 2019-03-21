@@ -98,6 +98,7 @@
             android:layout_height="56dp"
             android:layout_marginStart="15dp"
             android:paddingLeft="55dp"
+            android:hint="@string/My.Profile.Mobile"
             app:layout_constraintStart_toStartOf="parent" />
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/did_mobile_clean"

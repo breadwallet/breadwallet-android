@@ -125,13 +125,13 @@ public class ProfileEditActivity extends BaseSettingsActivity {
         boolean is = true;
         if(from == SettingsUtil.KYC_FROME_MOBILE){
             is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
-            if(!is) Toast.makeText(this, "手机号不合法", Toast.LENGTH_SHORT).show();
+            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
         } else if(from == SettingsUtil.KYC_FROME_EMAIL){
             is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
-            if(!is) Toast.makeText(this, "邮箱不合法", Toast.LENGTH_SHORT).show();
+            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
         } else if(from == SettingsUtil.KYC_FROME_ID){
             is = ValidatorUtil.isIDCard(mIDEdt.getText().toString());
-            if(!is) Toast.makeText(this, "生份证不合法", Toast.LENGTH_SHORT).show();
+            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_id), Toast.LENGTH_SHORT).show();
         }
 
         return is;
