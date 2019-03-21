@@ -151,7 +151,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presenter.activities.InputWordsActivity"
+            android:name=".ui.recovery.RecoveryKeyActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
