@@ -1004,8 +1004,8 @@
     <string name="My.Profile.Completed">完成</string>
 
     <string name="disclaim_title">聲明</string>
-    <string name="disclaim_content">"發現"中的应用程序由第三方供应商提供。 \n \n无论是Elephant还是Elastos都无法控制任何应用程序的内容，并且不对这些应用程序或其内容或可用性负责。</string>
-    <string name="disclaim_ok">確定</string>
+    <string name="disclaim_content">發現中的應用程序由協力廠商開發者提供。\n\n無論是Elephant還是Elastos都無法控制任何應用程序的內容，並且不對這些應用程序以及其內容和可用性負責。</string>
+    <string name="disclaim_ok">我知道了</string>
 
     <string name="invalid_number">無效號碼</string>
     <string name="invalid_email">無效郵件</string>

@@ -1008,8 +1008,8 @@
     <string name="My.Profile.Completed">完成</string>
 
     <string name="disclaim_title">声明</string>
-    <string name="disclaim_content">\"发现\"中的应用程序由第三方提供。\n\n无论是Elephant还是Elastos都无法控制任何应用程序的内容，并且不对这些应用程序内容负责。</string>
-    <string name="disclaim_ok">确定</string>
+    <string name="disclaim_content">发现中的应用程序由第三方开发者提供。 \n\n无论是Elephant还是Elastos都无法控制任何应用程序的内容，并且不对这些应用程序以及其内容和可用性负责。</string>
+    <string name="disclaim_ok">我知道了</string>
 
     <string name="invalid_number">无效号码</string>
     <string name="invalid_email">无效邮件</string>
