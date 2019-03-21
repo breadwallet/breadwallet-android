@@ -89,6 +89,11 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         mWalletManagerHelper.addTxListModifiedListener(listener);
     }
 
+    @Override
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        mWalletManagerHelper.removeTxListModifiedListener(listener);
+    }
+
     //TODO Not used by ETH, ERC20
     @Override
     public void refreshAddress(Context app) {
