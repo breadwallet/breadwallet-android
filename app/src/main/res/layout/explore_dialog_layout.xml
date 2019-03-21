@@ -22,7 +22,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:text="Disclaimer"/>
+            android:text="@string/disclaim_title"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/disclaimer_content"
@@ -30,22 +30,23 @@
             android:layout_height="150dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/disclaimer_title"
+            app:layout_constraintTop_toBottomOf="@id/disclaimer_title"
             android:layout_marginStart="28dp"
             android:layout_marginEnd="28dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:textSize="14sp"
             android:textColor="@color/black_999999"
-            android:text="Applications in Explore are provided by third party vendors. Either Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability."
+            android:text="@string/disclaim_content"
             />
 
         <View
             android:id="@+id/line"
-            app:layout_constraintTop_toBottomOf="@+id/disclaimer_content"
             android:layout_marginTop="14dp"
             android:layout_width="match_parent"
             android:background="#f7f8fb"
-            android:layout_height="1.5dp"/>
+            android:layout_height="1.5dp"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/disclaim_ok_btn"
@@ -56,7 +57,7 @@
             android:textColor="#ff3365"
             android:textSize="16sp"
             android:gravity="center"
-            android:text="OK"/>
+            android:text="@string/disclaim_ok"/>
 
     </android.support.constraint.ConstraintLayout>
 

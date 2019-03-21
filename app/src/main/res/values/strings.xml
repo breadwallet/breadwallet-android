@@ -953,7 +953,6 @@
     <string name="Send.dialog.cancle">Cancel</string>
     <string name="Upgrade.title">Check Upgrade</string>
     <string name="My.wallet.title">My Wallet</string>
-    <string name="My.explore.title">Explore</string>
     <string name="Setting.title">Settings</string>
 
     <string name="Gas.price">Gas Price</string>
@@ -998,21 +997,30 @@
     <string name="User.Not.Author.Exit">Exit</string>
     <string name="User.Not.Author.Continue">Continue</string>
 
+    <string name="My.explore.title">Explore</string>
     <!--profile-->
     <string name="My.Profile.Title">My Profile</string>
     <string name="My.Profile.Nickname">Nickname</string>
     <string name="My.Profile.Email">Email</string>
     <string name="My.Profile.Mobile">Mobile</string>
     <string name="My.Profile.ID">ID（China）</string>
-    <string name="My.Profile.Real.Name">Real name</string>
+    <string name="My.Profile.Real.Name">Real name</string>a
     <string name="My.Profile.Title.Nickname">Nick Name</string>
     <string name="My.Profile.Title.Email">Email</string>
     <string name="My.Profile.Title.Mobile">Mobile</string>
-    <string name="My.Profile.Title.ID">ID</string>
+    <string name="My.Profile.Message">-Complete your profile, build your own credits-</string>
 
     <string name="My.Profile.New">New</string>
     <string name="My.Profile.Pending">Pending</string>
     <string name="My.Profile.Saving">Saving</string>
     <string name="My.Profile.Completed">Completed</string>
 
+    <string name="disclaim_title">Disclaimer</string>
+    <string name="disclaim_content">Applications in Explore are provided by third party vendors. /n/nEither Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability.</string>
+    <string name="disclaim_ok">OK</string>
+
+    <string name="invalid_number">invalid number</string>
+    <string name="invalid_email">invalid email</string>
+    <string name="invalid_id">invalid ID</string>
+    
 </resources>

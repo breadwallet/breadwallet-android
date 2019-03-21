@@ -934,54 +934,80 @@
     <string name="WritePaperPhrase.step">%2$d 之 %1$d</string>
 
     <!--elastos strings-->
-    <string name="SendTransacton.failed">发送交易失败</string>
-    <string name="SendTransacton.sending">交易正在发送</string>
-    <string name="Transaction.rate">交易时价格</string>
-    <string name="Confirm.block">确认块</string>
+    <string name="SendTransacton.failed">發送交易失敗</string>
+    <string name="SendTransacton.sending">交易正在發送</string>
+    <string name="Transaction.rate">交易時價格</string>
+    <string name="Confirm.block">確認塊</string>
     <string name="Transaction.id">交易ID</string>
-    <string name="Token.list"> 币列表</string>
-    <string name="Intro_title">使用加密货币最安全且最可靠的方式。</string>
-    <string name="Address.isused.Hint">%1$s 地址已被重复使用过。</string>
-    <string name="Send.balance.hint">金额</string>
-    <string name="Send.max.body">发送最大金额?</string>
-    <string name="Upgrade.title">检测升级</string>
+    <string name="Token.list"> 幣列表</string>
+    <string name="Intro_title">使用加密貨幣最安全且最可靠的方式。</string>
+    <string name="Address.isused.Hint">%1$s 地址已被重複使用過。</string>
+    <string name="Send.balance.hint">金額</string>
+    <string name="Send.max.body">發送最大金額?</string>
+    <string name="Upgrade.title">檢測升級</string>
     <string name="Send.dialog.ignore">忽略</string>
     <string name="Send.dialog.cancle">取消</string>
-    <string name="My.wallet.title">我的钱包</string>
-    <string name="Setting.title">设置</string>
-    <string name="Gas.price">燃料价格</string>
+    <string name="My.wallet.title">我的錢包</string>
+    <string name="Setting.title">設置</string>
+    <string name="Gas.price">燃料價格</string>
     <string name="Gas.limit">燃料上限</string>
 
     <string name="upgrade_confirm">更新</string>
     <string name="upgrade_cancel">下次</string>
 
-    <string name="Did.Will.Get">%1$s 将要获取您的:</string>
-    <string name="Did.Authorized">已授权</string>
-    <string name="Did.Authorize">授权</string>
-    <string name="Did.Authorize.time">授权时间</string>
-    <string name="Did.Expiration">过期时间</string>
-    <string name="Did.Author.Info">授权信息</string>
-    <string name="Did.Nick.Name">昵称</string>
-    <string name="Did.Public.Key">公钥</string>
-    <string name="Did.What.Did">DID是什么？</string>
-    <string name="Did.Quest">问题</string>
-    <string name="Did.Required">必选</string>
-    <string name="Did.Receive.Address">钱包收币地址</string>
-    <string name="Did.Deny">拒绝</string>
+    <string name="Did.Will.Get">%1$s 將要獲取您的:</string>
+    <string name="Did.Authorized">已授權</string>
+    <string name="Did.Authorize">授權</string>
+    <string name="Did.Authorize.time">授權時間</string>
+    <string name="Did.Expiration">過期時間</string>
+    <string name="Did.Author.Info">授權信息</string>
+    <string name="Did.Nick.Name">暱稱</string>
+    <string name="Did.Public.Key">公鑰</string>
+    <string name="Did.What.Did">DID是什麼？</string>
+    <string name="Did.Quest">問題</string>
+    <string name="Did.Required">必選</string>
+    <string name="Did.Receive.Address">錢包收幣地址</string>
+    <string name="Did.Deny">拒絕</string>
     <string name="Did.Save">保存</string>
-    <string name="Did.Create.Ela.Red.Package">创建ELA红包</string>
-    <string name="Did.Description">DID是区块链世界的虚拟身份唯一标识，它是去中心化安全存储的，它可以识别真实世界万物，任何人、任何资产和任务实物。</string>
-    <string name="Author.Auto.Check">下次自动授权%1$s</string>
+    <string name="Did.Create.Ela.Red.Package">創建ELA紅包</string>
+    <string name="Did.Description">DID是區塊鏈世界的虛擬身份唯一標識，它是去中心化安全存儲的，它可以識別真實世界萬物，任何人、任何資產和任務實物。</string>
+    <string name="Author.Auto.Check">下次自動授權%1$s</string>
 
-    <string name="Did.Detail.Tile">详情</string>
-    <string name="Did.Detail.Authorized">已授权</string>
-    <string name="Did.Detail.Author.Time">授权时间:</string>
-    <string name="Did.Detail.Expiration">过期时间:</string>
-    <string name="Did.Detail.Auth.Info">授权信息:</string>
-    <string name="Did.Detail.Nick.Name">- 昵称</string>
+    <string name="Did.Detail.Tile">詳情</string>
+    <string name="Did.Detail.Authorized">已授權</string>
+    <string name="Did.Detail.Author.Time">授權時間:</string>
+    <string name="Did.Detail.Expiration">過期時間:</string>
+    <string name="Did.Detail.Auth.Info">授權信息:</string>
+    <string name="Did.Detail.Nick.Name">- 暱稱</string>
     <string name="Did.Detail.DID">- DID</string>
-    <string name="Did.Detail.Public.Key">- 公钥</string>
-    <string name="User.Not.Author.Message">您的手机系统不支持安卓标准KeyStore技术，而我们用这个技术来存储你的私钥，如果你想继续使用我们的app，请升级手机操作系统到安卓8.0或以上，或者点击继续按钮来允许我们app不经过您的授权即可访问您的keystore信息。</string>
+    <string name="Did.Detail.Public.Key">- 公鑰</string>
+    <string name="User.Not.Author.Message">您的手機系統不支持安卓標準KeyStore技術，而我們用這個技術來存儲你的私鑰，如果你想繼續使用我們的app，請升級手機操作系統到安卓8.0或以上，或者點擊繼續按鈕來允許我們app不經過您的授權即可訪問您的keystore信息。</string>
     <string name="User.Not.Author.Exit">退出</string>
-    <string name="User.Not.Author.Continue">继续</string>
+    <string name="User.Not.Author.Continue">繼續</string>
+
+    <string name="My.explore.title">發現</string>
+    <!--profile-->
+    <string name="My.Profile.Title">個人信息</string>
+    <string name="My.Profile.Nickname">暱稱</string>
+    <string name="My.Profile.Email">郵箱</string>
+    <string name="My.Profile.Mobile">手機</string>
+    <string name="My.Profile.ID">身份證（中國）</string>
+    <string name="My.Profile.Real.Name">真實姓名</string>
+    <string name="My.Profile.Title.Nickname">暱稱</string>
+    <string name="My.Profile.Title.Email">郵箱</string>
+    <string name="My.Profile.Title.Mobile">手機</string>
+    <string name="My.Profile.Message">-完善個人信息，構建個人信用-</string>
+
+    <string name="My.Profile.New">新</string>
+    <string name="My.Profile.Pending">待填寫</string>
+    <string name="My.Profile.Saving">保存中</string>
+    <string name="My.Profile.Completed">完成</string>
+
+    <string name="disclaim_title">聲明</string>
+    <string name="disclaim_content">"發現"中的应用程序由第三方供应商提供。 \n \n无论是Elephant还是Elastos都无法控制任何应用程序的内容，并且不对这些应用程序或其内容或可用性负责。</string>
+    <string name="disclaim_ok">確定</string>
+
+    <string name="invalid_number">無效號碼</string>
+    <string name="invalid_email">無效郵件</string>
+    <string name="invalid_id">無效ID</string>
 </resources>

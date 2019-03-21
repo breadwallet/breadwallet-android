@@ -210,6 +210,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                 try {
                                     if(StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
                                         dialogDismiss();
+                                        finish();
                                         return;
                                     }
                                     String url = null;
@@ -224,6 +225,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                     e.printStackTrace();
                                 } finally {
                                     dialogDismiss();
+                                    finish();
                                 }
                             }
                         }

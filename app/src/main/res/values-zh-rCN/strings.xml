@@ -989,5 +989,29 @@
     <string name="User.Not.Author.Exit">退出</string>
     <string name="User.Not.Author.Continue">继续</string>
 
-    <string name="My.Profile.Title">我的信息</string>
+    <string name="My.explore.title">发现</string>
+    <!--profile-->
+    <string name="My.Profile.Title">个人信息</string>
+    <string name="My.Profile.Nickname">昵称</string>
+    <string name="My.Profile.Email">邮箱</string>
+    <string name="My.Profile.Mobile">手机</string>
+    <string name="My.Profile.ID">身份证（中国）</string>
+    <string name="My.Profile.Real.Name">真实姓名</string>
+    <string name="My.Profile.Title.Nickname">昵称</string>
+    <string name="My.Profile.Title.Email">邮箱</string>
+    <string name="My.Profile.Title.Mobile">手机</string>
+    <string name="My.Profile.Message">-完善个人信息，构建个人信用-</string>
+
+    <string name="My.Profile.New">新</string>
+    <string name="My.Profile.Pending">待填写</string>
+    <string name="My.Profile.Saving">保存中</string>
+    <string name="My.Profile.Completed">完成</string>
+
+    <string name="disclaim_title">声明</string>
+    <string name="disclaim_content">\"发现\"中的应用程序由第三方提供。\n\n无论是Elephant还是Elastos都无法控制任何应用程序的内容，并且不对这些应用程序内容负责。</string>
+    <string name="disclaim_ok">确定</string>
+
+    <string name="invalid_number">无效号码</string>
+    <string name="invalid_email">无效邮件</string>
+    <string name="invalid_id">无效ID</string>
 </resources>

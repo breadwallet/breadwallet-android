@@ -85,9 +85,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
 
+        initDid();
         didIsOnchain();
     }
-
 
     class KeyValue {
         public String Key;
@@ -103,31 +103,32 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
     }
 
-    private void didIsOnchain(){
+    private Did mDid;
+    private String mSeed;
+    private String publicKey;
+    private void initDid(){
+        String mnemonic = getMn();
+        String language = Utility.detectLang(HomeActivity.this, mnemonic);
+        String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
+        mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+        DidManager didManager = identity.createDidManager(mSeed);
+        mDid = didManager.createDid(0);
+        publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+    }
 
+    private void didIsOnchain(){
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                String seed;
-                String mnemonic = getMn();
-                String language = Utility.detectLang(HomeActivity.this, mnemonic);
-                if(StringUtil.isNullOrEmpty(language)) return;
-                String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
-                seed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
-                Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-                DidManager didManager = identity.createDidManager(seed);
-                Did did = didManager.createDid(0);
-
-                String publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
-
-                did.syncInfo();
-                String value = did.getInfo("DID/Publickey");
-                Log.i("publicKey", "value:"+value);
+                mDid.syncInfo();
+                String value = mDid.getInfo("DID/Publickey");
+                Log.i("DidOnchain", "value:"+value);
                 if(StringUtil.isNullOrEmpty(value) || !value.contains("DID/Publickey")){
                     String data = getKeyVale("DID/Publickey", publicKey);
-                    String info = did.signInfo(seed, data);
+                    String info = mDid.signInfo(mSeed, data);
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
-                    Log.i("publicKey", "txid:"+txid);
+                    Log.i("DidOnchain", "txid:"+txid);
                 }
             }
         });
