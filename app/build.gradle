@@ -216,9 +216,9 @@ dependencies {
     implementation 'org.kie.modules:com-google-code-gson:6.5.0.Final'
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
-    implementation project(':authorizelibrary')
     implementation project(':walletlibrary')
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
+    implementation project(':authorizelibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

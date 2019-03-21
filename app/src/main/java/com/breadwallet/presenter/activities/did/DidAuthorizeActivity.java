@@ -27,6 +27,8 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
@@ -74,11 +76,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        if(intent != null) {
+        if (intent != null) {
             String action = intent.getAction();
-            if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)){
+            if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: "+ uri.toString());
+                Log.i(TAG, "server mUri: " + uri.toString());
                 mUri = uri.toString();
             } else {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
@@ -92,7 +94,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
 
-        if(StringUtil.isNullOrEmpty(mUri)) return;
+        if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
 
@@ -101,19 +103,19 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
-        mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+        mAuthorCbox.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
 
-        if(isAuto) author();
+        if (isAuto) author();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(intent != null) {
+        if (intent != null) {
             String action = intent.getAction();
-            if(action.equals(Intent.ACTION_VIEW)){
+            if (action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: "+ uri.toString());
+                Log.i(TAG, "server mUri: " + uri.toString());
                 mUri = uri.toString();
             } else {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
@@ -121,7 +123,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         }
     }
 
-    private void initView(){
+    private void initView() {
         mAppNameTv = findViewById(R.id.app_name);
         mNickNameSb = findViewById(R.id.nickname_switch_btn);
         mAddressSb = findViewById(R.id.receive_switch_btn);
@@ -131,7 +133,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mWillTv = findViewById(R.id.auth_info);
     }
 
-    private void initListener(){
+    private void initListener() {
         mDenyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,26 +149,26 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorCbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(uriFactory == null) return;
-                mAuthorCbox.setButtonDrawable(b?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+                if (uriFactory == null) return;
+                mAuthorCbox.setButtonDrawable(b ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getDID(), b);
             }
         });
     }
 
-    private void author(){
+    private void author() {
         String mn = getMn();
-        if(StringUtil.isNullOrEmpty(mn)) {
+        if (StringUtil.isNullOrEmpty(mn)) {
             Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(!mAddressSb.isChecked()){
+        if (!mAddressSb.isChecked()) {
             Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(StringUtil.isNullOrEmpty(mUri)){
+        if (StringUtil.isNullOrEmpty(mUri)) {
             Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -176,23 +178,40 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
+        final String requestInfo = uriFactory.getRequestInfo().toLowerCase();
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
-        if(!isValid) Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
+        if (!isValid) {
+            Toast.makeText(this, "invalid params", Toast.LENGTH_SHORT);
+            finish();
+        }
 
-        if(isValid){
+        if (isValid) {
             cacheAuthorInfo(uriFactory);
-            if(!StringUtil.isNullOrEmpty(backurl)){
+            if (!StringUtil.isNullOrEmpty(backurl)) {
                 final CallbackEntity entity = new CallbackEntity();
                 String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
                 String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
                 String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
                 final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+                BaseWalletManager btc = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BTC");
+                BaseWalletManager eth = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "ETH");
+                BaseWalletManager bch = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BCH");
                 CallbackData callbackData = new CallbackData();
-                callbackData.NickName = BRSharedPrefs.getNickname(DidAuthorizeActivity.this);
-                callbackData.ELAAddress = myAddress;
-                callbackData.RandomNumber = randomNumber;
+                callbackData.DID = myDid;
+                callbackData.PublicKey = myPK;
+                callbackData.NickName = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
+                callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
+                if (!StringUtil.isNullOrEmpty(requestInfo)) {
+                    callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
+                    callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
+                    callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
+                    callbackData.EMail = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
+                    callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
+                    callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getID(this) : null;
+                    callbackData.RandomNumber = requestInfo.contains("RandomNumber".toLowerCase()) ? randomNumber : null;
+                }
                 entity.Data = new Gson().toJson(callbackData);
                 entity.PublicKey = myPK;
                 entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
@@ -202,42 +221,56 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
-                        if(ret != null) {
-                            if(ret.contains("err code:")) {
+                        try {
+                            String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
+                            if(StringUtil.isNullOrEmpty(ret)) {
+                                toast("invalid callback url");
                                 dialogDismiss();
-                            } else {
-                                try {
-                                    if(StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
-                                        dialogDismiss();
-                                        finish();
-                                        return;
-                                    }
-                                    String url = null;
-                                    if(returnUrl.contains("?")){
-                                        url = returnUrl+"&did="+myDid;
-                                    } else {
-                                        url = returnUrl+"?did="+myDid;
-                                    }
-                                    UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-                                    finish();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    dialogDismiss();
-                                    finish();
-                                }
+                                finish();
+                                return;
                             }
+                            if(ret.contains("err code:")) {
+                                toast("callback return error");
+                                dialogDismiss();
+                                finish();
+                                return;
+                            }
+                            if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
+                                toast("invalid return url");
+                                dialogDismiss();
+                                finish();
+                                return;
+                            }
+                            String url = null;
+                            if (returnUrl.contains("?")) {
+                                url = returnUrl + "&did=" + myDid;
+                            } else {
+                                url = returnUrl + "?did=" + myDid;
+                            }
+                            UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+                            finish();
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        } finally {
+                            mLoadingDialog.dismiss();
+                            finish();
                         }
                     }
                 });
             }
-
-//                    AuthorizeManager.startClientActivity(DidAuthorizeActivity.this, response, packageName, activityCls);
         }
     }
 
-    private void dialogDismiss(){
+    private void toast(final String message){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DidAuthorizeActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void dialogDismiss() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -246,8 +279,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         });
     }
 
-    private void cacheAuthorInfo(UriFactory uriFactory){
-        if(uriFactory == null) return;
+    private void cacheAuthorInfo(UriFactory uriFactory) {
+        if (uriFactory == null) return;
         AuthorInfo info = new AuthorInfo();
         info.setAuthorTime(getAuthorTime(0));
         info.setPK(uriFactory.getPublicKey());
@@ -259,27 +292,27 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
-    private long getAuthorTime(int day){
+    private long getAuthorTime(int day) {
         Date date = new Date();
-        Calendar calendar  =   Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(calendar.DATE, day);
-        date=calendar.getTime();
+        date = calendar.getTime();
         long time = date.getTime();
 
         return time;
     }
 
-    private String timeTest(long time){
+    private String timeTest(long time) {
         return BRDateUtil.getAuthorDate(time);
     }
 
-    private String getMn(){
+    private String getMn() {
         byte[] phrase = null;
         try {
             phrase = BRKeyStore.getPhrase(this, 0);
-            if(phrase != null) {
-               return new String(phrase);
+            if (phrase != null) {
+                return new String(phrase);
             }
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();

@@ -1,1 +1,1 @@
-include ':app', ':authorizelibrary', ':walletlibrary'
+include ':app', ':walletlibrary', ':authorizelibrary'
