@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 
 /**
@@ -42,8 +41,6 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
     private BRActivity activity;
     private BaseTextView description;
     private BRButton close;
-
-    public boolean[] filterSwitches = new boolean[4];
 
     public BRNotificationBar(Context context) {
         super(context);
@@ -79,14 +76,11 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
         }
         attributes.recycle();
 
-        close.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (activity instanceof WalletActivity) {
-                    ((WalletActivity) activity).resetFlipper();
-                } else if (activity instanceof HomeActivity) {
-                    ((HomeActivity) activity).closeNotificationBar();
-                }
+        close.setOnClickListener(view -> {
+            if (activity instanceof WalletActivity) {
+                ((WalletActivity) activity).resetFlipper();
+            } else if (activity instanceof HomeActivity) {
+                ((HomeActivity) activity).closeNotificationBar();
             }
         });
 

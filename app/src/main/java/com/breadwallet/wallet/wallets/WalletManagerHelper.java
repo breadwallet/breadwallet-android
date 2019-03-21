@@ -75,6 +75,12 @@ public class WalletManagerHelper {
         }
     }
 
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        if (mOntxListModifiedListeners.contains(listener)) {
+            mOntxListModifiedListeners.remove(listener);
+        }
+    }
+
     public void onTxListModified(String hash) {
         for (OnTxListModified listener : mOntxListModifiedListeners) {
             if (listener != null) {

@@ -15,7 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
-import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
