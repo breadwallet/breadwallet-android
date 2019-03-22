@@ -995,12 +995,13 @@
     <string name="My.Profile.Nickname">昵称</string>
     <string name="My.Profile.Email">邮箱</string>
     <string name="My.Profile.Mobile">手机</string>
-    <string name="My.Profile.ID">身份证（中国）</string>
+    <string name="My.Profile.ID">中国居民身份证</string>
     <string name="My.Profile.Real.Name">真实姓名</string>
     <string name="My.Profile.Title.Nickname">昵称</string>
     <string name="My.Profile.Title.Email">邮箱</string>
     <string name="My.Profile.Title.Mobile">手机</string>
     <string name="My.Profile.Message">-完善个人信息，构建个人信用-</string>
+    <string name="My.Profile.List.Title">信息</string>
 
     <string name="My.Profile.New">新</string>
     <string name="My.Profile.Pending">待填写</string>

@@ -225,30 +225,24 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                             String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
                             if(StringUtil.isNullOrEmpty(ret)) {
                                 toast("invalid callback url");
-                                dialogDismiss();
-                                finish();
-                                return;
                             }
                             if(ret.contains("err code:")) {
                                 toast("callback return error");
-                                dialogDismiss();
-                                finish();
-                                return;
                             }
                             if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
                                 toast("invalid return url");
-                                dialogDismiss();
-                                finish();
-                                return;
                             }
-                            String url = null;
+                            String url;
                             if (returnUrl.contains("?")) {
-                                url = returnUrl + "&did=" + myDid;
+                                url = returnUrl + "&response=" +  entity.Data;
                             } else {
-                                url = returnUrl + "?did=" + myDid;
+                                url = returnUrl + "?response=" +  entity.Data;
                             }
-                            UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-                            finish();
+                            if(returnUrl.contains("target=\"internal\"")){
+                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+                            } else {
+                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+                            }
                         } catch (Exception e){
                             e.printStackTrace();
                         } finally {
