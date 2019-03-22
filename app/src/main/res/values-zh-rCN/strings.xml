@@ -1001,6 +1001,7 @@
     <string name="My.Profile.Title.Email">邮箱</string>
     <string name="My.Profile.Title.Mobile">手机</string>
     <string name="My.Profile.Message">-完善个人信息，构建个人信用-</string>
+    <string name="My.Profile.List.Title">信息</string>
 
     <string name="My.Profile.New">新</string>
     <string name="My.Profile.Pending">待填写</string>

@@ -26,8 +26,8 @@ public class ProfileDataSource {
 
     private Context mContext;
 
-    //final String devUrl = "https://api-wallet-did.elastos.org/api/1/blockagent/upchain/data";
-    final String didTestUrl = "https://api-wallet-did-testnet.elastos.org/";
+//    final String didUrl = "https://api-wallet-did-testnet.elastos.org/";
+final String didUrl = "https://api-wallet-did-testnet.elastos.org/";
 //    final String elaTestUrl = "https://api-wallet-ela-testnet.elastos.org/";
 
     private static ProfileDataSource instance;
@@ -51,7 +51,7 @@ public class ProfileDataSource {
     public String upchain(String data){
         try {
             Log.i("ProfileFunction", "upchain data:"+data);
-            ProfileResponse result = urlPost(didTestUrl+"api/1/blockagent/upchain/data", data);
+            ProfileResponse result = urlPost(didUrl +"api/1/blockagent/upchain/data", data);
             Log.i("ProfileFunction", "result:"+result);
             if(200 == result.status) return result.result;
         } catch (IOException e) {
@@ -77,7 +77,7 @@ public class ProfileDataSource {
     }
 
     public String getProfileValue(String did, String key){
-        String url = didTestUrl + "/api/1/did/"+did+"/"+key;
+        String url = didUrl + "/api/1/did/"+did+"/"+key;
 
         try {
             String result = urlGET(url);
@@ -96,7 +96,7 @@ public class ProfileDataSource {
 
     private Transaction getTransaction(String txid){
         Log.i("xidaokun", "getTransaction:"+txid);
-        String url = didTestUrl + "api/1/tx/" + txid;
+        String url = didUrl + "api/1/tx/" + txid;
         String result = null;
         try {
             result = urlGET(url);

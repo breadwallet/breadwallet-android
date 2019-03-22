@@ -997,6 +997,7 @@
     <string name="My.Profile.Title.Email">郵箱</string>
     <string name="My.Profile.Title.Mobile">手機</string>
     <string name="My.Profile.Message">-完善個人信息，構建個人信用-</string>
+    <string name="My.Profile.List.Title">信息</string>
 
     <string name="My.Profile.New">新</string>
     <string name="My.Profile.Pending">待填寫</string>

@@ -36,7 +36,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
     private EditText mEmailEdt;
     private TextView mEmailCleanTv;
 
-    private TextView mAreaTv;
+    private EditText mAreaTv;
     private EditText mMobileEdt;
     private TextView mMobileCleanTv;
 

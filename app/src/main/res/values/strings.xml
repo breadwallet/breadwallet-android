@@ -1004,11 +1004,12 @@
     <string name="My.Profile.Email">Email</string>
     <string name="My.Profile.Mobile">Mobile</string>
     <string name="My.Profile.ID">Chinese ID Card</string>
-    <string name="My.Profile.Real.Name">Real name</string>a
+    <string name="My.Profile.Real.Name">Real name</string>
     <string name="My.Profile.Title.Nickname">Nick Name</string>
     <string name="My.Profile.Title.Email">Email</string>
     <string name="My.Profile.Title.Mobile">Mobile</string>
     <string name="My.Profile.Message">-Complete your profile, build your own credits-</string>
+    <string name="My.Profile.List.Title">Profile</string>
 
     <string name="My.Profile.New">New</string>
     <string name="My.Profile.Pending">Pending</string>
