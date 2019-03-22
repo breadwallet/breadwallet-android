@@ -30,6 +30,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 
 
 public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted {
@@ -157,11 +158,18 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
 
                         boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this))
                                 || BRSharedPrefs.isNewWallet(LoginActivity.this);
+                        String currencyCode = BRSharedPrefs.getCurrentWalletCurrencyCode(LoginActivity.this);
+                        // Temporary fix for DROID-1231, refactor the Activity organization later.
+                        if (showHomeActivity) {
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                        } else if (currencyCode.equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
+                            BrdWalletActivity.start(LoginActivity.this, currencyCode);
+                        } else {
+                            WalletActivity.start(LoginActivity.this, currencyCode);
+                        }
 
-                        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
-                        Intent intent = new Intent(LoginActivity.this, toGo);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                         if (!LoginActivity.this.isDestroyed()) {
                             LoginActivity.this.finish();
                         }
