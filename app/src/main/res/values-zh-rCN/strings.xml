@@ -995,7 +995,7 @@
     <string name="My.Profile.Nickname">昵称</string>
     <string name="My.Profile.Email">邮箱</string>
     <string name="My.Profile.Mobile">手机</string>
-    <string name="My.Profile.ID">身份证（中国）</string>
+    <string name="My.Profile.ID">中国居民身份证</string>
     <string name="My.Profile.Real.Name">真实姓名</string>
     <string name="My.Profile.Title.Nickname">昵称</string>
     <string name="My.Profile.Title.Email">邮箱</string>
