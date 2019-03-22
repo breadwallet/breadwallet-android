@@ -84,6 +84,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BALANCE, SEARCH, NETWORK
     }
 
+    private BaseTextView mCurrencyTitle;
     private BaseTextView mCurrencyPriceUsd;
     private BaseTextView mBalancePrimary;
     private BaseTextView mBalanceSecondary;
@@ -126,6 +127,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         BRSharedPrefs.putIsNewWallet(this, false);
 
+        mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
         mBalancePrimary = findViewById(R.id.balance_primary);
         mBalanceSecondary = findViewById(R.id.balance_secondary);
@@ -249,6 +251,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             return;
         }
 
+        mCurrencyTitle.setText(walletManager.getName());
         String startColor = walletManager.getUiConfiguration().getStartColor();
         String endColor = walletManager.getUiConfiguration().getEndColor();
         int currentTheme = UiUtils.getThemeId(this);
