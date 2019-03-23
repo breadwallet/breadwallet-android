@@ -54,6 +54,7 @@ public class BrdWalletActivity extends WalletActivity {
     private static final Uri CONFETTI_VIDEO_URI = Uri.parse("android.resource://"
             + BuildConfig.APPLICATION_ID + File.separator + R.raw.confetti);
     private static final int UNINITIALIZED_POSITION = -1;
+    private AppBarLayout mAppBarLayoutRoot;
 
     // The view was expanded and ready to lock when collapsed again.
     private boolean mCanScroll = false;
@@ -73,15 +74,14 @@ public class BrdWalletActivity extends WalletActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppBarLayout appBarLayoutRoot =
-                (AppBarLayout) getLayoutInflater().inflate(R.layout.rewards_announcement_view, null);
+        mAppBarLayoutRoot = (AppBarLayout) getLayoutInflater().inflate(R.layout.rewards_announcement_view, null);
         final CoordinatorLayout coordinatorLayout = findViewById(R.id.transaction_list_coordinator_layout);
-        coordinatorLayout.addView(appBarLayoutRoot, 0);
+        coordinatorLayout.addView(mAppBarLayoutRoot, 0);
         final AppBarLayout appBarLayout = findViewById(R.id.app_bar);
         final ViewGroup expandedRewardsView = findViewById(R.id.expanded_rewards_layout);
         final ViewGroup collapsedRewardsView = findViewById(R.id.collapsed_rewards_toolbar);
         final RecyclerView transactionListRecyclerView = findViewById(R.id.tx_list);
-        appBarLayoutRoot.setOnClickListener(view -> {
+        mAppBarLayoutRoot.setOnClickListener(view -> {
             //Collapse without animation before showing the rewards webview.
             EventUtils.pushEvent(EventUtils.EVENT_REWARDS_BANNER);
             appBarLayout.setExpanded(false, false);
@@ -135,6 +135,12 @@ public class BrdWalletActivity extends WalletActivity {
         } else {
             lockRewardsViewToCollapsed(appBarLayout, transactionListRecyclerView);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAppBarLayoutRoot.setExpanded(false, false);
     }
 
     /**
