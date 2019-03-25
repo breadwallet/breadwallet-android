@@ -12,6 +12,7 @@
         android:background="@drawable/ic_erc20_flag"
         android:textColor="#A2ACB0"
         android:textSize="10sp"
+        android:layout_marginLeft="10dp"
         android:visibility="gone"
         android:text="erc20"/>
 

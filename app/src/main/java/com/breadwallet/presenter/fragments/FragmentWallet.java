@@ -140,7 +140,9 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
 
-                if(mAdapter.getItemAt(position).getIso().equalsIgnoreCase("ioex")) return;
+                if(mAdapter.getItemAt(position).getIso().equalsIgnoreCase("ioex")) {
+                    return;
+                }
 
                 if (mAdapter.getItemViewType(position) == 0) {
                     BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, mAdapter.getItemAt(position).getIso());

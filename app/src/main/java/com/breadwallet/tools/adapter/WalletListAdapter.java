@@ -95,7 +95,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingLabel.setText(item.mLabelText);
-        if(wallet instanceof WalletTokenManager)
+        if((wallet instanceof WalletTokenManager) && !wallet.getIso().equalsIgnoreCase("ioex"))
             holder.mErc20Icon.setVisibility(View.VISIBLE);
         else
             holder.mErc20Icon.setVisibility(View.GONE);
