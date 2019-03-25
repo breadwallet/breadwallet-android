@@ -31,7 +31,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">我的 Elephant</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">看起来您正在使用第三方键盘，它可以记录您键入的内容并窃取您的密钥（Phrase）。请切换到默认的安卓键盘以便获得额外保护。</string>
+    <string name="Alert.customKeyboard.android">看起来您正在使用第三方键盘，它可以记录您键入的内容并窃取您的密钥（Recovery Phrase）。请切换到默认的安卓键盘以便获得额外保护。</string>
     <!-- Error alert title -->
     <string name="Alert.error">错误</string>
     <!-- Keystore error -->
@@ -157,7 +157,7 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">费用总计</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">您输入的单词与纸密钥 (Phrase) 不匹配。请重试。</string>
+    <string name="ConfirmPaperPhrase.error">您输入的单词与助记词 (Recovery Phrase) 不匹配。请重试。</string>
     <!-- Confirm paper phrase view label. -->
     <string name="ConfirmPaperPhrase.label">为确保一切均被正确地书写，请在您的助记词输入以下文字。</string>
     <!-- Word label eg. Word #1, Word #2 -->
@@ -914,7 +914,7 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">失败</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">若想启用新钱包或恢复已有钱包，首先需要取消现钱包的链接。如要继续，输入现钱包的助记词（Phrase）。</string>
+    <string name="WipeWallet.instruction">若想启用新钱包或恢复已有钱包，首先要解绑钱包。如要继续，输入现钱包的助记词（Recovery Phrase）。</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">解绑钱包可将其从本设备移除。一旦钱包被解绑，您可以启用新钱包，或恢复本设备的其他钱包。</string>
     <!-- Start wipe wallet view warning -->

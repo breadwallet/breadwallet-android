@@ -492,7 +492,7 @@
     <!-- Recovery Phrase button description -->
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
     <!-- Recovery Phrase button title -->
-    <string name="SecurityCenter.paperKeyTitle">Recovery Recovery Phrase</string>
+    <string name="SecurityCenter.paperKeyTitle">Recovery Phrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protects your Elephant from unauthorized users.</string>
     <!-- PIN button title -->

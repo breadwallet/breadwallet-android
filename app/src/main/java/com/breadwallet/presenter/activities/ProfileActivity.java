@@ -148,7 +148,7 @@ public class ProfileActivity extends BRActivity {
         return null;
     }
 
-    private static final String APPID = "a14065617f900f64d21022568fff476a8d0a109e350f93e276cd68246b3e5e5628a262c30ff7d376cda40a130c2912a39b4e669896eb394c1565eed8a0ddfe9a";
+    private static final String APPID = BuildConfig.APP_ID;
 
     class KeyValue {
         public String Key;
