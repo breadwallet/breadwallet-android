@@ -35,7 +35,6 @@ import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
@@ -56,12 +55,12 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -74,8 +73,10 @@ import java.text.SimpleDateFormat;
 public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener,
         OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, BalanceUpdateListener {
     private static final String TAG = WalletActivity.class.getName();
+    private static final String URBAN_APP_PACKAGE_NAME = "com.urbandroid.lux";
 
-    public static final String EXTRA_CRYPTO_REQUEST = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST";
+    public static final String EXTRA_CRYPTO_REQUEST =
+            "com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST";
 
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
     private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
@@ -95,7 +96,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BaseTextView mProgressLabel;
     public ViewFlipper mBarFlipper;
     private BRSearchBar mSearchBar;
-    private ImageButton mSearchIcon;
     private ConstraintLayout mToolBarConstraintLayout;
     private LinearLayout mWalletFooter;
     private View mDelistedTokenBanner;
@@ -131,7 +131,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSellButton = findViewById(R.id.sell_button);
         mBarFlipper = findViewById(R.id.tool_bar_flipper);
         mSearchBar = findViewById(R.id.search_bar);
-        mSearchIcon = findViewById(R.id.search_icon);
+        ImageButton searchIcon = findViewById(R.id.search_icon);
         mToolBarConstraintLayout = findViewById(R.id.bread_toolbar);
         mProgressLayout = findViewById(R.id.progress_layout);
         mSyncStatusLabel = findViewById(R.id.sync_status_label);
@@ -142,6 +142,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         startSyncLoggerIfNeeded();
 
         setUpBarFlipper();
+
         mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, PRIMARY_TEXT_SIZE);
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, SECONDARY_TEXT_SIZE);
 
@@ -158,7 +159,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             @Override
             public void onClick(View view) {
                 UiUtils.showReceiveFragment(WalletActivity.this, true);
-
             }
         });
 
@@ -170,7 +170,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        mSearchIcon.setOnClickListener(new View.OnClickListener() {
+        searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!UiUtils.isClickAllowed()) {
@@ -187,7 +187,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UiUtils.startWebActivity(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL));
             }
         });
-
 
         mBalancePrimary.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,7 +211,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
                 Activity app = WalletActivity.this;
                 WalletsMaster.getInstance(app).refreshBalances(app);
                 if (mWallet != null) {
@@ -222,10 +220,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         });
 
         // Check if the "Twilight" screen altering app is currently running
-        if (Utils.checkIfScreenAlteringAppIsRunning(this, "com.urbandroid.lux")) {
-            BRDialog.showSimpleDialog(this, "Screen Altering App Detected", getString(R.string.Android_screenAlteringMessage));
+        if (Utils.checkIfScreenAlteringAppIsRunning(this, URBAN_APP_PACKAGE_NAME)) {
+            BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
+                    getString(R.string.Android_screenAlteringMessage));
         }
-
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
@@ -266,12 +264,17 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         BigDecimal bigExchangeRate = walletManager.getFiatExchangeRate(this);
 
-        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), bigExchangeRate);
-        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), walletManager.getFiatBalance(this));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, walletManager.getCurrencyCode(), walletManager.getCachedBalance(this), walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
+        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this,
+                BRSharedPrefs.getPreferredFiatIso(this), bigExchangeRate);
+        String fiatBalance = CurrencyUtils.getFormattedAmount(this,
+                BRSharedPrefs.getPreferredFiatIso(this), walletManager.getFiatBalance(this));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this,
+                walletManager.getCurrencyCode(), walletManager.getCachedBalance(this),
+                walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
 
         mCurrencyTitle.setText(walletManager.getName());
-        mCurrencyPriceUsd.setText(String.format(getString(R.string.Account_exchangeRate), fiatExchangeRate, walletManager.getCurrencyCode()));
+        mCurrencyPriceUsd.setText(String.format(getString(R.string.Account_exchangeRate),
+                fiatExchangeRate, walletManager.getCurrencyCode()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
 
@@ -328,7 +331,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             return;
         }
         EventUtils.pushEvent(EventUtils.EVENT_AMOUNT_SWAP_CURRENCY);
-        BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
+        BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this,
+                !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
         setPriceTags(BRSharedPrefs.isCryptoPreferred(WalletActivity.this), true);
     }
 
@@ -339,20 +343,22 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (animate) {
             TransitionManager.beginDelayedTransition(mToolBarConstraintLayout);
         }
-        int px8 = Utils.getPixelsFromDps(this, 8);
-
+        int balanceTextMargin = (int) getResources().getDimension(R.dimen.balance_text_margin);
+        int balancePrimaryPadding = (int) getResources().getDimension(R.dimen.balance_primary_padding);
+        int balanceSecondaryPadding = (int) getResources().getDimension(R.dimen.balance_secondary_padding);
         // CRYPTO on RIGHT
         if (cryptoPreferred) {
             // Align crypto balance to the right parent
-            set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
-            mBalancePrimary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
-            mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 12), 0, 0);
+            set.connect(R.id.balance_secondary, ConstraintSet.END,
+                    ConstraintSet.PARENT_ID, ConstraintSet.END, balanceTextMargin);
+            mBalancePrimary.setPadding(0, balancePrimaryPadding, 0, 0);
+            mBalanceSecondary.setPadding(0, balanceSecondaryPadding, 0, 0);
 
             // Align swap icon to left of crypto balance
-            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, px8);
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, balanceTextMargin);
 
             // Align usd balance to left of swap icon
-            set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+            set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, balanceTextMargin);
 
             mBalanceSecondary.setTextSize(PRIMARY_TEXT_SIZE);
             mBalancePrimary.setTextSize(SECONDARY_TEXT_SIZE);
@@ -362,27 +368,31 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         } else {
             // CRYPTO on LEFT
             // Align primary to right of parent
-            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
+            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID,
+                    ConstraintSet.END, balanceTextMargin);
 
             // Align swap icon to left of usd balance
-            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, px8);
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, balanceTextMargin);
 
 
             // Align secondary currency to the left of swap icon
-            set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 12), 0, 0);
-            mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
-
+            set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, balanceTextMargin);
+            mBalancePrimary.setPadding(0, balanceSecondaryPadding, 0, 0);
+            mBalanceSecondary.setPadding(0, balancePrimaryPadding, 0, 0);
 
             mBalanceSecondary.setTextSize(SECONDARY_TEXT_SIZE);
             mBalancePrimary.setTextSize(PRIMARY_TEXT_SIZE);
 
             set.applyTo(mToolBarConstraintLayout);
         }
-        mBalanceSecondary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.white : R.color.currency_subheading_color, null));
-        mBalancePrimary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.currency_subheading_color : R.color.white, null));
-        mBalanceSecondary.setTypeface(FontManager.get(this, cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
-        mBalancePrimary.setTypeface(FontManager.get(this, !cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
+        mBalanceSecondary.setTextColor(getResources().getColor(cryptoPreferred
+                ? R.color.white : R.color.currency_subheading_color, null));
+        mBalancePrimary.setTextColor(getResources().getColor(cryptoPreferred
+                ? R.color.currency_subheading_color : R.color.white, null));
+        String circularBoldFont = getString(R.string.Font_CircularPro_Bold);
+        String circularBookFont = getString(R.string.Font_CircularPro_Book);
+        mBalanceSecondary.setTypeface(FontManager.get(this, cryptoPreferred ? circularBoldFont : circularBookFont));
+        mBalancePrimary.setTypeface(FontManager.get(this, cryptoPreferred ? circularBookFont : circularBoldFont));
 
         updateUi();
     }
@@ -426,7 +436,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
-        SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
+        SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(),
+                mSyncNotificationBroadcastReceiver);
         SyncService.startService(getApplicationContext(), mCurrentWalletIso);
 
         showSendIfNeeded(getIntent());
@@ -454,7 +465,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (mWallet != null) {
             mWallet.removeSyncListener(this);
         }
-        SyncService.unregisterSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
+        SyncService.unregisterSyncNotificationBroadcastReceiver(getApplicationContext(),
+                mSyncNotificationBroadcastReceiver);
     }
 
     /* SyncListener methods */
@@ -532,9 +544,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             if (mWallet instanceof BaseBitcoinWalletManager) {
                 BaseBitcoinWalletManager baseBitcoinWalletManager = (BaseBitcoinWalletManager) mWallet;
-                long syncThroughDateInMillis = baseBitcoinWalletManager.getPeerManager().getLastBlockTimestamp() * DateUtils.SECOND_IN_MILLIS;
-                String syncedThroughDate = new SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT).format(syncThroughDateInMillis);
-                mSyncStatusLabel.setText(String.format(getString(R.string.SyncingView_syncedThrough), syncedThroughDate));
+                long syncThroughDateInMillis = baseBitcoinWalletManager.getPeerManager()
+                        .getLastBlockTimestamp() * DateUtils.SECOND_IN_MILLIS;
+                String syncedThroughDate = new SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT,
+                        Locale.getDefault()).format(syncThroughDateInMillis);
+                mSyncStatusLabel.setText(String.format(getString(R.string.SyncingView_syncedThrough),
+                        syncedThroughDate));
             }
         } else {
             mProgressLayout.animate()
@@ -604,7 +619,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                FragmentSend fragmentSend = (FragmentSend) getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+                FragmentSend fragmentSend = (FragmentSend) getSupportFragmentManager()
+                        .findFragmentByTag(FragmentSend.class.getName());
                 if (fragmentSend == null) {
                     fragmentSend = new FragmentSend();
                 }

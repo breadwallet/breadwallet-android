@@ -121,6 +121,10 @@ public final class EventUtils {
     public static final String EVENT_SKIP_BUTTON = "onboarding.skipButton";
     public static final String EVENT_BACK_BUTTON = "onboarding.backButton";
 
+    public static final String EVENT_REWARDS_OPEN_WALLET = "rewards.openwallet";
+    public static final String EVENT_REWARDS_BANNER = "rewards.banner";
+    public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
+
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";
@@ -144,7 +148,7 @@ public final class EventUtils {
     }
 
     public static synchronized void pushEvent(String eventName, Map<String, String> attributes) {
-        Log.d(TAG, "pushEvent: " + eventName);
+        Log.d(TAG, "pushEvent: " + eventName + ", attr: " + attributes);
         Event event = new Event(System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS, eventName, attributes);
         mEvents.add(event);
     }
@@ -162,13 +166,15 @@ public final class EventUtils {
                     eventJsonObject.put(SESSION_ID, mSessionId);
                     eventJsonObject.put(TIME, event.getTime());
                     eventJsonObject.put(EVENT_NAME, event.getEventName());
-                    JSONObject metadataJsonObject = new JSONObject();
                     if (event.getAttributes() != null && event.getAttributes().size() > 0) {
+                        JSONArray metadataJsonArray = new JSONArray();
                         for (Map.Entry<String, String> entry : event.getAttributes().entrySet()) {
+                            JSONObject metadataJsonObject = new JSONObject();
                             metadataJsonObject.put(KEY, entry.getKey());
                             metadataJsonObject.put(VALUE, entry.getValue());
+                            metadataJsonArray.put(metadataJsonObject);
                         }
-                        eventJsonObject.put(METADATA, metadataJsonObject);
+                        eventJsonObject.put(METADATA, metadataJsonArray);
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "saveEvents: ", e);
@@ -311,7 +317,8 @@ public final class EventUtils {
     }
 
     /**
-     *  Send an event of transaction SUCCESS if error is null or FAIL if error is present.
+     * Send an event of transaction SUCCESS if error is null or FAIL if error is present.
+     *
      * @param error - the error in case of transaction failed, null if transaction succeeded
      */
     public static void sendTransactionEvent(String error) {
