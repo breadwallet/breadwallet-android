@@ -238,7 +238,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                             } else {
                                 url = returnUrl + "?response=" +  entity.Data;
                             }
-                            if(returnUrl.contains("target=\"internal\"")){
+                            if(returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")){
                                 UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
                             } else {
                                 UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
