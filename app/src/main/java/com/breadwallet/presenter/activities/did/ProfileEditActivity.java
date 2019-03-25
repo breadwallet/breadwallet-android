@@ -36,7 +36,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
     private EditText mEmailEdt;
     private TextView mEmailCleanTv;
 
-    private EditText mAreaTv;
+    private EditText mAreaEdt;
     private EditText mMobileEdt;
     private TextView mMobileCleanTv;
 
@@ -67,7 +67,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
 
         mMobileEdt = findViewById(R.id.did_mobile_edt);
         mMobileCleanTv = findViewById(R.id.did_mobile_clean);
-        mAreaTv = findViewById(R.id.did_mobile_area);
+        mAreaEdt = findViewById(R.id.did_mobile_area);
 
         mEmailEdt = findViewById(R.id.did_email_edt);
         mEmailCleanTv = findViewById(R.id.did_email_clean);
@@ -123,10 +123,10 @@ public class ProfileEditActivity extends BaseSettingsActivity {
     private boolean check(int from){
         Log.i("ProfileFunction", "check validate");
         boolean is = true;
-        if(from == SettingsUtil.KYC_FROME_MOBILE){
+        /*if(from == SettingsUtil.KYC_FROME_MOBILE){
             is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
             if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
-        } else if(from == SettingsUtil.KYC_FROME_EMAIL){
+        } else*/ if(from == SettingsUtil.KYC_FROME_EMAIL){
             is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
             if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
         } else if(from == SettingsUtil.KYC_FROME_ID){
@@ -151,7 +151,8 @@ public class ProfileEditActivity extends BaseSettingsActivity {
                 break;
             case SettingsUtil.KYC_FROME_MOBILE:
                 String oMobile = BRSharedPrefs.getMobile(this);
-                String mobile = mMobileEdt.getText().toString();
+                String area = StringUtil.isNullOrEmpty(mAreaEdt.getText().toString())?"86":mAreaEdt.getText().toString();
+                String mobile = area+","+mMobileEdt.getText().toString();
                 if(!StringUtil.isNullOrEmpty(mobile) && !mobile.equals(oMobile)){
                     intent = new Intent();
                     intent.putExtra("mobile", mobile);
@@ -210,7 +211,14 @@ public class ProfileEditActivity extends BaseSettingsActivity {
             case SettingsUtil.KYC_FROME_MOBILE:
                 findViewById(R.id.did_mobile_layout).setVisibility(View.VISIBLE);
                 mTitleTv.setText(R.string.My_Profile_Mobile);
-                mMobileEdt.setText(BRSharedPrefs.getMobile(this));
+                String tmp = BRSharedPrefs.getMobile(this);
+                if(tmp.contains(",")){
+                    String[] mobiles = tmp.split(",");
+                    if(mobiles.length==2){
+                        mAreaEdt.setText(mobiles[0]);
+                        mMobileEdt.setText(mobiles[1]);
+                    }
+                }
                 break;
                 default:
                     break;

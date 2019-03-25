@@ -372,7 +372,7 @@
   <!-- Device encryption prompt title -->
   <string name="Prompts.NoScreenLock.title.android">Bildschirmsperre deaktiviert</string>
   <!-- Warning about paper key. -->
-  <string name="Prompts.PaperKey.body">Ihr Paper-Key muss für den Fall, dass Sie Ihr Telefon verlieren oder wechseln, gespeichert werden. Tippen Sie hier, um fortzufahren.</string>
+  <string name="Prompts.PaperKey.body">Ihr Phrase muss für den Fall, dass Sie Ihr Telefon verlieren oder wechseln, gespeichert werden. Tippen Sie hier, um fortzufahren.</string>
   <!-- An action is required (You must do this action). -->
   <string name="Prompts.PaperKey.title">Maßnahme erforderlich</string>
   <!-- Transaction rejected prompt body -->

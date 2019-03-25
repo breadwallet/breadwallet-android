@@ -31,7 +31,7 @@
   <!-- Default wallet name -->
   <string name="AccountHeader.defaultWalletName">Mit Elephant</string>
   <!-- Third party keyboard warning -->
-  <string name="Alert.customKeyboard.android">Det ser ud til at du bruger et tastatur fra en tredjepart, som kan optage det du skriver og stjæle din Paper Key. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
+  <string name="Alert.customKeyboard.android">Det ser ud til at du bruger et tastatur fra en tredjepart, som kan optage det du skriver og stjæle din phrase. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Fejl</string>
   <!-- Keystore error -->
@@ -48,8 +48,8 @@
   <string name="Alerts.copiedAddressesHeader">Adresser kopieret</string>
   <!-- Addresses Copied Alert sub header -->
   <string name="Alerts.copiedAddressesSubheader">Alle pungens adresser er kopieret.</string>
-  <!-- Alert Header Label (the paper key was set) -->
-  <string name="Alerts.paperKeySet">Paper key indstillet</string>
+  <!-- Alert Header Label (the phrase was set) -->
+  <string name="Alerts.paperKeySet">Phrase indstillet</string>
   <!-- Alert Subheader label (playfully positive) -->
   <string name="Alerts.paperKeySetSubheader">Fedt!</string>
   <!-- Alert Header label (the PIN was set) -->
@@ -159,7 +159,7 @@
   <!-- Confirm paper phrase error message -->
   <string name="ConfirmPaperPhrase.error">Ordene du har indtastet matcher ikke din papirnøgle. Prøv venligst igen.</string>
   <!-- Confirm paper phrase view label. -->
-  <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din paper key.</string>
+  <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din phrase.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
   <!-- Agree to legal terms button -->
@@ -371,7 +371,7 @@
   <string name="Prompts.NoScreenLock.body.android">Der skal en skærmlås til på enheden, for at beskytte din pung. Gå til \"Indstillinger\" &gt; \"Sikkerhed\" &gt; \"Skærmlås\" og aktiver for at fortsætte.</string>
   <!-- Device encryption prompt title -->
   <string name="Prompts.NoScreenLock.title.android">Skærmlås deaktiveret</string>
-  <!-- Warning about paper key. -->
+  <!-- Warning about phrase. -->
   <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon. Tryk her for at fortsætte.</string>
   <!-- An action is required (You must do this action). -->
   <string name="Prompts.PaperKey.title">Handling påkrævet</string>
@@ -423,26 +423,26 @@
   <string name="RecoverWallet.done">Færdig</string>
   <!-- Recover wallet header -->
   <string name="RecoverWallet.header">Gendan pung</string>
-  <!-- Reset PIN with paper key: header -->
+  <!-- Reset PIN with phrase: header -->
   <string name="RecoverWallet.header_reset_pin">Nulstil PIN</string>
-  <!-- Enter paper key instruction -->
-  <string name="RecoverWallet.instruction">Indtast paper key</string>
+  <!-- Enter phrase instruction -->
+  <string name="RecoverWallet.instruction">Indtast phrase</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Gendan dit Elephant med din paper key.</string>
-  <!-- Invalid paper key message -->
-  <string name="RecoverWallet.invalid">Den paper key du indtastede er ugyldig. Dobbelttjek hvert ord og prøv igen.</string>
+  <string name="RecoverWallet.intro">Gendan dit Elephant med din phrase.</string>
+  <!-- Invalid phrase message -->
+  <string name="RecoverWallet.invalid">Den phrase du indtastede er ugyldig. Dobbelttjek hvert ord og prøv igen.</string>
   <!-- Previous button accessibility label -->
   <string name="RecoverWallet.leftArrow">Venstre pil</string>
   <!-- Next button label -->
   <string name="RecoverWallet.next">Næste</string>
-  <!-- Reset PIN with paper key: more information button. -->
+  <!-- Reset PIN with phrase: more information button. -->
   <string name="RecoverWallet.reset_pin_more_info">Tryk her for flere oplysninger.</string>
   <!-- Next button accessibility label -->
   <string name="RecoverWallet.rightArrow">Højre pil</string>
   <!-- Recover wallet sub-header -->
-  <string name="RecoverWallet.subheader">Indtast paper key til pungen du vil gendanne.</string>
-  <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din paper key i boksene nedenfor.</string>
+  <string name="RecoverWallet.subheader">Indtast phrase til pungen du vil gendanne.</string>
+  <!-- Reset PIN with phrase: sub-header -->
+  <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din phrase i boksene nedenfor.</string>
   <!-- No amount entered error message. -->
   <string name="RequestAnAmount.noAmount">Indtast venligst et beløb først.</string>
   <!-- Request a specific amount of bitcoin -->
@@ -485,10 +485,10 @@
   <string name="SecurityCenter.faceIdTitle">Face ID</string>
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">Aktiver alle sikkerhedsfunktioner for maksimal beskyttelse.</string>
-  <!-- Paper Key button description -->
+  <!-- phrase button description -->
   <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
-  <!-- Paper Key button title -->
-  <string name="SecurityCenter.paperKeyTitle">Paper key</string>
+  <!-- phrase button title -->
+  <string name="SecurityCenter.paperKeyTitle">phrase</string>
   <!-- PIN button description -->
   <string name="SecurityCenter.pinDescription">Beskytter dit Elephant mod uberettigede brugere.</string>
   <!-- PIN button title -->
@@ -626,13 +626,13 @@
   <!-- Share data switch label. -->
   <string name="ShareData.toggleLabel">Del anonyme data?</string>
   <!-- button label -->
-  <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
-  <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit Elephant på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
+  <string name="StartPaperPhrase.againButtonTitle">Skriv phrase ned igen</string>
+  <!-- phrase explanation text. -->
+  <string name="StartPaperPhrase.body">Din phrase er den eneste måde at gendanne dit Elephant på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
   <!-- button label -->
-  <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
+  <string name="StartPaperPhrase.buttonTitle">Skriv phrase ned</string>
   <!-- Argument is date -->
-  <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den %1$s</string>
+  <string name="StartPaperPhrase.date">Du skrev sidst din phrase ned den %1$s</string>
   <!-- button label -->
   <string name="StartViewController.createButton">Opret ny tegnebog</string>
   <!-- Start view message -->
@@ -837,7 +837,7 @@
   <string name="UnlockScreen.faceIdText">Lås op med Face ID</string>
   <!-- My Address button title -->
   <string name="UnlockScreen.myAddress">Min adresse</string>
-  <!-- Reset PIN with Paper Key button label. -->
+  <!-- Reset PIN with phrase button label. -->
   <string name="UnlockScreen.resetPin">Nulstil PIN</string>
   <!-- Scan button title -->
   <string name="UnlockScreen.scan">Scan</string>
@@ -911,7 +911,7 @@
   <string name="WipeWallet.failedMessage">Fejl ved sletning af wallet.</string>
   <!-- Failed wipe wallet alert title -->
   <string name="WipeWallet.failedTitle">Fejl</string>
-  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
+  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] phrase that needs to be entered). -->
   <string name="WipeWallet.instruction">For at oprette en ny pung eller gendanne en eksisterende pung, skal du først fjerne linket til den pung der er installeret på nuværende tidspunkt. For at fortsætte, skal du indtaste den nuværende pungs papirnøgle.</string>
   <!-- Instructions for unlinking the wallet -->
   <string name="WipeWallet.startMessage">Fjern link til pung for at fjerne den fra denne enhed. Når linket til denne pung er fjernet, kan du starte en ny pung eller gendanne en anden pung på denne enhed.</string>
@@ -923,7 +923,7 @@
   <string name="WipeWallet.wipe">Slet</string>
   <!-- Wiping activity message -->
   <string name="WipeWallet.wiping">Sletter...</string>
-  <!-- Paper key instructions. -->
+  <!-- phrase instructions. -->
   <string name="WritePaperPhrase.instruction">Skriv hvert ord ned i rækkefølge og opbevar den et sikkert sted.</string>
   <!-- button label -->
   <string name="WritePaperPhrase.next">Næste</string>

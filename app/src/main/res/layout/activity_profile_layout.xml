@@ -77,12 +77,12 @@
     <com.breadwallet.presenter.customviews.BaseTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/profile_head_bg"
         app:layout_constraintTop_toBottomOf="@+id/profile_complete_count"
-        android:layout_marginLeft="20dp"
         android:textSize="14sp"
         android:textColor="@color/black_999999"
-        android:text="Completed"/>
+        app:layout_constraintStart_toStartOf="@+id/profile_complete_count"
+        app:layout_constraintEnd_toEndOf="@+id/profile_total_count"
+        android:text="@string/My.Profile.Completed"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/profile_credits_icon"

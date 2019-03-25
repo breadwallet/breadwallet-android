@@ -31,7 +31,7 @@
   <!-- Default wallet name -->
   <string name="AccountHeader.defaultWalletName">Il Mio Elephant</string>
   <!-- Third party keyboard warning -->
-  <string name="Alert.customKeyboard.android">Sembra che tu stia utilizzando una tastiera di terze parti, essa può registrare ciò che scrivi e rubare la tua Paper Key. Per favore, utilizza la tastiera Android di default per maggiore protezione.</string>
+  <string name="Alert.customKeyboard.android">Sembra che tu stia utilizzando una tastiera di terze parti, essa può registrare ciò che scrivi e rubare la tua Phrase. Per favore, utilizza la tastiera Android di default per maggiore protezione.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Errore</string>
   <!-- Keystore error -->
@@ -48,8 +48,8 @@
   <string name="Alerts.copiedAddressesHeader">Indirizzi Copiati</string>
   <!-- Addresses Copied Alert sub header -->
   <string name="Alerts.copiedAddressesSubheader">Tutti gli indirizzi del portafoglio sono stati copiati con successo.</string>
-  <!-- Alert Header Label (the paper key was set) -->
-  <string name="Alerts.paperKeySet">Paper Key Impostata</string>
+  <!-- Alert Header Label (the Phrase was set) -->
+  <string name="Alerts.paperKeySet">Phrase Impostata</string>
   <!-- Alert Subheader label (playfully positive) -->
   <string name="Alerts.paperKeySetSubheader">Fantastico!</string>
   <!-- Alert Header label (the PIN was set) -->
@@ -157,9 +157,9 @@
   <!-- Total Cost: ($5.00) -->
   <string name="Confirmation.totalLabel">Costo totale:</string>
   <!-- Confirm paper phrase error message -->
-  <string name="ConfirmPaperPhrase.error">Le parole inserite non corrispondono alla tua Paper Key. Ti preghiamo di riprovare.</string>
+  <string name="ConfirmPaperPhrase.error">Le parole inserite non corrispondono alla tua Phrase. Ti preghiamo di riprovare.</string>
   <!-- Confirm paper phrase view label. -->
-  <string name="ConfirmPaperPhrase.label">Per assicurarci che tutto sia stato scritto correttamente, per favore inserisci le seguenti parole della tua Paper Key.</string>
+  <string name="ConfirmPaperPhrase.label">Per assicurarci che tutto sia stato scritto correttamente, per favore inserisci le seguenti parole della tua Phrase.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Parola n°%1$s</string>
   <!-- Agree to legal terms button -->
@@ -371,8 +371,8 @@
   <string name="Prompts.NoScreenLock.body.android">È necessaria una schermata di blocco del dispositivo per proteggere il tuo portafoglio. Vai su “Impostazioni” &gt; “Sicurezza” &gt; “Schermata di Blocco” e abilitala per continuare.</string>
   <!-- Device encryption prompt title -->
   <string name="Prompts.NoScreenLock.title.android">Schermata di blocco disabilitata</string>
-  <!-- Warning about paper key. -->
-  <string name="Prompts.PaperKey.body">È necessario salvare la tua Paper Key nel caso in cui dovessi perdere o cambiare telefono. Premi qui per continuare.</string>
+  <!-- Warning about Phrase. -->
+  <string name="Prompts.PaperKey.body">È necessario salvare la tua Phrase nel caso in cui dovessi perdere o cambiare telefono. Premi qui per continuare.</string>
   <!-- An action is required (You must do this action). -->
   <string name="Prompts.PaperKey.title">Azione necessaria</string>
   <!-- Transaction rejected prompt body -->
@@ -423,26 +423,26 @@
   <string name="RecoverWallet.done">Completato</string>
   <!-- Recover wallet header -->
   <string name="RecoverWallet.header">Recupera Portafoglio</string>
-  <!-- Reset PIN with paper key: header -->
+  <!-- Reset PIN with Phrase: header -->
   <string name="RecoverWallet.header_reset_pin">Reimposta PIN</string>
-  <!-- Enter paper key instruction -->
-  <string name="RecoverWallet.instruction">Inserisci la tua Paper Key</string>
+  <!-- Enter Phrase instruction -->
+  <string name="RecoverWallet.instruction">Inserisci la tua Phrase</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Recupera il tuo Elephant con la tua Paper Key</string>
-  <!-- Invalid paper key message -->
-  <string name="RecoverWallet.invalid">La Paper Key inserita non è valida. Si prega di controllare ogni parola due volte e riprovare.</string>
+  <string name="RecoverWallet.intro">Recupera il tuo Elephant con la tua Phrase</string>
+  <!-- Invalid Phrase message -->
+  <string name="RecoverWallet.invalid">La Phrase inserita non è valida. Si prega di controllare ogni parola due volte e riprovare.</string>
   <!-- Previous button accessibility label -->
   <string name="RecoverWallet.leftArrow">Freccia Sinistra</string>
   <!-- Next button label -->
   <string name="RecoverWallet.next">Successivo</string>
-  <!-- Reset PIN with paper key: more information button. -->
+  <!-- Reset PIN with Phrase: more information button. -->
   <string name="RecoverWallet.reset_pin_more_info">Tocca qui per ulteriori informazioni.</string>
   <!-- Next button accessibility label -->
   <string name="RecoverWallet.rightArrow">Freccia Destra</string>
   <!-- Recover wallet sub-header -->
-  <string name="RecoverWallet.subheader">Inserisci la Paper Key per il portafoglio che vuoi recuperare.</string>
-  <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheader_reset_pin">Per reimpostare il tuo PIN, immetti le parole della tua Paper Key all\'interno dei riquadri sottostanti.</string>
+  <string name="RecoverWallet.subheader">Inserisci la Phrase per il portafoglio che vuoi recuperare.</string>
+  <!-- Reset PIN with Phrase: sub-header -->
+  <string name="RecoverWallet.subheader_reset_pin">Per reimpostare il tuo PIN, immetti le parole della tua Phrase all\'interno dei riquadri sottostanti.</string>
   <!-- No amount entered error message. -->
   <string name="RequestAnAmount.noAmount">Per favore inserisci prima una somma.</string>
   <!-- Request a specific amount of bitcoin -->
@@ -485,10 +485,10 @@
   <string name="SecurityCenter.faceIdTitle">Face ID</string>
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">Attiva tutte le funzionalità di sicurezza per la massima protezione.</string>
-  <!-- Paper Key button description -->
+  <!-- Phrase button description -->
   <string name="SecurityCenter.paperKeyDescription">L\'unico modo per accedere al tuo  bitcoin se perdi o aggiorni il telefono.</string>
-  <!-- Paper Key button title -->
-  <string name="SecurityCenter.paperKeyTitle">Paper Key</string>
+  <!-- Phrase button title -->
+  <string name="SecurityCenter.paperKeyTitle">Phrase</string>
   <!-- PIN button description -->
   <string name="SecurityCenter.pinDescription">Protegge il tuo Elephant dagli utenti non autorizzati.</string>
   <!-- PIN button title -->
@@ -626,13 +626,13 @@
   <!-- Share data switch label. -->
   <string name="ShareData.toggleLabel">Condividi Dati Anonimi?</string>
   <!-- button label -->
-  <string name="StartPaperPhrase.againButtonTitle">Annota di nuovo la Paper Key</string>
-  <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">La tua Paper Key è l\'unico modo per ripristinare il tuo Elephant, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.\n\nTi mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
+  <string name="StartPaperPhrase.againButtonTitle">Annota di nuovo la Phrase</string>
+  <!-- Phrase explanation text. -->
+  <string name="StartPaperPhrase.body">La tua Phrase è l\'unico modo per ripristinare il tuo Elephant, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.\n\nTi mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
   <!-- button label -->
-  <string name="StartPaperPhrase.buttonTitle">Annota la Paper Key</string>
+  <string name="StartPaperPhrase.buttonTitle">Annota la Phrase</string>
   <!-- Argument is date -->
-  <string name="StartPaperPhrase.date">Hai annotato la Paper Key l\'ultima volta il %1$s</string>
+  <string name="StartPaperPhrase.date">Hai annotato la Phrase l\'ultima volta il %1$s</string>
   <!-- button label -->
   <string name="StartViewController.createButton">Crea nuovo portafoglio</string>
   <!-- Start view message -->
@@ -837,7 +837,7 @@
   <string name="UnlockScreen.faceIdText">Sblocca con FaceID</string>
   <!-- My Address button title -->
   <string name="UnlockScreen.myAddress">Il Mio Indirizzo</string>
-  <!-- Reset PIN with Paper Key button label. -->
+  <!-- Reset PIN with Phrase button label. -->
   <string name="UnlockScreen.resetPin">Reimposta PIN</string>
   <!-- Scan button title -->
   <string name="UnlockScreen.scan">Acquisisci</string>
@@ -911,19 +911,19 @@
   <string name="WipeWallet.failedMessage">Ripulitura portafoglio fallita.</string>
   <!-- Failed wipe wallet alert title -->
   <string name="WipeWallet.failedTitle">Fallito</string>
-  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-  <string name="WipeWallet.instruction">Per attivare un nuovo portafoglio o ripristinarne uno esistente, devi innanzitutto scollegare il portafoglio che è attualmente installato. Per continuare, inserisci la Paper Key corrente del portafoglio.</string>
+  <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] Phrase that needs to be entered). -->
+  <string name="WipeWallet.instruction">Per attivare un nuovo portafoglio o ripristinarne uno esistente, devi innanzitutto scollegare il portafoglio che è attualmente installato. Per continuare, inserisci la Phrase corrente del portafoglio.</string>
   <!-- Instructions for unlinking the wallet -->
   <string name="WipeWallet.startMessage">Scollega il tuo portafoglio per rimuoverlo da questo dispositivo. Una volta scollegato questo portafoglio, puoi attivare un nuovo portafoglio o ripristinarne un altro su questo dispositivo.</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">Il tuo attuale portafoglio verrà rimosso dal tuo dispositivo. Se desidererai ripristinarlo in futuro, avrai bisogno della tua Paper Key.</string>
+  <string name="WipeWallet.startWarning">Il tuo attuale portafoglio verrà rimosso dal tuo dispositivo. Se desidererai ripristinarlo in futuro, avrai bisogno della tua Phrase.</string>
   <!-- Unlink this wallet from this device. -->
   <string name="WipeWallet.title">Scollega portafoglio</string>
   <!-- Wipe wallet button title -->
   <string name="WipeWallet.wipe">Ripulisci</string>
   <!-- Wiping activity message -->
   <string name="WipeWallet.wiping">Ripulitura...</string>
-  <!-- Paper key instructions. -->
+  <!-- Phrase instructions. -->
   <string name="WritePaperPhrase.instruction">Scrivi ciascuna parola in ordine e conservala in un luogo sicuro.</string>
   <!-- button label -->
   <string name="WritePaperPhrase.next">Successivo</string>
