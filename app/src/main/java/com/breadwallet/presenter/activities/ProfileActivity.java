@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,7 +33,6 @@ import com.google.gson.reflect.TypeToken;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
-import org.elastos.sdk.wallet.HDWallet;
 import org.elastos.sdk.wallet.Identity;
 import org.elastos.sdk.wallet.IdentityManager;
 
@@ -197,8 +195,10 @@ public class ProfileActivity extends BRActivity {
         String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
         mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
         Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+        BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
         DidManager didManager = identity.createDidManager(mSeed);
         mDid = didManager.createDid(0);
+        mDid.setNode(node);
     }
 
     class PayloadInfo {

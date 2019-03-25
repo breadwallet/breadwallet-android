@@ -24,6 +24,7 @@ import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
 import org.elastos.sdk.wallet.Identity;
@@ -113,7 +114,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
         Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
         DidManager didManager = identity.createDidManager(mSeed);
+        BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
         mDid = didManager.createDid(0);
+        mDid.setNode(node);
         publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
     }
 
