@@ -159,7 +159,7 @@ public final class BRConstants {
     public static final String BODY = "body";
     public static final String HEADERS = "headers";
     public static final String CLOSE_ON = "closeOn";
-    public static final String CLOSE = "_close";
+    public static final String CLOSE = "/_close";
     public static final String ARTICLE_ID = "articleId";
     public static final String URL = "url";
     public static final String JSONRPC = "jsonrpc";

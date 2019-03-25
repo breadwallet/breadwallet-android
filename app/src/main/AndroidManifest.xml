@@ -81,6 +81,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"/>
         <activity
+            android:name=".presenter.activities.BrdWalletActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
             android:name=".presenter.activities.InputPinActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

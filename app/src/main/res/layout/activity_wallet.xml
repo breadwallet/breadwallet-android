@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true"
-                android:background="@color/extra_light_blue_background"
-                android:clipToPadding="false"
-                android:descendantFocusability="beforeDescendants"
-                android:filterTouchesWhenObscured="true"
-                android:fitsSystemWindows="true"
-                android:focusableInTouchMode="true"
-                android:orientation="vertical"
-                tools:context="com.breadwallet.presenter.activities.WalletActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/extra_light_blue_background"
+    android:clipToPadding="false"
+    android:descendantFocusability="beforeDescendants"
+    android:filterTouchesWhenObscured="true"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.breadwallet.presenter.activities.WalletActivity">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:animateLayoutChanges="true"
-        android:elevation="8dp"
         android:orientation="vertical">
 
         <ViewFlipper
@@ -31,16 +30,16 @@
 
 
             <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-                                               android:id="@+id/bread_bar"
-                                               android:layout_width="match_parent"
-                                               android:layout_height="160dp"
-                                               android:background="@color/currency_header_background"
-                                               android:clipChildren="false"
-                                               android:clipToPadding="false"
-                                               android:contentInsetLeft="0dp"
-                                               android:contentInsetStart="0dp"
-                                               app:contentInsetLeft="0dp"
-                                               app:contentInsetStart="0dp">
+                android:id="@+id/bread_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@color/currency_header_background"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp">
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/bread_toolbar"
@@ -60,7 +59,7 @@
                         android:textSize="@dimen/header"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageButton
                         android:id="@+id/back_icon"
@@ -70,7 +69,7 @@
                         android:background="@drawable/ic_chevron_left_white_24dp"
                         android:padding="10dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/search_icon"/>
+                        app:layout_constraintTop_toTopOf="@id/search_icon" />
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:id="@+id/currency_usd_price"
@@ -79,26 +78,24 @@
                         android:text="$16,904.34 per BTC"
                         android:textColor="@color/trans_white"
                         android:textSize="@dimen/sub_header"
-                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/currency_label"/>
+                        app:layout_constraintTop_toBottomOf="@id/currency_label" />
 
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:id="@+id/balance_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="54dp"
                         android:layout_marginEnd="11dp"
+                        android:layout_marginBottom="54dp"
                         android:text="@string/Account.balance"
                         android:textColor="@color/trans_white"
                         android:textSize="14sp"
                         android:visibility="visible"
-                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"/>
+                        app:layout_constraintRight_toRightOf="parent" />
 
 
                     <com.breadwallet.presenter.customviews.BaseTextView
@@ -111,23 +108,23 @@
                         android:text="$26,495.69"
                         android:textColor="@color/white"
                         android:textSize="22sp"
-                        app:customTFont="CircularPro-Bold.otf"
+                        app:brdFont="@string/Font.CircularPro_Bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintVertical_bias="0.492"/>
+                        app:layout_constraintVertical_bias="0.492" />
 
 
                     <ImageButton
                         android:id="@+id/swap"
                         android:layout_width="14dp"
                         android:layout_height="14dp"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="30dp"
                         android:background="@drawable/ic_swap_horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toLeftOf="@id/balance_primary"
-                        app:layout_constraintVertical_bias="0.492"/>
+                        app:layout_constraintVertical_bias="0.492" />
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:id="@+id/balance_secondary"
@@ -136,28 +133,27 @@
                         android:layout_marginStart="28dp"
                         android:maxLines="1"
                         android:minHeight="70dp"
-                        android:paddingBottom="20dp"
                         android:paddingTop="18dp"
+                        android:paddingBottom="20dp"
                         android:text="1.56739 BTC"
                         android:textColor="@color/trans_white"
                         android:textSize="16sp"
-                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/balance_label"
                         app:layout_constraintEnd_toStartOf="@id/swap"
                         app:layout_constraintRight_toLeftOf="@id/swap"
-                        app:layout_constraintVertical_bias="0.492"/>
+                        app:layout_constraintVertical_bias="0.492" />
 
 
                     <ImageButton
                         android:id="@+id/search_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="98dp"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginBottom="98dp"
                         android:background="@drawable/ic_search_white_24dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintEnd_toEndOf="parent" />
 
 
                 </android.support.constraint.ConstraintLayout>
@@ -166,55 +162,61 @@
             </android.support.v7.widget.Toolbar>
 
             <com.breadwallet.presenter.customviews.BRSearchBar xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                               android:id="@+id/search_bar"
-                                                               android:layout_width="match_parent"
-                                                               android:layout_height="160dp"
-                                                               android:background="@drawable/bread_gradient"
-                                                               android:contentInsetLeft="0dp"
-                                                               android:contentInsetStart="0dp"
-                                                               app:contentInsetLeft="0dp"
-                                                               app:contentInsetStart="0dp"/>
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp" />
 
             <com.breadwallet.presenter.customviews.BRNotificationBar xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                                     android:id="@+id/notification_bar"
-                                                                     android:layout_width="match_parent"
-                                                                     android:layout_height="160dp"
-                                                                     android:layout_alignParentTop="true"
-                                                                     android:layout_marginEnd="0dp"
-                                                                     android:layout_marginStart="0dp"
-                                                                     android:background="@drawable/bread_gradient"
-                                                                     android:contentInsetLeft="0dp"
-                                                                     android:contentInsetStart="0dp"
-                                                                     android:visibility="visible"
-                                                                     app:breadText="@string/Alert.noInternet"
-                                                                     app:contentInsetLeft="0dp"
-                                                                     app:contentInsetStart="0dp"/>
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:visibility="visible"
+                app:breadText="@string/Alert.noInternet"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp" />
 
 
         </ViewFlipper>
 
     </LinearLayout>
 
-    <include android:id="@+id/delisted_token_layout" layout="@layout/view_delisted_token" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@id/toolbar_layout"/>
+    <include
+        android:id="@+id/delisted_token_layout"
+        layout="@layout/view_delisted_token"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_layout"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar_layout"
-        android:background="@color/sync_toolbar"
         android:animateLayoutChanges="true"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:background="@color/sync_toolbar"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/progress_layout_margins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
             <com.breadwallet.presenter.customviews.BaseTextView
@@ -224,20 +226,18 @@
                 android:layout_centerVertical="true"
                 android:text="Synced Through 01/01/70 00:00"
                 android:textColor="@color/sync_toolbar_text"
-                android:textSize="14sp"
-                app:customTFont="CircularPro-Book.otf" />
+                android:textSize="14sp" />
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/syncing_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/sync_progress"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@id/sync_progress"
                 android:text="@string/SyncingView.syncing"
                 android:textColor="@color/sync_toolbar_text"
-                android:textSize="14sp"
-                app:customTFont="CircularPro-Book.otf" />
+                android:textSize="14sp" />
 
             <ProgressBar
                 android:id="@+id/sync_progress"
@@ -250,33 +250,25 @@
                 android:indeterminateTint="@color/sync_toolbar_text"
                 android:keepScreenOn="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" />
         </RelativeLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/recycler_layout"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/transaction_list_coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/bottom_toolbar_layout1"
-        android:layout_below="@id/delisted_token_layout"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical">
+        android:layout_below="@id/delisted_token_layout">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tx_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1.0px"
-        android:layout_above="@id/bottom_toolbar_layout1"
-        android:background="@color/light_gray"/>
-
+    </android.support.design.widget.CoordinatorLayout>
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
@@ -295,19 +287,19 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="22dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:layout_weight="1.5"
             android:background="@color/currency_buttons_color"
             android:text="@string/Button.send"
             android:textColor="@color/white"
             android:textSize="@dimen/button_text_size"
+            app:brdFont="@string/Font.CircularPro_Bold"
             app:buttonType="4"
-            app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
-            app:isBreadButton="true"/>
+            app:isBreadButton="true" />
 
 
         <com.breadwallet.presenter.customviews.BRButton
@@ -315,38 +307,38 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="22dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:layout_weight="1.5"
             android:background="@color/currency_buttons_color"
             android:text="@string/Button.receive"
             android:textColor="@color/white"
             android:textSize="@dimen/button_text_size"
+            app:brdFont="@string/Font.CircularPro_Bold"
             app:buttonType="4"
-            app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
-            app:isBreadButton="true"/>
+            app:isBreadButton="true" />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/sell_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
-            android:visibility="gone"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="22dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:layout_weight="0"
             android:background="@color/currency_buttons_color"
             android:paddingTop="3dp"
             android:text="Sell"
             android:textColor="@color/white"
             android:textSize="@dimen/button_text_size"
+            android:visibility="gone"
+            app:brdFont="@string/Font.CircularPro_Bold"
             app:buttonType="4"
-            app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
-            app:isBreadButton="true"/>
+            app:isBreadButton="true" />
 
     </LinearLayout>
 
