@@ -7,7 +7,6 @@
     <dimen name="transaction_item_margin">10dp</dimen>
     <dimen name="button_height">60dp</dimen>
     <dimen name="button_text_size">14sp</dimen>
-
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
     <dimen name="separator_height">1px</dimen>
     <dimen name="text_size">18sp</dimen>
@@ -31,6 +30,9 @@
     <dimen name="currency_code_text_size_large">28px</dimen>
     <dimen name="amount_text_size">24px</dimen>
     <dimen name="margin">10dp</dimen>
+    <dimen name="balance_primary_padding">22dp</dimen>
+    <dimen name="balance_secondary_padding">12dp</dimen>
+    <dimen name="balance_text_margin">8dp</dimen>
 
 
     <!-- Participate with BRD link wallet dialog -->

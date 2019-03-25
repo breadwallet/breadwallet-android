@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/webview_parent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.breadwallet.presenter.activities.settings.WebViewActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/webview_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.breadwallet.presenter.activities.settings.WebViewActivity">
 
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
         android:filterTouchesWhenObscured="true">
 
     </WebView>
@@ -33,15 +33,14 @@
             android:orientation="horizontal">
 
 
-            <com.breadwallet.presenter.customviews.BaseTextView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.breadwallet.presenter.customviews.BaseTextView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/webview_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="Simplex Checkout"
                 android:textColor="@color/black"
-                app:customTFont="CircularPro-Bold.otf"/>
+                app:brdFont="@string/Font.CircularPro_Bold" />
 
 
             <com.breadwallet.presenter.customviews.BaseTextView
@@ -53,7 +52,7 @@
                 android:paddingEnd="8dp"
                 android:text="@string/AccessibilityLabels.close"
                 android:textColor="@color/button_primary_normal"
-                app:customTFont="CircularPro-Bold.otf"/>
+                app:brdFont="@string/Font.CircularPro_Bold" />
 
 
         </RelativeLayout>
@@ -80,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/ic_webview_left_inactive"/>
+                android:background="@drawable/ic_webview_left_inactive" />
 
 
             <ImageButton
@@ -91,7 +90,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="50dp"
                 android:layout_toRightOf="@id/webview_back_arrow"
-                android:background="@drawable/ic_webview_right_inactive"/>
+                android:background="@drawable/ic_webview_right_inactive" />
 
 
             <ImageButton
@@ -101,7 +100,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/ic_reload_blue"/>
+                android:background="@drawable/ic_reload_blue" />
 
         </RelativeLayout>
 

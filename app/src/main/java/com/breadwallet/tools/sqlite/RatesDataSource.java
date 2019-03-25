@@ -251,6 +251,12 @@ public class RatesDataSource implements BRDataSourceInterface {
         }
     }
 
+    public void removeOnDataChangedListener(OnDataChanged listener) {
+        if (onDataChangedListeners.contains(listener)) {
+            onDataChangedListeners.remove(listener);
+        }
+    }
+
     public interface OnDataChanged {
         void onChanged();
     }

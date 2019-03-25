@@ -16,11 +16,6 @@ import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.tools.security.BRKeyStore.SPEND_LIMIT_ALIAS;
-import static com.breadwallet.tools.security.BRKeyStore.TOTAL_LIMIT_ALIAS;
-import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
-
-
 /**
  * BreadWallet
  * <p/>
@@ -278,13 +273,13 @@ public class KeyStoreTests {
         BRKeyStore.putTotalLimit(mActivityRule.getActivity(), new BigDecimal(1479686841), "BTC");
         BRKeyStore.putEthPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
 
-        for (String a : aliasObjectMap.keySet()) {
+        for (String a : BRKeyStore.ALIAS_OBJECT_MAP.keySet()) {
             assertFilesExist(a);
         }
 
         BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
 
-        for (String a : aliasObjectMap.keySet()) {
+        for (String a : BRKeyStore.ALIAS_OBJECT_MAP.keySet()) {
             assertFilesDontExist(a);
         }
 
@@ -325,19 +320,19 @@ public class KeyStoreTests {
 
     @Test
     public void testKeyStoreAliasMap() {
-        Assert.assertNotNull(aliasObjectMap);
-        Assert.assertEquals(aliasObjectMap.size(), 13);
+        Assert.assertNotNull(BRKeyStore.ALIAS_OBJECT_MAP);
+        Assert.assertEquals(BRKeyStore.ALIAS_OBJECT_MAP.size(), 13);
     }
 
     public void assertFilesExist(String alias) {
         Activity app = mActivityRule.getActivity();
-        if (alias.equalsIgnoreCase(SPEND_LIMIT_ALIAS)) return;
-        if (alias.equalsIgnoreCase(TOTAL_LIMIT_ALIAS)) return;
+        if (alias.equalsIgnoreCase(BRKeyStore.SPEND_LIMIT_ALIAS)) return;
+        if (alias.equalsIgnoreCase(BRKeyStore.TOTAL_LIMIT_ALIAS)) return;
         byte[] data = BRKeyStore.retrieveEncryptedData(app, alias);
         Assert.assertNotNull(data);
         Assert.assertNotEquals(data.length, 0);
 
-        byte[] iv = BRKeyStore.retrieveEncryptedData(app, aliasObjectMap.get(alias).ivFileName);
+        byte[] iv = BRKeyStore.retrieveEncryptedData(app, BRKeyStore.ALIAS_OBJECT_MAP.get(alias).getIvFileName());
         Assert.assertNotNull(iv);
         Assert.assertNotEquals(iv.length, 0);
 
@@ -348,7 +343,7 @@ public class KeyStoreTests {
         byte[] data = BRKeyStore.retrieveEncryptedData(app, alias);
         Assert.assertNull(data);
 
-        byte[] iv = BRKeyStore.retrieveEncryptedData(app, aliasObjectMap.get(alias).ivFileName);
+        byte[] iv = BRKeyStore.retrieveEncryptedData(app, BRKeyStore.ALIAS_OBJECT_MAP.get(alias).getIvFileName());
         Assert.assertNull(iv);
     }
 
