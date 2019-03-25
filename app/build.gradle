@@ -62,6 +62,7 @@ android {
             buildConfigField "boolean", "UPGRADE_TESTNET", "false"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "false"
             buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
+            buildConfigField "String", "APP_ID", "\"xxxxxxxxxxxxxxxxxxx\""
             buildConfigField "String", "CAN_UPLOAD", "\"nickname\""
 
             externalNativeBuild {
@@ -83,6 +84,7 @@ android {
             buildConfigField "boolean", "UPGRADE_TESTNET", "true"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "true"
             buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
+            buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
             buildConfigField "String", "CAN_UPLOAD", "\"nickname\""
 
             externalNativeBuild {
@@ -103,6 +105,7 @@ android {
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             buildConfigField "boolean", "UPGRADE_TESTNET", "false"
             buildConfigField "boolean", "RED_PACKAGE_TEST", "true"
+            buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
             buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
             buildConfigField "String", "CAN_UPLOAD", "\"nickname\""
 

@@ -148,7 +148,7 @@ public class ProfileActivity extends BRActivity {
         return null;
     }
 
-    private static final String APPID = "fe2dad7890d9cf301be581d5db5ad23a5efac604a9bc6a1ed3d15b24b4782d8da78b5b09eb80134209fd536505658fa151f685a50627b4f32bda209e967fc44a";
+    private static final String APPID = BuildConfig.APP_ID;
 
     class KeyValue {
         public String Key;
@@ -190,15 +190,18 @@ public class ProfileActivity extends BRActivity {
     private Did mDid;
     private String mSeed;
     private void initDid(){
-        String mnemonic = getMn();
-        String language = Utility.detectLang(ProfileActivity.this, mnemonic);
-        String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
-        mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
-        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-        BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
-        DidManager didManager = identity.createDidManager(mSeed);
-        mDid = didManager.createDid(0);
-        mDid.setNode(node);
+        if(mDid == null){
+            String mnemonic = getMn();
+            String language = Utility.detectLang(ProfileActivity.this, mnemonic);
+            if(StringUtil.isNullOrEmpty(language)) return;
+            String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
+            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+            BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
+            DidManager didManager = identity.createDidManager(mSeed);
+            mDid = didManager.createDid(0);
+            mDid.setNode(node);
+        }
     }
 
     class PayloadInfo {
@@ -332,7 +335,7 @@ public class ProfileActivity extends BRActivity {
                         canRefresh = true;
                         BRSharedPrefs.putRealname(ProfileActivity.this, realname);
                         BRSharedPrefs.putID(ProfileActivity.this, idcard);
-                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
+                        BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE,
                                 BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid, txid);
                     }

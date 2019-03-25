@@ -31,7 +31,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">我的 Elephant</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">看起来您正在使用第三方键盘，它可以记录您键入的内容并窃取您的密钥（Phrase）。请切换到默认的安卓键盘以便获得额外保护。</string>
+    <string name="Alert.customKeyboard.android">看起来您正在使用第三方键盘，它可以记录您键入的内容并窃取您的密钥（Recovery Phrase）。请切换到默认的安卓键盘以便获得额外保护。</string>
     <!-- Error alert title -->
     <string name="Alert.error">错误</string>
     <!-- Keystore error -->
@@ -49,7 +49,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">所有的钱包地址已被成功复制。</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">纸上密钥已设置</string>
+    <string name="Alerts.paperKeySet">助记词已设置</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">太棒了！</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -157,7 +157,7 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">费用总计</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">您输入的单词与纸密钥 (Phrase) 不匹配。请重试。</string>
+    <string name="ConfirmPaperPhrase.error">您输入的单词与助记词 (Recovery Phrase) 不匹配。请重试。</string>
     <!-- Confirm paper phrase view label. -->
     <string name="ConfirmPaperPhrase.label">为确保一切均被正确地书写，请在您的助记词输入以下文字。</string>
     <!-- Word label eg. Word #1, Word #2 -->
@@ -281,13 +281,13 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">忽略</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Elephant 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
+    <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Elephant 的密钥链数据并盗取您的比特币！立即解绑这个钱包并在一台安全设备上进行恢复。</string>
     <!-- Jailbreak warning message -->
     <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Elephant 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Elephant 。</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">警告</string>
     <!-- Wipe wallet button -->
-    <string name="JailbreakWarnings.wipe">擦除</string>
+    <string name="JailbreakWarnings.wipe">解绑</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">位置服务被禁用。</string>
     <!-- No permissions for location services -->
@@ -444,7 +444,7 @@
     <!-- Recover wallet sub-header -->
     <string name="RecoverWallet.subheader">输入您想恢复的钱包的助记词。</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">要重置 PIN 码，请在下面的框中输入纸上密钥中的单词。</string>
+    <string name="RecoverWallet.subheader_reset_pin">要重置 PIN 码，请在下面的框中输入助记词中的单词。</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">请先输入金额。</string>
     <!-- Request a specific amount of bitcoin -->
@@ -630,11 +630,11 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">再次书写助记词</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Elephant 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
+    <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，助记词是恢复 Elephant 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">写下助记词</string>
     <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 %1$s</string>
+    <string name="StartPaperPhrase.date">您最后一次记录助记词是在 %1$s</string>
     <!-- button label -->
     <string name="StartViewController.createButton">创建新钱包</string>
     <!-- Start view message -->
@@ -908,23 +908,23 @@
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">您确认要删除此钱包吗？</string>
     <!-- Wipe wallet alert title -->
-    <string name="WipeWallet.alertTitle">擦除钱包吗？</string>
+    <string name="WipeWallet.alertTitle">解绑钱包吗？</string>
     <!-- Failed wipe wallet alert message -->
-    <string name="WipeWallet.failedMessage">擦除钱包失败。</string>
+    <string name="WipeWallet.failedMessage">解绑钱包失败。</string>
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">失败</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">若想启用新钱包或恢复已有钱包，首先需要取消现钱包的链接。如要继续，输入现钱包的纸钥匙（Phrase）。</string>
+    <string name="WipeWallet.instruction">若想启用新钱包或恢复已有钱包，首先要解绑钱包。如要继续，输入现钱包的助记词（Recovery Phrase）。</string>
     <!-- Instructions for unlinking the wallet -->
-    <string name="WipeWallet.startMessage">取消钱包链接可将其从本设备移除。一旦钱包链接被取消，您可以启用新钱包，或恢复本设备的其他钱包。</string>
+    <string name="WipeWallet.startMessage">解绑钱包可将其从本设备移除。一旦钱包被解绑，您可以启用新钱包，或恢复本设备的其他钱包。</string>
     <!-- Start wipe wallet view warning -->
     <string name="WipeWallet.startWarning">您无法再在这个设备上使用现在的Elephant钱包。 现在的一切资金都留在助记词上。</string>
     <!-- Unlink this wallet from this device. -->
-    <string name="WipeWallet.title">取消钱包的链接</string>
+    <string name="WipeWallet.title">解绑钱包</string>
     <!-- Wipe wallet button title -->
-    <string name="WipeWallet.wipe">擦除</string>
+    <string name="WipeWallet.wipe">解绑</string>
     <!-- Wiping activity message -->
-    <string name="WipeWallet.wiping">正在擦除...</string>
+    <string name="WipeWallet.wiping">正在解绑...</string>
     <!-- Paper key instructions. -->
     <string name="WritePaperPhrase.instruction">按顺序写下每个词并保存到安全位置。</string>
     <!-- button label -->

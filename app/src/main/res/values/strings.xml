@@ -31,7 +31,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">My Elephant</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your phrase. Please switch to the default Android keyboard for extra protection.</string>
+    <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your recovery phrase. Please switch to the default Android keyboard for extra protection.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
@@ -48,8 +48,8 @@
     <string name="Alerts.copiedAddressesHeader">Addresses Copied</string>
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">All wallet addresses successfully copied.</string>
-    <!-- Alert Header Label (the Phrase was set) -->
-    <string name="Alerts.paperKeySet">Phrase Set</string>
+    <!-- Alert Header Label (the Recovery Phrase was set) -->
+    <string name="Alerts.paperKeySet">Recovery Phrase Set</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Awesome!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -156,10 +156,10 @@
     <string name="Confirmation.to">To</string>
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Total Cost</string>
-    <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">The words entered do not match your Phrase. Please try again.</string>
-    <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your phrase.</string>
+    <!-- Confirm paper Recovery Phrase error message -->
+    <string name="ConfirmPaperPhrase.error">The words entered do not match your recovery phrase. Please try again.</string>
+    <!-- Confirm paper Recovery Phrase view label. -->
+    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your recovery phrase.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Word #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -281,13 +281,13 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">Ignore</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Elephant\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
+    <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Elephant\'s keychain data and steal your bitcoin! Unlink this wallet immediately and restore on a secure device.</string>
     <!-- Jailbreak warning message -->
     <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Elephant\'s keychain data and steal your bitcoin. Please only use Elephant on a non-jailbroken device.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">WARNING</string>
     <!-- Wipe wallet button -->
-    <string name="JailbreakWarnings.wipe">Wipe</string>
+    <string name="JailbreakWarnings.wipe">Unlink</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">Location services are disabled.</string>
     <!-- No permissions for location services -->
@@ -375,8 +375,8 @@
     <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" &gt; \"Security\" &gt; \"Screen lock\" and enable to continue.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
-    <!-- Warning about Phrase. -->
-    <string name="Prompts.PaperKey.body">Your phrase must be saved in case you ever lose or change your phone.</string>
+    <!-- Warning about Recovery Phrase. -->
+    <string name="Prompts.PaperKey.body">Your recovery phrase must be saved in case you ever lose or change your phone.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Action Required</string>
     <!-- Transaction rejected prompt body -->
@@ -427,26 +427,26 @@
     <string name="RecoverWallet.done">Done</string>
     <!-- Recover wallet header -->
     <string name="RecoverWallet.header">Recover Wallet</string>
-    <!-- Reset PIN with Phrase: header -->
+    <!-- Reset PIN with Recovery Phrase: header -->
     <string name="RecoverWallet.header_reset_pin">Reset PIN</string>
-    <!-- Enter Phrase instruction -->
-    <string name="RecoverWallet.instruction">Enter Phrase</string>
+    <!-- Enter Recovery Phrase instruction -->
+    <string name="RecoverWallet.instruction">Enter Recovery Phrase</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recover your Wallet with your phrase.</string>
-    <!-- Invalid Phrase message -->
-    <string name="RecoverWallet.invalid">The phrase you entered is invalid. Please double-check each word and try again.</string>
+    <string name="RecoverWallet.intro">Recover your Wallet with your recovery phrase.</string>
+    <!-- Invalid Recovery Phrase message -->
+    <string name="RecoverWallet.invalid">The recovery phrase you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Left Arrow</string>
     <!-- Next button label -->
     <string name="RecoverWallet.next">Next</string>
-    <!-- Reset PIN with Phrase: more information button. -->
+    <!-- Reset PIN with Recovery Phrase: more information button. -->
     <string name="RecoverWallet.reset_pin_more_info">Tap here for more information.</string>
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Right Arrow</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Enter the phrase for the wallet you want to recover.</string>
-    <!-- Reset PIN with Phrase: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your phrase into the boxes below.</string>
+    <string name="RecoverWallet.subheader">Enter the recovery phrase for the wallet you want to recover.</string>
+    <!-- Reset PIN with Recovery Phrase: sub-header -->
+    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your recovery phrase into the boxes below.</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">Please enter an amount first.</string>
     <!-- Request a specific amount of bitcoin -->
@@ -489,9 +489,9 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Security Center Info -->
     <string name="SecurityCenter.info">Enable all security features for maximum protection.</string>
-    <!-- Phrase button description -->
+    <!-- Recovery Phrase button description -->
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
-    <!-- Phrase button title -->
+    <!-- Recovery Phrase button title -->
     <string name="SecurityCenter.paperKeyTitle">Recovery Phrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protects your Elephant from unauthorized users.</string>
@@ -630,13 +630,13 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Share Anonymous Data?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Write Down Phrase Again</string>
-    <!-- Phrase explanation text. -->
-    <string name="StartPaperPhrase.body">Your phrase is the only way to restore your Elephant if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.againButtonTitle">Write Down Recovery Phrase Again</string>
+    <!-- Recovery Phrase explanation text. -->
+    <string name="StartPaperPhrase.body">Your recovery phrase is the only way to restore your Elephant if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Write Down Phrase</string>
+    <string name="StartPaperPhrase.buttonTitle">Write Down Recovery Phrase</string>
     <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">You last wrote down your phrase on %1$s</string>
+    <string name="StartPaperPhrase.date">You last wrote down your recovery phrase on %1$s</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Create New Wallet</string>
     <!-- Start view message -->
@@ -841,7 +841,7 @@
     <string name="UnlockScreen.faceIdText">Unlock with FaceID</string>
     <!-- My Address button title -->
     <string name="UnlockScreen.myAddress">My Address</string>
-    <!-- Reset PIN with Phrase button label. -->
+    <!-- Reset PIN with Recovery Phrase button label. -->
     <string name="UnlockScreen.resetPin">Reset PIN</string>
     <!-- Scan button title -->
     <string name="UnlockScreen.scan">Scan</string>
@@ -910,24 +910,24 @@
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">Are you sure you want to delete this wallet?</string>
     <!-- Wipe wallet alert title -->
-    <string name="WipeWallet.alertTitle">Wipe Wallet?</string>
+    <string name="WipeWallet.alertTitle">Unlink Wallet?</string>
     <!-- Failed wipe wallet alert message -->
-    <string name="WipeWallet.failedMessage">Failed to wipe wallet.</string>
+    <string name="WipeWallet.failedMessage">Failed to unlink wallet.</string>
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Failed</string>
-    <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] Phrase that needs to be entered). -->
-    <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s phrase.</string>
+    <!-- Enter Recovery Phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] Recovery Phrase that needs to be entered). -->
+    <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s recovery phrase.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Elephant wallet on this device.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your phrase.</string>
+    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your recovery phrase.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Start or Recover Another Wallet</string>
     <!-- Wipe wallet button title -->
-    <string name="WipeWallet.wipe">Wipe</string>
+    <string name="WipeWallet.wipe">Unlink</string>
     <!-- Wiping activity message -->
-    <string name="WipeWallet.wiping">Wiping...</string>
-    <!-- Phrase instructions. -->
+    <string name="WipeWallet.wiping">Unlinking...</string>
+    <!-- Recovery Phrase instructions. -->
     <string name="WritePaperPhrase.instruction">Write down each word in order and store it in a safe place.</string>
     <!-- button label -->
     <string name="WritePaperPhrase.next">Next</string>

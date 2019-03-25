@@ -44,7 +44,7 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/profile_head_bg"
-        android:layout_width="345dp"
+        android:layout_width="365dp"
         android:layout_height="166dp"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:layout_marginTop="26dp"
