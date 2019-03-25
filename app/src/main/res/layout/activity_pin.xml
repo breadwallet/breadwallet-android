@@ -34,7 +34,7 @@
         android:src="@drawable/brd_logo_gradient"
         android:textColor="@color/white"
         android:textSize="48sp"
-        app:customTFont="Celevenia.otf"
+        app:brdFont="@string/Font.Celevenia"
         android:layout_marginTop="130dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

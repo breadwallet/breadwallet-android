@@ -1,23 +1,50 @@
+/**
+ * BreadWallet
+ * <p/>
+ * Created by byfieldj on <jade@breadwallet.com> 1/17/18.
+ * Copyright (c) 2019 breadwallet LLC
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package com.breadwallet.presenter.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.viewmodels.MainViewModel;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -25,21 +52,19 @@ import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -47,12 +72,9 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged, BalanceUpdateListener {
-
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
     private static final String TAG = HomeActivity.class.getSimpleName();
     public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
-
-    public static final String CCC_CURRENCY_CODE = "CCC";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
 
     private RecyclerView mWalletRecycler;
@@ -63,6 +85,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
+    private MainViewModel mViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,10 +128,25 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                if (position >= mAdapter.getItemCount() || position < 0) return;
+                if (position >= mAdapter.getItemCount() || position < 0) {
+                    return;
+                }
                 if (mAdapter.getItemViewType(position) == 0) {
-                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this, mAdapter.getItemAt(position).getCurrencyCode());
-                    Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    BRSharedPrefs.putCurrentWalletCurrencyCode(HomeActivity.this,
+                            mAdapter.getItemAt(position).getCurrencyCode());
+                    Intent newIntent;
+                    // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
+                    if (mAdapter.getItemAt(position).getCurrencyCode()
+                            .equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
+                        if (!BRSharedPrefs.getRewardsAnimationShown(HomeActivity.this)) {
+                            Map<String, String> attributes = new HashMap<>();
+                            attributes.put(EventUtils.EVENT_ATTRIBUTE_CURRENCY, WalletTokenManager.BRD_CURRENCY_CODE);
+                            EventUtils.pushEvent(EventUtils.EVENT_REWARDS_OPEN_WALLET, attributes);
+                        }
+                        newIntent = new Intent(HomeActivity.this, BrdWalletActivity.class);
+                    } else {
+                        newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    }
                     startActivity(newIntent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 } else {
@@ -128,6 +166,30 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.toString())
                 && CurrencyUtils.isBuyNotificationNeeded(this);
         buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
+
+        mAdapter = new WalletListAdapter(this);
+        mWalletRecycler.setAdapter(mAdapter);
+
+        // Get ViewModel, observe updates to Wallet and aggregated balance data
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel.getWallets().observe(this, new Observer<List<Wallet>>() {
+            @Override
+            public void onChanged(@Nullable List<Wallet> wallets) {
+                mAdapter.setWallets(wallets);
+            }
+        });
+
+        mViewModel.getAggregatedFiatBalance().observe(this, new Observer<BigDecimal>() {
+            @Override
+            public void onChanged(@Nullable BigDecimal aggregatedFiatBalance) {
+                if (aggregatedFiatBalance == null) {
+                    Log.e(TAG, "fiatTotalAmount is null");
+                    return;
+                }
+                mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
+                        BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), aggregatedFiatBalance));
+            }
+        });
     }
 
     @Override
@@ -147,7 +209,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private void showNextPromptIfNeeded() {
-        PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(this);
+        PromptManager.PromptItem toShow = PromptManager.nextPrompt(this);
         if (toShow != null) {
             View promptView = PromptManager.promptInfo(this, toShow);
             if (mListGroupLayout.getChildCount() >= MAX_NUMBER_OF_CHILDREN) {
@@ -165,65 +227,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onResume() {
         super.onResume();
         showNextPromptIfNeeded();
-        WalletsMaster.getInstance(this).addBalanceUpdateListener(this);
-        populateWallets();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.startObserving();
-            }
-        }, DateUtils.SECOND_IN_MILLIS / 2);
         InternetManager.registerConnectionReceiver(this, this);
-        updateUi();
-        RatesDataSource.getInstance(this).addOnDataChangedListener(this);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
-                WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
-                BaseWalletManager walletManager = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-                if (walletManager != null) {
-                    walletManager.refreshAddress(HomeActivity.this);
-                }
-            }
-        });
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-    }
-
-    private void populateWallets() {
-        ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
-        mAdapter = new WalletListAdapter(this, list);
-        mWalletRecycler.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        mViewModel.refreshWallets();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         InternetManager.unregisterConnectionReceiver(this, this);
-        mAdapter.stopObserving();
-        WalletsMaster.getInstance(this).removeBalanceUpdateListener(this);
-    }
-
-    private void updateUi() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final BigDecimal fiatTotalAmount = WalletsMaster.getInstance(HomeActivity.this).getAggregatedFiatBalance(HomeActivity.this);
-                if (fiatTotalAmount == null) {
-                    Log.e(TAG, "updateUi: fiatTotalAmount is null");
-                    return;
-                }
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
-                                BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -232,9 +244,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if (isConnected) {
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.GONE);
-            }
-            if (mAdapter != null) {
-                mAdapter.startObserving();
             }
         } else {
             if (mNotificationBar != null) {
@@ -246,15 +255,5 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void closeNotificationBar() {
         mNotificationBar.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onChanged() {
-        updateUi();
-    }
-
-    @Override
-    public void onBalanceChanged(BigDecimal balance) {
-        updateUi();
     }
 }

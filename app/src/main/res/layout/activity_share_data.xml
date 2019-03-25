@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
@@ -21,21 +20,21 @@
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:background="?attr/toolbar_back_arrow" />
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/bread_margin"
-                android:layout_marginStart="@dimen/bread_margin"
-                android:text="@string/ShareData.header"
-                android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/bread_margin"
+                android:layout_marginEnd="@dimen/bread_margin"
+                android:text="@string/ShareData.header"
                 android:textSize="20sp"
-                app:customTFont="CircularPro-Bold.otf" />
+                app:brdFont="@string/Font.CircularPro_Bold" />
 
         </RelativeLayout>
 
@@ -45,54 +44,54 @@
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/ShareData.body"
         android:textSize="@dimen/sub_header"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/toolbar"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <View
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_margin="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:background="@color/extra_light_gray"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/ShareData.toggleLabel"
         android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Bold.otf"
+        app:brdFont="@string/Font.CircularPro_Bold"
         app:layout_constraintEnd_toStartOf="@+id/toggleButton"
         app:layout_constraintLeft_toLeftOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/description"/>
+        app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <ToggleButton
         android:id="@+id/toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:background="@drawable/bread_toggle"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/bread_toggle"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView4"/>
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -1,112 +1,116 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/wallet_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/crypto_card_shape">
+<com.breadwallet.presenter.customviews.ShimmerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/icon_background"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/asset_icon_background_transparent"
-        android:orientation="vertical">
+        android:id="@+id/wallet_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/crypto_card_shape">
+
+        <RelativeLayout
+            android:id="@+id/icon_background"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/asset_icon_background_transparent"
+            android:orientation="vertical">
+
+            <com.breadwallet.presenter.customviews.BaseTextView
+                android:id="@+id/icon_letter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:brdFont="@string/Font.CircularPro_Bold" />
+
+            <ImageView
+                android:id="@+id/currency_icon_white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
 
         <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/icon_letter"
-            android:text="T"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:customTFont="CircularPro-Bold.otf"
+            android:id="@+id/wallet_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/icon_background"
+            android:ellipsize="end"
+            android:maxWidth="180dp"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:brdFont="@string/Font.CircularPro_Bold" />
 
-        <ImageView
-            android:id="@+id/currency_icon_white"
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/wallet_trade_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
+            android:layout_below="@id/wallet_name"
+            android:layout_marginStart="16sp"
+            android:layout_toEndOf="@+id/icon_background"
+            android:textColor="@color/balance_crypto_color"
+            android:textSize="14sp"
+            app:brdFont="@string/Font.CircularPro_Bold" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/wallet_balance_fiat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16sp"
+            android:layout_marginTop="16sp"
+            android:layout_marginEnd="16dp"
+            android:text="$12.00"
+            android:textColor="@color/wallet_balance_fiat"
+            android:textSize="18sp"
+            app:brdFont="@string/Font.CircularPro_Bold" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/syncing_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wallet_balance_fiat"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="16dp"
+            android:layout_toStartOf="@id/sync_progress"
+            android:text="@string/SyncingView.syncing"
+            android:textColor="@color/sync_text"
+            android:textSize="14sp"
+            app:brdFont="@string/Font.CircularPro_Bold" />
+
+        <ProgressBar
+            android:id="@+id/sync_progress"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_below="@id/wallet_balance_fiat"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="10dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
+            android:indeterminateTint="@color/sync_text"
+            android:keepScreenOn="true" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/wallet_balance_currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wallet_balance_fiat"
+            android:layout_alignEnd="@id/wallet_balance_fiat"
+            android:textColor="@color/balance_crypto_color"
+            android:textSize="14sp"
+            app:brdFont="@string/Font.CircularPro_Bold" />
+
     </RelativeLayout>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/wallet_name"
-        android:layout_width="wrap_content"
-        android:maxLines="1"
-        android:maxWidth="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_toEndOf="@+id/icon_background"
-        android:ellipsize="end"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/wallet_trade_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/wallet_name"
-        android:layout_marginStart="16sp"
-        android:layout_toEndOf="@+id/icon_background"
-        android:textColor="@color/balance_crypto_color"
-        android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/wallet_balance_fiat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16sp"
-        android:layout_marginTop="16sp"
-        android:text="$12.00"
-        android:textColor="@color/wallet_balance_fiat"
-        android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/syncing_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/wallet_balance_fiat"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_toStartOf="@id/sync_progress"
-        android:text="@string/SyncingView.syncing"
-        android:textColor="@color/sync_text"
-        android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
-    <ProgressBar
-        android:id="@+id/sync_progress"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/wallet_balance_fiat"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="3dp"
-        android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
-        android:indeterminateTint="@color/sync_text"
-        android:keepScreenOn="true"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/wallet_balance_currency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/wallet_balance_fiat"
-        android:layout_below="@id/wallet_balance_fiat"
-        android:textColor="@color/balance_crypto_color"
-        android:textSize="14sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
-</RelativeLayout>
+</com.breadwallet.presenter.customviews.ShimmerLayout>

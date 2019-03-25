@@ -37,7 +37,7 @@ import com.breadwallet.tools.util.Utils;
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BaseTextView extends TextView {
-    private static final String TAG = BaseTextView.class.getName();
+    private static final float DEFAULT_LINE_SPACING = 1.3f;
 
     public BaseTextView(Context context) {
         super(context);
@@ -58,14 +58,13 @@ public class BaseTextView extends TextView {
         init(context, attrs);
     }
 
-    private void init(Context ctx, AttributeSet attrs) {
-        TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BaseTextView);
-        String customFont = attributes.getString(R.styleable.BaseTextView_customTFont);
-        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.BaseTextView);
+        String brdFont = attributes.getString(R.styleable.BaseTextView_brdFont);
+        FontManager.setCustomFont(context, this,
+                Utils.isNullOrEmpty(brdFont) ? context.getString(R.string.Font_CircularPro_Book) : brdFont);
         attributes.recycle();
-        setLineSpacing(0, 1.3f);
-
-        //setTextDirection(TEXT_DIRECTION_LTR);
+        setLineSpacing(0, DEFAULT_LINE_SPACING);
     }
 
 }

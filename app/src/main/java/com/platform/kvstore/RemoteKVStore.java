@@ -9,6 +9,7 @@ import com.platform.sqlite.KVItem;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,10 @@ import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
 public class RemoteKVStore implements KVStoreAdaptor {
     public static final String TAG = RemoteKVStore.class.getName();
 
+    // Headers in response are back in lowercase.
+    private static final String HEADER_ETAG = "etag";
+    private static final String HEADER_LAST_MODIFIED = "last-modified";
+
     private static RemoteKVStore instance;
     private APIClient apiClient;
 
@@ -77,7 +82,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
         }
         if (!res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
-            return new CompletionObject(0, 0, unknown);
+            return new CompletionObject(0, 0, extractErr(res));
         }
         v = extractVersion(res);
         t = extractDate(res);
@@ -99,14 +104,10 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long v;
         long t;
         APIClient.BRResponse res = apiClient.sendRequest(request, true);
-        if (Utils.isNullOrEmpty(res.getBody())) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
 
         if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
-            return new CompletionObject(0, 0, unknown);
+            Log.e(TAG, "put: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+            return new CompletionObject(0, 0, extractErr(res));
         }
 
         v = extractVersion(res);
@@ -126,13 +127,13 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long t;
         APIClient.BRResponse res = apiClient.sendRequest(request, true);
         if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
+            Log.d(TAG, "del: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+            return new CompletionObject(0, 0, extractErr(res));
         }
 
         if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
-            return new CompletionObject(0, 0, unknown);
+            Log.e(TAG, "del: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+            return new CompletionObject(0, 0, extractErr(res));
         }
 
         v = extractVersion(res);
@@ -155,13 +156,13 @@ public class RemoteKVStore implements KVStoreAdaptor {
         try {
             res = apiClient.sendRequest(request, true);
             if (res == null) {
-                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                Log.d(TAG, "get: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
                 return new CompletionObject(0, 0, unknown);
             }
 
             if (!res.isSuccessful()) {
-                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
-                return new CompletionObject(0, 0, unknown);
+                Log.e(TAG, "get: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+                return new CompletionObject(0, 0, extractErr(res));
             }
             v = extractVersion(res);
             t = extractDate(res);
@@ -183,12 +184,12 @@ public class RemoteKVStore implements KVStoreAdaptor {
         List<KVItem> keys = new ArrayList<>();
         APIClient.BRResponse res = apiClient.sendRequest(request, true);
         if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+            Log.d(TAG, "keys: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
         }
         if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
-            return new CompletionObject(0, 0, unknown);
+            Log.e(TAG, "keys: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+            return new CompletionObject(0, 0, extractErr(res));
         }
 
         byte[] reqData = res.getBody();
@@ -210,11 +211,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
                 byte[] keyBytes = new byte[keyLen];
                 buffer.get(keyBytes, 0, keyLen);
-                try {
-                    key = new String(keyBytes, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                key = new String(keyBytes, StandardCharsets.UTF_8);
 
                 version = buffer.getLong();
                 time = buffer.getLong();
@@ -234,9 +231,10 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long remoteVersion = 0;
         try {
             if (res != null) {
-                String eTag = res.getHeaders().get("ETag");
-                if (!Utils.isNullOrEmpty(eTag))
+                String eTag = res.getHeaders().get(HEADER_ETAG);
+                if (!Utils.isNullOrEmpty(eTag)) {
                     remoteVersion = Long.valueOf(eTag);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -248,7 +246,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long remoteTime = 0;
         try {
             if (res != null) {
-                String lastModified = res.getHeaders().get("Last-Modified");
+                String lastModified = res.getHeaders().get(HEADER_LAST_MODIFIED);
                 if (!Utils.isNullOrEmpty(lastModified))
                     remoteTime = Date.parse(lastModified);
             }

@@ -63,6 +63,10 @@ public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
 
     public static final String EXTRA_JSON_PARAM = "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_JSON_PARAM";
+    public static final String EXTRA_ENTER_TRANSITION =
+            "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_ENTER_TRANSITION";
+    public static final String EXTRA_EXIT_TRANSITION =
+            "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_EXIT_TRANSITION";
     private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     private static final String IMAGE_FILE_NAME_SUFFIX = "_kyc.jpg";
     private static final String BUY_PATH = "/buy";
@@ -125,7 +129,7 @@ public class WebViewActivity extends BRActivity {
                 Log.d(TAG, "onPageStarted: url:" + url);
                 String trimmedUrl = rTrim(url, '/');
                 Uri toUri = Uri.parse(trimmedUrl);
-                if (closeOnMatch(toUri) || toUri.toString().contains(BRConstants.CLOSE)) {
+                if (closeOnMatch(toUri) || toUri.toString().endsWith(BRConstants.CLOSE)) {
                     Log.d(TAG, "onPageStarted: close Uri found: " + toUri);
                     onBackPressed();
                     mOnCloseUrl = null;
@@ -350,8 +354,7 @@ public class WebViewActivity extends BRActivity {
             Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
             Uri toUri = Uri.parse(trimmedUrl);
 
-//                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
-            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains(BRConstants.CLOSE)) {
+            if (closeOnMatch(toUri) || toUri.toString().endsWith(BRConstants.CLOSE)) {
                 Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
                 onBackPressed();
                 mOnCloseUrl = null;
@@ -460,7 +463,9 @@ public class WebViewActivity extends BRActivity {
         } else {
             super.onBackPressed();
         }
-        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
+        int enterTransition = getIntent().getIntExtra(EXTRA_ENTER_TRANSITION, R.anim.fade_up);
+        int exitTransition = getIntent().getIntExtra(EXTRA_EXIT_TRANSITION, R.anim.exit_to_bottom);
+        overridePendingTransition(enterTransition, exitTransition);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
