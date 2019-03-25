@@ -155,7 +155,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
                 String mobile = area+","+mMobileEdt.getText().toString();
                 if(!StringUtil.isNullOrEmpty(mobile) && !mobile.equals(oMobile)){
                     intent = new Intent();
-                    intent.putExtra("mobile", "+"+area+","+mobile);
+                    intent.putExtra("mobile", mobile);
                 }
                 break;
             case SettingsUtil.KYC_FROME_EMAIL:
