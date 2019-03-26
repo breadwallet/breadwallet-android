@@ -241,22 +241,37 @@ public class ProfileActivity extends BRActivity {
                 PayloadInfo payloadInfo = null;
                 String nickname = mDid.getInfo(APPID+"/NickName");
                 payloadInfo = getPayloadInfo(nickname);
-                if(null != payloadInfo) BRSharedPrefs.putNickname(ProfileActivity.this, payloadInfo.value);
+                String nickTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
+                if(null!=payloadInfo && (StringUtil.isNullOrEmpty(nickTxid) || nickTxid.equals(payloadInfo.txid))){
+                    BRSharedPrefs.putNickname(ProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
+                }
 
                 String email = mDid.getInfo(APPID+"/Email");
                 payloadInfo = getPayloadInfo(email);
-                if(null != payloadInfo) BRSharedPrefs.putEmail(ProfileActivity.this, payloadInfo.value);
+                String emailTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid);
+                if(null!=payloadInfo && (StringUtil.isNullOrEmpty(emailTxid) || emailTxid.equals(payloadInfo.txid))) {
+                    BRSharedPrefs.putEmail(ProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
+                }
 
                 String mobile = mDid.getInfo(APPID+"/Mobile");
                 payloadInfo = getPayloadInfo(mobile);
-                if(null != payloadInfo) BRSharedPrefs.putMobile(ProfileActivity.this, payloadInfo.value);
+                String mobileTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid);
+                if(null!=payloadInfo && (StringUtil.isNullOrEmpty(mobileTxid) || mobileTxid.equals(payloadInfo.txid))) {
+                    BRSharedPrefs.putMobile(ProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
+                }
 
                 String idCard = mDid.getInfo(APPID+"/ChineseIDCard");
                 PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
-                if(null!=payloadInfoId && null!=payloadInfoId.value) {
+                String idTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid);
+                if(null!=payloadInfoId && null!=payloadInfoId.value && (StringUtil.isNullOrEmpty(idTxid) || idTxid.equals(payloadInfo.txid))) {
                     BRSharedPrefs.putRealname(ProfileActivity.this, payloadInfoId.value.name);
                     BRSharedPrefs.putID(ProfileActivity.this, payloadInfoId.value.code);
+                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
                 }
+                mHandler.sendEmptyMessage(0x01);
             }
         });
     }

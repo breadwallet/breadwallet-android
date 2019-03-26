@@ -130,6 +130,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 if(StringUtil.isNullOrEmpty(value) || !value.contains("Publickey")){
                     String data = getKeyVale("Publickey", publicKey);
                     String info = mDid.signInfo(mSeed, data);
+                    if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     Log.i("DidOnchain", "txid:"+txid);
                 }
