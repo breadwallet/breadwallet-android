@@ -302,6 +302,7 @@ public class ProfileActivity extends BRActivity {
                             BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("nickname")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
+                            BRSharedPrefs.putNickname(ProfileActivity.this, nickname);
                             BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("nickname")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         }
