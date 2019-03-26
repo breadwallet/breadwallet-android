@@ -90,6 +90,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
             @Override
             public void onClick(View view) {
                 mMobileEdt.setText("");
+                mAreaEdt.setText("");
             }
         });
         mEmailCleanTv.setOnClickListener(new View.OnClickListener() {
@@ -121,20 +122,22 @@ public class ProfileEditActivity extends BaseSettingsActivity {
     }
 
     private boolean check(int from){
-        Log.i("ProfileFunction", "check validate");
-        boolean is = true;
-        /*if(from == SettingsUtil.KYC_FROME_MOBILE){
-            is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
-            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
-        } else*/ if(from == SettingsUtil.KYC_FROME_EMAIL){
-            is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
-            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
-        } else if(from == SettingsUtil.KYC_FROME_ID){
-            is = ValidatorUtil.isIDCard(mIDEdt.getText().toString());
-            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_id), Toast.LENGTH_SHORT).show();
-        }
-
-        return is;
+//        Log.i("ProfileFunction", "check validate");
+//        boolean is = true;
+//        if(from == SettingsUtil.KYC_FROME_MOBILE){
+//            is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
+//            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
+//        } else if(from == SettingsUtil.KYC_FROME_EMAIL){
+//            is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
+//            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
+//        }
+//        else if(from == SettingsUtil.KYC_FROME_ID){
+//            is = ValidatorUtil.isIDCard(mIDEdt.getText().toString());
+//            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_id), Toast.LENGTH_SHORT).show();
+//        }
+//
+//        return is;
+        return true;
     }
 
     private void setEditResult(int from){
@@ -144,7 +147,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
             case SettingsUtil.KYC_FROME_NICKNAME:
                 String oNickname = BRSharedPrefs.getNickname(this);
                 String nickname = mNicknameEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(nickname) && !nickname.equals(oNickname)){
+                if(!nickname.equals(oNickname)){
                     intent = new Intent();
                     intent.putExtra("nickname", nickname);
                 }
@@ -153,7 +156,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
                 String oMobile = BRSharedPrefs.getMobile(this);
                 String area = StringUtil.isNullOrEmpty(mAreaEdt.getText().toString())?"86":mAreaEdt.getText().toString();
                 String mobile = area+","+mMobileEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(mobile) && !mobile.equals(oMobile)){
+                if(!mobile.equals(oMobile)){
                     intent = new Intent();
                     intent.putExtra("mobile", mobile);
                 }
@@ -161,7 +164,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
             case SettingsUtil.KYC_FROME_EMAIL:
                 String oEmial = BRSharedPrefs.getEmail(this);
                 String email = mEmailEdt.getText().toString();
-                if(!StringUtil.isNullOrEmpty(email) && !email.equals(oEmial)){
+                if(!email.equals(oEmial)){
                     intent = new Intent();
                     intent.putExtra("email", email);
                 }
@@ -171,8 +174,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
                 String realname = mRealNameEdt.getText().toString();
                 String oIdcard = BRSharedPrefs.getID(this);
                 String idcard = mIDEdt.getText().toString();
-                if(StringUtil.isNullOrEmpty(realname) || StringUtil.isNullOrEmpty(idcard)) break;
-                if(realname.equals(oRealname) || idcard.equals(oIdcard)) break;
+                if(realname.equals(oRealname) && idcard.equals(oIdcard)) break;
                 intent = new Intent();
                 intent.putExtra("realname", realname);
                 intent.putExtra("idcard", idcard);
@@ -206,6 +208,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
             case SettingsUtil.KYC_FROME_ID:
                 findViewById(R.id.did_id_layout).setVisibility(View.VISIBLE);
                 mTitleTv.setText(R.string.My_Profile_ID);
+                mRealNameEdt.setText(BRSharedPrefs.getRealname(this));
                 mIDEdt.setText(BRSharedPrefs.getID(this));
                 break;
             case SettingsUtil.KYC_FROME_MOBILE:

@@ -120,7 +120,7 @@
             android:layout_height="56dp"
             android:textColor="@color/black_333333"
             android:gravity="center"
-            android:maxLength="10"
+            android:maxLength="3"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="15dp"
             android:background="@null"

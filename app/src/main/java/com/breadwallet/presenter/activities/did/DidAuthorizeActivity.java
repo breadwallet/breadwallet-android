@@ -226,7 +226,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                             if(StringUtil.isNullOrEmpty(ret)) {
                                 toast("invalid callback url");
                             }
-                            if(ret.contains("err code:")) {
+                            if(StringUtil.isNullOrEmpty(ret) || ret.contains("err code:")) {
                                 toast("callback return error");
                             }
                             if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
@@ -234,9 +234,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                             }
                             String url;
                             if (returnUrl.contains("?")) {
-                                url = returnUrl + "&response=" +  entity.Data;
+                                url = returnUrl + "&response=" +  Uri.encode(new Gson().toJson(entity));
                             } else {
-                                url = returnUrl + "?response=" +  entity.Data;
+                                url = returnUrl + "?response=" +  Uri.encode(new Gson().toJson(entity));
                             }
                             if(returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")){
                                 UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
