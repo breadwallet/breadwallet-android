@@ -3,6 +3,8 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -119,6 +121,77 @@ public class ProfileEditActivity extends BaseSettingsActivity {
                 setEditResult(WHRER_FROM);
             }
         });
+
+        mNicknameEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = mNicknameEdt.getText().toString();
+                mNickCleanTv.setVisibility(StringUtil.isNullOrEmpty(input)?View.GONE:View.VISIBLE);
+            }
+        });
+
+        mEmailEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = mEmailEdt.getText().toString();
+                mEmailCleanTv.setVisibility(StringUtil.isNullOrEmpty(input)?View.GONE:View.VISIBLE);
+            }
+        });
+
+        mMobileEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = mMobileEdt.getText().toString();
+                mMobileCleanTv.setVisibility(StringUtil.isNullOrEmpty(input)?View.GONE:View.VISIBLE);
+            }
+        });
+
+        mRealNameEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = mRealNameEdt.getText().toString();
+                mRealCleanTv.setVisibility(StringUtil.isNullOrEmpty(input)?View.GONE:View.VISIBLE);
+            }
+        });
+
+        mIDEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = mIDEdt.getText().toString();
+                mIDCleanTv.setVisibility(StringUtil.isNullOrEmpty(input)?View.GONE:View.VISIBLE);
+            }
+        });
+
     }
 
     private boolean check(int from){
@@ -194,6 +267,8 @@ public class ProfileEditActivity extends BaseSettingsActivity {
         findViewById(R.id.did_email_layout).setVisibility(View.GONE);
         findViewById(R.id.did_mobile_layout).setVisibility(View.GONE);
         findViewById(R.id.did_id_layout).setVisibility(View.GONE);
+        String mobile  = mMobileEdt.getText().toString();
+        mMobileCleanTv.setVisibility(StringUtil.isNullOrEmpty(mobile)?View.GONE:View.VISIBLE);
         switch (from) {
             case SettingsUtil.KYC_FROME_NICKNAME:
                 findViewById(R.id.did_nickname_layout).setVisibility(View.VISIBLE);
