@@ -163,7 +163,7 @@ public class BRSharedPrefs {
     }
 
     public static void putNickname(Context context, String nickname) {
-        if(StringUtil.isNullOrEmpty(nickname)) nickname = "Your Name";
+        if(StringUtil.isNullOrEmpty(nickname)) nickname = "Your Nickname";
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("nickname", nickname);

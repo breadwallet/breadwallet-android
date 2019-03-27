@@ -201,7 +201,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 CallbackData callbackData = new CallbackData();
                 callbackData.DID = myDid;
                 callbackData.PublicKey = myPK;
-                callbackData.NickName = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
+                callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
                 callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
                 if (!StringUtil.isNullOrEmpty(requestInfo)) {
                     callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
