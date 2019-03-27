@@ -630,7 +630,6 @@ public class KVStoreManager {
             Log.w(TAG, "getData: value is null for key: " + key);
             return null;
         }
-
         byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
         if (decompressed == null) {
             Log.e(TAG, "getData: decompressed value is null");

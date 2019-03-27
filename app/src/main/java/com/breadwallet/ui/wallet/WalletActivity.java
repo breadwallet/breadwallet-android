@@ -367,7 +367,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         final BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(this);
         if (wallet != null) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
-                WalletEthManager.getInstance(WalletActivity.this).estimateGasPrice();
+                WalletEthManager.getInstance(getApplicationContext()).estimateGasPrice();
                 if (wallet.getConnectStatus() != 2) {
                     wallet.connect(WalletActivity.this);
                 }
