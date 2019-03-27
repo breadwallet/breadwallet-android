@@ -239,7 +239,7 @@ public class ProfileActivity extends BRActivity {
             public void run() {
                 mDid.syncInfo();
                 PayloadInfo payloadInfo = null;
-                String nickname = mDid.getInfo(APPID+"/NickName");
+                String nickname = mDid.getInfo(APPID+"/Nickname");
                 payloadInfo = getPayloadInfo(nickname);
                 String nickTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(nickTxid) || nickTxid.equals(payloadInfo.txid))){
@@ -308,7 +308,7 @@ public class ProfileActivity extends BRActivity {
                     String nickname = data.getStringExtra("nickname");
                     Log.i("ProfileFunction", "nickname:"+nickname);
                     if(null == nickname) return;
-                    String data = getKeyVale("NickName", nickname);
+                    String data = getKeyVale("Nickname", nickname);
                     if(BuildConfig.CAN_UPLOAD.contains("nickname")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("nickname")){
                         canRefresh = true;
