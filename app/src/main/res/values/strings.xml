@@ -1017,7 +1017,7 @@
     <string name="My.Profile.Completed">Completed</string>
 
     <string name="disclaim_title">Disclaimer</string>
-    <string name="disclaim_content">Applications in Explore are provided by third party vendors. /n/nEither Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability.</string>
+    <string name="disclaim_content">Applications in Explore are provided by third party vendors. \n\nEither Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability.</string>
     <string name="disclaim_ok">OK</string>
 
     <string name="invalid_number">invalid number</string>
