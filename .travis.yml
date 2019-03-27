@@ -11,8 +11,8 @@ licenses:
 - android-sdk-license-.+
 - google-gdk-license-.+
 before_install:
-#- openssl aes-256-cbc -K $encrypted_57d286c34edd_key -iv $encrypted_57d286c34edd_iv
-#  -in elastos.jks.enc -out elastos.jks -d
+- openssl aes-256-cbc -K $encrypted_c703387b800a_key -iv $encrypted_c703387b800a_iv
+  -in elastos.jks.enc -out elastos.jks -d
 - echo "y" | sdkmanager "cmake;3.6.4111459"
 - chmod +x gradlew
 - "./gradlew dependencies || true"
@@ -31,16 +31,18 @@ before_deploy:
 deploy:
   provider: releases
   api_key:
-    secure: oC8TT19HJbQPH8vM4iY4HPQfJ2xhTlpn7OWS56mcojTxZozN70oIhtIhFqo1xUMfcStdD4yJdY7fpqxCDJMd/c5Ue9sWexjv1HYt7i7ffE7K+hzWO9hyG4GgN/RMimAS+EXPii/ZvoKy9OP4WkhGZ2trV3A5EJNuuV++i/brG2MuEw2P6SpNgFBvgiCi13Wv34wpyre3C3XuxrQof7lPePGfkZVjQenj11wpcmpRTyW0QNwr+TGq1plcE68Ual6UqeJisVJbbFoXvgM7h85DeX6Pra6rGhQ0kcwcf9IxEhBY3UVSYAdFMF6YixhS2moitAv1wF5TDsnQb6Ttc3SCQHtUQ/JsnIowhvSESCg5Yl6pHawerPkOhz0+Rh+1x7JvmDnAa6Umyy82bNhFo9qtwnrR+W3U2ejHRVzlq1J/+289Yi3+eSUz2yK6JBL0gkgCKfvjcH6fW1jvJvn+5uFyPNB+dylCx0Qq4CGucBj+O9aPuiBx4l7crxxL1FHZMeZKjDOQMb7Mb5oWmtWQwtjksNLVxm6CJM3h9/g77TtdOcNqXRatFwT/qC6PJICBtIhsBcj2BLKbkGNnOfHKbbwuZlTw9gGBMm+XlpqvuQWwAHuARtMWVKMKYpCruJe+wCF2nq3MkOWywI2fz2Xn8rUvWYwyVN4z6yyu5Gf9MjKoHLc=
+    secure: JeSnJfv5wvuO1UO4I+r7pEOmEcKmBmqLd+AzCvND2jZS1GMBeeW0SPhtyjro0Nvx1aSYDNU1AVSJe2Mzm5cGaOWC/BEcUZNQ0kg2fxh0tfRAyphLDP4+H6WcbXxobVfckItdffCYxvnYvLaZylHzUDazggVfmTFAPt1mHFesTOftnu7grAji6hFsQtBpYC+l9IzG9dpFKHnURHSeSV2E4D/iEr829N6JcOFru2cZK0E63OlG+AseiL7rijYZRJ156Z+fVVmtkGriqrp6AqJZYvvH/1ynWLPSw60GhhGlsKH5MaUDsdVuw4YK4kfZrzHupkHAadn+fTdHgoNeU7W1uOb9oEBvovz9ceLlQweHpE2K+gc5bej24mp2jRH1FXKjwQkCkg/x66faiVr+prHeHWOqy4S+28tkKGc8StG3qdNr6B8IyvftV36rKqI5J5ONkzuH36uoYtEwFRqhS5+bZ/O0Ou6GUVy9UuMu5BQ5K6uHl8Sql68GZpG1XyH//72ZfdzyPFJlwFpQQcZSziBkd22x7OQmB5ypag8lPR7a7OjednU5ah94uzVVOQJWlg3lVNxbJdSlHL5JBn+47huLJ9baF9kOVKKYwK5Q4nD4ogRvQNVYtsP0OGETaGVclfcxM85sM5HoQNxvWhSJia5qWZwpGneLJFAQXesgfOrVq/Y=
   file: elephant_wallet_test.apk
   skip_cleanup: true
   on:
-    repo: xidaokun/Elastos.App.Wallet.Elephant.Android
-    branch: release_v1.3
+    repo: elastos/Elastos.App.Wallet.Elephant.Android
+    branch: dev
     tags: true
 notifications:
   email:
   - 15921908346@163.com
+  - lifayi@elastos.org
+  - xuliting@elastos.org
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -49,10 +51,6 @@ cache:
   - "$HOME/.gradle"
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
-#env:
-#  global:
-#  - secure: qNCAkKrKBzqqaEkPeP4ibIxVJFGzu8jQt9MPzXbtdICB/ZDG1AO/5At9FlMFoBVwVyVsJimAb2fD5AcrZ+O2EJyxe6RYU5oIAl58ahGVNBcgmuk1WJToR7CJ0///8iB9+Wu4cE/wqQJLEnbQMV9Qma97fqa0BPmw0XfqdpPDS7kKhxQ49Bc4FY+su/HBz8exXyNV52J1gsz6WfNqhVxVlTfljkcJws59eGps8JrptC0o2B4DX5X5AqV6ctf3/qw4hXgFkvZTUHfGRfEECt1oHjniEdLhMp83bVNHPiZKn9EJ808o3GCnzWtfzN73QL9nRjHeiLCmQG0IFZm9nZTJGVObmMBupFm/VzEKeh8SnJxjucZ0/EZHpVsKQbdxOhpTVzA5KgJ/SIHFnDQQ7KcQaIVgabVe8n/099b4UOapVgCMP8D3OokBLyS2Kn6+iNoHgSaodrXuy9/otei2qTCd+Ki1luvjMBxjRDh0ve3NZvbFzEZrcgieFskqbu4TE30aHWfTJvOffZsBTrc7WZOA5+StDqU0OQxBweYkR8wzm/C89xSTBKP121wPK1RrIoRcBqtwmz0vOxX9hgcAWprmpBW6DBXlDRfI57I5llx7/QmW/y4xdHQhiKHrtZ+buImOndmwVsZdDNl4XL1baYzJVaAw7HrooLUNeWEDy0fc1jA=
-#  - secure: QEZStob86hH2u9lvKjf/vhak+i4W2IdmqDsN42jpCqz8CE1w83zYlYJRtvNoA2gw6OGuYm3DBNIp1J0ig8SxvAJqpl2v+Qge/rW74Z20fnSXQC80eqG+rNVmBObFNn9cTaNusBBUcGF20TyjSD4fXV5dMARIPFOcqcWsC3BoXM5RSgdomByzRGq2D1TUSp8BuW8Ar5iPpuPR++XP4jXtjnu32RUxSFy9rNX0kjN5POXWr+XFgvw4SHyVAWi4GqnViCdSDGBYpKwYWeD2oSssPhGw0AVeBlnpbc7IolkKAbfINFji3zMa/BFHAB0+gKwKahpmP8xMBr8GbWG5lTR/YcKqkS7T9K1KhAi0x3ZrqlOUflh7dUHdeHCRJG5pBHDmR9gp8FnAxv14apm4A0/qY2evVB3h/aGTbNaKd/lvx4P7UObo68sC9K36XkO6y2VqbBGhXsK75ENlaSCJMuSdOVJGf2CbyVcKAnNu3VtLJjmtBwPYWGXmv1I+xCidAjttGBGNgM0rQ3nkGMZZND9LSXK1LK9kFC5lKFI29Czt3gmTEn/pro4t/ASfBubnRcwtq6eqM61lNI0cH4TSEmmgWuKxACCnMjz0LJKolwLpFD5XUVUX2d5aq8MsJkt8IlJUkGk9YpLlNgAtHEw8ZY3BIyFX2AatQRtubPu4lDuOJ74=
 after_success:
 - cp $TRAVIS_BUILD_DIR/elastos.jks $HOME
 - cd app/build/outputs/apk/ela/release/
@@ -60,3 +58,7 @@ after_success:
   -storepass $storepass -keypass $keypass app-ela-release-unsigned.apk elastos
 - jarsigner -verify app-ela-release-unsigned.apk
 - "${ANDROID_HOME}/build-tools/28.0.3/zipalign -v 4 app-ela-release-unsigned.apk elephant_wallet_test.apk"
+env:
+  global:
+  - secure: eWupYgBcTZqPx/Upm/E7iaNbxTbPAZEdR176h//la9JDiF5diQmyWdicdRIKoXF5mR6FG9RL5Kxd7KUI9E7Zsg1ocRnhiyqEpY2UmD8Hnd4SVtQE/JLMwereWevr/1mM7BsvZiCbbvGQp0GL3D+PeDAm3K9phvYGZ96+p5VOXVJfoGCsCnAOY/JiZHOtawsn3x0m8/dBwcYnfgyP6j8EZQ0XXgFUXKFF03d6OkD5TV1gc8pSLAjrVFNUG8wt5Pd3vgt9BJee0h98DBLB3HXRjoHJbv5nkKxSIKZuV/Sg/wc5W9lU6gBZ15KWmnFUEFy7wYdhNoj9Kv2Vd6ri6KRSGQG5b4I8ip4trnBgv2G232fqgFUs1rDtsXdxD0B6zka2j53M71BwhYd2+i6MgNVziUuYRhRt31R3fPvVxebUw+yMQ3xiIK8+Qg6L/iNhR9wN3bdWKpn3TkD89A9aiNTuZDM1ndU70s5qFT/qn9Qn23HI6IWs9evSZFOZtZNXKtGQJnuRP7xJlx1faDNaHmGDlGb6VABohr6oxz5bzs/iX3IsdO5LlSzpwte+MTsXa0SaU6osulPEQW0mseQOl62MWoiH0R8geu+hIx15LSyjkvfgr2kuaUnb4GM0t8G0YiaU9NHXpKLci+/56+W2rq74igQ/8y7a0+Icn2q54BqQ+F8=
+  - secure: quNhjKUXCGQGPR7p6C1I1SnqLxVP677Gpvuz2kUTH5fxmZjqq6JPOTvffNAuua1rEIJukL6UhqoYvSV+XxUYGTPGM+tO8maTCL8ZOQGlC3geuXsmJkPBlLW/kF67AmFdKwOdewy8ZLTni72fSTwYY9cgZVyXLjpi3XMGD5eeztMEVOcg2Bkq9rSvogCSXNOoZTMFdaOiC+H9ZXxlLYqJBF/A8zAglFOeH8nZUKNX1pzA1DL8Xu4rz51jV0sPCZVRTscfiub6YB9dZj5XiwAmYEWAX7tCp/OJvB9eo2hFxwX2xydDn1q/zEFn6C02cM38GT28mKNDuPLE5xbfHJ4dxuXsBhf8tLuKPdFktmtJwJuq+aD6NVkjLyvxLNCrf9GAlZ6SdPGowxEwU6E/z8f5DP+dW5ATt+zymHS/9TqRS9nMgVb9dVQQsJSHzc+PeexhDnDvwHObGpYC6OwhWGUEOa05tDTfZ/Z1JLsotsnwCvBjRuIHryS7NJC1NNZvr7LmZK5my8Kp1OP+ozxI9Rp9n2UEv3rO2N+WFa/RNFJNEuNOP1nV9sRx/Fna0Zf5dXHnPJsYDtmaYhJN2P4tYpjCSWG6Vi7GzUbFsi8FqFyDM3sc33DLx337A8Z5v4LAiL1r4JkLpoNfSBevTwwjcByBQHNjH46G46RfC7w6W+FRDn0=
