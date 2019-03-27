@@ -429,7 +429,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 if (WalletsMaster.getInstance().isCurrencyCodeErc20(getActivity(), wm.getCurrencyCode())) {
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
-                    BaseWalletManager ethWm = WalletEthManager.getInstance(app);
+                    BaseWalletManager ethWm = WalletEthManager.getInstance(app.getApplicationContext());
                     BigDecimal balance = ethWm.getBalance();
                     if (rawFee.compareTo(balance) > 0) {
                         if (allFilled) {
@@ -698,7 +698,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String formattedFee = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode, isoFee);
 
         if (isWalletErc20) {
-            BaseWalletManager ethWm = WalletEthManager.getInstance(context);
+            BaseWalletManager ethWm = WalletEthManager.getInstance(context.getApplicationContext());
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(context, rawFee, null);
             formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getCurrencyCode() : mSelectedCurrencyCode, isoFee);
         }

@@ -202,7 +202,7 @@ public class CryptoUriParser {
                 // ETH payment request amounts are called `value`
             } else if (keyValue[0].trim().equals(VALUE)) {
                 BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                cryptoBuilder.setAmount(WalletEthManager.getInstance(context).getSmallestCryptoForCrypto(context, bigDecimal));
+                cryptoBuilder.setAmount(WalletEthManager.getInstance(context.getApplicationContext()).getSmallestCryptoForCrypto(context.getApplicationContext(), bigDecimal));
             } else if (keyValue[0].trim().equals(LABEL)) {
                 cryptoBuilder.setLabel(keyValue[1].trim());
             } else if (keyValue[0].trim().equals(MESSAGE)) {
@@ -219,7 +219,7 @@ public class CryptoUriParser {
     private static CryptoRequest.Builder sanitizeData(Context context, BaseWalletManager currentWallet, Uri uri, CryptoRequest.Builder builder) {
         String address = uri.getHost();
         builder.setAddress(address);
-        WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(context.getApplicationContext());
         if (Utils.isNullOrEmpty(uri.getScheme())) {
             WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(context);
             WalletBchManager walletBchManager = WalletBchManager.getInstance(context);
@@ -356,7 +356,7 @@ public class CryptoUriParser {
         }
         if (request.getAmount() != null && request.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             if (currencyCode.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-                BigDecimal amount = WalletEthManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());
+                BigDecimal amount = WalletEthManager.getInstance(context.getApplicationContext()).getCryptoForSmallestCrypto(context, request.getAmount());
                 builder = builder.appendQueryParameter(VALUE, amount.toPlainString());
             } else if (currencyCode.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || currencyCode.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
                 BigDecimal amount = WalletBitcoinManager.getInstance(context).getCryptoForSmallestCrypto(context, request.getAmount());

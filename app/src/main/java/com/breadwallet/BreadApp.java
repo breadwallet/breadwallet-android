@@ -30,12 +30,9 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.WalletConnectionCleanUpWorker;
 import com.breadwallet.wallet.util.WalletConnectionWorker;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
@@ -44,9 +41,7 @@ import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,18 +87,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Activity mCurrentActivity;
-
-    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
-
-    static {
-        try {
-            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-        } catch (UnsatisfiedLinkError e) {
-            e.printStackTrace();
-            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
-            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
-        }
-    }
 
     @Override
     public void onCreate() {
@@ -289,20 +272,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
                         HTTPServer.getInstance().startServer(this);
 
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                TokenUtil.fetchTokensFromServer(mInstance);
-                            }
-                        });
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> TokenUtil.fetchTokensFromServer(mInstance));
                         APIClient.getInstance(this).updatePlatform(this);
 
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                UserMetricsUtil.makeUserMetricsRequest(mInstance);
-                            }
-                        });
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> UserMetricsUtil.makeUserMetricsRequest(mInstance));
                     }
                 }
                 break;
@@ -311,12 +284,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 if (isBRDWalletInitialized()) {
                     mBackgroundedTime = System.currentTimeMillis();
                     WalletConnectionCleanUpWorker.enqueueWork();
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            EventUtils.saveEvents(BreadApp.this);
-                            EventUtils.pushToServer(BreadApp.this);
-                        }
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                        EventUtils.saveEvents(BreadApp.this);
+                        EventUtils.pushToServer(BreadApp.this);
                     });
                     HTTPServer.getInstance().stopServer();
                 }
@@ -401,4 +371,5 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         return isDeviceStateValid;
     }
+
 }

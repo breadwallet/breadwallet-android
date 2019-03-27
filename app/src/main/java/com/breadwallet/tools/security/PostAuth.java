@@ -12,7 +12,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
+import com.breadwallet.core.ethereum.BREthereumEWM;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -280,7 +280,7 @@ public class PostAuth {
                     } else {
                         WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
                         GenericTransactionMetaData genericTransactionMetaData = mCryptoRequest.getGenericTransactionMetaData();
-                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(
+                        tx = new CryptoTransaction(ethWallet.getWallet().createTransferGeneric(
                                 genericTransactionMetaData.getTargetAddress(),
                                 genericTransactionMetaData.getAmount(),
                                 genericTransactionMetaData.getAmountUnit(), String.valueOf(genericTransactionMetaData.getGasPrice()),
@@ -292,11 +292,11 @@ public class PostAuth {
                     if (mCryptoRequest.getGenericTransactionMetaData() == null
                             && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             || WalletsMaster.getInstance().isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
-                        final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+                        final WalletEthManager walletEthManager = WalletEthManager.getInstance(context.getApplicationContext());
                         final Timer timeoutTimer = new Timer();
                         final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {
                             @Override
-                            public void onTransactionEvent(BREthereumLightNode.Listener.TransactionEvent event) {
+                            public void onTransactionEvent(BREthereumEWM.TransactionEvent event) {
                                 switch (event) {
                                     case GAS_ESTIMATE_UPDATED:
                                         Log.d(TAG, "onTransactionEvent: UPDATED");
