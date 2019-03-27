@@ -65,17 +65,6 @@ public class SyncService extends /*Job*/ IntentService {
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null
             : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
-    static {
-        try {
-            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-        } catch (UnsatisfiedLinkError e) {
-            e.printStackTrace();
-            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
-            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null"
-                    : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
-        }
-    }
-
     /**
      * The {@link SyncService} is responsible for polling the native layer for wallet sync updates and
      * posting updates to registered listeners.  The actual data sync is done natively and not in Java.

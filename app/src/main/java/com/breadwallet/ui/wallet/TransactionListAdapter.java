@@ -148,7 +148,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         BREthereumToken tkn = null;
         if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getTo())) {
-            tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
+            tkn = WalletEthManager.getInstance(mContext.getApplicationContext()).node.lookupToken(item.getTo());
         }
         // it's a token transfer ETH tx
         if (tkn != null) {

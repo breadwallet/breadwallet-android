@@ -56,16 +56,6 @@ public class BRActivity extends FragmentActivity {
     private static final String TAG = BRActivity.class.getName();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
-    static {
-        try {
-            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-        } catch (UnsatisfiedLinkError e) {
-            e.printStackTrace();
-            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
-            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
-        }
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

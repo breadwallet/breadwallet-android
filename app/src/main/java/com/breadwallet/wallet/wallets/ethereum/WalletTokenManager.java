@@ -5,10 +5,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.core.ethereum.BREthereumWallet;
+import com.breadwallet.core.ethereum.*;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -82,19 +79,18 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (mTokenWallets.containsKey(token.getAddress().toLowerCase())) {
             return mTokenWallets.get(token.getAddress().toLowerCase());
         } else {
-            BREthereumWallet w = walletEthManager.node.getWallet(token);
-
-            if (w != null) {
-                w.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
-                w.estimateGasPrice();
-                if (w.getToken() == null) {
+            BREthereumWallet wallet = walletEthManager.node.getWallet(token);
+            if (wallet != null) {
+                wallet.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
+                wallet.estimateGasPrice();
+                if (wallet.getToken() == null) {
                     BRReportsManager.reportBug(new NullPointerException("getToken is null:" + token.getAddress()));
                     return null;
                 }
-                WalletTokenManager wm = new WalletTokenManager(walletEthManager, w);
-                mTokenWallets.put(w.getToken().getAddress().toLowerCase(), wm);
+                WalletTokenManager walletTokenManager = new WalletTokenManager(walletEthManager, wallet);
+                mTokenWallets.put(wallet.getToken().getAddress().toLowerCase(), walletTokenManager);
 
-                return wm;
+                return walletTokenManager;
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Failed to find token by address: " + token.getAddress()), true);
             }
@@ -105,7 +101,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
-        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getBRDToken());
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getTokenBRD());
         if (brdWallet.getToken() == null) {
             BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
             return null;
@@ -119,7 +115,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     public synchronized static WalletTokenManager getTokenWalletByIso(Context context, String iso) {
 
-        WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(context.getApplicationContext());
 
         long start = System.currentTimeMillis();
         if (mTokenIsos.size() <= 0) mapTokenIsos(context);
@@ -157,7 +153,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         mWalletToken.sign(tx.getEtherTx(), new String(seed));
         mWalletToken.submit(tx.getEtherTx());
-        String hash = tx.getEtherTx().getHash();
+        String hash = tx.getEtherTx().getIdentifier();
         return hash == null ? new byte[0] : hash.getBytes();
     }
 
@@ -205,7 +201,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public CryptoTransaction[] getTxs(Context context) {
         long start = System.currentTimeMillis();
-        BREthereumTransaction[] txs = mWalletToken.getTransactions();
+        BREthereumTransfer[] txs = mWalletToken.getTransfers();
         CryptoTransaction[] arr = new CryptoTransaction[txs.length];
         for (int i = 0; i < txs.length; i++) {
             arr[i] = new CryptoTransaction(txs[i]);
@@ -227,7 +223,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             fee = BigDecimal.ZERO;
         } else {
-            String feeString = mWalletToken.transactionEstimatedFee(amount.toPlainString(),
+            String feeString = mWalletToken.transferEstimatedFee(amount.toPlainString(),
                     BREthereumAmount.Unit.TOKEN_INTEGER, BREthereumAmount.Unit.ETHER_WEI);
             fee = Utils.isNullOrEmpty(feeString) ? BigDecimal.ZERO : new BigDecimal(feeString);
         }
@@ -316,7 +312,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
-        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_INTEGER);
+        BREthereumTransfer tx = mWalletToken.createTransfer(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_INTEGER);
         return new CryptoTransaction(tx);
     }
 
@@ -501,7 +497,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         return fiatAmount.divide(new BigDecimal(tokenBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
     }
 
-    public static void printTxInfo(BREthereumTransaction tx) {
+    public static void printTxInfo(BREthereumTransfer tx) {
         StringBuilder builder = new StringBuilder();
         builder.append("|Tx:");
         builder.append("|Amount:");
