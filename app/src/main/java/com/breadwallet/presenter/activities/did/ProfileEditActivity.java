@@ -195,6 +195,15 @@ public class ProfileEditActivity extends BaseSettingsActivity {
     }
 
     private boolean check(int from){
+        boolean is = true;
+        if(from == SettingsUtil.KYC_FROME_EMAIL){
+            is = ValidatorUtil.isEmail(mEmailEdt.getText().toString());
+            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
+        } else if(from == SettingsUtil.KYC_FROME_MOBILE){
+            is = ValidatorUtil.isMobile(mMobileEdt.getText().toString());
+            if(!is) Toast.makeText(this, getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
+        }
+
 //        Log.i("ProfileFunction", "check validate");
 //        boolean is = true;
 //        if(from == SettingsUtil.KYC_FROME_MOBILE){
@@ -210,7 +219,7 @@ public class ProfileEditActivity extends BaseSettingsActivity {
 //        }
 //
 //        return is;
-        return true;
+        return is;
     }
 
     private void setEditResult(int from){
