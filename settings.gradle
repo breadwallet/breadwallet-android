@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':CoreLibrary'
+project(':CoreLibrary').projectDir = new File('core/Java/Core')

@@ -93,10 +93,6 @@ public class WalletTests {
     public void tearDown() {
     }
 
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
-
     @Test
     public void paymentRequestTest() {
         Activity app = mActivityRule.getActivity();
@@ -264,7 +260,7 @@ public class WalletTests {
 
         /**TEST ETH*/
 
-        WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+        WalletEthManager ethWallet = WalletEthManager.getInstance(app.getApplicationContext());
         Assert.assertNotNull(ethWallet);
 
         //getCryptoForSmallestCrypto(..)

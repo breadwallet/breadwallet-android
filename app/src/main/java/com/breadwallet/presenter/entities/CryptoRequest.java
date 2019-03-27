@@ -94,7 +94,7 @@ public class CryptoRequest implements Serializable {
 
         if (isErc20) {
             BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
-            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getBalance()) > 0;
+            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app.getApplicationContext()).getBalance()) > 0;
         } else {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
             BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);

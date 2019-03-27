@@ -19,9 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.*;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
@@ -208,9 +206,9 @@ public class FragmentTxDetails extends DialogFragment {
             if (received) {
                 hideSentViews();
             } else {
-                BREthereumTransaction ethTx = null;
-                if (mTransaction.getTransaction() instanceof BREthereumTransaction) {
-                    ethTx = (BREthereumTransaction) mTransaction.getTransaction();
+                BREthereumTransfer ethTx = null;
+                if (mTransaction.getTransaction() instanceof BREthereumTransfer) {
+                    ethTx = (BREthereumTransfer) mTransaction.getTransaction();
                 }
                 BigDecimal rawFee = mTransaction.getFee();
                 //meaning ETH
@@ -250,7 +248,7 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
             if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
-                tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
+                tkn = WalletEthManager.getInstance(app.getApplicationContext()).node.lookupToken(mTransaction.getTo());
             }
             if (tkn != null) {
                 cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx

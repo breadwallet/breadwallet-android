@@ -34,6 +34,8 @@ import java.io.IOException;
 public class FileHelper {
 
     private static final String TAG = FileHelper.class.getName();
+    private static final String CORE_DATA_FILE_NAME = "coreData";
+    private static String mCoreDataFilePath;
 
     public static void printDirectoryTree(File folder) {
         if (!folder.isDirectory()) {
@@ -105,5 +107,20 @@ public class FileHelper {
             Log.e(TAG, "saveToExternalStorage: ", e);
         }
         return file;
+    }
+
+    /**
+     * Returns the core data file full path.
+     * @param context The context.
+     * @return The file path.
+     */
+    public synchronized static String getCoreDataFilePath(Context context) {
+        if (Utils.isNullOrEmpty(mCoreDataFilePath)) {
+            // Create the storage file for core to save currencies data.
+            File storageFile = new File(context.getFilesDir(), CORE_DATA_FILE_NAME);
+            mCoreDataFilePath = storageFile.getAbsolutePath();
+            storageFile.mkdirs();
+        }
+        return mCoreDataFilePath;
     }
 }
