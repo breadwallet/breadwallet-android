@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -54,7 +55,10 @@ public class BrdWalletActivity extends WalletActivity {
     private static final Uri CONFETTI_VIDEO_URI = Uri.parse("android.resource://"
             + BuildConfig.APPLICATION_ID + File.separator + R.raw.confetti);
     private static final int UNINITIALIZED_POSITION = -1;
+    private static final int COLLAPSE_REWARDS_DELAY_MILLISECONDS = 6000;
     private AppBarLayout mAppBarLayoutRoot;
+    private final Handler mCollapseRewardsDelayHandler = new Handler();
+    private Runnable mCollapseRewardsRunnable;
 
     // The view was expanded and ready to lock when collapsed again.
     private boolean mCanScroll = false;
@@ -77,19 +81,19 @@ public class BrdWalletActivity extends WalletActivity {
         mAppBarLayoutRoot = (AppBarLayout) getLayoutInflater().inflate(R.layout.rewards_announcement_view, null);
         final CoordinatorLayout coordinatorLayout = findViewById(R.id.transaction_list_coordinator_layout);
         coordinatorLayout.addView(mAppBarLayoutRoot, 0);
-        final AppBarLayout appBarLayout = findViewById(R.id.app_bar);
         final ViewGroup expandedRewardsView = findViewById(R.id.expanded_rewards_layout);
         final ViewGroup collapsedRewardsView = findViewById(R.id.collapsed_rewards_toolbar);
         final RecyclerView transactionListRecyclerView = findViewById(R.id.tx_list);
+        lockRewardsViewToCollapsed(mAppBarLayoutRoot, transactionListRecyclerView);
         mAppBarLayoutRoot.setOnClickListener(view -> {
             //Collapse without animation before showing the rewards webview.
             EventUtils.pushEvent(EventUtils.EVENT_REWARDS_BANNER);
-            appBarLayout.setExpanded(false, false);
+            mAppBarLayoutRoot.setExpanded(false, true);
             UiUtils.openRewardsWebView(BrdWalletActivity.this);
         });
 
         if (!BRSharedPrefs.getRewardsAnimationShown(BrdWalletActivity.this)) {
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            mAppBarLayoutRoot.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 private int mScrollRange = UNINITIALIZED_POSITION;
                 private int mTotalDistance = 0;
 
@@ -114,7 +118,6 @@ public class BrdWalletActivity extends WalletActivity {
                         // Fully collapsed.
                         collapsedRewardsView.setAlpha(1f);
                         expandedRewardsView.setAlpha(0f);
-                        lockRewardsViewToCollapsed(appBarLayout, transactionListRecyclerView);
                     }
                 }
             });
@@ -127,19 +130,22 @@ public class BrdWalletActivity extends WalletActivity {
                     mediaPlayer.setOnInfoListener((sourceMediaPlayer, what, extra) -> {
                         if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                             BRSharedPrefs.putRewardsAnimationShown(BrdWalletActivity.this, true);
-                            appBarLayout.setExpanded(true, true);
+                            mAppBarLayoutRoot.setExpanded(true, true);
                             return true;
                         }
                         return false;
                     }));
-        } else {
-            lockRewardsViewToCollapsed(appBarLayout, transactionListRecyclerView);
+            mCollapseRewardsRunnable = () -> mAppBarLayoutRoot.setExpanded(false, true);
+            mCollapseRewardsDelayHandler.postDelayed(mCollapseRewardsRunnable, COLLAPSE_REWARDS_DELAY_MILLISECONDS);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mCollapseRewardsRunnable != null) {
+            mCollapseRewardsDelayHandler.removeCallbacks(mCollapseRewardsRunnable);
+        }
         mAppBarLayoutRoot.setExpanded(false, false);
     }
 
