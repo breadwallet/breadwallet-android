@@ -70,7 +70,7 @@ public class ValidatorUtil {
      * @return 校验通过返回true，否则返回false
      */
     public static boolean isMobile(String mobile) {
-        return /*Pattern.matches(REGEX_MOBILE, mobile)*/!StringUtil.isNullOrEmpty(mobile) && mobile.length()>=6;
+        return /*Pattern.matches(REGEX_MOBILE, mobile)*/StringUtil.isNullOrEmpty(mobile) && mobile.length()>=6;
     }
 
     /**
@@ -80,7 +80,7 @@ public class ValidatorUtil {
      * @return 校验通过返回true，否则返回false
      */
     public static boolean isEmail(String email) {
-        return !StringUtil.isNullOrEmpty(email) && Pattern.matches(REGEX_EMAIL, email);
+        return StringUtil.isNullOrEmpty(email) && Pattern.matches(REGEX_EMAIL, email);
     }
 
     /**
