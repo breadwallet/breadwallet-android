@@ -1,0 +1,64 @@
+language: android
+sudo: required
+android:
+  components:
+  - build-tools-28.0.3
+  - android-28
+  - extra-android-m2repository
+  - extra-android-support
+licenses:
+- android-sdk-preview-license-.+
+- android-sdk-license-.+
+- google-gdk-license-.+
+before_install:
+- openssl aes-256-cbc -K $encrypted_c703387b800a_key -iv $encrypted_c703387b800a_iv
+  -in elastos.jks.enc -out elastos.jks -d
+- echo "y" | sdkmanager "cmake;3.6.4111459"
+- chmod +x gradlew
+- "./gradlew dependencies || true"
+script:
+- "./gradlew assembleRelease"
+before_script:
+- wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
+- unzip -qq android-ndk-r16b-linux-x86_64.zip
+- export ANDROID_NDK_HOME=`pwd`/android-ndk-r16b
+- export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME"
+- export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64"
+- export PATH=$PATH:${ANDROID_NDK_HOME}
+- env
+before_deploy:
+- ls
+deploy:
+  provider: releases
+  api_key:
+    secure: JeSnJfv5wvuO1UO4I+r7pEOmEcKmBmqLd+AzCvND2jZS1GMBeeW0SPhtyjro0Nvx1aSYDNU1AVSJe2Mzm5cGaOWC/BEcUZNQ0kg2fxh0tfRAyphLDP4+H6WcbXxobVfckItdffCYxvnYvLaZylHzUDazggVfmTFAPt1mHFesTOftnu7grAji6hFsQtBpYC+l9IzG9dpFKHnURHSeSV2E4D/iEr829N6JcOFru2cZK0E63OlG+AseiL7rijYZRJ156Z+fVVmtkGriqrp6AqJZYvvH/1ynWLPSw60GhhGlsKH5MaUDsdVuw4YK4kfZrzHupkHAadn+fTdHgoNeU7W1uOb9oEBvovz9ceLlQweHpE2K+gc5bej24mp2jRH1FXKjwQkCkg/x66faiVr+prHeHWOqy4S+28tkKGc8StG3qdNr6B8IyvftV36rKqI5J5ONkzuH36uoYtEwFRqhS5+bZ/O0Ou6GUVy9UuMu5BQ5K6uHl8Sql68GZpG1XyH//72ZfdzyPFJlwFpQQcZSziBkd22x7OQmB5ypag8lPR7a7OjednU5ah94uzVVOQJWlg3lVNxbJdSlHL5JBn+47huLJ9baF9kOVKKYwK5Q4nD4ogRvQNVYtsP0OGETaGVclfcxM85sM5HoQNxvWhSJia5qWZwpGneLJFAQXesgfOrVq/Y=
+  file: elephant_wallet_test.apk
+  skip_cleanup: true
+  on:
+    repo: elastos/Elastos.App.Wallet.Elephant.Android
+    branch: dev
+    tags: true
+notifications:
+  email:
+  - 15921908346@163.com
+  - lifayi@elastos.org
+  - xuliting@elastos.org
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+  - "$HOME/.m2"
+  - "$HOME/.gradle"
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+after_success:
+- cp $TRAVIS_BUILD_DIR/elastos.jks $HOME
+- cd app/build/outputs/apk/ela/release/
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/elastos.jks
+  -storepass $storepass -keypass $keypass app-ela-release-unsigned.apk elastos
+- jarsigner -verify app-ela-release-unsigned.apk
+- "${ANDROID_HOME}/build-tools/28.0.3/zipalign -v 4 app-ela-release-unsigned.apk elephant_wallet_test.apk"
+env:
+  global:
+  - secure: eWupYgBcTZqPx/Upm/E7iaNbxTbPAZEdR176h//la9JDiF5diQmyWdicdRIKoXF5mR6FG9RL5Kxd7KUI9E7Zsg1ocRnhiyqEpY2UmD8Hnd4SVtQE/JLMwereWevr/1mM7BsvZiCbbvGQp0GL3D+PeDAm3K9phvYGZ96+p5VOXVJfoGCsCnAOY/JiZHOtawsn3x0m8/dBwcYnfgyP6j8EZQ0XXgFUXKFF03d6OkD5TV1gc8pSLAjrVFNUG8wt5Pd3vgt9BJee0h98DBLB3HXRjoHJbv5nkKxSIKZuV/Sg/wc5W9lU6gBZ15KWmnFUEFy7wYdhNoj9Kv2Vd6ri6KRSGQG5b4I8ip4trnBgv2G232fqgFUs1rDtsXdxD0B6zka2j53M71BwhYd2+i6MgNVziUuYRhRt31R3fPvVxebUw+yMQ3xiIK8+Qg6L/iNhR9wN3bdWKpn3TkD89A9aiNTuZDM1ndU70s5qFT/qn9Qn23HI6IWs9evSZFOZtZNXKtGQJnuRP7xJlx1faDNaHmGDlGb6VABohr6oxz5bzs/iX3IsdO5LlSzpwte+MTsXa0SaU6osulPEQW0mseQOl62MWoiH0R8geu+hIx15LSyjkvfgr2kuaUnb4GM0t8G0YiaU9NHXpKLci+/56+W2rq74igQ/8y7a0+Icn2q54BqQ+F8=
+  - secure: quNhjKUXCGQGPR7p6C1I1SnqLxVP677Gpvuz2kUTH5fxmZjqq6JPOTvffNAuua1rEIJukL6UhqoYvSV+XxUYGTPGM+tO8maTCL8ZOQGlC3geuXsmJkPBlLW/kF67AmFdKwOdewy8ZLTni72fSTwYY9cgZVyXLjpi3XMGD5eeztMEVOcg2Bkq9rSvogCSXNOoZTMFdaOiC+H9ZXxlLYqJBF/A8zAglFOeH8nZUKNX1pzA1DL8Xu4rz51jV0sPCZVRTscfiub6YB9dZj5XiwAmYEWAX7tCp/OJvB9eo2hFxwX2xydDn1q/zEFn6C02cM38GT28mKNDuPLE5xbfHJ4dxuXsBhf8tLuKPdFktmtJwJuq+aD6NVkjLyvxLNCrf9GAlZ6SdPGowxEwU6E/z8f5DP+dW5ATt+zymHS/9TqRS9nMgVb9dVQQsJSHzc+PeexhDnDvwHObGpYC6OwhWGUEOa05tDTfZ/Z1JLsotsnwCvBjRuIHryS7NJC1NNZvr7LmZK5my8Kp1OP+ozxI9Rp9n2UEv3rO2N+WFa/RNFJNEuNOP1nV9sRx/Fna0Zf5dXHnPJsYDtmaYhJN2P4tYpjCSWG6Vi7GzUbFsi8FqFyDM3sc33DLx337A8Z5v4LAiL1r4JkLpoNfSBevTwwjcByBQHNjH46G46RfC7w6W+FRDn0=
