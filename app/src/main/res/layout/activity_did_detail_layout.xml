@@ -52,10 +52,11 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/app_name"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:textSize="20sp"
+        android:singleLine="true"
         android:textColor="@color/black_333333"
         app:layout_constraintLeft_toRightOf="@+id/app_icon"
         app:layout_constraintTop_toTopOf="@+id/app_icon"

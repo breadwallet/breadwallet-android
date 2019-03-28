@@ -248,6 +248,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                             e.printStackTrace();
                         } finally {
                             dialogDismiss();
+                            finish();
                         }
                     }
                 });
