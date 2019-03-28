@@ -199,6 +199,7 @@ public class ProfileActivity extends BRActivity {
             String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
             Log.i("ProfileFunction", "words is null:"+ (null==words));
             mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
             DidManager didManager = identity.createDidManager(mSeed);
