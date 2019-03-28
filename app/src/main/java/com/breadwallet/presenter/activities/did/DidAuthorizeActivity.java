@@ -178,7 +178,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
-        final String requestInfo = uriFactory.getRequestInfo().toLowerCase();
+        final String requestInfo = uriFactory.getRequestInfo();
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
@@ -204,6 +204,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
                 callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
                 if (!StringUtil.isNullOrEmpty(requestInfo)) {
+                    requestInfo.toLowerCase();
                     callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
                     callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
                     callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
@@ -217,7 +218,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
 
 
-                mLoadingDialog.show();
+                if(!isFinishing()) mLoadingDialog.show();
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -246,8 +247,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         } catch (Exception e){
                             e.printStackTrace();
                         } finally {
-                            mLoadingDialog.dismiss();
-                            finish();
+                            dialogDismiss();
                         }
                     }
                 });
@@ -268,7 +268,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mLoadingDialog.dismiss();
+                if(!isFinishing())
+                    mLoadingDialog.dismiss();
             }
         });
     }

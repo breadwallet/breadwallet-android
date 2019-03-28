@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -79,7 +80,9 @@ public class ExploreWebActivity extends BRActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mLoadingDialog.show();
+                        if(!isFinishing() && !mLoadingDialog.isShowing()){
+                            mLoadingDialog.show();
+                        }
                     }
                 });
             }
@@ -90,7 +93,9 @@ public class ExploreWebActivity extends BRActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mLoadingDialog.dismiss();
+                        if(!isFinishing() && mLoadingDialog.isShowing()){
+                            mLoadingDialog.dismiss();
+                        }
                     }
                 });
             }
