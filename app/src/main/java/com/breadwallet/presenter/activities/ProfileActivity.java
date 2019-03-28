@@ -238,6 +238,7 @@ public class ProfileActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                if(null == mDid) return;
                 mDid.syncInfo();
                 PayloadInfo payloadInfo = null;
                 String nickname = mDid.getInfo(APPID+"/Nickname");
@@ -279,6 +280,7 @@ public class ProfileActivity extends BRActivity {
 
     private String uploadData(String data){
         Log.i("ProfileFunction", "upload Data:"+ data);
+        if(null == mDid) return null;
         String info = mDid.signInfo(mSeed, data);
         Log.i("ProfileFunction", "sign info:"+info);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);

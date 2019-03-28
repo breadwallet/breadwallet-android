@@ -128,6 +128,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                if(null == mDid) return;
                 mDid.syncInfo();
                 String value = mDid.getInfo("Publickey");
                 Log.i("DidOnchain", "value:"+value);
