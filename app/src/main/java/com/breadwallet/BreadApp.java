@@ -260,12 +260,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         switch (event) {
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
+                mBackgroundedTime = 0;
 
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
                 // initialized, we may need tell the user to enable the password.
                 if (isDeviceStateValid()) {
                     if (isBRDWalletInitialized()) {
-                        mBackgroundedTime = 0;
                         WalletConnectionCleanUpWorker.cancelEnqueuedWork();
 
                         WalletConnectionWorker.enqueueWork();
