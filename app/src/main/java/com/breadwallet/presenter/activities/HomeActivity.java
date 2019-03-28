@@ -109,9 +109,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private String publicKey;
     private void initDid(){
         String mnemonic = getMn();
+        if(StringUtil.isNullOrEmpty(mnemonic)) return;
         String language = Utility.detectLang(HomeActivity.this, mnemonic);
+        if(StringUtil.isNullOrEmpty(language)) return;
         String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
+        if(StringUtil.isNullOrEmpty(words)) return;
         mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+        if(StringUtil.isNullOrEmpty(mSeed)) return;
         Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
         DidManager didManager = identity.createDidManager(mSeed);
         BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
