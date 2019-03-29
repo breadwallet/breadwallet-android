@@ -58,6 +58,4 @@ Release_checklist
 
 /app/.externalNativeBuild/
 
-elastos.jks
-
 gradle.properties
