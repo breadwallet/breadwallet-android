@@ -1013,6 +1013,6 @@
     <string name="disclaim_ok">我知道了</string>
 
     <string name="invalid_number">无效号码</string>
-    <string name="invalid_email">无效邮件</string>
+    <string name="invalid_email">无效邮箱</string>
     <string name="invalid_id">无效ID</string>
 </resources>
