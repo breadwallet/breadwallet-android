@@ -199,6 +199,7 @@ public class ProfileActivity extends BRActivity {
             String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
             Log.i("ProfileFunction", "words is null:"+ (null==words));
             mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
             DidManager didManager = identity.createDidManager(mSeed);
@@ -237,6 +238,7 @@ public class ProfileActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                if(null == mDid) return;
                 mDid.syncInfo();
                 PayloadInfo payloadInfo = null;
                 String nickname = mDid.getInfo(APPID+"/Nickname");
@@ -278,6 +280,7 @@ public class ProfileActivity extends BRActivity {
 
     private String uploadData(String data){
         Log.i("ProfileFunction", "upload Data:"+ data);
+        if(null == mDid) return null;
         String info = mDid.signInfo(mSeed, data);
         Log.i("ProfileFunction", "sign info:"+info);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
