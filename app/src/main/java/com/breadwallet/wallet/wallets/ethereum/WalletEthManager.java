@@ -724,7 +724,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
-                            if (!Utils.isNullOrEmpty(jsonResult)) {
+                            if (!Utils.isNullOrEmpty(jsonResult) && jsonResult.contains(JsonRpcHelper.RESULT)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
                                 if (responseObject.has(JsonRpcHelper.RESULT)) {

@@ -108,20 +108,22 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private String mSeed;
     private String publicKey;
     private void initDid(){
-        String mnemonic = getMn();
-        if(StringUtil.isNullOrEmpty(mnemonic)) return;
-        String language = Utility.detectLang(HomeActivity.this, mnemonic);
-        if(StringUtil.isNullOrEmpty(language)) return;
-        String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
-        if(StringUtil.isNullOrEmpty(words)) return;
-        mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
-        if(StringUtil.isNullOrEmpty(mSeed)) return;
-        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-        DidManager didManager = identity.createDidManager(mSeed);
-        BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
-        mDid = didManager.createDid(0);
-        mDid.setNode(node);
-        publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+        if(null == mDid){
+            String mnemonic = getMn();
+            if(StringUtil.isNullOrEmpty(mnemonic)) return;
+            String language = Utility.detectLang(HomeActivity.this, mnemonic);
+            if(StringUtil.isNullOrEmpty(language)) return;
+            String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
+            if(StringUtil.isNullOrEmpty(words)) return;
+            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
+            Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+            DidManager didManager = identity.createDidManager(mSeed);
+            BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
+            mDid = didManager.createDid(0);
+            mDid.setNode(node);
+            publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+        }
     }
 
     private void didIsOnchain(){
@@ -133,7 +135,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 String value = mDid.getInfo("Publickey");
                 Log.i("DidOnchain", "value:"+value);
                 if(StringUtil.isNullOrEmpty(value) || !value.contains("Publickey")){
+                    if(StringUtil.isNullOrEmpty(publicKey)) return;
                     String data = getKeyVale("Publickey", publicKey);
+                    if(StringUtil.isNullOrEmpty(data)) return;
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
