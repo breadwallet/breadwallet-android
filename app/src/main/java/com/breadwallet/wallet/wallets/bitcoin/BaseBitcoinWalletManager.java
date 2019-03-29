@@ -73,6 +73,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -82,7 +84,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public static final int ONE_BITCOIN_IN_SATOSHIS = 100000000; // 1 Bitcoin in satoshis, 100 millions
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
-    private static final int SYNC_MAX_RETRY = 3;
+    // TODO Android code shouldn't retry at all, all the retries should be handled by core, temporary fix for CORE-266
+    private static final int SYNC_MAX_RETRY = 1;
+    private static final int SYNC_RETRY_DELAY_SECONDS = 3;
 
     public static final String BITCOIN_CURRENCY_CODE = "BTC";
     public static final String BITCASH_CURRENCY_CODE = "BCH";
@@ -937,28 +941,19 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         onSyncStopped(error);
 
         if (!Utils.isNullOrEmpty(error)) {
-            if (mSyncRetryCount < SYNC_MAX_RETRY) {
+            if (mSyncRetryCount < SYNC_MAX_RETRY && networkIsReachable()) {
                 Log.e(getTag(), "syncStopped: Retrying: " + mSyncRetryCount);
                 //Retry
                 mSyncRetryCount++;
-                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getPeerManager().connect();
-                    }
-                });
-
+                ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+                Runnable retry = () -> getPeerManager().connect();
+                worker.schedule(retry, SYNC_RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
             } else {
                 //Give up
                 Log.e(getTag(), "syncStopped: Giving up: " + mSyncRetryCount);
                 mSyncRetryCount = 0;
                 if (BuildConfig.DEBUG) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show());
                 }
             }
         }
