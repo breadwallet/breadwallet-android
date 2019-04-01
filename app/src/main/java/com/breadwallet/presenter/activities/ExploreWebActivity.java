@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -103,19 +102,16 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 super.onReceivedSslError(view, handler, error);
-                Log.i("xidaokun", "onReceivedSslError");
             }
 
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
-                Log.i("xidaokun", "onReceivedHttpError");
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                Log.i("xidaokun", "onReceivedError");
             }
         });
     }
