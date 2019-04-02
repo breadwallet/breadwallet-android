@@ -208,7 +208,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
                 callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
                 callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
-                callbackData.EMail = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
+                callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
                 callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
                 callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getID(this) : null;
                 callbackData.RandomNumber = requestInfo.contains("RandomNumber".toLowerCase()) ? randomNumber : null;
