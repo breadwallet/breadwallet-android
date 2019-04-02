@@ -85,6 +85,13 @@ public class FragmentExplore extends Fragment {
                 UiUtils.startWebviewActivity(getContext(), "https://redpacket.elastos.org");
             }
         });
+
+        mBannerview3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/index.html");
+            }
+        });
         mOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

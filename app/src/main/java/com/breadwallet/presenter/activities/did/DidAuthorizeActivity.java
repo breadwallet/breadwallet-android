@@ -178,7 +178,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
-        final String requestInfo = uriFactory.getRequestInfo();
+        final String requestInfo = !StringUtil.isNullOrEmpty(uriFactory.getRequestInfo())?uriFactory.getRequestInfo().toLowerCase():null;
+
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
@@ -189,74 +190,72 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
         if (isValid) {
             cacheAuthorInfo(uriFactory);
-            if (!StringUtil.isNullOrEmpty(backurl)) {
-                final CallbackEntity entity = new CallbackEntity();
-                String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
-                String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
-                String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
-                final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
-                BaseWalletManager btc = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BTC");
-                BaseWalletManager eth = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "ETH");
-                BaseWalletManager bch = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BCH");
-                CallbackData callbackData = new CallbackData();
-                callbackData.DID = myDid;
-                callbackData.PublicKey = myPK;
-                callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
-                callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
-                if (!StringUtil.isNullOrEmpty(requestInfo)) {
-                    requestInfo.toLowerCase();
-                    callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
-                    callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
-                    callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
-                    callbackData.EMail = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
-                    callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                    callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getID(this) : null;
-                    callbackData.RandomNumber = requestInfo.contains("RandomNumber".toLowerCase()) ? randomNumber : null;
-                }
-                entity.Data = new Gson().toJson(callbackData);
-                entity.PublicKey = myPK;
-                entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
-
-
-                if(!isFinishing()) mLoadingDialog.show();
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
-                            if(StringUtil.isNullOrEmpty(ret)) {
-                                toast("invalid callback url");
-                            }
-                            if(StringUtil.isNullOrEmpty(ret) || ret.contains("err code:")) {
-                                toast("callback return error");
-                            }
-                            if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
-                                toast("invalid return url");
-                            }
-                            String url;
-                            if (returnUrl.contains("?")) {
-                                url = returnUrl +"&did="+ myDid + "&response=" +  Uri.encode(new Gson().toJson(entity));
-                            } else {
-                                url = returnUrl + "?did="+ myDid +  "&response=" +  Uri.encode(new Gson().toJson(entity));
-                            }
-                            if(returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")){
-                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-                            } else {
-                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
-                            }
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        } finally {
-                            dialogDismiss();
-                            finish();
-                        }
-                    }
-                });
+            final CallbackEntity entity = new CallbackEntity();
+            String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
+            String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
+            String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
+            final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+            BaseWalletManager btc = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BTC");
+            BaseWalletManager eth = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "ETH");
+            BaseWalletManager bch = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BCH");
+            CallbackData callbackData = new CallbackData();
+            callbackData.DID = myDid;
+            callbackData.PublicKey = myPK;
+            callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
+            callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
+            if (!StringUtil.isNullOrEmpty(requestInfo)) {
+                requestInfo.toLowerCase();
+                callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
+                callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
+                callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
+                callbackData.EMail = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
+                callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
+                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getID(this) : null;
+                callbackData.RandomNumber = requestInfo.contains("RandomNumber".toLowerCase()) ? randomNumber : null;
             }
+            entity.Data = new Gson().toJson(callbackData);
+            entity.PublicKey = myPK;
+            entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
+
+
+            if (!isFinishing()) mLoadingDialog.show();
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
+                        if (StringUtil.isNullOrEmpty(ret)) {
+                            toast("invalid callback url");
+                        }
+                        if (StringUtil.isNullOrEmpty(ret) || ret.contains("err code:")) {
+                            toast("callback return error");
+                        }
+                        if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
+                            toast("invalid return url");
+                        }
+                        String url;
+                        if (returnUrl.contains("?")) {
+                            url = returnUrl + "&did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                        } else {
+                            url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                        }
+                        if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
+                            UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+                        } else {
+                            UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        dialogDismiss();
+                        finish();
+                    }
+                }
+            });
         }
     }
 
-    private void toast(final String message){
+    private void toast(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -269,7 +268,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!isFinishing())
+                if (!isFinishing())
                     mLoadingDialog.dismiss();
             }
         });
