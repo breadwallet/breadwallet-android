@@ -175,11 +175,13 @@
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/auto_checkbox"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="32dp"
+        android:layout_marginRight="10dp"
         android:drawablePadding="5dp"
+        app:layout_constraintRight_toRightOf="parent"
         android:button="@drawable/author_check_selector"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="@string/Author.Auto.Check"

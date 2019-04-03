@@ -201,6 +201,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             CallbackData callbackData = new CallbackData();
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
+            callbackData.RandomNumber = randomNumber;
             callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
             callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
             if (!StringUtil.isNullOrEmpty(requestInfo)) {
@@ -210,8 +211,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
                 callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
                 callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getID(this) : null;
-                callbackData.RandomNumber = requestInfo.contains("RandomNumber".toLowerCase()) ? randomNumber : null;
+                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getRealname(this)+","+BRSharedPrefs.getID(this) : null;
             }
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;

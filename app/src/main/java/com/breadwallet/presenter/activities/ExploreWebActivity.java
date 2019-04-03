@@ -1,13 +1,13 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -27,22 +28,73 @@ public class ExploreWebActivity extends BRActivity {
 
     private WebView webView;
     private LoadingDialog mLoadingDialog;
+    private BaseTextView mTitleTv;
+    private BaseTextView mBackTv;
+    private View mMenuLayout;
+    private BaseTextView mAboutTv;
+    private BaseTextView mCancelTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expolre_web_layout);
 
+        initView();
+        initListener();
+    }
+
+    private void initView(){
         webView = findViewById(R.id.web_view);
+        mTitleTv = findViewById(R.id.explore_web_title);
+        mBackTv = findViewById(R.id.explore_web_back);
+        mMenuLayout = findViewById(R.id.explore_web_about_layout);
+        mAboutTv = findViewById(R.id.explore_web_about);
+        mCancelTv = findViewById(R.id.explore_web_cancle);
         webviewSetting();
 
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
+    }
 
-        findViewById(R.id.web_finish).setOnClickListener(new View.OnClickListener() {
+    private void initListener(){
+        findViewById(R.id.explore_web_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMenuLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        findViewById(R.id.explore_web_finish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        mBackTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(webView.canGoBack()) webView.goBack();
+            }
+        });
+
+        mMenuLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
+        mCancelTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMenuLayout.setVisibility(View.GONE);
+            }
+        });
+        mAboutTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -51,16 +103,7 @@ public class ExploreWebActivity extends BRActivity {
     public void onResume() {
         super.onResume();
         String url = getIntent().getStringExtra("explore_url");
-        Log.i("loadUrl", "onResume url:"+url);
         loadUrl(url);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String url = getIntent().getStringExtra("explore_url");
-        Log.i("loadUrl", "onNewIntent url:"+url);
-//        loadUrl(url);
     }
 
     private void webviewSetting() {
@@ -75,7 +118,6 @@ public class ExploreWebActivity extends BRActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.i("loadUrl", "shouldOverrideUrl url:"+url);
                 if(StringUtil.isNullOrEmpty(url)) return true;
                 loadUrl(url);
                 return true;
@@ -97,6 +139,14 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+
+                String title = view.getTitle();
+                mTitleTv.setText(title);
+
+                WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
+                int account = mWebBackForwardList.getCurrentIndex();
+                mBackTv.setVisibility((account>0)?View.VISIBLE:View.GONE);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -125,7 +175,6 @@ public class ExploreWebActivity extends BRActivity {
     }
 
     private void loadUrl(String url){
-        Log.i("loadUrl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
         if(url.startsWith("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
