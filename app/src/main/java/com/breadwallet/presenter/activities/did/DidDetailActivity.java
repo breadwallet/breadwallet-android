@@ -13,7 +13,9 @@ import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -41,17 +43,30 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private BaseTextView mPublickeyTx;
     private BaseTextView mDidTx;
     private CheckBox mAuthorCbox;
+    private RoundImageView mAppIcon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         String did = intent.getStringExtra("did");
+        String appId = intent.getStringExtra("appId");
         if(!StringUtil.isNullOrEmpty(did)) {
             mAuthorInfo = DidDataSource.getInstance(this).getInfoByDid(did);
         }
         initView();
         initData();
+        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
+        if(!StringUtil.isNullOrEmpty(appId)) {
+            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.HASH_ID)){
+                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+            }
+        }
+        mAppIcon.setImageDrawable(getDrawable(iconResourceId));
     }
 
     private void initView() {
@@ -62,6 +77,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mPublickeyTx = findViewById(R.id.pub_key);
         mDidTx = findViewById(R.id.did);
         mAuthorCbox = findViewById(R.id.auto_checkbox);
+        mAppIcon = findViewById(R.id.app_icon);
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo.getDid());
         mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
 

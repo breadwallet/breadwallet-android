@@ -50,6 +50,7 @@ public class DidAuthListActivity extends BaseSettingsActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(DidAuthListActivity.this, DidDetailActivity.class);
                 intent.putExtra("did", infos.get(i).getDid());
+                intent.putExtra("appId", infos.get(i).getAppId());
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

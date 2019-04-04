@@ -52,7 +52,7 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/app_name"
-        android:layout_width="240dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:textSize="20sp"

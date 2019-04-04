@@ -20,6 +20,7 @@ import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -56,6 +57,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private CheckBox mAuthorCbox;
 
     private BaseTextView mWillTv;
+
+    private RoundImageView mAppIcon;
 
     @Override
     public int getLayoutId() {
@@ -106,6 +109,19 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
         mAuthorCbox.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
 
+        String appId = uriFactory.getAppID();
+        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
+        if(!StringUtil.isNullOrEmpty(appId)) {
+            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.HASH_ID)){
+                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+            }
+        }
+        mAppIcon.setImageDrawable(getDrawable(iconResourceId));
+
         if (isAuto) author();
     }
 
@@ -132,6 +148,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorizeBtn = findViewById(R.id.authorize_btn);
         mAuthorCbox = findViewById(R.id.auto_checkbox);
         mWillTv = findViewById(R.id.auth_info);
+        mAppIcon = findViewById(R.id.app_icon);
     }
 
     private void initListener() {
