@@ -18,7 +18,7 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/auth_app_name"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Elasto Developer Site"
         android:textSize="16sp"

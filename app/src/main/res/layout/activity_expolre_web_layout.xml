@@ -1,12 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background">
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/web_title"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#00000000">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/explore_web_back"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:background="@drawable/ic_web_back"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="15dp"
+            android:visibility="gone"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/explore_web_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="22sp"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/ic_explore_menu_react">
+            <View
+                android:layout_width="18dp"
+                android:layout_height="6dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/ic_explore_menu_about"/>
+            <View
+                android:id="@+id/explore_web_menu"
+                android:layout_width="18dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:background="#00000000"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="18dp"
+                android:layout_centerInParent="true"
+                android:background="#DEDEE0"/>
+
+            <View
+                android:id="@+id/explore_web_finish"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/ic_explore_menu_finish"/>
+
+        </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
+
     <WebView
         android:id="@+id/web_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintTop_toBottomOf="@+id/web_title"
+        android:layout_marginTop="56dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/explore_web_about_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#33000000"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/explore_web_about"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:background="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/explore_horizontal_line"
+            android:textColor="@color/black_333333"
+            android:text="@string/explore_menu_about"/>
+
+        <View
+            android:id="@+id/explore_horizontal_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toTopOf="@+id/explore_web_cancle"
+            android:background="#F7F8FB"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/explore_web_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:background="@color/white"
+            android:textColor="@color/black_333333"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/explore_menu_cancel"/>
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>

@@ -75,7 +75,7 @@ public class FragmentExplore extends Fragment {
         mBannerview1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.startWebviewActivity(getContext(), "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
+                UiUtils.openUrlByBrowser(getContext(), "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
             }
         });
 
@@ -83,6 +83,13 @@ public class FragmentExplore extends Fragment {
             @Override
             public void onClick(View view) {
                 UiUtils.startWebviewActivity(getContext(), "https://redpacket.elastos.org");
+            }
+        });
+
+        mBannerview3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/index.html");
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

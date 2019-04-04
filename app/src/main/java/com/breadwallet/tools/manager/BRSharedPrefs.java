@@ -188,6 +188,7 @@ public class BRSharedPrefs {
     }
 
     public static void putMobile(Context context, String mobile) {
+        if(StringUtil.isNullOrEmpty(mobile)) mobile = "+86";
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("mobile", mobile);

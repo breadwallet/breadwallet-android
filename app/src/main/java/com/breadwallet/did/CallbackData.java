@@ -9,7 +9,7 @@ public class CallbackData {
     public String BCHAddress;
     public String ETHAddress;
     public String IOEXAddress;
-    public String EMail;
+    public String Email;
     public String PhoneNumber;
     public String ChineseIDCard;
     public String RandomNumber;
