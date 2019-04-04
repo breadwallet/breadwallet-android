@@ -7,6 +7,16 @@ public class AuthorInfo {
     private long authorTime;
     private long expTime;
     private String appName;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    private String appId;
     private String appIcon;
 
     public String getNickName() {
