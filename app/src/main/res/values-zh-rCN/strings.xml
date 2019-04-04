@@ -1018,4 +1018,6 @@
 
     <string name="explore_menu_about">关于</string>
     <string name="explore_menu_cancel">取消</string>
+
+    <string name="redpackage_title">红包</string>
 </resources>

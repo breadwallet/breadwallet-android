@@ -141,13 +141,14 @@ public class ExploreWebActivity extends BRActivity {
                 super.onPageFinished(view, url);
 
                 String title = view.getTitle();
-                mTitleTv.setText(title);
 
                 WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
                 int account = mWebBackForwardList.getCurrentIndex();
                 if(url.contains("redpacket")){
+                    mTitleTv.setText(getResources().getString(R.string.redpackage_title));
                     mBackTv.setVisibility((account>1)?View.VISIBLE:View.GONE);
                 } else {
+                    mTitleTv.setText(title);
                     mBackTv.setVisibility((account>0)?View.VISIBLE:View.GONE);
                 }
 

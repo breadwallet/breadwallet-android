@@ -1026,4 +1026,6 @@
 
     <string name="explore_menu_about">About</string>
     <string name="explore_menu_cancel">Cancel</string>
+
+    <string name="redpackage_title">Red Packet</string>
 </resources>
