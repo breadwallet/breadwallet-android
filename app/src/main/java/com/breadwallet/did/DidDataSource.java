@@ -58,6 +58,7 @@ public class DidDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.DID_AUTHOR_NICKNAME, info.getNickName());
             value.put(BRSQLiteHelper.DID_AUTHOR_DID, info.getDid());
             value.put(BRSQLiteHelper.DID_AUTHOR_PK, info.getPK());
+            value.put(BRSQLiteHelper.DID_AUTHOR_APP_ID, info.getAppId());
             value.put(BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME, info.getAuthorTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_EXP_TIME, info.getExpTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_NAME, info.getAppName());
@@ -128,10 +129,11 @@ public class DidDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.DID_AUTHOR_NICKNAME,//0
             BRSQLiteHelper.DID_AUTHOR_DID,//1
             BRSQLiteHelper.DID_AUTHOR_PK,//2
-            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//3
-            BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//4
-            BRSQLiteHelper.DID_AUTHOR_APP_NAME,//5
-            BRSQLiteHelper.DID_AUTHOR_APP_ICON//6
+            BRSQLiteHelper.DID_AUTHOR_APP_ID,//3
+            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//4
+            BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//5
+            BRSQLiteHelper.DID_AUTHOR_APP_NAME,//6
+            BRSQLiteHelper.DID_AUTHOR_APP_ICON//7
     };
 
     private AuthorInfo cursorToInfo(Cursor cursor) {
@@ -139,10 +141,11 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setNickName(cursor.getString(0));
         authorInfo.setDid(cursor.getString(1));
         authorInfo.setPK(cursor.getString(2));
-        authorInfo.setAuthorTime(cursor.getLong(3));
-        authorInfo.setExpTime(cursor.getLong(4));
-        authorInfo.setAppName(cursor.getString(5));
-        authorInfo.setAppIcon(cursor.getString(6));
+        authorInfo.setAppId(cursor.getString(3));
+        authorInfo.setAuthorTime(cursor.getLong(4));
+        authorInfo.setExpTime(cursor.getLong(5));
+        authorInfo.setAppName(cursor.getString(6));
+        authorInfo.setAppIcon(cursor.getString(7));
         return authorInfo;
     }
 

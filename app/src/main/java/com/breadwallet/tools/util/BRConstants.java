@@ -139,6 +139,7 @@ public final class BRConstants {
 
 
     public static final String REA_PACKAGE_ID = "cc053c61afc22dda9a309e96943c1734";
+    public static final String DEVELOPER_WEBSITE = "62f3178e1ad6f98bf383ee5bc98ac8e7f9affaaf705ab337bde46082d3dde7a9";
 
     private BRConstants() {
     }

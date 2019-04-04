@@ -289,6 +289,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         AuthorInfo info = new AuthorInfo();
         info.setAuthorTime(getAuthorTime(0));
         info.setPK(uriFactory.getPublicKey());
+        info.setAppId(uriFactory.getAppID());
         info.setNickName(uriFactory.getAppName());
         info.setDid(uriFactory.getDID());
         info.setAppName(uriFactory.getAppName());
