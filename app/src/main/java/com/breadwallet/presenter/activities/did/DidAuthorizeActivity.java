@@ -214,7 +214,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
                 String realname = BRSharedPrefs.getRealname(this);
                 String idcard = BRSharedPrefs.getID(this);
-                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? realname+","+idcard : null;
+                callbackData.RealName = requestInfo.contains("RealName".toLowerCase()) ? realname : null;
+                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? idcard : null;
             }
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;
