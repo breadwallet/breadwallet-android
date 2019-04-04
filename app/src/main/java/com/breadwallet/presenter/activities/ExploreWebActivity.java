@@ -94,7 +94,7 @@ public class ExploreWebActivity extends BRActivity {
         mAboutTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mMenuLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -145,7 +145,11 @@ public class ExploreWebActivity extends BRActivity {
 
                 WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
                 int account = mWebBackForwardList.getCurrentIndex();
-                mBackTv.setVisibility((account>0)?View.VISIBLE:View.GONE);
+                if(url.contains("redpacket")){
+                    mBackTv.setVisibility((account>1)?View.VISIBLE:View.GONE);
+                } else {
+                    mBackTv.setVisibility((account>0)?View.VISIBLE:View.GONE);
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override

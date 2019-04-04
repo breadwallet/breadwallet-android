@@ -1015,4 +1015,7 @@
     <string name="invalid_number">无效号码</string>
     <string name="invalid_email">无效邮箱</string>
     <string name="invalid_id">无效ID</string>
+
+    <string name="explore_menu_about">关于</string>
+    <string name="explore_menu_cancel">取消</string>
 </resources>

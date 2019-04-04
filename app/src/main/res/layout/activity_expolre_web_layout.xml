@@ -42,13 +42,21 @@
             android:layout_marginRight="15dp"
             android:background="@drawable/ic_explore_menu_react">
             <View
-                android:id="@+id/explore_web_menu"
                 android:layout_width="18dp"
                 android:layout_height="6dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="15dp"
                 android:background="@drawable/ic_explore_menu_about"/>
+            <View
+                android:id="@+id/explore_web_menu"
+                android:layout_width="18dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:background="#00000000"/>
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="18dp"
@@ -91,20 +99,26 @@
             android:layout_height="60dp"
             android:gravity="center"
             android:background="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/explore_web_cancle"
+            app:layout_constraintBottom_toTopOf="@+id/explore_horizontal_line"
             android:textColor="@color/black_333333"
-            android:text="关于投票"/>
+            android:text="@string/explore_menu_about"/>
+
+        <View
+            android:id="@+id/explore_horizontal_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toTopOf="@+id/explore_web_cancle"
+            android:background="#F7F8FB"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/explore_web_cancle"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:gravity="center"
-            android:layout_marginTop="5dp"
             android:background="@color/white"
             android:textColor="@color/black_333333"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="取消"/>
+            android:text="@string/explore_menu_cancel"/>
 
     </android.support.constraint.ConstraintLayout>
 

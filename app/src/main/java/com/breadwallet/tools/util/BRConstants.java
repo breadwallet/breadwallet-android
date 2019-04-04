@@ -138,6 +138,8 @@ public final class BRConstants {
     public static final String URL_BLOG  = "http://t.me/elastoswalletelephant";
 
 
+    public static final String REA_PACKAGE_ID = "";
+
     private BRConstants() {
     }
 

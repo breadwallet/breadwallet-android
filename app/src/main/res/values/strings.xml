@@ -1023,5 +1023,7 @@
     <string name="invalid_number">invalid number</string>
     <string name="invalid_email">invalid email</string>
     <string name="invalid_id">invalid ID</string>
-    
+
+    <string name="explore_menu_about">About</string>
+    <string name="explore_menu_cancel">Cancel</string>
 </resources>

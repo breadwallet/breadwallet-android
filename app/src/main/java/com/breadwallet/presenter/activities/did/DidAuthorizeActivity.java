@@ -25,6 +25,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.WalletsMaster;
@@ -174,7 +175,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         }
 
         final String did = uriFactory.getDID();
-        String appId = uriFactory.getAppID();
+        final String appId = uriFactory.getAppID();
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
@@ -211,7 +212,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
                 callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
                 callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? BRSharedPrefs.getRealname(this)+","+BRSharedPrefs.getID(this) : null;
+                String realname = BRSharedPrefs.getRealname(this);
+                String idcard = BRSharedPrefs.getID(this);
+                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? realname+","+idcard : null;
             }
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;
@@ -223,26 +226,32 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 @Override
                 public void run() {
                     try {
-                        String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
-                        if (StringUtil.isNullOrEmpty(ret)) {
-                            toast("invalid callback url");
+                        if(!StringUtil.isNullOrEmpty(backurl)){
+                            String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
+                            if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+                                toast("callback return error");
+                            }
                         }
-                        if (StringUtil.isNullOrEmpty(ret) || ret.contains("err code:")) {
-                            toast("callback return error");
-                        }
-                        if (StringUtil.isNullOrEmpty(returnUrl) || returnUrl.equals("null")) {
-                            toast("invalid return url");
-                        }
-                        String url;
-                        if (returnUrl.contains("?")) {
-                            url = returnUrl + "&did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
-                        } else {
-                            url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
-                        }
-                        if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
-                            UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-                        } else {
-                            UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+
+                        if (!StringUtil.isNullOrEmpty(returnUrl)) {
+                            String url;
+                            if (returnUrl.contains("?")) {
+                                url = returnUrl + "&did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                            } else {
+                                url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                            }
+
+                            if(BRConstants.REA_PACKAGE_ID.equals(appId)){
+                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+                            } else {
+                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+                            }
+
+//                            if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
+//                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+//                            } else {
+//                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+//                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
