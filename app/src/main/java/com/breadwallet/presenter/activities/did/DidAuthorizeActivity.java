@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,7 +17,9 @@ import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
+import com.breadwallet.did.ChineseIDCard;
 import com.breadwallet.did.DidDataSource;
+import com.breadwallet.did.PhoneNumber;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
@@ -220,6 +223,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
             callbackData.RandomNumber = randomNumber;
+            callbackData.PhoneNumber = new PhoneNumber();
             callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
             callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
             if (!StringUtil.isNullOrEmpty(requestInfo)) {
@@ -228,11 +232,17 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
                 callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
                 callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
-                callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                String realname = BRSharedPrefs.getRealname(this);
-                String idcard = BRSharedPrefs.getID(this);
-                callbackData.RealName = requestInfo.contains("RealName".toLowerCase()) ? realname : null;
-                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? idcard : null;
+                PhoneNumber phoneNumber = new PhoneNumber();
+                phoneNumber.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
+                phoneNumber.CountryCode = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getArea(this) : null;
+                callbackData.PhoneNumber = phoneNumber;
+                String realName = BRSharedPrefs.getRealname(this);
+                String idNumber = BRSharedPrefs.getID(this);
+                if(!StringUtil.isNullOrEmpty(realName) || !StringUtil.isNullOrEmpty(idNumber)){
+                    callbackData.ChineseIDCard = new ChineseIDCard();
+                    callbackData.ChineseIDCard.RealName = requestInfo.contains("RealName".toLowerCase()) ?  realName: null;
+                    callbackData.ChineseIDCard.IDNumber = requestInfo.contains("ChineseIDCard".toLowerCase()) ?  idNumber: null;
+                }
             }
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;

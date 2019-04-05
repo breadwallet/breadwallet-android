@@ -187,6 +187,29 @@ public class ProfileActivity extends BRActivity {
         return new Gson().toJson(keyValues, new TypeToken<List<KeyValue>>(){}.getType());
     }
 
+    class PhoneNumber {
+        public String PhoneNumber;
+        public String CountryCode;
+    }
+
+    class KeyValuePhone {
+        public String Key;
+        public PhoneNumber Value;
+    }
+
+    private String getPhoneNumberValue(String path, String area, String number){
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.CountryCode = area;
+        phoneNumber.PhoneNumber = number;
+
+        KeyValuePhone keyValueId = new KeyValuePhone();
+        keyValueId.Key = APPID + "/" + path;
+        keyValueId.Value = phoneNumber;
+
+        List<KeyValue> keyValues = new ArrayList<>();
+        return new Gson().toJson(keyValues, new TypeToken<List<KeyValue>>(){}.getType());
+    }
+
     private Did mDid;
     private String mSeed;
     private void initDid(){
@@ -349,14 +372,16 @@ public class ProfileActivity extends BRActivity {
 
                 } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
                     String mobile = data.getStringExtra("mobile");
-                    Log.i("ProfileFunction", "mobile:"+mobile);
+                    String area = data.getStringExtra("area");
+                    Log.i("ProfileFunction", "area:"+area+" mobile:"+mobile);
                     if(null == mobile) return;
-                    String data = getKeyVale("Mobile", mobile);
+                    String data = getPhoneNumberValue("Mobile", area, mobile);
                     if(BuildConfig.CAN_UPLOAD.contains("mobile")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("mobile")){
                         canRefresh = true;
+                        BRSharedPrefs.putArea(ProfileActivity.this, area);
                         BRSharedPrefs.putMobile(ProfileActivity.this, mobile);
-                        if(mobile.equals("86,")){
+                        if(mobile.equals("")){
                             BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("mobile")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
