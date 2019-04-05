@@ -16,6 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
+import com.breadwallet.did.ChineseIDCard;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
@@ -229,10 +230,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
                 callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
                 callbackData.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                String realname = BRSharedPrefs.getRealname(this);
-                String idcard = BRSharedPrefs.getID(this);
-                callbackData.RealName = requestInfo.contains("RealName".toLowerCase()) ? realname : null;
-                callbackData.ChineseIDCard = requestInfo.contains("ChineseIDCard".toLowerCase()) ? idcard : null;
+                String realName = BRSharedPrefs.getRealname(this);
+                String idNumber = BRSharedPrefs.getID(this);
+                if(!StringUtil.isNullOrEmpty(realName) || !StringUtil.isNullOrEmpty(idNumber)){
+                    callbackData.ChineseIDCard = new ChineseIDCard();
+                    callbackData.ChineseIDCard.RealName = requestInfo.contains("RealName".toLowerCase()) ?  realName: null;
+                    callbackData.ChineseIDCard.IDNumber = requestInfo.contains("IDNumber".toLowerCase()) ?  idNumber: null;
+                }
             }
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;

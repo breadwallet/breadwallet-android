@@ -12,6 +12,6 @@ public class CallbackData {
     public String Email;
     public String PhoneNumber;
     public String RealName;
-    public String ChineseIDCard;
+    public ChineseIDCard ChineseIDCard;
     public String RandomNumber;
 }
