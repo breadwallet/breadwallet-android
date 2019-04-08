@@ -86,7 +86,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
 
-        initDid();
         didIsOnchain();
     }
 
@@ -130,14 +129,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                initDid();
                 if(null == mDid) return;
                 mDid.syncInfo();
-                String value = mDid.getInfo("Publickey");
+                String value = mDid.getInfo("PublicKey");
                 Log.i("DidOnchain", "value:"+value);
-                if(StringUtil.isNullOrEmpty(value) || !value.contains("Publickey")){
+                if(StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")){
                     if(StringUtil.isNullOrEmpty(publicKey)) return;
-                    String data = getKeyVale("Publickey", publicKey);
-                    if(StringUtil.isNullOrEmpty(data)) return;
+                    String data = getKeyVale("PublicKey", publicKey);
+                    if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
