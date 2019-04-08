@@ -90,6 +90,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             } else {
                 holder.mErc20Icon.setVisibility(View.GONE);
             }
+            if("ioex".equalsIgnoreCase(item.symbol)) holder.mErc20Icon.setVisibility(View.GONE);
 
             try {
                 holder.tokenIcon.setImageDrawable(mContext.getDrawable(iconResourceId));
