@@ -38,8 +38,6 @@
     <string name="Alert.error">Fejl</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Der er et problem med din Android OS keystore, kontakt venligst support@breadwallet.com</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Dine BRD-krypterede data blev for nyligt ugyldiggjort, eftersom din Android skærmlås blev deaktiveret.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStore fejl</string>
     <!-- No internet alert message -->
