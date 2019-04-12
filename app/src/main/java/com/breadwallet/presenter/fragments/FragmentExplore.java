@@ -61,13 +61,9 @@ public class FragmentExplore extends Fragment {
         super.onResume();
         String languageCode = Locale.getDefault().getLanguage();
         if(!StringUtil.isNullOrEmpty(languageCode)){
-            mBannerview1.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner1_en): (R.drawable.explore_banner1_zh));
-            mBannerview2.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner2_en): (R.drawable.explore_banner2_zh));
-            mBannerview3.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner3_en): (R.drawable.explore_banner3_zh));
-        } else {
-            mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
-            mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
-            mBannerview3.setBackgroundResource(R.drawable.explore_banner3_en);
+            mBannerview1.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner1_zh): (R.drawable.explore_banner1_en));
+            mBannerview2.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner2_zh): (R.drawable.explore_banner2_en));
+            mBannerview3.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner3_zh): (R.drawable.explore_banner3_en));
         }
     }
 
@@ -89,7 +85,7 @@ public class FragmentExplore extends Fragment {
         mBannerview3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/index.html");
+                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/vote_request.html");
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

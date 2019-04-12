@@ -673,4 +673,28 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("disclaimshow", true);
     }
+
+    public static void setAutoVote(Context context, boolean is){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("autoVote", is);
+        editor.apply();
+    }
+
+    public static boolean getAutoVote(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("autoVote", false);
+    }
+
+    public static void cacheCandidate(Context context, String candidate){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("candidate", candidate);
+        editor.apply();
+    }
+
+    public static String getCandidate(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("candidate", "");
+    }
 }

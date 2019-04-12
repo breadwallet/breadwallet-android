@@ -220,8 +220,8 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
-    implementation project(':authorizelibrary')
     implementation project(':walletlibrary')
+    implementation project(':authorizelibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

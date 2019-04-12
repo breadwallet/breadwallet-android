@@ -20,6 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
@@ -187,7 +188,9 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.startsWith("elaphant") && url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
-        } else {
+        } if(url.startsWith("elaphant") && url.contains("eladposvote")) {
+            UiUtils.startVoteActivity(ExploreWebActivity.this, url);
+        }else {
             webView.loadUrl(url);
         }
     }

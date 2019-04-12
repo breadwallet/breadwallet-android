@@ -19,9 +19,12 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
+import com.breadwallet.wallet.wallets.ela.request.Outputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
+import com.breadwallet.wallet.wallets.ela.response.create.Payload;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.elastos.jni.Utility;
@@ -76,7 +79,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = "api-wallet-ela.elastos.org";
+    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "api-wallet-ela-testnet.elastos.org";
 
     private static ElaDataSource mInstance;
 
@@ -325,8 +328,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         return true;
     }
 
-    ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
+        return createElaTx(inputAddress, outputsAddress, amount, memo, null);
+    }
+
+    ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+    public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo, List<String> payload){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
@@ -336,13 +343,22 @@ public class ElaDataSource implements BRDataSourceInterface {
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
 
-            com.breadwallet.wallet.wallets.ela.request.Outputs outputs = new com.breadwallet.wallet.wallets.ela.request.Outputs();
+            Outputs outputs = new Outputs();
             outputs.addr = outputsAddress;
             outputs.amt = amount;
+            Outputs voteOutputs = new Outputs();
+            long tmpBalance = 0;
+            if(payload!=null && payload.size()>0) {
+                BigDecimal balance = BRSharedPrefs.getCachedBalance(mContext, "ELA");
+                voteOutputs.addr = inputAddress;
+                voteOutputs.amt = balance.multiply(new BigDecimal("100000000")).subtract(new BigDecimal(amount)).subtract(new BigDecimal(10000)).longValue();
+                tmpBalance = voteOutputs.amt;
+            }
 
             tx.outputs.add(outputs);
 
             String json = new Gson().toJson(tx);
+            Log.d("posvote", "request json:"+json);
             String result = urlPost(url, json)/*getCreateTx()*/;
 
             JSONObject jsonObject = new JSONObject(result);
@@ -350,11 +366,23 @@ public class ElaDataSource implements BRDataSourceInterface {
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
             if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
+            List<ElaOutputs> outputsR = res.Transactions.get(0).Outputs;
+            for(int i=0; i<outputsR.size(); i++){
+                ElaOutputs utxoInputs = outputsR.get(i);
+                String address = utxoInputs.address;
+                if(inputAddress.equals(address) && utxoInputs.amount==tmpBalance) {
+                    Payload tmp = new Payload();
+                    tmp.CandidatePublicKeys = payload;
+                    utxoInputs.payload = tmp;
+                }
+            }
+
             for(int i=0; i<inputs.size(); i++){
                 ElaUTXOInputs utxoInputs = inputs.get(i);
                 utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
             }
 
+            Log.d("posvote", "create json:"+res);
             String transactionJson =new Gson().toJson(res);
 
             brElaTransaction = new BRElaTransaction();
@@ -379,7 +407,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             e.printStackTrace();
         }
 
-        return brElaTransaction;
+        //TODO daokun.xi test
+        return /*brElaTransaction*/null;
     }
 
 

@@ -1020,4 +1020,6 @@
     <string name="explore_menu_cancel">取消</string>
 
     <string name="redpackage_title">红包</string>
+    <string name="vote_title">投票</string>
+    <string name="vote_nodes_count">你将要向%1$d个节点投票(最多36个).</string>
 </resources>

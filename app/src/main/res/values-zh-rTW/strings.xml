@@ -1011,4 +1011,5 @@
     <string name="invalid_number">無效號碼</string>
     <string name="invalid_email">無效郵件</string>
     <string name="invalid_id">無效ID</string>
+    <string name="vote_title">投票</string>
 </resources>

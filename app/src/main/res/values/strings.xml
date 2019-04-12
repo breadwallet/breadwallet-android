@@ -1026,6 +1026,8 @@
 
     <string name="explore_menu_about">About</string>
     <string name="explore_menu_cancel">Cancel</string>
-
     <string name="redpackage_title">Red Packet</string>
+    <string name="vote_title">Vote</string>
+    <string name="vote_nodes_count">You are going to vote %1$d nodes (36 max).</string>
+    <string name="vote_balance">%1$s ELA</string>
 </resources>

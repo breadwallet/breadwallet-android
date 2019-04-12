@@ -396,6 +396,18 @@
             android:background="@color/extra_light_gray"
             />
 
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/auto_vote_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="8dp"
+            android:button="@drawable/author_check_selector"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="Auto keep my last vote using my ELA balance" />
+
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="match_parent"
