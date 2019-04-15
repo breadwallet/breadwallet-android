@@ -412,7 +412,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.containsAddress(obj.address)) {
+                            /*if (wm.containsAddress(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -427,7 +427,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(obj.address)) {
+                            } else */if (wm.addressIsUsed(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
