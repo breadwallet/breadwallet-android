@@ -64,6 +64,10 @@ public class FragmentExplore extends Fragment {
             mBannerview1.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner1_zh): (R.drawable.explore_banner1_en));
             mBannerview2.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner2_zh): (R.drawable.explore_banner2_en));
             mBannerview3.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner3_zh): (R.drawable.explore_banner3_en));
+        } else {
+            mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
+            mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
+            mBannerview3.setBackgroundResource(R.drawable.explore_banner3_en);
         }
     }
 
