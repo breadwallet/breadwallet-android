@@ -80,6 +80,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
         }, 500);
 
         updateUi();
+
         Activity activity = getActivity();
         if(activity == null) return;
         RatesDataSource.getInstance(activity).addOnDataChangedListener(this);
@@ -94,7 +95,9 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             }
         });
 
-        onConnectionChanged(InternetManager.getInstance().isConnected(activity));
+        if(null != activity){
+            onConnectionChanged(InternetManager.getInstance().isConnected(activity));
+        }
     }
 
     @Override
@@ -173,6 +176,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
                 PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(getActivity(), mCurrentPrompt);
                 if (info.listener != null)
                     info.listener.onClick(mPromptContinue);
+                hidePrompt();
             }
         });
     }
@@ -211,6 +215,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             mPromptContinue.setOnClickListener(promptInfo.listener);
 
         } else {
+            mPromptCard.setVisibility(View.GONE);
             Log.i(TAG, "showNextPrompt: nothing to show");
         }
     }
