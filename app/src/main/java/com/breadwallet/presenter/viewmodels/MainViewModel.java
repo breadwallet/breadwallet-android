@@ -67,8 +67,6 @@ public class MainViewModel extends AndroidViewModel {
         super(app);
 
         mWalletRepository = WalletRepository.Companion.getInstance(app);
-        // Retrieve and initialize wallet data (i.e., wallet names and currency code)
-        mWalletRepository.refreshWallets();
 
         // Register as balance and rate update listeners
         mBalanceUpdater = new BalanceUpdater();
@@ -105,7 +103,6 @@ public class MainViewModel extends AndroidViewModel {
      */
     public void refreshWallets() {
         mWalletRepository.refreshWallets();
-        refreshBalances();
     }
 
     @Override
@@ -116,15 +113,6 @@ public class MainViewModel extends AndroidViewModel {
         WalletsMaster.getInstance().removeBalanceUpdateListener(mBalanceUpdater);
         RatesDataSource.getInstance(getApplication()).removeOnDataChangedListener(mExchangeRatesUpdater);
         InternetManager.unregisterConnectionReceiver(getApplication(), mConnectionListener);
-    }
-
-    /**
-     * Invokes wallet balance refreshes in a background thread.
-     */
-    private void refreshBalances() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
-            mWalletRepository.refreshBalances();
-        });
     }
 
     /**
