@@ -7,39 +7,20 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 
-    <title>投票</title>
+    <title>request vote</title>
     <meta id="viewport" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
 </head>
 <body>
 <div>
-    <a id="J-call-app" href="javascript:;" class="label">投票&gt;&gt;</a>
-    <input id="J-download-app" type="hidden" name="storeurl" value="http://app.51aiu.com/elastos/wallet-test/elephant_author_test.apk">
+    <a id="J-call-app" href="javascript:;" class="label">vote启动elephant&gt;&gt;</a>
 </div>
 
 <script>
             (function(){
-                var ua = navigator.userAgent.toLowerCase();
-                var t;
-                var config = {
-                    scheme_Adr: 'elephant://identity',
-                    download_url: document.getElementById('J-download-app').value,
-                    timeout: 600
-                };
-
                 function openclient() {
                     try {
-                        console.log("open elephant wallet");
                         var a = document.getElementById("J-call-app");
                         a.href = 'elaphant://eladposvote?AppID=14bd1d772afc8e633ce95b988646bd9ed5df65cb33ec98a43b41e6cb6de5276ca9cce91d069dc688619f1a250842b37d380d4fb984c9f912a2f86edcf5dddba9&PublicKey=03ef5f8b0534c82aa4db218f7cead278124efc0411e4ca38b6131954a58e8ae3c0&Sign=298bd67a87865117f94689eb853de85119a74feedbbbe720ce63db40f698a2048f8bedef059a2980dfb17c8d8851d872748ec931e8354cdc65b28116165a416a&DID=igjFHgkyjxMp2dCCVLZ2JosXgDcunauX8D&AppName=vote.h5.app&ReturnUrl=https://www.vote.org&CallbackUrl=https://www.vote.org&CandidatePublicKeys=["02f033b85ada2c9aceb5a25fe4e6f09bd5294cab0254e1a5650cc1182cb324dde2","03477bcd06aa2eeff56f68f2b5608da93d0452b57925fd88dc4491b8406ef53380","0340a6b762eb5bdacc93ed2481a53b580ba517b18596aa64249b5135588cd3260f","02ae26793e4d1c8eafa8337f025b96a9aa95ceea31400ab505e47fc4e141f9c81e","037f7e9adc693b953eed1f76fcbbf51999f06d8e16e06de2ce3769eceb01b954e7"]';
-
-                        var t = setTimeout(function() {
-                            console.log("setTimeout");
-                            window.location = config.download_url;
-                        },"2000");
-
-                        window.onblur = function() {
-                            clearTimeout(t);
-                        }
                     } catch(e) {
                         console.log("exception: " + e.message);
                     }
