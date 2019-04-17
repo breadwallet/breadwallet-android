@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -25,6 +27,8 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.presenter.customviews.SwitchButton;
+import com.breadwallet.presenter.entities.AuthorInfoItem;
+import com.breadwallet.tools.adapter.AuthorInfoAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -41,15 +45,14 @@ import org.wallet.library.AuthorizeManager;
 import org.wallet.library.Constants;
 import org.wallet.library.entity.UriFactory;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class DidAuthorizeActivity extends BaseSettingsActivity {
     private static final String TAG = "author_test";
-
-    private SwitchButton mNickNameSb;
-
-    private SwitchButton mAddressSb;
 
     private Button mDenyBtn;
 
@@ -62,6 +65,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private BaseTextView mWillTv;
 
     private RoundImageView mAppIcon;
+
+    private ListView mAuthorInfoLv;
 
     @Override
     public int getLayoutId() {
@@ -93,11 +98,37 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
             }
         }
-//        mUri = "elaphant://identity?CallbackUrl=http%3A%2F%2Fdevsite.matrixyz.cn%2Fb.php%3Fidww%3D1&ReturnUrl=http%3A%2F%2Fdevsite.matrixyz.cn%2Fa.php%3Fida%3D1&Description=developerSite&AppID=223311&PublicKey=0290985E607823C7C8E1559588C5A07D62D2A0073EF042AE86EFDDCBA9687958D6&Signature=6E6ABE5B8733D8AEA09C6D813A50BF5DE7AF9E70446467CADE62FFB3D8AE5EF7013F01AC8232893701DA676D2EB13C992830025EE8BC1F35F7A75EF4C94A2B72&DID=ifjPYkMBfxFUes8DETpzRoM76bkVXg9DXv&RandomNumber=1548641817&AppName=developerSitaees";
-
         initView();
         initListener();
+        initData();
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                Log.i(TAG, "server mUri: " + uri.toString());
+                mUri = uri.toString();
+            } else {
+                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
+            }
+        }
+    }
+
+    private void initView() {
+        mAppNameTv = findViewById(R.id.app_name);
+        mDenyBtn = findViewById(R.id.deny_btn);
+        mAuthorizeBtn = findViewById(R.id.authorize_btn);
+        mAuthorCbox = findViewById(R.id.auto_checkbox);
+        mWillTv = findViewById(R.id.auth_info);
+        mAppIcon = findViewById(R.id.app_icon);
+        mAuthorInfoLv = findViewById(R.id.author_info_list);
+    }
+
+    private void initData(){
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
 
@@ -125,33 +156,64 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         }
         mAppIcon.setImageDrawable(getDrawable(iconResourceId));
 
+        List infos = createInfoList();
+        AuthorInfoAdapter authorAdapter = new AuthorInfoAdapter(this, infos);
+        mAuthorInfoLv.setAdapter(authorAdapter);
+
         if (isAuto) author();
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent != null) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_VIEW)) {
-                Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: " + uri.toString());
-                mUri = uri.toString();
-            } else {
-                mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
-            }
-        }
-    }
+    AuthorInfoItem btcAddressItem;
+    AuthorInfoItem ethAddressItem;
+    AuthorInfoItem bchAddressItem;
+    AuthorInfoItem phoneNumberItem;
+    AuthorInfoItem emailItem;
+    AuthorInfoItem idcardItem;
 
-    private void initView() {
-        mAppNameTv = findViewById(R.id.app_name);
-        mNickNameSb = findViewById(R.id.nickname_switch_btn);
-        mAddressSb = findViewById(R.id.receive_switch_btn);
-        mDenyBtn = findViewById(R.id.deny_btn);
-        mAuthorizeBtn = findViewById(R.id.authorize_btn);
-        mAuthorCbox = findViewById(R.id.auto_checkbox);
-        mWillTv = findViewById(R.id.auth_info);
-        mAppIcon = findViewById(R.id.app_icon);
+    private List<AuthorInfoItem> createInfoList(){
+        List<AuthorInfoItem> infos = new ArrayList<>();
+        AuthorInfoItem didItem = new AuthorInfoItem(AuthorInfoItem.DID, getString(R.string.Did_Elastos_DID), "required");
+        infos.add(didItem);
+        AuthorInfoItem publicKeyItem = new AuthorInfoItem(AuthorInfoItem.PUBLIC_KEY, getString(R.string.Did_Public_Key), "required");
+        infos.add(publicKeyItem);
+        AuthorInfoItem nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
+        infos.add(nickNameItem);
+        AuthorInfoItem elaAddressItem = new AuthorInfoItem(AuthorInfoItem.ELA_ADDRESS, getString(R.string.Did_Ela_Address), "check");
+        infos.add(elaAddressItem);
+
+        final String requestInfo = uriFactory.getRequestInfo();
+        if(StringUtil.isNullOrEmpty(requestInfo)) return infos;
+        if(requestInfo.contains("BTCAddress".toLowerCase())) {
+            btcAddressItem = new AuthorInfoItem(AuthorInfoItem.BTC_ADDRESS, getString(R.string.Did_Btc_Address), "check");
+            infos.add(btcAddressItem);
+        }
+
+        if(requestInfo.contains("ETHAddress".toLowerCase())){
+            ethAddressItem = new AuthorInfoItem(AuthorInfoItem.ETH_ADDRESS, getString(R.string.Did_Eth_Address), "check");
+            infos.add(ethAddressItem);
+        }
+
+        if(requestInfo.contains("BCHAddress".toLowerCase())){
+            bchAddressItem = new AuthorInfoItem(AuthorInfoItem.BCH_ADDRESS, getString(R.string.Did_Bch_Address), "check");
+            infos.add(bchAddressItem);
+        }
+
+        if(requestInfo.contains("PhoneNumber".toLowerCase())){
+            phoneNumberItem = new AuthorInfoItem(AuthorInfoItem.PHONE_NUMBER, getString(R.string.Did_PhoneNumber), "check");
+            infos.add(phoneNumberItem);
+        }
+
+        if(requestInfo.contains("Email".toLowerCase())){
+            emailItem = new AuthorInfoItem(AuthorInfoItem.EMAIL, getString(R.string.Did_Email), "check");
+            infos.add(emailItem);
+        }
+
+        if(requestInfo.contains("ChineseIDCard".toLowerCase())){
+            idcardItem = new AuthorInfoItem(AuthorInfoItem.CHINESE_ID_CARD, getString(R.string.Did_Chinese_ID), "check");
+            infos.add(idcardItem);
+        }
+
+        return infos;
     }
 
     private void initListener() {
@@ -184,11 +246,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             return;
         }
 
-        if (!mAddressSb.isChecked()) {
-            Toast.makeText(DidAuthorizeActivity.this, "需要获取public key", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if (StringUtil.isNullOrEmpty(mUri)) {
             Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
             return;
@@ -199,7 +256,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String sign = uriFactory.getSignature();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
-        final String requestInfo = !StringUtil.isNullOrEmpty(uriFactory.getRequestInfo())?uriFactory.getRequestInfo().toLowerCase():null;
 
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
@@ -214,36 +270,31 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             final CallbackEntity entity = new CallbackEntity();
             String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
             String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
-            String myAddress = Utility.getInstance(DidAuthorizeActivity.this).getAddress(myPK);
             final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
-            BaseWalletManager btc = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BTC");
-            BaseWalletManager eth = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "ETH");
-            BaseWalletManager bch = WalletsMaster.getInstance(DidAuthorizeActivity.this).getWalletByIso(DidAuthorizeActivity.this, "BCH");
+
             CallbackData callbackData = new CallbackData();
+            //default
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
             callbackData.RandomNumber = randomNumber;
             callbackData.PhoneNumber = new PhoneNumber();
-            callbackData.Nickname = mNickNameSb.isChecked() ? BRSharedPrefs.getNickname(DidAuthorizeActivity.this) : null;
-            callbackData.ELAAddress = mAddressSb.isChecked() ? myAddress : null;
-            if (!StringUtil.isNullOrEmpty(requestInfo)) {
-                requestInfo.toLowerCase();
-                callbackData.BTCAddress = requestInfo.contains("BTCAddress".toLowerCase()) ? btc.getAddress() : null;
-                callbackData.ETHAddress = requestInfo.contains("ETHAddress".toLowerCase()) ? eth.getAddress() : null;
-                callbackData.BCHAddress = requestInfo.contains("BCHAddress".toLowerCase()) ? bch.getAddress() : null;
-                callbackData.Email = requestInfo.contains("Email".toLowerCase()) ? BRSharedPrefs.getEmail(this) : null;
+            //request info
+            callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
+            callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
+            callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
+            callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
+            if(phoneNumberItem != null){
                 PhoneNumber phoneNumber = new PhoneNumber();
-                phoneNumber.PhoneNumber = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getMobile(this) : null;
-                phoneNumber.CountryCode = requestInfo.contains("PhoneNumber".toLowerCase()) ? BRSharedPrefs.getArea(this) : null;
+                phoneNumber.PhoneNumber = phoneNumberItem.getValue(this)[1];
+                phoneNumber.CountryCode = phoneNumberItem.getValue(this)[0];
                 callbackData.PhoneNumber = phoneNumber;
-                String realName = BRSharedPrefs.getRealname(this);
-                String idNumber = BRSharedPrefs.getID(this);
-                if(!StringUtil.isNullOrEmpty(realName) || !StringUtil.isNullOrEmpty(idNumber)){
-                    callbackData.ChineseIDCard = new ChineseIDCard();
-                    callbackData.ChineseIDCard.RealName = requestInfo.contains("RealName".toLowerCase()) ?  realName: null;
-                    callbackData.ChineseIDCard.IDNumber = requestInfo.contains("ChineseIDCard".toLowerCase()) ?  idNumber: null;
-                }
             }
+            if(idcardItem != null){
+                callbackData.ChineseIDCard = new ChineseIDCard();
+                callbackData.ChineseIDCard.RealName = idcardItem.getValue(this)[0];
+                callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
+            }
+
             entity.Data = new Gson().toJson(callbackData);
             entity.PublicKey = myPK;
             entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);

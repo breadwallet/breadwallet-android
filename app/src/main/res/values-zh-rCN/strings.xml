@@ -967,6 +967,13 @@
     <string name="Did.Author.Info">授权信息</string>
     <string name="Did.Nick.Name">昵称</string>
     <string name="Did.Public.Key">公钥</string>
+    <string name="Did.Btc.Address">比特币地址</string>
+    <string name="Did.Eth.Address">以太坊地址</string>
+    <string name="Did.Bch.Address">比特现金地址</string>
+    <string name="Did.Ela.Address">ELA地址</string>
+    <string name="Did.PhoneNumber">手机号</string>
+    <string name="Did.Email">邮箱</string>
+    <string name="Did.Chinese.ID">中国居民身份证</string>
     <string name="Did.What.Did">DID是什么？</string>
     <string name="Did.Quest">问题</string>
     <string name="Did.Required">必选</string>
