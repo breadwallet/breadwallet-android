@@ -26,6 +26,7 @@
 package com.breadwallet.protocols.messageexchange;
 
 import android.arch.lifecycle.Lifecycle;
+import android.content.Context;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 
@@ -36,17 +37,20 @@ import com.breadwallet.app.ApplicationLifecycleObserver;
 public class InboxPollingAppLifecycleObserver implements
         ApplicationLifecycleObserver.ApplicationLifecycleListener {
 
+    private Context mContext;
+
+    public InboxPollingAppLifecycleObserver(Context context) {
+        mContext = context;
+    }
+
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
         switch (event) {
             case ON_START:
-                // Cancel previously enqueued clean up worker.
-                InboxPollingCleanUpWorker.cancelEnqueuedWork();
-                // Start inbox polling worker.
-                InboxPollingWorker.initialize();
+                InboxPollingHandler.getInstance().startPolling(mContext);
                 break;
             case ON_STOP:
-                InboxPollingCleanUpWorker.enqueueWork();
+                InboxPollingHandler.getInstance().enqueueCleanUp();
                 break;
         }
     }

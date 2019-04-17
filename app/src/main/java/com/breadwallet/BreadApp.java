@@ -15,12 +15,12 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.protocols.messageexchange.InboxPollingHandler;
 import com.breadwallet.view.dialog.DialogActivity;
 import com.breadwallet.view.dialog.DialogActivity.DialogType;
 import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
-import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -132,9 +132,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             initializeWalletId();
 
             // Initialize message exchange inbox polling.
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver());
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver(mInstance));
             if (!isApplicationOnCreate) {
-                InboxPollingWorker.initialize();
+                InboxPollingHandler.getInstance().startPolling(mInstance);
             }
 
             // Initialize the Firebase Messaging Service.
