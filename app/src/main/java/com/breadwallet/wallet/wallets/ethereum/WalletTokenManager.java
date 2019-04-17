@@ -8,9 +8,9 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.ethereum.*;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
@@ -458,9 +458,9 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     private BigDecimal getFiatForToken(Context context, BigDecimal tokenAmount, String
             code) {
         //fiat rate for btc
-        CurrencyEntity rate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
+        CurrencyEntity rate = RatesRepository.getInstance(context).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity tokenBtcRate = RatesRepository.getInstance(context).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
 
         if (rate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC or ETH");
@@ -482,9 +482,9 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     private BigDecimal getTokensForFiat(Context context, BigDecimal fiatAmount, String
             code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
+        CurrencyEntity btcRate = RatesRepository.getInstance(context).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity tokenBtcRate = RatesRepository.getInstance(context).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

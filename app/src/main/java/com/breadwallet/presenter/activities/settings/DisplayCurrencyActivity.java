@@ -18,10 +18,10 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -68,7 +68,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         mExchangeText = findViewById(R.id.exchange_text);
         mListView = findViewById(R.id.currency_list_view);
         mAdapter = new CurrencyListAdapter(this);
-        List<CurrencyEntity> currencies = RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC");
+        List<CurrencyEntity> currencies = RatesRepository.getInstance(this.getApplicationContext()).getAllRatesForCurrency("BTC");
         List<CurrencyEntity> cleanList = cleanList(currencies);
         mAdapter.addAll(cleanList);
         mLeftButton = findViewById(R.id.left_button);
@@ -120,7 +120,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         Iterator<CurrencyEntity> iter = list.iterator();
         while (iter.hasNext()) {
             CurrencyEntity ent = iter.next();
-            if (WalletsMaster.getInstance().isIsoCrypto(this, ent.name)) {
+            if (WalletsMaster.getInstance().isIsoCrypto(this, ent.code)) {
                 iter.remove();
             }
         }
@@ -130,7 +130,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
     private void updateExchangeRate() {
         //set the rate from the last saved
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity entity = RatesDataSource.getInstance(this).getCurrencyByCode(this, "BTC", iso);//hard code BTC for this one
+        CurrencyEntity entity = RatesRepository.getInstance(this).getCurrencyByCode("BTC", iso);//hard code BTC for this one
         if (entity != null) {
             String formattedExchangeRate = CurrencyUtils.getFormattedAmount(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
             mExchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(100000000)), formattedExchangeRate));
