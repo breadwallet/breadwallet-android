@@ -8,10 +8,10 @@ import android.util.Log;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -672,7 +672,7 @@ public class KVStoreManager {
     public static TxMetaData createMetadata(Context app, BaseWalletManager wm, CryptoTransaction tx) {
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, wm.getCurrencyCode(), txMetaData.exchangeCurrency);
+        CurrencyEntity ent = RatesRepository.getInstance(app).getCurrencyByCode(wm.getCurrencyCode(), txMetaData.exchangeCurrency);
         txMetaData.exchangeRate = ent == null ? 0 : new BigDecimal(ent.rate).setScale(8, BRConstants.ROUNDING_MODE).stripTrailingZeros().doubleValue();
         txMetaData.fee = wm.getTxFee(tx).toPlainString();
         txMetaData.txSize = tx.getTxSize().intValue();
