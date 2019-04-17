@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -63,7 +62,7 @@
         android:id="@+id/auth_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
+        android:layout_marginLeft="15dp"
         android:text="@string/Did.Will.Get"
         android:textColor="@color/black_cccccc"
         android:textSize="14sp"
@@ -71,105 +70,21 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/will_get_your_bg" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/did"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:lineSpacingExtra="9sp"
-        android:textColor="@color/black_333333"
-        android:textSize="14sp"
-        android:text="@string/Did.Elastos.DID"
-        app:layout_constraintLeft_toLeftOf="@+id/auth_info"
-        app:layout_constraintTop_toBottomOf="@+id/will_get_your_bg" />
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:layout_width="wrap_content"
+    <com.breadwallet.presenter.customviews.MaxHeightLv
+        android:id="@+id/author_info_list"
+        app:layout_constraintTop_toBottomOf="@+id/auth_info"
+        android:layout_width="match_parent"
+        android:background="@null"
+        android:dividerHeight="0dp"
+        android:divider="@null"
         android:layout_height="wrap_content"
-        android:text="@string/Did.Required"
-        app:layout_constraintTop_toTopOf="@+id/did"
-        app:layout_constraintBottom_toBottomOf="@+id/did"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/black_cccccc"
-        android:layout_marginEnd="15dp"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/pub_key"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:lineSpacingExtra="9sp"
-        android:text="@string/Did.Public.Key"
-        android:textColor="@color/black_333333"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toLeftOf="@+id/auth_info"
-        app:layout_constraintTop_toBottomOf="@+id/did" />
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Did.Required"
-        android:textColor="@color/black_cccccc"
-        app:layout_constraintTop_toTopOf="@+id/pub_key"
-        app:layout_constraintBottom_toBottomOf="@+id/pub_key"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="15dp"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/nick_name"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:lineSpacingExtra="9sp"
-        android:text="@string/Did.Nick.Name"
-        android:textColor="@color/black_333333"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toLeftOf="@+id/auth_info"
-        app:layout_constraintTop_toBottomOf="@+id/pub_key" />
-    
-    <com.breadwallet.presenter.customviews.SwitchButton
-        android:id="@+id/nickname_switch_btn"
-        android:layout_width="50dp"
-        android:layout_height="25dp"
-        app:layout_constraintTop_toTopOf="@+id/nick_name"
-        app:layout_constraintBottom_toBottomOf="@+id/nick_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="15dp"
-        app:sb_show_indicator="false"
-        app:sb_checked_color="#ff3365"
-        app:sb_checked="true"
-        app:sb_uncheck_color="@color/black_cccccc"/>
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/receive_address"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:lineSpacingExtra="9sp"
-        android:text="@string/Did.Receive.Address"
-        android:textColor="@color/black_333333"
-        android:textSize="14sp"
-        android:gravity="center_vertical"
-        app:layout_constraintLeft_toLeftOf="@+id/auth_info"
-        app:layout_constraintTop_toBottomOf="@+id/nick_name"  />
-
-    <com.breadwallet.presenter.customviews.SwitchButton
-        android:id="@+id/receive_switch_btn"
-        android:layout_width="50dp"
-        android:layout_height="25dp"
-        app:layout_constraintTop_toTopOf="@+id/receive_address"
-        app:layout_constraintBottom_toBottomOf="@+id/receive_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="15dp"
-        app:sb_show_indicator="false"
-        app:sb_checked_color="#ff3365"
-        app:sb_checked="true"
-        app:sb_uncheck_color="@color/black_cccccc"/>
+        app:maxHeight="300dp"/>
 
     <View
         android:id="@+id/divider1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@+id/receive_switch_btn"
+        app:layout_constraintTop_toBottomOf="@+id/author_info_list"
         android:layout_marginTop="15dp"
         android:background="@color/black_cccccc"/>
 
@@ -178,9 +93,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginRight="10dp"
-        android:drawablePadding="5dp"
+        android:paddingLeft="5dp"
         app:layout_constraintRight_toRightOf="parent"
         android:button="@drawable/author_check_selector"
         app:layout_constraintLeft_toLeftOf="parent"

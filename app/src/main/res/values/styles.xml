@@ -118,4 +118,8 @@
         <!-- 模糊 -->
         <!-- <item name="android:windowContentOverlay">@null</item> -->
     </style>
+
+    <declare-styleable name="ConstraintHeightListView">
+        <attr name="maxHeight" format="dimension"></attr>
+    </declare-styleable>
 </resources>
