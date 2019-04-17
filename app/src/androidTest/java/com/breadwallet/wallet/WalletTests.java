@@ -11,9 +11,9 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
@@ -199,7 +199,7 @@ public class WalletTests {
         tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", ethRate, "ETH"));
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", brdRate, "BRD"));
-        RatesDataSource.getInstance(app).putCurrencies(app, tmp);
+        RatesRepository.getInstance(app).putCurrencyRates(tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 
