@@ -161,13 +161,8 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                     String currentPin = BRKeyStore.getPinCode(getContext());
                     if (pin.equals(currentPin)) {
                         mOnPinInsertedListener.onPinInserted(pin, true);
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                authSuccess(getContext());
-                                useNewDigitLimit(true);
-                            }
-                        });
+                        useNewDigitLimit(true);
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> authSuccess(getContext()));
                     } else {
                         mOnPinInsertedListener.onPinInserted(pin, false);
                         if (!mIsPinUpdating && !currentPin.isEmpty()) {
