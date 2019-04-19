@@ -188,7 +188,7 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.startsWith("elaphant") && url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
-        } if(url.startsWith("elaphant") && url.contains("eladposvote")) {
+        } if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         }else {
             webView.loadUrl(url);

@@ -736,9 +736,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">In progress: %1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">sending to %1$s</string>
+    <string name="Transaction.sendingTo">sending</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">sent to %1$s</string>
+    <string name="Transaction.sentTo">sent</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">Starting balance: %1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -796,11 +796,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">received from %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">received via %1$s</string>
+    <string name="TransactionDetails.receivedVia">received</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">receiving from %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">receiving via %1$s</string>
+    <string name="TransactionDetails.receivingVia">receiving</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Sent %1$s</string>
     <!-- Sent $5.00 -->

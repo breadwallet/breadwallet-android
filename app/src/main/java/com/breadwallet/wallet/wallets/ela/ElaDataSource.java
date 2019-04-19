@@ -31,6 +31,7 @@ import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
+import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -125,6 +126,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_AMOUNT,
             BRSQLiteHelper.ELA_COLUMN_MENO,
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
+            BRSQLiteHelper.ELA_COLUMN_ISVOTE
     };
 
     public void deleteElaTable(){
@@ -181,6 +183,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ELA_COLUMN_AMOUNT, entity.amount);
                 value.put(BRSQLiteHelper.ELA_COLUMN_MENO, entity.memo);
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
+                value.put(BRSQLiteHelper.ELA_COLUMN_ISVOTE, entity.isVote?1:0);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.i(TAG, "l:"+l);
@@ -237,7 +240,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getInt(9),
                 cursor.getLong(10),
                 cursor.getString(11),
-                cursor.getInt(12)==1);
+                cursor.getInt(12)==1,
+                cursor.getInt(13)==1);
     }
 
     private void toast(final String message){
@@ -298,6 +302,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 elaTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
                 elaTransactionEntity.balanceAfterTx = 0;
                 elaTransactionEntity.isValid = true;
+                elaTransactionEntity.isVote = isVote(history.TxType);
                 elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 elaTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(elaTransactionEntity);
@@ -321,11 +326,18 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     //true is receive
     private boolean isReceived(String type){
-        if(type==null || type.equals("")) return false;
+        if(StringUtil.isNullOrEmpty(type)) return false;
         if(type.equals("spend")) return false;
         if(type.equals("income")) return true;
 
         return true;
+    }
+
+    private boolean isVote(String type){
+        if(!StringUtil.isNullOrEmpty(type)){
+            if(type.equals("Vote")) return true;
+        }
+        return false;
     }
 
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
@@ -338,7 +350,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         BRElaTransaction brElaTransaction = null;
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
-            String url = getUrl("api/1/createTx");
+            String url = getUrl("api/1/createVoteTx");
             Log.i(TAG, "create tx url:"+url);
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -346,14 +358,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             Outputs outputs = new Outputs();
             outputs.addr = outputsAddress;
             outputs.amt = amount;
-            Outputs voteOutputs = new Outputs();
-            long tmpBalance = 0;
-            if(payload!=null && payload.size()>0) {
-                BigDecimal balance = BRSharedPrefs.getCachedBalance(mContext, "ELA");
-                voteOutputs.addr = inputAddress;
-                voteOutputs.amt = balance.multiply(new BigDecimal("100000000")).subtract(new BigDecimal(amount)).subtract(new BigDecimal(10000)).longValue();
-                tmpBalance = voteOutputs.amt;
-            }
 
             tx.outputs.add(outputs);
 
@@ -365,25 +369,25 @@ public class ElaDataSource implements BRDataSourceInterface {
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
             if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
-            List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
-            List<ElaOutputs> outputsR = res.Transactions.get(0).Outputs;
-            for(int i=0; i<outputsR.size(); i++){
-                ElaOutputs utxoInputs = outputsR.get(i);
-                String address = utxoInputs.address;
-                if(inputAddress.equals(address) && utxoInputs.amount==tmpBalance) {
-                    Payload tmp = new Payload();
-                    tmp.CandidatePublicKeys = payload;
-                    utxoInputs.payload = tmp;
-                }
-            }
 
+            List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
                 ElaUTXOInputs utxoInputs = inputs.get(i);
                 utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
             }
 
-            Log.d("posvote", "create json:"+res);
+            if(null!=payload && payload.size()>0){
+                List<ElaOutputs> outputsR = res.Transactions.get(0).Outputs;
+                if(outputsR.size() > 1) {
+                    ElaOutputs output = outputsR.get(1);
+                    Payload tmp = new Payload();
+                    tmp.candidatePublicKeys = payload;
+                    output.payload = tmp;
+                }
+            }
+
             String transactionJson =new Gson().toJson(res);
+            Log.d("posvote", "create json:"+transactionJson);
 
             brElaTransaction = new BRElaTransaction();
             brElaTransaction.setTx(transactionJson);
@@ -401,14 +405,14 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.balanceAfterTx = 0;
             elaTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
             elaTransactionEntity.isValid = true;
+            elaTransactionEntity.isVote = (payload!=null && payload.size()>0);
             elaTransactionEntity.memo = memo;
         } catch (Exception e) {
-            toast(/*mActivity.getResources().getString(R.string.SendTransacton_failed)*/e.getMessage());
+            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 
-        //TODO daokun.xi test
-        return /*brElaTransaction*/null;
+        return brElaTransaction;
     }
 
 
@@ -418,7 +422,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         try {
             String url = getUrl("api/1/sendRawTx");
             Log.i(TAG, "send raw url:"+url);
-            String rawTransaction = Utility.getInstance(mContext).generateRawTransaction(transaction);
+            String rawTransaction = ElastosKeypairSign.generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
             String tmp = urlPost(url, json);
@@ -431,8 +435,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.txReversed = result;
             cacheSingleTx(elaTransactionEntity);
             Log.i("rawTx", "result:"+result);
+            Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
-            toast(/*mActivity.getResources().getString(R.string.SendTransacton_failed)*/e.getMessage());
+            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 

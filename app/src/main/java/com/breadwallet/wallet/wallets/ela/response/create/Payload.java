@@ -4,5 +4,5 @@ import java.util.List;
 
 public class Payload {
     public String type = "delegate";
-    public List<String> CandidatePublicKeys;
+    public List<String> candidatePublicKeys;
 }

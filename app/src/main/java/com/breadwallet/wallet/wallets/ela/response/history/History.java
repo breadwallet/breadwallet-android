@@ -29,6 +29,7 @@ import java.util.List;
 public class History {
     public String Txid;
     public String Type;
+    public String TxType;
     public String Value;
     public int CreateTime;
     public int Height;

@@ -3,10 +3,8 @@ package com.breadwallet.presenter.activities.did;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,7 +24,6 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.RoundImageView;
-import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.presenter.entities.AuthorInfoItem;
 import com.breadwallet.tools.adapter.AuthorInfoAdapter;
 import com.breadwallet.tools.animation.UiUtils;
@@ -36,8 +33,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
@@ -49,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class DidAuthorizeActivity extends BaseSettingsActivity {
     private static final String TAG = "author_test";

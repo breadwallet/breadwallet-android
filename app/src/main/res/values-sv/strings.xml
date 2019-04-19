@@ -733,7 +733,7 @@
   <!-- sending to <address> -->
   <string name="Transaction.sendingTo">skickar till %1$s</string>
   <!-- sent to <address> -->
-  <string name="Transaction.sentTo">skickat till %1$s</string>
+  <string name="Transaction.sentTo">skickat till</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Ingående saldo: %1$s</string>
   <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->

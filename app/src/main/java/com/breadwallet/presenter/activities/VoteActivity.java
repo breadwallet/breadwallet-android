@@ -100,12 +100,14 @@ public class VoteActivity extends BRActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-//                String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
-//                BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, mAmount.multiply(new BigDecimal(100000000)).longValue(), "vote", mCandidates);
-//                String txId = transaction.getTx();
-//                if(StringUtil.isNullOrEmpty(txId)) return;
-//                String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
+                String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
+                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
+                BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, 0, "vote", mCandidates);
+                String txId = transaction.getTx();
+                if(StringUtil.isNullOrEmpty(txId)) return;
+                String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
                 dialogDismiss();
+                finish();
             }
         });
     }

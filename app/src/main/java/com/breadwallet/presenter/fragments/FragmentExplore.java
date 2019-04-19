@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
@@ -89,7 +87,7 @@ public class FragmentExplore extends Fragment {
         mBannerview3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/vote_request.html");
+                UiUtils.startWebviewActivity(getContext(), /*"https://liyangwood.github.io/dpos_vote"*/"file:///android_asset/vote/request_vote.html");
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

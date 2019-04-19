@@ -223,6 +223,7 @@ dependencies {
     implementation project(':walletlibrary')
     implementation project(':authorizelibrary')
     implementation 'com.belerweb:pinyin4j:2.5.1'
+    implementation project(':keypairlibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

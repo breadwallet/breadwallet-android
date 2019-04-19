@@ -734,9 +734,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">进行中：%1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">正在发送至 %1$s</string>
+    <string name="Transaction.sendingTo">正在发送</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">已发送至 %1$s</string>
+    <string name="Transaction.sentTo">已发送</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">期初余额：%1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -794,11 +794,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已接收，来自 %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">已通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivedVia">收到</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">正在接收，来自 %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">正在通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivingVia">正在接收</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已发送 %1$s</string>
     <!-- Sent $5.00 -->
