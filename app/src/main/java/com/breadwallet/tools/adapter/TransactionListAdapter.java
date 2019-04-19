@@ -259,7 +259,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
         } else {
             convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
-            convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_sending);
             convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
         }
         if(wm.getIso().equalsIgnoreCase("ELA")) {
@@ -268,6 +267,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {
                 convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
+                convertView.transactionIcon.setBackgroundResource(!received ? R.drawable.ellipse_sending : R.drawable.ellipse_receive);
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
             }
         }

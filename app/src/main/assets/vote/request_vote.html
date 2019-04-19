@@ -18,13 +18,11 @@
 <script>
             (function(){
                 function openclient() {
-                    try {
-                        var a = document.getElementById("J-call-app");
-                        a.href = 'elaphant://eladposvote?AppID=14bd1d772afc8e633ce95b988646bd9ed5df65cb33ec98a43b41e6cb6de5276ca9cce91d069dc688619f1a250842b37d380d4fb984c9f912a2f86edcf5dddba9&PublicKey=03ef5f8b0534c82aa4db218f7cead278124efc0411e4ca38b6131954a58e8ae3c0&Sign=298bd67a87865117f94689eb853de85119a74feedbbbe720ce63db40f698a2048f8bedef059a2980dfb17c8d8851d872748ec931e8354cdc65b28116165a416a&DID=igjFHgkyjxMp2dCCVLZ2JosXgDcunauX8D&AppName=vote.h5.app&ReturnUrl=https://www.vote.org&CallbackUrl=https://www.vote.org&CandidatePublicKeys=["03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800","033c495238ca2b6bb8b7f5ae172363caea9a55cf245ffb3272d078126b1fe3e7cd","0337e6eaabfab6321d109d48e135190560898d42a1d871bfe8fecc67f4c3992250","03c78467b91805c95ada2530513069bef1f1f1e7b756861381ab534efa6d94e40a","021d59a84d2243111e39e8c2af0a5089127d142d52b18c3e4bf744e0c6f8af44e0"]';
-                    } catch(e) {
-                        console.log("exception: " + e.message);
-                    }
+                    let url = 'elaphant://identity?ReturnUrl=https%3A%2F%2Fliyangwood.github.io%2Fdpos_vote%2F%23%2Freturn_url&AppID=317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A8754652DA3B89E7692BEA99FA3A1E0B2CD767377300AA4A7B0E8C7D00E&PublicKey=02752F9483DF73C57EDEA1F84F2431DC1036B2643F9519E78CB660D8C332793EDC&Signature=4109FDAD1EB5D3AD2B02D4BC62822268E0F04FCE0FF3A82D2AF1A6B88787815D920026D209154B3BCEC210B73418613E2358E8EE326F6C8F536AFD7EABAE5C99&DID=iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi&RandomNumber=998877&AppName=dopsvote.h5.app&RequestInfo=RandomNumber,Email,phoneNumber,Nickname,btcaddress,ethaddres&inside=1';
+                    location.href = url;
+
                 }
+
                 window.addEventListener("DOMContentLoaded", function(){
                     document.getElementById("J-call-app").addEventListener('click',openclient,false);
 

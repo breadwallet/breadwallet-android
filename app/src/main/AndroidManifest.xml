@@ -285,7 +285,6 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <!--协议部分-->
                 <data android:scheme="elaphant"
                     android:host="identity"/>
             </intent-filter>

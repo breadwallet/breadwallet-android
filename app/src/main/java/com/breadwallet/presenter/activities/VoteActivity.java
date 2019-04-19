@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -21,6 +23,7 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.wallet.library.AuthorizeManager;
 import org.wallet.library.entity.UriFactory;
 
 import java.math.BigDecimal;
@@ -82,9 +85,21 @@ public class VoteActivity extends BRActivity {
         mConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendTx();
+                if(verifyUri()){
+                    sendTx();
+                }
             }
         });
+    }
+
+    private boolean verifyUri(){
+        final String did = uriFactory.getDID();
+        final String appId = uriFactory.getAppID();
+        String sign = uriFactory.getSignature();
+        String PK = uriFactory.getPublicKey();
+        boolean isValid = AuthorizeManager.verify(this, did, PK, appId, sign);
+
+        return isValid;
     }
 
     private void sendTx(){

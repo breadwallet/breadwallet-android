@@ -725,6 +725,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mScan.setClickable(!mFromRedPackage);
         mPaste.setClickable(!mFromRedPackage);
         mCurrencyCodeButton.setClickable(!mFromRedPackage);
+
+        boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
+        mAutoVoteCb.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
     }
 
     @Override

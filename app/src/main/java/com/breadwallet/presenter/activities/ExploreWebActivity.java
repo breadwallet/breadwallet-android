@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -141,6 +142,8 @@ public class ExploreWebActivity extends BRActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
+                Log.i("schemeLoadurl", "url:"+url);
+
                 String title = view.getTitle();
 
                 WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
@@ -181,6 +184,7 @@ public class ExploreWebActivity extends BRActivity {
     }
 
     private void loadUrl(String url){
+        Log.i("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
         if(url.startsWith("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
