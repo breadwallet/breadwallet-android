@@ -733,9 +733,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">處理中：%1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">正在寄送至 %1$s</string>
+    <string name="Transaction.sendingTo">正在寄送</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">寄送至 %1$s</string>
+    <string name="Transaction.sentTo">寄送至</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">開始餘額：%1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -793,11 +793,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已收取自 %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">已經 %1$s 收到</string>
+    <string name="TransactionDetails.receivedVia">收到</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">正收取自 %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">正在經 %1$s 收到</string>
+    <string name="TransactionDetails.receivingVia">正在接收</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已送出 %1$s</string>
     <!-- Sent $5.00 -->
@@ -1011,4 +1011,5 @@
     <string name="invalid_number">無效號碼</string>
     <string name="invalid_email">無效郵件</string>
     <string name="invalid_id">無效ID</string>
+    <string name="vote_title">投票</string>
 </resources>

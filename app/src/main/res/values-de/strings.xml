@@ -734,7 +734,7 @@
   <!-- sending to <address> -->
   <string name="Transaction.sendingTo">wird gesendet an %1$s</string>
   <!-- sent to <address> -->
-  <string name="Transaction.sentTo">gesendet an %1$s</string>
+  <string name="Transaction.sentTo">gesendet an</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Startguthaben: %1$s</string>
   <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->

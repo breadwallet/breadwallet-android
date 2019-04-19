@@ -73,7 +73,7 @@ public class FragmentSetting extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mDidContent.setText(did);
+        mDidContent.setText("did:ela:"+did);
 
         mNickname = rootView.findViewById(R.id.did_alias);
         String nickname = BRSharedPrefs.getNickname(getContext());

@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -119,6 +121,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private SendViewModel mViewModel;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
+    private CheckBox mAutoVoteCb;
 
     public static boolean mFromRedPackage = false;
     public static boolean mIsSend = false;
@@ -149,6 +152,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
+        mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -207,6 +211,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void setListeners() {
+        mAutoVoteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i("posvote", "isChecked:"+isChecked);
+                BRSharedPrefs.setAutoVote(getContext(), isChecked);
+            }
+        });
+
         mCurrencyCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -400,7 +412,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.containsAddress(obj.address)) {
+                            /*if (wm.containsAddress(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -415,7 +427,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(obj.address)) {
+                            } else */if (wm.addressIsUsed(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -713,6 +725,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mScan.setClickable(!mFromRedPackage);
         mPaste.setClickable(!mFromRedPackage);
         mCurrencyCodeButton.setClickable(!mFromRedPackage);
+
+        boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
+        mAutoVoteCb.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
     }
 
     @Override

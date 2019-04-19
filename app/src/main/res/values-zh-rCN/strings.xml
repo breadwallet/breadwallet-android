@@ -734,9 +734,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">进行中：%1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">正在发送至 %1$s</string>
+    <string name="Transaction.sendingTo">正在发送</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">已发送至 %1$s</string>
+    <string name="Transaction.sentTo">已发送</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">期初余额：%1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -794,11 +794,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已接收，来自 %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">已通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivedVia">收到</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">正在接收，来自 %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">正在通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivingVia">正在接收</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已发送 %1$s</string>
     <!-- Sent $5.00 -->
@@ -967,6 +967,13 @@
     <string name="Did.Author.Info">授权信息</string>
     <string name="Did.Nick.Name">昵称</string>
     <string name="Did.Public.Key">公钥</string>
+    <string name="Did.Btc.Address">比特币地址</string>
+    <string name="Did.Eth.Address">以太坊地址</string>
+    <string name="Did.Bch.Address">比特现金地址</string>
+    <string name="Did.Ela.Address">ELA地址</string>
+    <string name="Did.PhoneNumber">手机号</string>
+    <string name="Did.Email">邮箱</string>
+    <string name="Did.Chinese.ID">中国居民身份证</string>
     <string name="Did.What.Did">DID是什么？</string>
     <string name="Did.Quest">问题</string>
     <string name="Did.Required">必选</string>
@@ -1020,4 +1027,6 @@
     <string name="explore_menu_cancel">取消</string>
 
     <string name="redpackage_title">红包</string>
+    <string name="vote_title">投票</string>
+    <string name="vote_nodes_count">你将要向%1$d个节点投票(最多36个).</string>
 </resources>

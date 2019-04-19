@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
@@ -61,9 +59,9 @@ public class FragmentExplore extends Fragment {
         super.onResume();
         String languageCode = Locale.getDefault().getLanguage();
         if(!StringUtil.isNullOrEmpty(languageCode)){
-            mBannerview1.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner1_en): (R.drawable.explore_banner1_zh));
-            mBannerview2.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner2_en): (R.drawable.explore_banner2_zh));
-            mBannerview3.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner3_en): (R.drawable.explore_banner3_zh));
+            mBannerview1.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner1_zh): (R.drawable.explore_banner1_en));
+            mBannerview2.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner2_zh): (R.drawable.explore_banner2_en));
+            mBannerview3.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner3_zh): (R.drawable.explore_banner3_en));
         } else {
             mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
             mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
@@ -89,7 +87,7 @@ public class FragmentExplore extends Fragment {
         mBannerview3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                UiUtils.startWebviewActivity(getContext(), "file:///android_asset/vote/index.html");
+                UiUtils.startWebviewActivity(getContext(), "https://liyangwood.github.io/dpos_vote" /*"file:///android_asset/vote/request_vote.html"*/);
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

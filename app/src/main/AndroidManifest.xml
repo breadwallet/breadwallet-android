@@ -285,7 +285,6 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <!--协议部分-->
                 <data android:scheme="elaphant"
                     android:host="identity"/>
             </intent-filter>
@@ -323,6 +322,17 @@
 
         <activity android:name=".presenter.activities.ExploreWebActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".presenter.activities.VoteActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="elaphant"
+                    android:host="eladposvote"/>
+            </intent-filter>
+        </activity>
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

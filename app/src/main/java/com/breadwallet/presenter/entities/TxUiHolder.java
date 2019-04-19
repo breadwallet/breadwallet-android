@@ -49,8 +49,17 @@ public class TxUiHolder {
     public TxMetaData metaData;
     private Object transaction;
     private boolean isReceived;
+    private boolean isVote;
 
     //todo refactor this useless class
+    public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
+                      BigDecimal fee,  String to, String from,
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isVote){
+        this(transaction, isReceived, timeStamp, blockHeight, hash, txReversed, fee, to, from,
+                balanceAfterTx, txSize, amount, isValid);
+        this.isVote = isVote;
+    }
+
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
                       BigDecimal fee,  String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
@@ -68,6 +77,11 @@ public class TxUiHolder {
         this.isValid = isValid;
         this.txSize = txSize;
     }
+
+    public boolean isVote(){
+        return isVote;
+    }
+
 
     public int getBlockHeight() {
         return blockHeight;

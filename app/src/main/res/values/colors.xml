@@ -127,6 +127,7 @@
     <color name="black_666666">#666666</color>
     <color name="black_cccccc">#cccccc</color>
 
+    <color name="tx_send_color">#ff3365</color>
     <color name="setting_type_new">#ff3365</color>
     <color name="setting_type_pending">#a47c4b</color>
     <color name="setting_type_completed">#878787</color>

@@ -30,6 +30,7 @@ import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
@@ -176,6 +177,12 @@ public class UiUtils {
         txDetails.setTransaction(item);
         txDetails.show(app.getFragmentManager(), "txDetails");
 
+    }
+
+    public static void startVoteActivity(Context context, String url){
+        Intent intent = new Intent(context, VoteActivity.class);
+        intent.putExtra("vote_scheme_uri", url);
+        context.startActivity(intent);
     }
 
     public static void startWebviewActivity(Context context, String url){

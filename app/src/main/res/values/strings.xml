@@ -736,9 +736,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">In progress: %1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">sending to %1$s</string>
+    <string name="Transaction.sendingTo">sending</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">sent to %1$s</string>
+    <string name="Transaction.sentTo">sent</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">Starting balance: %1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -796,11 +796,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">received from %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">received via %1$s</string>
+    <string name="TransactionDetails.receivedVia">received</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">receiving from %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">receiving via %1$s</string>
+    <string name="TransactionDetails.receivingVia">receiving</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Sent %1$s</string>
     <!-- Sent $5.00 -->
@@ -974,6 +974,13 @@
     <string name="Did.Author.Info">Auth information</string>
     <string name="Did.Nick.Name">Nick name</string>
     <string name="Did.Public.Key">Public key</string>
+    <string name="Did.Btc.Address">BTC address</string>
+    <string name="Did.Eth.Address">ETH address</string>
+    <string name="Did.Bch.Address">BCH address</string>
+    <string name="Did.Ela.Address">ELA address</string>
+    <string name="Did.PhoneNumber">Phone number</string>
+    <string name="Did.Email">Email</string>
+    <string name="Did.Chinese.ID">Chinese ID Card</string>
     <string name="Did.What.Did">What is DID?</string>
     <string name="Did.Quest">Questions</string>
     <string name="Did.Required">Required</string>
@@ -1026,6 +1033,8 @@
 
     <string name="explore_menu_about">About</string>
     <string name="explore_menu_cancel">Cancel</string>
-
     <string name="redpackage_title">Red Packet</string>
+    <string name="vote_title">Vote</string>
+    <string name="vote_nodes_count">You are going to vote %1$d nodes (36 max).</string>
+    <string name="vote_balance">%1$s ELA</string>
 </resources>

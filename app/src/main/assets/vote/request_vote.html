@@ -1,0 +1,33 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+
+    <title>request vote</title>
+    <meta id="viewport" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui">
+</head>
+<body>
+<div>
+    <a id="J-call-app" href="javascript:;" class="label">vote启动elephant&gt;&gt;</a>
+</div>
+
+<script>
+            (function(){
+                function openclient() {
+                    let url = 'elaphant://identity?ReturnUrl=https%3A%2F%2Fliyangwood.github.io%2Fdpos_vote%2F%23%2Freturn_url&AppID=317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A8754652DA3B89E7692BEA99FA3A1E0B2CD767377300AA4A7B0E8C7D00E&PublicKey=02752F9483DF73C57EDEA1F84F2431DC1036B2643F9519E78CB660D8C332793EDC&Signature=4109FDAD1EB5D3AD2B02D4BC62822268E0F04FCE0FF3A82D2AF1A6B88787815D920026D209154B3BCEC210B73418613E2358E8EE326F6C8F536AFD7EABAE5C99&DID=iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi&RandomNumber=998877&AppName=dopsvote.h5.app&RequestInfo=RandomNumber,Email,phoneNumber,Nickname,btcaddress,ethaddres&inside=1';
+                    location.href = url;
+
+                }
+
+                window.addEventListener("DOMContentLoaded", function(){
+                    document.getElementById("J-call-app").addEventListener('click',openclient,false);
+
+                }, false);
+            })()
+        </script>
+</body>
+</html>

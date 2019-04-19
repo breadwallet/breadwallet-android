@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -20,6 +21,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
@@ -140,6 +142,8 @@ public class ExploreWebActivity extends BRActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
+                Log.i("schemeLoadurl", "url:"+url);
+
                 String title = view.getTitle();
 
                 WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
@@ -180,6 +184,7 @@ public class ExploreWebActivity extends BRActivity {
     }
 
     private void loadUrl(String url){
+        Log.i("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
         if(url.startsWith("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
@@ -187,7 +192,9 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.startsWith("elaphant") && url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
-        } else {
+        } if(url.contains("elaphant") && url.contains("eladposvote")) {
+            UiUtils.startVoteActivity(ExploreWebActivity.this, url);
+        }else {
             webView.loadUrl(url);
         }
     }

@@ -1,48 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="@color/white">
 
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/tx_status_icon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/ellipse_receive"/>
+    
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/tx_description"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="sent to f94c57..."
+        app:layout_constraintLeft_toRightOf="@+id/tx_status_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/total_assets_usd_color"
+        android:textSize="16sp"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/vote_flag"
+        android:layout_width="40dp"
+        android:layout_height="16dp"
+        app:layout_constraintLeft_toRightOf="@+id/tx_description"
+        app:layout_constraintTop_toTopOf="@+id/tx_description"
+        app:layout_constraintBottom_toBottomOf="@+id/tx_description"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"
+        android:background="@drawable/vote_flag"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="12dp"
         android:text="Dec 2"
-        android:textColor="@color/total_assets_usd_color"
-        android:textSize="16sp"
-        app:customTFont="CircularPro-Book.otf" />
-
-
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/tx_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@id/tx_date"
-        android:layout_below="@id/tx_date"
-        android:layout_toStartOf="@id/tx_amount"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:paddingBottom="4dp"
-        android:text="sent to f94c57..."
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="12sp"
         android:textColor="@color/settings_chevron_right"
-        android:textSize="12sp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/tx_status_icon"
+        app:customTFont="CircularPro-Book.otf" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:text="-$839.30"
-        android:textSize="18sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        android:textSize="14sp"
+        android:maxLines="1"
+        android:textColor="@color/black_666666"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/tx_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="11sp"
+        android:textColor="@color/black_999999"
+        android:text="received" />
 
     <ProgressBar
         android:id="@+id/tx_progress"
@@ -80,4 +114,4 @@
         android:layout_alignParentBottom="true"
         android:background="@color/light_gray" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

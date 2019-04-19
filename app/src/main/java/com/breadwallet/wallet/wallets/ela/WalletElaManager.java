@@ -35,6 +35,8 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.elastos.jni.Utility;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -367,9 +369,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         entity.toAddress,
                         entity.fromAddress,
                         new BigDecimal(String.valueOf(entity.balanceAfterTx))
-                        , entity.txSize,
-                        amount
-                        , entity.isValid);
+                        ,entity.txSize
+                         ,amount
+                        , entity.isValid
+                        ,entity.isVote);
                 txUiHolder.memo = entity.memo;
                 uiTxs.add(txUiHolder);
             }
@@ -434,7 +437,17 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+        BRElaTransaction brElaTransaction = null;
+        boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
+        String candidatesStr = BRSharedPrefs.getCandidate(mContext);
+        Log.d("posvote", "autoVote:"+autoVote);
+        if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
+            List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+        } else {
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+        }
+
         return new CryptoTransaction(brElaTransaction);
     }
 

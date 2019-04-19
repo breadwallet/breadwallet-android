@@ -81,7 +81,7 @@ public class DidDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, allColumns, null, null, null, null, "authortime desc");
+            cursor = database.query(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, allColumns, null, null, null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {

@@ -213,6 +213,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
         convertView.transactionAmount.setText(formattedAmount);
+
+        convertView.transactionVoteFlag.setVisibility(item.isVote()?View.VISIBLE:View.GONE);
+
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
@@ -232,28 +235,40 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 level = confirms + 2;
             }
         }
-        if (level > 0 && level < 5) {
-            showTransactionProgress(convertView, level * 20);
-        }
+
         //已发送至
-        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getTo()));
+        String sentTo = mContext.getResources().getString(R.string.Transaction_sentTo);
         //已通过
-        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getFrom()));
+        String receivedVia = mContext.getResources().getString(R.string.TransactionDetails_receivedVia);
         //正在发送至
-        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getTo()));
+        String sendingTo = mContext.getResources().getString(R.string.Transaction_sendingTo);
         //正在通过 接收
-        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getFrom()));
+        String receivingVia = mContext.getResources().getString(R.string.TransactionDetails_receivingVia);
+
+
+        if(item.isReceived()){
+            convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_receive);
+            convertView.transactionDetail.setText(item.getTo());
+        } else {
+            convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_send);
+            convertView.transactionDetail.setText(item.getFrom());
+        }
 
         if (level > 4) {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
+            convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
+            convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
         } else {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
+            convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
+            convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
         }
         if(wm.getIso().equalsIgnoreCase("ELA")) {
             if(level == 0) {
-                convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
+                convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
+                convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {
-                convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
+                convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
+                convertView.transactionIcon.setBackgroundResource(!received ? R.drawable.ellipse_sending : R.drawable.ellipse_receive);
+                convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
             }
         }
         if (tkn != null) // it's a token transfer ETH tx
@@ -371,20 +386,19 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout mainLayout;
         public ConstraintLayout constraintLayout;
-        public TextView sentReceived;
         public TextView amount;
         public TextView account;
         public TextView status;
-        public TextView status_2;
         public TextView timestamp;
         public TextView comment;
-        public ImageView arrowIcon;
 
+        public BaseTextView transactionIcon;
         public BaseTextView transactionDate;
         public BaseTextView transactionAmount;
         public BaseTextView transactionDetail;
+        public BaseTextView transactionStatus;
+        public BaseTextView transactionVoteFlag;
         public Button transactionFailed;
         public ProgressBar transactionProgress;
 
@@ -395,9 +409,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             transactionDate = view.findViewById(R.id.tx_date);
             transactionAmount = view.findViewById(R.id.tx_amount);
             transactionDetail = view.findViewById(R.id.tx_description);
+            transactionStatus = view.findViewById(R.id.tx_status);
             transactionFailed = view.findViewById(R.id.tx_failed_button);
             transactionProgress = view.findViewById(R.id.tx_progress);
-
+            transactionIcon = view.findViewById(R.id.tx_status_icon);
+            transactionVoteFlag = view.findViewById(R.id.vote_flag);
         }
     }
 
