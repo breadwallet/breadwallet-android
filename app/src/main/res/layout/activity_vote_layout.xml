@@ -62,7 +62,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/content_bg_view"
         app:layout_constraintRight_toRightOf="@+id/content_bg_view"
         android:textSize="14sp"
-        android:text="Votes:(ELA)"/>
+        android:text="@string/votes_ela"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/vote_ela_amount"
@@ -103,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/elephant_logo_icon"
         android:layout_marginLeft="8dp"
         android:textColor="@color/black_999999"
-        android:text="Wallet Balance:"/>
+        android:text="@string/vote_wallet_balance_title"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/vote_ela_balance"
@@ -131,7 +131,7 @@
         android:layout_width="140dp"
         android:layout_height="54dp"
         android:layout_marginBottom="32dp"
-        android:text="Cancel"
+        android:text="@string/vote_cancel_btn_txt"
         android:textSize="18sp"
         app:buttonType="3"
         android:textColor="#ff3365"
@@ -146,7 +146,7 @@
         android:layout_width="140dp"
         android:layout_height="54dp"
         android:layout_marginBottom="32dp"
-        android:text="Confirm"
+        android:text="@string/vote_confirm_btn_txt"
         android:textSize="18sp"
         app:buttonType="6"
         android:textColor="#ff3365"
@@ -165,7 +165,7 @@
         app:layout_constraintTop_toBottomOf="@+id/content_bg_view"
         android:textColor="@color/black_999999"
         android:layout_marginTop="15dp"
-        android:text="You only need to pay a little transaction fee: 0.0001 ELA."/>
+        android:text="@string/vote_hint"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/vote_text_hint2"
@@ -175,7 +175,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/black_999999"
-        android:text="You can spend your ELA anytime after vote while your votes will be revoked."
+        android:text="@string/vote_hint2"
         app:layout_constraintTop_toBottomOf="@+id/vote_text_hint1"/>
 
 </android.support.constraint.ConstraintLayout>

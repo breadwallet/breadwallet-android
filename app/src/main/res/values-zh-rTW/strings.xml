@@ -1012,4 +1012,12 @@
     <string name="invalid_email">無效郵件</string>
     <string name="invalid_id">無效ID</string>
     <string name="vote_title">投票</string>
+    <string name="pin_author_vote">授权投票</string>
+    <string name="vote_cancel_btn_txt">取消</string>
+    <string name="vote_confirm_btn_txt">确认</string>
+    <string name="vote_hint">你只需要支付少量的手續費: 0.0001 ELA.</string>
+    <string name="vote_hint2">投票結束後，您可以隨時使用ELA，但您的投票將被取消。</string>
+    <string name="votes_ela">选票:(ELA)</string>
+    <string name="vote_wallet_balance_title">錢包餘額:</string>
+    <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
 </resources>

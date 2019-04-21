@@ -102,6 +102,6 @@ public class AuthorInfoItem {
                 return new String[]{realName, idNumber};
             }
         }
-        return null;
+        return new String[]{null, null};
     }
 }
