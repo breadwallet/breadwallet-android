@@ -138,6 +138,7 @@ public final class BRConstants {
     public static final String URL_BLOG  = "http://t.me/elastoswalletelephant";
 
 
+    public static final String DPOS_VOTE_ID = "317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A8754652DA3B89E7692BEA99FA3A1E0B2CD767377300AA4A7B0E8C7D00E";
     public static final String REA_PACKAGE_ID = "cc053c61afc22dda9a309e96943c1734";
     public static final String DEVELOPER_WEBSITE = "62f3178e1ad6f98bf383ee5bc98ac8e7f9affaaf705ab337bde46082d3dde7a9";
     public static final String HASH_ID = "14bd1d772afc8e633ce95b988646bd9ed5df65cb33ec98a43b41e6cb6de5276ca9cce91d069dc688619f1a250842b37d380d4fb984c9f912a2f86edcf5dddba9";

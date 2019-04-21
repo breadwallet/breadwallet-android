@@ -314,7 +314,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                                 url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
                             }
 
-                            if(BRConstants.REA_PACKAGE_ID.equals(appId)){
+                            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)){
                                 UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
                             } else {
                                 UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);

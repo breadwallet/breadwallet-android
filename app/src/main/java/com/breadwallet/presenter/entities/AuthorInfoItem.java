@@ -37,7 +37,7 @@ public class AuthorInfoItem {
 
     private String flag;
 
-    private boolean checked ;
+    private boolean checked = true;
 
     public AuthorInfoItem(String cname, String name, String flag){
         this.cname = cname;
