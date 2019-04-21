@@ -8,14 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -105,9 +104,10 @@ public class VoteActivity extends BRActivity {
     private void sendTx(){
         if(null==mCandidates || mCandidates.size()<=0) return;
         if (!isFinishing()) mLoadingDialog.show();
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+
+        AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, new BRAuthCompletion() {
             @Override
-            public void run() {
+            public void onComplete() {
                 Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
                 BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
                 try {
@@ -116,7 +116,6 @@ public class VoteActivity extends BRActivity {
                     e.printStackTrace();
                 }
                 String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
-                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
                 BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, 0, "vote", mCandidates);
                 String txId = transaction.getTx();
                 if(StringUtil.isNullOrEmpty(txId)) return;
@@ -124,7 +123,13 @@ public class VoteActivity extends BRActivity {
                 dialogDismiss();
                 finish();
             }
+
+            @Override
+            public void onCancel() {
+                //nothing
+            }
         });
+
     }
 
     private BigDecimal mAmount;
