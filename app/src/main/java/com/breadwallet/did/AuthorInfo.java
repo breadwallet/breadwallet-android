@@ -8,6 +8,16 @@ public class AuthorInfo {
     private long expTime;
     private String appName;
 
+    public String getRequestInfo() {
+        return requestInfo;
+    }
+
+    public void setRequestInfo(String requestInfo) {
+        this.requestInfo = requestInfo;
+    }
+
+    private String requestInfo;
+
     public String getAppId() {
         return appId;
     }

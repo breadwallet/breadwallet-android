@@ -13,6 +13,7 @@ import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.customviews.MaxHeightLv;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
@@ -39,11 +40,9 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private BaseTextView mAppNameTx;
     private BaseTextView mAuthorTimeTx;
     private BaseTextView mExpTimeTx;
-    private BaseTextView mNicknameTx;
-    private BaseTextView mPublickeyTx;
-    private BaseTextView mDidTx;
     private CheckBox mAuthorCbox;
     private RoundImageView mAppIcon;
+    private MaxHeightLv mAuthInfoLv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,12 +71,10 @@ public class DidDetailActivity extends BaseSettingsActivity {
     private void initView() {
         mAppNameTx = findViewById(R.id.app_name);
         mAuthorTimeTx = findViewById(R.id.auth_time);
-        mNicknameTx = findViewById(R.id.nick_name);
         mExpTimeTx = findViewById(R.id.expiration);
-        mPublickeyTx = findViewById(R.id.pub_key);
-        mDidTx = findViewById(R.id.did);
         mAuthorCbox = findViewById(R.id.auto_checkbox);
         mAppIcon = findViewById(R.id.app_icon);
+        mAuthInfoLv = findViewById(R.id.author_info_detail_list);
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo.getDid());
         mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
 

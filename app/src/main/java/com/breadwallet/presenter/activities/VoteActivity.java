@@ -8,13 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -103,25 +106,26 @@ public class VoteActivity extends BRActivity {
 
     private void sendTx(){
         if(null==mCandidates || mCandidates.size()<=0) return;
-        if (!isFinishing()) mLoadingDialog.show();
 
         AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
-                Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
-                BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
-                try {
-                    Thread.sleep(4*1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
-                BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, 0, "vote", mCandidates);
-                String txId = transaction.getTx();
-                if(StringUtil.isNullOrEmpty(txId)) return;
-                String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
-                dialogDismiss();
-                finish();
+                showDialog();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
+                        BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
+                        String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
+                        BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, 0, "vote", mCandidates);
+                        if(null == transaction) return;
+                        String txId = transaction.getTx();
+                        if(StringUtil.isNullOrEmpty(txId)) return;
+                        String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
+                        dismissDialog();
+                        finish();
+                    }
+                });
             }
 
             @Override
@@ -154,7 +158,7 @@ public class VoteActivity extends BRActivity {
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
     }
 
-    private void dialogDismiss() {
+    private void dismissDialog() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -163,5 +167,17 @@ public class VoteActivity extends BRActivity {
             }
         });
     }
+
+
+    private void showDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing())
+                    mLoadingDialog.show();
+            }
+        });
+    }
+
 
 }
