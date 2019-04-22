@@ -27,6 +27,7 @@ package com.breadwallet.protocols.messageexchange;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 /**
@@ -43,7 +44,9 @@ public class InboxPollingHandler {
     private Handler mInboxPollingHandler;
 
     private InboxPollingHandler() {
-        mInboxPollingHandler = new Handler();
+        HandlerThread handlerThread = new HandlerThread(TAG);
+        handlerThread.start();
+        mInboxPollingHandler = new Handler(handlerThread.getLooper());
     }
 
     synchronized public static InboxPollingHandler getInstance() {
