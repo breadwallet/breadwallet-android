@@ -91,7 +91,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mAuthorTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getAuthorTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getAuthorTime())));
         mExpTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getExpTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getExpTime())));
 
-        String requestInfo = /*mAuthorInfo.getRequestInfo()*/"Nickname,ELAAddress,BTCAddress,BCHAddress,ETHAddress,IOEXAddress,Email,PhoneNumber,ChineseIDCard".toLowerCase();
+        String requestInfo = mAuthorInfo.getRequestInfo()/*"Nickname,ELAAddress,BTCAddress,BCHAddress,ETHAddress,IOEXAddress,Email,PhoneNumber,ChineseIDCard".toLowerCase()*/;
         List<String> infoSb = new ArrayList<>();
         infoSb.add(getString(R.string.Did_Detail_DID));
         infoSb.add(getString(R.string.Did_Detail_Public_Key));
