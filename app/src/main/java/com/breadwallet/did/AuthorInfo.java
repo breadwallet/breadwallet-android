@@ -7,6 +7,15 @@ public class AuthorInfo {
     private long authorTime;
     private long expTime;
     private String appName;
+    private String requestInfo;
+
+    public String getRequestInfo() {
+        return requestInfo;
+    }
+
+    public void setRequestInfo(String requestInfo) {
+        this.requestInfo = requestInfo;
+    }
 
     public String getAppId() {
         return appId;

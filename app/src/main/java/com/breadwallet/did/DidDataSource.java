@@ -63,6 +63,7 @@ public class DidDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.DID_AUTHOR_EXP_TIME, info.getExpTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_NAME, info.getAppName());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_ICON, info.getAppIcon());
+            value.put(BRSQLiteHelper.DID_REQUEST_INFO, info.getRequestInfo());
 
             long l = database.insertWithOnConflict(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
             Log.i(TAG, "l:"+l);
@@ -133,7 +134,8 @@ public class DidDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//4
             BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//5
             BRSQLiteHelper.DID_AUTHOR_APP_NAME,//6
-            BRSQLiteHelper.DID_AUTHOR_APP_ICON//7
+            BRSQLiteHelper.DID_AUTHOR_APP_ICON,//7
+            BRSQLiteHelper.DID_REQUEST_INFO //8
     };
 
     private AuthorInfo cursorToInfo(Cursor cursor) {
@@ -146,6 +148,7 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setExpTime(cursor.getLong(5));
         authorInfo.setAppName(cursor.getString(6));
         authorInfo.setAppIcon(cursor.getString(7));
+        authorInfo.setRequestInfo(cursor.getString(8));
         return authorInfo;
     }
 
@@ -157,15 +160,6 @@ public class DidDataSource implements BRDataSourceInterface {
         Log.i("DidDataSource", "callBackUrl: result:"+tmp);
         return tmp;
     }
-
-    // "http://localhost:8081/packet/grabed/12-1-0?did=ihKwfxiFpYme8mb11roShjjpZcHt1Ru5VB"
-    public String callReturnUrl(String url, String did){
-        if(StringUtil.isNullOrEmpty(url)) return null;
-        String returnUrl = url+"?did="+did;
-        Log.i("DidDataSource", "returnUrl: "+returnUrl);
-        return urlGET(returnUrl);
-    }
-
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public synchronized String urlPost(String url, String json) {
@@ -187,6 +181,10 @@ public class DidDataSource implements BRDataSourceInterface {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void callReturnUrl(String url){
+        urlGET(url);
     }
 
     @WorkerThread

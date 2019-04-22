@@ -11,18 +11,15 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
-import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
-import com.breadwallet.presenter.activities.did.DidQuestionActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -39,7 +36,6 @@ import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
 import org.wallet.library.AuthorizeManager;
-import org.wallet.library.entity.UriFactory;
 
 /**
  * BreadWallet

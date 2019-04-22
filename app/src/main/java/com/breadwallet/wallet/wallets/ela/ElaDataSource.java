@@ -408,7 +408,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.isVote = (payload!=null && payload.size()>0);
             elaTransactionEntity.memo = memo;
         } catch (Exception e) {
-            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+//            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 
@@ -437,7 +437,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             Log.i("rawTx", "result:"+result);
             Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
-            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+//            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 

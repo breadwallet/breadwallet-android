@@ -70,6 +70,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DID_AUTHOR_EXP_TIME = "exptime";
     public static final String DID_AUTHOR_APP_NAME = "appname";
     public static final String DID_AUTHOR_APP_ICON = "appicon";
+    public static final String DID_REQUEST_INFO = "requestInfo";
 
     private static final String DID_AUTHOR_DATABASE_CREATE = "create table if not exists " + DID_AUTHOR_TABLE_NAME + " (" +
             DID_AUTHOR_COLUMN_ID + " integer, " +
@@ -80,7 +81,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             DID_AUTHOR_APP_NAME + " text, " +
             DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_EXP_TIME + " integer DEFAULT '0' , " +
-            DID_AUTHOR_APP_ICON +" text);";
+            DID_AUTHOR_APP_ICON + " text, " +
+            DID_REQUEST_INFO +" text);";
     /**
      * ELA transaction table
      */

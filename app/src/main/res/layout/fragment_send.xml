@@ -406,7 +406,7 @@
             android:paddingLeft="8dp"
             android:button="@drawable/author_check_selector"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:text="Auto keep my last vote using my ELA balance" />
+            android:text="@string/auto_vote_hint" />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"

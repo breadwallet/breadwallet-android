@@ -993,9 +993,17 @@
     <string name="My.Profile.Mobile">手機</string>
     <string name="My.Profile.ID">中國居民身份證</string>
     <string name="My.Profile.Real.Name">真實姓名</string>
-    <string name="My.Profile.Title.Nickname">暱稱</string>
     <string name="My.Profile.Title.Email">郵箱</string>
     <string name="My.Profile.Title.Mobile">手機</string>
+    <string name="My.Profile.Title.Nickname">暱稱</string>
+    <string name="Did.Detail.Ela.Address">- Ela地址</string>
+    <string name="Did.Detail.Btc.Address">- Btc地址</string>
+    <string name="Did.Detail.Bch.Address">- Bch地址</string>
+    <string name="Did.Detail.Eth.Address">- Eth地址</string>
+    <string name="Did.Detail.Ioex.Address">- Ioex地址</string>
+    <string name="Did.Detail.Email">- 邮箱</string>
+    <string name="Did.Detail.Phone.Number">- 手机号</string>
+    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="My.Profile.Message">-完善個人信息，構建個人信用-</string>
     <string name="My.Profile.List.Title">信息</string>
 
@@ -1020,4 +1028,7 @@
     <string name="votes_ela">选票:(ELA)</string>
     <string name="vote_wallet_balance_title">錢包餘額:</string>
     <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
+    <string name="auto_vote_hint">自動使用ELA餘額投票</string>
+    <string name="explore_vote_about_desc1">ELA投票</string>
+    <string name="explore_vote_aoubt_desc2">ELA投票應用程序將允許任何ELA持有者一次投票最多36個DPO超節點</string>
 </resources>

@@ -989,9 +989,17 @@
     <string name="Did.Detail.Author.Time">授权时间:</string>
     <string name="Did.Detail.Expiration">过期时间:</string>
     <string name="Did.Detail.Auth.Info">授权信息:</string>
-    <string name="Did.Detail.Nick.Name">- 昵称</string>
     <string name="Did.Detail.DID">- DID</string>
     <string name="Did.Detail.Public.Key">- 公钥</string>
+    <string name="Did.Detail.Nick.Name">- 昵称</string>
+    <string name="Did.Detail.Ela.Address">- Ela地址</string>
+    <string name="Did.Detail.Btc.Address">- Btc地址</string>
+    <string name="Did.Detail.Bch.Address">- Bch地址</string>
+    <string name="Did.Detail.Eth.Address">- Eth地址</string>
+    <string name="Did.Detail.Ioex.Address">- Ioex地址</string>
+    <string name="Did.Detail.Email">- 邮箱</string>
+    <string name="Did.Detail.Phone.Number">- 手机号</string>
+    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="User.Not.Author.Message">您的手机系统不支持安卓标准KeyStore技术，而我们用这个技术来存储你的私钥，如果你想继续使用我们的app，请升级手机操作系统到安卓8.0或以上，或者点击继续按钮来允许我们app不经过您的授权即可访问您的keystore信息。</string>
     <string name="User.Not.Author.Exit">退出</string>
     <string name="User.Not.Author.Continue">继续</string>
@@ -1023,7 +1031,7 @@
     <string name="invalid_email">无效邮箱</string>
     <string name="invalid_id">无效ID</string>
 
-    <string name="explore_menu_about">关于</string>
+    <string name="explore_menu_about">关于%1$s</string>
     <string name="explore_menu_cancel">取消</string>
 
     <string name="redpackage_title">红包</string>
@@ -1037,4 +1045,9 @@
     <string name="votes_ela">选票:(ELA)</string>
     <string name="vote_wallet_balance_title">钱包余额:</string>
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
+
+    <string name="loading_hint">请稍后....</string>
+    <string name="auto_vote_hint">自动使用ELA余额投票</string>
+    <string name="explore_vote_about_desc1">ELA投票</string>
+    <string name="explore_vote_about_desc2">ELA投票应用程序将允许任何ELA持有者一次投票最多36个DPO超节点。</string>
 </resources>

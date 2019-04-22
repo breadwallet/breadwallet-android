@@ -157,6 +157,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if (isAuto) author();
     }
 
+    AuthorInfoItem nickNameItem;
+    AuthorInfoItem elaAddressItem;
     AuthorInfoItem btcAddressItem;
     AuthorInfoItem ethAddressItem;
     AuthorInfoItem bchAddressItem;
@@ -170,13 +172,24 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         infos.add(didItem);
         AuthorInfoItem publicKeyItem = new AuthorInfoItem(AuthorInfoItem.PUBLIC_KEY, getString(R.string.Did_Public_Key), "required");
         infos.add(publicKeyItem);
-        AuthorInfoItem nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
-        infos.add(nickNameItem);
-        AuthorInfoItem elaAddressItem = new AuthorInfoItem(AuthorInfoItem.ELA_ADDRESS, getString(R.string.Did_Ela_Address), "check");
-        infos.add(elaAddressItem);
 
         final String requestInfo = uriFactory.getRequestInfo();
         if(StringUtil.isNullOrEmpty(requestInfo)) return infos;
+        if(requestInfo.contains("Nickname".toLowerCase())){
+            nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
+            infos.add(nickNameItem);
+        }
+
+        if(requestInfo.contains("ELAAddress".toLowerCase())){
+            elaAddressItem = new AuthorInfoItem(AuthorInfoItem.ELA_ADDRESS, getString(R.string.Did_Ela_Address), "check");
+            infos.add(elaAddressItem);
+        }
+
+        if(requestInfo.contains("Nickname".toLowerCase())){
+            nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
+            infos.add(nickNameItem);
+        }
+
         if(requestInfo.contains("BTCAddress".toLowerCase())) {
             btcAddressItem = new AuthorInfoItem(AuthorInfoItem.BTC_ADDRESS, getString(R.string.Did_Btc_Address), "check");
             infos.add(btcAddressItem);
@@ -273,6 +286,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             callbackData.RandomNumber = randomNumber;
             callbackData.PhoneNumber = new PhoneNumber();
             //request info
+            callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
+            callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
             callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
             callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
             callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
@@ -367,6 +382,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         info.setAppName(uriFactory.getAppName());
         info.setExpTime(getAuthorTime(30));
         info.setAppIcon("www.elstos.org");
+        info.setRequestInfo(uriFactory.getRequestInfo());
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
