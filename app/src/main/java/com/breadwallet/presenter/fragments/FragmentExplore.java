@@ -87,7 +87,7 @@ public class FragmentExplore extends Fragment {
         mBannerview3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.startWebviewActivity(getContext(), "https://liyangwood.github.io/dpos_vote" /*"file:///android_asset/vote/request_vote.html"*/);
+                UiUtils.startWebviewActivity(getContext(), "http://elaphant.net/" /*"file:///android_asset/vote/request_vote.html"*/);
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

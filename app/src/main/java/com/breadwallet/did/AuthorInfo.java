@@ -7,6 +7,7 @@ public class AuthorInfo {
     private long authorTime;
     private long expTime;
     private String appName;
+    private String requestInfo;
 
     public String getRequestInfo() {
         return requestInfo;
@@ -15,8 +16,6 @@ public class AuthorInfo {
     public void setRequestInfo(String requestInfo) {
         this.requestInfo = requestInfo;
     }
-
-    private String requestInfo;
 
     public String getAppId() {
         return appId;

@@ -33,7 +33,6 @@
         android:id="@+id/did_detail_bg"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:layout_marginTop="30dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
@@ -144,8 +143,14 @@
         android:id="@+id/author_info_detail_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:maxHeight="300dp"
+        android:paddingLeft="32dp"
+        android:background="#f7f8fb"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@+id/auth_info"
-        app:layout_constraintLeft_toLeftOf="@+id/auth_info" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/auto_checkbox"
@@ -157,6 +162,6 @@
         android:button="@drawable/author_check_selector"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="@string/Author.Auto.Check"
-        app:layout_constraintTop_toBottomOf="@+id/did_detail_bg"/>
+        app:layout_constraintTop_toBottomOf="@+id/author_info_detail_list"/>
 
 </android.support.constraint.ConstraintLayout>
