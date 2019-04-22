@@ -215,6 +215,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i("posvote", "isChecked:"+isChecked);
+                mAutoVoteCb.setButtonDrawable(isChecked ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setAutoVote(getContext(), isChecked);
             }
         });

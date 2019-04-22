@@ -1047,4 +1047,5 @@
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
 
     <string name="loading_hint">请稍后....</string>
+    <string name="auto_vote_hint">自动使用ELA余额投票</string>
 </resources>

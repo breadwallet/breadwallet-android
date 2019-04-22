@@ -1028,4 +1028,5 @@
     <string name="votes_ela">选票:(ELA)</string>
     <string name="vote_wallet_balance_title">錢包餘額:</string>
     <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
+    <string name="auto_vote_hint">自動使用ELA餘額投票</string>
 </resources>

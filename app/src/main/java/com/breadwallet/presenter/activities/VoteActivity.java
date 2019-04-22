@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
+import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -31,7 +31,7 @@ import org.wallet.library.entity.UriFactory;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class VoteActivity extends BRActivity {
+public class VoteActivity extends BaseSettingsActivity {
 
     private String mUri;
     private UriFactory uriFactory;
@@ -42,6 +42,16 @@ public class VoteActivity extends BRActivity {
     private Button mConfirmBtn;
 
     private LoadingDialog mLoadingDialog;
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_vote_layout;
+    }
+
+    @Override
+    public int getBackButtonId() {
+        return R.id.back_button;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

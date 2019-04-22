@@ -1054,4 +1054,6 @@
     <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
 
     <string name="loading_hint">Loading....</string>
+
+    <string name="auto_vote_hint">Auto keep my last vote using my ELA balance</string>
 </resources>
