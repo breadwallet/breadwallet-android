@@ -87,6 +87,11 @@ public class VoteActivity extends BRActivity {
         mConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
+                if(balance.longValue() <= 0){
+                    Toast.makeText(VoteActivity.this, getString(R.string.Send_insufficientFunds), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(verifyUri()){
                     sendTx();
                 }
@@ -153,7 +158,7 @@ public class VoteActivity extends BRActivity {
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));
-        mBalanceTv.setText(balance.toString());
+        mBalanceTv.setText(balance.toString()+" ELA");
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
     }

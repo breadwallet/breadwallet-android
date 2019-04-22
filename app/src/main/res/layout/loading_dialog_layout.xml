@@ -26,7 +26,7 @@
             android:layout_below="@id/iv_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="请稍后...."
+            android:text="@string/loading_hint"
             android:textSize="14sp"
             android:layout_marginTop="20dp"
             android:textColor="@android:color/darker_gray" />

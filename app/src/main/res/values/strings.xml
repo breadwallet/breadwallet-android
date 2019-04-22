@@ -1053,5 +1053,5 @@
     <string name="votes_ela">Votes:(ELA)</string>
     <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
 
-
+    <string name="loading_hint">Loading....</string>
 </resources>

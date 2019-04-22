@@ -1045,4 +1045,6 @@
     <string name="votes_ela">选票:(ELA)</string>
     <string name="vote_wallet_balance_title">钱包余额:</string>
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
+
+    <string name="loading_hint">请稍后....</string>
 </resources>
