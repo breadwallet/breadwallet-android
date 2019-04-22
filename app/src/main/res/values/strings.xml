@@ -1038,7 +1038,7 @@
     <string name="invalid_email">invalid email</string>
     <string name="invalid_id">invalid ID</string>
 
-    <string name="explore_menu_about">About</string>
+    <string name="explore_menu_about">About %1$s</string>
     <string name="explore_menu_cancel">Cancel</string>
     <string name="redpackage_title">Red Packet</string>
     <string name="vote_title">Vote</string>
@@ -1052,8 +1052,8 @@
     <string name="vote_confirm_btn_txt">Confirm</string>
     <string name="votes_ela">Votes:(ELA)</string>
     <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
-
     <string name="loading_hint">Loading....</string>
-
     <string name="auto_vote_hint">Auto keep my last vote using my ELA balance</string>
+    <string name="explore_vote_about_desc1">ELA Voting</string>
+    <string name="explore_vote_about_desc2">ELA voting app will allow any ELA holder to vote up to 36 DPoS supernodes at a time.</string>
 </resources>

@@ -183,6 +183,10 @@ public class DidDataSource implements BRDataSourceInterface {
         return null;
     }
 
+    public void callReturnUrl(String url){
+        urlGET(url);
+    }
+
     @WorkerThread
     public synchronized String urlGET(String myURL) {
 

@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ public class ExploreWebActivity extends BRActivity {
     private View mMenuLayout;
     private BaseTextView mAboutTv;
     private BaseTextView mCancelTv;
+    private String mFrom;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class ExploreWebActivity extends BRActivity {
         setContentView(R.layout.activity_expolre_web_layout);
 
         initView();
+        initData();
         initListener();
     }
 
@@ -96,15 +99,27 @@ public class ExploreWebActivity extends BRActivity {
         mAboutTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ExploreWebActivity.this, ExploreAboutActivity.class);
+                intent.putExtra("from", mFrom);
+                startActivity(intent);
                 mMenuLayout.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void initData(){
+        if(!StringUtil.isNullOrEmpty(mFrom) && mFrom.equals("vote")){
+            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
+        } else {
+            mAboutTv.setText("");
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         String url = getIntent().getStringExtra("explore_url");
+        mFrom = getIntent().getStringExtra("from");
         loadUrl(url);
     }
 

@@ -334,6 +334,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".presenter.activities.ExploreAboutActivity">
+
+        </activity>
+
         <provider
             android:name=".presenter.provider.BuglyFileProvider"
             android:authorities="${applicationId}.fileProvider"

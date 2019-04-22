@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -137,6 +137,14 @@ public class VoteActivity extends BaseSettingsActivity {
                         String txId = transaction.getTx();
                         if(StringUtil.isNullOrEmpty(txId)) return;
                         String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
+                        String returnUrl = uriFactory.getReturnUrl();
+                        String url;
+                        if (returnUrl.contains("?")) {
+                            url = returnUrl + "&txid=" + mRwTxid;
+                        } else {
+                            url = returnUrl + "?txid=" + mRwTxid;
+                        }
+                        DidDataSource.getInstance(VoteActivity.this).callReturnUrl(url);
                         dismissDialog();
                         finish();
                     }
@@ -168,7 +176,7 @@ public class VoteActivity extends BaseSettingsActivity {
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));
-        mBalanceTv.setText(balance.toString()+" ELA");
+        mBalanceTv.setText(String.format(getString(R.string.vote_balance), balance.toString()));
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
     }

@@ -185,6 +185,13 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
+    public static void startWebviewActivity(Context context, String url, String from){
+        Intent intent = new Intent(context, ExploreWebActivity.class);
+        intent.putExtra("explore_url", url);
+        intent.putExtra("from", from);
+        context.startActivity(intent);
+    }
+
     public static void startWebviewActivity(Context context, String url){
         Intent intent = new Intent(context, ExploreWebActivity.class);
         intent.putExtra("explore_url", url);
