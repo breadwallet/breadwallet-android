@@ -168,8 +168,6 @@ public class VoteActivity extends BaseSettingsActivity {
         uriFactory.parse(mUri);
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
-        Log.d("posvote", "candidateValue:"+mCandidatesStr);
-        BRSharedPrefs.cacheCandidate(this, mCandidatesStr);
         if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
         mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
 
