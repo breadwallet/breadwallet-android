@@ -44,14 +44,15 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/explore_about_desc2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/explore_about_desc1"/>
+        android:textColor="#222222"
+        android:lineSpacingExtra="9sp"
+        app:layout_constraintTop_toBottomOf="@+id/explore_about_desc1"
+        android:layout_marginTop="32dp" />
 
 
 </android.support.constraint.ConstraintLayout>

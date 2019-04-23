@@ -1049,7 +1049,7 @@
     <string name="loading_hint">请稍后....</string>
     <string name="auto_vote_hint">自动使用ELA余额投票</string>
     <string name="explore_vote_about_desc1">ELA投票</string>
-    <string name="explore_vote_about_desc2">ELA投票应用程序将允许任何ELA持有者一次投票最多36个DPO超节点。</string>
+    <string name="explore_vote_about_desc2">ELA投票应用程序将允许任何ELA持有者一次投票最多36个DPoS超节点。</string>
     <string name="vote_balance_not_insufficient">ela不足1</string>
     <string name="vote_candidates_is_none">候选人列表为空</string>
 </resources>
