@@ -1036,13 +1036,13 @@
 
     <string name="redpackage_title">红包</string>
     <string name="vote_title">投票</string>
-    <string name="vote_nodes_count">你将要向%1$d个节点投票(最多36个).</string>
-    <string name="vote_hint">你只需要支付少量的手续费: 0.0001 ELA.</string>
+    <string name="vote_nodes_count">你将正向%1$d个节点投票(最多36个)</string>
+    <string name="vote_hint">你只需要支付少量的手续费: 0.0001 ELA</string>
     <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
     <string name="pin_author_vote">授权投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
     <string name="vote_confirm_btn_txt">确认</string>
-    <string name="votes_ela">选票:(ELA)</string>
+    <string name="votes_ela">票数:(ELA)</string>
     <string name="vote_wallet_balance_title">钱包余额:</string>
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
 

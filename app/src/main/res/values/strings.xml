@@ -1042,10 +1042,10 @@
     <string name="explore_menu_cancel">Cancel</string>
     <string name="redpackage_title">Red Packet</string>
     <string name="vote_title">Voting</string>
-    <string name="vote_nodes_count">You are going to vote %1$d nodes (36 max).</string>
+    <string name="vote_nodes_count">You are going to vote %1$d nodes(36max)</string>
     <string name="vote_balance">%1$s ELA</string>
     <string name="vote_wallet_balance_title">Wallet Balance:</string>
-    <string name="vote_hint">You only need to pay a little transaction fee: 0.0001 ELA.</string>
+    <string name="vote_hint">You only need to pay a little transaction fee: 0.0001 ELA</string>
     <string name="vote_hint2">You can spend your ELA anytime after vote while your votes will be revoked.</string>
     <string name="pin_author_vote">Authorize Vote</string>
     <string name="vote_cancel_btn_txt">Cancel</string>
