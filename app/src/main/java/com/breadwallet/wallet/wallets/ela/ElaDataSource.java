@@ -303,7 +303,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 elaTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
                 elaTransactionEntity.balanceAfterTx = 0;
                 elaTransactionEntity.isValid = true;
-                elaTransactionEntity.isVote = isVote(history.TxType);
+                elaTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
                 elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 elaTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(elaTransactionEntity);
