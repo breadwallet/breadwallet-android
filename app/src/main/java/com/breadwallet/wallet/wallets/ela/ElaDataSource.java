@@ -80,7 +80,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "api-wallet-ela-testnet.elastos.org";
+    public static final String ELA_NODE = "api-wallet-ela.elastos.org" /*"api-wallet-ela-testnet.elastos.org"*/;
 
     private static ElaDataSource mInstance;
 
@@ -245,6 +245,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     private void toast(final String message){
+        Log.i("ElaDataApi", "message:"+message);
         if(mActivity !=null)
             mActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -408,7 +409,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             elaTransactionEntity.isVote = (payload!=null && payload.size()>0);
             elaTransactionEntity.memo = memo;
         } catch (Exception e) {
-//            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+            if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 
@@ -434,10 +435,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             elaTransactionEntity.txReversed = result;
             cacheSingleTx(elaTransactionEntity);
-            Log.i("rawTx", "result:"+result);
             Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
-//            toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+            if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
         }
 

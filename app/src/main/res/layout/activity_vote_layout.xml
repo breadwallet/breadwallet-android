@@ -167,15 +167,4 @@
         android:layout_marginTop="15dp"
         android:text="@string/vote_hint"/>
 
-    <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/vote_text_hint2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/black_999999"
-        android:text="@string/vote_hint2"
-        app:layout_constraintTop_toBottomOf="@+id/vote_text_hint1"/>
-
 </android.support.constraint.ConstraintLayout>
