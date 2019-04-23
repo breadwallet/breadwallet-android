@@ -99,7 +99,7 @@ public class VoteActivity extends BaseSettingsActivity {
             public void onClick(View v) {
                 BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
                 if(balance.longValue() <= 0){
-                    Toast.makeText(VoteActivity.this, getString(R.string.Send_insufficientFunds), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(verifyUri()){
@@ -110,11 +110,11 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private boolean verifyUri(){
-        final String did = uriFactory.getDID();
-        final String appId = uriFactory.getAppID();
-        String sign = uriFactory.getSignature();
+        String did = uriFactory.getDID();
+        String appId = uriFactory.getAppID();
+        String appName = uriFactory.getAppName();
         String PK = uriFactory.getPublicKey();
-        boolean isValid = AuthorizeManager.verify(this, did, PK, appId, sign);
+        boolean isValid = AuthorizeManager.verify(this, did, PK, appName, appId);
 
         return isValid;
     }

@@ -260,13 +260,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
         final String did = uriFactory.getDID();
         final String appId = uriFactory.getAppID();
-        String sign = uriFactory.getSignature();
+        String appName = uriFactory.getAppName();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
 
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
-        boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appId, sign);
+        boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appName, appId);
         if (!isValid) {
             Toast.makeText(this, "invalid params", Toast.LENGTH_SHORT);
             finish();

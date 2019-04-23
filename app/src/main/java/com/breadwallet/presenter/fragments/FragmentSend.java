@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -206,6 +207,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         setButton(true);
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
+
+        BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
+        String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+        if(balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
+            mAutoVoteCb.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
