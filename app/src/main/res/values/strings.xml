@@ -1041,7 +1041,7 @@
     <string name="explore_menu_about">About %1$s</string>
     <string name="explore_menu_cancel">Cancel</string>
     <string name="redpackage_title">Red Packet</string>
-    <string name="vote_title">Vote</string>
+    <string name="vote_title">Voting</string>
     <string name="vote_nodes_count">You are going to vote %1$d nodes (36 max).</string>
     <string name="vote_balance">%1$s ELA</string>
     <string name="vote_wallet_balance_title">Wallet Balance:</string>
