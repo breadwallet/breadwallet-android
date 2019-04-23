@@ -995,17 +995,17 @@
     <string name="Did.Detail.Author.Time">Auth time:</string>
     <string name="Did.Detail.Expiration">Expiration:</string>
     <string name="Did.Detail.Auth.Info">Auth information:</string>
-    <string name="Did.Detail.DID">- DID</string>
+    <string name="Did.Detail.DID">- Elastos DID</string>
     <string name="Did.Detail.Public.Key">- Public key</string>
     <string name="Did.Detail.Nick.Name">- Nick name</string>
-    <string name="Did.Detail.Ela.Address">- Ela address</string>
-    <string name="Did.Detail.Btc.Address">- Btc address</string>
-    <string name="Did.Detail.Bch.Address">- Bch address</string>
-    <string name="Did.Detail.Eth.Address">- Eth address</string>
-    <string name="Did.Detail.Ioex.Address">- Ioex address</string>
+    <string name="Did.Detail.Ela.Address">- ELA address</string>
+    <string name="Did.Detail.Btc.Address">- BTC address</string>
+    <string name="Did.Detail.Bch.Address">- BCH address</string>
+    <string name="Did.Detail.Eth.Address">- ETH address</string>
+    <string name="Did.Detail.Ioex.Address">- IOEX address</string>
     <string name="Did.Detail.Email">- Email</string>
     <string name="Did.Detail.Phone.Number">- Phone number</string>
-    <string name="Did.Detail.Chinese.Id.Card">- Chinese id card</string>
+    <string name="Did.Detail.Chinese.Id.Card">- Chinese ID Card</string>
     <string name="User.Not.Author.Message">Your operation system does not support standard KeyStore technology on Android which we use to store your private key, to continue to use our app, please upgrade your operation system to Android 8.0 or later, or tap Continue to always allow our app to access your KeyStore without permission request.
 </string>
     <string name="User.Not.Author.Exit">Exit</string>

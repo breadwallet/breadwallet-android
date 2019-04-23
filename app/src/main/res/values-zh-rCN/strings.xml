@@ -989,7 +989,7 @@
     <string name="Did.Detail.Author.Time">授权时间:</string>
     <string name="Did.Detail.Expiration">过期时间:</string>
     <string name="Did.Detail.Auth.Info">授权信息:</string>
-    <string name="Did.Detail.DID">- DID</string>
+    <string name="Did.Detail.DID">- Elastos DID</string>
     <string name="Did.Detail.Public.Key">- 公钥</string>
     <string name="Did.Detail.Nick.Name">- 昵称</string>
     <string name="Did.Detail.Ela.Address">- Ela地址</string>

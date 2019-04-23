@@ -15,6 +15,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
@@ -126,6 +127,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private void didIsOnchain(){
+        long nowTime = System.currentTimeMillis();
+        long didTime = BRSharedPrefs.getDid2ChainTime(this);
+        Log.d("didIsOnchain", "nowTime-didTime:"+(nowTime-didTime));
+        if(nowTime-didTime < 15*60*1000) return;
+        Log.d("didIsOnchain", "nowTime-didTime > 15*60*1000");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -133,7 +139,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 if(null == mDid) return;
                 mDid.syncInfo();
                 String value = mDid.getInfo("PublicKey");
-                Log.i("DidOnchain", "value:"+value);
+                Log.i("didIsOnchain", "value:"+value);
                 if(StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")){
                     if(StringUtil.isNullOrEmpty(publicKey)) return;
                     String data = getKeyVale("PublicKey", publicKey);
@@ -141,7 +147,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
-                    Log.i("DidOnchain", "txid:"+txid);
+                    BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
+                    Log.d("didIsOnchain", "txid:"+txid);
                 }
             }
         });
