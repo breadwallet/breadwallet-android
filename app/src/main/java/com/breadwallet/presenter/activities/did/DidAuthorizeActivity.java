@@ -280,11 +280,10 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
 
             CallbackData callbackData = new CallbackData();
-            //default
+            //require
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
             callbackData.RandomNumber = randomNumber;
-            callbackData.PhoneNumber = new PhoneNumber();
             //request info
             callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
             callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
@@ -304,9 +303,10 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
             }
 
-            entity.Data = new Gson().toJson(callbackData);
-            entity.PublicKey = myPK;
-            entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
+            final String Data = new Gson().toJson(callbackData);
+            final String Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, Data);
+            entity.Data = Data;
+            entity.Sign = Sign;
 
 
             if (!isFinishing()) mLoadingDialog.show();
@@ -324,9 +324,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                         if (!StringUtil.isNullOrEmpty(returnUrl)) {
                             String url;
                             if (returnUrl.contains("?")) {
-                                url = returnUrl + "&did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
                             } else {
-                                url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
+                                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
                             }
 
                             if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)){
