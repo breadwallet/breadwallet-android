@@ -152,15 +152,6 @@ public class DidDataSource implements BRDataSourceInterface {
         return authorInfo;
     }
 
-    public String callBackUrl(String url, CallbackEntity entity){
-        if(entity==null || StringUtil.isNullOrEmpty(url)) return null;
-        String params = new Gson().toJson(entity);
-        Log.i("DidDataSource", "callBackUrl: "+"url:"+url+" params:"+params);
-        String tmp = urlPost(url, params);
-        Log.i("DidDataSource", "callBackUrl: result:"+tmp);
-        return tmp;
-    }
-
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public synchronized String urlPost(String url, String json) {
         int code;

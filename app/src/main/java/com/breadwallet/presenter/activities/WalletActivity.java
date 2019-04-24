@@ -113,6 +113,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private String mUri;
 
     public static String mCallbackUrl;
+    public static String mReturnUrl;
+    public static String mOrderId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -417,7 +419,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         String PK = factory.getPublicKey();
                         String des = factory.getDescription();
                         mCallbackUrl = factory.getCallbackUrl();
-                        Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
+                        mReturnUrl = factory.getReturnUrl();
+                        mOrderId = factory.getOrderID();
                         Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
                         boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
