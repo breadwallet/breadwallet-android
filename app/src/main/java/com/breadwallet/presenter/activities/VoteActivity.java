@@ -99,11 +99,11 @@ public class VoteActivity extends BaseSettingsActivity {
         mConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
-                if(balance.longValue() <= 0){
-                    Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
+//                if(balance.longValue() <= 0){
+//                    Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 if(verifyUri()){
                     sendTx();
                 }
@@ -127,9 +127,9 @@ public class VoteActivity extends BaseSettingsActivity {
         String returnUrl = uriFactory.getReturnUrl();
         String url;
         if (returnUrl.contains("?")) {
-            url = returnUrl + "&txid=" + txId;
+            url = returnUrl + "&TXID=" + txId;
         } else {
-            url = returnUrl + "?txid=" + txId;
+            url = returnUrl + "?TXID=" + txId;
         }
         DidDataSource.getInstance(VoteActivity.this).callReturnUrl(url);
     }
