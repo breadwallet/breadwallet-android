@@ -263,12 +263,17 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String appName = uriFactory.getAppName();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
+        if(StringUtil.isNullOrEmpty(did) || StringUtil.isNullOrEmpty(appId) || StringUtil.isNullOrEmpty(appName)
+                || StringUtil.isNullOrEmpty(PK) || StringUtil.isNullOrEmpty(randomNumber)) {
+            Toast.makeText(DidAuthorizeActivity.this, "invalid params", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appName, appId);
         if (!isValid) {
-            Toast.makeText(this, "invalid params", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
         }
 
@@ -280,11 +285,10 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
 
             CallbackData callbackData = new CallbackData();
-            //default
+            //require
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
             callbackData.RandomNumber = randomNumber;
-            callbackData.PhoneNumber = new PhoneNumber();
             //request info
             callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
             callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
@@ -304,9 +308,10 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
             }
 
-            entity.Data = new Gson().toJson(callbackData);
-            entity.PublicKey = myPK;
-            entity.Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, entity.Data);
+            final String Data = new Gson().toJson(callbackData);
+            final String Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, Data);
+            entity.Data = Data;
+            entity.Sign = Sign;
 
 
             if (!isFinishing()) mLoadingDialog.show();
@@ -314,33 +319,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 @Override
                 public void run() {
                     try {
-                        if(!StringUtil.isNullOrEmpty(backurl)){
-                            String ret = DidDataSource.getInstance(DidAuthorizeActivity.this).callBackUrl(backurl, entity);
-                            if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
-                                toast("callback return error");
-                            }
-                        }
-
-                        if (!StringUtil.isNullOrEmpty(returnUrl)) {
-                            String url;
-                            if (returnUrl.contains("?")) {
-                                url = returnUrl + "&did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
-                            } else {
-                                url = returnUrl + "?did=" + myDid + "&response=" + Uri.encode(new Gson().toJson(entity));
-                            }
-
-                            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)){
-                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-                            } else {
-                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
-                            }
-
-//                            if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
-//                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-//                            } else {
-//                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
-//                            }
-                        }
+                        callBackUrl(backurl, entity);
+                        callReturnUrl(returnUrl, Data, Sign, appId);
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
@@ -349,6 +329,38 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                     }
                 }
             });
+        }
+    }
+
+    private void callBackUrl(String backurl, CallbackEntity entity){
+        if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
+        String params = new Gson().toJson(entity);
+        String ret = DidDataSource.getInstance(this).urlPost(backurl, params);
+        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+            toast("callback return error");
+        }
+    }
+
+    private void callReturnUrl(String returnUrl, String Data, String Sign, String appId){
+        if (!StringUtil.isNullOrEmpty(returnUrl)) {
+            String url;
+            if (returnUrl.contains("?")) {
+                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
+            } else {
+                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
+            }
+
+            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)){
+                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+            } else {
+                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+            }
+
+//                            if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
+//                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
+//                            } else {
+//                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
+//                            }
         }
     }
 

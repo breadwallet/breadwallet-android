@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.entities.VoteEntity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -119,6 +121,27 @@ public class VoteActivity extends BaseSettingsActivity {
         return isValid;
     }
 
+
+    private void callReturnUrl(String txId){
+        if(StringUtil.isNullOrEmpty(txId)) return;
+        String returnUrl = uriFactory.getReturnUrl();
+        String url;
+        if (returnUrl.contains("?")) {
+            url = returnUrl + "&txid=" + txId;
+        } else {
+            url = returnUrl + "?txid=" + txId;
+        }
+        DidDataSource.getInstance(VoteActivity.this).callReturnUrl(url);
+    }
+
+    private void callBackUrl(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return;
+        String backurl = uriFactory.getCallbackUrl();
+        VoteEntity txEntity = new VoteEntity();
+        txEntity.TXID = txid;
+        String ret = DidDataSource.getInstance(this).urlPost(backurl, new Gson().toJson(txEntity));
+    }
+
     private void sendTx(){
         if(null==mCandidates || mCandidates.size()<=0) return;
         if(mCandidates.size()>36) {
@@ -140,14 +163,8 @@ public class VoteActivity extends BaseSettingsActivity {
                         String txId = transaction.getTx();
                         if(StringUtil.isNullOrEmpty(txId)) return;
                         String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
-                        String returnUrl = uriFactory.getReturnUrl();
-                        String url;
-                        if (returnUrl.contains("?")) {
-                            url = returnUrl + "&txid=" + mRwTxid;
-                        } else {
-                            url = returnUrl + "?txid=" + mRwTxid;
-                        }
-                        DidDataSource.getInstance(VoteActivity.this).callReturnUrl(url);
+                        callBackUrl(mRwTxid);
+                        callReturnUrl(mRwTxid);
                         dismissDialog();
                         finish();
                     }

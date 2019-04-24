@@ -13,6 +13,7 @@ import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.entities.ElapayEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -172,22 +173,35 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         Log.i(TAG, "signAndPublishTransaction");
-        if(tx == null) return new byte[1];
-        BRElaTransaction raw = tx.getElaTx();
-        if(raw == null) return new byte[1];
-        String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+        try {
+            if(tx == null) return new byte[1];
+            BRElaTransaction raw = tx.getElaTx();
+            if(raw == null) return new byte[1];
+            String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
 
-        if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
-        TxManager.getInstance().updateTxList(mContext);
-        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) {
-            if(WalletActivity.mCallbackUrl.contains("?")){
-                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-            } else {
-                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
+            if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
+            TxManager.getInstance().updateTxList(mContext);
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+                ElapayEntity elapayEntity = new ElapayEntity();
+                elapayEntity.OrderID = WalletActivity.mOrderId;
+                elapayEntity.TXID = mRwTxid;
+                ElaDataSource.getInstance(mContext).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
             }
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
+                if(WalletActivity.mReturnUrl.contains("?")){
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"&txid="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                } else {
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"?txid="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                }
+            }
+            WalletActivity.mCallbackUrl = null;
+            WalletActivity.mReturnUrl = null;
+            WalletActivity.mOrderId = null;
+            return mRwTxid.getBytes();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        WalletActivity.mCallbackUrl = null;
-        return mRwTxid.getBytes();
+        return new byte[1];
     }
 
     public void updateTxHistory() {

@@ -749,7 +749,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mPaste.setClickable(true);
         mCurrencyCodeButton.setClickable(true);
         mFromRedPackage = false;
-        if(!mIsSend) WalletActivity.mCallbackUrl = null;
+        if(!mIsSend) {
+            WalletActivity.mReturnUrl = null;
+            WalletActivity.mCallbackUrl = null;
+            WalletActivity.mOrderId = null;
+        }
     }
 
     private void handleClick(String key) {

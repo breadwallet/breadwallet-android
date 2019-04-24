@@ -113,6 +113,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private String mUri;
 
     public static String mCallbackUrl;
+    public static String mReturnUrl;
+    public static String mOrderId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -412,14 +414,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         factory.parse(mUri);
                         mUri = null;
                         String did = factory.getDID();
+                        String appName = factory.getAppName();
                         String appId = factory.getAppID();
-                        String signed = factory.getSignature();
                         String PK = factory.getPublicKey();
                         String des = factory.getDescription();
                         mCallbackUrl = factory.getCallbackUrl();
-                        Log.i(TAG, "mCallbackUrl:"+mCallbackUrl);
-                        Log.i(TAG, "walletActivity1 did:"+did+" appId:"+appId+" signed:"+signed+" PK: "+PK);
-                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK,appId, signed);
+                        mReturnUrl = factory.getReturnUrl();
+                        mOrderId = factory.getOrderID();
+                        Log.i(TAG, "walletActivity1 did:"+did+" appName:"+appName+" appId:"+appId+" PK: "+PK);
+                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK, appName, appId);
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
                         if(!isValide) return;
                         BaseWalletManager walletManager = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
