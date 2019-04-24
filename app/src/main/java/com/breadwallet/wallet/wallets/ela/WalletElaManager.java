@@ -189,9 +189,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             }
             if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
                 if(WalletActivity.mReturnUrl.contains("?")){
-                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"&txid="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"&TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
                 } else {
-                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"?txid="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"?TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
                 }
             }
             WalletActivity.mCallbackUrl = null;
