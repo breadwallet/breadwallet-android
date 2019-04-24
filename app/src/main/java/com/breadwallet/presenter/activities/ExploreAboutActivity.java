@@ -6,19 +6,17 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 
 public class ExploreAboutActivity extends BaseSettingsActivity {
 
     private TextView mDes1;
     private TextView mDes2;
-    private String mFrom;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFrom = getIntent().getStringExtra("from");
-
         initView();
         initData();
     }
@@ -29,11 +27,12 @@ public class ExploreAboutActivity extends BaseSettingsActivity {
     }
 
     private void initData(){
-        if(StringUtil.isNullOrEmpty(mFrom)) return;
-        if(mFrom.equalsIgnoreCase("vote")){
+        String from = BRSharedPrefs.getExploreFrom(this);
+        if(StringUtil.isNullOrEmpty(from)) return;
+        if(from.equalsIgnoreCase("vote")){
             mDes1.setText(getString(R.string.explore_vote_about_desc1));
             mDes2.setText(getString(R.string.explore_vote_about_desc2));
-        } else if(mFrom.equalsIgnoreCase("redpacket")){
+        } else if(from.equalsIgnoreCase("redpacket")){
 
         }
     }

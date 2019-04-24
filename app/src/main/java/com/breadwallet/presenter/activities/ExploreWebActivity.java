@@ -23,6 +23,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
@@ -36,7 +37,6 @@ public class ExploreWebActivity extends BRActivity {
     private View mMenuLayout;
     private BaseTextView mAboutTv;
     private BaseTextView mCancelTv;
-    private String mFrom;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +100,6 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ExploreWebActivity.this, ExploreAboutActivity.class);
-                intent.putExtra("from", mFrom);
                 startActivity(intent);
                 mMenuLayout.setVisibility(View.GONE);
             }
@@ -108,10 +107,11 @@ public class ExploreWebActivity extends BRActivity {
     }
 
     private void initData(){
-        if(!StringUtil.isNullOrEmpty(mFrom) && mFrom.equals("vote")){
+        String from = BRSharedPrefs.getExploreFrom(this);
+        if(!StringUtil.isNullOrEmpty(from) && from.equalsIgnoreCase("vote")){
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
         } else {
-            mAboutTv.setText("");
+            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), ""));
         }
     }
 
@@ -119,7 +119,6 @@ public class ExploreWebActivity extends BRActivity {
     public void onResume() {
         super.onResume();
         String url = getIntent().getStringExtra("explore_url");
-        mFrom = getIntent().getStringExtra("from");
         loadUrl(url);
     }
 

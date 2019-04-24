@@ -697,4 +697,28 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("candidate", "");
     }
+
+    public static void setExploreFrom(Context context, String from){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("exploreFrom", from);
+        editor.apply();
+    }
+
+    public static String getExploreFrom(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("exploreFrom", "");
+    }
+
+    public static void putDid2ChainTime(Context context, long time){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("did2Chain", time);
+        editor.apply();
+    }
+
+    public static long getDid2ChainTime(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("did2Chain", 0);
+    }
 }

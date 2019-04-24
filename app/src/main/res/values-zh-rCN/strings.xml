@@ -989,14 +989,14 @@
     <string name="Did.Detail.Author.Time">授权时间:</string>
     <string name="Did.Detail.Expiration">过期时间:</string>
     <string name="Did.Detail.Auth.Info">授权信息:</string>
-    <string name="Did.Detail.DID">- DID</string>
+    <string name="Did.Detail.DID">- ELA DID</string>
     <string name="Did.Detail.Public.Key">- 公钥</string>
     <string name="Did.Detail.Nick.Name">- 昵称</string>
-    <string name="Did.Detail.Ela.Address">- Ela地址</string>
-    <string name="Did.Detail.Btc.Address">- Btc地址</string>
-    <string name="Did.Detail.Bch.Address">- Bch地址</string>
-    <string name="Did.Detail.Eth.Address">- Eth地址</string>
-    <string name="Did.Detail.Ioex.Address">- Ioex地址</string>
+    <string name="Did.Detail.Ela.Address">- ELA地址</string>
+    <string name="Did.Detail.Btc.Address">- 比特币地址</string>
+    <string name="Did.Detail.Bch.Address">- 比特现金地址</string>
+    <string name="Did.Detail.Eth.Address">- 以太坊地址</string>
+    <string name="Did.Detail.Ioex.Address">- IOEX地址</string>
     <string name="Did.Detail.Email">- 邮箱</string>
     <string name="Did.Detail.Phone.Number">- 手机号</string>
     <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
@@ -1036,20 +1036,21 @@
 
     <string name="redpackage_title">红包</string>
     <string name="vote_title">投票</string>
-    <string name="vote_nodes_count">你将要向%1$d个节点投票(最多36个).</string>
-    <string name="vote_hint">你只需要支付少量的手续费: 0.0001 ELA.</string>
+    <string name="vote_nodes_count">你正在向%1$d个节点投票(最多36个)</string>
+    <string name="vote_hint">投票只需要很少的手续费:0.0001</string>
     <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
     <string name="pin_author_vote">授权投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
     <string name="vote_confirm_btn_txt">确认</string>
-    <string name="votes_ela">选票:(ELA)</string>
+    <string name="votes_ela">票数:(ELA)</string>
     <string name="vote_wallet_balance_title">钱包余额:</string>
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
 
     <string name="loading_hint">请稍后....</string>
     <string name="auto_vote_hint">自动使用ELA余额投票</string>
     <string name="explore_vote_about_desc1">ELA投票</string>
-    <string name="explore_vote_about_desc2">ELA投票应用程序将允许任何ELA持有者一次投票最多36个DPO超节点。</string>
-    <string name="vote_balance_not_insufficient">ela不足1</string>
+    <string name="explore_vote_about_desc2">投票小程序允许你每次最多投给36个DPoS超级节点。</string>
+    <string name="vote_balance_not_insufficient">ELA余额少于1</string>
     <string name="vote_candidates_is_none">候选人列表为空</string>
+    <string name="beyond_max_vote_node">一次投票最多36个DPoS超节点</string>
 </resources>

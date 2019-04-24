@@ -121,7 +121,10 @@ public class VoteActivity extends BaseSettingsActivity {
 
     private void sendTx(){
         if(null==mCandidates || mCandidates.size()<=0) return;
-
+        if(mCandidates.size()>36) {
+            Toast.makeText(this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT);
+            return;
+        }
         AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
@@ -168,8 +171,6 @@ public class VoteActivity extends BaseSettingsActivity {
         uriFactory.parse(mUri);
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
-        Log.d("posvote", "candidateValue:"+mCandidatesStr);
-        BRSharedPrefs.cacheCandidate(this, mCandidatesStr);
         if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
         mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
 
