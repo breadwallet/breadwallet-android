@@ -1058,7 +1058,7 @@
     <string name="explore_vote_about_desc2">ELA voting app will allow any ELA holder to vote up to 36 DPoS supernodes at a time.</string>
     <string name="vote_balance_not_insufficient">Your balance is less than 1 ELA.</string>
     <string name="vote_candidates_is_none">There are no nodes selected, please select at least one node and try again.</string>
-    <string name="beyond_max_vote_node">Up to 36 DPoS hypernodes per vote</string>
+    <string name="beyond_max_vote_node">At most 36 nodes</string>
     <string name="redpackage_hint1">Red Packet</string>
     <string name="redpackage_hint2">With the ELA red packet applet, you can send an ELA red packet to your friends.</string>
 </resources>

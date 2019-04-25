@@ -99,11 +99,11 @@ public class VoteActivity extends BaseSettingsActivity {
         mConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
-//                if(balance.longValue() <= 0){
-//                    Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
+                BigDecimal balance = BRSharedPrefs.getCachedBalance(VoteActivity.this, "ELA");
+                if(balance.longValue() <= 0){
+                    Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(verifyUri()){
                     sendTx();
                 }
