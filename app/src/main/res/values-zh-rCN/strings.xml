@@ -1055,4 +1055,5 @@
     <string name="beyond_max_vote_node">最多36个节点</string>
     <string name="redpackage_hint1">红包</string>
     <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
+    <string name="double_spend">您有另外一笔交易正在处理，请在2分钟后重试</string>
 </resources>

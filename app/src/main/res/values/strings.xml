@@ -1061,4 +1061,5 @@
     <string name="beyond_max_vote_node">At most 36 nodes</string>
     <string name="redpackage_hint1">Red Packet</string>
     <string name="redpackage_hint2">With the ELA red packet mini program, you can send an ELA red packet to your friends.</string>
+    <string name="double_spend">There is another transaction being processed, please try again 2 minutes later.</string>
 </resources>
