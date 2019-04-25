@@ -136,6 +136,7 @@ public class VoteActivity extends BaseSettingsActivity {
     private void callBackUrl(String txid){
         if(StringUtil.isNullOrEmpty(txid)) return;
         String backurl = uriFactory.getCallbackUrl();
+        if(StringUtil.isNullOrEmpty(backurl)) return;
         VoteEntity txEntity = new VoteEntity();
         txEntity.TXID = txid;
         String ret = DidDataSource.getInstance(this).urlPost(backurl, new Gson().toJson(txEntity));
