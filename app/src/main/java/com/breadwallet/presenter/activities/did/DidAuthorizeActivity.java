@@ -173,8 +173,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         AuthorInfoItem publicKeyItem = new AuthorInfoItem(AuthorInfoItem.PUBLIC_KEY, getString(R.string.Did_Public_Key), "required");
         infos.add(publicKeyItem);
 
-        final String requestInfo = uriFactory.getRequestInfo();
+        String requestInfo = uriFactory.getRequestInfo();
         if(StringUtil.isNullOrEmpty(requestInfo)) return infos;
+        requestInfo = requestInfo.toLowerCase();
         if(requestInfo.contains("Nickname".toLowerCase())){
             nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
             infos.add(nickNameItem);
@@ -183,11 +184,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(requestInfo.contains("ELAAddress".toLowerCase())){
             elaAddressItem = new AuthorInfoItem(AuthorInfoItem.ELA_ADDRESS, getString(R.string.Did_Ela_Address), "check");
             infos.add(elaAddressItem);
-        }
-
-        if(requestInfo.contains("Nickname".toLowerCase())){
-            nickNameItem = new AuthorInfoItem(AuthorInfoItem.NICK_NAME, getString(R.string.Did_Nick_Name), "check");
-            infos.add(nickNameItem);
         }
 
         if(requestInfo.contains("BTCAddress".toLowerCase())) {
@@ -279,6 +275,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
 
         if (isValid) {
             cacheAuthorInfo(uriFactory);
+            StringBuilder sb = new StringBuilder();
             final CallbackEntity entity = new CallbackEntity();
             String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
             String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
@@ -289,24 +286,35 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             callbackData.DID = myDid;
             callbackData.PublicKey = myPK;
             callbackData.RandomNumber = randomNumber;
+            sb.append(AuthorInfoItem.DID).append(",").append(AuthorInfoItem.PUBLIC_KEY).append(",");
             //request info
             callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
+            if((nickNameItem!=null) && nickNameItem.isChecked()) sb.append(AuthorInfoItem.NICK_NAME).append(",");
             callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
+            if((elaAddressItem!=null) && elaAddressItem.isChecked()) sb.append(AuthorInfoItem.ELA_ADDRESS).append(",");
             callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
+            if((btcAddressItem!=null) && btcAddressItem.isChecked()) sb.append(AuthorInfoItem.BTC_ADDRESS).append(",");
             callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
+            if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
             callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
+            if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
             callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
+            if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
             if(phoneNumberItem != null){
                 PhoneNumber phoneNumber = new PhoneNumber();
                 phoneNumber.PhoneNumber = phoneNumberItem.getValue(this)[1];
                 phoneNumber.CountryCode = phoneNumberItem.getValue(this)[0];
                 callbackData.PhoneNumber = phoneNumber;
+                if(phoneNumberItem.isChecked()) sb.append(AuthorInfoItem.PHONE_NUMBER).append(",");
             }
             if(idcardItem != null){
                 callbackData.ChineseIDCard = new ChineseIDCard();
                 callbackData.ChineseIDCard.RealName = idcardItem.getValue(this)[0];
                 callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
+                if(idcardItem.isChecked()) sb.append(AuthorInfoItem.CHINESE_ID_CARD).append(",");
             }
+
+            BRSharedPrefs.putRequestInfo(DidAuthorizeActivity.this, sb.toString().toLowerCase());
 
             final String Data = new Gson().toJson(callbackData);
             final String Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, Data);
@@ -394,7 +402,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         info.setAppName(uriFactory.getAppName());
         info.setExpTime(getAuthorTime(30));
         info.setAppIcon("www.elstos.org");
-        info.setRequestInfo(uriFactory.getRequestInfo());
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 

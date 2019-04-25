@@ -1053,4 +1053,6 @@
     <string name="vote_balance_not_insufficient">ELA余额少于1</string>
     <string name="vote_candidates_is_none">候选人列表为空</string>
     <string name="beyond_max_vote_node">一次投票最多36个DPoS超节点</string>
+    <string name="redpackage_hint1">红包</string>
+    <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
 </resources>

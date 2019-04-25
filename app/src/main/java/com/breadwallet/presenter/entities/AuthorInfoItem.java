@@ -20,8 +20,6 @@ public class AuthorInfoItem {
     public static final String MOBILE = "mobile";
     public static final String EMAIL = "Email";
     public static final String CHINESE_ID_CARD = "ChineseIDCard";
-    public static final String REAL_NAME = "Realname";
-    public static final String ID_NUMBER = "IdNumber";
 
     public String getCname() {
         return cname;
