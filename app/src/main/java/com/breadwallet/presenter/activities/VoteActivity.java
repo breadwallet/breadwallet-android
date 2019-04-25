@@ -145,7 +145,7 @@ public class VoteActivity extends BaseSettingsActivity {
     private void sendTx(){
         if(null==mCandidates || mCandidates.size()<=0) return;
         if(mCandidates.size()>36) {
-            Toast.makeText(this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT);
+            Toast.makeText(this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show();
             return;
         }
         AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, new BRAuthCompletion() {
