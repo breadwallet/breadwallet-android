@@ -63,7 +63,6 @@ public class DidDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.DID_AUTHOR_EXP_TIME, info.getExpTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_NAME, info.getAppName());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_ICON, info.getAppIcon());
-            value.put(BRSQLiteHelper.DID_REQUEST_INFO, info.getRequestInfo());
 
             long l = database.insertWithOnConflict(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
             Log.i(TAG, "l:"+l);
@@ -135,7 +134,6 @@ public class DidDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//5
             BRSQLiteHelper.DID_AUTHOR_APP_NAME,//6
             BRSQLiteHelper.DID_AUTHOR_APP_ICON,//7
-            BRSQLiteHelper.DID_REQUEST_INFO //8
     };
 
     private AuthorInfo cursorToInfo(Cursor cursor) {
@@ -148,7 +146,6 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setExpTime(cursor.getLong(5));
         authorInfo.setAppName(cursor.getString(6));
         authorInfo.setAppIcon(cursor.getString(7));
-        authorInfo.setRequestInfo(cursor.getString(8));
         return authorInfo;
     }
 

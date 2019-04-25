@@ -108,10 +108,11 @@ public class ExploreWebActivity extends BRActivity {
 
     private void initData(){
         String from = BRSharedPrefs.getExploreFrom(this);
-        if(!StringUtil.isNullOrEmpty(from) && from.equalsIgnoreCase("vote")){
+        if(StringUtil.isNullOrEmpty(from)) return;
+        if(from.equalsIgnoreCase("vote")){
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
-        } else {
-            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), ""));
+        } else if(from.equalsIgnoreCase("redpacket")) {
+            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.redpackage_title)));
         }
     }
 

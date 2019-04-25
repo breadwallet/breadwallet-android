@@ -721,4 +721,16 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("did2Chain", 0);
     }
+
+    public static void putRequestInfo(Context context, String value){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("requestInfo", value);
+        editor.apply();
+    }
+
+    public static String getRequestInfo(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("requestInfo", null);
+    }
 }

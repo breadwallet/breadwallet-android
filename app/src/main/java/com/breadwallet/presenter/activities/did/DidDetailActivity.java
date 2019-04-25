@@ -91,38 +91,39 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mAuthorTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getAuthorTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getAuthorTime())));
         mExpTimeTx.setText(BRDateUtil.getAuthorDate(mAuthorInfo.getExpTime()==0 ? System.currentTimeMillis() : (mAuthorInfo.getExpTime())));
 
-        String requestInfo = mAuthorInfo.getRequestInfo()/*"Nickname,ELAAddress,BTCAddress,BCHAddress,ETHAddress,IOEXAddress,Email,PhoneNumber,ChineseIDCard".toLowerCase()*/;
         List<String> infoSb = new ArrayList<>();
         infoSb.add(getString(R.string.Did_Detail_DID));
         infoSb.add(getString(R.string.Did_Detail_Public_Key));
 
-        if(StringUtil.isNullOrEmpty(requestInfo)) return;
-        if(requestInfo.contains("Nickname".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Nick_Name));
-        }
-        if(requestInfo.contains("ELAAddress".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Ela_Address));
-        }
-        if(requestInfo.contains("BTCAddress".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Btc_Address));
-        }
-        if(requestInfo.contains("BCHAddress".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Bch_Address));
-        }
-        if(requestInfo.contains("ETHAddress".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Eth_Address));
-        }
-        if(requestInfo.contains("IOEXAddress".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Ioex_Address));
-        }
-        if(requestInfo.contains("Email".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Email));
-        }
-        if(requestInfo.contains("PhoneNumber".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Phone_Number));
-        }
-        if(requestInfo.contains("ChineseIDCard".toLowerCase())){
-            infoSb.add(getString(R.string.Did_Detail_Chinese_Id_Card));
+        String requestInfo = BRSharedPrefs.getRequestInfo(this);
+        if(!StringUtil.isNullOrEmpty(requestInfo)) {
+            if(requestInfo.contains("Nickname".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Nick_Name));
+            }
+            if(requestInfo.contains("ELAAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Ela_Address));
+            }
+            if(requestInfo.contains("BTCAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Btc_Address));
+            }
+            if(requestInfo.contains("ETHAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Eth_Address));
+            }
+            if(requestInfo.contains("BCHAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Bch_Address));
+            }
+            if(requestInfo.contains("IOEXAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Ioex_Address));
+            }
+            if(requestInfo.contains("PhoneNumber".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Phone_Number));
+            }
+            if(requestInfo.contains("Email".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Email));
+            }
+            if(requestInfo.contains("ChineseIDCard".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_Chinese_Id_Card));
+            }
         }
 
         mAuthInfoLv.setAdapter(new AuthorDetailAdapter(this, infoSb));

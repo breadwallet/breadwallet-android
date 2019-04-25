@@ -426,7 +426,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
                         if(!isValide) return;
                         BaseWalletManager walletManager = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
-                        String result = CryptoUriParser.createElapayUrl(walletManager, factory.getAmount(), factory.getPaymentAddress(), des);
+                        String result = CryptoUriParser.createElapayUrl(walletManager, factory.getAmount(), factory.getReceivingAddress(), des);
                         if (CryptoUriParser.isCryptoUrl(WalletActivity.this, result)) {
                             CryptoUriParser.processRequest(WalletActivity.this, result,
                                     WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this));

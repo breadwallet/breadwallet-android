@@ -20,8 +20,6 @@ public class AuthorInfoItem {
     public static final String MOBILE = "mobile";
     public static final String EMAIL = "Email";
     public static final String CHINESE_ID_CARD = "ChineseIDCard";
-    public static final String REAL_NAME = "Realname";
-    public static final String ID_NUMBER = "IdNumber";
 
     public String getCname() {
         return cname;
@@ -71,7 +69,9 @@ public class AuthorInfoItem {
 
     public String[] getValue(Context context){
         if(checked){
-            if(ELA_ADDRESS.equals(cname)){
+            if(NICK_NAME.equals(cname)){
+                return new String[]{BRSharedPrefs.getNickname(context)};
+            } if(ELA_ADDRESS.equals(cname)){
                 BaseWalletManager ela = WalletsMaster.getInstance(context).getWalletByIso(context, "ELA");
                 return new String[]{ela.getAddress()};
 

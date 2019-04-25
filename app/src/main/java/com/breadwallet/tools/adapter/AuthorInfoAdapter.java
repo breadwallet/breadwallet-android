@@ -55,7 +55,6 @@ public class AuthorInfoAdapter extends BaseAdapter {
 
         String name = mData.get(position).getName();
         holder.mNameTv.setText(name);
-
         String flag = mData.get(position).getFlag();
         if(!StringUtil.isNullOrEmpty(flag)){
             if(flag.equals("required")){
@@ -70,6 +69,8 @@ public class AuthorInfoAdapter extends BaseAdapter {
             }
         }
 
+        holder.mCheckSb.setOnCheckedChangeListener(null);
+        holder.mCheckSb.setChecked(mData.get(position).isChecked());
         holder.mCheckSb.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
