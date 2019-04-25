@@ -16,18 +16,8 @@ public class AuthorInfoItem {
     public static final String ETH_ADDRESS = "ETHAddress";
     public static final String BCH_ADDRESS = "BCHAddress";
     public static final String PHONE_NUMBER = "PhoneNumber";
-    public static final String AREA = "area";
-    public static final String MOBILE = "mobile";
     public static final String EMAIL = "Email";
     public static final String CHINESE_ID_CARD = "ChineseIDCard";
-
-    public String getCname() {
-        return cname;
-    }
-
-    public void setCname(String cname) {
-        this.cname = cname;
-    }
 
     private String cname;
 
