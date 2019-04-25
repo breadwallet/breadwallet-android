@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
-import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.VoteEntity;
