@@ -69,7 +69,9 @@ public class AuthorInfoItem {
 
     public String[] getValue(Context context){
         if(checked){
-            if(ELA_ADDRESS.equals(cname)){
+            if(NICK_NAME.equals(cname)){
+                return new String[]{BRSharedPrefs.getNickname(context)};
+            } if(ELA_ADDRESS.equals(cname)){
                 BaseWalletManager ela = WalletsMaster.getInstance(context).getWalletByIso(context, "ELA");
                 return new String[]{ela.getAddress()};
 
