@@ -218,6 +218,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
         if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
