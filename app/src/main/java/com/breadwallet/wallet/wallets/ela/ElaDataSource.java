@@ -80,7 +80,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "api-wallet-ela-testnet.elastos.org";
+    public static final String ELA_NODE = "api-wallet-ela.elastos.org" /*"api-wallet-ela-testnet.elastos.org"*/;
 
     private static ElaDataSource mInstance;
 
