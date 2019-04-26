@@ -204,13 +204,13 @@ public class ExploreWebActivity extends BRActivity {
     private synchronized void loadUrl(String url){
         Log.i("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
-        if(url.contains("identity")) {
+        if(url.startsWith("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
             finish();
-        } else if(url.contains("elapay")) {
+        } else if(url.startsWith("elaphant") && url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
-        } else if(url.contains("eladposvote")) {
+        } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         }else {
             webView.loadUrl(url);
