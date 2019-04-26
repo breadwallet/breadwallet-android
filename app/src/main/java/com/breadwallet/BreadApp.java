@@ -6,19 +6,14 @@ import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
@@ -30,15 +25,11 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,8 +40,6 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * BreadWallet
@@ -156,26 +145,6 @@ public class BreadApp extends Application {
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-        upgradeAction();
-    }
-
-
-    private void upgradeAction(){
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
-        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
-        if(oldVerson != newVersion){
-            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
-            UpgradeHandler.getInstance(this).deleteAllTransactions();
-//            UpgradeHandler.getInstance(this).deleteAllKVs();
-            BRSharedPrefs.putVersionCode(this, "version", newVersion);
-        }
-
     }
 
     public static void generateWalletIfIfNeeded(Context app, String address) {

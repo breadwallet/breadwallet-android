@@ -1037,7 +1037,7 @@
     <string name="redpackage_title">红包</string>
     <string name="vote_title">投票</string>
     <string name="vote_nodes_count">你正在向%1$d个节点投票(最多36个)</string>
-    <string name="vote_hint">投票只需要很少的手续费:0.0001</string>
+    <string name="vote_hint">投票只需要很少的手续费:0.0000486 ELA</string>
     <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
     <string name="pin_author_vote">授权投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
