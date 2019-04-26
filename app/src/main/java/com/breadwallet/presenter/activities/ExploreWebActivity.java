@@ -44,7 +44,7 @@ public class ExploreWebActivity extends BRActivity {
         setContentView(R.layout.activity_expolre_web_layout);
 
         initView();
-        initData();
+        initMenu();
         initListener();
     }
 
@@ -66,6 +66,7 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 mMenuLayout.setVisibility(View.VISIBLE);
+                initMenu();
             }
         });
 
@@ -106,13 +107,15 @@ public class ExploreWebActivity extends BRActivity {
         });
     }
 
-    private void initData(){
+    private void initMenu(){
         String from = BRSharedPrefs.getExploreFrom(this);
         if(StringUtil.isNullOrEmpty(from)) return;
         if(from.equalsIgnoreCase("vote")){
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
         } else if(from.equalsIgnoreCase("redpacket")) {
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.redpackage_title)));
+        } else {
+            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), ""));
         }
     }
 
@@ -120,7 +123,7 @@ public class ExploreWebActivity extends BRActivity {
     public void onResume() {
         super.onResume();
         String url = getIntent().getStringExtra("explore_url");
-        loadUrl(url);
+        webView.loadUrl(url);
     }
 
     private void webviewSetting() {
@@ -198,16 +201,16 @@ public class ExploreWebActivity extends BRActivity {
         });
     }
 
-    private void loadUrl(String url){
+    private synchronized void loadUrl(String url){
         Log.i("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
-        if(url.startsWith("elaphant") && url.contains("identity")) {
+        if(url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
             finish();
-        } else if(url.startsWith("elaphant") && url.contains("elapay")) {
+        } else if(url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
-        } if(url.contains("elaphant") && url.contains("eladposvote")) {
+        } else if(url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         }else {
             webView.loadUrl(url);
