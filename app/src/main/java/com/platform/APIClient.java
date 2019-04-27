@@ -378,6 +378,8 @@ public class APIClient {
             if (mHTTPClient == null) {
                 mHTTPClient = new OkHttpClient.Builder().followRedirects(false)
                         .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                        .readTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                        .writeTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
             }
 
