@@ -520,7 +520,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        BigDecimal fiatData = getFiatForEth(app, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(app));
+        BigDecimal fiatData = RatesRepository.getInstance(app)
+                .getFiatForCrypto( BigDecimal.ONE, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(app));
         if (fiatData == null) {
             return BigDecimal.ZERO;
         }
@@ -551,7 +552,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
 
-        BigDecimal fiatData = getFiatForEth(app, cryptoAmount, iso);
+        BigDecimal fiatData = RatesRepository.getInstance(app).getFiatForCrypto(cryptoAmount, getCurrencyCode(), iso);
         if (fiatData == null) {
             return null;
         }
@@ -584,25 +585,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         BigDecimal ethAmount = getEthForFiat(app, amount, iso);
         if (ethAmount == null) return null;
         return ethAmount.multiply(ONE_ETH);
-    }
-
-    //pass in a eth amount and return the specified amount in fiat
-    //ETH rates are in BTC (thus this math)
-    private BigDecimal getFiatForEth(Context app, BigDecimal ethAmount, String code) {
-        //fiat rate for btc
-        CurrencyEntity btcRate = RatesRepository.getInstance(app).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
-        //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        if (btcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
-            return null;
-        }
-        if (ethBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
-            return null;
-        }
-
-        return ethAmount.multiply(new BigDecimal(ethBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
 
     //pass in a fiat amount and return the specified amount in ETH
