@@ -120,7 +120,14 @@ android {
         }
     }
 
-    task downloadBundles() {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+task downloadBundles {
+    doLast {
         def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
         def stagingHost = "api.breadwallet.com"
         def releaseHost = "stage2.breadwallet.com"
@@ -144,10 +151,6 @@ android {
                 new URL(fileUrl).withInputStream { from -> out << from }
             }
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
