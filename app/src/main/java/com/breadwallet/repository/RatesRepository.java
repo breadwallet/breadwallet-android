@@ -25,10 +25,14 @@
 package com.breadwallet.repository;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * and abstracts away the underlying data source.
  */
 public class RatesRepository {
+    private static final String TAG = RatesRepository.class.getName();
     private static final String CACHE_KEY_DELIMITER = ":";
     private static RatesRepository mInstance;
 
@@ -120,6 +125,32 @@ public class RatesRepository {
         }
 
         return rates;
+    }
+
+    /**
+     * Get the fiat value for a given amount of crypto. Because we only store the fiat exchange rate for BTC we have to
+     * calculate the crypto to fiat rate from crypto to BTC and BTC to fiat rates.
+     *
+     * @param cryptoAmount  Amount of crypto we want to calculate.
+     * @param cryptoCode    Code of the crypto we want to calculate.
+     * @param fiatCode      Code of the fiat we want to get the exchange for.
+     * @return The fiat value of the given crypto.
+     */
+    public BigDecimal getFiatForCrypto(BigDecimal cryptoAmount, String cryptoCode, String fiatCode) {
+        //fiat rate for btc
+        CurrencyEntity btcRate = getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, fiatCode);
+        //Btc rate for the given crypto
+        CurrencyEntity cryptoBtcRate = getCurrencyByCode( cryptoCode, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        if (btcRate == null) {
+            Log.e(TAG, "getFiatForBch: No " + fiatCode + " rates for BTC");
+            return null;
+        }
+        if (cryptoBtcRate == null) {
+            Log.e(TAG, "getFiatForBch: No BTC rates for " + cryptoCode);
+            return null;
+        }
+
+        return cryptoAmount.multiply(new BigDecimal(cryptoBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
 
     /**
