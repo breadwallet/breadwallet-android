@@ -218,7 +218,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if(newVersion == 17) {
+        if((newVersion!=oldVersion) && newVersion==17) {
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL(ELA_TX_DATABASE_CREATE);
         }

@@ -430,9 +430,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
-                if(result.contains("Duplicate")) {
-                    toast(mActivity.getString(R.string.double_spend));
-                }
+                if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
 //                toast(result);
                 return null;
             }
