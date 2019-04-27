@@ -382,7 +382,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public BigDecimal getFiatExchangeRate(Context context) {
-        BigDecimal fiatData = getFiatForToken(context, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(context));
+        BigDecimal fiatData = RatesRepository.getInstance(context)
+                .getFiatForCrypto(BigDecimal.ONE, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(context));
         if (fiatData == null) {
             return BigDecimal.ZERO;
         }
@@ -411,7 +412,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             return getCryptoForSmallestCrypto(context, amount).multiply(new BigDecimal(ent.rate));
         }
         BigDecimal cryptoAmount = getCryptoForSmallestCrypto(context, amount);
-        BigDecimal fiatData = getFiatForToken(context, cryptoAmount, iso);
+        BigDecimal fiatData = RatesRepository.getInstance(context).getFiatForCrypto(cryptoAmount, getCurrencyCode(), iso);
         if (fiatData == null) {
             return null;
         }
@@ -451,30 +452,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             convertedCryptoAmount = convertedCryptoAmount.setScale(getMaxDecimalPlaces(context), BRConstants.ROUNDING_MODE);
         }
         return getSmallestCryptoForCrypto(context, convertedCryptoAmount);
-    }
-
-    //pass in a token amount and return the specified amount in fiat
-    //erc20 rates are in BTC (thus this math)
-    private BigDecimal getFiatForToken(Context context, BigDecimal tokenAmount, String
-            code) {
-        //fiat rate for btc
-        CurrencyEntity rate = RatesRepository.getInstance(context).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
-        //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesRepository.getInstance(context).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-
-        if (rate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC or ETH");
-            return null;
-        }
-        if (tokenBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC or ETH rates for token");
-            return null;
-        }
-        if (tokenBtcRate.rate == 0 || rate.rate == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(rate.rate));
     }
 
     //pass in a fiat amount and return the specified amount in tokens
