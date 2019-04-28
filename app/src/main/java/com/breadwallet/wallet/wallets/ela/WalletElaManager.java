@@ -128,7 +128,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BREthereumAmount.Unit getUnit() {
         Log.i(TAG, "getUnit");
-        throw new RuntimeException("stub");
+        return BREthereumAmount.Unit.TOKEN_DECIMAL;
     }
 
     public String getPrivateKey() {
