@@ -568,7 +568,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     // TODO only ETH and ERC20
     @Override
     public BREthereumAmount.Unit getUnit() {
-        throw new RuntimeException("stub");
+        return BREthereumAmount.Unit.TOKEN_DECIMAL;
     }
 
     @Override
