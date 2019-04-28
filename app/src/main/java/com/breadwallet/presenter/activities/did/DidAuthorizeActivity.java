@@ -432,4 +432,13 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         }
         return null;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(null != mLoadingDialog){
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
+        }
+    }
 }

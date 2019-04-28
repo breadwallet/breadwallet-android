@@ -230,4 +230,13 @@ public class ExploreWebActivity extends BRActivity {
             webView.loadUrl(url);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadingDialog != null){
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
+        }
+    }
 }

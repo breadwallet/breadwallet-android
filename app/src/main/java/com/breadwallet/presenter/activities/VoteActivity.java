@@ -221,4 +221,12 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(null != mLoadingDialog){
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
+        }
+    }
 }

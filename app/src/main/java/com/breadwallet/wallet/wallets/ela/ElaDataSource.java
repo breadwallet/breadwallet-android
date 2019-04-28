@@ -3,6 +3,7 @@ package com.breadwallet.wallet.wallets.ela;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.WorkerThread;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -94,8 +96,16 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private ElaDataSource(Context context){
         mContext = context;
-        if(context instanceof Activity) mActivity = (Activity) context;
+        if(context instanceof Activity) mActivity = findActivity(context);
         dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+
+    private static Activity findActivity(Context context) {
+        if (context instanceof Activity) {
+            return (Activity) context;
+        }
+        return HomeActivity.mHomeActivity;
     }
 
     public static ElaDataSource getInstance(Context context){
@@ -250,7 +260,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                 }
             });
     }
@@ -430,6 +440,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
+                Thread.sleep(3000);
                 if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
 //                toast(result);
                 return null;

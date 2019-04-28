@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
@@ -48,6 +49,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private Fragment mSettingFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
+    public static Activity mHomeActivity;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,6 +90,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
 
         didIsOnchain();
+        mHomeActivity = this;
     }
 
     class KeyValue {
@@ -201,5 +204,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void onConnectionChanged(boolean isConnected) {
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHomeActivity = null;
     }
 }
