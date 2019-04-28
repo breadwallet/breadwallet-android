@@ -3,6 +3,7 @@ package com.breadwallet.wallet.wallets.ela;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.WorkerThread;
@@ -94,8 +95,21 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private ElaDataSource(Context context){
         mContext = context;
-        if(context instanceof Activity) mActivity = (Activity) context;
+        if(context instanceof Activity) mActivity = findActivity(context);
         dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+
+    private static Activity findActivity(Context context) {
+        if (context instanceof Activity) {
+            return (Activity) context;
+        }
+        if (context instanceof ContextWrapper) {
+            ContextWrapper wrapper = (ContextWrapper) context;
+            return findActivity(wrapper.getBaseContext());
+        } else {
+            return null;
+        }
     }
 
     public static ElaDataSource getInstance(Context context){
@@ -250,7 +264,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                 }
             });
     }
@@ -430,6 +444,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
+                Thread.sleep(2000);
                 if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
 //                toast(result);
                 return null;
