@@ -105,12 +105,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if (context instanceof Activity) {
             return (Activity) context;
         }
-        if (context instanceof ContextWrapper) {
-            ContextWrapper wrapper = (ContextWrapper) context;
-            return findActivity(wrapper.getBaseContext());
-        } else {
-            return HomeActivity.mHomeActivity;
-        }
+        return HomeActivity.mHomeActivity;
     }
 
     public static ElaDataSource getInstance(Context context){

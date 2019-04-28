@@ -90,6 +90,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
 
         didIsOnchain();
+        mHomeActivity = this;
     }
 
     class KeyValue {
@@ -203,5 +204,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void onConnectionChanged(boolean isConnected) {
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHomeActivity = null;
     }
 }
