@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -108,7 +109,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             ContextWrapper wrapper = (ContextWrapper) context;
             return findActivity(wrapper.getBaseContext());
         } else {
-            return null;
+            return HomeActivity.mHomeActivity;
         }
     }
 
@@ -444,7 +445,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
                 if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
 //                toast(result);
                 return null;

@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
@@ -48,6 +49,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private Fragment mSettingFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
+    public static Activity mHomeActivity;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
