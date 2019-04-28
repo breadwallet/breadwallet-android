@@ -210,6 +210,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
         String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA")){
+            mAutoVoteCb.setVisibility(View.GONE);
+        }
         if(balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
         }

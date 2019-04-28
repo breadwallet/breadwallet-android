@@ -6,6 +6,7 @@ import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -199,6 +200,19 @@ public class ExploreWebActivity extends BRActivity {
                 super.onReceivedError(view, request, error);
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
+            int account = mWebBackForwardList.getCurrentIndex();
+            if(account > 0){
+                webView.goBack();
+                return false;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private synchronized void loadUrl(String url){
