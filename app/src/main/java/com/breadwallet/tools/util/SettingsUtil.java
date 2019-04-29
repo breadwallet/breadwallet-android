@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
@@ -78,9 +79,15 @@ public final class SettingsUtil {
     private static final String API_SERVER = "API Server";
     private static final String API_SERVER_SET_FORMAT = "Api server %s set!";
     private static final String ONBOARDING_FLOW = "Onboarding flow";
-    private static final String WEB_BUNDLE = "Select web bundle";
-    private static final String TOKEN_BUNDLE = "Select token bundle";
+    private static final String WEB_BUNDLE = "Web Platform Bundle";
+    private static final String WEB_PLATFORM_DEBUG_URL = "Web Platform Debug URL";
+    private static final String TOKEN_BUNDLE = "Token Bundle";
     private static final String BUNDLE_SET = "Bundle set: ";
+    private static final String WEB_PLATFORM_DEBUG_URL_SET = "Web Platform Debug URL set: ";
+    private static final String BUNDLE_PROMPT = "Please specify a Bundle";
+    private static final String DEBUG_URL_PROMPT = "Please specify a Web Platform Debug URL";
+    private static final String APPLY = "Apply";
+    private static final String CANCEL = "Cancel";
 
     private SettingsUtil() {
     }
@@ -267,37 +274,33 @@ public final class SettingsUtil {
 
     public static List<BRSettingsItem> getDeveloperOptionsSettings(final Activity activity) {
         List<BRSettingsItem> items = new ArrayList<>();
-        items.add(new BRSettingsItem(SEND_LOGS, "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LogsUtils.shareLogs(activity);
-            }
+        items.add(new BRSettingsItem(SEND_LOGS, "", view -> LogsUtils.shareLogs(activity),false, 0));
+        items.add(new BRSettingsItem(API_SERVER, "", view -> showInputDialog(activity),false, 0));
+        items.add(new BRSettingsItem(ONBOARDING_FLOW, "", view -> {
+            Intent intent = new Intent(activity, OnBoardingActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }, false, 0));
-        items.add(new BRSettingsItem(API_SERVER, "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showInputDialog(activity);
-            }
+
+        String currentWebPlatformDebugURL = ServerBundlesHelper.getWebPlatformDebugURL(activity);
+        items.add(new BRSettingsItem(WEB_PLATFORM_DEBUG_URL, currentWebPlatformDebugURL, view -> {
+            showWebPlatformDebugURLTextDialog(activity, currentWebPlatformDebugURL);
         }, false, 0));
-        items.add(new BRSettingsItem(ONBOARDING_FLOW, "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, OnBoardingActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, 0));
-        items.add(new BRSettingsItem(WEB_BUNDLE, "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBundlePickerDialog(activity, ServerBundlesHelper.Type.WEB, ServerBundlesHelper.BRD_WEB_BUNDLES);
-            }
-        }, false, 0));
-        items.add(new BRSettingsItem(TOKEN_BUNDLE, "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBundlePickerDialog(activity, ServerBundlesHelper.Type.TOKEN, ServerBundlesHelper.BRD_TOKEN_BUNDLES);
-            }
+
+        if (Utils.isNullOrEmpty(currentWebPlatformDebugURL)) {
+            String currentWebBundle = ServerBundlesHelper.getBundle(activity, ServerBundlesHelper.Type.WEB);
+            items.add(new BRSettingsItem(WEB_BUNDLE, currentWebBundle, view -> {
+                showBundleTextDialog(activity, ServerBundlesHelper.Type.WEB, currentWebBundle);
+            }, false, 0));
+        } else {
+            items.add(new BRSettingsItem(WEB_BUNDLE, "(not used if debug URL specified)", view -> {
+                // do nothing
+            }, false, 0));
+        }
+
+        String currentTokenBundle = ServerBundlesHelper.getBundle(activity, ServerBundlesHelper.Type.TOKEN);
+        items.add(new BRSettingsItem(TOKEN_BUNDLE, currentTokenBundle, view -> {
+            showBundleTextDialog(activity, ServerBundlesHelper.Type.TOKEN, currentTokenBundle);
         }, false, 0));
         return items;
     }
@@ -439,19 +442,51 @@ public final class SettingsUtil {
         return items;
     }
 
-    private static void showBundlePickerDialog(final Context context,
-                                               final ServerBundlesHelper.Type bundleType,
-                                               final String[] options) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selectedBundle = options[which];
-                Toast.makeText(context, BUNDLE_SET + selectedBundle, Toast.LENGTH_LONG).show();
-                ServerBundlesHelper.setDebugBundle(context.getApplicationContext(), bundleType, selectedBundle);
-            }
-        });
-        dialogBuilder.show();
+    /**
+     * Displays an Alert Dialog with an input text field for entering a Bundle setting.
+     *
+     * @param activity The activity context.
+     * @param bundleType The type of bundle (whether WEB or TOKEN).
+     * @param defaultBundle The default bundle name that will initially appear in the input text field.
+     */
+    private static void showBundleTextDialog(final Activity activity, final ServerBundlesHelper.Type bundleType, final String defaultBundle) {
+        final EditText bundleEditText = new EditText(activity);
+        bundleEditText.setText(defaultBundle, TextView.BufferType.EDITABLE);
+        AlertDialog bundleDialog = new AlertDialog.Builder(activity)
+            .setMessage(BUNDLE_PROMPT)
+            .setView(bundleEditText)
+            .setPositiveButton(APPLY, (DialogInterface dialogInterface, int which) -> {
+                String bundleName = String.valueOf(bundleEditText.getText());
+                Toast.makeText(activity, BUNDLE_SET + bundleName, Toast.LENGTH_LONG).show();
+                ServerBundlesHelper.setDebugBundle(activity.getApplicationContext(), bundleType, bundleName);
+                activity.recreate();
+            })
+            .setNegativeButton(CANCEL, null)
+            .create();
+        bundleDialog.show();
+    }
+
+    /**
+     * Displays an Alert Dialog with an input text field for entering a Platform Web URL.
+     *
+     * @param activity The activity context.
+     * @param defaultWebPlatformURL The default URL that will initially appear in the input text field.
+     */
+    private static void showWebPlatformDebugURLTextDialog(final Activity activity, String defaultWebPlatformURL) {
+        final EditText urlEditText = new EditText(activity);
+        urlEditText.setText(defaultWebPlatformURL, TextView.BufferType.EDITABLE);
+        AlertDialog urlDialog = new AlertDialog.Builder(activity)
+                .setMessage(DEBUG_URL_PROMPT)
+                .setView(urlEditText)
+                .setPositiveButton(APPLY, (DialogInterface dialogInterface, int which) -> {
+                    String platformURL = String.valueOf(urlEditText.getText());
+                    Toast.makeText(activity, WEB_PLATFORM_DEBUG_URL_SET + platformURL, Toast.LENGTH_LONG).show();
+                    ServerBundlesHelper.setWebPlatformDebugURL(activity.getApplicationContext(), platformURL);
+                    activity.recreate();
+                })
+                .setNegativeButton(CANCEL, null)
+                .create();
+        urlDialog.show();
     }
 
 }
