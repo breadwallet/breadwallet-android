@@ -10,11 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class SettingsAdapter extends ArrayAdapter<String> {
             v = inflater.inflate(settings_list_item, parent, false);
             TextView addon = v.findViewById(R.id.item_addon);
 
-            if (!addon.getText().toString().isEmpty()) {
+            if (!Utils.isNullOrEmpty(item.addonText)) {
                 addon.setVisibility(View.VISIBLE);
                 addon.setText(item.addonText);
             }
