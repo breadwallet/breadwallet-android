@@ -705,26 +705,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public void txPublished(final String error) {
         super.txPublished(error);
-        final Context app = BreadApp.getBreadContext();
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (app instanceof Activity) {
-                    EventUtils.sendTransactionEvent(error);
-                    UiUtils.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    if (!((Activity) app).isDestroyed()) {
-                                        ((Activity) app).getFragmentManager().popBackStack();
-                                    }
-                                }
-                            });
-                }
-
-            }
-        });
-
     }
 
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
