@@ -465,17 +465,18 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         if (amount.doubleValue() == 0) {
             return amount;
         }
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        BigDecimal rate;
         if (ent == null) {
-            ent = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), iso);
+            rate = getFiatExchangeRate(app);
+        } else {
+            rate = new BigDecimal(ent.rate);
         }
-        if (ent == null) {
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             return null;
         }
-        double rate = ent.rate;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(new BigDecimal(rate));
+        return cryptoAmount.multiply(rate);
     }
 
     @Override
@@ -483,25 +484,21 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         if (fiatAmount.doubleValue() == 0) {
             return fiatAmount;
         }
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), iso);
-        if (ent == null) {
+        BigDecimal rate = getFiatExchangeRate(app);
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             return null;
         }
-        double rate = ent.rate;
-        //convert c to $.
         int unit = BRSharedPrefs.getCryptoDenomination(app, getCurrencyCode());
         BigDecimal result = BigDecimal.ZERO;
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
-                result = fiatAmount.divide(new BigDecimal(rate), 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
+                result = fiatAmount.divide(rate, 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
                 break;
             case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = fiatAmount.divide(new BigDecimal(rate), getMaxDecimalPlaces(app), ROUNDING_MODE);
+                result = fiatAmount.divide(rate, getMaxDecimalPlaces(app), ROUNDING_MODE);
                 break;
         }
         return result;
-
     }
 
     @Override
@@ -545,15 +542,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), iso);
-        if (ent == null) {
+        BigDecimal rate = getFiatExchangeRate(app);
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             Log.e(getTag(), "getSmallestCryptoForFiat: no exchange rate data!");
             return amount;
         }
-        double rate = ent.rate;
         //convert c to $.
-        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
+        return amount.divide(rate, 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
     // TODO only ETH and ERC20
