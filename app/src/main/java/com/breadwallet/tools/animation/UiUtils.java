@@ -306,7 +306,7 @@ public class UiUtils {
     }
 
     public static void killAllFragments(Activity app) {
-        if (app != null && !app.isDestroyed())
+        if (app != null && !app.isDestroyed() && !app.isFinishing())
             app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
