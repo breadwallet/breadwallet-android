@@ -102,6 +102,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         super.onNewIntent(intent);
         if (intent != null) {
             String action = intent.getAction();
+            if(StringUtil.isNullOrEmpty(action)) return;
             if (action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
                 Log.i(TAG, "server mUri: " + uri.toString());
