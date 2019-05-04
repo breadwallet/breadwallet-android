@@ -427,7 +427,9 @@ public class FragmentTxDetails extends DialogFragment {
         // Update the memo field on the transaction and save it
         if (mTxMetaData == null) mTxMetaData = new TxMetaData();
         mTxMetaData.comment = mMemoText.getText().toString();
-        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        if(null != mTransaction){
+            KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        }
         mTxMetaData = null;
 
         // Hide softkeyboard if it's visible
