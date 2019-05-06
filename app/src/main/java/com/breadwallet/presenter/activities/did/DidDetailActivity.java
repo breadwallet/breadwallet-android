@@ -13,6 +13,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.MaxHeightLv;
 import com.breadwallet.presenter.customviews.RoundImageView;
+import com.breadwallet.tools.adapter.AuthorDetailAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;

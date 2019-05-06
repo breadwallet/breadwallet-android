@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.VoteEntity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -41,6 +43,7 @@ public class VoteActivity extends BaseSettingsActivity {
     private TextView mVoteElaAmountTv;
     private Button mCancleBtn;
     private Button mConfirmBtn;
+    private ListView mVoteNodeLv;
 
     private LoadingDialog mLoadingDialog;
 
@@ -84,6 +87,7 @@ public class VoteActivity extends BaseSettingsActivity {
         mVoteElaAmountTv = findViewById(R.id.vote_ela_amount);
         mCancleBtn = findViewById(R.id.vote_cancle_btn);
         mConfirmBtn = findViewById(R.id.vote_confirm_btn);
+        mVoteNodeLv = findViewById(R.id.vote_node_lv);
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
     }
@@ -197,6 +201,8 @@ public class VoteActivity extends BaseSettingsActivity {
         mBalanceTv.setText(String.format(getString(R.string.vote_balance), balance.toString()));
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
+
+        mVoteNodeLv.setAdapter(new VoteNodeAdapter(this, mCandidates));
     }
 
     private void dismissDialog() {
