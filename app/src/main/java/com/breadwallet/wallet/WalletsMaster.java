@@ -102,8 +102,9 @@ public class WalletsMaster {
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
-            enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("USDT", true, "0xdAC17F958D2ee523a2206206994597C13D831ec7"));
             enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BGX", true, "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb"));
             enabled.add(new TokenListMetaData.TokenInfo("HSC", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f"));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
