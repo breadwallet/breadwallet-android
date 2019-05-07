@@ -7,15 +7,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.vote.ProducerEntity;
+import com.breadwallet.vote.ProducersEntity;
 
 import java.util.List;
 
 public class VoteNodeAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<String> mData;
+    private List<ProducerEntity> mData;
 
-    public VoteNodeAdapter(Context context, List<String> data){
+    public VoteNodeAdapter(Context context, List<ProducerEntity> data){
         mContext = context;
         mData = data;
     }
@@ -47,7 +49,7 @@ public class VoteNodeAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.mNameTv.setText(mData.get(position));
+        holder.mNameTv.setText(mData.get(position).Producer_public_key);
 
         return convertView;
     }

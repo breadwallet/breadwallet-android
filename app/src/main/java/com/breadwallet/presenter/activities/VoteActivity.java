@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
@@ -18,10 +20,16 @@ import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.VoteEntity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.VoteNodeAdapter;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
+import com.breadwallet.vote.ProducersEntity;
+import com.breadwallet.vote.VoteDataSource;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
@@ -32,6 +40,7 @@ import org.wallet.library.AuthorizeManager;
 import org.wallet.library.entity.UriFactory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VoteActivity extends BaseSettingsActivity {
@@ -41,6 +50,7 @@ public class VoteActivity extends BaseSettingsActivity {
     private TextView mVoteCountTv;
     private TextView mBalanceTv;
     private TextView mVoteElaAmountTv;
+    private TextView mVotePasteTv;
     private Button mCancleBtn;
     private Button mConfirmBtn;
     private ListView mVoteNodeLv;
@@ -82,9 +92,10 @@ public class VoteActivity extends BaseSettingsActivity {
 
 
     private void findView(){
-        mVoteCountTv = findViewById(R.id.vote_nodes_count);
+        mVoteCountTv = findViewById(R.id.voting_hint);
         mBalanceTv = findViewById(R.id.vote_ela_balance);
         mVoteElaAmountTv = findViewById(R.id.vote_ela_amount);
+        mVotePasteTv = findViewById(R.id.vote_paste_tv);
         mCancleBtn = findViewById(R.id.vote_cancle_btn);
         mConfirmBtn = findViewById(R.id.vote_confirm_btn);
         mVoteNodeLv = findViewById(R.id.vote_node_lv);
@@ -112,6 +123,19 @@ public class VoteActivity extends BaseSettingsActivity {
                 }
             }
         });
+
+        mVotePasteTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(this, new Gson().toJson(mProducers));
+        Toast.makeText(this, "has copy to clipboard", Toast.LENGTH_SHORT).show();
+
     }
 
     private boolean verifyUri(){
@@ -185,7 +209,9 @@ public class VoteActivity extends BaseSettingsActivity {
 
     private BigDecimal mAmount;
     private String  mCandidatesStr;
+    private VoteNodeAdapter mAdapter;
     private List<String> mCandidates;
+    private List<ProducerEntity> mProducers = new ArrayList<>();
     private void initData(){
         if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
@@ -202,7 +228,24 @@ public class VoteActivity extends BaseSettingsActivity {
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
 
-        mVoteNodeLv.setAdapter(new VoteNodeAdapter(this, mCandidates));
+        mAdapter = new VoteNodeAdapter(this, mProducers);
+        mVoteNodeLv.setAdapter(mAdapter);
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                mProducers.clear();
+                List producers = VoteDataSource.getInstance(VoteActivity.this).getProducers();
+                if(null==producers || producers.size()<=0) return;
+                mProducers.addAll(producers);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 
     private void dismissDialog() {
