@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
@@ -25,11 +23,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
-import com.breadwallet.vote.ProducersEntity;
-import com.breadwallet.vote.VoteDataSource;
-import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
@@ -231,21 +225,21 @@ public class VoteActivity extends BaseSettingsActivity {
         mAdapter = new VoteNodeAdapter(this, mProducers);
         mVoteNodeLv.setAdapter(mAdapter);
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                mProducers.clear();
-                List producers = VoteDataSource.getInstance(VoteActivity.this).getProducers();
-                if(null==producers || producers.size()<=0) return;
-                mProducers.addAll(producers);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                mProducers.clear();
+//                List producers = ElaDataSource.getInstance(VoteActivity.this).getProducers();
+//                if(null==producers || producers.size()<=0) return;
+//                mProducers.addAll(producers);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//            }
+//        });
     }
 
     private void dismissDialog() {

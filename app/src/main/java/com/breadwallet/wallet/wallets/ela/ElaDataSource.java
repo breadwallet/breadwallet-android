@@ -3,7 +3,6 @@ package com.breadwallet.wallet.wallets.ela;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.WorkerThread;
@@ -19,6 +18,8 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
+import com.breadwallet.vote.ProducersEntity;
 import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
@@ -29,7 +30,6 @@ import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.breadwallet.wallet.wallets.ela.response.create.Payload;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
-import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
@@ -211,6 +211,38 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     }
 
+    public List<ProducerEntity> getCacheProducers(){
+        List<ProducerEntity> producers = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, allColumns, null, null, null, null, "rank desc");
+            if(null == cursor) return null;
+            cursor.moveToFirst();
+            while(cursor.isAfterLast()) {
+                ProducerEntity entity = cursorToProducerEntity(cursor);
+                producers.add(entity);
+            }
+            return producers;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return null;
+    }
+
+    private ProducerEntity cursorToProducerEntity(Cursor cursor) {
+        return new ProducerEntity(cursor.getString(0),
+                cursor.getString(1),
+                cursor.getInt(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5));
+    }
 
     public List<ElaTransactionEntity> getAllTransactions(){
         List<ElaTransactionEntity> currencies = new ArrayList<>();
@@ -222,7 +254,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                ElaTransactionEntity curEntity = cursorToCurrency(cursor);
+                ElaTransactionEntity curEntity = cursorToTxEntity(cursor);
                 currencies.add(curEntity);
                 cursor.moveToNext();
             }
@@ -237,7 +269,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    private ElaTransactionEntity cursorToCurrency(Cursor cursor) {
+    private ElaTransactionEntity cursorToTxEntity(Cursor cursor) {
         return new ElaTransactionEntity(cursor.getInt(0)==1,
                 cursor.getLong(1),
                 cursor.getInt(2),
@@ -454,6 +486,47 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return result;
+    }
+
+    public void getProducers(){
+        try {
+            String jsonRes = urlGET(getUrl("api/1/dpos/rank/height/9999999999999999"));
+            if(!StringUtil.isNullOrEmpty(jsonRes) && jsonRes.contains("result")) {
+                ProducersEntity producersEntity = new Gson().fromJson(jsonRes, ProducersEntity.class);
+                List list = producersEntity.result;
+                if(list==null || list.size()<=0) return;
+                cacheProducer(list);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void cacheProducer(List<ProducerEntity> values){
+        if(values==null || values.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+
+            for(ProducerEntity entity : values) {
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.PEODUCER_PUBLIC_KEY, entity.Producer_public_key);
+                value.put(BRSQLiteHelper.PEODUCER_VALUE, entity.Value);
+                value.put(BRSQLiteHelper.PEODUCER_RANK, entity.Rank);
+                value.put(BRSQLiteHelper.PEODUCER_ADDRESS, entity.Address);
+                value.put(BRSQLiteHelper.PEODUCER_NICKNAME, entity.Nickname);
+                value.put(BRSQLiteHelper.PEODUCER_VOTES, entity.Votes);
+                long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

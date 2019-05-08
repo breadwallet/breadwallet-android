@@ -3,7 +3,6 @@ package com.breadwallet.tools.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -11,7 +10,6 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +56,27 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 17;
 
     /**
+     * sign table
+     */
+    public static final String SIGN_AUTHOR_TABLE_NAME = "signTable";
+    public static final String SIGN_APP_NAME = "signAppName";
+    public static final String SIGN_APP_ID = "signAppId";
+    public static final String SIGN_APP_ICON = "signAppIcon";
+    public static final String SIGN_DID = "signDid";
+    public static final String SIGN_TIMESTAMP = "signTimestamp";
+    public static final String SIGN_PURPOSE = "signPrupose";
+    public static final String SIGN_CONTENT = "signContent";
+
+    private static final String SIGN_DATABASE_CREATE = "create table if not exists " + SIGN_AUTHOR_TABLE_NAME + " (" +
+            SIGN_APP_NAME + " text, " +
+            SIGN_APP_ID + " text, " +
+            SIGN_APP_ICON + " text, " +
+            SIGN_DID + " text primary key , " +
+            SIGN_TIMESTAMP + " integer, " +
+            SIGN_PURPOSE + " text, " +
+            SIGN_CONTENT +" text);";
+
+    /**
      * DID author table
      */
     public static final String DID_AUTHOR_TABLE_NAME = "didAuthorTable";
@@ -81,6 +100,27 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_EXP_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_APP_ICON +" text);";
+
+    /**
+     * ELA Producers table
+     */
+
+    public static final String ELA_PRODUCER_TABLE_NAME = "elaProducerTable";
+    public static final String PEODUCER_PUBLIC_KEY = "publicKey";
+    public static final String PEODUCER_VALUE = "value";
+    public static final String PEODUCER_RANK = "rank";
+    public static final String PEODUCER_ADDRESS = "address";
+    public static final String PEODUCER_NICKNAME = "nickname";
+    public static final String PEODUCER_VOTES = "votes";
+
+    private static final String ELA_PRODUCER_DATABASE_CREATE = "create table if not exists " + ELA_PRODUCER_TABLE_NAME + " (" +
+            PEODUCER_PUBLIC_KEY + " text, " +
+            PEODUCER_VALUE + " text, " +
+            PEODUCER_RANK + " interger, " +
+            PEODUCER_ADDRESS + " text, " +
+            PEODUCER_NICKNAME + " text, " +
+            PEODUCER_VOTES +" text);";
+
     /**
      * ELA transaction table
      */
@@ -200,6 +240,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
+        database.execSQL(SIGN_DATABASE_CREATE);
         database.execSQL(DID_AUTHOR_DATABASE_CREATE);
         database.execSQL(ELA_TX_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);

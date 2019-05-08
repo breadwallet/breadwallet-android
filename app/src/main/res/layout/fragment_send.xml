@@ -385,7 +385,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
-            android:cursorVisible="false"
             android:maxLength="256"
             android:hint="@string/Send.descriptionLabel"/>
 

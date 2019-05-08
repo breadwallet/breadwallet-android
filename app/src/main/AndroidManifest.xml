@@ -101,13 +101,9 @@
             android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
-                <!--必有项-->
                 <action android:name="android.intent.action.VIEW"/>
-                <!--如果希望该应用可以通过浏览器的连接启动，则添加该项-->
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!--表示该页面可以被隐式调用，必须加上该项-->
                 <category android:name="android.intent.category.DEFAULT"/>
-                <!--协议部分-->
                 <data android:scheme="elaphant"
                     android:host="elapay"/>
             </intent-filter>
@@ -321,6 +317,23 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".presenter.activities.ExploreWebActivity"
+            android:screenOrientation="portrait"/>
+        
+        <activity android:name=".sign.SignaureActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="elaphant"
+                    android:host="sign"/>
+            </intent-filter>
+        </activity>
+        
+        <activity android:name=".sign.SignDetailActivity"
+            android:screenOrientation="portrait"/>
+        
+        <activity android:name=".sign.AddLimitationActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".presenter.activities.VoteActivity"
