@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -21,7 +20,8 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
-import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.TransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
@@ -162,21 +162,21 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
 
-    public void cacheSingleTx(ElaTransactionEntity entity){
-        List<ElaTransactionEntity> entities = new ArrayList<>();
+    public void cacheSingleTx(HistoryTransactionEntity entity){
+        List<HistoryTransactionEntity> entities = new ArrayList<>();
         entities.clear();
         entities.add(entity);
         cacheMultTx(entities);
     }
 
-    public synchronized void cacheMultTx(List<ElaTransactionEntity> elaTransactionEntities){
+    public synchronized void cacheMultTx(List<HistoryTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
 //        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for(ElaTransactionEntity entity : elaTransactionEntities){
+            for(HistoryTransactionEntity entity : elaTransactionEntities){
 //                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
 //                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed}, null, null, null);
 
@@ -245,8 +245,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getString(5));
     }
 
-    public List<ElaTransactionEntity> getAllTransactions(){
-        List<ElaTransactionEntity> currencies = new ArrayList<>();
+    public List<HistoryTransactionEntity> getHistoryTransactions(){
+        List<HistoryTransactionEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
 
         try {
@@ -255,7 +255,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                ElaTransactionEntity curEntity = cursorToTxEntity(cursor);
+                HistoryTransactionEntity curEntity = cursorToTxEntity(cursor);
                 currencies.add(curEntity);
                 cursor.moveToNext();
             }
@@ -270,8 +270,8 @@ public class ElaDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    private ElaTransactionEntity cursorToTxEntity(Cursor cursor) {
-        return new ElaTransactionEntity(cursor.getInt(0)==1,
+    private HistoryTransactionEntity cursorToTxEntity(Cursor cursor) {
+        return new HistoryTransactionEntity(cursor.getInt(0)==1,
                 cursor.getLong(1),
                 cursor.getInt(2),
                 cursor.getBlob(3),
@@ -320,36 +320,52 @@ public class ElaDataSource implements BRDataSourceInterface {
         return balance;
     }
 
+    public TransactionEntity getTransactionById(String txId){
+        if(StringUtil.isNullOrEmpty(txId)) return null;
+        String url = getUrl("api/1/tx/"+txId);
+        TransactionEntity transactionEntity = null;
+        try {
+            String result = urlGET(url);
+            JSONObject jsonObject = new JSONObject(result);
+            String json = jsonObject.getString("result");
+            transactionEntity = new Gson().fromJson(json, TransactionEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return transactionEntity;
+    }
+
     public void getHistory(String address){
-        if(address == null) return;
+        if(StringUtil.isNullOrEmpty(address)) return;
         try {
             String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
             Log.i(TAG, "history url:"+url);
-            String result = urlGET(url)/*getTxHistory()*/;
+            String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
             TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
 
-            List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
+            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
             List<History> transactions = txHistory.History;
             for(History history : transactions){
-                ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
-                elaTransactionEntity.txReversed = history.Txid;
-                elaTransactionEntity.isReceived = isReceived(history.Type);
-                elaTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-                elaTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-                elaTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
-                elaTransactionEntity.blockHeight = history.Height;
-                elaTransactionEntity.hash = history.Txid.getBytes();
-                elaTransactionEntity.txSize = 0;
-                elaTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
-                elaTransactionEntity.balanceAfterTx = 0;
-                elaTransactionEntity.isValid = true;
-                elaTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
-                elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
-                elaTransactionEntity.memo = getMeno(history.Memo);
-                elaTransactionEntities.add(elaTransactionEntity);
+                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
+                historyTransactionEntity.txReversed = history.Txid;
+                historyTransactionEntity.isReceived = isReceived(history.Type);
+                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
+                historyTransactionEntity.blockHeight = history.Height;
+                historyTransactionEntity.hash = history.Txid.getBytes();
+                historyTransactionEntity.txSize = 0;
+                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
+                historyTransactionEntity.balanceAfterTx = 0;
+                historyTransactionEntity.isValid = true;
+                historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
+                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+                historyTransactionEntity.memo = getMeno(history.Memo);
+                elaTransactionEntities.add(historyTransactionEntity);
             }
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
@@ -388,7 +404,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return createElaTx(inputAddress, outputsAddress, amount, memo, null);
     }
 
-    ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+    HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo, List<String> payload){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
@@ -437,20 +453,20 @@ public class ElaDataSource implements BRDataSourceInterface {
             brElaTransaction.setTx(transactionJson);
             brElaTransaction.setTxId(inputs.get(0).txid);
 
-            elaTransactionEntity.txReversed = inputs.get(0).txid;
-            elaTransactionEntity.fromAddress = inputAddress;
-            elaTransactionEntity.toAddress = outputsAddress;
-            elaTransactionEntity.isReceived = false;
-            elaTransactionEntity.fee = new BigDecimal("4860").longValue();
-            elaTransactionEntity.blockHeight = 0;
-            elaTransactionEntity.hash = new byte[1];
-            elaTransactionEntity.txSize = 0;
-            elaTransactionEntity.amount = new BigDecimal(amount).longValue();
-            elaTransactionEntity.balanceAfterTx = 0;
-            elaTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
-            elaTransactionEntity.isValid = true;
-            elaTransactionEntity.isVote = (payload!=null && payload.size()>0);
-            elaTransactionEntity.memo = memo;
+            historyTransactionEntity.txReversed = inputs.get(0).txid;
+            historyTransactionEntity.fromAddress = inputAddress;
+            historyTransactionEntity.toAddress = outputsAddress;
+            historyTransactionEntity.isReceived = false;
+            historyTransactionEntity.fee = new BigDecimal("4860").longValue();
+            historyTransactionEntity.blockHeight = 0;
+            historyTransactionEntity.hash = new byte[1];
+            historyTransactionEntity.txSize = 0;
+            historyTransactionEntity.amount = new BigDecimal(amount).longValue();
+            historyTransactionEntity.balanceAfterTx = 0;
+            historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
+            historyTransactionEntity.isValid = true;
+            historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
+            historyTransactionEntity.memo = memo;
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
@@ -478,8 +494,8 @@ public class ElaDataSource implements BRDataSourceInterface {
 //                toast(result);
                 return null;
             }
-            elaTransactionEntity.txReversed = result;
-            cacheSingleTx(elaTransactionEntity);
+            historyTransactionEntity.txReversed = result;
+            cacheSingleTx(historyTransactionEntity);
             Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));

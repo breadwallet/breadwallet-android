@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
@@ -40,6 +41,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.presenter.viewmodels.SendViewModel;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -53,14 +55,20 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -127,6 +135,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public static boolean mFromRedPackage = false;
     public static boolean mIsSend = false;
 
+    private VoteNodeAdapter mAdapter;
+    private List<ProducerEntity> mProducers = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -153,6 +164,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
+        mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
@@ -208,17 +220,30 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
+        initVoteAdapter();
+        return rootView;
+    }
+
+    private ListView mVoteNodeLv;
+    private void initVoteAdapter(){
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
         String candidatesStr = BRSharedPrefs.getCandidate(getContext());
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
-        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA")){
+        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
+                balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
-        }
-        if(balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
-            mAutoVoteCb.setVisibility(View.GONE);
+            mVoteNodeLv.setVisibility(View.GONE);
+            return;
         }
 
-        return rootView;
+        List<String> candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
+        if(tmp!=null && tmp.size()>0) {
+            mProducers.clear();
+            mProducers.addAll(tmp);
+        }
+        mAdapter = new VoteNodeAdapter(getContext(), mProducers);
+        mVoteNodeLv.setAdapter(mAdapter);
     }
 
     private void setListeners() {
