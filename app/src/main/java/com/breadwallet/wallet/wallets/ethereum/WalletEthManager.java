@@ -1180,8 +1180,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
         String currencyCode = (null == wallet.getToken() ? getCurrencyCode() : wallet.getToken().getSymbol());
         for (OnTransactionEventListener listener : mTransactionEventListeners) {
-            listener.onTransactionEvent(event);
-            mTransactionEventListeners.remove(listener);
+            listener.onTransactionEvent(event, transaction, status);
         }
         switch (event) {
             case CREATED:
@@ -1260,8 +1259,19 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         mTransactionEventListeners.remove(listener);
     }
 
+    /**
+     * Interface for listening to transaction events
+     */
     public interface OnTransactionEventListener {
-        void onTransactionEvent(BREthereumEWM.TransactionEvent event);
+
+        /**
+         * Handles a given transaction event
+         *
+         * @param event an enum indicating what type of transaction event has occurred
+         * @param transaction the associated transaction
+         * @param status the status of the event
+         */
+        void onTransactionEvent(BREthereumEWM.TransactionEvent event, BREthereumTransfer transaction, BREthereumEWM.Status status);
     }
 
     @Override
