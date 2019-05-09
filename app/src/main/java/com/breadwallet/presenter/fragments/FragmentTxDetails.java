@@ -28,6 +28,7 @@ import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.adapter.TxProducerAdapter;
 import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -40,6 +41,7 @@ import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -101,6 +103,8 @@ public class FragmentTxDetails extends DialogFragment {
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
 
+    private BaseTextView mVoteTitleTv;
+    private BaseTextView mPaseTv;
     private ListView mVoteNodeLv;
 
     boolean mDetailsShowing = false;
@@ -163,6 +167,8 @@ public class FragmentTxDetails extends DialogFragment {
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
         mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
+        mVoteTitleTv = rootView.findViewById(R.id.vote_nodes_list_title);
+        mPaseTv = rootView.findViewById(R.id.transaction_detail_vote_paste_tv);
         mVoteNodeLv = rootView.findViewById(R.id.transaction_detail_vote_node_lv);
 
         mCloseButton.setOnClickListener(new View.OnClickListener() {
@@ -205,27 +211,26 @@ public class FragmentTxDetails extends DialogFragment {
         this.mTransaction = item;
     }
 
-    private VoteNodeAdapter mAdapter;
-    private List<ProducerEntity> mProducers = new ArrayList<>();
+    private TxProducerAdapter mAdapter;
+    private List<TxProducerEntity> mProducers = new ArrayList<>();
     private void initTxAdapter(){
-        //TODO daokun.xi 投票publickey假数据
-        List<String> mCandidates = new ArrayList<>();
-        mCandidates.add("03d55285f06683c9e5c6b5892a688affd046940c7161571611ea3a98330f72459f");
-        mCandidates.add("02d6f8ff72eaa9aada515d6b316cff2cbc55be09ddab17981d74a585ae20617a72");
-        mCandidates.add("032d4e464da80cb333aeb14624d7eef09dafb984aeba42c13f3c9ce9f94c93972a");
-        mCandidates.add("02fb43581e1f2f201fc95243444631ec552e6f5d204e2d62ecd8c3f7e6eefd3467");
-        mCandidates.add("02b6d98b9e8f484e4ea83d5278099be59f945951bb6dc464b792ba0895eab1a774");
-        mCandidates.add("022145c89fb500c02ce6b8ba9a51f608cd2c7d1dc99b43f11bdf8589161aa7d690");
-        mCandidates.add("02b28266ff709f4764374c0452e379671e47d66713efb4cce7812b3c9f4a12b2bc");
-        mCandidates.add("02f59c9e337d4102d49082fe641b2e8aac5b229583bfa27cfba87790ac0113518b");
-        mCandidates.add("02a85be1f6244b40b8778b626bde33e1d666b3b5863f195487e72dc0e2a6af33a1");
-        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(mCandidates);
-        if(tmp!=null && tmp.size()>0) {
-            mProducers.clear();
-            mProducers.addAll(tmp);
+        if(mTransaction.isVote()) {
+            mVoteTitleTv.setVisibility(View.VISIBLE);
+            mPaseTv.setVisibility(View.VISIBLE);
+            mVoteNodeLv.setVisibility(View.VISIBLE);
+
+            List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
+            if(tmp!=null && tmp.size()>0) {
+                mProducers.clear();
+                mProducers.addAll(tmp);
+            }
+            mAdapter = new TxProducerAdapter(getContext(), mProducers);
+            mVoteNodeLv.setAdapter(mAdapter);
+        } else {
+            mVoteTitleTv.setVisibility(View.GONE);
+            mPaseTv.setVisibility(View.GONE);
+            mVoteNodeLv.setVisibility(View.GONE);
         }
-        mAdapter = new VoteNodeAdapter(getContext(), mProducers);
-        mVoteNodeLv.setAdapter(mAdapter);
     }
 
     private void updateUi() {

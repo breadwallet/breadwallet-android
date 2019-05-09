@@ -21,7 +21,9 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
-import com.breadwallet.wallet.wallets.ela.data.TransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.MultiTxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
@@ -212,28 +214,34 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     }
 
-    public List<ProducerEntity> getCacheProducers(){
-        List<ProducerEntity> producers = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, allColumns, null, null, null, null, "rank desc");
-            if(null == cursor) return null;
-            cursor.moveToFirst();
-            while(cursor.isAfterLast()) {
-                ProducerEntity entity = cursorToProducerEntity(cursor);
-                producers.add(entity);
-            }
-            return producers;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null)
-                cursor.close();
-            closeDatabase();
-        }
+//    public List<ProducerEntity> getCacheProducers(){
+//        List<ProducerEntity> producers = new ArrayList<>();
+//        Cursor cursor = null;
+//        try {
+//            database = openDatabase();
+//            cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, allColumns, null, null, null, null, "rank desc");
+//            if(null == cursor) return null;
+//            cursor.moveToFirst();
+//            while(cursor.isAfterLast()) {
+//                ProducerEntity entity = cursorToProducerEntity(cursor);
+//                producers.add(entity);
+//            }
+//            return producers;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (cursor != null)
+//                cursor.close();
+//            closeDatabase();
+//        }
+//
+//        return null;
+//    }
 
-        return null;
+    private TxProducerEntity cursorToTxProducerEntity(Cursor cursor){
+        return new TxProducerEntity(cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3));
     }
 
     private ProducerEntity cursorToProducerEntity(Cursor cursor) {
@@ -320,24 +328,31 @@ public class ElaDataSource implements BRDataSourceInterface {
         return balance;
     }
 
-    public TransactionEntity getTransactionById(String txId){
-        if(StringUtil.isNullOrEmpty(txId)) return null;
-        String url = getUrl("api/1/tx/"+txId);
-        TransactionEntity transactionEntity = null;
+    static class ProducerTxid {
+        public List<String> txid;
+    }
+
+    public void getProducerByTxid(){
+        if(mVoteTxid.size() <= 0) return;
+        MultiTxProducerEntity multiTxProducerEntity = null;
         try {
-            String result = urlGET(url);
-            JSONObject jsonObject = new JSONObject(result);
-            String json = jsonObject.getString("result");
-            transactionEntity = new Gson().fromJson(json, TransactionEntity.class);
+            ProducerTxid producerTxid = new ProducerTxid();
+            producerTxid.txid = mVoteTxid;
+            String json = new Gson().toJson(producerTxid);
+            String url = getUrl("api/1/dpos/transaction/producer");
+            String result = urlPost(url, json);
+            multiTxProducerEntity = new Gson().fromJson(result, MultiTxProducerEntity.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return transactionEntity;
+        if(multiTxProducerEntity==null || multiTxProducerEntity.result==null) return;
+        cacheMultiTxProducer(multiTxProducerEntity.result);
     }
 
+    public List<String> mVoteTxid = new ArrayList<>();
     public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
+        mVoteTxid.clear();
         try {
             String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
             Log.i(TAG, "history url:"+url);
@@ -366,6 +381,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
+                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
@@ -519,6 +535,31 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
+    public List<TxProducerEntity> getTxProducerByTxid(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return null;
+        List<TxProducerEntity> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME,
+                    null, BRSQLiteHelper.HISTORY_PRODUCER_TXID + " = ?", new String[]{txid},
+                    null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                TxProducerEntity producerEntity = cursorToTxProducerEntity(cursor);
+                entities.add(producerEntity);
+                cursor.moveToNext();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
+    }
+
     public List<ProducerEntity> getProducersByPK(List<String> publicKeys){
         if(publicKeys==null || publicKeys.size()<=0) return null;
         List<ProducerEntity> entities = new ArrayList<>();
@@ -546,6 +587,33 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return entities;
+    }
+
+    private void cacheMultiTxProducer(List<TxProducersEntity> entities){
+        if(entities==null || entities.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            for(TxProducersEntity txProducersEntity : entities){
+                if(null==txProducersEntity.Producer || StringUtil.isNullOrEmpty(txProducersEntity.Txid)) break;
+                for(TxProducerEntity txProducerEntity : txProducersEntity.Producer){
+                    ContentValues value = new ContentValues();
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_TXID, txProducersEntity.Txid);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_OWN_PUBLICKEY, txProducerEntity.Ownerpublickey);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NOD_PUBLICKEY, txProducerEntity.Nodepublickey);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NICKNAME, txProducerEntity.Nickname);
+                    long l = database.insertWithOnConflict(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
     }
 
     public synchronized void cacheProducer(List<ProducerEntity> values){

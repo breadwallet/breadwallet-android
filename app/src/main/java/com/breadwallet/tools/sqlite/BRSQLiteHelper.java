@@ -56,6 +56,21 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 17;
 
     /**
+     * History Producer table
+     */
+    public static final String HISTORY_PRODUCER_TABLE_NAME = "historyProducerTable";
+    public static final String HISTORY_PRODUCER_TXID = "txid";
+    public static final String HISTORY_PRODUCER_OWN_PUBLICKEY = "ownPublicKey";
+    public static final String HISTORY_PRODUCER_NOD_PUBLICKEY = "nodePublicKey";
+    public static final String HISTORY_PRODUCER_NICKNAME = "nickName";
+    private static final String HISTORY_PRODUCER_DATABASE_CREATE = "create table if not exists " + HISTORY_PRODUCER_TABLE_NAME + " (" +
+            HISTORY_PRODUCER_TXID + " text, " +
+            HISTORY_PRODUCER_OWN_PUBLICKEY + " text primary key , " +
+            HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
+            HISTORY_PRODUCER_NICKNAME +" text);";
+
+
+    /**
      * sign table
      */
     public static final String SIGN_AUTHOR_TABLE_NAME = "signTable";
@@ -240,6 +255,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
         database.execSQL(SIGN_DATABASE_CREATE);
         database.execSQL(DID_AUTHOR_DATABASE_CREATE);
