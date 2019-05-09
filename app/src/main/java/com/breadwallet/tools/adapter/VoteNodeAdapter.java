@@ -49,7 +49,7 @@ public class VoteNodeAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.mNameTv.setText(mData.get(position).Producer_public_key);
+        holder.mNameTv.setText(mData.get(position).Nickname);
 
         return convertView;
     }

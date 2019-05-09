@@ -34,6 +34,7 @@ import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -381,6 +382,14 @@ public class UiUtils {
         }
 
         return 0;
+    }
+
+    public static void startSignEditActivity(Activity activity, String from, String value, int requestCode){
+        Intent intent = new Intent(activity, SignaureEditActivity.class);
+        activity.startActivityForResult(intent, requestCode);
+        intent.putExtra("from", from);
+        intent.putExtra("value", value);
+        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
 }

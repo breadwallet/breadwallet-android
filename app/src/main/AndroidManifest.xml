@@ -319,7 +319,7 @@
         <activity android:name=".presenter.activities.ExploreWebActivity"
             android:screenOrientation="portrait"/>
         
-        <activity android:name=".sign.SignaureActivity"
+        <activity android:name=".presenter.activities.sign.SignaureActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -330,10 +330,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".sign.SignDetailActivity"
-            android:screenOrientation="portrait"/>
-        
-        <activity android:name=".sign.AddLimitationActivity"
+        <activity android:name=".presenter.activities.sign.SignDetailActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".presenter.activities.VoteActivity"

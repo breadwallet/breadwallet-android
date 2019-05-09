@@ -1,4 +1,4 @@
-package com.breadwallet.sign;
+package com.breadwallet.presenter.activities.sign;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -33,9 +33,6 @@ import org.wallet.library.AuthorizeManager;
 import org.wallet.library.Constants;
 import org.wallet.library.entity.UriFactory;
 
-import java.util.Calendar;
-import java.util.Date;
-
 public class SignaureActivity extends BRActivity {
 
     private static final String TAG =  SignaureActivity.class.getSimpleName() + "_debug";
@@ -50,9 +47,12 @@ public class SignaureActivity extends BRActivity {
     private BaseTextView mContentTv;
     private BRButton mDenyBtn;
     private BRButton mSignBtn;
+    private BaseTextView mAddLimitTv;
+    private BaseTextView mViewAllTv;
 
     private String mUri;
     private UriFactory uriFactory;
+    private SignInfo mSignInfo = new SignInfo();
 
     private LoadingDialog mLoadingDialog;
 
@@ -78,6 +78,17 @@ public class SignaureActivity extends BRActivity {
         initData();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(null == data) return;
+        if(BRConstants.SIGN_PURPOSE_REQUEST == requestCode){
+            String purpose = data.getStringExtra("purpose");
+            mSignInfo.setPurpose(purpose);
+            if(null != purpose) mPurposeTv.setText(purpose);
+        }
+    }
+
     public void initView(){
         mBackBtn = findViewById(R.id.back_button);
         mAppIconIv = findViewById(R.id.app_icon);
@@ -89,6 +100,8 @@ public class SignaureActivity extends BRActivity {
         mContentTv = findViewById(R.id.content);
         mDenyBtn = findViewById(R.id.deny_btn);
         mSignBtn = findViewById(R.id.sign_btn);
+        mAddLimitTv = findViewById(R.id.add_limitation_btn);
+        mViewAllTv = findViewById(R.id.view_all_details_btn);
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
     }
@@ -112,6 +125,18 @@ public class SignaureActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 sign();
+            }
+        });
+        mAddLimitTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.startSignEditActivity(SignaureActivity.this, "limit",uriFactory.getUseStatement(), BRConstants.SIGN_PURPOSE_REQUEST);
+            }
+        });
+        mViewAllTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.startSignEditActivity(SignaureActivity.this, "viewAll",uriFactory.getRequestedConent(), BRConstants.SIGN_CONTENT_REQUEST);
             }
         });
     }
@@ -149,14 +174,13 @@ public class SignaureActivity extends BRActivity {
         String pk = Utility.getInstance(this).getSinglePrivateKey(phrase);
         String myPK = Utility.getInstance(this).getSinglePublicKey(phrase);
         String myDid = Utility.getInstance(this).getDid(myPK);
-        long timestamp = getSignTime(0);
 
         CallbackData callbackData = new CallbackData();
         callbackData.DID = myDid;
         callbackData.PublicKey = myPK;
         callbackData.RequesterDID = uriFactory.getDID();
         callbackData.RequestedConent = uriFactory.getRequestedConent();
-        callbackData.Timestamp = timestamp;
+        callbackData.Timestamp = mSignInfo.getTimestamp();
         callbackData.UseStatement = uriFactory.getUseStatement();
 
         final String Data = new Gson().toJson(callbackData);
@@ -181,20 +205,7 @@ public class SignaureActivity extends BRActivity {
                 }
             }
         });
-
-        cacheSignInfo(uriFactory, timestamp);
-
-    }
-
-    private void cacheSignInfo(UriFactory uriFactory, long timestamp){
-        if(null == uriFactory) return;
-        SignInfo signInfo = new SignInfo();
-        signInfo.setAppName(uriFactory.getAppName());
-        signInfo.setDid(uriFactory.getDID());
-        signInfo.setAppId(uriFactory.getAppID());
-        signInfo.setContent(uriFactory.getRequestedConent());
-        signInfo.setTimestamp(timestamp);
-        signInfo.setPurpose(uriFactory.getUseStatement());
+        DidDataSource.getInstance(this).cacheSignApp(mSignInfo);
     }
 
     private void callBackUrl(String backurl, CallbackEntity entity){
@@ -221,17 +232,6 @@ public class SignaureActivity extends BRActivity {
                 UiUtils.openUrlByBrowser(this, url);
             }
         }
-    }
-
-    private long getSignTime(int day) {
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(calendar.DATE, day);
-        date = calendar.getTime();
-        long time = date.getTime();
-
-        return time;
     }
 
     private String getPhrase() {
@@ -270,22 +270,43 @@ public class SignaureActivity extends BRActivity {
         if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
-        String appName = uriFactory.getAppName();
+        long timestamp = System.currentTimeMillis();
+        String timeFormat =  BRDateUtil.getAuthorDate(timestamp);
+
+        mSignInfo.setAppName(uriFactory.getAppName());
+        mSignInfo.setDid(uriFactory.getDID());
+        mSignInfo.setAppId(uriFactory.getAppID());
+        mSignInfo.setContent(uriFactory.getRequestedConent());
+        mSignInfo.setTimestamp(timestamp);
+        mSignInfo.setPurpose(uriFactory.getUseStatement());
+
+        String appName = mSignInfo.getAppName();
         if(!StringUtil.isNullOrEmpty(appName)) mAppNameTv.setText(appName);
 
-        String appId = uriFactory.getAppID();
+        String appId = mSignInfo.getAppId();
         if(!StringUtil.isNullOrEmpty(appId)) mAppIdTv.setText(appId);
 
-        String reqDid = uriFactory.getDID();
+        String reqDid = mSignInfo.getDid();
         if(StringUtil.isNullOrEmpty(reqDid)) mDidTv.setText(reqDid);
 
-        String timestamp =  BRDateUtil.getAuthorDate(System.currentTimeMillis());
-        if(!StringUtil.isNullOrEmpty(timestamp)) mTimestampTv.setText(timestamp);
+        if(!StringUtil.isNullOrEmpty(timeFormat)) mTimestampTv.setText(timeFormat);
 
-        String purpose = uriFactory.getUseStatement();
+        String purpose = mSignInfo.getPurpose();
         if(StringUtil.isNullOrEmpty(purpose)) mPurposeTv.setText(purpose);
 
-        String content = uriFactory.getRequestedConent();
+        String content = mSignInfo.getContent();
         if(StringUtil.isNullOrEmpty(content)) mContentTv.setText(content);
+
+        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
+        if(!StringUtil.isNullOrEmpty(appId)) {
+            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
+            } else if(appId.equals(BRConstants.HASH_ID)){
+                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+            }
+        }
+        mAppIconIv.setImageDrawable(getDrawable(iconResourceId));
     }
 }

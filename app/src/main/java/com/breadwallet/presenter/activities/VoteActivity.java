@@ -222,24 +222,15 @@ public class VoteActivity extends BaseSettingsActivity {
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
 
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(VoteActivity.this).getProducersByPK(mCandidates);
+        if(tmp!=null && tmp.size()>0) {
+            mProducers.clear();
+            mProducers.addAll(tmp);
+        }
         mAdapter = new VoteNodeAdapter(this, mProducers);
         mVoteNodeLv.setAdapter(mAdapter);
 
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                mProducers.clear();
-//                List producers = ElaDataSource.getInstance(VoteActivity.this).getProducers();
-//                if(null==producers || producers.size()<=0) return;
-//                mProducers.addAll(producers);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mAdapter.notifyDataSetChanged();
-//                    }
-//                });
-//            }
-//        });
+
     }
 
     private void dismissDialog() {

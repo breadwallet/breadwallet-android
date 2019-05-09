@@ -17,6 +17,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.google.gson.Gson;
 import com.platform.APIClient;
@@ -200,6 +201,12 @@ public class BRApiManager {
                     @Override
                     public void run() {
                         WalletElaManager.getInstance(context).updateTxHistory();
+                    }
+                });
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        ElaDataSource.getInstance(context).getProducers();
                     }
                 });
 

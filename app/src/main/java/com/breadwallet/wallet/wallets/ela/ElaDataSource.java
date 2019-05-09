@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -500,6 +501,35 @@ public class ElaDataSource implements BRDataSourceInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<ProducerEntity> getProducersByPK(List<String> publicKeys){
+        if(publicKeys==null || publicKeys.size()<=0) return null;
+        List<ProducerEntity> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+
+            for(String publickey : publicKeys){
+                cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME,
+                        null, BRSQLiteHelper.PEODUCER_PUBLIC_KEY + " = ?", new String[]{publickey},
+                        null, null, null);
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    ProducerEntity producerEntity = cursorToProducerEntity(cursor);
+                    entities.add(producerEntity);
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
     }
 
     public synchronized void cacheProducer(List<ProducerEntity> values){

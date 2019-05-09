@@ -49,7 +49,7 @@ public class DidDataSource implements BRDataSourceInterface {
         return mInstance;
     }
 
-    public void putSignApp(SignInfo info){
+    public void cacheSignApp(SignInfo info){
         try {
             database = openDatabase();
             database.beginTransaction();

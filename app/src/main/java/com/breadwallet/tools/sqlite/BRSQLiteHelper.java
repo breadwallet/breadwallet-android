@@ -114,7 +114,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEODUCER_VOTES = "votes";
 
     private static final String ELA_PRODUCER_DATABASE_CREATE = "create table if not exists " + ELA_PRODUCER_TABLE_NAME + " (" +
-            PEODUCER_PUBLIC_KEY + " text, " +
+            PEODUCER_PUBLIC_KEY + " text primary key , " +
             PEODUCER_VALUE + " text, " +
             PEODUCER_RANK + " interger, " +
             PEODUCER_ADDRESS + " text, " +
