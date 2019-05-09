@@ -131,6 +131,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
     private CheckBox mAutoVoteCb;
+    private BaseTextView mPublicKeyLvTitle;
+    private BaseTextView mPasteTv;
 
     public static boolean mFromRedPackage = false;
     public static boolean mIsSend = false;
@@ -166,6 +168,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
         mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
+        mPublicKeyLvTitle = rootView.findViewById(R.id.send_list_title);
+        mPasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -233,6 +237,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
             mVoteNodeLv.setVisibility(View.GONE);
+            mPublicKeyLvTitle.setVisibility(View.GONE);
+            mPaste.setVisibility(View.GONE);
             return;
         }
 
