@@ -320,7 +320,8 @@
             android:screenOrientation="portrait"/>
         
         <activity android:name=".presenter.activities.sign.SignaureActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
@@ -329,6 +330,9 @@
                     android:host="sign"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".presenter.activities.sign.SignaureEditActivity"
+            android:screenOrientation="portrait"/>
         
         <activity android:name=".presenter.activities.sign.SignDetailActivity"
             android:screenOrientation="portrait"/>

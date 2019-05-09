@@ -271,9 +271,11 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     if(mUri.contains("redpacket")){
                         UiUtils.startWebviewActivity(this, "https://redpacket.elastos.org");
                     } else if(mUri.contains("identity")) {
-                        AuthorizeManager.startWalletActivity(BRActivity.this, mUri, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
+                        UiUtils.startAuthorActivity(this, mUri);
                     } else if(mUri.contains("elapay")) {
-                        AuthorizeManager.startWalletActivity(BRActivity.this, mUri, "com.breadwallet.presenter.activities.WalletActivity");
+                        UiUtils.startWalletActivity(this, mUri);
+                    } else if(mUri.contains("sign")){
+                        UiUtils.startSignActivity(this, mUri);
                     }
                 }
                 break;

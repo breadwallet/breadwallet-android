@@ -93,7 +93,7 @@ public class SignaureActivity extends BRActivity {
         mBackBtn = findViewById(R.id.back_button);
         mAppIconIv = findViewById(R.id.app_icon);
         mAppNameTv = findViewById(R.id.app_name);
-        mAppIdTv = findViewById(R.id.app_name);
+        mAppIdTv = findViewById(R.id.app_id);
         mDidTv = findViewById(R.id.developer_did);
         mTimestampTv = findViewById(R.id.timestamp);
         mPurposeTv = findViewById(R.id.purpose);
@@ -130,13 +130,13 @@ public class SignaureActivity extends BRActivity {
         mAddLimitTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startSignEditActivity(SignaureActivity.this, "limit",uriFactory.getUseStatement(), BRConstants.SIGN_PURPOSE_REQUEST);
+                UiUtils.startSignEditActivity(SignaureActivity.this, "limit",mSignInfo.getPurpose(), BRConstants.SIGN_PURPOSE_REQUEST);
             }
         });
         mViewAllTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startSignEditActivity(SignaureActivity.this, "viewAll",uriFactory.getRequestedConent(), BRConstants.SIGN_CONTENT_REQUEST);
+                UiUtils.startSignEditActivity(SignaureActivity.this, "viewAll",mSignInfo.getContent(), BRConstants.SIGN_CONTENT_REQUEST);
             }
         });
     }
@@ -178,10 +178,10 @@ public class SignaureActivity extends BRActivity {
         CallbackData callbackData = new CallbackData();
         callbackData.DID = myDid;
         callbackData.PublicKey = myPK;
-        callbackData.RequesterDID = uriFactory.getDID();
-        callbackData.RequestedConent = uriFactory.getRequestedConent();
+        callbackData.RequesterDID = mSignInfo.getDid();
+        callbackData.RequestedConent = mSignInfo.getContent();
         callbackData.Timestamp = mSignInfo.getTimestamp();
-        callbackData.UseStatement = uriFactory.getUseStatement();
+        callbackData.UseStatement = mSignInfo.getPurpose();
 
         final String Data = new Gson().toJson(callbackData);
         final String Sign = AuthorizeManager.sign(this, pk, Data);
@@ -276,7 +276,7 @@ public class SignaureActivity extends BRActivity {
         mSignInfo.setAppName(uriFactory.getAppName());
         mSignInfo.setDid(uriFactory.getDID());
         mSignInfo.setAppId(uriFactory.getAppID());
-        mSignInfo.setContent(uriFactory.getRequestedConent());
+        mSignInfo.setContent(uriFactory.getRequestedContent());
         mSignInfo.setTimestamp(timestamp);
         mSignInfo.setPurpose(uriFactory.getUseStatement());
 
@@ -284,18 +284,18 @@ public class SignaureActivity extends BRActivity {
         if(!StringUtil.isNullOrEmpty(appName)) mAppNameTv.setText(appName);
 
         String appId = mSignInfo.getAppId();
-        if(!StringUtil.isNullOrEmpty(appId)) mAppIdTv.setText(appId);
+        if(!StringUtil.isNullOrEmpty(appId)) mAppIdTv.setText("App ID:"+appId);
 
         String reqDid = mSignInfo.getDid();
-        if(StringUtil.isNullOrEmpty(reqDid)) mDidTv.setText(reqDid);
+        if(!StringUtil.isNullOrEmpty(reqDid)) mDidTv.setText(reqDid);
 
         if(!StringUtil.isNullOrEmpty(timeFormat)) mTimestampTv.setText(timeFormat);
 
         String purpose = mSignInfo.getPurpose();
-        if(StringUtil.isNullOrEmpty(purpose)) mPurposeTv.setText(purpose);
+        if(!StringUtil.isNullOrEmpty(purpose)) mPurposeTv.setText(purpose);
 
         String content = mSignInfo.getContent();
-        if(StringUtil.isNullOrEmpty(content)) mContentTv.setText(content);
+        if(!StringUtil.isNullOrEmpty(content)) mContentTv.setText(content);
 
         int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
         if(!StringUtil.isNullOrEmpty(appId)) {
