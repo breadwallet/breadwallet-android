@@ -1782,7 +1782,7 @@ static struct BREthereumTokenRecord tokens[] = {
     },
     {
             "0x8f7571fdbfc3ce3ab4d697afb4f9950e9574f676",
-            "FIlmC",
+            "FILMC",
             "WeFilmchain",
             "",
             18,

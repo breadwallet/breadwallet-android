@@ -133,7 +133,7 @@ public class VoteActivity extends BaseSettingsActivity {
 
     private void copyText() {
         BRClipboardManager.putClipboard(this, new Gson().toJson(mProducers));
-        Toast.makeText(this, "has copy to clipboard", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
 
     }
 

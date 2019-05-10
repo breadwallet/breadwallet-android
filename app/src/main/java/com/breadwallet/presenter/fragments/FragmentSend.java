@@ -696,7 +696,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private void copyText() {
         BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
-        Toast.makeText(getContext(), "has copy to clipboard", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
     private void showKeyboard(boolean b) {

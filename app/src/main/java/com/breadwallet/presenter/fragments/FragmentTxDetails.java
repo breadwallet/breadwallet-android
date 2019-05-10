@@ -215,7 +215,7 @@ public class FragmentTxDetails extends DialogFragment {
 
     private void copyText() {
         BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
-        Toast.makeText(getContext(), "has copy to clipboard", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
     @Override
