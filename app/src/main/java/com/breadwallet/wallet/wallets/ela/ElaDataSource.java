@@ -589,7 +589,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return entities;
     }
 
-    private void cacheMultiTxProducer(List<TxProducersEntity> entities){
+    public void cacheMultiTxProducer(List<TxProducersEntity> entities){
         if(entities==null || entities.size()<=0) return;
         try {
             database = openDatabase();

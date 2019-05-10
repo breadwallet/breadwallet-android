@@ -28,6 +28,8 @@ import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -190,6 +192,7 @@ public class VoteActivity extends BaseSettingsActivity {
                         String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
                         callBackUrl(mRwTxid);
                         callReturnUrl(mRwTxid);
+                        cacheTxProducer(mRwTxid);
                         dismissDialog();
                         finish();
                     }
@@ -202,6 +205,21 @@ public class VoteActivity extends BaseSettingsActivity {
             }
         });
 
+    }
+
+    private void cacheTxProducer(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return;
+        if(null==mProducers || mProducers.size()<=0) return;
+        List<TxProducersEntity> txProducersEntities = new ArrayList<>();
+        TxProducersEntity txProducersEntity = new TxProducersEntity();
+        txProducersEntity.Txid = txid;
+        txProducersEntity.Producer = new ArrayList<>();
+        for(ProducerEntity entity : mProducers){
+            TxProducerEntity txProducerEntity = new TxProducerEntity(entity.Producer_public_key, entity.Producer_public_key, entity.Nickname);
+            txProducersEntity.Producer.add(txProducerEntity);
+        }
+        txProducersEntities.add(txProducersEntity);
+        ElaDataSource.getInstance(this).cacheMultiTxProducer(txProducersEntities);
     }
 
     private BigDecimal mAmount;
