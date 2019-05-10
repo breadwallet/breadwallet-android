@@ -7,22 +7,29 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.VoteEntity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,6 +37,7 @@ import org.wallet.library.AuthorizeManager;
 import org.wallet.library.entity.UriFactory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VoteActivity extends BaseSettingsActivity {
@@ -41,6 +49,9 @@ public class VoteActivity extends BaseSettingsActivity {
     private TextView mVoteElaAmountTv;
     private Button mCancleBtn;
     private Button mConfirmBtn;
+    private ListView mVoteNodeLv;
+    private TextView mVotePasteTv;
+    private BaseTextView mNodeListTitle;
 
     private LoadingDialog mLoadingDialog;
 
@@ -79,11 +90,14 @@ public class VoteActivity extends BaseSettingsActivity {
 
 
     private void findView(){
-        mVoteCountTv = findViewById(R.id.vote_nodes_count);
+        mVoteCountTv = findViewById(R.id.voting_hint);
         mBalanceTv = findViewById(R.id.vote_ela_balance);
         mVoteElaAmountTv = findViewById(R.id.vote_ela_amount);
+        mVotePasteTv = findViewById(R.id.vote_paste_tv);
+        mNodeListTitle = findViewById(R.id.vote_nodes_list_title);
         mCancleBtn = findViewById(R.id.vote_cancle_btn);
         mConfirmBtn = findViewById(R.id.vote_confirm_btn);
+        mVoteNodeLv = findViewById(R.id.vote_node_lv);
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
     }
@@ -108,6 +122,19 @@ public class VoteActivity extends BaseSettingsActivity {
                 }
             }
         });
+
+        mVotePasteTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(this, new Gson().toJson(mProducers));
+        Toast.makeText(this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
+
     }
 
     private boolean verifyUri(){
@@ -165,6 +192,7 @@ public class VoteActivity extends BaseSettingsActivity {
                         String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
                         callBackUrl(mRwTxid);
                         callReturnUrl(mRwTxid);
+                        cacheTxProducer(mRwTxid);
                         dismissDialog();
                         finish();
                     }
@@ -179,9 +207,26 @@ public class VoteActivity extends BaseSettingsActivity {
 
     }
 
+    private void cacheTxProducer(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return;
+        if(null==mProducers || mProducers.size()<=0) return;
+        List<TxProducersEntity> txProducersEntities = new ArrayList<>();
+        TxProducersEntity txProducersEntity = new TxProducersEntity();
+        txProducersEntity.Txid = txid;
+        txProducersEntity.Producer = new ArrayList<>();
+        for(ProducerEntity entity : mProducers){
+            TxProducerEntity txProducerEntity = new TxProducerEntity(entity.Producer_public_key, entity.Producer_public_key, entity.Nickname);
+            txProducersEntity.Producer.add(txProducerEntity);
+        }
+        txProducersEntities.add(txProducersEntity);
+        ElaDataSource.getInstance(this).cacheMultiTxProducer(txProducersEntities);
+    }
+
     private BigDecimal mAmount;
     private String  mCandidatesStr;
+    private VoteNodeAdapter mAdapter;
     private List<String> mCandidates;
+    private List<ProducerEntity> mProducers = new ArrayList<>();
     private void initData(){
         if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
@@ -194,9 +239,20 @@ public class VoteActivity extends BaseSettingsActivity {
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));
+        mNodeListTitle.setText(String.format(getString(R.string.node_list_title), mCandidates.size()));
         mBalanceTv.setText(String.format(getString(R.string.vote_balance), balance.toString()));
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
+
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(VoteActivity.this).getProducersByPK(mCandidates);
+        if(tmp!=null && tmp.size()>0) {
+            mProducers.clear();
+            mProducers.addAll(tmp);
+        }
+        mAdapter = new VoteNodeAdapter(this, mProducers);
+        mVoteNodeLv.setAdapter(mAdapter);
+
+
     }
 
     private void dismissDialog() {

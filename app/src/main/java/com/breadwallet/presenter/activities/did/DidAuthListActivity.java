@@ -11,6 +11,7 @@ import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.tools.adapter.AuthorAdapter;
 import com.breadwallet.tools.util.PinyinUtil;
 import com.breadwallet.tools.util.StringUtil;
 

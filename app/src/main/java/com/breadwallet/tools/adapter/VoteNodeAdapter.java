@@ -1,24 +1,25 @@
-package com.breadwallet.presenter.activities.did;
+package com.breadwallet.tools.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.vote.ProducerEntity;
+import com.breadwallet.vote.ProducersEntity;
 
 import java.util.List;
 
-public class AuthorDetailAdapter extends BaseAdapter {
-    private LayoutInflater mInflater;
-    private List<String> mData;
-    
+public class VoteNodeAdapter extends BaseAdapter {
 
-    public AuthorDetailAdapter(Context context, List<String> data){
-        this.mData = data;
-        mInflater = LayoutInflater.from(context);
+    private Context mContext;
+    private List<ProducerEntity> mData;
+
+    public VoteNodeAdapter(Context context, List<ProducerEntity> data){
+        mContext = context;
+        mData = data;
     }
 
     @Override
@@ -38,24 +39,22 @@ public class AuthorDetailAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        final ViewHolder holder;
         if(convertView == null){
-            convertView = mInflater.inflate(R.layout.author_info_detail_item_layout, parent, false);
+            convertView = View.inflate(mContext, R.layout.vote_node_item_layout, null);
             holder = new ViewHolder();
-            holder.nameTv = convertView.findViewById(R.id.author_detail_name_tv);
-
+            holder.mNameTv = convertView.findViewById(R.id.item_name_tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String name = mData.get(position);
-        holder.nameTv.setText(name);
+        holder.mNameTv.setText(mData.get(position).Nickname);
 
         return convertView;
     }
 
-    private class ViewHolder {
-        TextView nameTv;
+    static class ViewHolder {
+        TextView mNameTv;
     }
 }

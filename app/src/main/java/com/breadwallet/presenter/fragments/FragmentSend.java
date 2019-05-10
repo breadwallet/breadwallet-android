@@ -25,12 +25,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -40,6 +41,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.presenter.viewmodels.SendViewModel;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -53,14 +55,20 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -123,9 +131,15 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
     private CheckBox mAutoVoteCb;
+    private BaseTextView mNodeLvTitle;
+    private BaseTextView mPasteTv;
+    private View mSeparator5;
 
     public static boolean mFromRedPackage = false;
     public static boolean mIsSend = false;
+
+    private VoteNodeAdapter mAdapter;
+    private List<ProducerEntity> mProducers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -153,7 +167,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
+        mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
+        mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
+        mPasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
+        mSeparator5 = rootView.findViewById(R.id.separator5);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -208,17 +226,40 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
+        initVoteAdapter();
+        return rootView;
+    }
+
+    private ListView mVoteNodeLv;
+    private void initVoteAdapter(){
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
         String candidatesStr = BRSharedPrefs.getCandidate(getContext());
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
-        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA")){
+        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
+                balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
-        }
-        if(balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
-            mAutoVoteCb.setVisibility(View.GONE);
+            mVoteNodeLv.setVisibility(View.GONE);
+            mNodeLvTitle.setVisibility(View.GONE);
+            mPasteTv.setVisibility(View.GONE);
+            mSeparator5.setVisibility(View.GONE);
+            return;
         }
 
-        return rootView;
+        mAutoVoteCb.setVisibility(View.VISIBLE);
+        mVoteNodeLv.setVisibility(View.VISIBLE);
+        mNodeLvTitle.setVisibility(View.VISIBLE);
+        mPaste.setVisibility(View.VISIBLE);
+        mSeparator5.setVisibility(View.VISIBLE);
+
+        List<String> candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
+        if(tmp!=null && tmp.size()>0) {
+            mProducers.clear();
+            mProducers.addAll(tmp);
+        }
+        mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+        mAdapter = new VoteNodeAdapter(getContext(), mProducers);
+        mVoteNodeLv.setAdapter(mAdapter);
     }
 
     private void setListeners() {
@@ -644,6 +685,18 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
+        mPasteTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
     private void showKeyboard(boolean b) {

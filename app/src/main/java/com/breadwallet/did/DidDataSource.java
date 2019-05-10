@@ -49,6 +49,28 @@ public class DidDataSource implements BRDataSourceInterface {
         return mInstance;
     }
 
+    public void cacheSignApp(SignInfo info){
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            ContentValues values = new ContentValues();
+            values.put(BRSQLiteHelper.SIGN_APP_NAME, info.getAppName());
+            values.put(BRSQLiteHelper.SIGN_APP_ID, info.getAppId());
+            values.put(BRSQLiteHelper.SIGN_DID, info.getDid());
+            values.put(BRSQLiteHelper.SIGN_PURPOSE, info.getPurpose());
+            values.put(BRSQLiteHelper.SIGN_CONTENT, info.getContent());
+
+            long l = database.insertWithOnConflict(BRSQLiteHelper.SIGN_AUTHOR_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.i(TAG, "l:"+l);
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+             e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
     public void putAuthorApp(AuthorInfo info){
         try {
             database = openDatabase();

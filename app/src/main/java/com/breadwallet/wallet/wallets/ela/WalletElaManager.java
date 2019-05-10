@@ -1,7 +1,6 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -10,7 +9,6 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.ElapayEntity;
@@ -34,7 +32,7 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
-import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -367,10 +365,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
+        List<HistoryTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getHistoryTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
         try {
-            for (ElaTransactionEntity entity : transactionEntities) {
+            for (HistoryTransactionEntity entity : transactionEntities) {
                 BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
                 BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
                 TxUiHolder txUiHolder = new TxUiHolder(null,

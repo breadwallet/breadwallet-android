@@ -53,6 +53,8 @@ public final class BRConstants {
     public static final int REQUEST_PHRASE_BITID = 117;
     public static final int PROVE_PHRASE_REQUEST = 119;
     public static final int UPLOAD_FILE_REQUEST = 120;
+    public static final int SIGN_PURPOSE_REQUEST = 121;
+    public static final int SIGN_CONTENT_REQUEST = 122;
 
     /**
      * Request codes for take picture
@@ -141,6 +143,7 @@ public final class BRConstants {
     public static final String DPOS_VOTE_ID = "23091883A390CCBFFFED4928F996936AFCEBB1B57192532D15271158F3A277FD1BB3309DA2719334CBE1DE7BA2408047E2786A94F370CE66C208159B3A8D1162";
     public static final String REA_PACKAGE_ID = "8FD01FF48C37DC11B53DF6E4BDB07924A3BF7034AEC2E0CC0CCDAC253F1AD006492F0E809E1274C1F20A819E438C8A4FDA99CD34A9E4B210337D6F26203A7B9D";
     public static final String DEVELOPER_WEBSITE = "62f3178e1ad6f98bf383ee5bc98ac8e7f9affaaf705ab337bde46082d3dde7a9";
+    public static final String EXCHANGE_ID = "d316e28cce8fda7b697c428b7a1c9e5a54585a3d541e55175a5a0d35ae51986916b715a41ca313e08d0a960b06fa938387bbf64a87058239fc0d92933c2d5e87";
     public static final String HASH_ID = "14bd1d772afc8e633ce95b988646bd9ed5df65cb33ec98a43b41e6cb6de5276ca9cce91d069dc688619f1a250842b37d380d4fb984c9f912a2f86edcf5dddba9";
 
     private BRConstants() {

@@ -3,7 +3,6 @@ package com.breadwallet.wallet.wallets.ela;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.WorkerThread;
@@ -19,7 +18,12 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.vote.ProducerEntity;
+import com.breadwallet.vote.ProducersEntity;
+import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.MultiTxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
@@ -29,7 +33,6 @@ import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.breadwallet.wallet.wallets.ela.response.create.Payload;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
-import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
@@ -161,21 +164,21 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
 
-    public void cacheSingleTx(ElaTransactionEntity entity){
-        List<ElaTransactionEntity> entities = new ArrayList<>();
+    public void cacheSingleTx(HistoryTransactionEntity entity){
+        List<HistoryTransactionEntity> entities = new ArrayList<>();
         entities.clear();
         entities.add(entity);
         cacheMultTx(entities);
     }
 
-    public synchronized void cacheMultTx(List<ElaTransactionEntity> elaTransactionEntities){
+    public synchronized void cacheMultTx(List<HistoryTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
 //        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for(ElaTransactionEntity entity : elaTransactionEntities){
+            for(HistoryTransactionEntity entity : elaTransactionEntities){
 //                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
 //                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed}, null, null, null);
 
@@ -211,9 +214,47 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     }
 
+//    public List<ProducerEntity> getCacheProducers(){
+//        List<ProducerEntity> producers = new ArrayList<>();
+//        Cursor cursor = null;
+//        try {
+//            database = openDatabase();
+//            cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, allColumns, null, null, null, null, "rank desc");
+//            if(null == cursor) return null;
+//            cursor.moveToFirst();
+//            while(cursor.isAfterLast()) {
+//                ProducerEntity entity = cursorToProducerEntity(cursor);
+//                producers.add(entity);
+//            }
+//            return producers;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (cursor != null)
+//                cursor.close();
+//            closeDatabase();
+//        }
+//
+//        return null;
+//    }
 
-    public List<ElaTransactionEntity> getAllTransactions(){
-        List<ElaTransactionEntity> currencies = new ArrayList<>();
+    private TxProducerEntity cursorToTxProducerEntity(Cursor cursor){
+        return new TxProducerEntity(cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3));
+    }
+
+    private ProducerEntity cursorToProducerEntity(Cursor cursor) {
+        return new ProducerEntity(cursor.getString(0),
+                cursor.getString(1),
+                cursor.getInt(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5));
+    }
+
+    public List<HistoryTransactionEntity> getHistoryTransactions(){
+        List<HistoryTransactionEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
 
         try {
@@ -222,7 +263,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                ElaTransactionEntity curEntity = cursorToCurrency(cursor);
+                HistoryTransactionEntity curEntity = cursorToTxEntity(cursor);
                 currencies.add(curEntity);
                 cursor.moveToNext();
             }
@@ -237,8 +278,8 @@ public class ElaDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    private ElaTransactionEntity cursorToCurrency(Cursor cursor) {
-        return new ElaTransactionEntity(cursor.getInt(0)==1,
+    private HistoryTransactionEntity cursorToTxEntity(Cursor cursor) {
+        return new HistoryTransactionEntity(cursor.getInt(0)==1,
                 cursor.getLong(1),
                 cursor.getInt(2),
                 cursor.getBlob(3),
@@ -287,36 +328,60 @@ public class ElaDataSource implements BRDataSourceInterface {
         return balance;
     }
 
+    static class ProducerTxid {
+        public List<String> txid;
+    }
+
+    public void getProducerByTxid(){
+        if(mVoteTxid.size() <= 0) return;
+        MultiTxProducerEntity multiTxProducerEntity = null;
+        try {
+            ProducerTxid producerTxid = new ProducerTxid();
+            producerTxid.txid = mVoteTxid;
+            String json = new Gson().toJson(producerTxid);
+            String url = getUrl("api/1/dpos/transaction/producer");
+            String result = urlPost(url, json);
+            multiTxProducerEntity = new Gson().fromJson(result, MultiTxProducerEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(multiTxProducerEntity==null || multiTxProducerEntity.result==null) return;
+        cacheMultiTxProducer(multiTxProducerEntity.result);
+    }
+
+    public List<String> mVoteTxid = new ArrayList<>();
     public void getHistory(String address){
-        if(address == null) return;
+        if(StringUtil.isNullOrEmpty(address)) return;
+        mVoteTxid.clear();
         try {
             String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
             Log.i(TAG, "history url:"+url);
-            String result = urlGET(url)/*getTxHistory()*/;
+            String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
             TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
 
-            List<ElaTransactionEntity> elaTransactionEntities = new ArrayList<>();
+            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
             List<History> transactions = txHistory.History;
             for(History history : transactions){
-                ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
-                elaTransactionEntity.txReversed = history.Txid;
-                elaTransactionEntity.isReceived = isReceived(history.Type);
-                elaTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-                elaTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-                elaTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
-                elaTransactionEntity.blockHeight = history.Height;
-                elaTransactionEntity.hash = history.Txid.getBytes();
-                elaTransactionEntity.txSize = 0;
-                elaTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
-                elaTransactionEntity.balanceAfterTx = 0;
-                elaTransactionEntity.isValid = true;
-                elaTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
-                elaTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
-                elaTransactionEntity.memo = getMeno(history.Memo);
-                elaTransactionEntities.add(elaTransactionEntity);
+                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
+                historyTransactionEntity.txReversed = history.Txid;
+                historyTransactionEntity.isReceived = isReceived(history.Type);
+                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
+                historyTransactionEntity.blockHeight = history.Height;
+                historyTransactionEntity.hash = history.Txid.getBytes();
+                historyTransactionEntity.txSize = 0;
+                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
+                historyTransactionEntity.balanceAfterTx = 0;
+                historyTransactionEntity.isValid = true;
+                historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
+                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+                historyTransactionEntity.memo = getMeno(history.Memo);
+                elaTransactionEntities.add(historyTransactionEntity);
+                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
@@ -355,7 +420,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return createElaTx(inputAddress, outputsAddress, amount, memo, null);
     }
 
-    ElaTransactionEntity elaTransactionEntity = new ElaTransactionEntity();
+    HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
     public synchronized BRElaTransaction createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo, List<String> payload){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
@@ -404,20 +469,20 @@ public class ElaDataSource implements BRDataSourceInterface {
             brElaTransaction.setTx(transactionJson);
             brElaTransaction.setTxId(inputs.get(0).txid);
 
-            elaTransactionEntity.txReversed = inputs.get(0).txid;
-            elaTransactionEntity.fromAddress = inputAddress;
-            elaTransactionEntity.toAddress = outputsAddress;
-            elaTransactionEntity.isReceived = false;
-            elaTransactionEntity.fee = new BigDecimal("4860").longValue();
-            elaTransactionEntity.blockHeight = 0;
-            elaTransactionEntity.hash = new byte[1];
-            elaTransactionEntity.txSize = 0;
-            elaTransactionEntity.amount = new BigDecimal(amount).longValue();
-            elaTransactionEntity.balanceAfterTx = 0;
-            elaTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
-            elaTransactionEntity.isValid = true;
-            elaTransactionEntity.isVote = (payload!=null && payload.size()>0);
-            elaTransactionEntity.memo = memo;
+            historyTransactionEntity.txReversed = inputs.get(0).txid;
+            historyTransactionEntity.fromAddress = inputAddress;
+            historyTransactionEntity.toAddress = outputsAddress;
+            historyTransactionEntity.isReceived = false;
+            historyTransactionEntity.fee = new BigDecimal("4860").longValue();
+            historyTransactionEntity.blockHeight = 0;
+            historyTransactionEntity.hash = new byte[1];
+            historyTransactionEntity.txSize = 0;
+            historyTransactionEntity.amount = new BigDecimal(amount).longValue();
+            historyTransactionEntity.balanceAfterTx = 0;
+            historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
+            historyTransactionEntity.isValid = true;
+            historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
+            historyTransactionEntity.memo = memo;
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
@@ -445,8 +510,8 @@ public class ElaDataSource implements BRDataSourceInterface {
 //                toast(result);
                 return null;
             }
-            elaTransactionEntity.txReversed = result;
-            cacheSingleTx(elaTransactionEntity);
+            historyTransactionEntity.txReversed = result;
+            cacheSingleTx(historyTransactionEntity);
             Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
@@ -454,6 +519,128 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return result;
+    }
+
+    public void getProducers(){
+        try {
+            String jsonRes = urlGET(getUrl("api/1/dpos/rank/height/9999999999999999"));
+            if(!StringUtil.isNullOrEmpty(jsonRes) && jsonRes.contains("result")) {
+                ProducersEntity producersEntity = new Gson().fromJson(jsonRes, ProducersEntity.class);
+                List list = producersEntity.result;
+                if(list==null || list.size()<=0) return;
+                cacheProducer(list);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<TxProducerEntity> getTxProducerByTxid(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return null;
+        List<TxProducerEntity> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME,
+                    null, BRSQLiteHelper.HISTORY_PRODUCER_TXID + " = ?", new String[]{txid},
+                    null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                TxProducerEntity producerEntity = cursorToTxProducerEntity(cursor);
+                entities.add(producerEntity);
+                cursor.moveToNext();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
+    }
+
+    public List<ProducerEntity> getProducersByPK(List<String> publicKeys){
+        if(publicKeys==null || publicKeys.size()<=0) return null;
+        List<ProducerEntity> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+
+            for(String publickey : publicKeys){
+                cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME,
+                        null, BRSQLiteHelper.PEODUCER_PUBLIC_KEY + " = ?", new String[]{publickey},
+                        null, null, null);
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    ProducerEntity producerEntity = cursorToProducerEntity(cursor);
+                    entities.add(producerEntity);
+                    cursor.moveToNext();
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
+    }
+
+    public void cacheMultiTxProducer(List<TxProducersEntity> entities){
+        if(entities==null || entities.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            for(TxProducersEntity txProducersEntity : entities){
+                if(null==txProducersEntity.Producer || StringUtil.isNullOrEmpty(txProducersEntity.Txid)) break;
+                for(TxProducerEntity txProducerEntity : txProducersEntity.Producer){
+                    ContentValues value = new ContentValues();
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_TXID, txProducersEntity.Txid);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_OWN_PUBLICKEY, txProducerEntity.Ownerpublickey);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NOD_PUBLICKEY, txProducerEntity.Nodepublickey);
+                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NICKNAME, txProducerEntity.Nickname);
+                    long l = database.insertWithOnConflict(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+    public synchronized void cacheProducer(List<ProducerEntity> values){
+        if(values==null || values.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+
+            for(ProducerEntity entity : values) {
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.PEODUCER_PUBLIC_KEY, entity.Producer_public_key);
+                value.put(BRSQLiteHelper.PEODUCER_VALUE, entity.Value);
+                value.put(BRSQLiteHelper.PEODUCER_RANK, entity.Rank);
+                value.put(BRSQLiteHelper.PEODUCER_ADDRESS, entity.Address);
+                value.put(BRSQLiteHelper.PEODUCER_NICKNAME, entity.Nickname);
+                value.put(BRSQLiteHelper.PEODUCER_VOTES, entity.Votes);
+                long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

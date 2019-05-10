@@ -102,6 +102,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         super.onNewIntent(intent);
         if (intent != null) {
             String action = intent.getAction();
+            if(StringUtil.isNullOrEmpty(action)) return;
             if (action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
                 Log.i(TAG, "server mUri: " + uri.toString());
@@ -120,12 +121,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mWillTv = findViewById(R.id.auth_info);
         mAppIcon = findViewById(R.id.app_icon);
         mAuthorInfoLv = findViewById(R.id.author_info_list);
+        mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
+        mLoadingDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initData(){
-        mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
-        mLoadingDialog.setCanceledOnTouchOutside(false);
-
         if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
@@ -245,12 +245,12 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     private void author() {
         String mn = getMn();
         if (StringUtil.isNullOrEmpty(mn)) {
-            Toast.makeText(DidAuthorizeActivity.this, "还未创建钱包", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DidAuthorizeActivity.this, "Not yet created Wallet", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (StringUtil.isNullOrEmpty(mUri)) {
-            Toast.makeText(DidAuthorizeActivity.this, "参数无效", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DidAuthorizeActivity.this, "invalid params", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -265,79 +265,78 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             finish();
         }
 
-        final String backurl = uriFactory.getCallbackUrl();
-        final String returnUrl = uriFactory.getReturnUrl();
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appName, appId);
         if (!isValid) {
             Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
         }
 
-        if (isValid) {
-            cacheAuthorInfo(uriFactory);
-            StringBuilder sb = new StringBuilder();
-            final CallbackEntity entity = new CallbackEntity();
-            String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
-            String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
-            final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
+        final String backurl = uriFactory.getCallbackUrl();
+        final String returnUrl = uriFactory.getReturnUrl();
 
-            CallbackData callbackData = new CallbackData();
-            //require
-            callbackData.DID = myDid;
-            callbackData.PublicKey = myPK;
-            callbackData.RandomNumber = randomNumber;
-            sb.append(AuthorInfoItem.DID).append(",").append(AuthorInfoItem.PUBLIC_KEY).append(",");
-            //request info
-            callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
-            if((nickNameItem!=null) && nickNameItem.isChecked()) sb.append(AuthorInfoItem.NICK_NAME).append(",");
-            callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
-            if((elaAddressItem!=null) && elaAddressItem.isChecked()) sb.append(AuthorInfoItem.ELA_ADDRESS).append(",");
-            callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
-            if((btcAddressItem!=null) && btcAddressItem.isChecked()) sb.append(AuthorInfoItem.BTC_ADDRESS).append(",");
-            callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
-            if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
-            callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
-            if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
-            callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
-            if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
-            if(phoneNumberItem != null){
-                PhoneNumber phoneNumber = new PhoneNumber();
-                phoneNumber.PhoneNumber = phoneNumberItem.getValue(this)[1];
-                phoneNumber.CountryCode = phoneNumberItem.getValue(this)[0];
-                callbackData.PhoneNumber = phoneNumber;
-                if(phoneNumberItem.isChecked()) sb.append(AuthorInfoItem.PHONE_NUMBER).append(",");
-            }
-            if(idcardItem != null){
-                callbackData.ChineseIDCard = new ChineseIDCard();
-                callbackData.ChineseIDCard.RealName = idcardItem.getValue(this)[0];
-                callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
-                if(idcardItem.isChecked()) sb.append(AuthorInfoItem.CHINESE_ID_CARD).append(",");
-            }
+        cacheAuthorInfo(uriFactory);
+        StringBuilder sb = new StringBuilder();
+        String pk = Utility.getInstance(DidAuthorizeActivity.this).getSinglePrivateKey(mn);
+        String myPK = Utility.getInstance(DidAuthorizeActivity.this).getSinglePublicKey(mn);
+        final String myDid = Utility.getInstance(DidAuthorizeActivity.this).getDid(myPK);
 
-            BRSharedPrefs.putRequestInfo(DidAuthorizeActivity.this, sb.toString().toLowerCase());
-
-            final String Data = new Gson().toJson(callbackData);
-            final String Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, Data);
-            entity.Data = Data;
-            entity.Sign = Sign;
-
-
-            if (!isFinishing()) mLoadingDialog.show();
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        callBackUrl(backurl, entity);
-                        callReturnUrl(returnUrl, Data, Sign, appId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        dialogDismiss();
-                        finish();
-                    }
-                }
-            });
+        CallbackData callbackData = new CallbackData();
+        //require
+        callbackData.DID = myDid;
+        callbackData.PublicKey = myPK;
+        callbackData.RandomNumber = randomNumber;
+        sb.append(AuthorInfoItem.DID).append(",").append(AuthorInfoItem.PUBLIC_KEY).append(",");
+        //request info
+        callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
+        if((nickNameItem!=null) && nickNameItem.isChecked()) sb.append(AuthorInfoItem.NICK_NAME).append(",");
+        callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
+        if((elaAddressItem!=null) && elaAddressItem.isChecked()) sb.append(AuthorInfoItem.ELA_ADDRESS).append(",");
+        callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
+        if((btcAddressItem!=null) && btcAddressItem.isChecked()) sb.append(AuthorInfoItem.BTC_ADDRESS).append(",");
+        callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
+        if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
+        callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
+        if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
+        callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
+        if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
+        if(phoneNumberItem != null){
+            PhoneNumber phoneNumber = new PhoneNumber();
+            phoneNumber.PhoneNumber = phoneNumberItem.getValue(this)[1];
+            phoneNumber.CountryCode = phoneNumberItem.getValue(this)[0];
+            callbackData.PhoneNumber = phoneNumber;
+            if(phoneNumberItem.isChecked()) sb.append(AuthorInfoItem.PHONE_NUMBER).append(",");
         }
+        if(idcardItem != null){
+            callbackData.ChineseIDCard = new ChineseIDCard();
+            callbackData.ChineseIDCard.RealName = idcardItem.getValue(this)[0];
+            callbackData.ChineseIDCard.IDNumber = idcardItem.getValue(this)[1];
+            if(idcardItem.isChecked()) sb.append(AuthorInfoItem.CHINESE_ID_CARD).append(",");
+        }
+
+        BRSharedPrefs.putRequestInfo(DidAuthorizeActivity.this, sb.toString().toLowerCase());
+
+        final String Data = new Gson().toJson(callbackData);
+        final String Sign = AuthorizeManager.sign(DidAuthorizeActivity.this, pk, Data);
+        final CallbackEntity entity = new CallbackEntity();
+        entity.Data = Data;
+        entity.Sign = Sign;
+
+
+        if (!isFinishing()) mLoadingDialog.show();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    callBackUrl(backurl, entity);
+                    callReturnUrl(returnUrl, Data, Sign, appId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    dialogDismiss();
+                    finish();
+                }
+            }
+        });
     }
 
     private void callBackUrl(String backurl, CallbackEntity entity){
@@ -358,17 +357,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
             }
 
-            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)){
+            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId) || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId)){
                 UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
             } else {
                 UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
             }
-
-//                            if (returnUrl.contains("target=\"internal\"") || returnUrl.contains("target=internal")) {
-//                                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-//                            } else {
-//                                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
-//                            }
         }
     }
 

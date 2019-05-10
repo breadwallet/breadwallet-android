@@ -33,7 +33,10 @@ import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.activities.sign.SignaureActivity;
+import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -49,6 +52,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+
+import org.wallet.library.Constants;
 
 import java.util.List;
 
@@ -191,6 +196,24 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
+    public static void startWalletActivity(Context context, String url){
+        Intent intent = new Intent(context, WalletActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
+        context.startActivity(intent);
+    }
+
+    public static void startAuthorActivity(Context context, String url){
+        Intent intent = new Intent(context, DidAuthorizeActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
+        context.startActivity(intent);
+    }
+
+    public static void startSignActivity(Context context, String url){
+        Intent intent = new Intent(context, SignaureActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
+        context.startActivity(intent);
+    }
+
     public static void openUrlByBrowser(Context context, String url){
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -306,7 +329,7 @@ public class UiUtils {
     }
 
     public static void killAllFragments(Activity app) {
-        if (app != null && !app.isDestroyed())
+        if (app != null && !app.isDestroyed() && !app.isFinishing())
             app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
@@ -381,6 +404,13 @@ public class UiUtils {
         }
 
         return 0;
+    }
+
+    public static void startSignEditActivity(Activity activity, String from, String value, int requestCode){
+        Intent intent = new Intent(activity, SignaureEditActivity.class);
+        intent.putExtra("from", from);
+        intent.putExtra("value", value);
+        activity.startActivityForResult(intent, requestCode);
     }
 
 }

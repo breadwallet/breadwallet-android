@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.did;
+package com.breadwallet.tools.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -225,7 +225,8 @@ public class FragmentFingerprint extends Fragment
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    if (getActivity() != null)
+                    Activity activity = getActivity();
+                    if ( activity!=null && !activity.isFinishing() && !activity.isDestroyed())
                         getActivity().getFragmentManager().beginTransaction().remove(FragmentFingerprint.this).commitAllowingStateLoss();
                 }
             });

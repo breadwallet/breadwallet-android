@@ -13,6 +13,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.Locale;
 
@@ -89,8 +90,9 @@ public class FragmentExplore extends Fragment {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.setExploreFrom(getContext(), "vote");
+                //TODO exchange test
+//                UiUtils.startWebviewActivity(getContext(), "https://dev.elabank.net/Decentralized/index.html");
                 UiUtils.startWebviewActivity(getContext(), "http://elaphant.net/");
-//                UiUtils.startWebviewActivity(getContext(), "http://elaphant.net/" /*"file:///android_asset/vote/request_vote.html"*/);
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

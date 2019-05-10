@@ -263,18 +263,18 @@ public class CryptoUriParser {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
-            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
-                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, null, 0);
-                return true; //true since it's a crypto url but different iso than the currently chosen one
-            } //  else ->   //allow tokens to scan ETH so continue ..
-        }
+//        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
+//            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
+//                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
+//                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+//                            @Override
+//                            public void onClick(BRDialogView brDialogView) {
+//                                brDialogView.dismiss();
+//                            }
+//                        }, null, null, 0);
+//                return true; //true since it's a crypto url but different iso than the currently chosen one
+//            } //  else ->   //allow tokens to scan ETH so continue ..
+//        }
 
         if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

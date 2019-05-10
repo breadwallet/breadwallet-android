@@ -1781,6 +1781,30 @@ static struct BREthereumTokenRecord tokens[] = {
         1
     },
     {
+            "0x8f7571fdbfc3ce3ab4d697afb4f9950e9574f676",
+            "FILMC",
+            "WeFilmchain",
+            "",
+            18,
+            "#0000ff",
+            "#0000ff",
+            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+            1
+    },
+    {
+            "0xa8cac329f783edac931815c5466e283d48c9d7f7",
+            "FISH",
+            "FishChain Token",
+            "",
+            4,
+            "#0000ff",
+            "#0000ff",
+            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+            1
+    },
+    {
         "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7d",
         "IOEX",
         "Coming soon",

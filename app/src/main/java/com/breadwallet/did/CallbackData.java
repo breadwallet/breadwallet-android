@@ -14,4 +14,8 @@ public class CallbackData {
     public String RealName;
     public ChineseIDCard ChineseIDCard;
     public String RandomNumber;
+    public String RequesterDID;
+    public String RequestedConent;
+    public long Timestamp;
+    public String UseStatement;
 }
