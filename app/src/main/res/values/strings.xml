@@ -1062,4 +1062,16 @@
     <string name="redpackage_hint1">Red Packet</string>
     <string name="redpackage_hint2">With the ELA red packet mini program, you can send an ELA red packet to your friends.</string>
     <string name="double_spend">There is another transaction being processed, please try again 2 minutes later.</string>
+    
+    <string name="sign_signature_request_title">Signature Request</string>
+    <string name="sign_request_information">Request information:</string>
+    <string name="sign_developer_did">Developer DID</string>
+    <string name="sign_timestamp">Timestamp</string>
+    <string name="sign_purpose">Purpose</string>
+    <string name="sign_content">Content</string>
+    <string name="sign_add_limitation">Add limitation</string>
+    <string name="sign_view_all_detail">View all details</string>
+    <string name="sign_sign_btn">Sign</string>
+
+    <string name="node_list_title">Node list of these %1$d nodes:</string>
 </resources>

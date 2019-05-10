@@ -1056,4 +1056,15 @@
     <string name="redpackage_hint1">红包</string>
     <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
     <string name="double_spend">您有另外一笔交易正在处理，请在2分钟后重试</string>
+
+    <string name="sign_signature_request_title">签名请求</string>
+    <string name="sign_request_information">请求数据:</string>
+    <string name="sign_developer_did">开发者DID</string>
+    <string name="sign_timestamp">时间戳</string>
+    <string name="sign_purpose">用途</string>
+    <string name="sign_content">内容</string>
+    <string name="sign_add_limitation">添加限制</string>
+    <string name="sign_view_all_detail">显示详情</string>
+    <string name="sign_sign_btn">签名</string>
+    <string name="node_list_title">%1$d个节点列表:</string>
 </resources>

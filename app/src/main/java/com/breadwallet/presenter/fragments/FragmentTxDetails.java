@@ -43,6 +43,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.google.gson.Gson;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -178,6 +179,17 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
+        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        int color = mToFromAddress.getTextColors().getDefaultColor();
+        mMemoText.setTextColor(color);
+
+        initListener();
+        updateUi();
+        initTxAdapter();
+        return rootView;
+    }
+
+    private void initListener(){
         mShowHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,13 +205,17 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
-        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        int color = mToFromAddress.getTextColors().getDefaultColor();
-        mMemoText.setTextColor(color);
+        mPaseTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+    }
 
-        updateUi();
-        initTxAdapter();
-        return rootView;
+    private void copyText() {
+        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        Toast.makeText(getContext(), "has copy to clipboard", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -224,6 +240,7 @@ public class FragmentTxDetails extends DialogFragment {
                 mProducers.clear();
                 mProducers.addAll(tmp);
             }
+            mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
             mAdapter = new TxProducerAdapter(getContext(), mProducers);
             mVoteNodeLv.setAdapter(mAdapter);
         } else {

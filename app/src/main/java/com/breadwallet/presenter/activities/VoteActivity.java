@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.VoteEntity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -44,10 +45,11 @@ public class VoteActivity extends BaseSettingsActivity {
     private TextView mVoteCountTv;
     private TextView mBalanceTv;
     private TextView mVoteElaAmountTv;
-    private TextView mVotePasteTv;
     private Button mCancleBtn;
     private Button mConfirmBtn;
     private ListView mVoteNodeLv;
+    private TextView mVotePasteTv;
+    private BaseTextView mNodeListTitle;
 
     private LoadingDialog mLoadingDialog;
 
@@ -90,6 +92,7 @@ public class VoteActivity extends BaseSettingsActivity {
         mBalanceTv = findViewById(R.id.vote_ela_balance);
         mVoteElaAmountTv = findViewById(R.id.vote_ela_amount);
         mVotePasteTv = findViewById(R.id.vote_paste_tv);
+        mNodeListTitle = findViewById(R.id.vote_nodes_list_title);
         mCancleBtn = findViewById(R.id.vote_cancle_btn);
         mConfirmBtn = findViewById(R.id.vote_confirm_btn);
         mVoteNodeLv = findViewById(R.id.vote_node_lv);
@@ -218,6 +221,7 @@ public class VoteActivity extends BaseSettingsActivity {
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));
+        mNodeListTitle.setText(String.format(getString(R.string.node_list_title), mCandidates.size()));
         mBalanceTv.setText(String.format(getString(R.string.vote_balance), balance.toString()));
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");

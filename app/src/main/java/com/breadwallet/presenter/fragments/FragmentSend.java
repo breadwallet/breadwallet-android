@@ -27,11 +27,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -131,8 +131,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
     private CheckBox mAutoVoteCb;
-    private BaseTextView mPublicKeyLvTitle;
+    private BaseTextView mNodeLvTitle;
     private BaseTextView mPasteTv;
+    private View mSeparator5;
 
     public static boolean mFromRedPackage = false;
     public static boolean mIsSend = false;
@@ -168,8 +169,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
         mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
-        mPublicKeyLvTitle = rootView.findViewById(R.id.send_list_title);
+        mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
         mPasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
+        mSeparator5 = rootView.findViewById(R.id.separator5);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -237,10 +239,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
             mVoteNodeLv.setVisibility(View.GONE);
-            mPublicKeyLvTitle.setVisibility(View.GONE);
-            mPaste.setVisibility(View.GONE);
+            mNodeLvTitle.setVisibility(View.GONE);
+            mPasteTv.setVisibility(View.GONE);
+            mSeparator5.setVisibility(View.GONE);
             return;
         }
+
+        mAutoVoteCb.setVisibility(View.VISIBLE);
+        mVoteNodeLv.setVisibility(View.VISIBLE);
+        mNodeLvTitle.setVisibility(View.VISIBLE);
+        mPaste.setVisibility(View.VISIBLE);
+        mSeparator5.setVisibility(View.VISIBLE);
 
         List<String> candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
         List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
@@ -248,6 +257,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             mProducers.clear();
             mProducers.addAll(tmp);
         }
+        mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
         mAdapter = new VoteNodeAdapter(getContext(), mProducers);
         mVoteNodeLv.setAdapter(mAdapter);
     }
@@ -675,6 +685,18 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
+        mPasteTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        Toast.makeText(getContext(), "has copy to clipboard", Toast.LENGTH_SHORT).show();
     }
 
     private void showKeyboard(boolean b) {
