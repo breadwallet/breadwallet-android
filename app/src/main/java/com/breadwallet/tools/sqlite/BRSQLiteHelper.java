@@ -65,10 +65,11 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String HISTORY_PRODUCER_NICKNAME = "nickName";
     private static final String HISTORY_PRODUCER_DATABASE_CREATE = "create table if not exists " + HISTORY_PRODUCER_TABLE_NAME + " (" +
             HISTORY_PRODUCER_TXID + " text, " +
-            HISTORY_PRODUCER_OWN_PUBLICKEY + " text primary key , " +
+            HISTORY_PRODUCER_OWN_PUBLICKEY + " text, " +
             HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
-            HISTORY_PRODUCER_NICKNAME +" text);";
-
+            HISTORY_PRODUCER_NICKNAME +" text, " +
+            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_NOD_PUBLICKEY + ")" +
+            ");";
 
     /**
      * sign table
