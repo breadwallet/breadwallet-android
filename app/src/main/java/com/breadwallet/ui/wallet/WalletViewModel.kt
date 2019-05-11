@@ -68,7 +68,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     var filter: TxFilter = TxFilter()
         set(value) {
             field = value
-            BRExecutor.getInstance().forBackgroundTasks().execute {
+            // Apply filter out of the main thread.
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
                 txListLiveData.postValue(filteredTxList())
             }
         }
@@ -138,7 +139,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * Refresh the wallet's transactions list.
      */
     private fun refreshTxList() {
-        BRExecutor.getInstance().forBackgroundTasks().execute {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
             // TODO this code belongs to a repository
             val wallet = WalletsMaster.getInstance().getCurrentWallet(getApplication())
             if (wallet == null) {
