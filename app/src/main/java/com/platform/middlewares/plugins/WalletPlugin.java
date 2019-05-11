@@ -1,6 +1,5 @@
 package com.platform.middlewares.plugins;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -118,7 +117,7 @@ public class WalletPlugin implements Plugin {
         if (!target.startsWith(PATH_BASE)) {
             return false;
         }
-        Activity context = (Activity) BreadApp.getBreadContext();
+        Context context = BreadApp.getBreadContext();
 
         if (target.startsWith(PATH_BASE + PATH_INFO) && request.getMethod().equalsIgnoreCase(GET.asString())) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
@@ -279,42 +278,30 @@ public class WalletPlugin implements Plugin {
                 AuthManager.getInstance().authPrompt(context, authText, "", false, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                JSONObject obj = new JSONObject();
-                                try {
-                                    obj.put(KEY_AUTHENTICATED, true);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                if (continuation != null) {
-                                    APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
-                                    BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
-                                }
-                                cleanUp();
-                            }
-                        });
+                        handleResult(true);
                     }
 
                     @Override
                     public void onCancel() {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                JSONObject obj = new JSONObject();
-                                try {
-                                    obj.put(KEY_AUTHENTICATED, false);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK,  BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
-                                BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
-                                cleanUp();
-                            }
-                        });
-
+                        handleResult(false);
                     }
+
+                    private void handleResult(boolean authenticated) {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                            JSONObject obj = new JSONObject();
+                            try {
+                                obj.put(KEY_AUTHENTICATED, authenticated);
+                            } catch (JSONException e) {
+                                Log.e(TAG, "Failed to put KEY_AUTHENTICATED", e);
+                            }
+                            if (continuation != null) {
+                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
+                                BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
+                            }
+                            cleanUp();
+                        });
+                    }
+
                 });
 
             } catch (JSONException e) {
@@ -413,18 +400,7 @@ public class WalletPlugin implements Plugin {
             return;
         }
         final CryptoRequest item = new CryptoRequest.Builder().setAddress(addr).setAmount(new BigDecimal(numerator)).build();
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
-                    @Override
-                    public void onCompleted(String hash, boolean succeed) {
-                        finalizeTx(succeed, hash);
-                    }
-                });
-            }
-        });
-
+        BRExecutor.getInstance().forBackgroundTasks().execute(() -> SendManager.sendTransaction(app, item, wm, (hash, succeed) -> finalizeTx(succeed, hash)));
     }
 
     private JSONArray getCurrencyData(Context app) {
