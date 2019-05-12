@@ -170,7 +170,6 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private void sendTx(){
-        if(null==mCandidates || mCandidates.size()<=0) return;
         if(mCandidates.size()>36) {
             Toast.makeText(this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show();
             return;
@@ -183,7 +182,6 @@ public class VoteActivity extends BaseSettingsActivity {
                     @Override
                     public void run() {
                         Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
-                        BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
                         String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
                         BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, 0, "vote", mCandidates);
                         if(null == transaction) return;
@@ -192,7 +190,13 @@ public class VoteActivity extends BaseSettingsActivity {
                         String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
                         callBackUrl(mRwTxid);
                         callReturnUrl(mRwTxid);
-                        cacheTxProducer(mRwTxid);
+                        if(null==mCandidates || mCandidates.size()<=0) {
+                            BRSharedPrefs.cacheCandidate(VoteActivity.this, "");
+                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
+                        } else {
+                            BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
+                            cacheTxProducer(mRwTxid);
+                        }
                         dismissDialog();
                         finish();
                     }

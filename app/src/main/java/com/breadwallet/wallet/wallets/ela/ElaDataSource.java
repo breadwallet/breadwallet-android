@@ -15,6 +15,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
@@ -587,6 +588,15 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return entities;
+    }
+
+    public void deleteAllTxProducer() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME, null, null);
+        } finally {
+            closeDatabase();
+        }
     }
 
     public void cacheMultiTxProducer(List<TxProducersEntity> entities){
