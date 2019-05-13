@@ -251,7 +251,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mPaste.setVisibility(View.VISIBLE);
         mSeparator5.setVisibility(View.VISIBLE);
 
-        List<String> candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+        List<String> candidates = null;
+        if(candidatesStr.contains("[")){
+            new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+        } else {
+            candidates = Utils.spliteByComma(candidatesStr);
+        }
         List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
         if(tmp!=null && tmp.size()>0) {
             mProducers.clear();

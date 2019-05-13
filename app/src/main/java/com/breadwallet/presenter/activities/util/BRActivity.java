@@ -276,6 +276,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                         UiUtils.startWalletActivity(this, mUri);
                     } else if(mUri.contains("sign")){
                         UiUtils.startSignActivity(this, mUri);
+                    } else if(mUri.contains("eladposvote")){
+                        UiUtils.startVoteActivity(this, mUri);
                     }
                 }
                 break;

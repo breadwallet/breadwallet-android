@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -239,8 +240,11 @@ public class VoteActivity extends BaseSettingsActivity {
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
         if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
-        mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
-
+        if(mCandidatesStr.contains("[")){
+            mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
+        } else {
+            mCandidates = Utils.spliteByComma(mCandidatesStr);
+        }
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));
