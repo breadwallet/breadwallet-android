@@ -261,10 +261,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         if(tmp!=null && tmp.size()>0) {
             mProducers.clear();
             mProducers.addAll(tmp);
+            mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mAdapter = new VoteNodeAdapter(getContext(), mProducers);
+            mVoteNodeLv.setAdapter(mAdapter);
         }
-        mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
-        mAdapter = new VoteNodeAdapter(getContext(), mProducers);
-        mVoteNodeLv.setAdapter(mAdapter);
     }
 
     private void setListeners() {

@@ -68,7 +68,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             HISTORY_PRODUCER_OWN_PUBLICKEY + " text, " +
             HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
             HISTORY_PRODUCER_NICKNAME +" text, " +
-            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_NOD_PUBLICKEY + ")" +
+            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_OWN_PUBLICKEY + ")" +
             ");";
 
     /**

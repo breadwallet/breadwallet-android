@@ -239,10 +239,10 @@ public class FragmentTxDetails extends DialogFragment {
             if(tmp!=null && tmp.size()>0) {
                 mProducers.clear();
                 mProducers.addAll(tmp);
+                mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+                mAdapter = new TxProducerAdapter(getContext(), mProducers);
+                mVoteNodeLv.setAdapter(mAdapter);
             }
-            mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
-            mAdapter = new TxProducerAdapter(getContext(), mProducers);
-            mVoteNodeLv.setAdapter(mAdapter);
         } else {
             mVoteTitleTv.setVisibility(View.GONE);
             mPaseTv.setVisibility(View.GONE);
