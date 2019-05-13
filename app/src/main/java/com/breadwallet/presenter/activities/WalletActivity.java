@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.BreadApp;
@@ -56,7 +55,6 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
-import com.platform.tools.BRBitId;
 
 import org.wallet.library.AuthorizeManager;
 import org.wallet.library.Constants;
@@ -274,7 +272,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if(!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
                 mUri = uri.toString();
-                sendRedPackage();
+                elaPayScheme();
             }
         }
     }
@@ -398,15 +396,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
 
-        sendRedPackage();
+        elaPayScheme();
     }
 
-    private void sendRedPackage(){
+    private void elaPayScheme(){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 if(StringUtil.isNullOrEmpty(mUri)) return;
-                FragmentSend.mFromRedPackage = true;
+                FragmentSend.mFromElapay = true;
                 UiUtils.showSendFragment(WalletActivity.this, null);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override

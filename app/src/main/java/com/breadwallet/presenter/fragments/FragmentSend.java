@@ -135,7 +135,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private BaseTextView mPasteTv;
     private View mSeparator5;
 
-    public static boolean mFromRedPackage = false;
+    public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
 
     private VoteNodeAdapter mAdapter;
@@ -705,7 +705,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void showKeyboard(boolean b) {
-        if (!b || mFromRedPackage) {
+        if (!b || mFromElapay) {
             mSignalLayout.removeView(mKeyboardLayout);
 
         } else {
@@ -789,12 +789,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onResume() {
         super.onResume();
         loadViewModelData();
-        mAmountEdit.setEnabled(!mFromRedPackage);
-        mAddressEdit.setEnabled(!mFromRedPackage);
-        mCommentEdit.setEnabled(!mFromRedPackage);
-        mScan.setClickable(!mFromRedPackage);
-        mPaste.setClickable(!mFromRedPackage);
-        mCurrencyCodeButton.setClickable(!mFromRedPackage);
+        mAmountEdit.setEnabled(!mFromElapay);
+        mAddressEdit.setEnabled(!mFromElapay);
+        mCommentEdit.setEnabled(!mFromElapay);
+        mScan.setClickable(!mFromElapay);
+        mPaste.setClickable(!mFromElapay);
+        mCurrencyCodeButton.setClickable(!mFromElapay);
 
         boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
         mAutoVoteCb.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
@@ -810,7 +810,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mScan.setClickable(true);
         mPaste.setClickable(true);
         mCurrencyCodeButton.setClickable(true);
-        mFromRedPackage = false;
+        mFromElapay = false;
         if(!mIsSend) {
             WalletActivity.mReturnUrl = null;
             WalletActivity.mCallbackUrl = null;
@@ -881,7 +881,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         BigDecimal mCurrentBalance = wm.getCachedBalance(app);
         if (!mIsAmountLabelShown)
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
-        mCurrencyCodeButton.setText(mSelectedCurrencyCode);
+        mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
@@ -1021,14 +1021,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String code = null;
         String amount = null;
         String memo = null;
-        if (request == null) {
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(BreadApp.mContext);
+        if (request==null) {
             if (mCommentEdit != null) {
                 memo = mCommentEdit.getText().toString();
                 address = mAddressEdit.getText().toString();
                 code = mSelectedCurrencyCode;
             }
         } else {
-            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(BreadApp.mContext);
             address = request.address;
             memo = request.message;
             code = request.iso;
@@ -1104,7 +1104,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         if(!Utils.isNullOrEmpty(code)){
-            mCurrencyCodeButton.setText(code.toUpperCase());
+            mCurrencyCodeButton.setText(mFromElapay? wm.getIso():code.toUpperCase());
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);
