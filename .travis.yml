@@ -11,7 +11,7 @@ licenses:
 - android-sdk-license-.+
 - google-gdk-license-.+
 before_install:
-- echo "y" | sdkmanager "cmake;3.6.4111459"
+yes | sdkmanager "cmake;3.6.4111459" --licenses
 - chmod +x gradlew
 - "./gradlew dependencies || true"
 script:
