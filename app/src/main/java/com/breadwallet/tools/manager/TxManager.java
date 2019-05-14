@@ -84,6 +84,7 @@ public class TxManager {
             adapter = new TransactionListAdapter(app, null);
         if (txList.getAdapter() == null)
             txList.setAdapter(adapter);
+        adapter.clearData();
         adapter.notifyDataSetChanged();
     }
 

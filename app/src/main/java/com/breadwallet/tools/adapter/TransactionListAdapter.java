@@ -105,6 +105,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
+    public void clearData(){
+        if(null != itemFeed) itemFeed.clear();
+        if(null != backUpFeed) backUpFeed.clear();
+    }
+
     public void updateData() {
         if (mIsUpdatingData) {
             return;
@@ -248,10 +253,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if(item.isReceived()){
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_receive);
-            convertView.transactionDetail.setText(item.getTo());
+            convertView.transactionDetail.setText(item.getFrom());
         } else {
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_send);
-            convertView.transactionDetail.setText(item.getFrom());
+            convertView.transactionDetail.setText(item.getTo());
         }
 
         if (level > 4) {
