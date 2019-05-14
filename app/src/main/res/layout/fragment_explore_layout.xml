@@ -29,8 +29,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        android:background="@drawable/explore_banner1_zh"/>
+        app:layout_constraintTop_toBottomOf="@+id/title"/>
 
     <View
         android:id="@+id/explore_banner2"
@@ -41,8 +40,7 @@
         android:layout_marginRight="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explore_banner1"
-        android:background="@drawable/explore_banner2_zh"/>
+        app:layout_constraintTop_toBottomOf="@+id/explore_banner1"/>
 
     <View
         android:id="@+id/explore_banner3"
@@ -53,8 +51,18 @@
         android:layout_marginRight="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explore_banner2"
-        android:background="@drawable/explore_banner3_zh"/>
+        app:layout_constraintTop_toBottomOf="@+id/explore_banner2"/>
+
+    <View
+        android:id="@+id/explore_banner4"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/explore_banner3"/>
 
     <include
         android:id="@+id/disclaim_layout"

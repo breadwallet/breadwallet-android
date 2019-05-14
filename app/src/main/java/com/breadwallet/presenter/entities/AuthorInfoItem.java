@@ -15,6 +15,7 @@ public class AuthorInfoItem {
     public static final String BTC_ADDRESS = "BTCAddress";
     public static final String ETH_ADDRESS = "ETHAddress";
     public static final String BCH_ADDRESS = "BCHAddress";
+    public static final String USDT_ADDRESS = "USDTAddress";
     public static final String PHONE_NUMBER = "PhoneNumber";
     public static final String EMAIL = "Email";
     public static final String CHINESE_ID_CARD = "ChineseIDCard";
@@ -69,7 +70,7 @@ public class AuthorInfoItem {
                 BaseWalletManager btc = WalletsMaster.getInstance(context).getWalletByIso(context, "BTC");
                 return new String[]{btc.getAddress()};
 
-            } else if(ETH_ADDRESS.equals(cname)){
+            } else if(ETH_ADDRESS.equals(cname) || USDT_ADDRESS.equals(cname)){
                 BaseWalletManager eth = WalletsMaster.getInstance(context).getWalletByIso(context, "ETH");
                 return new String[]{eth.getAddress()};
 

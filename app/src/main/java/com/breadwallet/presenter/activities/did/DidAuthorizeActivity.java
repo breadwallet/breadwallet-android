@@ -162,6 +162,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     AuthorInfoItem btcAddressItem;
     AuthorInfoItem ethAddressItem;
     AuthorInfoItem bchAddressItem;
+    AuthorInfoItem usdtAddressItem;
     AuthorInfoItem phoneNumberItem;
     AuthorInfoItem emailItem;
     AuthorInfoItem idcardItem;
@@ -199,6 +200,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(requestInfo.contains("BCHAddress".toLowerCase())){
             bchAddressItem = new AuthorInfoItem(AuthorInfoItem.BCH_ADDRESS, getString(R.string.Did_Bch_Address), "check");
             infos.add(bchAddressItem);
+        }
+
+        if(requestInfo.contains("USDTAddress".toLowerCase())){
+            usdtAddressItem = new AuthorInfoItem(AuthorInfoItem.USDT_ADDRESS, getString(R.string.Did_Usd_Address), "check");
+            infos.add(usdtAddressItem);
         }
 
         if(requestInfo.contains("PhoneNumber".toLowerCase())){
@@ -297,6 +303,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
         callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
         if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
+        callbackData.USDTAddress = (usdtAddressItem !=null)? usdtAddressItem.getValue(this)[0] : null;
+        if((usdtAddressItem !=null) && usdtAddressItem.isChecked()) sb.append(AuthorInfoItem.USDT_ADDRESS).append(",");
         callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
         if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
         if(phoneNumberItem != null){

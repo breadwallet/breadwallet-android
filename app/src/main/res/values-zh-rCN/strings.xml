@@ -970,6 +970,7 @@
     <string name="Did.Btc.Address">比特币地址</string>
     <string name="Did.Eth.Address">以太坊地址</string>
     <string name="Did.Bch.Address">比特现金地址</string>
+    <string name="Did.Usd.Address">USDT地址</string>
     <string name="Did.Ela.Address">ELA地址</string>
     <string name="Did.PhoneNumber">手机号</string>
     <string name="Did.Email">邮箱</string>
