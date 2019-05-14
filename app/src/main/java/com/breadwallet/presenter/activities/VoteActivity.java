@@ -137,9 +137,13 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(this, new Gson().toJson(mProducers));
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(ProducerEntity producerEntity : mProducers){
+            sb.append(producerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(this, sb.toString());
         Toast.makeText(this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
-
     }
 
     private boolean verifyUri(){

@@ -214,7 +214,12 @@ public class FragmentTxDetails extends DialogFragment {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(TxProducerEntity txProducerEntity : mProducers){
+            sb.append(txProducerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(getContext(), sb.toString());
         Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 

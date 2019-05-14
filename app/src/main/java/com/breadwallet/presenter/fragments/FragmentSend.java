@@ -61,6 +61,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -700,7 +701,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(ProducerEntity producerEntity : mProducers){
+            sb.append(producerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(getContext(), sb.toString());
         Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
