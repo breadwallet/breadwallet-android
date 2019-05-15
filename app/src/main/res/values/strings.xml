@@ -1062,6 +1062,8 @@
     <string name="beyond_max_vote_node">At most 36 nodes</string>
     <string name="redpackage_hint1">Red Packet</string>
     <string name="redpackage_hint2">With the ELA red packet mini program, you can send an ELA red packet to your friends.</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">"New World, New Money." SWFT Blockchain is a “Next-Generation Blockchain Global Transfer Agreement.” We focus on integrating the world’s major exchanges and blockchains to effectively hedge risks and provide customers with an efficient and easy-to-use platform for cryptocurrency transfers.</string>
     <string name="double_spend">There is another transaction being processed, please try again 2 minutes later.</string>
     
     <string name="sign_signature_request_title">Signature Request</string>

@@ -102,6 +102,7 @@ public class FragmentExplore extends Fragment {
             @Override
             public void onClick(View v) {
                 //正式环境 http://swft.elabank.net
+                BRSharedPrefs.setExploreFrom(getContext(), "exchange");
                 UiUtils.startWebviewActivity(getContext(), "https://dev.elabank.net/Decentralized/index.html");
             }
         });

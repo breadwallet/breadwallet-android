@@ -395,6 +395,18 @@
             android:background="@color/extra_light_gray"
             />
 
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/auto_vote_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="8dp"
+            android:button="@drawable/author_check_selector"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/auto_vote_hint" />
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -405,7 +417,6 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="15dp"
                 android:lines="1"
-                android:text="Public Keys of these 36 nodes:"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -415,7 +426,9 @@
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/send_vote_paste_tv"
                 android:layout_width="18dp"
+
                 android:layout_height="18dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/ic_vote_paste"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginRight="27dp"
@@ -438,25 +451,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/vote_nodes_list_title"
             app:maxHeight="100dp" />
-
-        <View
-            android:id="@+id/separator5"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/extra_light_gray"
-            />
-
-        <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/auto_vote_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="13dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="8dp"
-            android:button="@drawable/author_check_selector"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="@string/auto_vote_hint" />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"

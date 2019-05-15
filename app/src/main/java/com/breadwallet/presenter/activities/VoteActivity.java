@@ -198,10 +198,10 @@ public class VoteActivity extends BaseSettingsActivity {
                         callReturnUrl(mRwTxid);
                         if(null==mCandidates || mCandidates.size()<=0) {
                             BRSharedPrefs.cacheCandidate(VoteActivity.this, "");
-                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
+//                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
                         } else {
                             BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
-                            cacheTxProducer(mRwTxid);
+//                            cacheTxProducer(mRwTxid);
                         }
                         dismissDialog();
                         finish();

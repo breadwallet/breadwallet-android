@@ -1056,6 +1056,8 @@
     <string name="beyond_max_vote_node">最多36个节点</string>
     <string name="redpackage_hint1">红包</string>
     <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">SWFT Blockchain是“下一代区块链全球转移协议”。专注于整合全球主流交易所和区块链项目，以有效对冲风险，并为客户提供一个高效、易用的加密货币兑换平台。</string>
     <string name="double_spend">您有另外一笔交易正在处理，请在2分钟后重试</string>
 
     <string name="sign_signature_request_title">签名请求</string>

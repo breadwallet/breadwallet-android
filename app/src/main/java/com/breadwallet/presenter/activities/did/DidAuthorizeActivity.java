@@ -135,7 +135,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
-        mAuthorCbox.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
+        mAuthorCbox.setChecked(isAuto);
 
         String appId = uriFactory.getAppID();
         int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
@@ -242,7 +242,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (uriFactory == null) return;
-                mAuthorCbox.setButtonDrawable(b ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getDID(), b);
             }
         });

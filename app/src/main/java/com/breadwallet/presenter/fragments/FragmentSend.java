@@ -134,7 +134,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private CheckBox mAutoVoteCb;
     private BaseTextView mNodeLvTitle;
     private BaseTextView mPasteTv;
-    private View mSeparator5;
 
     public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
@@ -172,7 +171,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
         mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
         mPasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
-        mSeparator5 = rootView.findViewById(R.id.separator5);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -227,8 +225,28 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
+
+        boolean isChecked = mAutoVoteCb.isChecked();
+        if(isChecked) {
+            showVoteView();
+        } else {
+            hideVoteView();
+        }
+
         initVoteAdapter();
         return rootView;
+    }
+
+    private void showVoteView(){
+        mVoteNodeLv.setVisibility(View.VISIBLE);
+        mNodeLvTitle.setVisibility(View.VISIBLE);
+        mPaste.setVisibility(View.VISIBLE);
+    }
+
+    private void hideVoteView(){
+        mVoteNodeLv.setVisibility(View.GONE);
+        mNodeLvTitle.setVisibility(View.GONE);
+        mPasteTv.setVisibility(View.GONE);
     }
 
     private ListView mVoteNodeLv;
@@ -239,22 +257,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.GONE);
-            mVoteNodeLv.setVisibility(View.GONE);
-            mNodeLvTitle.setVisibility(View.GONE);
-            mPasteTv.setVisibility(View.GONE);
-            mSeparator5.setVisibility(View.GONE);
+            hideVoteView();
             return;
         }
 
-        mAutoVoteCb.setVisibility(View.VISIBLE);
-        mVoteNodeLv.setVisibility(View.VISIBLE);
-        mNodeLvTitle.setVisibility(View.VISIBLE);
-        mPaste.setVisibility(View.VISIBLE);
-        mSeparator5.setVisibility(View.VISIBLE);
-
         List<String> candidates = null;
         if(candidatesStr.contains("[")){
-            new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
         } else {
             candidates = Utils.spliteByComma(candidatesStr);
         }
@@ -273,8 +282,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i("posvote", "isChecked:"+isChecked);
-                mAutoVoteCb.setButtonDrawable(isChecked ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setAutoVote(getContext(), isChecked);
+                if(isChecked) {
+                    showVoteView();
+                } else {
+                    hideVoteView();
+                }
             }
         });
 
@@ -803,7 +816,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mCurrencyCodeButton.setClickable(!mFromElapay);
 
         boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
-        mAutoVoteCb.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
+        mAutoVoteCb.setChecked(isAuto);
     }
 
     @Override

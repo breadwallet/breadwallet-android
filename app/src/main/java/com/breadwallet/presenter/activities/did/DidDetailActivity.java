@@ -73,14 +73,13 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mAppIcon = findViewById(R.id.app_icon);
         mAuthInfoLv = findViewById(R.id.author_info_detail_list);
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo.getDid());
-        mAuthorCbox.setButtonDrawable(isAuto?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
+        mAuthorCbox.setChecked(isAuto);
 
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), mAuthorInfo.getAppName()));
         mAuthorCbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(mAuthorInfo == null) return;
-                mAuthorCbox.setButtonDrawable(b?R.drawable.ic_author_check:R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setIsAuthorAuto(DidDetailActivity.this, mAuthorInfo.getDid(), b);
             }
         });

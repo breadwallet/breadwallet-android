@@ -350,6 +350,21 @@ public class ElaDataSource implements BRDataSourceInterface {
         cacheMultiTxProducer(multiTxProducerEntity.result);
     }
 
+    //TODO test
+    public void getProducerByTxid(String txid){
+        try {
+            ProducerTxid producerTxid = new ProducerTxid();
+            producerTxid.txid = new ArrayList<>();
+            producerTxid.txid.add(txid);
+            String json = new Gson().toJson(producerTxid);
+            String url = getUrl("api/1/dpos/transaction/producer");
+            String result = urlPost(url, json);
+            Log.i("test", "test");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<String> mVoteTxid = new ArrayList<>();
     public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;

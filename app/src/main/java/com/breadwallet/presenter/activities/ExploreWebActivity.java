@@ -115,8 +115,10 @@ public class ExploreWebActivity extends BRActivity {
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
         } else if(from.equalsIgnoreCase("redpacket")) {
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.redpackage_title)));
-        } else {
+        } else if(from.equalsIgnoreCase("exchange")){
             mAboutTv.setText(String.format(getString(R.string.explore_menu_about), ""));
+        } else {
+            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), "SWFT"));
         }
     }
 

@@ -33,6 +33,7 @@ import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -235,19 +236,17 @@ public class FragmentTxDetails extends DialogFragment {
     private TxProducerAdapter mAdapter;
     private List<TxProducerEntity> mProducers = new ArrayList<>();
     private void initTxAdapter(){
-        if(mTransaction.isVote()) {
+        List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
+        if(mTransaction.isVote() && (tmp!=null && tmp.size()>0)) {
             mVoteTitleTv.setVisibility(View.VISIBLE);
             mPaseTv.setVisibility(View.VISIBLE);
             mVoteNodeLv.setVisibility(View.VISIBLE);
 
-            List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
-            if(tmp!=null && tmp.size()>0) {
-                mProducers.clear();
-                mProducers.addAll(tmp);
-                mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
-                mAdapter = new TxProducerAdapter(getContext(), mProducers);
-                mVoteNodeLv.setAdapter(mAdapter);
-            }
+            mProducers.clear();
+            mProducers.addAll(tmp);
+            mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mAdapter = new TxProducerAdapter(getContext(), mProducers);
+            mVoteNodeLv.setAdapter(mAdapter);
         } else {
             mVoteTitleTv.setVisibility(View.GONE);
             mPaseTv.setVisibility(View.GONE);
