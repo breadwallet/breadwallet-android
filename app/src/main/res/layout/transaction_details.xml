@@ -534,7 +534,7 @@
                 <com.breadwallet.presenter.customviews.TxDetailListView
                     android:id="@+id/transaction_detail_vote_node_lv"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="24dp"
