@@ -196,7 +196,7 @@ public final class SettingsUtil {
 
         final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
         String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
-        items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
+        items.add(new BRSettingsItem(bitcoinSettingsLabel, null, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
@@ -206,14 +206,14 @@ public final class SettingsUtil {
         final WalletBchManager walletBchManager = WalletBchManager.getInstance(activity);
         String bchSettingsLabel = String.format("%s %s", walletBchManager.getName(), activity.getString(R.string.Settings_title));
 
-        items.add(new BRSettingsItem(bchSettingsLabel, currentFiatCode, new View.OnClickListener() {
+        items.add(new BRSettingsItem(bchSettingsLabel, null, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBchManager.getCurrencyCode());
                 startCurrencySettings(activity);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), currentFiatCode, new View.OnClickListener() {
+        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), null, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity, ShareDataActivity.class);
