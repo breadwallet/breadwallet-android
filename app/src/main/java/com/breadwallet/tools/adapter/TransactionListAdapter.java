@@ -250,7 +250,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //正在通过 接收
         String receivingVia = mContext.getResources().getString(R.string.TransactionDetails_receivingVia);
 
-
         if(item.isReceived()){
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_receive);
             convertView.transactionDetail.setText(item.getFrom());

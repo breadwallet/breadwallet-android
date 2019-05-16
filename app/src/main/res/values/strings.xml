@@ -1039,7 +1039,7 @@
     <string name="invalid_email">invalid email</string>
     <string name="invalid_id">invalid ID</string>
 
-    <string name="explore_menu_about">About %1$s</string>
+    <string name="explore_menu_about">About</string>
     <string name="explore_menu_cancel">Cancel</string>
     <string name="redpackage_title">Red Packet</string>
     <string name="vote_title">Voting</string>
