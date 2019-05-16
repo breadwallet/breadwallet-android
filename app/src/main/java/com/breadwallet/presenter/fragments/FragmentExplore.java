@@ -101,9 +101,8 @@ public class FragmentExplore extends Fragment {
         mBannerview4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //正式环境 http://swft.elabank.net
                 BRSharedPrefs.setExploreFrom(getContext(), "exchange");
-                UiUtils.startWebviewActivity(getContext(), "https://dev.elabank.net/Decentralized/index.html");
+                UiUtils.startWebviewActivity(getContext(), /*"https://dev.elabank.net/Decentralized/index.html"*/"http://swft.elabank.net ");
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {
