@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -252,7 +253,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if(item.isReceived()){
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_receive);
-            convertView.transactionDetail.setText(item.getFrom());
+            String from = item.getFrom();
+            convertView.transactionDetail.setText(StringUtil.isNullOrEmpty(from) ? item.getTo():from);
         } else {
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_send);
             convertView.transactionDetail.setText(item.getTo());
