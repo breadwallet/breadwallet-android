@@ -142,7 +142,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(!StringUtil.isNullOrEmpty(appId)) {
             if(appId.equals(BRConstants.REA_PACKAGE_ID)){
                 iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
                 iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
             } else if(appId.equals(BRConstants.HASH_ID)){
                 iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
