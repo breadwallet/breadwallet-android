@@ -1020,7 +1020,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 mAddressEdit.setText(walletManager.decorateAddress(mViewModel.getAddress()));
             }
             if (!Utils.isNullOrEmpty(mViewModel.getMemo())) {
-                mCommentEdit.setText(mViewModel.getMemo());
+                String comment = mViewModel.getMemo();
+                if(StringUtil.isNullOrEmpty(comment) || comment.equals("null")) {
+                    mCommentEdit.setText("");
+                } else {
+                    mCommentEdit.setText(comment);
+                }
             }
             if (!Utils.isNullOrEmpty(mViewModel.getChosenCode())) {
                 mSelectedCurrencyCode = mViewModel.getChosenCode().toUpperCase();
