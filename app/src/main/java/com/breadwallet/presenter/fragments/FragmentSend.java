@@ -223,15 +223,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
-
-        boolean isChecked = mAutoVoteCb.isChecked();
-        if(isChecked) {
-            showVoteView();
-        } else {
-            hideVoteView();
-        }
-
-        initVoteAdapter();
         return rootView;
     }
 
@@ -815,6 +806,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
         mAutoVoteCb.setChecked(isAuto);
+        boolean isChecked = mAutoVoteCb.isChecked();
+        if(isChecked) {
+            showVoteView();
+        } else {
+            hideVoteView();
+        }
+        initVoteAdapter();
     }
 
     @Override
