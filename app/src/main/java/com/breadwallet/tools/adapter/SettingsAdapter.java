@@ -70,7 +70,9 @@ public class SettingsAdapter extends ArrayAdapter<String> {
             v = inflater.inflate(settings_list_item, parent, false);
             TextView addon = v.findViewById(R.id.item_addon);
 
-            if (!Utils.isNullOrEmpty(item.addonText)) {
+            if (Utils.isNullOrEmpty(item.addonText)) {
+                addon.setVisibility(View.INVISIBLE);
+            } else {
                 addon.setVisibility(View.VISIBLE);
                 addon.setText(item.addonText);
             }
