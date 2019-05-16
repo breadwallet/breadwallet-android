@@ -59,9 +59,7 @@ import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -133,7 +131,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mSignalLayout;
     private CheckBox mAutoVoteCb;
     private BaseTextView mNodeLvTitle;
-    private BaseTextView mPasteTv;
+    private BaseTextView mNodePasteTv;
 
     public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
@@ -170,7 +168,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
         mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
         mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
-        mPasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
+        mNodePasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -240,13 +238,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private void showVoteView(){
         mVoteNodeLv.setVisibility(View.VISIBLE);
         mNodeLvTitle.setVisibility(View.VISIBLE);
-        mPaste.setVisibility(View.VISIBLE);
+        mNodePasteTv.setVisibility(View.VISIBLE);
     }
 
     private void hideVoteView(){
         mVoteNodeLv.setVisibility(View.GONE);
         mNodeLvTitle.setVisibility(View.GONE);
-        mPasteTv.setVisibility(View.GONE);
+        mNodePasteTv.setVisibility(View.GONE);
     }
 
     private ListView mVoteNodeLv;
@@ -704,7 +702,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
-        mPasteTv.setOnClickListener(new View.OnClickListener() {
+        mNodePasteTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 copyText();
