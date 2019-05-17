@@ -204,7 +204,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            database.endTransaction();
             closeDatabase();
             e.printStackTrace();
         } finally {
@@ -632,7 +631,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            database.endTransaction();
             closeDatabase();
             e.printStackTrace();
         } finally {
@@ -659,7 +657,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            database.endTransaction();
             closeDatabase();
             e.printStackTrace();
         } finally {
