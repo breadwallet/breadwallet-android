@@ -35,6 +35,12 @@ public class ExploreAboutActivity extends BaseSettingsActivity {
         } else if(from.equalsIgnoreCase("redpacket")){
             mDes1.setText(getString(R.string.redpackage_hint1));
             mDes2.setText(getString(R.string.redpackage_hint2));
+        } else if(from.equalsIgnoreCase("exchange")){
+            mDes1.setText(getString(R.string.exchange_hint1));
+            mDes2.setText(getString(R.string.exchange_hint2));
+        } else {
+            mDes1.setText("");
+            mDes2.setText("");
         }
     }
 

@@ -970,6 +970,7 @@
     <string name="Did.Btc.Address">比特币地址</string>
     <string name="Did.Eth.Address">以太坊地址</string>
     <string name="Did.Bch.Address">比特现金地址</string>
+    <string name="Did.Usd.Address">USDT地址</string>
     <string name="Did.Ela.Address">ELA地址</string>
     <string name="Did.PhoneNumber">手机号</string>
     <string name="Did.Email">邮箱</string>
@@ -1031,7 +1032,7 @@
     <string name="invalid_email">无效邮箱</string>
     <string name="invalid_id">无效ID</string>
 
-    <string name="explore_menu_about">关于%1$s</string>
+    <string name="explore_menu_about">关于</string>
     <string name="explore_menu_cancel">取消</string>
 
     <string name="redpackage_title">红包</string>
@@ -1055,10 +1056,12 @@
     <string name="beyond_max_vote_node">最多36个节点</string>
     <string name="redpackage_hint1">红包</string>
     <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">SWFT Blockchain是“下一代区块链全球转移协议”。专注于整合全球主流交易所和区块链项目，以有效对冲风险，并为客户提供一个高效、易用的加密货币兑换平台。</string>
     <string name="double_spend">您有另外一笔交易正在处理，请在2分钟后重试</string>
 
     <string name="sign_signature_request_title">签名请求</string>
-    <string name="sign_request_information">请求数据:</string>
+    <string name="sign_request_information">请求信息:</string>
     <string name="sign_developer_did">开发者DID</string>
     <string name="sign_timestamp">时间戳</string>
     <string name="sign_purpose">用途</string>

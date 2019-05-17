@@ -125,6 +125,11 @@ public class BreadApp extends Application {
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(this);
 
+        Log.i("buildConfig", "BITCOIN_TESTNET:"+BuildConfig.BITCOIN_TESTNET);
+        Log.i("buildConfig", "UPGRADE_TESTNET:"+BuildConfig.UPGRADE_TESTNET);
+        Log.i("buildConfig", "RED_PACKAGE_TEST:"+BuildConfig.RED_PACKAGE_TEST);
+        Log.i("buildConfig", "CAN_UPLOAD:"+BuildConfig.CAN_UPLOAD);
+
         mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");

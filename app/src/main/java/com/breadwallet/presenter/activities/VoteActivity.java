@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -117,6 +118,10 @@ public class VoteActivity extends BaseSettingsActivity {
                     Toast.makeText(VoteActivity.this, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if(mCandidates.size()>36) {
+                    Toast.makeText(VoteActivity.this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(verifyUri()){
                     sendTx();
                 }
@@ -132,9 +137,13 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(this, new Gson().toJson(mProducers));
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(ProducerEntity producerEntity : mProducers){
+            sb.append(producerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(this, sb.toString());
         Toast.makeText(this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
-
     }
 
     private boolean verifyUri(){
@@ -170,10 +179,6 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private void sendTx(){
-        if(mCandidates.size()>36) {
-            Toast.makeText(this, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show();
-            return;
-        }
         AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
@@ -193,10 +198,10 @@ public class VoteActivity extends BaseSettingsActivity {
                         callReturnUrl(mRwTxid);
                         if(null==mCandidates || mCandidates.size()<=0) {
                             BRSharedPrefs.cacheCandidate(VoteActivity.this, "");
-                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
+//                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
                         } else {
                             BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
-                            cacheTxProducer(mRwTxid);
+//                            cacheTxProducer(mRwTxid);
                         }
                         dismissDialog();
                         finish();
@@ -239,8 +244,11 @@ public class VoteActivity extends BaseSettingsActivity {
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
         if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
-        mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
-
+        if(mCandidatesStr.contains("[")){
+            mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
+        } else {
+            mCandidates = Utils.spliteByComma(mCandidatesStr);
+        }
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 
         mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), mCandidates.size()));

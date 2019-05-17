@@ -38,7 +38,6 @@ public class MaxHeightLv extends ListView {
 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int specSize = MeasureSpec.getSize(heightMeasureSpec);
-        //限制高度小于lv高度,设置为限制高度
         if (mMaxHeight <= specSize && mMaxHeight > -1) {
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(Float.valueOf(mMaxHeight).intValue(),
                     MeasureSpec.AT_MOST);

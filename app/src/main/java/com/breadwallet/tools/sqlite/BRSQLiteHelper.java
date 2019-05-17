@@ -53,7 +53,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
     /**
      * History Producer table
@@ -68,7 +68,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             HISTORY_PRODUCER_OWN_PUBLICKEY + " text, " +
             HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
             HISTORY_PRODUCER_NICKNAME +" text, " +
-            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_NOD_PUBLICKEY + ")" +
+            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_OWN_PUBLICKEY + ")" +
             ");";
 
     /**
@@ -277,7 +277,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if((newVersion!=oldVersion) && newVersion==17) {
+        if(oldVersion == 16) {
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL(ELA_TX_DATABASE_CREATE);
         }

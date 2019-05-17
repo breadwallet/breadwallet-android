@@ -135,14 +135,14 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
         boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
-        mAuthorCbox.setButtonDrawable(isAuto ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
+        mAuthorCbox.setChecked(isAuto);
 
         String appId = uriFactory.getAppID();
         int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
         if(!StringUtil.isNullOrEmpty(appId)) {
             if(appId.equals(BRConstants.REA_PACKAGE_ID)){
                 iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
                 iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
             } else if(appId.equals(BRConstants.HASH_ID)){
                 iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
@@ -162,6 +162,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     AuthorInfoItem btcAddressItem;
     AuthorInfoItem ethAddressItem;
     AuthorInfoItem bchAddressItem;
+    AuthorInfoItem usdtAddressItem;
     AuthorInfoItem phoneNumberItem;
     AuthorInfoItem emailItem;
     AuthorInfoItem idcardItem;
@@ -201,6 +202,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             infos.add(bchAddressItem);
         }
 
+        if(requestInfo.contains("USDTAddress".toLowerCase())){
+            usdtAddressItem = new AuthorInfoItem(AuthorInfoItem.USDT_ADDRESS, getString(R.string.Did_Usd_Address), "check");
+            infos.add(usdtAddressItem);
+        }
+
         if(requestInfo.contains("PhoneNumber".toLowerCase())){
             phoneNumberItem = new AuthorInfoItem(AuthorInfoItem.PHONE_NUMBER, getString(R.string.Did_PhoneNumber), "check");
             infos.add(phoneNumberItem);
@@ -236,7 +242,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (uriFactory == null) return;
-                mAuthorCbox.setButtonDrawable(b ? R.drawable.ic_author_check : R.drawable.ic_author_uncheck);
                 BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getDID(), b);
             }
         });
@@ -297,6 +302,8 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
         callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
         if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
+        callbackData.USDTAddress = (usdtAddressItem !=null)? usdtAddressItem.getValue(this)[0] : null;
+        if((usdtAddressItem !=null) && usdtAddressItem.isChecked()) sb.append(AuthorInfoItem.USDT_ADDRESS).append(",");
         callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
         if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
         if(phoneNumberItem != null){

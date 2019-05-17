@@ -33,9 +33,11 @@ import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
@@ -214,7 +216,12 @@ public class FragmentTxDetails extends DialogFragment {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(getContext(), new Gson().toJson(mProducers));
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(TxProducerEntity txProducerEntity : mProducers){
+            sb.append(txProducerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(getContext(), sb.toString());
         Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
@@ -230,16 +237,14 @@ public class FragmentTxDetails extends DialogFragment {
     private TxProducerAdapter mAdapter;
     private List<TxProducerEntity> mProducers = new ArrayList<>();
     private void initTxAdapter(){
-        if(mTransaction.isVote()) {
+        List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
+        if(mTransaction.isVote() && (tmp!=null && tmp.size()>0)) {
             mVoteTitleTv.setVisibility(View.VISIBLE);
             mPaseTv.setVisibility(View.VISIBLE);
             mVoteNodeLv.setVisibility(View.VISIBLE);
 
-            List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
-            if(tmp!=null && tmp.size()>0) {
-                mProducers.clear();
-                mProducers.addAll(tmp);
-            }
+            mProducers.clear();
+            mProducers.addAll(tmp);
             mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
             mAdapter = new TxProducerAdapter(getContext(), mProducers);
             mVoteNodeLv.setAdapter(mAdapter);
@@ -357,7 +362,12 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
-            mToFromAddress.setText(walletManager.decorateAddress(received?mTransaction.getFrom():mTransaction.getTo())); //showing only the destination address
+            String from = mTransaction.getFrom();
+            if(StringUtil.isNullOrEmpty(from)){
+                mToFromAddress.setText(mTransaction.getTo());
+            } else {
+                mToFromAddress.setText(walletManager.decorateAddress(received?mTransaction.getFrom():mTransaction.getTo())); //showing only the destination address
+            }
 
             // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {

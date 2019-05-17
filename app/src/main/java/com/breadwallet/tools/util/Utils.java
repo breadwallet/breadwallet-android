@@ -25,8 +25,11 @@ import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -285,6 +288,12 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static List<String> spliteByComma(String value){
+        if(StringUtil.isNullOrEmpty(value)) return null;
+        String[] trimArray = value.trim().split(",");
+        return Arrays.asList(trimArray);
     }
 
     public static void correctTextSizeIfNeeded(TextView v) {

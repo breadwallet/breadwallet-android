@@ -62,7 +62,7 @@ public class AuthorAdapter extends BaseAdapter {
         if(!StringUtil.isNullOrEmpty(appId)) {
             if(appId.equals(BRConstants.REA_PACKAGE_ID)){
                 iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE)){
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
                 iconResourceId = mContext.getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, mContext.getPackageName());
             } else if(appId.equals(BRConstants.HASH_ID)){
                 iconResourceId = mContext.getResources().getIdentifier("hash", BRConstants.DRAWABLE, mContext.getPackageName());

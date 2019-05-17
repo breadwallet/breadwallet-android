@@ -8,6 +8,7 @@ public class CallbackData {
     public String BTCAddress;
     public String BCHAddress;
     public String ETHAddress;
+    public String USDTAddress;
     public String IOEXAddress;
     public String Email;
     public PhoneNumber PhoneNumber;

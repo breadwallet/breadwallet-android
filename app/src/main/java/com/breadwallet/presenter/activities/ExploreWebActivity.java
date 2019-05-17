@@ -45,7 +45,6 @@ public class ExploreWebActivity extends BRActivity {
         setContentView(R.layout.activity_expolre_web_layout);
 
         initView();
-        initMenu();
         initListener();
     }
 
@@ -67,7 +66,6 @@ public class ExploreWebActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 mMenuLayout.setVisibility(View.VISIBLE);
-                initMenu();
             }
         });
 
@@ -106,18 +104,6 @@ public class ExploreWebActivity extends BRActivity {
                 mMenuLayout.setVisibility(View.GONE);
             }
         });
-    }
-
-    private void initMenu(){
-        String from = BRSharedPrefs.getExploreFrom(this);
-        if(StringUtil.isNullOrEmpty(from)) return;
-        if(from.equalsIgnoreCase("vote")){
-            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.vote_title)));
-        } else if(from.equalsIgnoreCase("redpacket")) {
-            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), getString(R.string.redpackage_title)));
-        } else {
-            mAboutTv.setText(String.format(getString(R.string.explore_menu_about), ""));
-        }
     }
 
     @Override

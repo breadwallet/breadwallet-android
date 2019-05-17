@@ -131,9 +131,9 @@ public class CryptoUriParser {
 
         if (scheme == null) {
             scheme = wm.getScheme();
-            obj.iso = wm.getIso();
+//            obj.iso = wm.getIso();
 
-        } else {
+        } /*else {
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
                 if (scheme.equalsIgnoreCase(walletManager.getScheme())) {
@@ -141,9 +141,10 @@ public class CryptoUriParser {
                     break;
                 }
             }
-        }
+        }*/
 
         obj.scheme = scheme;
+        obj.iso = wm.getIso();
 
         String schemeSpecific = u.getSchemeSpecificPart();
         if (schemeSpecific.startsWith("//")) {
@@ -176,12 +177,14 @@ public class CryptoUriParser {
             }
             if (keyValue[0].trim().equals("amount")) {
                 try {
-                    BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    if(scheme.equalsIgnoreCase("elastos")) {
-                        obj.amount = bigDecimal;
-                    } else {
-                        obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
-                    }
+                    obj.amount = new BigDecimal(keyValue[1].trim());
+//                    BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
+//                    obj.amount = bigDecimal;
+//                    if(scheme.equalsIgnoreCase("elastos")) {
+//                        obj.amount = bigDecimal;
+//                    } else {
+//                        obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
+//                    }
 
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
