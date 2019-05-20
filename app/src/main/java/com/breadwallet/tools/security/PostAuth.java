@@ -13,11 +13,8 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
-import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
@@ -102,7 +99,7 @@ public class PostAuth {
         if (listener != null) {
             mAuthenticationSuccessListener = listener;
         }
-        boolean success = WalletsMaster.getInstance(context).generateRandomSeed(context);
+        boolean success = WalletsMaster.getInstance().generateRandomSeed(context);
         if (success) {
             BreadApp.initialize(false);
             mAuthenticationSuccessListener.onAuthenticatedSuccess();
@@ -186,55 +183,51 @@ public class PostAuth {
         BRBitId.completeBitID(context, authenticated);
     }
 
-    public void onRecoverWalletAuth(final Activity activity, boolean authAsked) {
+    public boolean onRecoverWalletAuth(final Activity activity, boolean authAsked) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
             BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
-            return;
+            return false;
         }
 
+        boolean success = false;
         try {
-            boolean success = false;
-            try {
-                success = BRKeyStore.putPhrase(mCachedPaperKey.getBytes(),
-                        activity, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
-            } catch (UserNotAuthenticatedException e) {
-                if (authAsked) {
-                    Log.e(TAG, "onRecoverWalletAuth: WARNING!!!! LOOP");
-                    mAuthLoopBugHappened = true;
-
-                }
-                return;
+            success = BRKeyStore.putPhrase(mCachedPaperKey.getBytes(), activity,
+                    BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, "onRecoverWalletAuth: WARNING!!!! LOOP");
+                mAuthLoopBugHappened = true; // TODO is it possible to get in the auth loop when recovering the wallet?
             }
+        }
 
-            if (!success) {
-                if (authAsked)
-                    Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
-            } else {
-                if (mCachedPaperKey.length() != 0) {
-                    BRSharedPrefs.putPhraseWroteDown(activity, true);
+        if (success) {
+            if (mCachedPaperKey.length() != 0) {
+                BRSharedPrefs.putPhraseWroteDown(activity, true);
+                try {
                     byte[] seed = BRCoreKey.getSeedFromPhrase(mCachedPaperKey.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, activity);
+
+                    // Recover wallet-info before starting to sync wallets.
+                    KVStoreManager.syncWalletInfo(activity);
+
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
                     BreadApp.initialize(false);
 
-                    Intent intent = new Intent(activity, InputPinActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-
                     mCachedPaperKey = null;
+                    return true;
+                } catch (Exception e) {
+                    // TODO REVIEW NON FATAL EVENTS IN CRASHLYTICS TO CATCH SPECIFIC EXCEPTION DROID-1261
+                    Log.e(TAG, "onRecoverWalletAuth: failed to put auth key in the key store", e);
+                    BRReportsManager.reportBug(e);
                 }
-
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            BRReportsManager.reportBug(e);
+        } else if (authAsked) {
+            Log.e(TAG, "onRecoverWalletAuth, !success && authAsked"); // THIS SEEMS TO BE REDUNDANT WITH THE CATCH
         }
-
+        return false;
     }
 
     @WorkerThread
@@ -298,7 +291,7 @@ public class PostAuth {
                     // We use dynamic gas for ETH and ERC20 tokens. BUT not when we have a generic transaction CALL_REQUEST.
                     if (mCryptoRequest.getGenericTransactionMetaData() == null
                             && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
-                            || WalletsMaster.getInstance(context).isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
+                            || WalletsMaster.getInstance().isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
                         final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
                         final Timer timeoutTimer = new Timer();
                         final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {
@@ -402,7 +395,7 @@ public class PostAuth {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] txHash = WalletsMaster.getInstance(context).getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
+                byte[] txHash = WalletsMaster.getInstance().getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }

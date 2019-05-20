@@ -87,7 +87,7 @@ public final class SettingsUtil {
 
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(activity);
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
             @Override

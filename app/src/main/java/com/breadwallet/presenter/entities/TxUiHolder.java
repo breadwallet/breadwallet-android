@@ -1,8 +1,5 @@
 package com.breadwallet.presenter.entities;
 
-import android.util.Log;
-
-import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.platform.entities.TxMetaData;
 
 import java.math.BigDecimal;
@@ -51,7 +48,7 @@ public class TxUiHolder {
 
     //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
-                      BigDecimal fee,  String to, String from,
+                      BigDecimal fee, String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
         this.transaction = transaction;
         this.timeStamp = timeStamp;
@@ -131,7 +128,6 @@ public class TxUiHolder {
     public boolean isReceived() {
         return isReceived;
     }
-
 
 
 }

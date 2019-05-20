@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.ui.recovery.RecoveryKeyActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
 
@@ -30,7 +30,7 @@ public class RecoverActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
+                Intent intent = new Intent(RecoverActivity.this, RecoveryKeyActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

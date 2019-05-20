@@ -173,18 +173,6 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static BigDecimal getCachedBalance(Context context, String iso) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return new BigDecimal(prefs.getString(BALANCE + iso.toUpperCase(), "0"));
-    }
-
-    public static void putCachedBalance(Context context, String iso, BigDecimal balance) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(BALANCE + iso.toUpperCase(), balance.toPlainString());
-        editor.apply();
-    }
-
     public static long getSecureTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(SECURE_TIME, System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);

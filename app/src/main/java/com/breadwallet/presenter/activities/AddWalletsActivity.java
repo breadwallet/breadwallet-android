@@ -142,6 +142,6 @@ public class AddWalletsActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        WalletsMaster.getInstance(this).updateWallets(this);
+        WalletsMaster.getInstance().updateWallets(this);
     }
 }

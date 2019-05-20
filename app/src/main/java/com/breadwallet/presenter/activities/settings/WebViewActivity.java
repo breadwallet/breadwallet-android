@@ -184,7 +184,7 @@ public class WebViewActivity extends BRActivity {
                 mBottomToolbar.setVisibility(View.INVISIBLE);
             }
             if (mUrl.endsWith(BUY_PATH)) {
-                mUrl = String.format(URL_FORMAT, mUrl, CURRENCY, WalletsMaster.getInstance(this).getCurrentWallet(this).getCurrencyCode().toLowerCase());
+                mUrl = String.format(URL_FORMAT, mUrl, CURRENCY, WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode().toLowerCase());
 
             }
             mWebView.loadUrl(mUrl);

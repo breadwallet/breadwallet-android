@@ -198,7 +198,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 decoratedHolderView.mIconLetter.setText(currencyCode.substring(0, 1).toUpperCase());
             }
 
-            WalletUiConfiguration uiConfiguration = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, wallet.getCurrencyCode()).getUiConfiguration();
+            WalletUiConfiguration uiConfiguration = WalletsMaster.getInstance().getWalletByIso(mContext, wallet.getCurrencyCode()).getUiConfiguration();
             String startColor = uiConfiguration.getStartColor();
             String endColor = uiConfiguration.getEndColor();
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();

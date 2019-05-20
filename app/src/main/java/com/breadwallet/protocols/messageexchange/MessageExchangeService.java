@@ -785,7 +785,7 @@ public final class MessageExchangeService extends JobIntentService {
     private ByteString processAccountRequest(byte[] decryptedMessage) throws InvalidProtocolBufferException {
         Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
         String currencyCode = request.getScope();
-        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(this, currencyCode);
 
         Protos.AccountResponse.Builder responseBuilder = Protos.AccountResponse.newBuilder();
         if (walletManager == null) {
@@ -968,7 +968,7 @@ public final class MessageExchangeService extends JobIntentService {
     private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
 
         if (requestMetaData != null) {
-            if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getTokenSymbol())) {
+            if (!WalletsMaster.getInstance().hasWallet(requestMetaData.getTokenSymbol())) {
                 WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getTokenSymbol());
                 TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
 
@@ -983,7 +983,7 @@ public final class MessageExchangeService extends JobIntentService {
                     }
 
                     KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
-                    WalletsMaster.getInstance(this).updateWallets(this);
+                    WalletsMaster.getInstance().updateWallets(this);
                 }
             }
         }

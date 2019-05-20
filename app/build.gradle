@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.protobuf'
 
@@ -8,7 +10,7 @@ android {
     ext {
         brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 8     // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 5       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
@@ -18,6 +20,7 @@ android {
         }
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
+        brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
     }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
@@ -164,6 +167,12 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${output.baseName}-${brdInternalVersionName}.apk"
+        }
+    }
+
     task downloadBundles() {
         def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
         def stagingHost = "api.breadwallet.com"
@@ -190,6 +199,10 @@ android {
         }
     }
     preBuild.dependsOn(downloadBundles)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 protobuf {
@@ -262,6 +275,7 @@ dependencies {
     implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908' //do not update
     implementation 'org.slf4j:slf4j-api:1.7.22'
     implementation 'tools.fastlane:screengrab:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -81,20 +81,20 @@ public class CryptoRequest implements Serializable {
         return minAmount != null && absAmt.compareTo(minAmount) < 0 && mGenericTransactionMetaData == null;
     }
 
-    public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
-        return mAmount.abs().compareTo(walletManager.getCachedBalance(app)) > 0
+    public boolean isLargerThanBalance(BaseWalletManager walletManager) {
+        return mAmount.abs().compareTo(walletManager.getBalance()) > 0
                 && mAmount.abs().compareTo(BigDecimal.ZERO) > 0;
     }
 
     //not enough money for a tx + fee
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
-        BigDecimal balance = walletManager.getCachedBalance(app);
+        BigDecimal balance = walletManager.getBalance();
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
+        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
             BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
-            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0;
+            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getBalance()) > 0;
         } else {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
             BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
@@ -105,9 +105,9 @@ public class CryptoRequest implements Serializable {
 
     //the fee needs adjustments (amount + fee > balance but possible to adjust the amount to create a tx)
     public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
-        BigDecimal balance = walletManager.getCachedBalance(app);
+        BigDecimal balance = walletManager.getBalance();
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
+        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
 
         if (isErc20) {
             return false; //never need adjustment for ERC20s (fee is in ETH)

@@ -17,6 +17,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
+import com.breadwallet.ui.recovery.RecoveryKeyActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -49,7 +50,7 @@ public class DisabledActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(DisabledActivity.this).getCurrentWallet(DisabledActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(DisabledActivity.this);
                 UiUtils.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
             }
         });
@@ -57,8 +58,8 @@ public class DisabledActivity extends BRActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DisabledActivity.this, InputWordsActivity.class);
-                intent.putExtra(InputWordsActivity.EXTRA_RESET_PIN, true);
+                Intent intent = new Intent(DisabledActivity.this, RecoveryKeyActivity.class);
+                intent.putExtra(RecoveryKeyActivity.EXTRA_RESET_PIN, true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

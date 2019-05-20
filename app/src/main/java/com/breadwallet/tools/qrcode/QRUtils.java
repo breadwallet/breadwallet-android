@@ -176,7 +176,7 @@ public class QRUtils {
             shareIntent.setType(INTENT_TYPE);
             shareIntent.putExtra(Intent.EXTRA_TEXT, mTextToShare);
             String emailSubject = context.getString(R.string.Email_address_subject,
-                    WalletsMaster.getInstance(context).getCurrentWallet(context).getName());
+                    WalletsMaster.getInstance().getCurrentWallet(context).getName());
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.Receive_share)));
