@@ -43,7 +43,7 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
         mTitle = findViewById(R.id.title);
         mListView = findViewById(R.id.settings_list);
 
-        final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(this);
 
         mTitle.setText(String.format("%s %s", wm.getName(), CurrencySettingsActivity.this.getString(R.string.Settings_title)));
     }
@@ -56,7 +56,7 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
             mItems = new ArrayList<>();
         }
         mItems.clear();
-        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(this);
         mItems.addAll(walletManager.getSettingsConfiguration().getSettingsList());
         View view = new View(this);
         mListView.addFooterView(view, null, true);

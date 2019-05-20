@@ -118,7 +118,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         String distinguishedName = null;
         try {
             URL url = new URL(params[0]);
-            BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+            BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(mContext);
 
             String acceptHeaderValue = walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
                     ? String.format(ACCEPT_HEADER_FORMAT, walletManager.getName().toLowerCase())
@@ -145,7 +145,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 try {
                     String network = jsonObject.has(NETWORK) ? jsonObject.getString(NETWORK) : null;
                     String currency = jsonObject.has(CURRENCY) ? jsonObject.getString(CURRENCY) : null;
-                    WalletsMaster walletsMaster = WalletsMaster.getInstance(mContext);
+                    WalletsMaster walletsMaster = WalletsMaster.getInstance();
                     if (walletsMaster.hasWallet(currency)) {
                         walletManager = walletsMaster.getWalletByIso(mContext, currency);
                         if (walletManager != null) {
@@ -351,7 +351,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         for (BRCoreTransactionOutput output : outputs) {
             allAddresses.append(output.getAddress()).append(", ");
         }
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(mContext);
         BRCoreWallet coreWallet = walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
                 ? ((WalletBitcoinManager) walletManager).getWallet()
                 : ((WalletBchManager) walletManager).getWallet();
@@ -405,7 +405,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                     return;
                 }
-                WalletsMaster master = WalletsMaster.getInstance(mContext);
+                WalletsMaster master = WalletsMaster.getInstance();
 
                 final BigDecimal total = amount.add(fee);
 

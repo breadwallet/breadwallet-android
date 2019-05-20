@@ -95,7 +95,7 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(WriteDownActivity.this).getCurrentWallet(WriteDownActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(WriteDownActivity.this);
                 UiUtils.showSupportFragment(WriteDownActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
 
             }

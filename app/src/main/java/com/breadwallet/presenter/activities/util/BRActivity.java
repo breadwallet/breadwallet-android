@@ -14,8 +14,8 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
-import com.breadwallet.presenter.activities.InputWordsActivity;
-import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.ui.recovery.RecoveryKeyActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -180,18 +180,6 @@ public class BRActivity extends FragmentActivity {
                 }
                 break;
 
-            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this, true);
-                        }
-                    });
-                } else {
-                    finish();
-                }
-                break;
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -203,8 +191,7 @@ public class BRActivity extends FragmentActivity {
                 } else {
                     Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
                     // TODO: Should this be BreadApp.clearApplicationUserData();?
-                    WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
-                    m.wipeWalletButKeystore(this);
+                    WalletsMaster.getInstance().wipeWalletButKeystore(this);
                     finish();
                 }
                 break;
@@ -218,7 +205,7 @@ public class BRActivity extends FragmentActivity {
             BRApiManager.getInstance().startTimer(this);
         }
         //show wallet locked if it is and we're not in an illegal activity.
-        if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
+        if (!(this instanceof InputPinActivity || this instanceof RecoveryKeyActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {
                 AuthManager.getInstance().setWalletDisabled(this);
             }

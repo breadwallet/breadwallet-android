@@ -27,7 +27,7 @@ import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
-import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -38,7 +38,7 @@ import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentWebModal;
-import com.breadwallet.presenter.fragments.FragmentTxDetails;
+import com.breadwallet.ui.wallet.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -130,7 +130,7 @@ public class UiUtils {
                     currencyQuery = "";
                 } else {
                     String currencyCode = walletManager.getCurrencyCode();
-                    WalletsMaster walletsMaster = WalletsMaster.getInstance(fragmentActivity.getApplicationContext());
+                    WalletsMaster walletsMaster = WalletsMaster.getInstance();
                     if (walletsMaster.isCurrencyCodeErc20(fragmentActivity.getApplicationContext(), currencyCode)) {
                         currencyCode = BRConstants.CURRENCY_ERC20;
                     }
@@ -166,7 +166,7 @@ public class UiUtils {
     }
 
 
-    public static void showTransactionDetails(Activity app, TxUiHolder item, int position) {
+    public static void showTransactionDetails(Activity app, TxUiHolder item) {
 
         FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.class.getName());
 

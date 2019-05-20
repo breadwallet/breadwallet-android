@@ -1,0 +1,54 @@
+# More documentation about how to customize your build
+# can be found here:
+# https://docs.fastlane.tools
+fastlane_version "2.68.0"
+
+default_platform :android
+
+# Make a build an publish it to Crashlytics for each flavors.
+#
+# Optional params:
+# [output_path:"~/some/path/"] Path to a specific location where you want to get a copy of the the
+# generated apks.
+lane :betaAll do |options|
+  beta(flavor: 'brdTestnet', build_type: 'debug', output_path: options[:output_path])
+  beta(flavor: 'brdTestnet', build_type: 'release', output_path: options[:output_path])
+  beta(flavor: 'brd', build_type: 'debug', output_path: options[:output_path])
+  beta(flavor: 'brd', build_type: 'release', output_path: options[:output_path])
+end
+
+# Make a build and publish it to Crashlytics and/or to a local folder.
+#
+# Required params: it requires the flavor:[brd/brdTestnet] to be built and the release
+# flavor:[brd/brdTestnet]
+# mode:"[debug/release]" 
+# Optional params:
+# [output_path:"~/some/path/"] Path to a specific location where you want to get a copy of the apk.
+# [upload:true/false] Flag indicating if the build should be uploaded to Crashlytics, True as default.
+# fastlane beta flavor:"brdTestnet" build_type:"debug" [output_path:"~/Desktop/3.8.1.1/"] [upload:false]
+lane :beta do |options|
+  # build the release variant
+  gradle(
+    task: 'assemble',
+    flavor: options[:flavor],
+    build_type: options[:build_type],
+    properties: {
+      "android.injected.signing.store.file" => ENV['SIGNING_KEY'],
+      "android.injected.signing.store.password" => ENV['SIGNING_PASSWORD'],
+      "android.injected.signing.key.alias" => ENV['SIGNING_ALIAS'],
+      "android.injected.signing.key.password" => ENV['SIGNING_ALIAS_PASSWORD']
+    }
+  )
+  # upload to Beta by Crashlytics
+  if !options.key?(:upload) or options[:upload]
+    crashlytics(
+      notes_path: "fastlane/changelog.txt",
+      groups: ["android-team", "support"]
+    )
+  end
+  if options[:output_path]
+    apk_location = "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
+    sh("mkdir -pv #{options[:output_path]}")
+    sh("mv -fv #{apk_location} #{options[:output_path]}")
+  end
+end

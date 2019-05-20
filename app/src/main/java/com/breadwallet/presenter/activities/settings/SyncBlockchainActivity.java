@@ -35,7 +35,7 @@ public class SyncBlockchainActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                BaseWalletManager wm = WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(SyncBlockchainActivity.this);
                 UiUtils.showSupportFragment(SyncBlockchainActivity.this, BRConstants.FAQ_RESCAN, wm);
             }
         });
@@ -74,7 +74,7 @@ public class SyncBlockchainActivity extends BRActivity {
                 Activity thisApp = SyncBlockchainActivity.this;
                 BRSharedPrefs.putStartHeight(thisApp, BRSharedPrefs.getCurrentWalletCurrencyCode(thisApp), 0);
                 BRSharedPrefs.putAllowSpend(thisApp, BRSharedPrefs.getCurrentWalletCurrencyCode(thisApp), false);
-                WalletsMaster.getInstance(thisApp).getCurrentWallet(thisApp).rescan(thisApp);
+                WalletsMaster.getInstance().getCurrentWallet(thisApp).rescan(thisApp);
                 UiUtils.startBreadActivity(thisApp, false);
 
             }

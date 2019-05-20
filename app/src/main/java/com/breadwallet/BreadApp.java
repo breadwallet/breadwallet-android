@@ -36,6 +36,8 @@ import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.util.WalletConnectionCleanUpWorker;
+import com.breadwallet.wallet.util.WalletConnectionWorker;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
@@ -90,38 +92,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Activity mCurrentActivity;
-
-    private Runnable mDisconnectWalletsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
-            for (final BaseWalletManager walletManager : list) {
-                //TODO Temporary new thread until the core lags are fixed
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        walletManager.disconnect(BreadApp.this);
-                    }
-                });
-            }
-        }
-    };
-
-    private Runnable mConnectWalletsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
-            for (final BaseWalletManager walletManager : list) {
-                //TODO Temporary new thread until the core lags are fixed
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        walletManager.connect(BreadApp.this);
-                    }
-                });
-            }
-        }
-    };
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -313,8 +283,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 // initialized, we may need tell the user to enable the password.
                 if (isDeviceStateValid()) {
                     if (isBRDWalletInitialized()) {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
+                        WalletConnectionCleanUpWorker.cancelEnqueuedWork();
+
+                        WalletConnectionWorker.enqueueWork();
 
                         HTTPServer.getInstance().startServer(this);
 
@@ -339,8 +310,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 Log.d(TAG, "onLifeCycle: STOP");
                 if (isBRDWalletInitialized()) {
                     mBackgroundedTime = System.currentTimeMillis();
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+                    WalletConnectionCleanUpWorker.enqueueWork();
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {

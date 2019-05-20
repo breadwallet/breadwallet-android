@@ -60,7 +60,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(DisplayCurrencyActivity.this).getCurrentWallet(DisplayCurrencyActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(DisplayCurrencyActivity.this);
                 UiUtils.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
             }
         });
@@ -120,7 +120,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         Iterator<CurrencyEntity> iter = list.iterator();
         while (iter.hasNext()) {
             CurrencyEntity ent = iter.next();
-            if (WalletsMaster.getInstance(this).isIsoCrypto(this, ent.name)) {
+            if (WalletsMaster.getInstance().isIsoCrypto(this, ent.name)) {
                 iter.remove();
             }
         }

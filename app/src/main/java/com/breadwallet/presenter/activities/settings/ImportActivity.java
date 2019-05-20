@@ -47,7 +47,7 @@ public class ImportActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(ImportActivity.this).getCurrentWallet(ImportActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(ImportActivity.this);
                 UiUtils.showSupportFragment(ImportActivity.this, BRConstants.FAQ_IMPORT_WALLET, wm);
             }
         });

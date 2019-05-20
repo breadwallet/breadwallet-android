@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.abstracts;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -28,5 +29,18 @@ import java.math.BigDecimal;
  */
 public interface BalanceUpdateListener {
 
-    abstract void onBalanceChanged(BigDecimal newBalance);
+    /**
+     * Notify the balance for a given currency has changed.
+     *
+     * @param currencyCode The currency code of the updated balance.
+     * @param newBalance   The new balance.
+     */
+    void onBalanceChanged(String currencyCode, BigDecimal newBalance);
+
+    /**
+     * Notify the new balances for a set of currencies.
+     *
+     * @param balanceMap Map of currency codes and balances.
+     */
+    void onBalancesChanged(Map<String, BigDecimal> balanceMap);
 }
