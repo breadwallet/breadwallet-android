@@ -14,7 +14,6 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -53,6 +52,7 @@ public class IntroActivity extends BRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_intro);
         setOnClickListeners();
         updateBundles();
@@ -70,7 +70,10 @@ public class IntroActivity extends BRActivity {
             Utils.printPhoneSpecs(this);
         }
 
-        PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
+        // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
+        if (!WalletsMaster.getInstance(this).noWallet(this)) {
+                UiUtils.startBreadActivity(this, true);
+        }
     }
 
     @Override

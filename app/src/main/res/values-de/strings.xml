@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">BRD funktioniert nicht ordnungsgemäß, solange bildschirmverändernde Apps (z.B. Twilight) aktiv sind.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Bildschirmverändernde App erkannt</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">Kaufen Sie bis zum 31. März 2019 für 100 € Bitcoins ein und Sie erhalten einen Amazon.de-Geschengutschein im Wert von 20 € ⃰</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">Jetzt Geschenkgutschein erhalten</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">⃰ Maximal ein Gutschein pro Kunde. Nur erhältlich in Österreich, Deutschland, Luxemburg und den Niederlanden.</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">Holen Sie sich einen Geschenkgutschein für Amazon.de im Wert von 20 €!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">BTC- und ETH-Käufe über Ihre Bank haben höhere Limits, schnellere Lieferzeiten und niedrigere Gebühren. Melden Sie sich an und erhalten Sie eine Benachrichtigung, sobald es losgeht.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">Wir informieren Sie über Veränderungen.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">Eine neue Art zu kaufen, kommt bald!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">Vielen Dank!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON-Serialisierungsfehler</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">Betrag, welcher versendet werden soll:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Netzwerkgebühr:</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">Netzgebühr (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Bearbeitungszeit: Diese Transaktion ist voraussichtlich in %1$s abgeschlossen.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">Voraussichtliche Dauer</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">Wann soll synchronisiert werden?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">Erfahren Sie, wie Sie Handelsgebühren sparen und zukünftige Belohnungen freischalten können.</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">Vorstellung der BRD-Belohnungen.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">Belohnungen</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Kamerablitz</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">Die Aktivierung von SegWit ist eine Funktion, die nicht rückgängig gemacht werden kann. Sind Sie sicher, dass Sie fortfahren möchten?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">Aktivieren</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">Zum Mond</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Betrag</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">Auf Standardwährungen zurücksetzen</string>
     <!-- Leave review button label -->
     <string name="Settings.review">Schreibe eine Rezension für unsere App</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">Belohnungen</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">Übermittle anonyme Nutzungsdaten</string>
     <!-- Sync blockchain label -->

@@ -94,7 +94,6 @@ public class AuthManager {
             Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
             return;
         }
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 
         boolean useFingerPrint = isFingerPrintAvailableAndSetup(context);
 
@@ -114,63 +113,35 @@ public class AuthManager {
         }
 
         final Activity app = (Activity) context;
-
-        FragmentFingerprint fingerprintFragment;
-        PinFragment breadPin;
-
-        if (keyguardManager.isKeyguardSecure()) {
-            if (useFingerPrint) {
-                fingerprintFragment = new FragmentFingerprint();
-                Bundle args = new Bundle();
-                args.putString("title", title);
-                args.putString("message", message);
-                fingerprintFragment.setArguments(args);
-                fingerprintFragment.setCompletion(completion);
-                FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
-                transaction.addToBackStack(null);
-                if (!app.isDestroyed()) {
-                    transaction.commitAllowingStateLoss();
-                }
-            } else {
-                breadPin = new PinFragment();
-                Bundle args = new Bundle();
-                args.putString("title", title);
-                args.putString("message", message);
-                breadPin.setArguments(args);
-                breadPin.setCompletion(completion);
-                FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
-                transaction.addToBackStack(null);
-                if (!app.isDestroyed()) {
-                    transaction.commitAllowingStateLoss();
-                }
+        if (useFingerPrint) {
+            FragmentFingerprint fingerprintFragment = new FragmentFingerprint();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("message", message);
+            fingerprintFragment.setArguments(args);
+            fingerprintFragment.setCompletion(completion);
+            FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+            transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
+            transaction.addToBackStack(null);
+            if (!app.isDestroyed()) {
+                transaction.commitAllowingStateLoss();
             }
         } else {
-            sayNoScreenLock(app);
+            PinFragment breadPin = new PinFragment();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("message", message);
+            breadPin.setArguments(args);
+            breadPin.setCompletion(completion);
+            FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+            transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
+            transaction.addToBackStack(null);
+            if (!app.isDestroyed()) {
+                transaction.commitAllowingStateLoss();
+            }
         }
-
-    }
-
-    private void sayNoScreenLock(final Activity app) {
-        BRDialog.showCustomDialog(app,
-                "",
-                app.getString(R.string.Prompts_NoScreenLock_body_android),
-                app.getString(R.string.AccessibilityLabels_close),
-                null,
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        app.finish();
-                    }
-                }, null, new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        app.finish();
-                    }
-                }, 0);
     }
 
     public static boolean isFingerPrintAvailableAndSetup(Context context) {

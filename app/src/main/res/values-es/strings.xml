@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">BRD no funcionará correctamente a menos que las aplicaciones que alteran la pantalla (como Twilight) estén desactivadas.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Se ha detectado una aplicación de alteración de pantalla</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">Compra 100 € en Bitcoin antes del 31 de marzo de 2019 y recibe una tarjeta regalo de Amazon.de de 20 € *</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">Consigue tu tarjeta regalo</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">⃰ Limite de una tarjeta regalo por cliente. Disponible solo en Austria, Alemania, Luxemburgo y los Países Bajos.</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">¡Recibe una tarjeta regalo de Amazon.de de 20 €!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">Las compras de BTC y ETH a través de su banco tendrán límites más altos, plazos de ejecución más cortos y comisiones más bajas. Suscríbase para ser notificado de su lanzamiento.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">Le notificaremos sobre los cambios.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">¡Próximamente una nueva forma de comprar!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">¡Gracias!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">Error de serialización de JSON</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">Cantidad a enviar:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Tarifa de la red:</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">Tarifa de red (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Tiempo de procesamiento: se prevé que esta transacción se completará en %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">Hora prevista</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">¿Cuándo sincronizar?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">Descubra cómo puede ahorrar en comisiones de negociación y desbloquear futuras recompensas</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">Presentamos BRD Rewards.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">Recompensas</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Flash de la cámara</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">Habilitar SegWit es una característica irreversible. ¿Estás seguro de que quieres continuar?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">Habilitar</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">A la luna</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Cantidad</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">Restablecer a las monedas predeterminadas</string>
     <!-- Leave review button label -->
     <string name="Settings.review">Déjanos una valoración</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">Premios</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">Compartir datos anónimos</string>
     <!-- Sync blockchain label -->
