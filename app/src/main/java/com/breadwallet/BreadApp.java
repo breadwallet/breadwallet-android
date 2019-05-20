@@ -3,6 +3,7 @@ package com.breadwallet;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
@@ -14,6 +15,9 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.view.dialog.DialogActivity;
+import com.breadwallet.view.dialog.DialogActivity.DialogType;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
 import com.breadwallet.protocols.messageexchange.InboxPollingWorker;
@@ -150,30 +154,29 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         mDisplayWidthPx = size.x;
         mDisplayHeightPx = size.y;
 
-        registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        // Initialize application lifecycle observer and register this application for events.
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
 
         initialize(true);
+
+        registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         // Start our local server as soon as the application instance is created, since we need to
         // display support WebViews during onboarding.
         HTTPServer.getInstance().startServer(this);
-
     }
 
     /**
-     * Initializes the application.  Only put things in here that need to happen after the user has created or
-     * recovered the BRD wallet.
+     * Initializes the application state.
      *
-     * @param isApplicationOnCreate True if initialize is called from application onCreate.
+     * @param isApplicationOnCreate True if the caller is {@link BreadApp#onCreate()}; false, otherwise.
      */
     public static void initialize(boolean isApplicationOnCreate) {
-        if (bRDWalletExists()) {
+        // Things that should be done only if the wallet exists.
+        if (isBRDWalletInitialized()) {
             // Initialize the wallet id (also called rewards id).
             initializeWalletId();
-
-            // Initialize application lifecycle observer and register this application for events.
-            ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
 
             // Initialize message exchange inbox polling.
             ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver());
@@ -190,11 +193,11 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     /**
-     * Returns whether the BRD wallet exists.  i.e. has the BRD wallet been created or recovered.
+     * Returns whether the BRD wallet is initialized.  i.e. has the BRD wallet been created or recovered.
      *
-     * @return True if the BRD wallet exists; false, otherwise.
+     * @return True if the BRD wallet is initialized; false, otherwise.
      */
-    private static boolean bRDWalletExists() {
+    private static boolean isBRDWalletInitialized() {
         return BRKeyStore.getMasterPublicKey(mInstance) != null;
     }
 
@@ -305,32 +308,48 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
                 mBackgroundedTime = 0;
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                HTTPServer.getInstance().startServer(this);
+                // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
+                // initialized, we may need tell the user to enable the password.
+                if (isDeviceStateValid()) {
+                    if (isBRDWalletInitialized()) {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
 
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        TokenUtil.fetchTokensFromServer(mInstance);
+                        HTTPServer.getInstance().startServer(this);
+
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                TokenUtil.fetchTokensFromServer(mInstance);
+                            }
+                        });
+                        APIClient.getInstance(this).updatePlatform(this);
+
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserMetricsUtil.makeUserMetricsRequest(mInstance);
+                            }
+                        });
                     }
-                });
-                APIClient.getInstance(this).updatePlatform(this);
+                }
                 break;
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");
-                mBackgroundedTime = System.currentTimeMillis();
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        EventUtils.saveEvents(BreadApp.this);
-                        EventUtils.pushToServer(BreadApp.this);
-                    }
-                });
-                HTTPServer.getInstance().stopServer();
+                if (isBRDWalletInitialized()) {
+                    mBackgroundedTime = System.currentTimeMillis();
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            EventUtils.saveEvents(BreadApp.this);
+                            EventUtils.pushToServer(BreadApp.this);
+                        }
+                    });
+                    HTTPServer.getInstance().stopServer();
+                }
                 break;
             default:
                 break;
@@ -373,4 +392,43 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
     }
 
+    /**
+     * Returns true if the device state is valid. The device state is considered valid, if the device password
+     * is enabled and if the Android key store state is valid.  The Android key store can be invalided if the
+     * device password was removed or if fingerprints are added/removed.
+     *
+     * @return True, if the device state is valid; false, otherwise.
+     */
+    private boolean isDeviceStateValid() {
+        boolean isDeviceStateValid;
+        DialogType dialogType = DialogType.DEFAULT;
+
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Activity.KEYGUARD_SERVICE);
+        if (!keyguardManager.isKeyguardSecure()) {
+            isDeviceStateValid = false;
+            dialogType = DialogType.ENABLE_DEVICE_PASSWORD;
+        } else {
+            switch (BRKeyStore.getValidityStatus()) {
+                case VALID:
+                    isDeviceStateValid = true;
+                    break;
+                case INVALID_WIPE:
+                    isDeviceStateValid = false;
+                    dialogType = DialogType.KEY_STORE_INVALID_WIPE;
+                    break;
+                case INVALID_UNINSTALL:
+                    isDeviceStateValid = false;
+                    dialogType = DialogType.KEY_STORE_INVALID_UNINSTALL;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid key store validity status.");
+            }
+        }
+
+        if (dialogType != DialogType.DEFAULT) {
+            DialogActivity.startDialogActivity(this, dialogType);
+        }
+
+        return isDeviceStateValid;
+    }
 }

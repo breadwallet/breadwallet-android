@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">BRD fungerer ikke korrekt medmindre apps der ændrer skærmbilledet (så som Twilight) er deaktiveret.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Der er fundet en app der ændrer skærmbilledet</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">Køb for 100€ Bitcoins inden 31. marts 2019 og få et gavekort på 20€ til Amazon.de*</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">Få dit gavekort</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">*Begrænset: kun et gavekort per kunde. Kun tilgængelig i Østrig, Tyskland, Luxembourg og Holland.</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">Få et gavekort på 20€ til Amazon.de!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">Køb af BTC og ETH via din bank vil have højere grænser, hurtigere leveringstider og lavere gebyrer. Tilmeld dig for at få besked, når den lanceres.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">Vi vil fortælle dig om ændringerne.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">Der kommer snart en ny måde at købe!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">Tak!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON serialiseringsfejl</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">Beløb der skal sendes:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Netværksgebyr:</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">Netværksgebyr (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Behandlingstid: denne transaktion er efter planen færdig om %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">Anslået tid</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">Hvornår skal der synkroniseres?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">Se hvordan du kan spare på handelsgebyrer og låse op for fremtidige gevinster.</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">Introduktion til BRD-belønninger.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">Belønninger</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Kamerablitz</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">Aktivering af SegWit er en irreversibel funktion. Er du sikker på, at du vil fortsætte?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">Aktiver</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">Til månen</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Beløb</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">Nulstil til standard valutaer</string>
     <!-- Leave review button label -->
     <string name="Settings.review">Giv os en anmeldelse</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">Belønninger</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">Del anonyme data</string>
     <!-- Sync blockchain label -->
