@@ -54,6 +54,7 @@ projectFilesBackup
 /publishTODO.txt
 /.idea/
 fastlane/
+.env
 Release_checklist
 
 /app/.externalNativeBuild/

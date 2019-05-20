@@ -143,7 +143,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
     protected void onPause() {
         super.onPause();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-        WalletsMaster.getInstance(this).updateWallets(this);
+        WalletsMaster.getInstance().updateWallets(this);
     }
 
     @Override

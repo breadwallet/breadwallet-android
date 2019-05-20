@@ -158,7 +158,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
             @Override
             public void run() {
                 //Update Crypto Rates
-                List<String> codeList = WalletsMaster.getInstance(context).getAllCurrencyCodesPossible(context);
+                List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
                 updateCryptoRates(context, codeList);
                 //Update new tokens rate (e.g. CCC)
                 fetchNewTokensData(context);
@@ -171,7 +171,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
                 updateFiatRates(context);
             }
         });
-        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(context));
         for (final BaseWalletManager walletManager : list) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override

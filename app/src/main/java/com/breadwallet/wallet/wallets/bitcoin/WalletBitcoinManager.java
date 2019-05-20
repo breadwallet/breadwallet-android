@@ -88,10 +88,10 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
                     EventUtils.pushEvent(EventUtils.EVENT_WALLET_DID_USE_DEFAULT_FEE_PER_KB);
                 }
                 getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
-                WalletsMaster.getInstance(context).updateFixedPeer(context, WalletBitcoinManager.this);
+                WalletsMaster.getInstance().updateFixedPeer(context, WalletBitcoinManager.this);
             }
         });
-        WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
+        WalletsMaster.getInstance().setSpendingLimitIfNotSet(context, this);
         updateSettings(context);
     }
 

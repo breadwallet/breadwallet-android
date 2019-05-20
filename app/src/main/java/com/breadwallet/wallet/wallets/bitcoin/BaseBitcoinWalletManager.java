@@ -401,8 +401,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getCurrencyCode());
+    public BigDecimal getBalance() {
+        return new BigDecimal(getWallet().getBalance());
     }
 
     @Override
@@ -416,12 +416,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, getCurrencyCode());
         PeerDataSource.getInstance(app).deleteAllPeers(app, getCurrencyCode());
         BRSharedPrefs.clearAllPrefs(app);
-    }
-
-    @Override
-    public void refreshCachedBalance(Context context) {
-        BigDecimal balance = new BigDecimal(getWallet().getBalance());
-        onBalanceChanged(context, balance);
     }
 
     @Override
@@ -449,7 +443,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         if (app == null) {
             return null;
         }
-        BigDecimal balance = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
+        BigDecimal balance = getFiatForSmallestCrypto(app, getBalance(), null);
         if (balance == null) {
             return BigDecimal.ZERO;
         }
@@ -839,8 +833,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public void onBalanceChanged(Context context, BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(context, getCurrencyCode(), balance);
+    public void onBalanceChanged(BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(getCurrencyCode(), balance);
     }
 
     protected void updateCachedAddress(Context context, String address) {
@@ -873,6 +867,11 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         mWalletManagerHelper.addTxListModifiedListener(listener);
     }
 
+    @Override
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        mWalletManagerHelper.removeTxListModifiedListener(listener);
+    }
+
     public void onTxListModified(String hash) {
         mWalletManagerHelper.onTxListModified(hash);
     }
@@ -885,7 +884,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
         final Context context = BreadApp.getBreadContext();
-        onBalanceChanged(context, new BigDecimal(balance));
+        onBalanceChanged(new BigDecimal(balance));
         refreshAddress(context);
     }
 
@@ -963,7 +962,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public void onTxAdded(BRCoreTransaction transaction) {
         super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
-        final WalletsMaster master = WalletsMaster.getInstance(ctx);
+        final WalletsMaster master = WalletsMaster.getInstance();
 
         TxMetaData metaData = KVStoreManager.createMetadata(ctx, this, new CryptoTransaction(transaction));
         KVStoreManager.putTxMetaData(ctx, metaData, transaction.getHash());

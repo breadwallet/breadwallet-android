@@ -41,8 +41,10 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -78,12 +80,12 @@ public class WalletsMaster {
     private TokenListMetaData mTokenListMetaData;
     private List<BalanceUpdateListener> mBalancesUpdateListeners = new ArrayList<>();
 
-    private WalletsMaster(Context app) {
+    private WalletsMaster() {
     }
 
-    public synchronized static WalletsMaster getInstance(Context app) {
+    public synchronized static WalletsMaster getInstance() {
         if (instance == null) {
-            instance = new WalletsMaster(app);
+            instance = new WalletsMaster();
         }
         return instance;
     }
@@ -316,13 +318,30 @@ public class WalletsMaster {
         wipeWalletButKeystore(app);
     }
 
-    public void refreshBalances(Context app) {
-        List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
-        for (BaseWalletManager wallet : list) {
-            wallet.refreshCachedBalance(app);
+    /**
+     * Notify all the balance update listeners with the latest balances of all the wallets.
+     */
+    public void refreshBalances() {
+        // Notify all the listeners with the current balance.
+        Map<String, BigDecimal> balanceMap = new HashMap<>();
+        for (BaseWalletManager walletManager : mWallets) {
+            balanceMap.put(walletManager.getCurrencyCode(), walletManager.getBalance());
         }
         for (BalanceUpdateListener balanceUpdateListener : mBalancesUpdateListeners) {
-            balanceUpdateListener.onBalanceChanged(null);
+            balanceUpdateListener.onBalancesChanged(balanceMap);
+        }
+    }
+
+    /**
+     * Notify all the balance update listeners with the new balance for a given currency.
+     *
+     * @param currencyCode The currency code of the refreshed balance.
+     * @param newBalance   The new balance.
+     */
+    public void refreshBalance(String currencyCode, BigDecimal newBalance) {
+        for (BalanceUpdateListener balanceUpdateListener : mBalancesUpdateListeners) {
+            Log.d(TAG, "refreshBalance: notify balance update of " + currencyCode + " with balance " + newBalance);
+            balanceUpdateListener.onBalanceChanged(currencyCode, newBalance);
         }
     }
 
@@ -334,7 +353,7 @@ public class WalletsMaster {
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
-                    BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                    BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(app);
                     BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
                     BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getCurrencyCode()));
                     BRKeyStore.putTotalLimit(app, totalLimit, wm.getCurrencyCode());

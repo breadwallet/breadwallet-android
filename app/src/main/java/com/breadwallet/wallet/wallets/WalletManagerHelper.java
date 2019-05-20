@@ -1,17 +1,14 @@
 package com.breadwallet.wallet.wallets;
 
 
-import android.content.Context;
-
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
-//import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class WalletManagerHelper {
 
@@ -23,7 +20,6 @@ public class WalletManagerHelper {
     private static final int CONFIRMATIONS_COMPLETE_MINIMUM = 6;
 
     private List<BalanceUpdateListener> mOnBalanceChangedListeners = new ArrayList<>();
-    //    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> mSyncListeners = new ArrayList<>();
     private List<OnTxListModified> mOntxListModifiedListeners = new ArrayList<>();
 
@@ -37,11 +33,10 @@ public class WalletManagerHelper {
         mOnBalanceChangedListeners.remove(listener);
     }
 
-    public void onBalanceChanged(Context context, String currencyCode, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(context, currencyCode, balance);
+    public void onBalanceChanged(String currencyCode, BigDecimal balance) {
         for (BalanceUpdateListener listener : mOnBalanceChangedListeners) {
             if (listener != null) {
-                listener.onBalanceChanged(balance);
+                listener.onBalanceChanged(currencyCode, balance);
             }
         }
     }
@@ -77,6 +72,12 @@ public class WalletManagerHelper {
     public void addTxListModifiedListener(OnTxListModified listener) {
         if (listener != null && !mOntxListModifiedListeners.contains(listener)) {
             mOntxListModifiedListeners.add(listener);
+        }
+    }
+
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        if (mOntxListModifiedListeners.contains(listener)) {
+            mOntxListModifiedListeners.remove(listener);
         }
     }
 

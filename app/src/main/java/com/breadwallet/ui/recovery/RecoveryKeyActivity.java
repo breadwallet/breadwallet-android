@@ -1,6 +1,8 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.ui.recovery;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BREdit;
@@ -24,21 +27,19 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.mvvm.Resource;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputWordsActivity extends BRActivity implements View.OnFocusChangeListener, BREdit.EditTextEventListener {
-    private static final String TAG = InputWordsActivity.class.getName();
+public class RecoveryKeyActivity extends BRActivity implements View.OnFocusChangeListener, BREdit.EditTextEventListener {
+    private static final String TAG = RecoveryKeyActivity.class.getName();
     private Button mNextButton;
 
     private static final int NUMBER_OF_WORDS = 12;
@@ -53,6 +54,29 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     private boolean mIsUnlinking = false;
     private boolean mIsResettingPin = false;
     private TypedValue mTypedValue = new TypedValue();
+    private RecoveryKeyViewModel mViewModel;
+    private Observer<Resource<Void>> mRecoverWalletObserver = resource -> {
+        if (resource == null) {
+            return;
+        }
+        switch (resource.getStatus()) {
+            case SUCCESS:
+                Intent intent = new Intent(this, InputPinActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                break;
+            case LOADING:
+                findViewById(R.id.loading_view).setVisibility(View.VISIBLE);
+                break;
+            case ERROR:
+                findViewById(R.id.loading_view).setVisibility(View.GONE);
+                break;
+            default:
+                break;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +110,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
-                UiUtils.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(RecoveryKeyActivity.this);
+                UiUtils.showSupportFragment(RecoveryKeyActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
             }
         });
 
@@ -106,6 +130,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         mEditTextWords.add((BREdit) findViewById(R.id.word10));
         mEditTextWords.add((BREdit) findViewById(R.id.word11));
         mEditTextWords.add((BREdit) findViewById(R.id.word12));
+
+        mViewModel = ViewModelProviders.of(this).get(RecoveryKeyViewModel.class);
 
         for (EditText editText : mEditTextWords) {
             editText.setOnFocusChangeListener(this);
@@ -140,7 +166,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             @Override
             public void onClick(View view) {
                 validateAllWords();
-                final Activity app = InputWordsActivity.this;
+                final Activity app = RecoveryKeyActivity.this;
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) {
                     return;
@@ -158,7 +184,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                             clearWords();
 
                             if (mIsUnlinking) {
-                                BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle),
+                                BRDialog.showCustomDialog(RecoveryKeyActivity.this, getString(R.string.WipeWallet_alertTitle),
                                         getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
@@ -172,7 +198,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                         }, null, 0);
 
                             } else {
-                                AuthManager.getInstance().setPinCode(InputWordsActivity.this, "");
+                                AuthManager.getInstance().setPinCode(RecoveryKeyActivity.this, "");
                                 Intent intent = new Intent(app, InputPinActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -193,13 +219,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                     } else {
                         // Recover Wallet
                         Utils.hideKeyboard(app);
-                        WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                        PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
-                        //Disallow BTC and BCH sending.
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE, false);
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false);
-
-                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
+                        mViewModel.recoverWallet(RecoveryKeyActivity.this, cleanPhrase)
+                                .observe(RecoveryKeyActivity.this, mRecoverWalletObserver);
                     }
 
                 } else {
@@ -261,7 +282,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         String paperKey = paperKeyStringBuilder.toString().trim();
         int numberOfWords = paperKey.split(" ").length;
         if (numberOfWords != NUMBER_OF_WORDS) {
-            BRReportsManager.reportBug(new IllegalArgumentException("Paper key contains " + numberOfWords + " words"));
+            BRReportsManager.reportBug(new IllegalArgumentException("Paper key contains " + numberOfWords + "words"));
             return null;
         }
 
@@ -306,15 +327,19 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == RESULT_OK) {
 
             boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
             if (isPinAccepted) {
                 UiUtils.startBreadActivity(this, false);
             }
+        } else if (requestCode == BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mViewModel.recoverWallet(this).observe(this, mRecoverWalletObserver);
+            } else {
+                finish();
+            }
         }
-
     }
 
     @Override
