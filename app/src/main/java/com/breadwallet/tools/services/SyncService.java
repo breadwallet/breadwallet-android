@@ -156,7 +156,7 @@ public class SyncService extends /*Job*/ IntentService {
      * @param walletIso The wallet ISO used to identify which wallet needs to be polled for sync progress.
      */
     private void startSyncPolling(Context context, String walletIso) {
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(context, walletIso);
         final double progress = walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(context,
                 BRSharedPrefs.getCurrentWalletCurrencyCode(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);

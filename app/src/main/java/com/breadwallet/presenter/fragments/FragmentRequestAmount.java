@@ -130,7 +130,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                             + (HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT)));
                     return;
                 }
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(app);
 
                 UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_REQUEST_AMOUNT, wm);
             }
@@ -194,7 +194,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
                 QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoUri.toString());
@@ -227,7 +227,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 } else {
                     mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
-                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
 
                 boolean generated = generateQrImage(wm.decorateAddress(mReceiveAddress), mAmountEdit.getText().toString(), mSelectedCurrencyCode);
                 if (!generated)
@@ -250,7 +250,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                final BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
 
                 wallet.refreshAddress(getActivity());
                 mReceiveAddress = wallet.getAddress(getContext());
@@ -272,7 +272,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     @Override
     public void onResume() {
         super.onResume();
-        mWallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        mWallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
     }
 
     @Override
@@ -294,7 +294,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
 
         boolean generated = generateQrImage(wm.decorateAddress(mReceiveAddress), mAmountEdit.getText().toString(), mSelectedCurrencyCode);
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
@@ -359,9 +359,9 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     }
 
     private boolean generateQrImage(String address, String strAmount, String iso) {
-        BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
 
-        boolean isCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), iso);
+        boolean isCrypto = WalletsMaster.getInstance().isIsoCrypto(getActivity(), iso);
 
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
 
@@ -381,9 +381,9 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     }
 
     private BigDecimal getAmount() {
-        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         String strAmount = mAmountEdit.getText().toString();
-        boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), mSelectedCurrencyCode);
+        boolean isIsoCrypto = WalletsMaster.getInstance().isIsoCrypto(getActivity(), mSelectedCurrencyCode);
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
         return isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wm.getSmallestCryptoForFiat(getActivity(), bigAmount);
     }

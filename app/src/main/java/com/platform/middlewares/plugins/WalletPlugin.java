@@ -126,7 +126,7 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "context is null", baseRequest, response);
             }
-            WalletsMaster walletsMaster = WalletsMaster.getInstance(context);
+            WalletsMaster walletsMaster = WalletsMaster.getInstance();
             BaseWalletManager walletManager = WalletBitcoinManager.getInstance(context);
             JSONObject jsonResp = new JSONObject();
             try {
@@ -359,7 +359,7 @@ public class WalletPlugin implements Plugin {
 
         } else if (target.startsWith(PATH_BASE + PATH_ADDRESSES)) {
             String iso = target.substring(target.lastIndexOf("/") + 1);
-            BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, iso);
+            BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(context, iso);
             if (walletManager == null) {
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "Invalid iso for address: " + iso, baseRequest, response);
             }
@@ -406,7 +406,7 @@ public class WalletPlugin implements Plugin {
             return;
         }
 
-        final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
+        final BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(app, currency);
         String addr = wm.undecorateAddress(toAddress);
         if (Utils.isNullOrEmpty(addr)) {
             BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
@@ -429,7 +429,7 @@ public class WalletPlugin implements Plugin {
 
     private JSONArray getCurrencyData(Context app) {
         JSONArray arr = new JSONArray();
-        List<BaseWalletManager> list = WalletsMaster.getInstance(app).getAllWallets(app);
+        List<BaseWalletManager> list = WalletsMaster.getInstance().getAllWallets(app);
         for (BaseWalletManager walletManager : list) {
             JSONObject obj = new JSONObject();
             try {
@@ -446,7 +446,7 @@ public class WalletPlugin implements Plugin {
 
                 JSONObject balance = new JSONObject();
 
-                BigDecimal rawBalance = walletManager.getCachedBalance(app);
+                BigDecimal rawBalance = walletManager.getBalance();
                 String denominator = walletManager.getDenominator();
                 balance.put(KEY_CURRENCY, walletManager.getCurrencyCode());
                 balance.put(KEY_NUMERATOR, rawBalance.toPlainString());

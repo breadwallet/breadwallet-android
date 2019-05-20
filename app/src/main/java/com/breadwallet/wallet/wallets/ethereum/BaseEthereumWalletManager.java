@@ -70,8 +70,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     }
 
     @Override
-    public void onBalanceChanged(Context context, BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(context, getCurrencyCode(), balance);
+    public void onBalanceChanged(BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(getCurrencyCode(), balance);
     }
 
     // TODO not used by ETH, ERC20
@@ -87,6 +87,11 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     @Override
     public void addTxListModifiedListener(OnTxListModified listener) {
         mWalletManagerHelper.addTxListModifiedListener(listener);
+    }
+
+    @Override
+    public void removeTxListModifiedListener(OnTxListModified listener) {
+        mWalletManagerHelper.removeTxListModifiedListener(listener);
     }
 
     //TODO Not used by ETH, ERC20

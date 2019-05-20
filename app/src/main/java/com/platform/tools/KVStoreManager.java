@@ -18,7 +18,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.APIClient;
-import com.platform.entities.SegWitMetaData;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfoData;
@@ -175,6 +174,16 @@ public class KVStoreManager {
             Log.e(TAG, "setData: Error setting value for key: " + KEY_WALLET_INFO + ", err: " + completionObject.err);
         }
 
+    }
+
+    /**
+     * Synchronize wallet info with KV store.
+     *
+     * @param context Caller context.
+     */
+    public static void syncWalletInfo(Context context) {
+        ReplicatedKVStore replicatedKVStore = getReplicatedKvStore(context);
+        replicatedKVStore.syncKey(KEY_WALLET_INFO);
     }
 
     public static PairingMetaData getPairingMetadata(Context context, byte[] pubKey) {
@@ -453,11 +462,10 @@ public class KVStoreManager {
         return result;
     }
 
-    public static TxMetaData getTxMetaData(Context app, byte[] txHash) {
+    public static TxMetaData getTxMetaData(Context context, byte[] txHash) {
         String key = txKey(txHash);
 
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        ReplicatedKVStore kvStore = getReplicatedKvStore(context);
         long ver = kvStore.localVersion(key).version;
 
         CompletionObject obj = kvStore.get(key, ver);
@@ -470,10 +478,9 @@ public class KVStoreManager {
         return valueToMetaData(obj.kv.value);
     }
 
-    public static Map<String, TxMetaData> getAllTxMD(Context app) {
+    public static Map<String, TxMetaData> getAllTxMD(Context context) {
         Map<String, TxMetaData> mds = new HashMap<>();
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        ReplicatedKVStore kvStore = getReplicatedKvStore(context);
         List<KVItem> list = kvStore.getAllTxMdKv();
         for (int i = 0; i < list.size(); i++) {
             TxMetaData md = valueToMetaData(list.get(i).value);
@@ -608,8 +615,7 @@ public class KVStoreManager {
             BRReportsManager.reportBug(e);
             return null;
         }
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(context));
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(context, remoteKVStore);
+        ReplicatedKVStore kvStore = getReplicatedKvStore(context);
         long localVer = kvStore.localVersion(key).version;
         long removeVer = kvStore.remoteVersion(key);
         return kvStore.set(localVer, removeVer, key, compressed, System.currentTimeMillis(), 0);
@@ -617,8 +623,7 @@ public class KVStoreManager {
     }
 
     private static byte[] getData(Context context, String key) {
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(context));
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(context, remoteKVStore);
+        ReplicatedKVStore kvStore = getReplicatedKvStore(context);
         long ver = kvStore.localVersion(key).version;
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.kv == null) {
@@ -713,5 +718,10 @@ public class KVStoreManager {
     private static String pairingKey(byte[] pubKey) {
         String suffix = BRCoreKey.encodeHex(CryptoHelper.sha256(pubKey));
         return PAIRING_META_DATA_KEY_PREFIX + suffix;
+    }
+
+    private static ReplicatedKVStore getReplicatedKvStore(Context context) {
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(context));
+        return ReplicatedKVStore.getInstance(context, remoteKVStore);
     }
 }

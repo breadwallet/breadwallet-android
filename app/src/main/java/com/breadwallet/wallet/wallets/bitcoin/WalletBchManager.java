@@ -94,7 +94,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
                 getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
             }
         });
-        WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
+        WalletsMaster.getInstance().setSpendingLimitIfNotSet(context, this);
 
         setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
