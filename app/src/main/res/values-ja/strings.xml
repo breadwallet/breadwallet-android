@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">画面変更アプリ(例: Twilight) が無効になっていなければ、BRDは正常に動作しません。</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">画面変更アプリが検出されました</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">2019年3月31日までにビットコインを100ユーロ購入して、20ユーロのAmazon.deギフトカードをもらおう*</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">ギフトカードをもらおう</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">*ギフトカードはお一人様1枚まで。オーストリア、ドイツ、ルクセンブルク、オランダでのみ利用可能</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">20ユーロのAmazon.deギフトカードをもらおう！</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">銀行経由のBTCとETHの購入はより高い上限額となり、デリバリーも迅速かつ低手数料となります。登録を行ってローンチの際通知を受け取りましょう。</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">変更の詳細についてお知らせいたします。</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">近日中に新しい購入方法が登場予定です！</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">ありがとうございます！</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSONシリアル化エラー</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">送る金額：</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">ネットワーク手数料：</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">ネットワーク料金（ETH）:</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">処理時間: この取引は%1$sで完了する見込みです。</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">推定時間</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">いつ同期しますか?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">取引手数料を節約して今後のリワードをアンロックする方法を学びましょう。</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">BRDリワードについて。</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">リワード</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">カメラのフラッシュ</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">「SegWitの有効化」は取り消しできない機能です。継続してよろしいですか？</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">有効化する</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">月へ</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">デフォルトの通貨に戻す</string>
     <!-- Leave review button label -->
     <string name="Settings.review">レビューを書く</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">リワード</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">匿名データをシェアする</string>
     <!-- Sync blockchain label -->

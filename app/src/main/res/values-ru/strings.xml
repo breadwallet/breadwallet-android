@@ -76,6 +76,22 @@
     <string name="Android.screenAlteringMessage">BRD не сможет нормально работать, если не отключить изменяющие экран приложения (такие как Twilight).</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Обнаружено изменяющее экран приложение</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">Купите биткойны на 100 евро до 31 марта 2019 года и получите подарочный сертификат Amazon.de на 20 евро*</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">Получите свой подарочный сертификат</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote">⃰ Максимум один подарочный сертификат на одного клиента. Доступен только в Австрии, Германии, Люксембурге и Нидерландах.</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">Получите подарочный сертификат Amazon.de на 20 евро!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">При покупке BTC и ETH через ваш банк, у вас будут более высокие лимиты, ускоренные сроки расчетов и низкие комиссии. Подпишитесь чтобы получить уведомление о запуске.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">Мы сообщим вам об изменениях.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">Скоро, новый способ покупки!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">Спасибо!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">Ошибка JSON-сериализации</string>
     <!-- Wallet not ready error message -->
@@ -154,6 +170,8 @@
     <string name="Confirmation.amountLabel">Сумма для отправки:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Комиссия сети:</string>
+    <!-- Network Fee: (ETH) -->
+    <string name="Confirmation.feeLabelETH">Комиссия сети (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Время обработки: Эта транзакция должна быть завершена через %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -540,6 +558,12 @@
     <string name="ReScan.subheader1">Примерное время</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">Когда синхронизировать?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">Узнайте как сэкономить на комиссионных обменах и открыть будущие бонусы.</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">Представляем Бонусы BRD.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">Бонусы</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Вспышка камеры</string>
     <!-- Complete filter label -->
@@ -578,6 +602,8 @@
     <string name="Segwit.ConfirmChoiceLayout">Активация SegWit является необратимой функцией. Вы уверены, что хотите продолжить?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">Активировать</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">На главный экран</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Сумма</string>
     <!-- Balance: $4.00 -->
@@ -686,6 +712,8 @@
     <string name="Settings.resetCurrencies">Восстановить валюту по умолчанию</string>
     <!-- Leave review button label -->
     <string name="Settings.review">Оставьте свой отзыв</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">Вознаграждения</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">Поделиться анонимными данными</string>
     <!-- Sync blockchain label -->

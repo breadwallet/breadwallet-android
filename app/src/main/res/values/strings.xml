@@ -38,10 +38,6 @@
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Your BRD encrypted data was recently invalidated because your Android lock screen was disabled.</string>
-    <!-- Keystore error title -->
-    <string name="Alert.keystore.title.android">Android KeyStore Error</string>
     <!-- No internet alert message -->
     <string name="Alert.noInternet">No internet connection found. Check your connection and try again.</string>
     <!-- General error message -->
@@ -76,6 +72,22 @@
     <string name="Android.screenAlteringMessage">BRD will not function properly unless screen-altering apps (such as Twilight) are disabled.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Screen-Altering App Detected</string>
+    <!-- Body for an announcement promoting Coinify. -->
+    <string name="Announcement.coinfyPromoBody">Buy €100 of Bitcoin by March 31, 2019 and get a €20 Amazon.de gift card  ⃰</string>
+    <!-- Button title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoActionTitle">Get your gift card</string>
+    <!-- Footnote text for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoFootnote"> ⃰ Limit one gift card per customer. Available only in Austria, Germany, Luxembourg and the Netherlands</string>
+    <!-- Title for an announcement promoting Coinify. -->
+    <string name="Announcement.coinifyPromoTitle">Get a €20 Amazon.de gift card!</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyOne">BTC and ETH purchases via your bank will have higher limits, expedited delivery times, and lower fees. Sign up to get notified when it\'s launched.</string>
+    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
+    <string name="Announcement.glideraBodyTwo">We will let you know about the changes.</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleOne">New way to buy coming soon!</string>
+    <!-- Title for in-app announcement about our partner Glidera. -->
+    <string name="Announcement.glideraTitleTwo">Thank you!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON Serialization Error</string>
     <!-- Wallet not ready error message -->
@@ -154,7 +166,7 @@
     <string name="Confirmation.amountLabel">Amount to Send:</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Network Fee:</string>
-    <!-- Network Fee for ETH/ERC20 transactions -->
+    <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">Network Fee (ETH):</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
@@ -409,7 +421,7 @@
     <!-- Payment too small alert title -->
     <string name="PaymentProtocol.Errors.smallOutputError">Couldn\'t make payment</string>
     <!-- Amount too small error message -->
-    <string name="PaymentProtocol.Errors.smallPayment">Payment can\’t be less than %1$s. Bitcoin transaction fees are more than the amount of this transaction. Please increase the amount and try again.</string>
+    <string name="PaymentProtocol.Errors.smallPayment">Bitcoin payments can\'t be less than %1$s.</string>
     <!-- Output too small error message. -->
     <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaction outputs can\'t be less than %1$s.</string>
     <!-- Unsupported signature type payment protocol error message -->
@@ -436,8 +448,6 @@
     <string name="Prompts.NoPasscode.body">A device passcode is needed to safeguard your wallet. Go to settings and turn passcode on.</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">Turn device passcode on</string>
-    <!-- Instruction how to enable device encryption -->
-    <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" &gt; \"Security\" &gt; \"Screen lock\" and enable to continue.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
     <!-- Warning about paper key. -->
@@ -542,6 +552,12 @@
     <string name="ReScan.subheader1">Estimated time</string>
     <!-- Subheader label -->
     <string name="ReScan.subheader2">When to Sync?</string>
+    <!-- Rewards view expanded body. -->
+    <string name="RewardsView.expandedBody">Learn how you can save on trading fees and unlock future rewards</string>
+    <!-- Rewards view expanded title. -->
+    <string name="RewardsView.expandedTitle">Introducing BRD Rewards.</string>
+    <!-- Rewards view title -->
+    <string name="RewardsView.normalTitle">Rewards</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Camera Flash</string>
     <!-- Complete filter label -->
@@ -580,6 +596,8 @@
     <string name="Segwit.ConfirmChoiceLayout">Enabling SegWit is an irreversible feature. Are you sure you want to continue?</string>
     <!-- Segwit enableButton -->
     <string name="Segwit.Enable">Enable</string>
+    <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
+    <string name="Segwit.HomeButton">To the Moon</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Amount</string>
     <!-- Balance: $4.00 -->
@@ -688,6 +706,8 @@
     <string name="Settings.resetCurrencies">Reset to Default Currencies</string>
     <!-- Leave review button label -->
     <string name="Settings.review">Leave us a Review</string>
+    <!-- Rewards menu item -->
+    <string name="Settings.rewards">Rewards</string>
     <!-- Share anonymous data label -->
     <string name="Settings.shareData">Share Anonymous Data</string>
     <!-- Sync blockchain label -->
@@ -1018,29 +1038,34 @@
     <string name="WritePaperPhrase.previous">Previous</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-    <!--Added to native.strings-->
-    <string name="Segwit.HomeButton">To the Moon</string>
-    <!--Missing from native.strings-->
-    <string name="ErrorMessages.ContactSupportBug.android">BRD cannot proceed due to a bug in your app version. Please contact support with issue #%1$d.</string>
-    <!-- Label for the Android file chooser when we need to prompt the user to select an image file.-->
-    <string name="FileChooser.selectImageSource.android">Select Image Source</string>
-    <!--Rewards menu item-->
-    <string name="Settings.rewards">Rewards</string>
-
-    <!--Rewards view expanded title.-->
-    <string name="RewardsView.expandedTitle">Introducing BRD\nRewards.</string>
-    <!--Rewards view expanded body.-->
-    <string name="RewardsView.expandedBody">Learn how you can save on trading fees and unlock future rewards</string>
-    <!--Rewards view title-->
-    <string name="RewardsView.normalTitle">Rewards</string>
-    <!--Screen Altering App Detected-->
-    <string name="Alert.ScreenAlteringAppDetected">Screen Altering App Detected</string>
     <!-- Share e-mail subject -->
     <string name="Email.address_subject">%1$s Address</string>
-    <!-- Message shown when failing to recover key from key store -->
-    <string name="ErrorMessages.BadKeyStore.android">BRD cannot proceed due to an error your device is encountering. Don\'t worry, your funds are safe! To ensure successful recovery, please do the following:\n\n1. Confirm that you have your paper key written down.\n2. Uninstall the BRD app.\n3. Disable the Android lock screen and fingerprints (if applicable). \n4. Enable the Android lock screen and fingerprints (if applicable).\n5. Install BRD app.\n6. Recover your wallet using your paper key.\n\nIf you have any questions, please contact our customer support at support@brd.com.</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file.-->
+    <string name="FileChooser.selectImageSource.android">Select Image Source</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">Security Settings</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">Contact Support</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">Wipe</string>
+    <!--  Button label to uninstall the app.  -->
+    <string name="Button.uninstall.android">Uninstall</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your paper key.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped by uninstalling.\n\nDon’t worry, your funds are still secure! Reinstall the app and recover your wallet using your paper key.</string>
 
-    <!--Font file names-->
+    <!-- Modified -->
+    <!-- Instructions on how to enable screen lock settings -->
+    <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Enable screen lock in your settings to continue.</string>
+    <!-- Key store error title -->
+    <string name="Alert.keystore.title.android">Android Key Store Error</string>
+
+    <!-- Missing from native.strings -->
+    <!--Screen Altering App Detected-->
+    <string name="Alert.ScreenAlteringAppDetected">Screen Altering App Detected</string>
+
+    <!--Font file names TODO: move to attributes file. -->
     <string name="Font.CircularPro_Bold">CircularPro-Bold.otf</string>
     <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
     <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
