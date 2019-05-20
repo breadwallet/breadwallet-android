@@ -28,7 +28,6 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -106,16 +105,7 @@ public final class UserMetricsUtil {
     private UserMetricsUtil() {
     }
 
-    public static void sendUserMetricsRequest() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                UserMetricsUtil.makeUserMetricsRequest(BreadApp.getBreadContext());
-            }
-        });
-    }
-
-    private static void makeUserMetricsRequest(Context context) {
+    public static void makeUserMetricsRequest(Context context) {
         try {
             JSONObject bundles = new JSONObject();
             for (String bundleName : ServerBundlesHelper.getBundleNames(context)) {
