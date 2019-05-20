@@ -1077,4 +1077,28 @@
     <string name="sign_sign_btn">Sign</string>
 
     <string name="node_list_title">Node list of these %1$d nodes:</string>
+
+    <string name="multisign_deny">Deny</string>
+    <string name="multisign_approve">Approve</string>
+    <string name="multisign_approve_send">Approve and Send</string>
+    <string name="multisign_spend">From :</string>
+    <string name="multisign_accept">To :</string>
+    <string name="multisign_signed_title">%1$d of %2$d keys are required to approve this expense.</string>
+    <string name="multisign_toolbar_title">Approve Request</string>
+    <string name="multisign_spend_desc">is being spent in the  shared wallet</string>
+    <string name="multisign_balance">Balance:</string>
+    <string name="multisign_approved">You have approved the request successfully.</string>
+    <string name="multisign_pass_next">Pass the request to next.</string>
+    <string name="multisign_share_qrcode">Share QR code</string>
+    <string name="multisign_share_or">--- or ---</string>
+    <string name="multisign_share_json">Share file.json</string>
+    <string name="multisign_approved_title">Approved</string>
+    <string name="multisign_send_succeeded">The ELAs have been sent.</string>
+    <string name="multisign_wallet_creation">Shared Wallet Creation</string>
+    <string name="multisign_create">create</string>
+    <string name="multisign_create_desc">A shared wallet is being created.</string>
+    <string name="multisign_created">Wallet created</string>
+    <string name="multisign_create_addr">Address</string>
+    <string name="multisign_create_keys">Total keys: %1$d</string>
+    <string name="multisign_create_unlock_keys">Unlock keys required: %1$d</string>
 </resources>

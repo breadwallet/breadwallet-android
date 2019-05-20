@@ -351,6 +351,10 @@
         <activity android:name=".presenter.activities.ExploreAboutActivity">
 
         </activity>
+        <activity android:name=".presenter.activities.MultiSignQrActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".presenter.activities.MultiSignTxActivity" />
+        <activity android:name=".presenter.activities.MultiSignCreateActivity" />
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

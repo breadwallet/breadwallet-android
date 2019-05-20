@@ -1070,4 +1070,28 @@
     <string name="sign_view_all_detail">显示详情</string>
     <string name="sign_sign_btn">签名</string>
     <string name="node_list_title">%1$d个节点列表:</string>
+
+    <string name="multisign_deny">拒绝</string>
+    <string name="multisign_approve">批准</string>
+    <string name="multisign_approve_send">批准并付款</string>
+    <string name="multisign_spend">付款方：</string>
+    <string name="multisign_accept">收款方：</string>
+    <string name="multisign_signed_title">%2$d个私钥中至少需要%1$d个批准后才能付款。</string>
+    <string name="multisign_toolbar_title">审批请求</string>
+    <string name="multisign_spend_desc">正在通过一个多签钱包花费</string>
+    <string name="multisign_balance">余额：</string>
+    <string name="multisign_approved">你已经成功批准了付款请求。</string>
+    <string name="multisign_pass_next">请将请求发给下一个人继续审批。</string>
+    <string name="multisign_share_qrcode">分享二维码</string>
+    <string name="multisign_share_or">--- 或 ---</string>
+    <string name="multisign_share_json">分享json文件</string>
+    <string name="multisign_approved_title">审批通过</string>
+    <string name="multisign_send_succeeded">这笔付款已经执行。</string>
+    <string name="multisign_wallet_creation">创建多签钱包</string>
+    <string name="multisign_create">创建</string>
+    <string name="multisign_create_desc">正在创建一个多签钱包</string>
+    <string name="multisign_created">钱包已创建</string>
+    <string name="multisign_create_addr">钱包地址</string>
+    <string name="multisign_create_keys">公钥总数：%1$d</string>
+    <string name="multisign_create_unlock_keys">审批需要私钥数：%1$d</string>
 </resources>

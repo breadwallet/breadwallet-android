@@ -1,2 +1,2 @@
 configurations.maybeCreate("default")
-artifacts.add("default", file('keypairlibrary.aar'))
+artifacts.add("default", file('ElastosSdkKeypair-v0.1.31.aar'))

@@ -663,6 +663,33 @@ public class ElaDataSource implements BRDataSourceInterface {
             database.endTransaction();
             closeDatabase();
         }
+
+    public synchronized String sendSerializedRawTx(final String rawTransaction) {
+        String result = null;
+        try {
+            String url = getUrl("api/1/sendRawTx");
+            Log.i(TAG, "send raw url:"+url);
+            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
+            Log.i(TAG, "rawTransaction:"+rawTransaction);
+            String tmp = urlPost(url, json);
+            JSONObject jsonObject = new JSONObject(tmp);
+            result = jsonObject.getString("result");
+            Log.d(TAG, "send raw tx result: " + tmp);
+            if(result==null || result.contains("ERROR") || result.contains(" ")) {
+                Thread.sleep(3000);
+                if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
+//                toast(result);
+                return null;
+            }
+            elaTransactionEntity.txReversed = result;
+            cacheSingleTx(elaTransactionEntity);
+            Log.d("posvote", "txId:"+result);
+        } catch (Exception e) {
+            if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

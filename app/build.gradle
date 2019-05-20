@@ -222,8 +222,8 @@ dependencies {
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
     implementation project(':walletlibrary')
     implementation 'com.belerweb:pinyin4j:2.5.1'
-    implementation project(':keypairlibrary')
     implementation project(':authorizelibrary')
+    implementation project(path: ':keypairlibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

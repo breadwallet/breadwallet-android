@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/pb_lable_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="12sp"
+        android:textColor="#888888"/>
+    
+    <ImageView
+        android:id="@+id/pb_lable_flag"
+        android:layout_width="12dp"
+        android:layout_height="8dp"
+        android:paddingStart="2dp"
+        android:src="@drawable/multisign_signed_flag"
+        android:layout_gravity="center_vertical"/>
+
+</LinearLayout>

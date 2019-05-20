@@ -14,6 +14,7 @@ import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
@@ -36,6 +37,9 @@ import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
 import org.wallet.library.AuthorizeManager;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * BreadWallet
@@ -278,6 +282,15 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                         UiUtils.startSignActivity(this, mUri);
                     } else if(mUri.contains("eladposvote")){
                         UiUtils.startVoteActivity(this, mUri);
+                    } else if(mUri.contains("multisign")){
+                        Intent intent = new Intent();
+                        intent.setClass(this, MultiSignTxActivity.class);
+                        try {
+                            intent.putExtra("tx", URLDecoder.decode(mUri.substring("elaphant://multisign?sign=".length()), "utf-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        startActivity(intent);
                     }
                 }
                 break;
