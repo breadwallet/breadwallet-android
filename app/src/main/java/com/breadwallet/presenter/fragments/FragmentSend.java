@@ -49,6 +49,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
 
@@ -112,6 +113,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
     private static boolean mIsSendShown;
+    private boolean mAllowEditFee = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,13 +165,16 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         showFeeSelectionButtons(mIsFeeButtonsShown);
 
-        mEditFeeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (wm.getCurrencyCode().equals(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)) {
+            mAllowEditFee = true;
+            mEditFeeIcon.setOnClickListener((View v) -> {
                 mIsFeeButtonsShown = !mIsFeeButtonsShown;
                 showFeeSelectionButtons(mIsFeeButtonsShown);
-            }
-        });
+            });
+        } else {
+            mEditFeeIcon.setVisibility(View.GONE);
+        }
+
         mKeyboardIndex = mSignalLayout.indexOfChild(mKeyboardLayout);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
@@ -203,7 +208,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             mAmountEdit.setHint("0");
             mAmountEdit.setTextSize(getResources().getDimension(R.dimen.amount_text_size));
             mBalanceText.setVisibility(View.VISIBLE);
-            mEditFeeIcon.setVisibility(View.VISIBLE);
+
+            if (mAllowEditFee) {
+                mEditFeeIcon.setVisibility(View.VISIBLE);
+            }
+
             mAmountEdit.setVisibility(View.VISIBLE);
             mFeeText.setVisibility(View.VISIBLE);
             mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
