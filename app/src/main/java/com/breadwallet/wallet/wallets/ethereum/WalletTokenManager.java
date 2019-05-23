@@ -153,7 +153,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         mWalletToken.sign(tx.getEtherTx(), new String(seed));
         mWalletToken.submit(tx.getEtherTx());
-        String hash = tx.getEtherTx().getIdentifier();
+        String hash = tx.getHash();
         return hash == null ? new byte[0] : hash.getBytes();
     }
 
