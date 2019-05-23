@@ -244,7 +244,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] phrase) {
         mWallet.sign(tx.getEtherTx(), new String(phrase));
         mWallet.submit(tx.getEtherTx());
-        String hash = tx.getEtherTx().getIdentifier();
+        String hash = tx.getHash();
         return hash == null ? new byte[0] : hash.getBytes();
     }
 
@@ -1194,7 +1194,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce()
                             + ", actual: " + transaction.getNonce());
                     if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
-                        String hash = transaction.getIdentifier();
+                        String hash = transaction.getOriginationTransactionHash();
                         if (!Utils.isNullOrEmpty(hash)) {
                             if (mWatchListener != null) {
                                 mWatchListener.onUpdated(hash);
@@ -1213,9 +1213,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 if (WalletsMaster.getInstance().isCurrencyCodeErc20(mContext, currencyCode)) {
                     walletManagerHelper = WalletTokenManager.getTokenWalletByIso(mContext, currencyCode).getWalletManagerHelper();
                 }
-                walletManagerHelper.onTxListModified(transaction.getIdentifier());
+                walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
 
-                Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getIdentifier());
+                Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getOriginationTransactionHash());
                 printInfo("Transaction submitted: " + transaction.getAmount(), currencyCode, event.name());
                 break;
             case INCLUDED:
