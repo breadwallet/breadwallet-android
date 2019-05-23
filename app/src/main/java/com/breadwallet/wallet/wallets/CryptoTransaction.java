@@ -66,7 +66,7 @@ public class CryptoTransaction {
         if (mCoreTx != null) {
             return mCoreTx.getReverseHash();
         } else if (mEtherTx != null) {
-            return mEtherTx.getIdentifier();
+            return mEtherTx.getOriginationTransactionHash();
         } else {
             return null;
         }

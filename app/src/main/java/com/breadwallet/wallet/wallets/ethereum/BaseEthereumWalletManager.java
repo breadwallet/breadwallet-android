@@ -116,8 +116,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
                     BREthereumAmount.Unit feeUnit = getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             ? BREthereumAmount.Unit.ETHER_WEI : BREthereumAmount.Unit.ETHER_GWEI;
                     uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(getEthereumWallet().getWallet().getAccount().getPrimaryAddress()),
-                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getIdentifier())
-                            ? null : tx.getIdentifier().getBytes(), tx.getIdentifier(), new BigDecimal(tx.getFee(feeUnit)),
+                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getOriginationTransactionHash())
+                            ? null : tx.getOriginationTransactionHash().getBytes(), tx.getOriginationTransactionHash(), new BigDecimal(tx.getFee(feeUnit)),
                             tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                             new BigDecimal(tx.getAmount(getUnit())), true));
                 }
