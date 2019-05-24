@@ -747,7 +747,7 @@ public final class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-        BaseWalletManager wm = WalletsMaster.getInstance(context).getWalletByIso(context, iso);
+        BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(context, iso);
         WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
         return (result != null && result.length > 0)
                 ? new BigDecimal(new String(result))
@@ -961,7 +961,7 @@ public final class BRKeyStore {
                         @Override
                         public void run() {
                             BRDialog.hideDialog();
-                            BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
+                            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(context);
                             UiUtils.showSupportFragment((FragmentActivity) context, BRConstants.FAQ_LOOP_BUG, wm);
                         }
                     });

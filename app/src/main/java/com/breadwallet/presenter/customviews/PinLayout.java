@@ -161,13 +161,8 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                     String currentPin = BRKeyStore.getPinCode(getContext());
                     if (pin.equals(currentPin)) {
                         mOnPinInsertedListener.onPinInserted(pin, true);
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                authSuccess(getContext());
-                                useNewDigitLimit(true);
-                            }
-                        });
+                        useNewDigitLimit(true);
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> authSuccess(getContext()));
                     } else {
                         mOnPinInsertedListener.onPinInserted(pin, false);
                         if (!mIsPinUpdating && !currentPin.isEmpty()) {
@@ -256,7 +251,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     //when pin auth success
     public void authSuccess(final Context app) {
         //put the new total limit
-        BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(app);
         if (walletManager != null) {
             BRKeyStore.putTotalLimit(app, walletManager.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, walletManager.getCurrencyCode())), walletManager.getCurrencyCode());
         }

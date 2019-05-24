@@ -33,6 +33,7 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.util.JsonRpcHelper;
@@ -162,7 +163,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
 
-        WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
+        WalletsMaster.getInstance().setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
@@ -323,7 +324,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public BigDecimal getMaxOutputAmount(Context app) {
-        BigDecimal balance = getCachedBalance(app);
+        BigDecimal balance = getBalance();
         if (balance.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
@@ -392,12 +393,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
         }
 
-    }
-
-    @Override
-    public void refreshCachedBalance(final Context context) {
-        final BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
-        onBalanceChanged(context, balance);
     }
 
     @Override
@@ -470,8 +465,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     }
 
     @Override
-    public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getCurrencyCode());
+    public BigDecimal getBalance() {
+        return new BigDecimal(mWallet.getBalance(getUnit()));
     }
 
     @Override
@@ -529,7 +524,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         if (app == null) {
             return null;
         }
-        return getFiatForSmallestCrypto(app, getCachedBalance(app), null);
+        return getFiatForSmallestCrypto(app, getBalance(), null);
     }
 
     @Override
@@ -1204,8 +1199,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     break;
                 case BALANCE_UPDATED:
                     if (status == Status.SUCCESS) {
-                        WalletsMaster.getInstance(context).refreshBalances(context);
-                        printInfo("New Balance: " + wallet.getBalance(), currencyCode, event.name());
+                        // mWallet.getBalance returns the balance of the node that is currently syncing
+                        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(context, currencyCode);
+                        BigDecimal balance = walletManager.getBalance();
+                        WalletsMaster.getInstance().refreshBalance(currencyCode, balance);
+                        printInfo("New Balance: " + balance, currencyCode, event.name());
                     } else {
                         BRReportsManager.reportBug(new IllegalArgumentException("BALANCE_UPDATED: Failed to update balance: status:"
                                 + status + ", err: " + errorDescription));

@@ -114,8 +114,8 @@ public class SendManager {
             return true; //return so no error is shown
         } catch (InsufficientFundsException ignored) {
             BigDecimal fee = walletManager.getEstimatedFee(payment.getAmount(), "");
-            if (WalletsMaster.getInstance(app).isCurrencyCodeErc20(app, walletManager.getCurrencyCode()) &&
-                    fee.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0) {
+            if (WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode()) &&
+                    fee.compareTo(WalletEthManager.getInstance(app).getBalance()) > 0) {
                 sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, WalletEthManager.ETH_CURRENCY_CODE, fee)));
             } else
                 sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_insufficientFunds));
@@ -188,7 +188,7 @@ public class SendManager {
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
-        BigDecimal balance = walletManager.getCachedBalance(app);
+        BigDecimal balance = walletManager.getBalance();
         BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
 
         //not enough for fee
@@ -211,7 +211,7 @@ public class SendManager {
         }
 
         //amount is larger than balance
-        if (paymentRequest.isLargerThanBalance(app, walletManager)) {
+        if (paymentRequest.isLargerThanBalance(walletManager)) {
             throw new InsufficientFundsException(paymentRequest.getAmount(), balance);
         }
 
@@ -222,7 +222,7 @@ public class SendManager {
     }
 
     private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager, final SendCompletion completion) {
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(app);
         BigDecimal maxAmountDouble = walletManager.getMaxOutputAmount(app);
         if (maxAmountDouble.compareTo(new BigDecimal(-1)) == 0) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
@@ -392,7 +392,7 @@ public class SendManager {
         String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
 
-        boolean isErc20 = WalletsMaster.getInstance(ctx).isCurrencyCodeErc20(ctx, wm.getCurrencyCode());
+        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(ctx, wm.getCurrencyCode());
         String feeLabel = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
 
         if (isErc20) {

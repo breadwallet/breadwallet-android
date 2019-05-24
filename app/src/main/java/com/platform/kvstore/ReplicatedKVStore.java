@@ -47,6 +47,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +72,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private Context mContext;
     private SQLiteDatabase mDatabase;
     private boolean mSyncImmediately = false;
-    private boolean mSyncRunning = false;
+    private AtomicBoolean mSyncRunning = new AtomicBoolean(false);
     private KVStoreAdaptor mRemoteKvStore;
     private final PlatformSqliteHelper mDbHelper;
 
@@ -145,7 +146,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                     e.printStackTrace();
                 }
                 if (mSyncImmediately && obj.err == null) {
-                    if (!mSyncRunning) {
+                    if (!mSyncRunning.get()) {
                         syncKey(kv.key, 0, 0, null);
                         Log.e(TAG, "set: key synced: " + kv.key);
                     }
@@ -434,10 +435,9 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
      * Sync an individual key. Normally this is only called internally and you should call syncAllKeys
      */
     private void syncKey(final String key, final long remoteVersion, final long remoteTime, final CompletionObject.RemoteKVStoreError err) {
-        if (mSyncRunning) {
+        if (!mSyncRunning.compareAndSet(false, true)) {
             return;
         }
-        mSyncRunning = true;
 
         try {
             if (remoteVersion == 0 || remoteTime == 0) {
@@ -459,7 +459,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            mSyncRunning = false;
+            mSyncRunning.set(false);
         }
     }
 
@@ -477,7 +477,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         // 2. along with the remote version will come the last-modified date of the remote object
         // 3. if their last-modified date is newer than ours, overwrite ours
         // 4. if their last-modified date is older than ours, overwrite theirs
-        if (!mSyncRunning) {
+        if (!mSyncRunning.get()) {
             throw new IllegalArgumentException("how did we get here?");
         }
 
@@ -553,7 +553,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                     try {
                         obj = _delete(key, localKv.version);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "_syncKey: failed to delete key " + key, e);
                     }
                     if (obj.version != 0) {
                         boolean success = setRemoteVersion(key, obj.version, remoteVersion).err == null;
@@ -610,18 +610,17 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         // 2. for kvs that we don't have, add em
         // 3. for kvs that we do have, sync em
         // 4. for kvs that they don't have that we do, upload em
-        if (mSyncRunning) {
+        if (!mSyncRunning.compareAndSet(false, true)) {
             Log.e(TAG, "syncAllKeys: already syncing");
             return false;
         }
-        mSyncRunning = true;
         long startTime = System.currentTimeMillis();
 
         try {
             CompletionObject obj = mRemoteKvStore.keys();
             if (obj.err != null) {
                 Log.e(TAG, String.format("Error fetching remote key data: %s", obj.err));
-                mSyncRunning = false;
+                mSyncRunning.set(false);
                 return false;
             }
             List<KVItem> localKvs = getRawKVs();
@@ -647,9 +646,30 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            mSyncRunning = false;
+            mSyncRunning.set(false);
         }
         return false;
+    }
+
+    /**
+     * Sync the given key with the remote kv store.
+     *
+     * @param key The key to be sync.
+     */
+    public void syncKey(String key) {
+        mSyncRunning.set(true);
+        try {
+            CompletionObject completionObject = mRemoteKvStore.ver(key);
+            if (completionObject.err == null) {
+                _syncKey(key, completionObject.version, completionObject.time, null);
+            } else {
+                Log.e(TAG, "syncKey: failed to fetch remote " + key + ": " + completionObject.err.name());
+            }
+        } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "syncKey: failed to sync " + key, ex);
+        } finally {
+            mSyncRunning.set(false);
+        }
     }
 
     private List<String> getKeysFromKVEntity(List<KVItem> entities) {
@@ -780,7 +800,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                     e.printStackTrace();
                 }
                 if (mSyncImmediately && obj.err == null) {
-                    if (!mSyncRunning) {
+                    if (!mSyncRunning.get()) {
                         syncKey(key, 0, 0, null);
                         Log.e(TAG, "set: key synced: " + key);
                     }

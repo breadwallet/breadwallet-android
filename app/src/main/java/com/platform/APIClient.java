@@ -885,7 +885,7 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                List<BaseWalletManager> wallets = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
+                List<BaseWalletManager> wallets = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(app));
                 for (BaseWalletManager w : wallets) {
                     w.updateFee(app);
                 }
