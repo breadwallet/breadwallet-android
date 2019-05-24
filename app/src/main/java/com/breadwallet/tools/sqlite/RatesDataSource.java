@@ -134,7 +134,7 @@ public class RatesDataSource implements BRDataSourceInterface {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 CurrencyEntity curEntity = cursorToCurrency(cursor);
-                if (!WalletsMaster.getInstance(app).isIsoCrypto(app, curEntity.code))
+                if (!WalletsMaster.getInstance().isIsoCrypto(app, curEntity.code))
                     currencies.add(curEntity);
                 cursor.moveToNext();
             }

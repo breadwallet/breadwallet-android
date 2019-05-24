@@ -64,7 +64,7 @@ public class FingerprintActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
+                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(FingerprintActivity.this);
                 UiUtils.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
             }
         });
