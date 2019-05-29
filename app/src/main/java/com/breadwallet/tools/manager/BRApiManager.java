@@ -9,7 +9,9 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -19,7 +21,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -81,6 +82,10 @@ public final class BRApiManager {
     private static final String TOKEN_RATES_URL_SUFFIX = "&tsyms=BTC";
     private static final int FSYMS_CHAR_LIMIT = 300;
     private static final String CONTRACT_INITIAL_VALUE = "contract_initial_value";
+    private static final String FEE_URL_FORMAT = "%s/fee-per-kb?currency=%s";
+    private static final String FEE_FIELD_REGULAR = "fee_per_kb";
+    private static final String FEE_FIELD_ECONOMY = "fee_per_kb_economy";
+    private static final String FEE_FIELD_PRIORITY = "fee_per_kb_priority";
 
     private static BRApiManager mInstance;
     private Timer mTimer;
@@ -96,6 +101,57 @@ public final class BRApiManager {
             mInstance = new BRApiManager();
         }
         return mInstance;
+    }
+
+    /**
+     * Retrieves fee rates for the given currency and stores them in the fee repository.
+     * @param context the context
+     * @param currencyCode the currency for which fee rates are being retrieved
+     */
+    public static void updateFeeForCurrency(Context context, String currencyCode) {
+        String feeUpdateJSONStr = BRApiManager.urlGET(context, String.format(FEE_URL_FORMAT, APIClient.getBaseURL(), currencyCode));
+        long timestamp = System.currentTimeMillis();
+
+        if (Utils.isNullOrEmpty(feeUpdateJSONStr)) {
+            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + feeUpdateJSONStr);
+            return;
+        }
+
+        try {
+            JSONObject feeUpdateJSONObj = new JSONObject(feeUpdateJSONStr);
+
+            BigDecimal fee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_REGULAR));
+            BigDecimal economyFee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_ECONOMY));
+            BigDecimal priorityFee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_PRIORITY));
+
+            Log.d(TAG, "updateFee: " + currencyCode + ":" + fee + "|" + economyFee + " | " + priorityFee);
+
+            if (fee.compareTo(BigDecimal.ZERO) > 0) {
+                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, fee, FeeOption.REGULAR, timestamp);
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
+                Log.d(TAG, "Error: Fee is unexpected value");
+            }
+
+            if (economyFee.compareTo(BigDecimal.ZERO) > 0) {
+                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, economyFee, FeeOption.ECONOMY, timestamp);
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
+                Log.d(TAG, "Error: Economy fee is unexpected value");
+            }
+
+            if (priorityFee.compareTo(BigDecimal.ZERO) > 0) {
+                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, priorityFee, FeeOption.PRIORITY, timestamp);
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("Priority fee is weird:" + economyFee));
+                Log.d(TAG, "Error: Priority fee is unexpected value");
+            }
+
+        } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + feeUpdateJSONStr, e);
+            BRReportsManager.reportBug(e);
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + feeUpdateJSONStr));
+        }
     }
 
     @WorkerThread
