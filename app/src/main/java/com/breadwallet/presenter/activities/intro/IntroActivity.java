@@ -19,7 +19,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.platform.APIClient;
 
 /**
  * BreadWallet
@@ -88,10 +87,9 @@ public class IntroActivity extends BRActivity {
             public void run() {
                 ServerBundlesHelper.extractBundlesIfNeeded(getApplicationContext());
                 final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(getApplicationContext());
-                apiClient.updateBundle();
+                ServerBundlesHelper.updateBundles(IntroActivity.this);
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundles DONE in " + (endTime - startTime) + "ms");
             }
         });
     }

@@ -274,7 +274,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         HTTPServer.getInstance().startServer(this);
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> TokenUtil.fetchTokensFromServer(mInstance));
-                        APIClient.getInstance(this).updatePlatform(this);
+                        APIClient.getInstance(this).updatePlatform();
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> UserMetricsUtil.makeUserMetricsRequest(mInstance));
                     }
