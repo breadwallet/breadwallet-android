@@ -242,28 +242,23 @@
                 app:layout_constraintVertical_bias="0.0" />
 
 
-            <ImageView
-                android:id="@+id/edit"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="0dp"
-                android:background="@drawable/edit"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/fee_text"
-                app:layout_constraintLeft_toRightOf="@+id/fee_text" />
 
         </android.support.constraint.ConstraintLayout>
 
-        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        <LinearLayout
             android:id="@+id/fee_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="2.0"
-            app:backgroundColor="@color/extra_light_blue_background"
-            app:strokeColor="@color/extra_light_gray"
-            app:withStroke="true">
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/separatorFee"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/extra_light_gray" />
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:layout_width="wrap_content"
@@ -291,18 +286,31 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
-                android:weightSum="2.0"
+                android:weightSum="3.0"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/BRText2">
 
                 <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/left_button"
+                    android:id="@+id/economy_button"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:background="@drawable/b_half_left_blue"
+                    android:background="@drawable/b_half_left_blue_stroke"
+                    android:padding="0dp"
+                    android:text="@string/FeeSelector.economy"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="14sp"
+                    app:customBFont="CircularPro-Medium.otf"
+                    app:isBreadButton="false" />
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/regular_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/b_blue_square"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
@@ -311,13 +319,13 @@
                     app:isBreadButton="false" />
 
                 <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/right_button"
+                    android:id="@+id/priority_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_right_blue_stroke"
                     android:padding="0dp"
-                    android:text="@string/FeeSelector.economy"
+                    android:text="@string/FeeSelector.priority"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
                     app:customBFont="CircularPro-Medium.otf"
@@ -336,7 +344,7 @@
                 android:textSize="@dimen/paragraph" />
 
 
-        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
+        </LinearLayout>
 
         <View
             android:id="@+id/separator2"
