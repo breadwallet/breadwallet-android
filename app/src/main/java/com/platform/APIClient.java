@@ -30,21 +30,12 @@ import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.TokenHolder;
 
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,8 +48,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.sigpipe.jbsdiff.InvalidHeaderException;
-import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -109,8 +98,6 @@ public class APIClient {
     private static final int NETWORK_ERROR_CODE = 599;
     private static final int SYNC_ITEMS_COUNT = 4;
     private static final String FEATURE_FLAG_PATH = "/me/features";
-    private static final String TAR = "tar";
-    private static final String BUNDLES_FORMAT = "%s/assets/bundles/%s/diff/%s";
     private static final String PUBKEY = "pubKey";
     private static final String DEVICE_ID = "deviceID";
 
@@ -147,12 +134,9 @@ public class APIClient {
     private OkHttpClient mHTTPClient;
     private static final Map<String, String> mHttpHeaders = new HashMap<>();
 
-
-    private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
     private static final String BUY_NOTIFICATION_KEY = "buy-notification";
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-    private static final boolean PRINT_FILES = false;
     private static final int MAX_RETRY = 3;
     private static final int CONNECTION_TIMEOUT_SECONDS = 30;
 
@@ -554,224 +538,6 @@ public class APIClient {
         return new AuthenticatedRequest(request, token);
     }
 
-    /**
-     * Gets the bundle version of the specified bundle that is currently on the device.
-     *
-     * @param bundleFile the file the bundle resides in.
-     * @return The bundle version of the specified bundle that is currently on the device.
-     */
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    private String getCurrentBundleVersion(File bundleFile) {
-        byte[] bundleBytes;
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(bundleFile);
-            bundleBytes = IOUtils.toByteArray(fileInputStream);
-            byte[] hash = CryptoHelper.sha256(bundleBytes);
-            return Utils.isNullOrEmpty(hash) ? null : Utils.bytesToHex(hash);
-        } catch (IOException e) {
-            Log.e(TAG, "getCurrentBundleVersion: ", e);
-        } finally {
-            try {
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "getCurrentBundleVersion: ", e);
-            }
-        }
-        return null;
-    }
-
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    public synchronized void updateBundle() {
-        for (String bundleName : ServerBundlesHelper.getBundleNames(mContext)) {
-            File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
-            String currentTarVersion = BRSharedPrefs.getBundleHash(mContext, bundleName);
-            if (bundleFile.exists()) {
-                Log.d(TAG, bundleFile + ": updateBundle: exists");
-                String latestVersion = fetchBundleVersion(bundleName);
-
-                Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-                if (latestVersion != null) {
-                    if (latestVersion.equals(currentTarVersion)) {
-                        Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
-                        tryExtractTar(bundleName);
-                    } else {
-                        Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
-                        downloadDiff(bundleName, currentTarVersion);
-                        tryExtractTar(bundleName);
-                        BRSharedPrefs.putBundleHash(mContext, bundleName, latestVersion);
-                    }
-                } else {
-                    Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
-                }
-
-            } else {
-                Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
-                long startTime = System.currentTimeMillis();
-                Request request = new Request.Builder()
-                        .url(String.format("%s/assets/bundles/%s/download", getBaseURL(), bundleName))
-                        .get().build();
-                byte[] body;
-                BRResponse response = sendRequest(request, false);
-                Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-                body = writeBundleToFile(bundleName, response.getBody());
-                if (Utils.isNullOrEmpty(body)) {
-                    Log.e(TAG, "updateBundle: body is null, returning.");
-                    return;
-                }
-
-                boolean extracted = tryExtractTar(bundleName);
-                if (!extracted) {
-                    Log.e(TAG, "updateBundle: Failed to extract tar");
-                } else {
-                    String currentBundleVersion = getCurrentBundleVersion(bundleFile);
-                    if (!Utils.isNullOrEmpty(currentBundleVersion)) {
-                        BRSharedPrefs.putBundleHash(mContext, bundleName, currentBundleVersion);
-                    }
-                }
-
-            }
-
-            logFiles("updateBundle after", bundleName, mContext);
-        }
-    }
-
-    /**
-     * Gets the bundle version of the specified bundle from the server.  This can be used to determine if a new version is available.
-     *
-     * @param bundleName
-     * @return
-     */
-    public String fetchBundleVersion(String bundleName) {
-        if (UiUtils.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        String latestVersion = null;
-        Request request = new Request.Builder()
-                .get()
-                .url(String.format("%s/assets/bundles/%s/versions", getBaseURL(), bundleName))
-                .build();
-
-        BRResponse response = sendRequest(request, false);
-
-        try {
-            JSONObject versionsJson = new JSONObject(response.getBodyText());
-            JSONArray jsonArray = versionsJson.getJSONArray("versions");
-            if (jsonArray.length() == 0) {
-                return null;
-            }
-            latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "fetchBundleVersion: ", e);
-        }
-        return latestVersion;
-    }
-
-    // TODO: Move to ServerBundlesHelper DROID-1133, only keep the request to the API here.
-    public void downloadDiff(String bundleName, String currentTarVersion) {
-        if (UiUtils.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        Request diffRequest = new Request.Builder().url(String.format(BUNDLES_FORMAT, getBaseURL(), bundleName, currentTarVersion)).get().build();
-        BRResponse resp = sendRequest(diffRequest, false);
-        if (Utils.isNullOrEmpty(resp.getBodyText())) {
-            Log.e(TAG, "downloadDiff: no response");
-            return;
-        }
-        File patchFile = null;
-        File tempFile = null;
-        byte[] patchBytes = null;
-        try {
-            patchFile = new File(getBundleResource(mContext, bundleName + "-patch.diff"));
-            patchBytes = resp.getBody();
-            Log.e(TAG, "downloadDiff: trying to write to file");
-            FileUtils.writeByteArrayToFile(patchFile, patchBytes);
-            tempFile = new File(getBundleResource(mContext, bundleName + "-2temp.tar"));
-            tempFile.createNewFile();
-            File bundleFile = new File(getBundleResource(mContext, bundleName + "." + TAR));
-            FileUI.patch(bundleFile, tempFile, patchFile);
-            byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
-            if (Utils.isNullOrEmpty(updatedBundleBytes)) {
-                Log.e(TAG, "downloadDiff: failed to get bytes from the updatedBundle: " + tempFile.getAbsolutePath());
-            }
-            FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
-
-        } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
-            Log.e(TAG, "downloadDiff: ", e);
-            new File(getBundleResource(mContext, bundleName + "." + TAR)).delete();
-        } finally {
-            if (patchFile != null) {
-                patchFile.delete();
-            }
-            if (tempFile != null) {
-                tempFile.delete();
-            }
-        }
-
-        logFiles("downloadDiff", bundleName, mContext);
-    }
-
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    public byte[] writeBundleToFile(String bundleName, byte[] response) {
-        try {
-            if (response == null) {
-                Log.e(TAG, "writeBundleToFile: WARNING, response is null");
-                return null;
-            }
-            File bundleFile = new File(getBundleResource(mContext, bundleName + ".tar"));
-            FileUtils.writeByteArrayToFile(bundleFile, response);
-            return response;
-        } catch (IOException e) {
-            Log.e(TAG, "writeBundleToFile: ", e);
-        }
-
-        return null;
-    }
-
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    public boolean tryExtractTar(String bundleName) {
-        Context app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "tryExtractTar: failed to extract, app is null");
-            return false;
-        }
-        File bundleFile = new File(getBundleResource(mContext, bundleName + "." + TAR));
-        Log.e(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
-        boolean result = false;
-        TarArchiveInputStream debInputStream = null;
-        try {
-            final InputStream is = new FileInputStream(bundleFile);
-            debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(TAR, is);
-            TarArchiveEntry entry = null;
-            while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
-
-                final String outPutFileName = entry.getName().replace("./", "");
-                final File outputFile = new File(getExtractedPath(mContext, bundleName, null), outPutFileName);
-                if (!entry.isDirectory()) {
-                    FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
-                }
-            }
-
-            result = true;
-        } catch (Exception e) {
-            Log.e(TAG, "tryExtractTar: ", e);
-        } finally {
-            try {
-                if (debInputStream != null) {
-                    debInputStream.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "tryExtractTar: ", e);
-            }
-        }
-        logFiles("tryExtractTar", bundleName, mContext);
-        return result;
-
-    }
-
     private void updateFeatureFlag() {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
@@ -837,8 +603,10 @@ public class APIClient {
         }
     }
 
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    public void updatePlatform(final Context app) {
+    /**
+     * Launch in separate threads updates for bundles, feature flags, KVStore entries and fees.
+     */
+    public void updatePlatform() {
         if (mIsPlatformUpdating) {
             Log.e(TAG, "updatePlatform: platform already Updating!");
             return;
@@ -846,58 +614,45 @@ public class APIClient {
         mIsPlatformUpdating = true;
 
         //update Bundle
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(mContext);
-                apiClient.updateBundle();
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + ServerBundlesHelper.getBundle(mContext, ServerBundlesHelper.Type.WEB) + ": DONE in " + (endTime - startTime) + "ms");
-                itemFinished();
-            }
+        BRExecutor.getInstance().forBackgroundTasks().execute(() -> {
+            final long startTime = System.currentTimeMillis();
+            ServerBundlesHelper.updateBundles(mContext);
+            long endTime = System.currentTimeMillis();
+            Log.d(TAG, "updateBundles " + ServerBundlesHelper.getBundle(mContext, ServerBundlesHelper.Type.WEB) + ": DONE in " + (endTime - startTime) + "ms");
+            itemFinished();
         });
 
         //update feature flags
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(mContext);
-                apiClient.updateFeatureFlag();
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
-                itemFinished();
-            }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            final long startTime = System.currentTimeMillis();
+            APIClient apiClient = APIClient.getInstance(mContext);
+            apiClient.updateFeatureFlag();
+            long endTime = System.currentTimeMillis();
+            Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
+            itemFinished();
         });
 
         //update kvStore
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("updatePlatform");
-                final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(mContext);
-                apiClient.syncKvStore();
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
-                itemFinished();
-            }
+        BRExecutor.getInstance().forBackgroundTasks().execute(() -> {
+            Thread.currentThread().setName("updatePlatform");
+            final long startTime = System.currentTimeMillis();
+            APIClient apiClient = APIClient.getInstance(mContext);
+            apiClient.syncKvStore();
+            long endTime = System.currentTimeMillis();
+            Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+            itemFinished();
         });
 
         //update fee
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final long startTime = System.currentTimeMillis();
-                List<BaseWalletManager> wallets = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(app));
-                for (BaseWalletManager w : wallets) {
-                    w.updateFee(app);
-                }
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
-                itemFinished();
+        BRExecutor.getInstance().forBackgroundTasks().execute(() -> {
+            final long startTime = System.currentTimeMillis();
+            List<BaseWalletManager> wallets = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(mContext));
+            for (BaseWalletManager w : wallets) {
+                w.updateFee(mContext);
             }
+            long endTime = System.currentTimeMillis();
+            Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
+            itemFinished();
         });
 
     }
@@ -922,57 +677,12 @@ public class APIClient {
         kvStore.syncAllKeys();
     }
 
-    //returns the resource at bundles/path, if path is null then the bundle folder
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    private String getBundleResource(Context app, String path) {
-        String bundle = app.getFilesDir().getAbsolutePath() + ServerBundlesHelper.BUNDLES_FOLDER;
-        if (Utils.isNullOrEmpty(path)) {
-            return bundle;
-        } else {
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-            return bundle + path;
-        }
-    }
-
-    //returns the extracted folder or the path in it
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    public String getExtractedPath(Context app, String bundleName, String path) {
-        String extractedBundleFolder = String.format("%s-extracted", bundleName);
-        String extracted = app.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
-        if (Utils.isNullOrEmpty(path)) {
-            return extracted;
-        } else {
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-            return extracted + path;
-        }
-    }
-
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
     private synchronized byte[] getCachedAuthKey() {
         if (Utils.isNullOrEmpty(mCachedAuthKey)) {
             mCachedAuthKey = BRKeyStore.getAuthKey(mContext);
         }
         return mCachedAuthKey;
-    }
-
-    // TODO: Move to ServerBundlesHelper DROID-1133
-    private void logFiles(String tag, String bundleName, Context ctx) {
-        if (PRINT_FILES) {
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
-            String path = getExtractedPath(ctx, bundleName, null);
-
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-            Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
-            for (int i = 0; files != null && i < files.length; i++) {
-                Log.e("Files", "FileName:" + files[i].getName());
-            }
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
-        }
     }
 
     public static class AuthenticatedRequest {

@@ -70,8 +70,8 @@ public class HTTPFileMiddleware implements Middleware {
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
-        Context app = BreadApp.getBreadContext();
-        if (app == null) {
+        Context context = BreadApp.getBreadContext();
+        if (context == null) {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
@@ -82,10 +82,10 @@ public class HTTPFileMiddleware implements Middleware {
         APIClient.BRResponse brResp = new APIClient.BRResponse();
 
         // Platform Debug URL may be set above or via shared preferences
-        String webPlatformDebugURL = DEBUG_URL != null ? DEBUG_URL : BRSharedPrefs.getWebPlatformDebugURL(app);
+        String webPlatformDebugURL = DEBUG_URL != null ? DEBUG_URL : BRSharedPrefs.getWebPlatformDebugURL(context);
         if (Utils.isNullOrEmpty(webPlatformDebugURL)) {
             // fetch the file locally
-            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, ServerBundlesHelper.getBundle(app, ServerBundlesHelper.Type.WEB), target);
+            String requestedFile = ServerBundlesHelper.getExtractedPath(context, ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.WEB), target);
             Log.d(TAG, "Request local file -> " + requestedFile);
             Log.d(TAG, "Request local file target -> " + target);
 
@@ -131,7 +131,7 @@ public class HTTPFileMiddleware implements Middleware {
             Request debugRequest = new Request.Builder()
                     .url(webPlatformDebugURL)
                     .get().build();
-            brResp = APIClient.getInstance(app).sendRequest(debugRequest, false);
+            brResp = APIClient.getInstance(context).sendRequest(debugRequest, false);
         }
 
         brResp.setCode(200);
