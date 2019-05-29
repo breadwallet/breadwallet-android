@@ -211,14 +211,11 @@ public class OnBoardingActivity extends BRActivity {
 
     // TODO Create an interface in FragmentOnBoarding to call this method without it being static.
     public static void setupPin(final Activity activity) {
-        PostAuth.getInstance().onCreateWalletAuth(activity, false, new PostAuth.AuthenticationSuccessListener() {
-            @Override
-            public void onAuthenticatedSuccess() {
-                APIClient.getInstance(activity).updatePlatform(activity);
-                Intent intent = new Intent(activity, InputPinActivity.class);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-            }
+        PostAuth.getInstance().onCreateWalletAuth(activity, false, () -> {
+            APIClient.getInstance(activity).updatePlatform();
+            Intent intent = new Intent(activity, InputPinActivity.class);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
         });
     }
 
