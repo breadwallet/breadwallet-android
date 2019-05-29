@@ -18,18 +18,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
@@ -94,7 +92,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private EditText mAmountEdit;
     private TextView mBalanceText;
     private TextView mFeeText;
-    private ImageView mEditFeeIcon;
     private String mSelectedCurrencyCode;
     private Button mCurrencyCodeButton;
     private int mKeyboardIndex;
@@ -103,8 +100,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ConstraintLayout mAmountLayout;
     private BRButton mRegularFeeButton;
     private BRButton mEconomyFeeButton;
-    private BRLinearLayoutWithCaret mFeeLayout;
-    private boolean mIsFeeButtonsShown = false;
+    private BRButton mPriorityFeeButton;
+    private LinearLayout mFeeLayout;
     private BaseTextView mFeeDescription;
     private BaseTextView mEconomyFeeWarningText;
     private boolean mIsAmountLabelShown = true;
@@ -134,7 +131,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAmountEdit = rootView.findViewById(R.id.amount_edit);
         mBalanceText = rootView.findViewById(R.id.balance_text);
         mFeeText = rootView.findViewById(R.id.fee_text);
-        mEditFeeIcon = rootView.findViewById(R.id.edit);
         mCurrencyCodeButton = rootView.findViewById(R.id.iso_button);
         mKeyboardLayout = rootView.findViewById(R.id.keyboard_layout);
         mAmountLayout = rootView.findViewById(R.id.amount_layout);
@@ -142,13 +138,18 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
 
-        mRegularFeeButton = rootView.findViewById(R.id.left_button);
-        mEconomyFeeButton = rootView.findViewById(R.id.right_button);
+        mRegularFeeButton = rootView.findViewById(R.id.regular_button);
+        mEconomyFeeButton = rootView.findViewById(R.id.economy_button);
+        mPriorityFeeButton = rootView.findViewById(R.id.priority_button);
         mCloseButton = rootView.findViewById(R.id.close_button);
         BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
+
+        if (wm.getCurrencyCode().equals(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)) {
+            mAllowEditFee = true;
+        }
 
         setListeners();
         mCurrencyCode.setText(getString(R.string.Send_amountLabel));
@@ -163,16 +164,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
-        showFeeSelectionButtons(mIsFeeButtonsShown);
-
-        if (wm.getCurrencyCode().equals(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)) {
-            mAllowEditFee = true;
-            mEditFeeIcon.setOnClickListener((View v) -> {
-                mIsFeeButtonsShown = !mIsFeeButtonsShown;
-                showFeeSelectionButtons(mIsFeeButtonsShown);
-            });
-        } else {
-            mEditFeeIcon.setVisibility(View.GONE);
+        if (mAllowEditFee) {
+            mFeeLayout.setVisibility(View.VISIBLE);
+            setFeeOption(FeeOption.REGULAR);
         }
 
         mKeyboardIndex = mSignalLayout.indexOfChild(mKeyboardLayout);
@@ -195,7 +189,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         });
 
         showKeyboard(false);
-        setButton(true);
 
         mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
@@ -208,10 +201,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             mAmountEdit.setHint("0");
             mAmountEdit.setTextSize(getResources().getDimension(R.dimen.amount_text_size));
             mBalanceText.setVisibility(View.VISIBLE);
-
-            if (mAllowEditFee) {
-                mEditFeeIcon.setVisibility(View.VISIBLE);
-            }
 
             mAmountEdit.setVisibility(View.VISIBLE);
             mFeeText.setVisibility(View.VISIBLE);
@@ -516,19 +505,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         mKeyboard.setOnInsertListener(this);
 
-        mRegularFeeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(true);
-            }
-        });
-        mEconomyFeeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(false);
-            }
-        });
-
+        if (mAllowEditFee) {
+            mRegularFeeButton.setOnClickListener((View v) -> setFeeOption(FeeOption.REGULAR));
+            mEconomyFeeButton.setOnClickListener((View v) -> setFeeOption(FeeOption.ECONOMY));
+            mPriorityFeeButton.setOnClickListener((View v) -> setFeeOption(FeeOption.PRIORITY));
+        }
     }
 
     private void showKeyboard(boolean b) {
@@ -746,15 +727,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAmountLayout.requestLayout();
     }
 
-    private void showFeeSelectionButtons(boolean b) {
-        if (!b) {
-            mSignalLayout.removeView(mFeeLayout);
-        } else {
-            mSignalLayout.addView(mFeeLayout, mSignalLayout.indexOfChild(mAmountLayout) + 1);
-
-        }
-    }
-
     private void setAmount() {
         String cryptoAmount = mViewModel.getAmount();
 
@@ -775,27 +747,49 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAmountEdit.setText(newAmount.toString());
     }
 
-    private void setButton(boolean isRegular) {
-        BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
-        String iso = wallet.getCurrencyCode();
-        if (isRegular) {
-            BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);
-            mRegularFeeButton.setTextColor(getContext().getColor(R.color.white));
-            mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
-            mEconomyFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
-            mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
-            mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
-            mEconomyFeeWarningText.getLayoutParams().height = 0;
-        } else {
-            BRSharedPrefs.putFavorStandardFee(getActivity(), iso, false);
-            mRegularFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
-            mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
-            mEconomyFeeButton.setTextColor(getContext().getColor(R.color.white));
-            mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
-            mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
-            mEconomyFeeWarningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+    /**
+     * Sets the given fee option as selected.
+     * @param feeOption the fee option to be selected
+     */
+    private void setFeeOption(FeeOption feeOption) {
+        // TODO: Redo using a toggle button and a selector
+        switch (feeOption) {
+            case REGULAR:
+                mRegularFeeButton.setTextColor(getContext().getColor(R.color.white));
+                mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_blue_square));
+                mEconomyFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
+                mPriorityFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mPriorityFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
+                mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
+                mEconomyFeeWarningText.setVisibility(View.GONE);
+                break;
+            case ECONOMY:
+                mRegularFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_blue_square_stroke));
+                mEconomyFeeButton.setTextColor(getContext().getColor(R.color.white));
+                mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
+                mPriorityFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mPriorityFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
+                mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
+                mEconomyFeeWarningText.setVisibility(View.VISIBLE);
+                break;
+            case PRIORITY:
+                mRegularFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_blue_square_stroke));
+                mEconomyFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+                mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
+                mPriorityFeeButton.setTextColor(getContext().getColor(R.color.white));
+                mPriorityFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
+                mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_priorityTime)));
+                mEconomyFeeWarningText.setVisibility(View.GONE);
+                break;
         }
-        mEconomyFeeWarningText.requestLayout();
+
+        // Editing the fee option is only available for BTC wallets
+        BaseBitcoinWalletManager walletManager = (BaseBitcoinWalletManager) WalletsMaster.getInstance().getWalletByIso(getActivity(), BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
+        mViewModel.updateFeeOptionPreference(walletManager, feeOption);
+
         updateText();
     }
 

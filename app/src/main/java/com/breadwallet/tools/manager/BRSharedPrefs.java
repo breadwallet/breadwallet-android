@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -59,6 +60,7 @@ public class BRSharedPrefs {
     private static final String CURRENT_CURRENCY = "currentCurrency";
     private static final String PAPER_KEY_WRITTEN_DOWN = "phraseWritten";
     private static final String PREFER_STANDARD_FEE = "favorStandardFee";
+    private static final String FEE_PREFERENCE = "feePreference";
     private static final String RECEIVE_ADDRESS = "receive_address";
     private static final String FEE_RATE = "feeRate";
     private static final String ECONOMY_FEE_RATE = "economyFeeRate";
@@ -126,16 +128,16 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getFavorStandardFee(Context context, String iso) {
+    public static String getPreferredFeeOption(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(PREFER_STANDARD_FEE + iso.toUpperCase(), true);
+        return prefs.getString(FEE_PREFERENCE + iso.toUpperCase(), FeeOption.REGULAR.toString());
 
     }
 
-    public static void putFavorStandardFee(Context context, String iso, boolean favorStandardFee) {
+    public static void putPreferredFeeOption(Context context, String iso, FeeOption feeOption) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(PREFER_STANDARD_FEE + iso.toUpperCase(), favorStandardFee);
+        editor.putString(FEE_PREFERENCE + iso.toUpperCase(), feeOption.toString());
         editor.apply();
     }
 
@@ -150,27 +152,15 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static BigDecimal getFeeRate(Context context, String iso) {
+    public static BigDecimal getFeeRate(Context context, String iso, FeeOption feeOption) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return new BigDecimal(prefs.getString(FEE_RATE + iso.toUpperCase(), "0"));
+        return new BigDecimal(prefs.getString(FEE_RATE + iso.toUpperCase() + feeOption.toString(), "0"));
     }
 
-    public static void putFeeRate(Context context, String iso, BigDecimal fee) {
+    public static void putFeeRate(Context context, String iso, BigDecimal fee, FeeOption feeOption) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(FEE_RATE + iso.toUpperCase(), fee.toPlainString());
-        editor.apply();
-    }
-
-    public static BigDecimal getEconomyFeeRate(Context context, String iso) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return new BigDecimal(prefs.getString(ECONOMY_FEE_RATE + iso.toUpperCase(), "0"));
-    }
-
-    public static void putEconomyFeeRate(Context context, String iso, BigDecimal fee) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(ECONOMY_FEE_RATE + iso.toUpperCase(), fee.toPlainString());
+        editor.putString(FEE_RATE + iso.toUpperCase() + feeOption.toString(), fee.toPlainString());
         editor.apply();
     }
 
