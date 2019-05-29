@@ -7,7 +7,9 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -81,13 +83,15 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
                 if (BRSharedPrefs.getStartHeight(context, getCurrencyCode()) == 0)
                     BRSharedPrefs.putStartHeight(context, getCurrencyCode(), getPeerManager().getLastBlockHeight());
 
-                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getCurrencyCode());
-                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getCurrencyCode());
-                if (fee.compareTo(BigDecimal.ZERO) == 0) {
-                    fee = new BigDecimal(getWallet().getDefaultFeePerKb());
+                String currencyCode = getCurrencyCode();
+                FeeOption preferredFeeOption = FeeRepository.getInstance(context).getPreferredFeeOptionByCurrency(currencyCode);
+                BigDecimal preferredFee = FeeRepository.getInstance(context).getFeeByCurrency(currencyCode, preferredFeeOption);
+
+                if (preferredFee.compareTo(BigDecimal.ZERO) == 0) {
+                    preferredFee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     EventUtils.pushEvent(EventUtils.EVENT_WALLET_DID_USE_DEFAULT_FEE_PER_KB);
                 }
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getCurrencyCode()) ? fee.longValue() : economyFee.longValue());
+                getWallet().setFeePerKb(preferredFee.longValue());
                 WalletsMaster.getInstance().updateFixedPeer(context, WalletBitcoinManager.this);
             }
         });
