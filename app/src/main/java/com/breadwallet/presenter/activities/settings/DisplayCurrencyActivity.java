@@ -26,6 +26,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -68,7 +69,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         mExchangeText = findViewById(R.id.exchange_text);
         mListView = findViewById(R.id.currency_list_view);
         mAdapter = new CurrencyListAdapter(this);
-        List<CurrencyEntity> currencies = RatesRepository.getInstance(this.getApplicationContext()).getAllRatesForCurrency("BTC");
+        List<CurrencyEntity> currencies = RatesRepository.getInstance(this).getAllRatesForCurrency(WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         List<CurrencyEntity> cleanList = cleanList(currencies);
         mAdapter.addAll(cleanList);
         mLeftButton = findViewById(R.id.left_button);
