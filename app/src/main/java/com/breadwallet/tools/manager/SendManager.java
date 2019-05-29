@@ -83,10 +83,9 @@ public class SendManager {
             sending = true;
             long now = System.currentTimeMillis();
 
-            // Check whether the fee (for BTC, BCH, and ETH) value we have is old, then try updating the fee
+            // Check whether the fee (for BTC and BCH) value we have is old, then try updating the fee
             if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) ||
-                walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE) ||
-                walletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
 
                 if (now - BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()) >= FEE_EXPIRATION_MILLIS) {
                     new Thread(() -> {
