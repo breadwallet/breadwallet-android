@@ -108,9 +108,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
                     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                     WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
-            UiUtils.startWebActivity(HomeActivity.this, url);
+            UiUtils.startPlatformBrowser(HomeActivity.this, url);
         });
-        mTradeLayout.setOnClickListener(view -> UiUtils.startWebActivity(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)));
+        mTradeLayout.setOnClickListener(view -> UiUtils.startPlatformBrowser(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)));
         mMenuLayout.setOnClickListener(view -> {
             Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
             intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS);
