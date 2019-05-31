@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.ui.browser;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -43,7 +43,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
-import com.platform.middlewares.plugins.LinkPlugin;
 
 import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONException;
@@ -59,14 +58,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class WebViewActivity extends BRActivity {
+public abstract class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
 
-    public static final String EXTRA_JSON_PARAM = "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_JSON_PARAM";
+    public static final String EXTRA_JSON_PARAM = "com.breadwallet.ui.browser.WebViewActivity.EXTRA_JSON_PARAM";
     public static final String EXTRA_ENTER_TRANSITION =
-            "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_ENTER_TRANSITION";
+            "com.breadwallet.ui.browser.WebViewActivity.EXTRA_ENTER_TRANSITION";
     public static final String EXTRA_EXIT_TRANSITION =
-            "com.breadwallet.presenter.activities.settings.WebViewActivity.EXTRA_EXIT_TRANSITION";
+            "com.breadwallet.ui.browser.WebViewActivity.EXTRA_EXIT_TRANSITION";
     private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     private static final String IMAGE_FILE_NAME_SUFFIX = "_kyc.jpg";
     private static final String BUY_PATH = "/buy";
@@ -91,7 +90,6 @@ public class WebViewActivity extends BRActivity {
     private ImageButton mForwardButton;
     private ValueCallback<Uri[]> mFilePathCallback;
     private Uri mCameraImageFileUri;
-    private String mUrl;
     private String mOnCloseUrl;
     private boolean mKeyboardListenersAttached = false;
 
@@ -149,8 +147,6 @@ public class WebViewActivity extends BRActivity {
                 }
 
             }
-
-
         });
 
         mTopToolbar = findViewById(R.id.toolbar);
@@ -171,23 +167,23 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        mUrl = getIntent().getStringExtra(BRConstants.EXTRA_URL);
+        String url = getIntent().getStringExtra(BRConstants.EXTRA_URL);
         String json = getIntent().getStringExtra(EXTRA_JSON_PARAM);
 
         if (json == null) {
             if (articleId != null && !articleId.isEmpty()) {
-                mUrl = mUrl + "/" + articleId;
+                url = url + "/" + articleId;
             }
 
-            Log.d(TAG, "onCreate: theUrl: " + mUrl + ", articleId: " + articleId);
-            if (!mUrl.contains(BRConstants.CHECKOUT)) {
+            Log.d(TAG, "onCreate: theUrl: " + url + ", articleId: " + articleId);
+            if (!url.contains(BRConstants.CHECKOUT)) {
                 mBottomToolbar.setVisibility(View.INVISIBLE);
             }
-            if (mUrl.endsWith(BUY_PATH)) {
-                mUrl = String.format(URL_FORMAT, mUrl, CURRENCY, WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode().toLowerCase());
+            if (url.endsWith(BUY_PATH)) {
+                url = String.format(URL_FORMAT, url, CURRENCY, WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode().toLowerCase());
 
             }
-            mWebView.loadUrl(mUrl);
+            mWebView.loadUrl(url);
             if (articleId != null && !articleId.isEmpty()) {
                 navigate(articleId);
             }
@@ -234,40 +230,23 @@ public class WebViewActivity extends BRActivity {
                 webView.setLayoutParams(webviewParams);
 
                 // Make the reload/refresh button functional
-                mReloadButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        request(webView, jsonString);
-
-                    }
-                });
+                mReloadButton.setOnClickListener(view -> request(webView, jsonString));
 
                 // Make the close button functional
-                mCloseButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onBackPressed();
-                    }
-                });
+                mCloseButton.setOnClickListener(view -> onBackPressed());
 
                 // Make the back button functional
-                mBackButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                mBackButton.setOnClickListener(view -> {
 
-                        if (webView.canGoBack()) {
-                            webView.goBack();
-                        }
+                    if (webView.canGoBack()) {
+                        webView.goBack();
                     }
                 });
 
                 // Make the forward button functional
-                mForwardButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (webView.canGoForward()) {
-                            webView.goForward();
-                        }
+                mForwardButton.setOnClickListener(view -> {
+                    if (webView.canGoForward()) {
+                        webView.goForward();
                     }
                 });
             }
@@ -285,7 +264,6 @@ public class WebViewActivity extends BRActivity {
                     httpHeaders.put(key, jsonHeaders.getString(key));
                 }
             }
-            byte[] body = strBody == null ? null : strBody.getBytes();
 
             if (method.equalsIgnoreCase(HttpMethod.GET.asString())) {
                 if (httpHeaders != null) {
@@ -294,7 +272,8 @@ public class WebViewActivity extends BRActivity {
                     webView.loadUrl(url);
                 }
             } else if (method.equalsIgnoreCase(HttpMethod.POST.asString())) {
-                Log.e(TAG, "request: POST:" + body.length);
+                byte[] body = strBody == null ? null : strBody.getBytes();
+                Log.e(TAG, "request: POST:" + (body == null ? 0 :body.length));
                 webView.postUrl(url, body);
             } else {
                 throw new NullPointerException("unexpected method: " + method);
@@ -307,12 +286,7 @@ public class WebViewActivity extends BRActivity {
 
     private void navigate(String to) {
         String js = String.format("window.location = \'%s\';", to);
-        mWebView.evaluateJavascript(js, new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                Log.e(TAG, "onReceiveValue: " + value);
-            }
-        });
+        mWebView.evaluateJavascript(js, value -> Log.e(TAG, "onReceiveValue: " + value));
     }
 
     private boolean closeOnMatch(Uri toUri) {
@@ -561,12 +535,6 @@ public class WebViewActivity extends BRActivity {
         if (result.length() > 0 && s.charAt(s.length() - 1) == c)
             result = s.substring(0, s.length() - 1);
         return result;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LinkPlugin.hasBrowser = false;
     }
 
     @Override
