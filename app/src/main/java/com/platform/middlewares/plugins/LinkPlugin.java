@@ -8,11 +8,10 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.ui.browser.BrdBrowserActivity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -126,9 +125,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
-                    Intent getInt = new Intent(app, WebViewActivity.class);
-                    getInt.putExtra(BRConstants.EXTRA_URL, getUri.toString());
-                    app.startActivity(getInt);
+                    BrdBrowserActivity.Companion.startWithUrl(app, getUri.toString());
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse resp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
 
@@ -188,9 +185,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
-                    Intent postInt = new Intent(app, WebViewActivity.class);
-                    postInt.putExtra(WebViewActivity.EXTRA_JSON_PARAM, json.toString());
-                    app.startActivity(postInt);
+                    BrdBrowserActivity.Companion.startJson(app, json);
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse brResp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
                     return BRHTTPHelper.handleSuccess(brResp, baseRequest, response);

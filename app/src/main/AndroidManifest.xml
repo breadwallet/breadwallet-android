@@ -161,7 +161,13 @@
             android:screenOrientation="portrait" />
         <!-- Use launchMode="standard for WebViewActivity in order to be able to have multiple instances" -->
         <activity
-            android:name=".presenter.activities.settings.WebViewActivity"
+            android:name=".ui.browser.PlatformBrowserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.browser.BrdBrowserActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="standard"
             android:screenOrientation="portrait"

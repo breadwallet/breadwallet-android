@@ -146,7 +146,7 @@ public class OnBoardingActivity extends BRActivity {
         String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
                 HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                 WalletBitcoinManager.getInstance(activity).getCurrencyCode());
-        UiUtils.startWebActivity(activity, url);
+        UiUtils.startPlatformBrowser(activity, url);
     }
 
     private void showHideToolBarButtons(boolean show) {
