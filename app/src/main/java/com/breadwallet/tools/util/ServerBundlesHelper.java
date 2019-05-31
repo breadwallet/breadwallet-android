@@ -267,10 +267,6 @@ public final class ServerBundlesHelper {
     }
 
     /**
-     *  Methods copied from APIClient, duplicate code must be removed from APIClient after refactor 01/17/19 DROID-1133
-     */
-
-    /**
      * Returns the resource at bundles/path, if path is null then the bundle folder.
      *
      * @param context Execution context.
