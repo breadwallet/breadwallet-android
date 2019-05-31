@@ -206,7 +206,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mSearchBar.onShow(true);
         });
 
-        mSellButton.setOnClickListener(view -> UiUtils.startWebActivity(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));
+        mSellButton.setOnClickListener(view -> UiUtils.startPlatformBrowser(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));
 
         mBalancePrimary.setOnClickListener(view -> swap());
         mBalanceSecondary.setOnClickListener(view -> swap());
