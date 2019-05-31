@@ -341,7 +341,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
      *
      * @return True, if the device state is valid; false, otherwise.
      */
-    private boolean isDeviceStateValid() {
+    public boolean isDeviceStateValid() {
         boolean isDeviceStateValid;
         DialogType dialogType = DialogType.DEFAULT;
 

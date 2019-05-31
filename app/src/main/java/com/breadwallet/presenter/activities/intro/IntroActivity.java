@@ -1,25 +1,3 @@
-
-package com.breadwallet.presenter.activities.intro;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
-
-import com.breadwallet.BuildConfig;
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.util.ServerBundlesHelper;
-import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-
 /**
  * BreadWallet
  * <p/>
@@ -44,9 +22,28 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.presenter.activities.intro;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ImageButton;
+
+import com.breadwallet.BuildConfig;
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.util.EventUtils;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+
+/**
+ * Activity shown when there is no wallet, here the user can pick between creating new wallet or recovering one with
+ * the paper key.
+ */
 public class IntroActivity extends BRActivity {
-    private static final String TAG = IntroActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,24 +51,9 @@ public class IntroActivity extends BRActivity {
 
         setContentView(R.layout.activity_intro);
         setOnClickListeners();
-        updateBundles();
-        ImageButton faq = findViewById(R.id.faq_button);
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(IntroActivity.this);
-                UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
-            }
-        });
 
         if (BuildConfig.DEBUG) {
             Utils.printPhoneSpecs(this);
-        }
-
-        // TODO: Remove this check once the this activity is not called from the launcher. See DROID-1134.
-        if (!WalletsMaster.getInstance().noWallet(this)) {
-                UiUtils.startBreadActivity(this, true);
         }
     }
 
@@ -81,46 +63,33 @@ public class IntroActivity extends BRActivity {
         EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_APPEARED);
     }
 
-    private void updateBundles() {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                ServerBundlesHelper.extractBundlesIfNeeded(getApplicationContext());
-                final long startTime = System.currentTimeMillis();
-                ServerBundlesHelper.updateBundles(IntroActivity.this);
-                long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundles DONE in " + (endTime - startTime) + "ms");
-            }
-        });
-    }
-
     private void setOnClickListeners() {
         BRButton buttonNewWallet = findViewById(R.id.button_new_wallet);
         BRButton buttonRecoverWallet = findViewById(R.id.button_recover_wallet);
-        buttonNewWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
-                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED);
-                Intent intent = new Intent(IntroActivity.this, OnBoardingActivity.class);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
+        ImageButton faq = findViewById(R.id.faq_button);
+        buttonNewWallet.setOnClickListener(v -> {
+            if (!UiUtils.isClickAllowed()) {
+                return;
             }
+            EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED);
+            Intent intent = new Intent(IntroActivity.this, OnBoardingActivity.class);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            startActivity(intent);
         });
 
-        buttonRecoverWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) {
-                    return;
-                }
-                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET);
-                Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        buttonRecoverWallet.setOnClickListener(v -> {
+            if (!UiUtils.isClickAllowed()) {
+                return;
             }
+            EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET);
+            Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        });
+        faq.setOnClickListener(v -> {
+            if (!UiUtils.isClickAllowed()) return;
+            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(IntroActivity.this);
+            UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
         });
     }
 

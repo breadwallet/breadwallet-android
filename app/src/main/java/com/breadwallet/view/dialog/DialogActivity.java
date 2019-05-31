@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class DialogActivity extends AppCompatActivity {
     private static final String DIALOG_TYPE_EXTRA = "com.breadwallet.view.dialog.DialogActivity";
     private static final String BRD_SUPPORT_EMAIL = "support@brd.com";
     private static final String PACKAGE_PREFIX = "package:";
+    private static final int SET_AUTH_REQ_CODE = 5713; // Arbitrary number to identify result from the Security Settings
 
     public enum DialogType {
         DEFAULT,
@@ -64,6 +66,12 @@ public class DialogActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SET_AUTH_REQ_CODE) {  finish(); } // Dismiss the dialog when returning from Security Settings
+    }
+
     /**
      * Show a dialog of the specified type.
      *
@@ -88,26 +96,18 @@ public class DialogActivity extends AppCompatActivity {
                 getString(R.string.Prompts_NoScreenLock_body_android),
                 getString(R.string.Button_securitySettings_android),
                 getString(R.string.AccessibilityLabels_close),
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        // Open password settings so the user can enable a password easily.
-                        Intent intent = new Intent(DevicePolicyManager.ACTION_SET_NEW_PASSWORD);
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        } else {
-                            Log.e(TAG, "showEnableDevicePasswordDialog: Security Settings button failed.");
-                        }
-
-                        finish();
+                brDialogView -> {
+                    // Open password settings so the user can enable a password easily.
+                    Intent intent = new Intent(DevicePolicyManager.ACTION_SET_NEW_PASSWORD);
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(intent, SET_AUTH_REQ_CODE);
+                    } else {
+                        Log.e(TAG, "showEnableDevicePasswordDialog: Security Settings button failed.");
                     }
                 },
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        // Close the app.
-                        finishAffinity();
-                    }
+                brDialogView -> {
+                    // Close the app.
+                    finishAffinity();
                 },
                 null
         );
@@ -119,12 +119,9 @@ public class DialogActivity extends AppCompatActivity {
         showKeyStoreInvalidDialog(
                 getString(R.string.Alert_keystore_invalidated_wipe_android),
                 getString(R.string.Button_wipe_android),
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        Log.d(TAG, "showKeyStoreInvalidDialogAndWipe: Clearing app data.");
-                        BreadApp.clearApplicationUserData();
-                    }
+                brDialogView -> {
+                    Log.d(TAG, "showKeyStoreInvalidDialogAndWipe: Clearing app data.");
+                    BreadApp.clearApplicationUserData();
                 });
     }
 
@@ -132,18 +129,15 @@ public class DialogActivity extends AppCompatActivity {
         showKeyStoreInvalidDialog(
                 getString(R.string.Alert_keystore_invalidated_uninstall_android),
                 getString(R.string.Button_uninstall_android),
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        Log.d(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstalling");
-                        Intent intent = new Intent(Intent.ACTION_DELETE);
-                        intent.setData(Uri.parse(PACKAGE_PREFIX + BuildConfig.APPLICATION_ID));
+                brDialogView -> {
+                    Log.d(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstalling");
+                    Intent intent = new Intent(Intent.ACTION_DELETE);
+                    intent.setData(Uri.parse(PACKAGE_PREFIX + BuildConfig.APPLICATION_ID));
 
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        } else {
-                            Log.e(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstall button failed.");
-                        }
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Log.e(TAG, "showKeyStoreInvalidDialogAndUninstall: Uninstall button failed.");
                     }
                 });
     }
@@ -155,18 +149,15 @@ public class DialogActivity extends AppCompatActivity {
                 positiveButton,
                 getString(R.string.Button_contactSupport_android),
                 positiveListener,
-                new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType(BRConstants.CONTENT_TYPE_TEXT);
-                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{BRD_SUPPORT_EMAIL});
-                        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Alert_keystore_title_android));
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        } else {
-                            Log.e(TAG, "showKeyStoreInvalidDialog: Customer support button failed.");
-                        }
+                brDialogView -> {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType(BRConstants.CONTENT_TYPE_TEXT);
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{BRD_SUPPORT_EMAIL});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Alert_keystore_title_android));
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Log.e(TAG, "showKeyStoreInvalidDialog: Customer support button failed.");
                     }
                 },
                 null
@@ -175,7 +166,7 @@ public class DialogActivity extends AppCompatActivity {
         dialog.setCancelable(false);
     }
 
-    //endRegion
+    //endregion
 
     //region Generic dialog methods TODO: Move generic BRDialog methods here.
     private BRDialogView showDialog(@NonNull String title, @NonNull String message, @NonNull String positiveButton,
@@ -193,5 +184,5 @@ public class DialogActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().add(dialog, dialog.getTag()).commit();
         return dialog;
     }
-    //endRegion
+    //endregion
 }
