@@ -246,6 +246,10 @@
     <string name="FeeSelector.estimatedDeliver">Geschatte levering: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2 tot 5 minuten</string>
+    <!-- Priority fee -->
+    <string name="FeeSelector.priority">Voorrang</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
+    <string name="FeeSelector.priorityTime">10-30 minuten</string>
     <!-- Regular fee -->
     <string name="FeeSelector.regular">Normaal</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
