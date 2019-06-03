@@ -247,7 +247,7 @@
     <!-- Regular fee -->
     <string name="FeeSelector.regular">Regular</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-    <string name="FeeSelector.regularTime">30-60 minutes</string>
+    <string name="FeeSelector.regularTime">10-60 minutes</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">Processing Speed</string>
     <!-- This is the section that allows administration of the user's wallet -->
