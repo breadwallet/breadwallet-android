@@ -33,7 +33,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 
 
-public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted {
+public class LoginActivity extends BRActivity implements PinLayout.PinLayoutListener {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard mKeyboard;
     private LinearLayout mPinLayout;
@@ -221,4 +221,10 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
             showFailedToUnlock();
         }
     }
+
+    @Override
+    public void onPinLocked() {
+        showWalletDisabled();
+    }
+
 }

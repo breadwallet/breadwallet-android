@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -47,7 +48,7 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 
-public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
+public class PinFragment extends Fragment implements PinLayout.PinLayoutListener {
     private static final String TAG = PinFragment.class.getName();
 
     private BRAuthCompletion mCompletion;
@@ -169,4 +170,14 @@ public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
             handleSuccess();
         }
     }
+
+    @Override
+    public void onPinLocked() {
+        if (getActivity() instanceof BRActivity) {
+            ((BRActivity)getActivity()).showWalletDisabled();
+        } else {
+            throw new IllegalStateException("PinFragment must be hosted by BRActivity");
+        }
+    }
+
 }
