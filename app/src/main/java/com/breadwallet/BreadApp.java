@@ -16,6 +16,7 @@ import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.protocols.messageexchange.InboxPollingHandler;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.view.dialog.DialogActivity;
 import com.breadwallet.view.dialog.DialogActivity.DialogType;
 import com.breadwallet.app.util.UserMetricsUtil;
@@ -78,7 +79,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     // The server(s) on which the API is hosted
     private static final String HOST = BuildConfig.DEBUG ? "stage2.breadwallet.com" : "api.breadwallet.com";
-    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
     private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
     private static final String WALLET_ID_SEPARATOR = " ";
     private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
@@ -261,7 +261,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         switch (event) {
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
-                mBackgroundedTime = 0;
 
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
                 // initialized, we may need tell the user to enable the password.
@@ -277,6 +276,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         APIClient.getInstance(this).updatePlatform();
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> UserMetricsUtil.makeUserMetricsRequest(mInstance));
+                        BRApiManager.getInstance().startTimer(this);
                     }
                 }
                 break;
@@ -290,6 +290,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         EventUtils.pushToServer(BreadApp.this);
                     });
                     HTTPServer.getInstance().stopServer();
+                    BRApiManager.getInstance().stopTimerTask();
                 }
                 SyncUpdateHandler.INSTANCE.cancelWalletSync();
                 break;
@@ -298,16 +299,19 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
     }
 
-    public static void lockIfNeeded(Activity activity) {
-        //lock wallet if 3 minutes passed
-        if (mBackgroundedTime != 0
-                && (System.currentTimeMillis() - mBackgroundedTime >= LOCK_TIMEOUT)
-                && !(activity instanceof DisabledActivity)) {
-            if (!BRKeyStore.getPinCode(activity).isEmpty()) {
-                UiUtils.startBreadActivity(activity, true);
-            }
-        }
+    /**
+     * Reset the backgrounded time to 0. Intended to be called only from BRActivity.onResume
+     */
+    public void resetBackgroundedTime() {
+        mBackgroundedTime = 0;
+    }
 
+    /**
+     * Get the time when the app was sent to background.
+     * @return the timestamp when the app was sent sent to background or 0 if it's in the foreground.
+     */
+    public long getBackgroundedTime() {
+        return mBackgroundedTime;
     }
 
     /**

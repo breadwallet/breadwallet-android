@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.customviews;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
@@ -60,7 +58,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     private static final int FIRST_INDEX = 0;
     private static final int SIXTH_INDEX = 5;
     private static final int LOCK_FAIL_ATTEMPT_COUNT = 3;
-    private OnPinInserted mOnPinInsertedListener;
+    private PinLayoutListener mOnPinInsertedListener;
     private String mLastInsertedPin;
     private boolean mIsPinUpdating;
     private int mPinDotBackground;
@@ -205,7 +203,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     }
 
 
-    public void setup(BRKeyboard keyboard, OnPinInserted onPinInsertedListener) {
+    public void setup(BRKeyboard keyboard, PinLayoutListener onPinInsertedListener) {
         this.mKeyboard = keyboard;
         mKeyboard.setOnInsertListener(this);
         mKeyboard.setShowDecimal(false);
@@ -233,18 +231,28 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         }
     }
 
-    public interface OnPinInserted {
+    public interface PinLayoutListener {
+        /**
+         * Callback to notify the pin that has been entered.
+         * @param pin The PIN that has been entered.
+         * @param isPinCorrect True if the PIN is correct.
+         */
         void onPinInserted(String pin, boolean isPinCorrect);
+
+        /**
+         * Callback for when the PIN has been locked.
+         */
+        void onPinLocked();
     }
 
-    public void authFailed(final Context app, String pin) {
+    private void authFailed(final Context context, String pin) {
         if (!pin.equals(mLastInsertedPin)) {
-            int failCount = BRKeyStore.getFailCount(app);
-            BRKeyStore.putFailCount(failCount + 1, app);
+            int failCount = BRKeyStore.getFailCount(context);
+            BRKeyStore.putFailCount(failCount + 1, context);
         }
-        if (BRKeyStore.getFailCount(app) >= LOCK_FAIL_ATTEMPT_COUNT) {
+        if (BRKeyStore.getFailCount(context) >= LOCK_FAIL_ATTEMPT_COUNT) {
             EventUtils.pushEvent(EventUtils.EVENT_LOGIN_LOCKED);
-            AuthManager.getInstance().setWalletDisabled((Activity) app);
+            mOnPinInsertedListener.onPinLocked();
         }
     }
 

@@ -66,7 +66,7 @@ import okhttp3.Request;
  * THE SOFTWARE.
  */
 
-public final class BRApiManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
+public final class BRApiManager {
     private static final String TAG = BRApiManager.class.getName();
     private static final String BIT_PAY_URL = "https://bitpay.com/rates";
     private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
@@ -134,26 +134,16 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
     }
 
     private void initializeTimerTask(final Context context) {
-        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
         mTimerTask = new TimerTask() {
             public void run() {
-                //use a handler to run a toast that shows the current timestamp
-                mHandler.post(new Runnable() {
-                    public void run() {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateData(context);
-                            }
-                        });
-                    }
-                });
+                updateData(context);
             }
         };
     }
 
     @WorkerThread
     private void updateData(final Context context) {
+        Log.d(TAG, "Fetching rates");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -254,7 +244,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
         mTimer.schedule(mTimerTask, DateUtils.SECOND_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS);
     }
 
-    private synchronized void stopTimerTask() {
+    public synchronized void stopTimerTask() {
         //stop the timer, if it's not already null
         if (mTimer != null) {
             mTimer.cancel();
@@ -380,16 +370,5 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
             Log.e(TAG, "urlGET: ", e);
         }
         return bodyText;
-    }
-
-    @Override
-    public void onLifeCycle(Lifecycle.Event event) {
-        switch (event) {
-            case ON_STOP:
-                stopTimerTask();
-                ApplicationLifecycleObserver.removeApplicationLifecycleListener(this);
-                break;
-        }
-
     }
 }
