@@ -18,7 +18,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
-public class InputPinActivity extends BRActivity implements PinLayout.OnPinInserted {
+public class InputPinActivity extends BRActivity implements PinLayout.PinLayoutListener {
     private static final String TAG = InputPinActivity.class.getName();
 
     private PinLayout mPinDigitViews;
@@ -122,6 +122,11 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onPinLocked() {
+        showWalletDisabled();
     }
 
     private void setModeUi() {
