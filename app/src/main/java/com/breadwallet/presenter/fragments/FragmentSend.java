@@ -201,9 +201,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             mAmountEdit.setHint("0");
             mAmountEdit.setTextSize(getResources().getDimension(R.dimen.amount_text_size));
             mBalanceText.setVisibility(View.VISIBLE);
-
+            if (mAllowEditFee) {
+                mFeeText.setVisibility(View.VISIBLE);
+            }
             mAmountEdit.setVisibility(View.VISIBLE);
-            mFeeText.setVisibility(View.VISIBLE);
             mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
             mCurrencyCode.setTextSize(getResources().getDimension(R.dimen.currency_code_text_size_large));
@@ -211,10 +212,15 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             ConstraintSet set = new ConstraintSet();
             set.clone(mAmountLayout);
 
+            // Re-space elements due to new UI elements being visible
             int px4 = Utils.getPixelsFromDps(getContext(), 4);
             set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
-            set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
-            set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+            if (mAllowEditFee) {
+                set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
+                set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+            } else {
+                set.connect(mBalanceText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+            }
             set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
             set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
             set.applyTo(mAmountLayout);
