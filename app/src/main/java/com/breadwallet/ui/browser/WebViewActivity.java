@@ -328,7 +328,8 @@ public abstract class WebViewActivity extends BRActivity {
             Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
             Uri toUri = Uri.parse(trimmedUrl);
 
-            if (closeOnMatch(toUri) || toUri.toString().endsWith(BRConstants.CLOSE)) {
+            // We need to check if the activity isn't destroyed because the close url could have been processed at onPageStarted
+            if ((closeOnMatch(toUri) || toUri.toString().endsWith(BRConstants.CLOSE)) & !isDestroyed()) {
                 Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
                 onBackPressed();
                 mOnCloseUrl = null;
