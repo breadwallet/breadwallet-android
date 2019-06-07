@@ -34,6 +34,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -251,5 +252,9 @@ public class OnBoardingActivity extends BRActivity {
 
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
+    }
 }
 
