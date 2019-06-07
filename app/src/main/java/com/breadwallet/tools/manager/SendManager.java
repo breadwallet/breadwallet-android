@@ -66,7 +66,7 @@ public class SendManager {
 
     private static boolean timedOut;
     private static boolean sending;
-    private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
+    private final static long FEE_EXPIRATION_MILLIS = 10 * 60 * 1000L;
 
 
     @WorkerThread
@@ -82,21 +82,20 @@ public class SendManager {
             }
             sending = true;
             long now = System.currentTimeMillis();
-            //if the fee (for BTC and BCH only) was updated more than 24 hours ago then try updating the fee
-            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
-                    || walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
-                if (now - BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()) >= FEE_EXPIRATION_MILLIS) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(DateUtils.SECOND_IN_MILLIS * 3);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
 
-                            if (sending) timedOut = true;
+            // Check whether the fee (for BTC and BCH) value we have is old, then try updating the fee
+            if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) ||
+                walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
+
+                if (now - BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()) >= FEE_EXPIRATION_MILLIS) {
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(DateUtils.SECOND_IN_MILLIS * 3);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+
+                        if (sending) timedOut = true;
                     }).start();
                     walletManager.updateFee(app);
                     //if the fee is STILL out of date then fail with network problem message

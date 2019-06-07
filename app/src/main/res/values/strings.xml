@@ -1070,4 +1070,9 @@
     <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
     <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
     <string name="Font.Celevenia">Celevenia.otf</string>
+
+    <!-- Priority Fee -->
+    <string name="FeeSelector.priority">Priority</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
+    <string name="FeeSelector.priorityTime">10-30 minutes</string>
 </resources>
