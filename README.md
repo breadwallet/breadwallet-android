@@ -1,8 +1,7 @@
 LoafWallet for Android
 ----------------------------------
 
-![download](/images/icon-google-play.png)
-(https://play.google.com/store/apps/details?id=com.loafwallet)
+![download](/images/icon-google-play.png)(https://play.google.com/store/apps/details?id=com.loafwallet)
 
 ### The easy and secure Litecoin wallet
 
@@ -36,7 +35,7 @@ Simplicity and ease-of-use is **LoafWallet**'s core design principle. A simple r
 3. Download NDK r15c from the [NDK Archives](https://developer.android.com/ndk/downloads/older_releases.html)
 4. Clone this repo & init submodules
 ```bash
-$ git clone https://github.com/CryptoCloudInc/slicewallet-android.git
+$ git clone https://github.com/litecoin-foundation/loafwallet-android
 $ git submodule init
 $ git submodule update
 ```
