@@ -26,6 +26,7 @@ package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
@@ -93,4 +94,8 @@ public class IntroActivity extends BRActivity {
         });
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
+    }
 }
