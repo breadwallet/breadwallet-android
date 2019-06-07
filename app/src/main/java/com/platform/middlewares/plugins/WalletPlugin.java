@@ -4,8 +4,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -394,6 +396,14 @@ public class WalletPlugin implements Plugin {
         }
 
         final BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(app, currency);
+
+        // If BTC, set trade fee option and wallet fee rate to 'priority'
+        if (currency.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)) {
+            FeeRepository.getInstance(app).putPreferredFeeOptionForCurrency(currency, FeeOption.PRIORITY);
+            BigDecimal fee = FeeRepository.getInstance(app).getFeeByCurrency(currency, FeeOption.PRIORITY);
+            ((WalletBitcoinManager) wm).getWallet().setFeePerKb(fee.longValue());
+        }
+
         String addr = wm.undecorateAddress(toAddress);
         if (Utils.isNullOrEmpty(addr)) {
             BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
