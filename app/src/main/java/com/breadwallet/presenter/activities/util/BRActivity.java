@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -115,7 +116,7 @@ public abstract class BRActivity extends FragmentActivity {
     }
 
     @Override
-        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
@@ -235,5 +236,24 @@ public abstract class BRActivity extends FragmentActivity {
         if (!(this instanceof DisabledActivity)) {
             UiUtils.showWalletDisabled(this);
         }
+    }
+
+    /**
+     * Check if there is an overlay view over the screen, if an overlay view is found the event won't be dispatched and
+     * a dialog with a warning will be shown.
+     *
+     * @param event The touch screen event.
+     * @return boolean Return true if this event was consumed or if an overlay view was found.
+     */
+    protected boolean checkOverlayAndDispatchTouchEvent(MotionEvent event) {
+        // Filter obscured touches by consuming them.
+        if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) != 0) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
+                        getString(R.string.Android_screenAlteringMessage));
+            }
+            return true;
+        }
+        return super.dispatchTouchEvent(event);
     }
 }
