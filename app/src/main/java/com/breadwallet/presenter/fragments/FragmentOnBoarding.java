@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,6 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.EventUtils;
@@ -21,6 +21,7 @@ public class FragmentOnBoarding extends Fragment {
 
     private Button mBuyButton;
     private Button mBrowseButton;
+    private NavigationListener onBoardingHost;
 
     public FragmentOnBoarding() {
     }
@@ -73,13 +74,12 @@ public class FragmentOnBoarding extends Fragment {
                     if (BRKeyStore.getPinCode(getContext()).length() > 0) {
                         OnBoardingActivity.showBuyScreen(getActivity());
                     } else {
-                        OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.BUY_SCREEN);
-                        OnBoardingActivity.setupPin(getActivity());
+                        onBoardingHost.setupPin(OnBoardingActivity.NextScreen.BUY_SCREEN);
                     }
                 });
                 mBrowseButton.setOnClickListener(view -> {
                     toggleButtons(false);
-                    OnBoardingActivity.progressToBrowse(getActivity());
+                    onBoardingHost.progressToBrowse();
                 });
                 break;
         }
@@ -92,9 +92,29 @@ public class FragmentOnBoarding extends Fragment {
         toggleButtons(true);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onBoardingHost = (NavigationListener)context;
+    }
+
     private void toggleButtons(Boolean isEnabled) {
         mBrowseButton.setEnabled(isEnabled);
         mBuyButton.setEnabled(isEnabled);
     }
 
+    /**
+     * Interface to provide interaction for navigation between the fragment and the host activity.
+     */
+    public interface NavigationListener {
+        /**
+         * Navigate to PIN setup screen.
+         */
+        void setupPin(OnBoardingActivity.NextScreen nextScreen);
+
+        /**
+         * Navigate to home activity.
+         */
+        void progressToBrowse();
+    }
 }
