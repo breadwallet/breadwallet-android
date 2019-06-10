@@ -28,7 +28,7 @@ public class WriteDownActivity extends BRActivity {
         /* Activity was shown from settings.  */
         SETTINGS(1),
 
-        /* Activity was shown from settings.  */
+        /* Activity was shown from onboarding.  */
         ON_BOARDING(2),
 
         /* Invalid reason.  */
