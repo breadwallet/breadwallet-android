@@ -41,15 +41,14 @@ import android.widget.ImageButton;
 
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
-import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentOnBoarding;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
@@ -61,13 +60,12 @@ import java.util.List;
  * New on boarding activity
  */
 
-public class OnBoardingActivity extends BRActivity {
+public class OnBoardingActivity extends BRActivity implements FragmentOnBoarding.NavigationListener {
     private static final String TAG = OnBoardingActivity.class.getSimpleName();
     private List<View> mIndicators = new ArrayList<>();
     private ImageButton mBackButton;
     private Button mSkipButton;
-
-    private static NextScreen mNextScreen;
+    private View mLoadingView;
 
     private enum OnBoardingEvent {
         GLOBE_PAGE_APPEARED,
@@ -89,22 +87,17 @@ public class OnBoardingActivity extends BRActivity {
         mIndicators.add(findViewById(R.id.indicator2));
         mIndicators.add(findViewById(R.id.indicator3));
         mBackButton = findViewById(R.id.button_back);
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EventUtils.pushEvent(EventUtils.EVENT_BACK_BUTTON);
-                onBackPressed();
-            }
+        mBackButton.setOnClickListener(v -> {
+            EventUtils.pushEvent(EventUtils.EVENT_BACK_BUTTON);
+            onBackPressed();
         });
         mSkipButton = findViewById(R.id.button_skip);
-        mSkipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSkipButton.setEnabled(false);
-                EventUtils.pushEvent(EventUtils.EVENT_SKIP_BUTTON);
-                progressToBrowse(OnBoardingActivity.this);
-            }
+        mSkipButton.setOnClickListener(v -> {
+            mSkipButton.setEnabled(false);
+            EventUtils.pushEvent(EventUtils.EVENT_SKIP_BUTTON);
+            progressToBrowse();
         });
+        mLoadingView = findViewById(R.id.loading_view);
 
         OnBoardingPagerAdapter onBoardingPagerAdapter = new OnBoardingPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(onBoardingPagerAdapter);
@@ -158,31 +151,7 @@ public class OnBoardingActivity extends BRActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE) {
-            if (data != null) {
-                boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
-                if (isPinAccepted) {
-                    switch (mNextScreen) {
-                        case BUY_SCREEN:
-                            showPaperKeyActivity(PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name());
-                            break;
-                        case HOME_SCREEN:
-                            showPaperKeyActivity(null);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    private void showPaperKeyActivity(String onDoneExtra) {
-        Intent intent = new Intent(this, WriteDownActivity.class);
-        intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.ON_BOARDING.getValue());
-        if (!Utils.isNullOrEmpty(onDoneExtra)) {
-            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, onDoneExtra);
-        }
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+        mLoadingView.setVisibility(View.GONE);
     }
 
     private void sendEvent(OnBoardingEvent event) {
@@ -199,24 +168,29 @@ public class OnBoardingActivity extends BRActivity {
         }
     }
 
-    // TODO Create an interface in FragmentOnBoarding to call this method without it being static.
-    public static void progressToBrowse(Activity activity) {
+    public void progressToBrowse() {
         EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST);
-        if (BRKeyStore.getPinCode(activity).length() > 0) {
-            UiUtils.startBreadActivity(activity, true);
+        if (BRKeyStore.getPinCode(this).length() > 0) {
+            UiUtils.startBreadActivity(this, true);
         } else {
-            OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.HOME_SCREEN);
-            setupPin(activity);
+            setupPin(OnBoardingActivity.NextScreen.HOME_SCREEN);
         }
     }
 
-    // TODO Create an interface in FragmentOnBoarding to call this method without it being static.
-    public static void setupPin(final Activity activity) {
-        PostAuth.getInstance().onCreateWalletAuth(activity, false, () -> {
-            APIClient.getInstance(activity).updatePlatform();
-            Intent intent = new Intent(activity, InputPinActivity.class);
-            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+    public void setupPin(final NextScreen nextScreen) {
+        mLoadingView.setVisibility(View.VISIBLE);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            PostAuth.getInstance().onCreateWalletAuth(this, false, () -> {
+                APIClient.getInstance(OnBoardingActivity.this).updatePlatform();
+                Intent intent = new Intent(OnBoardingActivity.this, InputPinActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                if (nextScreen == NextScreen.BUY_SCREEN) {
+                    intent.putExtra(InputPinActivity.EXTRA_PIN_NEXT_SCREEN, PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name());
+                    intent.putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, true);
+                }
+                OnBoardingActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                OnBoardingActivity.this.startActivity(intent);
+            });
         });
     }
 
@@ -225,10 +199,6 @@ public class OnBoardingActivity extends BRActivity {
             View view = mIndicators.get(i);
             view.setBackground(getDrawable(i == position ? R.drawable.page_indicator_active : R.drawable.page_indicator_inactive));
         }
-    }
-
-    public static void setNextScreen(NextScreen nextScreen) {
-        mNextScreen = nextScreen;
     }
 
     public static class OnBoardingPagerAdapter extends FragmentPagerAdapter {
