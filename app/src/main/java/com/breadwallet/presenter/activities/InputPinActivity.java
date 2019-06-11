@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
@@ -173,5 +174,10 @@ public class InputPinActivity extends BRActivity implements PinLayout.PinLayoutL
         }
         startActivity(intent);
         overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
     }
 }
