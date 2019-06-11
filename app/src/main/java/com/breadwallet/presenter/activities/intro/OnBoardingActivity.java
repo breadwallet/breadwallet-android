@@ -186,8 +186,8 @@ public class OnBoardingActivity extends BRActivity implements FragmentOnBoarding
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 if (nextScreen == NextScreen.BUY_SCREEN) {
                     intent.putExtra(InputPinActivity.EXTRA_PIN_NEXT_SCREEN, PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name());
-                    intent.putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, true);
                 }
+                intent.putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, true);
                 OnBoardingActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 OnBoardingActivity.this.startActivity(intent);
             });
