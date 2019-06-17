@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -128,7 +128,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
             Log.e(TAG, "updateFiatRates: ", e);
         }
         if (set.size() > 0) {
-            RatesDataSource.getInstance(context).putCurrencies(context, set);
+            RatesRepository.getInstance(context).putCurrencyRates(set);
         }
 
     }
@@ -234,7 +234,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
                 CurrencyEntity currencyEntity = new CurrencyEntity(code, "", Float.valueOf(rate), currencyCode);
                 ratesList.add(currencyEntity);
             }
-            RatesDataSource.getInstance(context).putCurrencies(context, ratesList);
+            RatesRepository.getInstance(context).putCurrencyRates(ratesList);
         } catch (JSONException e) {
             BRReportsManager.reportBug(e);
             Log.e(TAG, "fetchCryptoRates: ", e);
@@ -310,7 +310,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
                     currencyEntities.add(currencyEntity);
                 }
             }
-            RatesDataSource.getInstance(context).putCurrencies(context, currencyEntities);
+            RatesRepository.getInstance(context).putCurrencyRates(currencyEntities);
         } catch (JSONException ex) {
             Log.e(TAG, "fetchNewTokensData: ", ex);
         }
@@ -320,8 +320,9 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
         if (currencyEntity == null) {
             return null;
         }
-        CurrencyEntity ethBtcExchangeRate = RatesDataSource.getInstance(context)
-                .getCurrencyByCode(context, WalletEthManager.ETH_CURRENCY_CODE, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+
+        CurrencyEntity ethBtcExchangeRate = RatesRepository.getInstance(context)
+                .getCurrencyByCode(WalletEthManager.ETH_CURRENCY_CODE, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (ethBtcExchangeRate == null) {
             Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null");
             return null;

@@ -1,7 +1,7 @@
 package com.breadwallet.wallet.wallets;
 
 import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.BREthereumTransfer;
 
 import java.math.BigDecimal;
 
@@ -32,37 +32,51 @@ import java.math.BigDecimal;
 public class CryptoTransaction {
 
     private BRCoreTransaction mCoreTx;
-    private BREthereumTransaction mEtherTx;
+    private BREthereumTransfer mEtherTx;
 
     public CryptoTransaction(Object transaction) {
-        if (transaction instanceof BRCoreTransaction) mCoreTx = (BRCoreTransaction) transaction;
-        else if (transaction instanceof BREthereumTransaction)
-            mEtherTx = (BREthereumTransaction) transaction;
+        if (transaction instanceof BRCoreTransaction) {
+            mCoreTx = (BRCoreTransaction) transaction;
+        } else if (transaction instanceof BREthereumTransfer) {
+            mEtherTx = (BREthereumTransfer) transaction;
+        }
     }
 
     public BigDecimal getTxSize() {
-        if (mCoreTx != null) return new BigDecimal(mCoreTx.getSize());
-        else if (mEtherTx != null) return BigDecimal.ZERO;
-        else return null;
+        if (mCoreTx != null) {
+            return new BigDecimal(mCoreTx.getSize());
+        } else if (mEtherTx != null) {
+            return BigDecimal.ZERO;
+        } else {
+            return null;
+        }
     }
 
     public BigDecimal getTxStandardFee() {
-        if (mCoreTx != null) return new BigDecimal(mCoreTx.getStandardFee());
-        else if (mEtherTx != null) return BigDecimal.ZERO;
-        else return null;
+        if (mCoreTx != null) {
+            return new BigDecimal(mCoreTx.getStandardFee());
+        } else if (mEtherTx != null) {
+            return BigDecimal.ZERO;
+        } else {
+            return null;
+        }
     }
 
     public String getHash() {
-        if (mCoreTx != null) return mCoreTx.getReverseHash();
-        else if (mEtherTx != null) return mEtherTx.getHash();
-        else return null;
+        if (mCoreTx != null) {
+            return mCoreTx.getReverseHash();
+        } else if (mEtherTx != null) {
+            return mEtherTx.getOriginationTransactionHash();
+        } else {
+            return null;
+        }
     }
 
     public BRCoreTransaction getCoreTx() {
         return mCoreTx;
     }
 
-    public BREthereumTransaction getEtherTx() {
+    public BREthereumTransfer getEtherTx() {
         return mEtherTx;
     }
 }
