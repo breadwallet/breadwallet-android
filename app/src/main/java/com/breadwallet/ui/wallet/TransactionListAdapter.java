@@ -148,7 +148,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         BREthereumToken tkn = null;
         if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getTo())) {
-            tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
+            tkn = WalletEthManager.getInstance(mContext.getApplicationContext()).node.lookupToken(item.getTo());
         }
         // it's a token transfer ETH tx
         if (tkn != null) {
@@ -164,7 +164,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.getTransactionAmount().setText(formattedAmount);
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getCurrencyCode());
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
+        int confirms = (blockHeight == Integer.MAX_VALUE || blockHeight == 0) ? 0 : lastBlockHeight - blockHeight + 1;
         int level;
         if (confirms <= 0) {
             long relayCount = wm.getRelayCount(item.getTxHash());

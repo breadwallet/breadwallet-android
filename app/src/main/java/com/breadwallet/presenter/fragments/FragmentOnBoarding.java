@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
@@ -17,6 +18,9 @@ import com.breadwallet.tools.util.EventUtils;
 
 public class FragmentOnBoarding extends Fragment {
     private static final String ARGUMENT_POSITION = "com.breadwallet.presenter.fragments.FragmentOnBoarding.POSITION";
+
+    private Button mBuyButton;
+    private Button mBrowseButton;
 
     public FragmentOnBoarding() {
     }
@@ -39,8 +43,8 @@ public class FragmentOnBoarding extends Fragment {
             position = getArguments().getInt(ARGUMENT_POSITION);
         }
 
-        BRButton buttonBuy = rootLayout.findViewById(R.id.button_buy);
-        BRButton buttonBrowse = rootLayout.findViewById(R.id.button_browse);
+        mBuyButton = rootLayout.findViewById(R.id.button_buy);
+        mBrowseButton = rootLayout.findViewById(R.id.button_browse);
         BaseTextView primaryText = rootLayout.findViewById(R.id.primary_text);
         BaseTextView secondaryText = rootLayout.findViewById(R.id.secondary_text);
         BaseTextView lastScreenText = rootLayout.findViewById(R.id.last_screen_title);
@@ -57,33 +61,40 @@ public class FragmentOnBoarding extends Fragment {
                 break;
             case 2:
                 lastScreenText.setVisibility(View.VISIBLE);
-                buttonBuy.setVisibility(View.VISIBLE);
-                buttonBrowse.setVisibility(View.VISIBLE);
+                mBuyButton.setVisibility(View.VISIBLE);
+                mBrowseButton.setVisibility(View.VISIBLE);
                 primaryText.setVisibility(View.INVISIBLE);
                 secondaryText.setVisibility(View.INVISIBLE);
                 imageView.setVisibility(View.INVISIBLE);
                 lastScreenText.setVisibility(View.VISIBLE);
-                buttonBuy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BUY_COIN);
-                        if (BRKeyStore.getPinCode(getContext()).length() > 0) {
-                            OnBoardingActivity.showBuyScreen(getActivity());
-                        } else {
-                            OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.BUY_SCREEN);
-                            OnBoardingActivity.setupPin(getActivity());
-                        }
+                mBuyButton.setOnClickListener(view -> {
+                    toggleButtons(false);
+                    EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BUY_COIN);
+                    if (BRKeyStore.getPinCode(getContext()).length() > 0) {
+                        OnBoardingActivity.showBuyScreen(getActivity());
+                    } else {
+                        OnBoardingActivity.setNextScreen(OnBoardingActivity.NextScreen.BUY_SCREEN);
+                        OnBoardingActivity.setupPin(getActivity());
                     }
                 });
-                buttonBrowse.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        OnBoardingActivity.progressToBrowse(getActivity());
-                    }
+                mBrowseButton.setOnClickListener(view -> {
+                    toggleButtons(false);
+                    OnBoardingActivity.progressToBrowse(getActivity());
                 });
                 break;
         }
         return rootLayout;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        toggleButtons(true);
+    }
+
+    private void toggleButtons(Boolean isEnabled) {
+        mBrowseButton.setEnabled(isEnabled);
+        mBuyButton.setEnabled(isEnabled);
     }
 
 }

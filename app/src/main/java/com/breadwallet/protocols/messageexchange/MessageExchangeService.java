@@ -818,7 +818,7 @@ public final class MessageExchangeService extends JobIntentService {
     private void processPaymentRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
-            WalletEthManager walletManager = WalletEthManager.getInstance(this);
+            WalletEthManager walletManager = WalletEthManager.getInstance(getApplicationContext());
 
             // Assume ETH wallet type for now.
             CryptoRequest cryptoRequest = new CryptoRequest.Builder()
@@ -885,7 +885,7 @@ public final class MessageExchangeService extends JobIntentService {
     private void processCallRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
-            WalletEthManager walletManager = WalletEthManager.getInstance(this);
+            WalletEthManager walletManager = WalletEthManager.getInstance(getApplicationContext());
             // Assume ETH wallet type for now.
             CryptoRequest cryptoRequest = new CryptoRequest.Builder()
                     .setAddress(requestMetaData.getAddress())
@@ -952,7 +952,7 @@ public final class MessageExchangeService extends JobIntentService {
                 transactionHash,
                 requestMetaData.getCurrencyCode(),
                 requestMetaData.getAmount(),
-                WalletEthManager.getInstance(this).getAddress(this),
+                WalletEthManager.getInstance(getApplicationContext()).getAddress(this),
                 requestMetaData.getTokenSymbol(),
                 requestMetaData.getTokenAmount(),
                 requestMetaData.getAddress(),

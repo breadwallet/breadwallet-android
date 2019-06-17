@@ -129,5 +129,4 @@ public class TxUiHolder {
         return isReceived;
     }
 
-
 }
