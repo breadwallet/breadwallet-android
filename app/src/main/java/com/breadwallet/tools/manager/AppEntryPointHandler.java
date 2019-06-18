@@ -110,7 +110,7 @@ public final class AppEntryPointHandler {
      * @param url The URL in question.
      * @return  Returns true if the URL is a deep link to be rendered by the platform.
      */
-    private static boolean isDeepLinkPlatformUrl(String url) {
+    public static boolean isDeepLinkPlatformUrl(String url) {
         if (!Utils.isNullOrEmpty(url)) {
             Uri uri = Uri.parse(url);
             return BRD_HOST.equalsIgnoreCase(uri.getHost())
@@ -142,7 +142,7 @@ public final class AppEntryPointHandler {
      * @param context The context in which we are operating.
      * @param url The URL to be rendered.
      */
-    private static void processPlatformDeepLinkingUrl(Context context, String url) {
+    public static void processPlatformDeepLinkingUrl(Context context, String url) {
         Uri uri = Uri.parse(url);
         String platformPath = "/".concat(uri.getPath().replace(PLATFORM_PATH_PREFIX, ""));
         try {
