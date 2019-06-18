@@ -15,8 +15,10 @@ import org.json.JSONArray;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -94,6 +96,7 @@ public class BRSharedPrefs {
     private static final String DEBUG_WEB_PLATFORM_URL = "debug_web_platform_url";
     private static final String HTTP_SERVER_PORT = "http_server_port";
     private static final String REWARDS_ANIMATION_SHOWN = "rewardsAnimationShown";
+    private static final String READ_IN_APP_NOTIFICATIONS = "readInAppNotifications";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -671,7 +674,7 @@ public class BRSharedPrefs {
     /**
      * Saves the web platform debug URL to the shared preferences.
      *
-     * @param context Execution context.
+     * @param context             Execution context.
      * @param webPlatformDebugURL The web platform debug URL to be persisted.
      */
     public static void putWebPlatformDebugURL(Context context, String webPlatformDebugURL) {
@@ -699,6 +702,34 @@ public class BRSharedPrefs {
     public static void putHttpServerPort(Context context, int port) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit().putInt(HTTP_SERVER_PORT, port).apply();
+    }
+
+    /**
+     * Save the given in-app notification id into the collection of read message.
+     *
+     * @param context        Execution context.
+     * @param notificationId The id of the message that has been read.
+     */
+    public static void putReadInAppNotificationId(Context context, String notificationId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        Set<String> readIds = prefs.getStringSet(READ_IN_APP_NOTIFICATIONS, new HashSet<>());
+        String stringId = notificationId;
+        if (!readIds.contains(stringId)) {
+            Set<String> updatedSet = new HashSet<>(readIds);
+            updatedSet.add(stringId);
+            prefs.edit().putStringSet(READ_IN_APP_NOTIFICATIONS, updatedSet).apply();
+        }
+    }
+
+    /**
+     * Get the ids of the in-app notification that has been read.
+     *
+     * @param context Execution context.
+     * @return A set with the ids of the messages that has been read.
+     */
+    public static Set<String> getReadInAppNotificationIds(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getStringSet(READ_IN_APP_NOTIFICATIONS, new HashSet<>());
     }
 
 }
