@@ -28,6 +28,7 @@ import android.content.Context
 import android.util.Log
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.EventUtils
 import com.platform.network.InAppMessagesClient
 
 /**
@@ -56,6 +57,8 @@ object MessagesRepository {
         // for notifications.
         val inAppMessage = inAppMessages[0]
         Log.d(TAG, "getInAppNotification: ${inAppMessage.title}")
+        EventUtils.pushEvent(EventUtils.EVENT_IN_APP_NOTIFICATION_RECEIVED,
+                mapOf(EventUtils.EVENT_ATTRIBUTE_NOTIFICATION_ID to inAppMessage.id))
         return inAppMessage
     }
 
