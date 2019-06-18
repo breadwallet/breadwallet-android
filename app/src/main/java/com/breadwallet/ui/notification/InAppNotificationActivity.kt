@@ -49,6 +49,8 @@ class InAppNotificationActivity : BRActivity() {
         private const val EXT_NOTIFICATION = "com.breadwallet.ui.notification.EXT_NOTIFICATION"
 
         fun start(context: Context, notification: InAppMessage) {
+            EventUtils.pushEvent(EventUtils.EVENT_IN_APP_NOTIFICATION_APPEARED,
+                    mapOf(EventUtils.EVENT_ATTRIBUTE_NOTIFICATION_ID to notification.id))
             val intent = Intent(context, InAppNotificationActivity::class.java).apply {
                 putExtra(EXT_NOTIFICATION, notification)
             }
@@ -70,6 +72,10 @@ class InAppNotificationActivity : BRActivity() {
         notification_btn.setOnClickListener {
             viewModel.markAsRead()
             val actionUrl = viewModel.notification.actionButtonUrl
+            val notificationId = viewModel.notification.id
+            EventUtils.pushEvent(EventUtils.EVENT_IN_APP_NOTIFICATION_CTA_BUTTON,
+                    mapOf(EventUtils.EVENT_ATTRIBUTE_NOTIFICATION_ID to notificationId,
+                            EventUtils.EVENT_ATTRIBUTE_NOTIFICATION_CTA_URL to actionUrl))
             if (!actionUrl.isNullOrEmpty()) {
                 if (AppEntryPointHandler.isDeepLinkPlatformUrl(actionUrl)) {
                     AppEntryPointHandler.processPlatformDeepLinkingUrl(this, actionUrl)
@@ -89,6 +95,8 @@ class InAppNotificationActivity : BRActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         viewModel.markAsRead()
+        EventUtils.pushEvent(EventUtils.EVENT_IN_APP_NOTIFICATION_DISMISSED,
+                mapOf(EventUtils.EVENT_ATTRIBUTE_NOTIFICATION_ID to viewModel.notification.id))
     }
 
 }
