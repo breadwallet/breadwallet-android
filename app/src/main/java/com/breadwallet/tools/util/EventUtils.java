@@ -132,6 +132,7 @@ public final class EventUtils {
     public static final String EVENT_IN_APP_NOTIFICATION_CTA_BUTTON = "inAppNotifications.inAppNotification.notificationCTAButton";
     public static final String EVENT_ATTRIBUTE_NOTIFICATION_ID = "id";
     public static final String EVENT_ATTRIBUTE_NOTIFICATION_CTA_URL = "cta_url";
+    public static final String EVENT_ATTRIBUTE_MESSAGE_ID = "message_id";
 
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
