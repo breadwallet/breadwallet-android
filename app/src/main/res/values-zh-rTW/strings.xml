@@ -38,8 +38,6 @@
     <string name="Alert.error">錯誤</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@breadwallet.com</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">您的 BRD 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android 金鑰儲存區錯誤</string>
     <!-- No internet alert message -->

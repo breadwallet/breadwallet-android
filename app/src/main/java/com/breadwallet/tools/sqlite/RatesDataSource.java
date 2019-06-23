@@ -69,10 +69,10 @@ public class RatesDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putCurrencies(Context app, Collection<CurrencyEntity> currencyEntities) {
+    public boolean putCurrencies(Context app, Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null || currencyEntities.size() <= 0) {
             Log.e(TAG, "putCurrencies: failed: " + currencyEntities);
-            return;
+            return false;
         }
 
         try {
@@ -100,11 +100,14 @@ public class RatesDataSource implements BRDataSourceInterface {
                     list.onChanged();
                 }
             }
+
+            return true;
         } catch (Exception ex) {
             Log.e(TAG, "putCurrencies: failed: ", ex);
             BRReportsManager.reportBug(ex);
 
             //Error in between database transaction
+            return false;
         } finally {
             database.endTransaction();
             closeDatabase();

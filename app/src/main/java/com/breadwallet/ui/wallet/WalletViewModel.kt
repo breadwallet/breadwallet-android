@@ -27,10 +27,13 @@ package com.breadwallet.ui.wallet
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.text.format.DateUtils
 import android.util.Log
 import com.breadwallet.presenter.entities.TxUiHolder
+import com.breadwallet.repository.WalletRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.services.SyncService
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.CurrencyUtils
@@ -49,14 +52,14 @@ import java.math.BigDecimal
  */
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
 
-    companion object {
-        private val TAG = WalletViewModel::class.toString()
-        private const val CONFIRMED_BLOCKS_NUMBER = 6
-    }
-
     val balanceLiveData = MutableLiveData<Balance>()
     val txListLiveData = MutableLiveData<List<TxUiHolder>>()
-    var currencyToWatch = ""
+    val progressLiveData = Transformations.map(WalletRepository.getInstance(application).walletsLiveData)
+    { wallets ->
+        val wallet = wallets.findLast { wallet -> wallet.currencyCode == targetCurrencyCode }
+        if (wallet?.isSyncing == true) wallet.syncProgress else SyncService.PROGRESS_FINISH
+    }
+    var targetCurrencyCode = ""
         set(value) {
             field = value
             WalletsMaster.getInstance().getWalletByIso(getApplication(), value)
@@ -74,16 +77,21 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     private val mRatesListener: RatesDataSource.OnDataChanged
     private val mTxModifiedListener: OnTxListModified
 
+    companion object {
+        private val TAG = WalletViewModel::class.java.toString()
+        private const val CONFIRMED_BLOCKS_NUMBER = 6
+    }
+
     init {
         mBalanceListener = object : BalanceUpdateListener {
             override fun onBalanceChanged(currencyCode: String, newBalance: BigDecimal) {
-                if (currencyCode == currencyToWatch && balanceLiveData.hasActiveObservers()) {
+                if (currencyCode == targetCurrencyCode && balanceLiveData.hasActiveObservers()) {
                     refreshBalanceAndTxList()
                 }
             }
 
             override fun onBalancesChanged(balanceMap: Map<String, BigDecimal>) {
-                if (balanceMap.containsKey(currencyToWatch) && balanceLiveData.hasActiveObservers()) {
+                if (balanceMap.containsKey(targetCurrencyCode) && balanceLiveData.hasActiveObservers()) {
                     refreshBalanceAndTxList()
                 }
             }
@@ -120,7 +128,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val cryptoBalance = CurrencyUtils.getFormattedAmount(context,
                 walletManager.currencyCode, walletManager.balance,
                 walletManager.uiConfiguration.maxDecimalPlacesForUi)
-        val balance = Balance(currencyToWatch, bigExchangeRate, fiatExchangeRate,
+        val balance = Balance(targetCurrencyCode, bigExchangeRate, fiatExchangeRate,
                 fiatBalance, cryptoBalance)
         balanceLiveData.postValue(balance)
         refreshTxList()

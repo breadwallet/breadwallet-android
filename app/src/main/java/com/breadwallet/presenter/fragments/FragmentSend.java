@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -378,6 +379,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 //not allowed now
                 if (!UiUtils.isClickAllowed()) return;
+
+                // TODO: Refactor: the logic in this listener, some of which is business logic, should be re-organized
+
                 WalletsMaster master = WalletsMaster.getInstance();
                 final BaseWalletManager wm = master.getCurrentWallet(getActivity());
                 //get the current wallet used
@@ -403,11 +407,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     sayInvalidClipboardData();
                     return;
                 }
-                final Activity app = getActivity();
+                final Activity activity = getActivity();
                 if (!wm.isAddressValid(req.getAddress())) {
 
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress),
-                            app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(activity, activity.getString(R.string.Alert_error), activity.getString(R.string.Send_noAddress),
+                            activity.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -429,12 +433,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 if (WalletsMaster.getInstance().isCurrencyCodeErc20(getActivity(), wm.getCurrencyCode())) {
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
-                    BaseWalletManager ethWm = WalletEthManager.getInstance(app);
+                    BaseWalletManager ethWm = WalletEthManager.getInstance(activity.getApplicationContext());
                     BigDecimal balance = ethWm.getBalance();
                     if (rawFee.compareTo(balance) > 0) {
                         if (allFilled) {
-                            BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, rawFee);
-                            sayInsufficientEthereumForFee(ethVal.setScale(ethWm.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE).toPlainString());
+                            BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(activity, rawFee);
+                            sayInsufficientEthereumForFee(ethVal.setScale(ethWm.getMaxDecimalPlaces(activity), BRConstants.ROUNDING_MODE).toPlainString());
                             allFilled = false;
                         }
                     }
@@ -442,14 +446,20 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                 if (allFilled) {
                     final CryptoRequest item = new CryptoRequest.Builder().setAddress(req.getAddress()).setAmount(cryptoAmount).setMessage(comment).build();
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            SendManager.sendTransaction(getActivity(), item, wm, null);
 
-                        }
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                        SendManager.sendTransaction(activity, item, wm, (transactionHash, succeeded) -> {
+                            // Show success or error message
+                            if (!Utils.isNullOrEmpty(transactionHash) && succeeded) {
+                                UiUtils.showBreadSignal(activity, activity.getString(R.string.Alerts_sendSuccess),
+                                    activity.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, () -> UiUtils.killAllFragments(activity));
+                            } else {
+                                UiUtils.showBreadSignal(activity, activity.getString(R.string.Alert_error),
+                                    activity.getString(R.string.Alerts_sendFailure), R.drawable.ic_error_outline_black_24dp, () -> UiUtils.killAllFragments(activity));
+                            }
+
+                        });
                     });
-
                     closeWithAnimation();
                 }
             }
@@ -698,7 +708,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String formattedFee = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode, isoFee);
 
         if (isWalletErc20) {
-            BaseWalletManager ethWm = WalletEthManager.getInstance(context);
+            BaseWalletManager ethWm = WalletEthManager.getInstance(context.getApplicationContext());
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(context, rawFee, null);
             formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getCurrencyCode() : mSelectedCurrencyCode, isoFee);
         }

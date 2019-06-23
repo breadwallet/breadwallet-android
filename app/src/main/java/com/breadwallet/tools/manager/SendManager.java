@@ -115,7 +115,7 @@ public class SendManager {
         } catch (InsufficientFundsException ignored) {
             BigDecimal fee = walletManager.getEstimatedFee(payment.getAmount(), "");
             if (WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode()) &&
-                    fee.compareTo(WalletEthManager.getInstance(app).getBalance()) > 0) {
+                    fee.compareTo(WalletEthManager.getInstance(app.getApplicationContext()).getBalance()) > 0) {
                 sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, WalletEthManager.ETH_CURRENCY_CODE, fee)));
             } else
                 sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_insufficientFunds));
@@ -398,7 +398,7 @@ public class SendManager {
         if (isErc20) {
             formattedCryptoTotal = "";
             formattedTotal = "";
-            BaseWalletManager ethWm = WalletEthManager.getInstance(ctx);
+            BaseWalletManager ethWm = WalletEthManager.getInstance(ctx.getApplicationContext());
             formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getCurrencyCode(), feeForTx);
             formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
             feeLabel = ctx.getString(R.string.Confirmation_feeLabelETH) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";

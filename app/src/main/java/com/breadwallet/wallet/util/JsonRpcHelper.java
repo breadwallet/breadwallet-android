@@ -58,16 +58,18 @@ public class JsonRpcHelper {
                 + "&address=" + address + "&contractaddress=" + contractAddress;
     }
 
-    public static String createEthereumTransactionsUrl(String address) {
+    public static String createEthereumTransactionsUrl(String address, long fromBlock, long toBlock) {
         return APIClient.getBaseURL() + BRD_ETH_TX_ENDPOINT
-                + "query?module=account&action=txlist&address=" + address;
+                + "query?module=account&action=txlist&address=" + address
+                + "&startblock=" + fromBlock
+                + "&endblock=" + toBlock;
     }
 
-    public static String createLogsUrl(String address, String contract, String event) {
-
+    public static String createLogsUrl(String address, String contract, String event, long fromBlock, long toBlock) {
         return APIClient.getBaseURL() + BRD_ETH_TX_ENDPOINT + "query?"
                 + "module=logs&action=getLogs"
-                + "&fromBlock=0&toBlock=latest"
+                + "&fromBlock=" + fromBlock
+                + "&toBlock=" + toBlock
                 + (null == contract ? "" : ("&address=" + contract))
                 + "&topic0=" + event
                 + "&topic1=" + address

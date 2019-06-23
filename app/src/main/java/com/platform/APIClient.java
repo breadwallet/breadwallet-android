@@ -131,6 +131,7 @@ public class APIClient {
     private static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
     private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
     private static final String HEADER_USER_AGENT = "User-agent";
+    private static final String HEADER_CONTENT_TYPE = "content-type";
 
     // User Agent constants
     public static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
@@ -378,6 +379,8 @@ public class APIClient {
             if (mHTTPClient == null) {
                 mHTTPClient = new OkHttpClient.Builder().followRedirects(false)
                         .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                        .readTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                        .writeTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
             }
 
@@ -476,14 +479,16 @@ public class APIClient {
                 int code = res.code();
                 Map<String, String> headers = new HashMap<>();
                 for (String name : res.headers().names()) {
-                    headers.put(name, res.header(name));
+                    headers.put(name.toLowerCase(), res.header(name));
                 }
 
                 byte[] bytesBody = null;
-                String contentType = null;
+                String contentType = headers.get(HEADER_CONTENT_TYPE);
                 try {
                     ResponseBody body = res.body();
-                    contentType = body.contentType() == null ? "" : body.contentType().type();
+                    if (contentType == null) {
+                        contentType = body.contentType() != null ? body.contentType().type() : "";
+                    }
                     bytesBody = body.bytes();
                 } catch (IOException ex) {
                     Log.e(TAG, "createBrResponse: ", ex);
