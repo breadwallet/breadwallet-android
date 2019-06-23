@@ -92,7 +92,7 @@ public class WalletsMaster {
 
     //expensive operation (uses the KVStore), only update when needed and not in a loop.
     public synchronized void updateWallets(Context app) {
-        WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+        WalletEthManager ethWallet = WalletEthManager.getInstance(app.getApplicationContext());
         if (ethWallet == null) {
             return; //return empty wallet list if ETH is null (meaning no public key yet)
         }
@@ -161,7 +161,7 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         }
         if (WalletEthManager.ETH_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
-            return WalletEthManager.getInstance(app);
+            return WalletEthManager.getInstance(app.getApplicationContext());
         } else if (isCurrencyCodeErc20(app, currencyCode)) {
             return WalletTokenManager.getTokenWalletByIso(app, currencyCode);
         }
@@ -256,7 +256,7 @@ public class WalletsMaster {
     }
 
     public boolean isCurrencyCodeErc20(Context app, String iso) {
-        WalletEthManager walletEthManager = WalletEthManager.getInstance(app);
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(app.getApplicationContext());
         if (Utils.isNullOrEmpty(iso) || walletEthManager == null) {
             return false;
         }

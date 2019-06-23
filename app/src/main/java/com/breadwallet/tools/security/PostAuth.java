@@ -12,7 +12,8 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
+import com.breadwallet.core.ethereum.BREthereumEWM;
+import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -280,7 +281,7 @@ public class PostAuth {
                     } else {
                         WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
                         GenericTransactionMetaData genericTransactionMetaData = mCryptoRequest.getGenericTransactionMetaData();
-                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(
+                        tx = new CryptoTransaction(ethWallet.getWallet().createTransferGeneric(
                                 genericTransactionMetaData.getTargetAddress(),
                                 genericTransactionMetaData.getAmount(),
                                 genericTransactionMetaData.getAmountUnit(), String.valueOf(genericTransactionMetaData.getGasPrice()),
@@ -292,20 +293,10 @@ public class PostAuth {
                     if (mCryptoRequest.getGenericTransactionMetaData() == null
                             && (mWalletManager.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             || WalletsMaster.getInstance().isCurrencyCodeErc20(context, mWalletManager.getCurrencyCode()))) {
-                        final WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+                        final WalletEthManager walletEthManager = WalletEthManager.getInstance(context.getApplicationContext());
                         final Timer timeoutTimer = new Timer();
-                        final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new WalletEthManager.OnTransactionEventListener() {
-                            @Override
-                            public void onTransactionEvent(BREthereumLightNode.Listener.TransactionEvent event) {
-                                switch (event) {
-                                    case GAS_ESTIMATE_UPDATED:
-                                        Log.d(TAG, "onTransactionEvent: UPDATED");
-                                        timeoutTimer.cancel();
-                                        continueWithPayment(context, rawPhrase, tx);
-                                        break;
-                                }
-                            }
-                        };
+                        final WalletEthManager.OnTransactionEventListener onTransactionEventListener = new TransactionEventListener(context, walletEthManager, tx, rawPhrase, timeoutTimer);
+
                         // If getting the gas estimate takes longer than 30 seconds, show error message.
                         timeoutTimer.schedule(new TimerTask() {
                             @Override
@@ -419,6 +410,47 @@ public class PostAuth {
 
     public interface AuthenticationSuccessListener {
         void onAuthenticatedSuccess();
+    }
+
+    /**
+     * Listener for transaction events emitted from WalletEthManager
+     */
+    class TransactionEventListener implements WalletEthManager.OnTransactionEventListener {
+        final private Context mContext;
+        final private WalletEthManager mWalletEthManager;
+        final private CryptoTransaction mTransaction;
+        final private byte[] mRawPhrase;
+        final private Timer mTimeoutTimer;
+
+        /**
+         * Constructor takes various state variables that are necessary when processing transaction events
+         *
+         * @param context the application context
+         * @param walletEthManager reference to the WalletEthManager
+         * @param transaction the transaction for which this listener is listening to events
+         * @param rawPhrase the phrase used in processing transactions
+         * @param timeoutTimer the timer that signals when a timeout has occurred
+         */
+        TransactionEventListener(Context context, WalletEthManager walletEthManager, CryptoTransaction transaction, byte[] rawPhrase, Timer timeoutTimer) {
+            mContext = context;
+            mWalletEthManager = walletEthManager;
+            mTransaction = transaction;
+            mRawPhrase = rawPhrase;
+            mTimeoutTimer = timeoutTimer;
+        }
+
+        public void onTransactionEvent(BREthereumEWM.TransactionEvent event, BREthereumTransfer transaction, BREthereumEWM.Status status) {
+            // Ensure event is for the transaction this listener is interested in
+            if (transaction != null && mTransaction != null && mTransaction.getEtherTx() != null && transaction.getIdentifier().equals(mTransaction.getEtherTx().getIdentifier())) {
+                switch (event) {
+                    case GAS_ESTIMATE_UPDATED:
+                        Log.d(TAG, "onTransactionEvent: GAS ESTIMATE UPDATED");
+                        mTimeoutTimer.cancel();
+                        mWalletEthManager.removeTransactionEventListener(this);
+                        continueWithPayment(mContext, mRawPhrase, mTransaction);
+                }
+            }
+        }
     }
 
 }

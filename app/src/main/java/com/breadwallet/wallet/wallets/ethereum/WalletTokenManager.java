@@ -5,15 +5,12 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.core.ethereum.BREthereumWallet;
+import com.breadwallet.core.ethereum.*;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
@@ -82,19 +79,18 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (mTokenWallets.containsKey(token.getAddress().toLowerCase())) {
             return mTokenWallets.get(token.getAddress().toLowerCase());
         } else {
-            BREthereumWallet w = walletEthManager.node.getWallet(token);
-
-            if (w != null) {
-                w.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
-                w.estimateGasPrice();
-                if (w.getToken() == null) {
+            BREthereumWallet wallet = walletEthManager.node.getWallet(token);
+            if (wallet != null) {
+                wallet.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
+                wallet.estimateGasPrice();
+                if (wallet.getToken() == null) {
                     BRReportsManager.reportBug(new NullPointerException("getToken is null:" + token.getAddress()));
                     return null;
                 }
-                WalletTokenManager wm = new WalletTokenManager(walletEthManager, w);
-                mTokenWallets.put(w.getToken().getAddress().toLowerCase(), wm);
+                WalletTokenManager walletTokenManager = new WalletTokenManager(walletEthManager, wallet);
+                mTokenWallets.put(wallet.getToken().getAddress().toLowerCase(), walletTokenManager);
 
-                return wm;
+                return walletTokenManager;
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Failed to find token by address: " + token.getAddress()), true);
             }
@@ -105,7 +101,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
-        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getBRDToken());
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getTokenBRD());
         if (brdWallet.getToken() == null) {
             BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
             return null;
@@ -119,7 +115,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     public synchronized static WalletTokenManager getTokenWalletByIso(Context context, String iso) {
 
-        WalletEthManager walletEthManager = WalletEthManager.getInstance(context);
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(context.getApplicationContext());
 
         long start = System.currentTimeMillis();
         if (mTokenIsos.size() <= 0) mapTokenIsos(context);
@@ -157,7 +153,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         mWalletToken.sign(tx.getEtherTx(), new String(seed));
         mWalletToken.submit(tx.getEtherTx());
-        String hash = tx.getEtherTx().getHash();
+        String hash = tx.getHash();
         return hash == null ? new byte[0] : hash.getBytes();
     }
 
@@ -205,7 +201,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public CryptoTransaction[] getTxs(Context context) {
         long start = System.currentTimeMillis();
-        BREthereumTransaction[] txs = mWalletToken.getTransactions();
+        BREthereumTransfer[] txs = mWalletToken.getTransfers();
         CryptoTransaction[] arr = new CryptoTransaction[txs.length];
         for (int i = 0; i < txs.length; i++) {
             arr[i] = new CryptoTransaction(txs[i]);
@@ -227,7 +223,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             fee = BigDecimal.ZERO;
         } else {
-            String feeString = mWalletToken.transactionEstimatedFee(amount.toPlainString(),
+            String feeString = mWalletToken.transferEstimatedFee(amount.toPlainString(),
                     BREthereumAmount.Unit.TOKEN_INTEGER, BREthereumAmount.Unit.ETHER_WEI);
             fee = Utils.isNullOrEmpty(feeString) ? BigDecimal.ZERO : new BigDecimal(feeString);
         }
@@ -316,7 +312,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address) {
-        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_INTEGER);
+        BREthereumTransfer tx = mWalletToken.createTransfer(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_INTEGER);
         return new CryptoTransaction(tx);
     }
 
@@ -386,7 +382,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     @Override
     public BigDecimal getFiatExchangeRate(Context context) {
-        BigDecimal fiatData = getFiatForToken(context, BigDecimal.ONE, BRSharedPrefs.getPreferredFiatIso(context));
+        BigDecimal fiatData = RatesRepository.getInstance(context)
+                .getFiatForCrypto(BigDecimal.ONE, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(context));
         if (fiatData == null) {
             return BigDecimal.ZERO;
         }
@@ -415,7 +412,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             return getCryptoForSmallestCrypto(context, amount).multiply(new BigDecimal(ent.rate));
         }
         BigDecimal cryptoAmount = getCryptoForSmallestCrypto(context, amount);
-        BigDecimal fiatData = getFiatForToken(context, cryptoAmount, iso);
+        BigDecimal fiatData = RatesRepository.getInstance(context).getFiatForCrypto(cryptoAmount, getCurrencyCode(), iso);
         if (fiatData == null) {
             return null;
         }
@@ -457,38 +454,14 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         return getSmallestCryptoForCrypto(context, convertedCryptoAmount);
     }
 
-    //pass in a token amount and return the specified amount in fiat
-    //erc20 rates are in BTC (thus this math)
-    private BigDecimal getFiatForToken(Context context, BigDecimal tokenAmount, String
-            code) {
-        //fiat rate for btc
-        CurrencyEntity rate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
-        //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-
-        if (rate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC or ETH");
-            return null;
-        }
-        if (tokenBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC or ETH rates for token");
-            return null;
-        }
-        if (tokenBtcRate.rate == 0 || rate.rate == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(rate.rate));
-    }
-
     //pass in a fiat amount and return the specified amount in tokens
     //Token rates are in BTC (thus this math)
     private BigDecimal getTokensForFiat(Context context, BigDecimal fiatAmount, String
             code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
+        CurrencyEntity btcRate = RatesRepository.getInstance(context).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity tokenBtcRate = RatesRepository.getInstance(context).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -501,7 +474,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         return fiatAmount.divide(new BigDecimal(tokenBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
     }
 
-    public static void printTxInfo(BREthereumTransaction tx) {
+    public static void printTxInfo(BREthereumTransfer tx) {
         StringBuilder builder = new StringBuilder();
         builder.append("|Tx:");
         builder.append("|Amount:");

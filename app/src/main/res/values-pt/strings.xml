@@ -38,8 +38,6 @@
     <string name="Alert.error">Erro</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Há um problema com a KeyStore do seu SO Android. Por favor, contacte support@breadwallet.com</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">Os seus dados encriptados pelo BRD foram recentemente invalidados porque o seu ecrã de bloqueio do Android estava desativado.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Erro na KeyStore do Android</string>
     <!-- No internet alert message -->
