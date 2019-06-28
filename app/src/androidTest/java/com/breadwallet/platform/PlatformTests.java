@@ -64,11 +64,6 @@ public class PlatformTests {
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(
             TestActivity.class);
 
-    //loading the native library
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
-
     @Test
     public void testFeePerKbFetch() {
         long fee = APIClient.getInstance(mActivityRule.getActivity()).feePerKb();

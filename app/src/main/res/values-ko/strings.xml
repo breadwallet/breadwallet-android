@@ -38,8 +38,6 @@
     <string name="Alert.error">오류</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">귀하의 안드로이드 OS 키스토어에 문제가 있습니다, support@breadwallet.com로 연락해 주세요</string>
-    <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">귀하의 안드로이드 잠금 화면이 꺼져서 귀하의 암호화 된 데이터가 최근 무효화 되었습니다.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
     <!-- No internet alert message -->
