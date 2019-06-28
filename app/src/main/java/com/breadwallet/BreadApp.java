@@ -281,9 +281,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         APIClient.getInstance(this).updatePlatform();
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> UserMetricsUtil.makeUserMetricsRequest(mInstance));
-                        BRApiManager.getInstance().startTimer(this);
                     }
                 }
+                BRApiManager.getInstance().startTimer(this);
                 break;
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");
@@ -295,8 +295,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         EventUtils.pushToServer(BreadApp.this);
                     });
                     HTTPServer.getInstance().stopServer();
-                    BRApiManager.getInstance().stopTimerTask();
                 }
+                BRApiManager.getInstance().stopTimerTask();
                 SyncUpdateHandler.INSTANCE.cancelWalletSync();
                 break;
             default:
