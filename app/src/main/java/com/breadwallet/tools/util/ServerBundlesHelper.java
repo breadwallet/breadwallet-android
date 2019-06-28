@@ -60,7 +60,6 @@ public final class ServerBundlesHelper {
     private static final String TAR_EXTENSION = ".tar";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    private static final String BRD_WEB_DEV = "brd-web-dev";
     private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     public static final String BUNDLES_FOLDER = "/bundles";
@@ -69,8 +68,6 @@ public final class ServerBundlesHelper {
     private static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG
             ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
     private static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
-    public static final String[] BRD_WEB_BUNDLES = {BRD_WEB, BRD_WEB_STAGING, BRD_WEB_DEV};
-    public static final String[] BRD_TOKEN_BUNDLES = {BRD_TOKEN_ASSETS, BRD_TOKEN_ASSETS_STAGING};
 
     /**
      * Available server bundle types.
@@ -178,6 +175,28 @@ public final class ServerBundlesHelper {
                 throw new IllegalArgumentException("Unexpected bundle: " + type.name());
         }
         return !Utils.isNullOrEmpty(debugBundle) ? debugBundle : defaultBundle;
+    }
+
+    /**
+     * Saves the given web platform debug URL into the shared preferences, if build is DEBUG.
+     *
+     * @param context Execution context.
+     * @param webPlatformDebugURL The web platform debug URL.
+     */
+    public static void setWebPlatformDebugURL(Context context, String webPlatformDebugURL) {
+        if (BuildConfig.DEBUG) {
+            BRSharedPrefs.putWebPlatformDebugURL(context, webPlatformDebugURL);
+        }
+    }
+
+    /**
+     * Returns the web platform debug URL from the shared preferences, if build is DEBUG.
+     *
+     * @param context Execution context.
+     * @return The web platform debug URL or empty.
+     */
+    public static String getWebPlatformDebugURL(Context context) {
+        return BuildConfig.DEBUG ? BRSharedPrefs.getWebPlatformDebugURL(context) : "";
     }
 
     /**

@@ -33,6 +33,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -43,7 +44,6 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -73,6 +73,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -82,7 +84,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public static final int ONE_BITCOIN_IN_SATOSHIS = 100000000; // 1 Bitcoin in satoshis, 100 millions
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
-    private static final int SYNC_MAX_RETRY = 3;
+    // TODO Android code shouldn't retry at all, all the retries should be handled by core, temporary fix for CORE-266
+    private static final int SYNC_MAX_RETRY = 1;
+    private static final int SYNC_RETRY_DELAY_SECONDS = 3;
 
     public static final String BITCOIN_CURRENCY_CODE = "BTC";
     public static final String BITCASH_CURRENCY_CODE = "BCH";
@@ -430,8 +434,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        CurrencyEntity btcFiatRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, BRSharedPrefs.getPreferredFiatIso(app));
-        CurrencyEntity currencyBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity btcFiatRate = RatesRepository.getInstance(app).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, BRSharedPrefs.getPreferredFiatIso(app));
+        CurrencyEntity currencyBtcRate = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcFiatRate == null || currencyBtcRate == null) {
             return BigDecimal.ZERO;
         }
@@ -455,17 +459,18 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         if (amount.doubleValue() == 0) {
             return amount;
         }
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        BigDecimal rate;
         if (ent == null) {
-            ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), iso);
+            rate = getFiatExchangeRate(app);
+        } else {
+            rate = new BigDecimal(ent.rate);
         }
-        if (ent == null) {
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             return null;
         }
-        double rate = ent.rate;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(new BigDecimal(rate));
+        return cryptoAmount.multiply(rate);
     }
 
     @Override
@@ -473,25 +478,21 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         if (fiatAmount.doubleValue() == 0) {
             return fiatAmount;
         }
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), iso);
-        if (ent == null) {
+        BigDecimal rate = getFiatExchangeRate(app);
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             return null;
         }
-        double rate = ent.rate;
-        //convert c to $.
         int unit = BRSharedPrefs.getCryptoDenomination(app, getCurrencyCode());
         BigDecimal result = BigDecimal.ZERO;
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
-                result = fiatAmount.divide(new BigDecimal(rate), 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
+                result = fiatAmount.divide(rate, 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
                 break;
             case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = fiatAmount.divide(new BigDecimal(rate), getMaxDecimalPlaces(app), ROUNDING_MODE);
+                result = fiatAmount.divide(rate, getMaxDecimalPlaces(app), ROUNDING_MODE);
                 break;
         }
         return result;
-
     }
 
     @Override
@@ -535,15 +536,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getCurrencyCode(), iso);
-        if (ent == null) {
+        BigDecimal rate = getFiatExchangeRate(app);
+        if (rate == null || rate.equals(BigDecimal.ZERO)) {
             Log.e(getTag(), "getSmallestCryptoForFiat: no exchange rate data!");
             return amount;
         }
-        double rate = ent.rate;
         //convert c to $.
-        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
+        return amount.divide(rate, 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
     // TODO only ETH and ERC20
@@ -700,26 +699,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public void txPublished(final String error) {
         super.txPublished(error);
-        final Context app = BreadApp.getBreadContext();
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (app instanceof Activity) {
-                    EventUtils.sendTransactionEvent(error);
-                    UiUtils.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    if (!((Activity) app).isDestroyed()) {
-                                        ((Activity) app).getFragmentManager().popBackStack();
-                                    }
-                                }
-                            });
-                }
-
-            }
-        });
-
     }
 
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
@@ -931,28 +910,19 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         onSyncStopped(error);
 
         if (!Utils.isNullOrEmpty(error)) {
-            if (mSyncRetryCount < SYNC_MAX_RETRY) {
+            if (mSyncRetryCount < SYNC_MAX_RETRY && networkIsReachable()) {
                 Log.e(getTag(), "syncStopped: Retrying: " + mSyncRetryCount);
                 //Retry
                 mSyncRetryCount++;
-                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getPeerManager().connect();
-                    }
-                });
-
+                ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+                Runnable retry = () -> getPeerManager().connect();
+                worker.schedule(retry, SYNC_RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
             } else {
                 //Give up
                 Log.e(getTag(), "syncStopped: Giving up: " + mSyncRetryCount);
                 mSyncRetryCount = 0;
                 if (BuildConfig.DEBUG) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show());
                 }
             }
         }

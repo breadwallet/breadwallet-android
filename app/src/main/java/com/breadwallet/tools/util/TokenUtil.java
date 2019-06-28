@@ -167,13 +167,13 @@ public final class TokenUtil {
         }
     }
 
+    // TODO refactor to avoid passing in context.
     private static ArrayList<TokenItem> parseJsonToTokenList(Context context, String jsonString) {
         ArrayList<TokenItem> tokenItems = new ArrayList<>();
-
+        WalletEthManager ethWalletManager = WalletEthManager.getInstance(context.getApplicationContext());
         // Iterate over the token list and announce each token to Core.
         try {
             JSONArray tokenListArray = new JSONArray(jsonString);
-            WalletEthManager ethWalletManager = WalletEthManager.getInstance(context);
 
             for (int i = 0; i < tokenListArray.length(); i++) {
                 JSONObject tokenObject = tokenListArray.getJSONObject(i);
@@ -210,9 +210,7 @@ public final class TokenUtil {
 
                 if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
                     ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
-
                     // Keep a local reference to the token list, so that we can make token symbols to their
-
                     // gradient colors in WalletListAdapter
                     TokenItem item = new TokenItem(address, symbol, name, null, isSupported);
 
@@ -225,9 +223,10 @@ public final class TokenUtil {
                     tokenItems.add(item);
                 }
             }
-
+            ethWalletManager.node.announceTokenComplete(0, true);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing token list response from server:", e);
+            ethWalletManager.node.announceTokenComplete(0, false);
         }
         return tokenItems;
     }

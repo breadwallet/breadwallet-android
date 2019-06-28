@@ -91,6 +91,7 @@
             android:name=".presenter.activities.InputPinActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".presenter.activities.intro.RecoverActivity"
             android:launchMode="singleTask"
@@ -260,6 +261,18 @@
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/x/link-wallet"
+                    android:scheme="https" />
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="brd.com"
+                    android:pathPrefix="/x/debug"
                     android:scheme="https" />
 
             </intent-filter>

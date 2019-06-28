@@ -9,9 +9,9 @@ android {
     buildToolsVersion = '28.0.3'
     ext {
         brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
-        brdProductVersion = 8     // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 5       // Build version. Increase for each new build. Maximum value: 999
+        brdProductVersion = 9     // Minor version. Usually affected by product. Maximum value: 99
+        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 13      // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -33,21 +33,10 @@ android {
         buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
 
         multiDexEnabled true
-        // Similar to other properties in the defaultConfig block,
-        // you can configure the ndk block for each product flavor
-        // in your build configuration.
-        ndk {
-            // Specifies the ABI configurations of your native
-            // libraries Gradle should build and package with your APK.
-            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
-            //, 'armeabi' (not supported by NDK 17.0.4754217)
-        }
-        externalNativeBuild {
-            cmake {
-                //Comment since it's the default but keep the code as sample for the future arguments.
-                //arguments '-DANDROID_TOOLCHAIN=clang'
-            }
-        }
+
+        // Core Library
+        missingDimensionStrategy 'network', 'onMainnet'
+
     }
     signingConfigs {
         FakeSigningConfig {
@@ -65,15 +54,6 @@ android {
         // TODO: Update when WorkManager alpha10 becomes available.
         exclude 'META-INF/proguard/androidx-annotations.pro'
     }
-    externalNativeBuild {
-        cmake {
-            // When you specify a version of CMake, as shown below,
-            // the Android plugin searches for its binary within your
-            // PATH environmental variable.
-            path "CMakeLists.txt"  //path can only be set outside (in android block)
-
-        }
-    }
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
     productFlavors {
@@ -82,32 +62,16 @@ android {
             dimension "mode"
             resValue "string", "app_name", "BRD"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
-            externalNativeBuild {
-                cmake {
-                    // When you specify a version of CMake, as shown below,
-                    // the Android plugin searches for its binary within your
-                    // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=0"
-                    targets "core"
-                }
-            }
-            //signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
+            signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
+            missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
             applicationId = "com.breadwallet.testnet"
             dimension "mode"
             resValue "string", "app_name", "BRD Testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
-            externalNativeBuild {
-                cmake {
-                    // When you specify a version of CMake, as shown below,
-                    // the Android plugin searches for its binary within your
-                    // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=1"
-                    targets "core"
-                }
-            }
             signingConfig signingConfigs.FakeSigningConfig
+            missingDimensionStrategy 'network', 'onTestnet'
         }
     }
     lintOptions {
@@ -131,11 +95,6 @@ android {
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
-
-            ndk {
-                minifyEnabled = false
-                debuggable = false
-            }
         }
         debug {
             applicationIdSuffix '.debug'
@@ -144,25 +103,13 @@ android {
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
-            
-            externalNativeBuild {
-                cmake {
-                    cFlags "-DBITCOIN_DEBUG=1"
-                }
-            }
 
-            ndk {
-                minifyEnabled = false
-                debuggable = true
-                jniDebuggable = true
-            }
         }
 
     }
     sourceSets {
         main {
-            java.srcDirs = ['src/main/java', 'src/main/jni/breadwallet-core/Java/root',
-                            'src/main/jni/breadwallet-core/ethereum/Java/root',
+            java.srcDirs = ['src/main/java',
                             '${protobuf.generatedFilesBaseDir}/main/javalite']
         }
     }
@@ -173,7 +120,14 @@ android {
         }
     }
 
-    task downloadBundles() {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+task downloadBundles {
+    doLast {
         def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
         def stagingHost = "api.breadwallet.com"
         def releaseHost = "stage2.breadwallet.com"
@@ -189,7 +143,7 @@ android {
             }
 
             def folder = file(resFolder)
-            if( !folder.exists() ) {
+            if (!folder.exists()) {
                 folder.mkdirs()
             }
             println("Downloading: ${fileUrl} into ${resFolder}")
@@ -197,11 +151,6 @@ android {
                 new URL(fileUrl).withInputStream { from -> out << from }
             }
         }
-    }
-    preBuild.dependsOn(downloadBundles)
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -242,8 +191,12 @@ repositories {
 }
 
 dependencies {
+    implementation project(':CoreLibrary')
+
     implementation 'commons-io:commons-io:2.4'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+        transitive = true
+    }
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation("android.arch.work:work-runtime:1.0.0-alpha09") {
         exclude group: 'com.google.guava', module: 'listenablefuture'
