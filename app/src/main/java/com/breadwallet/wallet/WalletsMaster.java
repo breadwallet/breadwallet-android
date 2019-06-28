@@ -146,6 +146,7 @@ public class WalletsMaster {
         currencyCodes.add(WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         currencyCodes.add(WalletBitcoinManager.BITCASH_CURRENCY_CODE);
         currencyCodes.add(WalletEthManager.ETH_CURRENCY_CODE);
+        currencyCodes.add(WalletTokenManager.BRD_CURRENCY_CODE);
         for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
             currencyCodes.add(tokenItem.symbol.toUpperCase());
         }
