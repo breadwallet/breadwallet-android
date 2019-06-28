@@ -24,14 +24,11 @@ import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.ShimmerLayout;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.services.SyncService;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.squareup.picasso.Picasso;
 

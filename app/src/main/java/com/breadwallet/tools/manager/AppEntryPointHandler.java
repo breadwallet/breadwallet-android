@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -49,8 +52,11 @@ public final class AppEntryPointHandler {
     private static final String BRD_HOST = "brd.com";
     private static final String BRD_PROTOCOL = "https://";
     private static final String PLATFORM_PATH_PREFIX = "/x/platform/";
+    private static final String PLATFORM_DEBUG_PATH_PREFIX = "/x/debug";
     private static final String PLATFORM_URL_FORMAT = "/link?to=%s";
     private static final String PATH_ENCODING = "utf-8";
+    private static final String QUERY_PARAM_WEB_BUNDLE = "web_bundle";
+    private static final String QUERY_PARAM_BUNDLE_DEBUG_URL = "bundle_debug_url";
 
     /**
      * A utility class used to process QR codes URL links to start our application.
@@ -69,9 +75,17 @@ public final class AppEntryPointHandler {
         return CryptoUriParser.isCryptoUrl(context, result) || BRBitId.isBitId(result) || isWalletPairUrl(result);
     }
 
+    /**
+     * Performs the appropriate processing given a URL parsed from an Intent.
+     *
+     * @param context The context in which we are operating.
+     * @param result The URL that encapsulates the processing to be done.
+     */
     private static void processIntentResult(final Context context, String result) {
         if (isDeepLinkPlatformUrl(result)) {
             processPlatformDeepLinkingUrl(context, result);
+        } else if (isDeepLinkPlatformDebugUrl(result)) {
+            processDeepLinkPlatformDebugUrl(context, result);
         } else if (CryptoUriParser.isCryptoUrl(context, result)) {
             // Handle external click with crypto scheme.
             CryptoUriParser.processRequest(context, result,
@@ -90,6 +104,12 @@ public final class AppEntryPointHandler {
         }
     }
 
+    /**
+     * Returns whether the given URL is a deep link to be rendered by the platform.
+     *
+     * @param url The URL in question.
+     * @return  Returns true if the URL is a deep link to be rendered by the platform.
+     */
     private static boolean isDeepLinkPlatformUrl(String url) {
         if (!Utils.isNullOrEmpty(url)) {
             Uri uri = Uri.parse(url);
@@ -100,6 +120,28 @@ public final class AppEntryPointHandler {
         return false;
     }
 
+    /**
+     * Returns whether the given URL is a deep link encoding a debug setting to be applied.
+     *
+     * @param url The URL in question.
+     * @return Returns true if the URL is a deep link encoding a debug setting to be applied.
+     */
+    private static boolean isDeepLinkPlatformDebugUrl(String url) {
+        if (!Utils.isNullOrEmpty(url)) {
+            Uri uri = Uri.parse(url);
+            return BRD_HOST.equalsIgnoreCase(uri.getHost())
+                    && !Utils.isNullOrEmpty(uri.getPath())
+                    && uri.getPath().startsWith(PLATFORM_DEBUG_PATH_PREFIX);
+        }
+        return false;
+    }
+
+    /**
+     * Handles routing a platform deep link to an appropriate Activity to be rendered.
+     *
+     * @param context The context in which we are operating.
+     * @param url The URL to be rendered.
+     */
     private static void processPlatformDeepLinkingUrl(Context context, String url) {
         Uri uri = Uri.parse(url);
         String platformPath = "/".concat(uri.getPath().replace(PLATFORM_PATH_PREFIX, ""));
@@ -111,6 +153,27 @@ public final class AppEntryPointHandler {
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "processPlatformDeepLinkingUrl: ", e);
         }
+    }
+
+    /**
+     * Handles applying a deep link debug setting and routes to the appropriate landing Activity.
+     *
+     * @param context The context in which we are operating.
+     * @param url The URL encoding the debug setting to be applied.
+     */
+    private static void processDeepLinkPlatformDebugUrl(Context context, String url) {
+        Uri uri = Uri.parse(url);
+        String webBundle = uri.getQueryParameter(QUERY_PARAM_WEB_BUNDLE);
+        String webBundleUrl = uri.getQueryParameter(QUERY_PARAM_BUNDLE_DEBUG_URL);
+
+        if (!Utils.isNullOrEmpty(webBundleUrl)) {
+            ServerBundlesHelper.setWebPlatformDebugURL(context, webBundleUrl);
+        } else if (!Utils.isNullOrEmpty(webBundle)) {
+            ServerBundlesHelper.setDebugBundle(context, ServerBundlesHelper.Type.WEB, webBundle);
+        }
+
+        Intent intent = new Intent(context, HomeActivity.class);
+        context.startActivity(intent);
     }
 
     /**

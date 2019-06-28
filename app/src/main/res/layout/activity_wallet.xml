@@ -191,67 +191,25 @@
 
     </LinearLayout>
 
-    <include
-        android:id="@+id/delisted_token_layout"
-        layout="@layout/view_delisted_token"
+    <LinearLayout
+        android:id="@+id/list_headers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar_layout"
-        android:visibility="gone" />
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/progress_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar_layout"
-        android:animateLayoutChanges="true"
-        android:background="@color/sync_toolbar"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <RelativeLayout
-            android:id="@+id/progress_layout_margins"
+        <include
+            android:id="@+id/delisted_token_layout"
+            layout="@layout/view_delisted_token"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:visibility="gone" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
-                android:id="@+id/sync_status_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="Synced Through 01/01/70 00:00"
-                android:textColor="@color/sync_toolbar_text"
-                android:textSize="14sp" />
+        <include
+            layout="@layout/wallet_sync_progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
-                android:id="@+id/syncing_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="5dp"
-                android:layout_toStartOf="@id/sync_progress"
-                android:text="@string/SyncingView.syncing"
-                android:textColor="@color/sync_toolbar_text"
-                android:textSize="14sp" />
-
-            <ProgressBar
-                android:id="@+id/sync_progress"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"
-                android:indeterminate="true"
-                android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
-                android:indeterminateTint="@color/sync_toolbar_text"
-                android:keepScreenOn="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </RelativeLayout>
     </LinearLayout>
 
     <android.support.design.widget.CoordinatorLayout
@@ -259,7 +217,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_toolbar_layout1"
-        android:layout_below="@id/delisted_token_layout">
+        android:layout_below="@id/list_headers">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tx_list"

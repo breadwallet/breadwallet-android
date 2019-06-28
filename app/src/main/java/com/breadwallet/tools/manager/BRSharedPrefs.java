@@ -89,6 +89,7 @@ public class BRSharedPrefs {
     private static final String APP_BACKGROUNDED_FROM_HOME = "appBackgroundedFromHome";
     private static final String DEBUG_HOST = "debug_host";
     private static final String DEBUG_SERVER_BUNDLE = "debug_server_bundle";
+    private static final String DEBUG_WEB_PLATFORM_URL = "debug_web_platform_url";
     private static final String HTTP_SERVER_PORT = "http_server_port";
     private static final String REWARDS_ANIMATION_SHOWN = "rewardsAnimationShown";
 
@@ -664,6 +665,28 @@ public class BRSharedPrefs {
     public static void putDebugBundle(Context context, ServerBundlesHelper.Type bundleType, String bundle) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit().putString(DEBUG_SERVER_BUNDLE + bundleType.name(), bundle).apply();
+    }
+
+    /**
+     * Get the web platform debug URL from shared preferences or empty, if not available.
+     *
+     * @param context Execution context.
+     * @return Returns the web platform debug URL or empty.
+     */
+    public static String getWebPlatformDebugURL(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(DEBUG_WEB_PLATFORM_URL, "");
+    }
+
+    /**
+     * Saves the web platform debug URL to the shared preferences.
+     *
+     * @param context Execution context.
+     * @param webPlatformDebugURL The web platform debug URL to be persisted.
+     */
+    public static void putWebPlatformDebugURL(Context context, String webPlatformDebugURL) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putString(DEBUG_WEB_PLATFORM_URL, webPlatformDebugURL).apply();
     }
 
     /**

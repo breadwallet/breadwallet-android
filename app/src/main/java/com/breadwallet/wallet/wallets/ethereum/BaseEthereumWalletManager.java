@@ -3,8 +3,8 @@ package com.breadwallet.wallet.wallets.ethereum;
 import android.content.Context;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.BREthereumEWM;
+import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -56,7 +56,7 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     @Override
     public boolean isAddressValid(String address) {
-        return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX) && BREthereumLightNode.addressIsValid(address);
+        return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX) && BREthereumEWM.addressIsValid(address);
     }
 
     @Override
@@ -103,7 +103,7 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        BREthereumTransaction[] txs = getWallet().getTransactions();
+        BREthereumTransfer[] txs = getWallet().getTransfers();
         int blockHeight = (int) getEthereumWallet().getBlockHeight();
         if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
             BRSharedPrefs.putLastBlockHeight(app, getCurrencyCode(), blockHeight);
@@ -111,13 +111,13 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         if (txs != null && txs.length > 0) {
             List<TxUiHolder> uiTxs = new ArrayList<>();
             for (int i = txs.length - 1; i >= 0; i--) { //revere order
-                BREthereumTransaction tx = txs[i];
+                BREthereumTransfer tx = txs[i];
                 if (tx.isSubmitted()) {
                     BREthereumAmount.Unit feeUnit = getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             ? BREthereumAmount.Unit.ETHER_WEI : BREthereumAmount.Unit.ETHER_GWEI;
                     uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(getEthereumWallet().getWallet().getAccount().getPrimaryAddress()),
-                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash())
-                            ? null : tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(feeUnit)),
+                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getOriginationTransactionHash())
+                            ? null : tx.getOriginationTransactionHash().getBytes(), tx.getOriginationTransactionHash(), new BigDecimal(tx.getFee(feeUnit)),
                             tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                             new BigDecimal(tx.getAmount(getUnit())), true));
                 }
