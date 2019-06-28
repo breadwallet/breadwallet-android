@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.TypesConverter;
@@ -79,7 +80,10 @@ public class HTTPFileMiddleware implements Middleware {
 
         File temp = null;
         APIClient.BRResponse brResp = new APIClient.BRResponse();
-        if (DEBUG_URL == null) {
+
+        // Platform Debug URL may be set above or via shared preferences
+        String webPlatformDebugURL = DEBUG_URL != null ? DEBUG_URL : BRSharedPrefs.getWebPlatformDebugURL(app);
+        if (Utils.isNullOrEmpty(webPlatformDebugURL)) {
             // fetch the file locally
             String requestedFile = APIClient.getInstance(app).getExtractedPath(app, ServerBundlesHelper.getBundle(app, ServerBundlesHelper.Type.WEB), target);
             Log.d(TAG, "Request local file -> " + requestedFile);
@@ -122,10 +126,10 @@ public class HTTPFileMiddleware implements Middleware {
 
         } else {
             // download the file from the debug endpoint
-            String debugUrl = DEBUG_URL + target;
+            webPlatformDebugURL += target;
 
             Request debugRequest = new Request.Builder()
-                    .url(debugUrl)
+                    .url(webPlatformDebugURL)
                     .get().build();
             brResp = APIClient.getInstance(app).sendRequest(debugRequest, false);
         }

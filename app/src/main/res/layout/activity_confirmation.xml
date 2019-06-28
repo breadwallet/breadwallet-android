@@ -12,10 +12,13 @@
 
         <RelativeLayout
             android:id="@+id/header"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="64dp"
             android:background="@color/primary_background"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/header_title"

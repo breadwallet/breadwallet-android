@@ -35,6 +35,7 @@ Simplicity is breadwallet's core design principle. A simple backup phrase is all
 4. Go to https://github.com/breadwallet/breadwallet-android and clone or download the project
 5. Open the project with Android Studio and let the project sync
 6. Go to SDK Manager and download all the SDK Platforms and SDK Tools
-7. Initialize the submodules - <code>git submodule init</code>
-8. Update the submodules - <code>git submodule update</code>
-9. Build -> Rebuild Project
+7  If present, remove app/src/main/jni and remove app/src/main/secp
+8. Initialize the submodules - <code>git submodule init</code>
+9. Update the submodules - <code>git submodule update --recursive</code>
+10. Build -> Rebuild Project
