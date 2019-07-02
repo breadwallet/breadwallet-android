@@ -281,6 +281,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         APIClient.getInstance(this).updatePlatform();
 
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> UserMetricsUtil.makeUserMetricsRequest(mInstance));
+                        incrementAppForegroundedCounter();
                     }
                 }
                 BRApiManager.getInstance().startTimer(this);
@@ -381,6 +382,11 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
 
         return isDeviceStateValid;
+    }
+
+    private void incrementAppForegroundedCounter() {
+        BRSharedPrefs.putInt(this, BRSharedPrefs.APP_FOREGROUNDED_COUNT,
+                BRSharedPrefs.getInt(this, BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0) + 1);
     }
 
 }
