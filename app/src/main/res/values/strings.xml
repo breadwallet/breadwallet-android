@@ -1075,4 +1075,14 @@
     <string name="FeeSelector.priority">Priority</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
     <string name="FeeSelector.priorityTime">10-30 minutes</string>
+
+    <!-- Rate app dialog TODO: pending translations -->
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title">Rate BRD</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body">If you love our app, please take a moment to rate it and give us a review.</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp">Rate BRD</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss">No Thanks</string>
 </resources>

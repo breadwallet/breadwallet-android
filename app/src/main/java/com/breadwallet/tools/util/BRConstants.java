@@ -215,6 +215,9 @@ public final class BRConstants {
     public static final String CURRENCY = "currency";
     public static final String UTF_8 = "UTF-8";
 
+    // Number of confirmations required to consider a transaction completed.
+    public static final int CONFIRMED_BLOCKS_NUMBER = 6;
+
     /**
      * Commonly used regular expressions.
      */
