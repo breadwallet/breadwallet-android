@@ -24,6 +24,7 @@
  */
 package com.breadwallet.wallet.util;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 /**
  * Worker in charge of disconnecting the wallets after a delay after the app goes to background.
@@ -46,6 +48,10 @@ public class WalletConnectionCleanUpWorker extends Worker {
 
     private static final String TAG_BACKGROUND_WALLETS_DISCONNECT = "background-wallets-disconnect";
     private static final int DISCONNECT_WALLETS_DELAY_SECONDS = 30;
+
+    public WalletConnectionCleanUpWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
+    }
 
     /**
      * Enqueue job to disconnect all wallets after {@value #DISCONNECT_WALLETS_DELAY_SECONDS} time.
@@ -78,6 +84,6 @@ public class WalletConnectionCleanUpWorker extends Worker {
         for (final BaseWalletManager walletManager : list) {
             walletManager.disconnect(getApplicationContext());
         }
-        return Result.SUCCESS;
+        return Result.success();
     }
 }

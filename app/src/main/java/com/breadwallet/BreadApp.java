@@ -96,6 +96,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         mInstance = this;
 
+        BRSharedPrefs.provideContext(this);
+
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
