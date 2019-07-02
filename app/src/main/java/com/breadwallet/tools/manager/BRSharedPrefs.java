@@ -97,6 +97,9 @@ public class BRSharedPrefs {
     private static final String HTTP_SERVER_PORT = "http_server_port";
     private static final String REWARDS_ANIMATION_SHOWN = "rewardsAnimationShown";
     private static final String READ_IN_APP_NOTIFICATIONS = "readInAppNotifications";
+    public static final String APP_FOREGROUNDED_COUNT = "appForegroundedCount";
+    public static final String APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated";
+    public static final String APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -732,4 +735,57 @@ public class BRSharedPrefs {
         return prefs.getStringSet(READ_IN_APP_NOTIFICATIONS, new HashSet<>());
     }
 
+    /**
+     * Save an int with the given key in the shared preferences.
+     *
+     * @param context Execution context.
+     * @param key     The name of the preference.
+     * @param value   The new value for the preference.
+     */
+    public static void putInt(Context context, String key, int value) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putInt(key, value).apply();
+    }
+
+    /**
+     * Retrieve an int value from the preferences.
+     *
+     * @param key          The name of the preference to retrieve.
+     * @param defaultValue Value to return if this preference does not exist.
+     * @param context      Execution context.
+     * @param key          The name of the preference.
+     * @param defaultValue The default value to return if not present.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    public static int getInt(Context context, String key, int defaultValue) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(key, defaultValue);
+    }
+
+    /**
+     * Save an boolean with the given key in the shared preferences.
+     *
+     * @param context Execution context.
+     * @param key     The name of the preference.
+     * @param value   The new value for the preference.
+     */
+    public static void putBoolean(Context context, String key, boolean value) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(key, value).apply();
+    }
+
+    /**
+     * Retrieve an boolean value from the preferences.
+     *
+     * @param key          The name of the preference to retrieve.
+     * @param defaultValue Value to return if this preference does not exist.
+     * @param context      Execution context.
+     * @param key          The name of the preference.
+     * @param defaultValue The default value to return if not present.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    public static boolean getBoolean(Context context, String key, boolean defaultValue) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(key, defaultValue);
+    }
 }
