@@ -1064,6 +1064,42 @@
     <!-- Missing from native.strings -->
     <!--Screen Altering App Detected-->
     <string name="Alert.ScreenAlteringAppDetected">Screen Altering App Detected</string>
+    <!-- Price Alert List screen title. -->
+    <string name="PriceAlertList.title">Price Alerts</string>
+    <string name="PriceAlertList.priceIncreasedByValue">%1$s is over %2$s</string>
+    <string name="PriceAlertList.priceDecreasedByValue">%1$s is under %2$s</string>
+    <string name="PriceAlertList.percentChanged">%1$s changes %2$s%%</string>
+    <string name="PriceAlertList.percentChangedInDay">%1$s changes %2$s%% in a day</string>
+    <string name="PriceAlertList.percentChangedInDayOrWeek">%1$s changes %2$s%% in a day or week</string>
+    <string name="PriceAlertList.percentIncreased">%1$s increases %2$s%%</string>
+    <string name="PriceAlertList.percentIncreasedInDay">%1$s increases %2$s%% in a day</string>
+    <string name="PriceAlertList.percentIncreasedInDayOrWeek">%1$s increases %2$s%% in a day or week</string>
+    <string name="PriceAlertList.percentDecreased">%1$s decreases %2$s%%</string>
+    <string name="PriceAlertList.percentDecreasedInDay">%1$s decreases %2$s%% in a day</string>
+    <string name="PriceAlertList.percentDecreasedInDayOrWeek">%1$s decreases %2$s%% in a day or week</string>
+    <string name="NewPriceAlert.title">New Price Alert</string>
+    <string name="NewPriceAlert.select">Select</string>
+    <string name="NewPriceAlert.selectCrypto">Select Crypto</string>
+    <string name="NewPriceAlert.selectToCurrency">To Currency</string>
+    <string name="NewPriceAlert.alertWhen">Alert When</string>
+    <string name="NewPriceAlert.priceChangedByValue">Changed</string>
+    <string name="NewPriceAlert.priceChangedByPercent">Changed By %</string>
+    <string name="NewPriceAlert.priceIncreasedByPercent">Increased By %</string>
+    <string name="NewPriceAlert.priceDecreasedByPercent">Decreased By %</string>
+    <string name="NewPriceAlert.value">Value</string>
+    <string name="NewPriceAlert.window">Window</string>
+    <string name="NewPriceAlert.windowAnytime">Anytime</string>
+    <string name="NewPriceAlert.windowInADay">In a Day</string>
+    <string name="NewPriceAlert.windowInADayAndWeek">In a Day and Week</string>
+    <string name="SelectAlertCrypto.title">Select Crypto</string>
+    <string name="SelectForCurrency.title">Select Currency</string>
+    <string name="PriceAlertNotification.title">Price Alert</string>
+    <string name="PriceAlertNotification.channelTitle">Price Alerts</string>
+    <string name="PriceAlertNotification.channelDescription">Price Alerts for your wallets.</string>
+    <string name="PriceAlertNotification.priceTargetUp">%1$s is UP %2$s%% from %3$s to %4$s</string>
+    <string name="PriceAlertNotification.priceTargetDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
+    <string name="PriceAlertNotification.percentChangeUp">%1$s is UP %2$s%% from %3$s to %4$s</string>
+    <string name="PriceAlertNotification.percentChangeDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
 
     <!--Font file names TODO: move to attributes file. -->
     <string name="Font.CircularPro_Bold">CircularPro-Bold.otf</string>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/currency_item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:filterTouchesWhenObscured="true"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:paddingStart="16dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/sub_header"
+        app:brdFont="@string/Font.CircularPro_Medium"/>
+</FrameLayout>

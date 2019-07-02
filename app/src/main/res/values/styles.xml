@@ -39,6 +39,8 @@
         <item name="hide_wallet_button_background">@drawable/remove_wallet_button_dark</item>
         <item name="show_wallet_button_background">@drawable/add_wallet_button_dark</item>
         <item name="toolbar_back_arrow">@drawable/ic_arrow_left_dark</item>
+        <item name="new_price_alert_button">@drawable/ic_add_wallets</item>
+        <item name="save_price_alert_button">@drawable/ic_check_mark_blue</item>
         <item name="back_arrow_secondary">@drawable/ic_arrow_left_white</item>
         <item name="pin_pad_delete_src">@drawable/ic_delete_dark</item>
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
@@ -69,6 +71,8 @@
         <item name="hide_wallet_button_background">@drawable/remove_wallet_button</item>
         <item name="show_wallet_button_background">@drawable/add_wallet_button</item>
         <item name="toolbar_back_arrow">@drawable/ic_arrow_left</item>
+        <item name="new_price_alert_button">@drawable/ic_add_wallets</item>
+        <item name="save_price_alert_button">@drawable/ic_check_mark_blue</item>
         <item name="back_arrow_secondary">@drawable/ic_arrow_left</item>
         <item name="pin_pad_delete_src">@drawable/ic_delete_gray</item>
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_black</item>
@@ -113,4 +117,6 @@
     <attr name="deny_wallet_link_button" format="reference"/>
     <attr name="confirmation_footer_background" format="reference"/>
     <attr name="link_wallet_subtitle_text_color" format="reference"/>
+    <attr name="new_price_alert_button" format="reference"/>
+    <attr name="save_price_alert_button" format="reference"/>
 </resources>
