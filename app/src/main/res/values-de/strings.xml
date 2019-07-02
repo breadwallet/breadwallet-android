@@ -155,7 +155,7 @@
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Verkaufen</string>
     <!-- send button -->
-    <string name="Button.send">senden</string>
+    <string name="Button.send">Senden</string>
     <!-- Settings button label -->
     <string name="Button.settings">Einstellungen</string>
     <!-- Settings button label -->
