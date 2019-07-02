@@ -41,6 +41,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.util.AppReviewPromptManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +72,6 @@ import java.util.List;
  */
 public final class SettingsUtil {
     private static final String TAG = SettingsUtil.class.getSimpleName();
-    private static final String MARKET_URI = "market://details?id=com.breadwallet";
-    private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
-    private static final String APP_STORE_PACKAGE = "com.android.vending";
     private static final String DEVELOPER_OPTIONS_TITLE = "Developer Options";
     private static final String SEND_LOGS = "Send Logs";
     private static final String API_SERVER = "API Server";
@@ -142,15 +140,7 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Intent appStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URI));
-                    appStoreIntent.setPackage(APP_STORE_PACKAGE);
-
-                    activity.startActivity(appStoreIntent);
-                } catch (android.content.ActivityNotFoundException exception) {
-                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_URI)));
-                }
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                AppReviewPromptManager.INSTANCE.openGooglePlay(activity);
             }
         }, false, R.drawable.ic_review));
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_rewards), "", new View.OnClickListener() {
