@@ -141,8 +141,8 @@ public class TxUiHolder {
      * @return True, if the transaction is complete; false, otherwise.
      */
     public boolean isComplete(Context context, String currencyCode) {
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 :
-                BRSharedPrefs.getLastBlockHeight(context, currencyCode) - blockHeight + 1;
+        int confirms = (blockHeight == Integer.MAX_VALUE || blockHeight == 0) ?
+                0 : BRSharedPrefs.getLastBlockHeight(context, currencyCode) - blockHeight + 1;
         return confirms >= BRConstants.CONFIRMED_BLOCKS_NUMBER;
     }
 
