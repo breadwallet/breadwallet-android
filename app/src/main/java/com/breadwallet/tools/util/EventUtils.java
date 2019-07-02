@@ -134,6 +134,11 @@ public final class EventUtils {
     public static final String EVENT_ATTRIBUTE_NOTIFICATION_CTA_URL = "cta_url";
     public static final String EVENT_ATTRIBUTE_MESSAGE_ID = "message_id";
 
+    // Google Play review prompt
+    public static final String EVENT_REVIEW_PROMPT_DISPLAYED = "prompt.playstoreRate.displayed";
+    public static final String EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED = "prompt.playstoreRate.trigger";
+    public static final String EVENT_REVIEW_PROMPT_DISMISSED = "prompt.playstoreRate.dismissed";
+
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";
