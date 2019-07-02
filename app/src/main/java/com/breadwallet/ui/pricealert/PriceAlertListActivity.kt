@@ -31,7 +31,6 @@ import android.support.v7.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity
 import com.breadwallet.ui.util.bindCreated
-import com.breadwallet.ui.util.bindResumed
 import com.breadwallet.ui.util.viewModel
 import kotlinx.android.synthetic.main.activity_price_alert_list.*
 
@@ -50,7 +49,6 @@ class PriceAlertListActivity : BaseSettingsActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(layoutId)
 
         price_alert_list.layoutManager = LinearLayoutManager(this)
         price_alert_list.adapter = adapter
