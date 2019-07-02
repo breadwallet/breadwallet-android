@@ -548,7 +548,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (isFragmentOnTop()) {
             return;
         }
-
+        
+        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED);
         BRDialog.showCustomDialog(
                 this,
                 getString(R.string.RateAppPrompt_Title),
@@ -556,6 +557,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 getString(R.string.RateAppPrompt_Button_RateApp),
                 getString(R.string.RateAppPrompt_Button_Dismiss),
                 brDialogView -> { // positiveButton
+                    EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED);
                     AppReviewPromptManager.INSTANCE.openGooglePlay(this);
                     brDialogView.dismiss();
                 },
@@ -563,6 +565,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     brDialogView.dismiss();
                 },
                 brDialogView -> { // onDismiss
+                    EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED);
                     mViewModel.onRateAppPromptDismissed();
                 },
                 0
@@ -573,7 +576,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
      * Check the back stack to see if send or receive fragment are present and look for FragmentTxDetail by tag.
      */
     private boolean isFragmentOnTop() {
-        return  getSupportFragmentManager().getBackStackEntryCount() > 0
+        return getSupportFragmentManager().getBackStackEntryCount() > 0
                 || getSupportFragmentManager().findFragmentByTag(FragmentTxDetails.TAG) != null;
     }
 }
