@@ -105,6 +105,7 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo(WalletBchManager.BITCASH_CURRENCY_CODE, false, null));
             enabled.add(new TokenListMetaData.TokenInfo(WalletEthManager.ETH_CURRENCY_CODE, false, null));
             enabled.add(new TokenListMetaData.TokenInfo(WalletTokenManager.BRD_CURRENCY_CODE, true, WalletTokenManager.BRD_CONTRACT_ADDRESS));
+            enabled.add(new TokenListMetaData.TokenInfo(WalletTokenManager.DAI_CURRENCY_CODE, true, WalletTokenManager.DAI_CONTRACT_ADDRESS));
             mTokenListMetaData = new TokenListMetaData(enabled, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
