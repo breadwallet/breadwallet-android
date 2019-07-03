@@ -288,7 +288,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
                     outputAddress, outputAddress,
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
-                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
+                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx),
+                    false, null));
         }
 
         return uiTxs;
