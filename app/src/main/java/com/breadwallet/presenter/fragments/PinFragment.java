@@ -69,7 +69,7 @@ public class PinFragment extends Fragment implements PinLayout.PinLayoutListener
 
         View rootView = inflater.inflate(R.layout.fragment_pin, container, false);
         mKeyboard = rootView.findViewById(R.id.brkeyboard);
-        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_black);
 
         mTitle = rootView.findViewById(R.id.title);
         mMessage = rootView.findViewById(R.id.message);
