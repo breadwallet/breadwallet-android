@@ -121,7 +121,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mKeyboard = rootView.findViewById(R.id.keyboard);
         mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         mKeyboard.setBRKeyboardColor(R.color.white);
-        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_black);
         mCurrencyCode = rootView.findViewById(R.id.iso_text);
         mAddressEdit = rootView.findViewById(R.id.address_edit);
         mScan = rootView.findViewById(R.id.scan);
