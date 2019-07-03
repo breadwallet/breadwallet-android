@@ -24,7 +24,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/pin_pad_text"
+        android:background="@color/web_view_toolbar"
         android:visibility="invisible">
 
         <RelativeLayout
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/pin_pad_text"
+        android:background="@color/web_view_toolbar"
         android:visibility="invisible">
 
         <RelativeLayout
