@@ -30,6 +30,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +102,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == TX_TYPE) {
+            // NOTE: If recyclable is set to true in the future, will require significant re-write and regression of UI
+            // including wallets with txns in various states (complete, in progress, failed, etc.)
             holder.setIsRecyclable(false);
             holder.itemView.setOnClickListener(v -> {
                 if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
@@ -138,7 +141,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.getTransactionAmount().setTextColor(mContext.getResources().getColor(amountColor, null));
 
         // If this transaction failed, show the "FAILED" indicator in the cell
-        if (!item.isValid()) {
+        if (!item.isValid() || item.isErrored()) {
             showTransactionFailed(convertView, item, received);
         }
 
@@ -233,11 +236,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
         holder.getTransactionDate().setVisibility(View.INVISIBLE);
+        holder.getTransactionFailed().setVisibility(View.VISIBLE);
+
+        // Align txn description with respect to 'Failed' msg
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.RIGHT_OF, holder.getTransactionFailed().getId());
-        params.setMargins(DP_16, 0, 0, 0);
-        params.addRule(RelativeLayout.CENTER_VERTICAL, holder.getTransactionFailed().getId());
         holder.getTransactionDetail().setLayoutParams(params);
+        holder.getTransactionDetail().setGravity(Gravity.CENTER_VERTICAL);
+
         BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
 
         if (!received) {
