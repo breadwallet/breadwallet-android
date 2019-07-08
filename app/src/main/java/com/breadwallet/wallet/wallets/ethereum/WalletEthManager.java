@@ -43,11 +43,9 @@ import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -69,7 +67,6 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,6 +112,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private BREthereumWallet mWallet;
     private Context mContext;
 
+    private List<OnTokenLoadedListener> mOnTokenLoadedListeners = new ArrayList<>();
     private List<OnTransactionEventListener> mTransactionEventListeners = new ArrayList<>();
 
     private WalletEthManager(final Context context, byte[] ethPubKey, BREthereumNetwork network) {
@@ -1205,6 +1203,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public void handleTokenEvent(BREthereumToken token, BREthereumEWM.TokenEvent event) {
         Log.d(TAG, "handleTokenEvent: " + token.getName());
+        if (event == BREthereumEWM.TokenEvent.CREATED) {
+            for (OnTokenLoadedListener listener : mOnTokenLoadedListeners) {
+                listener.onTokenLoaded(token.getSymbol());
+            }
+        }
     }
 
     //endregion
@@ -1251,4 +1254,23 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
     }
 
+    public void addTokenLoadedListener(OnTokenLoadedListener listener) {
+        if (!mOnTokenLoadedListeners.contains(listener)) {
+            mOnTokenLoadedListeners.add(listener);
+        }
+    }
+
+    public void removeTokenLoadedListener(OnTokenLoadedListener listener) {
+        mOnTokenLoadedListeners.remove(listener);
+    }
+
+    /** Callback for observing loaded tokens. */
+    public interface OnTokenLoadedListener {
+        /**
+         * Called when a new token is available.
+         *
+         * @param symbol The symbol of the loaded token.
+         */
+        void onTokenLoaded(String symbol);
+    }
 }
