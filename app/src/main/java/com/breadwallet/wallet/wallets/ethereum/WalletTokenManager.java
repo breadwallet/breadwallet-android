@@ -67,6 +67,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     public static final String BRD_CURRENCY_CODE = "BRD";
     public static final String DAI_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0xfc8862446cd3e4a2e7167e7d97df738407fead07" : "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359";
     public static final String DAI_CURRENCY_CODE = "DAI";
+    public static final String TUSD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x8Dd5fbCE2F6a956c3022bA3663759011Dd51E73E" : "0x8Dd5fbCE2F6a956c3022bA3663759011Dd51E73E";
+    public static final String TUSD_CURRENCY_CODE = "TUSD";
 
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         mWalletEthManager = walletEthManager;
