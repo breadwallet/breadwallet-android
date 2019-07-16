@@ -143,7 +143,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 return;
             }
 
-            node = new BREthereumEWM(this, network, FileHelper.getCoreDataFilePath(context), paperKey, words);
+            node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), paperKey, words);
 
             mWallet = node.getWallet();
 
@@ -156,7 +156,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             BRKeyStore.putEthPublicKey(ethPubKey, context);
         } else {
             Log.d(TAG, "WalletEthManager: Using the pubkey to create");
-            node = new BREthereumEWM(this, network, FileHelper.getCoreDataFilePath(context), ethPubKey);
+            node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), ethPubKey);
 
             mWallet = node.getWallet();
 
