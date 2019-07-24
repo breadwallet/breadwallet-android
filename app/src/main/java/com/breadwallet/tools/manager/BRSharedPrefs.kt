@@ -30,6 +30,7 @@ package com.breadwallet.tools.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.annotation.VisibleForTesting
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.core.content.edit
@@ -67,7 +68,8 @@ object BRSharedPrefs {
     private const val PAPER_KEY_WRITTEN_DOWN = "phraseWritten"
     private const val PREFER_STANDARD_FEE = "favorStandardFee"
     private const val FEE_PREFERENCE = "feePreference"
-    private const val RECEIVE_ADDRESS = "receive_address"
+    @VisibleForTesting
+    const val RECEIVE_ADDRESS = "receive_address"
     private const val FEE_RATE = "feeRate"
     private const val ECONOMY_FEE_RATE = "economyFeeRate"
     private const val BALANCE = "balance"
@@ -156,7 +158,7 @@ object BRSharedPrefs {
 
     @JvmStatic
     fun getReceiveAddress(context: Context? = null, iso: String): String? =
-            brdPrefs.getString(PREFS_NAME + iso.toUpperCase(), "")
+            brdPrefs.getString(RECEIVE_ADDRESS + iso.toUpperCase(), "")
 
     @JvmStatic
     fun putReceiveAddress(context: Context? = null, tmpAddr: String, iso: String) =
