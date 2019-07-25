@@ -38,6 +38,12 @@
     <string name="Alert.error">Fejl</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Der er et problem med din Android OS keystore, kontakt venligst support@breadwallet.com</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">Dine BRD-krypterede data blev for nyligt ugyldiggjort, eftersom din Android skærmlås blev deaktiveret.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">Vi kan ikke fortsætte, fordi dine indstillinger for skærmlåsen er blevet ændret (f.eks. adgangskoden deaktiveret, fingeraftryk ændret). Af sikkerhedshensyn har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata fjernes fuldstændigt ved at afinstallere.\n\nBare rolig, dine midler er stadig sikre! Geninstallr appen og gendan din pung vha. din papirnøgle.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">Vi kan ikke fortsætte, fordi dine indstillinger for skærmlåsen er blevet ændret (f.eks. adgangskoden deaktiveret, fingeraftryk ændret). Af sikkerhedshensyn har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata fjernes fuldstændugt.\n\nBare rolig, dine midler er stadig sikre! Gendan din pung vha. din papirtast.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStore fejl</string>
     <!-- No internet alert message -->
@@ -74,22 +80,6 @@
     <string name="Android.screenAlteringMessage">BRD fungerer ikke korrekt medmindre apps der ændrer skærmbilledet (så som Twilight) er deaktiveret.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Der er fundet en app der ændrer skærmbilledet</string>
-    <!-- Body for an announcement promoting Coinify. -->
-    <string name="Announcement.coinfyPromoBody">Køb for 100€ Bitcoins inden 31. marts 2019 og få et gavekort på 20€ til Amazon.de*</string>
-    <!-- Button title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoActionTitle">Få dit gavekort</string>
-    <!-- Footnote text for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoFootnote">*Begrænset: kun et gavekort per kunde. Kun tilgængelig i Østrig, Tyskland, Luxembourg og Holland.</string>
-    <!-- Title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoTitle">Få et gavekort på 20€ til Amazon.de!</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyOne">Køb af BTC og ETH via din bank vil have højere grænser, hurtigere leveringstider og lavere gebyrer. Tilmeld dig for at få besked, når den lanceres.</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyTwo">Vi vil fortælle dig om ændringerne.</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleOne">Der kommer snart en ny måde at købe!</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleTwo">Tak!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON serialiseringsfejl</string>
     <!-- Wallet not ready error message -->
@@ -134,14 +124,22 @@
     <string name="Button.buy">Køb</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">Annuller</string>
+    <!-- Confirm button title -->
+    <string name="Button.confirm">Bekræft</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">Kontakt support</string>
     <!-- prompt continue button -->
     <string name="Button.continueAction">Fortsæt</string>
     <!-- prompt dismiss button -->
     <string name="Button.dismiss">Afvis</string>
+    <!-- Done button title -->
+    <string name="Button.done">Færdig</string>
     <!-- Button to return to the "home" screen (the home screen is the top menu). -->
     <string name="Button.Home">Hjem</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">Ignorer</string>
+    <!-- Maybe Later button label -->
+    <string name="Button.maybeLater">Måske senere</string>
     <!-- menu button -->
     <string name="Button.menu">Menu</string>
     <!-- More information button -->
@@ -150,16 +148,28 @@
     <string name="Button.no">Nej</string>
     <!-- OK button label -->
     <string name="Button.ok">OK</string>
+    <!-- Open Settings button -->
+    <string name="Button.openSettings">Åbn indstillinger</string>
     <!-- receive button -->
     <string name="Button.receive">Modtag</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">Sikkerhedscenter</string>
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Sælg</string>
     <!-- send button -->
     <string name="Button.send">send</string>
     <!-- Settings button label -->
     <string name="Button.settings">Indstillinger</string>
+    <!-- Setup button label -->
+    <string name="Button.setup">Opsætning</string>
+    <!-- Skip button title -->
+    <string name="Button.skip">Spring over</string>
     <!-- Settings button label -->
     <string name="Button.submit">Send</string>
+    <!-- Button label to uninstall the app. -->
+    <string name="Button.uninstall.android">Afinstaller</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">Fjern fuldstændigt</string>
     <!-- Yes button -->
     <string name="Button.yes">Ja</string>
     <!-- Camera plugin instruction -->
@@ -202,6 +212,8 @@
     <string name="DefaultCurrency.rateLabel">Valutakurs</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Pung deaktiveret</string>
+    <!-- Share address by e-mail subject -->
+    <string name="Email.address_subject">%1$s adresse</string>
     <!-- Service capabilities description -->
     <string name="EME.permissions.accountRequest">Anmod om %1$s-kontooplysninger</string>
     <!-- Service capabilities description -->
@@ -256,6 +268,8 @@
     <string name="FeeSelector.regularTime">10-60 minutter</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">Behandlingshastighed</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
+    <string name="FileChooser.selectImageSource.android">Vælg Billedkilde</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Administration</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -368,6 +382,14 @@
     <string name="MenuViewController.modalTitle">Menu</string>
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Gendan pung</string>
+    <!-- Paper Key Skip modal body (Android-version) -->
+    <string name="Modal.PaperKeySkip.Body.Android">Din papirnøgle er nødvendig for at du kan åbne din tegnebog, hvis du ændrer sikkerhedsindstillingerne på din telefon.\n\nEr du sikker på at du vil oprette din papirnøgle senere?</string>
+    <!-- Paper Key Skip modal Continue Set Up button -->
+    <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Fortsæt oprettelse</string>
+    <!-- Paper Key Skip modal I'll do it later button -->
+    <string name="Modal.PaperKeySkip.Button.IllDoItLater">Jeg gør det senere</string>
+    <!-- Paper Key Skip modal title -->
+    <string name="Modal.PaperKeySkip.Title">Vær opmærksom</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">Skift til automatisk tilstand</string>
     <!-- Node is connected label -->
@@ -411,7 +433,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">Vi har aktiver til en værdi af mere end 6 milliarder dollars under vores beskyttelse.</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">Slut dig til de 1,5 millioner mennesker rundt om i verden der har tillid til BRD.</string>
+    <string name="OnboardingPageTwo.title">Gør som millioner af mennesker over hele verden, der stoler på BRD.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Send %1$s for at købe %2$s</string>
     <!-- Payment confirmation view title -->
@@ -454,12 +476,14 @@
     <string name="Prompts.NoPasscode.body">En adgangskode til enheden er nødvendig for at beskytte din wallet. Gå til indstillinger og slå adgangskode til.</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">Slå enhedens adgangskode til</string>
-    <!-- Instruction how to enable device encryption -->
+    <!-- Instructions on how to enable screen lock settings -->
     <string name="Prompts.NoScreenLock.body.android">Der skal en skærmlås til på enheden, for at beskytte din pung. Gå til \"Indstillinger\" &gt; \"Sikkerhed\" &gt; \"Skærmlås\" og aktiver for at fortsætte.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Skærmlås deaktiveret</string>
-    <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon. Tryk her for at fortsætte.</string>
+    <!-- Warning about recovery key (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon.</string>
+    <!-- Warning about paper key (Android-version) -->
+    <string name="Prompts.PaperKey.Body.Android">Opret din papirnøgle, i tilfælde af at du mister eller udskifter din telefon. Din nøgle er også påkrævet, hvis du ændrer sikkerhedsindstillingerne på din telefon.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Handling påkrævet</string>
     <!-- Transaction rejected prompt body -->
@@ -484,20 +508,32 @@
     <string name="Prompts.UpgradePin.body">BRD er blevet opgraderet til at bruge en 6-cifret PIN. Tryk her for at opgradere.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Opgader PIN</string>
-    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">Slå notifikationer til for at modtage særlige meddelelser fra BRD i fremtiden.</string>
+    <!-- Body text for the push notifications prompt. -->
+    <string name="PushNotifications.body">Slå push-notifikationer til, og vær den første til at høre om nye funktioner og specialtilbud.</string>
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">Notifikationer deaktiveret</string>
-    <!-- Push notifications settings instructions -->
-    <string name="PushNotifications.enableInstructions">Slå notifikationer til i Indstillinger for at modtage advarsler</string>
+    <!-- Body text when push notifications are disabled. -->
+    <string name="PushNotifications.disabledBody">Aktivér meddelelser for at modtage særlige tilbud og opdateringer fra BRD.</string>
+    <!-- Body text when push notifications are enabled. -->
+    <string name="PushNotifications.enabledBody">Du modtager særlige tilbud og opdateringer fra BRD.</string>
+    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">Det lader til, at meddelelser er slået fra. Gå til Indstillinger for at aktivere meddelelser fra BRD.</string>
     <!-- Push notifications toggle switch label -->
-    <string name="PushNotifications.label">Push notifikationer</string>
+    <string name="PushNotifications.label">Modtag pushmeddelelser</string>
     <!-- Push notifications are off label -->
     <string name="PushNotifications.off">Fra</string>
     <!-- Push notifications are on label -->
     <string name="PushNotifications.on">Til</string>
     <!-- Push notifications settings view title label -->
-    <string name="PushNotifications.title">Notifikationer</string>
+    <string name="PushNotifications.title">Hold dig opdateret</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body.Android">Hvis du elsker vores app, skal du tage et øjeblik til at bedømme den og give os en anmeldelse.</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss.Android">Nej tak</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp.Android">Bedøm BRD</string>
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title.Android">Bedøm BRD</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">Kopieret til udklipsholder.</string>
     <!-- Share via email button label -->
@@ -534,6 +570,74 @@
     <string name="RecoverWallet.subheader">Indtast paper key til pungen du vil gendanne.</string>
     <!-- Reset PIN with paper key: sub-header -->
     <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din paper key i boksene nedenfor.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryInputError">Ordet du indtastede er forkert. Prøv igen.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Næsten færdig! Indtast følgende ord fra din genoprettelsesnøgle.</string>
+    <!-- Title for the confirmation step of the recovery key flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bekræft Genoprettelsesnøgle</string>
+    <!-- Title displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Indtast Genoprettelsesnøgle</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Indtast venligst din genoprettelsesnøgle for at fjerne tilknytningen til denne tegnebog fra din enhed.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Er du sikker på, at du vil opsætte din genoprettelsesnøgle senere?</string>
+    <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Opsæt senere</string>
+    <!-- Button text for the 'Generate Recovery Key' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Generer Genoprettelsesnøgle</string>
+    <!-- Subtext for the recovery key landing page. -->
+    <string name="RecoveryKeyFlow.generateKeyExplanation">Denne nøgle er nødvendig for at inddrive dine penge, hvis du opgraderer eller mister din telefon.</string>
+    <!-- Default title for the recovery key landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Generer din private genoprettelsesnøgle</string>
+    <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
+    <string name="RecoveryKeyFlow.goToWalletButtonTitle">Gå til Tegnebog</string>
+    <!-- Hint text for recovery key intro page, e.g., Step 2 -->
+    <string name="RecoveryKeyFlow.howItWorksStep">Sådan fungerer det - Trin %1$@</string>
+    <!-- Error text displayed when the user enters an incorrect recovery key -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Nogle af de indtastede ord matcher ikke din genoprettelsesnøgle. Prøv igen.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.keepSecure">Hold den sikker</string>
+    <!-- Informs the user that the recovery is only required for recovering a wallet. -->
+    <string name="RecoveryKeyFlow.keyUseHint">Din nøgle er kun nødvendig til genopretning, ikke til hverdagsadgang til tegnebogen.</string>
+    <!-- Reminds the user not to take screenshots or email the recovery key words -->
+    <string name="RecoveryKeyFlow.noScreenshotsOrEmailWarning">Af sikkerhedshensyn skal du ikke tage skærmbilleder eller e-maile disse ord</string>
+    <!-- Recommends that the user avoids capturing the paper key with a screenshot -->
+    <string name="RecoveryKeyFlow.noScreenshotsRecommendation">Skriv din nøgle ned på papir og bekræft den. Skærmbilleder anbefales ikke af sikkerhedsmæssige årsager.</string>
+    <!-- Title displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWallet">Gendan din Tegnebog</string>
+    <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Indtast venligst genoprettelsesnøglen til den tegnebog, du vil gendanne.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.relaxBuyTrade">Slap af, køb og handel</string>
+    <!-- Reminds the user to write down the recovery key words. -->
+    <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Husk at skrive disse ord ned. Stryg tilbage, hvis du har glemt dem.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Indtast venligst din genoprettelsesnøgle for at nulstille din pinkode.</string>
+    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <string name="RecoveryKeyFlow.securityAssurance">Køb og handel vel vidende, at dine midler er beskyttet af den bedste sikkerhed og privatlivspolitik i branchen.</string>
+    <!-- Recommends that the user stores the recovery key in a secure location -->
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Gem din nøgle på et sikkert sted. Dette er den eneste måde at genoprette din tegnebog på. BRD beholder ikke en kopi.</string>
+    <!-- Title for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Tillykke! Du har gennemført opsætningen af genoprettelsesnøgle.</string>
+    <!-- Subtitle for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successSubheading">Du er klar til at indbetale, handle og købe krypto fra din BRD-tegnebog.</string>
+    <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWallet">Fjern forbindelsen til din tegnebog fra denne enhed.</string>
+    <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
+    <string name="RecoveryKeyFlow.unlinkWalletSubtext">Start en ny tegnebog ved at afkoble din enhed fra den aktuelt installerede tegnebog.</string>
+    <!-- Warning displayed when the user starts the process of unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWalletWarning">Tegnebogen skal genoprettes for at genvinde adgangen.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.writeItDown">Skriv din nøgle ned</string>
+    <!-- Title for the recovery key landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Skriv din genoprettelsesnøgle ned igen</string>
+    <!-- Subtitle for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Skriv følgende ord ned i rækkefølge.</string>
+    <!-- Title for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Din Genoprettelsesnøgle</string>
+    <!-- Title for the step number when the user pages through the recovery words -->
+    <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ af %2$@</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">Indtast venligst et beløb først.</string>
     <!-- Request a specific amount of bitcoin -->
@@ -582,8 +686,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
-    <!-- Paper Key button title -->
+    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Paper key</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">Paper key</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Beskytter dit BRD mod uberettigede brugere.</string>
     <!-- PIN button title -->
@@ -686,6 +793,10 @@
     <string name="Settings.advanced">Avanceret</string>
     <!-- Advanced Settings title -->
     <string name="Settings.advancedTitle">Avancerede indstillinger</string>
+    <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
+    <string name="Settings.atmMapMenuItemSubtitle">Kun tilgængelig i USA</string>
+    <!-- ATM map menu item title -->
+    <string name="Settings.atmMapMenuItemTitle">Crypto ATM-kort</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Vis valuta</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
@@ -746,16 +857,20 @@
     <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit BRD på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
+    <!-- Paper key explanation text (Android-version) -->
+    <string name="StartPaperPhrase.Body.Android">Din papirnøgle er den eneste måde hvorpå du kan gendanne din BRD, hvis din telefon går tabt, bliver stjålet, ødelagt eller opgraderet.\n\nDin papirnøgle er også påkrævet, hvis du ændrer sikkerhedsindstillingerne på din enhed.\n\nVi viser dig en liste med ord, som du skal skrive ned på et stykke papir og opbevare sikkert.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
-    <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den %1$s</string>
+    <!-- Argument is date; date should be on a new line -->
+    <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den \n%1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Opret ny tegnebog</string>
     <!-- Start view message -->
     <string name="StartViewController.message">Den mest sikre og trygge måde at bruge bitcoins på.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Gendan tegnebog</string>
+    <!-- Syncing view done syncing state header text -->
+    <string name="SyncingView.activity">Aktivitet</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Tilslutter</string>
     <!-- The sync has failed (to complete) -->
@@ -880,6 +995,9 @@
     <string name="TransactionDetails.commentsPlaceholder">Tilføj memo...</string>
     <!-- Timestamp section header for complete tx -->
     <string name="TransactionDetails.completeTimestampHeader">Gennemført</string>
+    <!-- Block height and confirmations label -->
+    <!--eg. 182930 (45061 confirmations)-->
+    <string name="TransactionDetails.confirmationsLabel">Bekræftelser</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Dine transaktioner vil vises her.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->

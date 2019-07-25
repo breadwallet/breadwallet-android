@@ -38,6 +38,12 @@
     <string name="Alert.error">Erro</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Há um problema com a KeyStore do seu SO Android. Por favor, contacte support@breadwallet.com</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">Os seus dados encriptados pelo BRD foram recentemente invalidados porque o seu ecrã de bloqueio do Android estava desativado.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">Não podemos continuarporque as suasconfigurações de bloqueio de ecrã foram alteradas ( a sua password foi desativada, e as impressões digitaisforam alteradas). Por motivos de segurança, o Android bloqueou permanentemente seu armazenamento de passwords. \nPortanto, os dados do seu aplicativo BRD devem ser apagados a desinstalação.pel\n\nNão se preocupe, seus fundos continuam seguros! Reinstale a aplicação e recupere a sua carteira usando a chave de papel.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">Não podemos continuarporque as suasconfigurações de bloqueio de ecrã foram alteradas ( a sua password foi desativada, e as impressões digitaisforam alteradas). Por motivos de segurança, o Android bloqueou permanentemente seu armazenamento de passwords. Portanto, os seus dados da aplicação BRD devem ser apagados.\n\nNão se preocupe, seus fundos continuam seguros! Recupere asua carteira usando a sua chave de papel.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Erro na KeyStore do Android</string>
     <!-- No internet alert message -->
@@ -74,22 +80,6 @@
     <string name="Android.screenAlteringMessage">O BRD não vai funcionar adequadamente se não forem desativadas as aplicações que alteram o ecrã (tais como a Twilight).</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Foi Detetada uma Aplicação que Altera o Ecrã</string>
-    <!-- Body for an announcement promoting Coinify. -->
-    <string name="Announcement.coinfyPromoBody">Compre €100 até 31 de março, 2019, e obtenha um cartão presente Amazon.de de €20*</string>
-    <!-- Button title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoActionTitle">Obtenha o seu cartão presente</string>
-    <!-- Footnote text for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoFootnote">*Limite de um cartão presente por cliente. Disponível apenas na Áustria, Alemanha, Luxemburgo e Holanda.</string>
-    <!-- Title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoTitle">Obtenha um cartão presente Amazon.de de €20!</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyOne">As compras de BTC e ECH através do seu banco terão limites superiores, tempos de entrega rápidos e comissões mais baixas. Registe-se e seja notificado quando for lançado.</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyTwo">Informá-lo-emos sobre as alterações.</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleOne">Em breve estará disponível uma nova forma de comprar!</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleTwo">Obrigado!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">Erro de Serialização JSON</string>
     <!-- Wallet not ready error message -->
@@ -134,14 +124,22 @@
     <string name="Button.buy">Comprar</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">Cancelar</string>
+    <!-- Confirm button title -->
+    <string name="Button.confirm">Confirmar</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">Contatar a assistência </string>
     <!-- prompt continue button -->
     <string name="Button.continueAction">Continuar</string>
     <!-- prompt dismiss button -->
     <string name="Button.dismiss">Descartar</string>
+    <!-- Done button title -->
+    <string name="Button.done">Feito</string>
     <!-- Button to return to the "home" screen (the home screen is the top menu). -->
     <string name="Button.Home">Página inicial</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">Ignorar</string>
+    <!-- Maybe Later button label -->
+    <string name="Button.maybeLater">Talvez Mais Tarde</string>
     <!-- menu button -->
     <string name="Button.menu">Menu</string>
     <!-- More information button -->
@@ -150,16 +148,28 @@
     <string name="Button.no">Não</string>
     <!-- OK button label -->
     <string name="Button.ok">OK</string>
+    <!-- Open Settings button -->
+    <string name="Button.openSettings">Abrir Configurações</string>
     <!-- receive button -->
     <string name="Button.receive">Receber</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">Centro de Segurança</string>
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Vender</string>
     <!-- send button -->
     <string name="Button.send">enviar</string>
     <!-- Settings button label -->
     <string name="Button.settings">Definições</string>
+    <!-- Setup button label -->
+    <string name="Button.setup">Definir</string>
+    <!-- Skip button title -->
+    <string name="Button.skip">Saltar</string>
     <!-- Settings button label -->
     <string name="Button.submit">Submeter</string>
+    <!-- Button label to uninstall the app. -->
+    <string name="Button.uninstall.android">Desinstalar</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">Apagar</string>
     <!-- Yes button -->
     <string name="Button.yes">Sim</string>
     <!-- Camera plugin instruction -->
@@ -202,6 +212,8 @@
     <string name="DefaultCurrency.rateLabel">Taxa de Câmbio</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Carteira desativada</string>
+    <!-- Share address by e-mail subject -->
+    <string name="Email.address_subject">%1$s Endereço</string>
     <!-- Service capabilities description -->
     <string name="EME.permissions.accountRequest">Requisitar %1$s dados da conta</string>
     <!-- Service capabilities description -->
@@ -256,6 +268,8 @@
     <string name="FeeSelector.regularTime">10-60 minutos</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">Velocidade de processamento</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
+    <string name="FileChooser.selectImageSource.android">Selecione a origem da imagem</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Administrador</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -368,6 +382,14 @@
     <string name="MenuViewController.modalTitle">Menu</string>
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Recuperar Carteira</string>
+    <!-- Paper Key Skip modal body (Android-version) -->
+    <string name="Modal.PaperKeySkip.Body.Android">A sua chave de papel é necessária para abrir a sua carteira se alterar as definições de segurança do seu telefone. \n\nTem a certeza de que quer definir a sua chave de papel mais tarde?</string>
+    <!-- Paper Key Skip modal Continue Set Up button -->
+    <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Continuar Definição</string>
+    <!-- Paper Key Skip modal I'll do it later button -->
+    <string name="Modal.PaperKeySkip.Button.IllDoItLater">Mais tarde</string>
+    <!-- Paper Key Skip modal title -->
+    <string name="Modal.PaperKeySkip.Title">Atenção</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">Mudar para o modo automático</string>
     <!-- Node is connected label -->
@@ -411,7 +433,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">Temos activos protegidos no valor de mais de 6 mil milhões de dólares. </string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">Junte-se ao milhão e meio de pessoas em todo o mundo que confia em BRD.</string>
+    <string name="OnboardingPageTwo.title">Junte-se a milhões de pessoas em todo o mundo que confiam em BRD.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Enviar %1$s para comprar %2$s</string>
     <!-- Payment confirmation view title -->
@@ -454,12 +476,14 @@
     <string name="Prompts.NoPasscode.body">Para proteger a sua carteira, é necessário ter um código de acesso ao dispositivo. Vá às definições e ative o código de acesso.</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">Ativar o código de acesso ao dispositivo</string>
-    <!-- Instruction how to enable device encryption -->
+    <!-- Instructions on how to enable screen lock settings -->
     <string name="Prompts.NoScreenLock.body.android">É necessário um bloqueio de ecrã no dispositivo para salvaguardar a sua carteira. Vá a \"Definições\" &gt; \"Segurança\" &gt; \"Bloqueio de ecrã\" e ative para continuar.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Bloqueio de ecrã desativado</string>
-    <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">O seu Paper Key deve ser guardado para o caso de perder ou alterar o seu telemóvel. Clique aqui para continuar.</string>
+    <!-- Warning about recovery key (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">O seu Paper Key deve ser guardado para o caso de perder ou alterar o seu telemóvel.</string>
+    <!-- Warning about paper key (Android-version) -->
+    <string name="Prompts.PaperKey.Body.Android">Defina a sua chave de papel para o caso de perder ou substituir o seu telefone. A sua chave também é necessária se alterar as definições de segurança do seu telefone.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Ação Necessária</string>
     <!-- Transaction rejected prompt body -->
@@ -484,20 +508,32 @@
     <string name="Prompts.UpgradePin.body">A BRD foi atualizada para usar um PIN de 6-dígitos. Toque aqui para atualizar.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Atualizar PIN</string>
-    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">Ative as notificações para receber mensagens especiais da BRD no futuro.</string>
+    <!-- Body text for the push notifications prompt. -->
+    <string name="PushNotifications.body">Ative as notificações por push e seja o primeiro a descobrir novos recursos e ofertas especiais.</string>
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">Notificações Desativadas</string>
-    <!-- Push notifications settings instructions -->
-    <string name="PushNotifications.enableInstructions">Para receber alertas, ative as notificações nas Definições</string>
+    <!-- Body text when push notifications are disabled. -->
+    <string name="PushNotifications.disabledBody">Ative as notificações para receber ofertas especiais e atualizações do BRD.</string>
+    <!-- Body text when push notifications are enabled. -->
+    <string name="PushNotifications.enabledBody">Está a receber ofertas especiais e atualizações do BRD.</string>
+    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">Parece que as notificações estão desativadas. Vá para Configurações para ativar as notificações do BRD.</string>
     <!-- Push notifications toggle switch label -->
-    <string name="PushNotifications.label">Notificações Push</string>
+    <string name="PushNotifications.label">Receber Notificações Push</string>
     <!-- Push notifications are off label -->
     <string name="PushNotifications.off">Desligado</string>
     <!-- Push notifications are on label -->
     <string name="PushNotifications.on">Ligado</string>
     <!-- Push notifications settings view title label -->
-    <string name="PushNotifications.title">Notificações</string>
+    <string name="PushNotifications.title">Mantenha-se actualizado</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body.Android">Se gostas da nossa app, dedica uns instantes a avaliá-la e escreve uma opinião.</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss.Android">Não, obrigado</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp.Android">Avalia a BRD</string>
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title.Android">Avalia a BRD</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">Copiado para a área de transferência.</string>
     <!-- Share via email button label -->
@@ -534,6 +570,74 @@
     <string name="RecoverWallet.subheader">Introduza a chave de papel para a carteira que quer recuperar.</string>
     <!-- Reset PIN with paper key: sub-header -->
     <string name="RecoverWallet.subheader_reset_pin">Para redefinir o seu PIN, introduza as palavras da sua chave de papel nas caixas abaixo.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryInputError">A palavra que introduziu está incorrecta. Por favor, tente outra vez.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Quase pronto! Introduza as seguintes palavras da sua chave de recuperação.</string>
+    <!-- Title for the confirmation step of the recovery key flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirmar Chave de Recuperação</string>
+    <!-- Title displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Introduzir Chave de Recuperação</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Por favor, introduza a sua chave de recuperação para desvincular esta carteira deste dispositivo.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Tem a certeza que pretende definir a sua chave de recuperação mais tarde?</string>
+    <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Definir Mais Tarde</string>
+    <!-- Button text for the 'Generate Recovery Key' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Gerar Chave de Recuperação</string>
+    <!-- Subtext for the recovery key landing page. -->
+    <string name="RecoveryKeyFlow.generateKeyExplanation">Esta chave é necessária para recuperar o seu dinheiro caso mude ou perca o seu telefone.</string>
+    <!-- Default title for the recovery key landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Gerar a sua chave de recuperação privada</string>
+    <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
+    <string name="RecoveryKeyFlow.goToWalletButtonTitle">Ir para Carteira</string>
+    <!-- Hint text for recovery key intro page, e.g., Step 2 -->
+    <string name="RecoveryKeyFlow.howItWorksStep">Como funciona - Passo %1$@</string>
+    <!-- Error text displayed when the user enters an incorrect recovery key -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Algumas das palavras que introduziu não correspondem à sua chave de recuperação.\nPor favor, tente outra vez.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.keepSecure">Mantenha-a segura</string>
+    <!-- Informs the user that the recovery is only required for recovering a wallet. -->
+    <string name="RecoveryKeyFlow.keyUseHint">A sua chave é apenas necessária para recuperação, não para o acesso normal à sua carteira.</string>
+    <!-- Reminds the user not to take screenshots or email the recovery key words -->
+    <string name="RecoveryKeyFlow.noScreenshotsOrEmailWarning">Por motivos de segurança, não faça capturas de ecrã ou envie por email estas palavras.</string>
+    <!-- Recommends that the user avoids capturing the paper key with a screenshot -->
+    <string name="RecoveryKeyFlow.noScreenshotsRecommendation">Tome nota num papel da sua chave de recuperação e confirme. Capturas de ecrã não são recomendadas por questões de segurança.</string>
+    <!-- Title displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWallet">Recuperar a Sua Carteira</string>
+    <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Por favor, introduza a chave de recuperação da carteira que pretende recuperar.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.relaxBuyTrade">Relaxe, compre, e troque</string>
+    <!-- Reminds the user to write down the recovery key words. -->
+    <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Lembre-se de apontar estas palavras. Deslize para trás caso se tenha esquecido.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Por favor, introduza a sua chave de recuperação para redefinir o seu PIN.</string>
+    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <string name="RecoveryKeyFlow.securityAssurance">Compre e troque sabendo que os seus fundos estão protegidos pela melhor segurança e privacidade na área.</string>
+    <!-- Recommends that the user stores the recovery key in a secure location -->
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Guarde a sua chave numa localização segura. Esta é a única forma de recuperar a sua carteira. A BRD não guarda uma cópia.</string>
+    <!-- Title for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Parabéns! Completou a definição da sua chave de recuperação.</string>
+    <!-- Subtitle for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successSubheading">Está pronto para depositar, trocar, e comprar crypto a partir da sua carteira BRD.</string>
+    <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWallet">Desvincule a sua carteira deste dispositivo.</string>
+    <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
+    <string name="RecoveryKeyFlow.unlinkWalletSubtext">Comece uma nova carteira desvinculando o seu dispositivo da carteira já instalada.</string>
+    <!-- Warning displayed when the user starts the process of unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWalletWarning">A carteira tem de ser recuperada para recuperar o acesso.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.writeItDown">Tome nota da sua chave</string>
+    <!-- Title for the recovery key landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Tome nota novamente da sua chave de recuperação</string>
+    <!-- Subtitle for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Tome nota das seguintes palavras em ordem.</string>
+    <!-- Title for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">A Sua Chave de Recuperação</string>
+    <!-- Title for the step number when the user pages through the recovery words -->
+    <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ de %2$@</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">Primeiro, por favor, introduza um montante.</string>
     <!-- Request a specific amount of bitcoin -->
@@ -582,8 +686,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">A única forma de aceder às suas bitcoins se perder ou atualizar o seu telefone.</string>
-    <!-- Paper Key button title -->
+    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Chave de Papel</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">Chave de Papel</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protege a sua BRD de utilizadores não autorizados.</string>
     <!-- PIN button title -->
@@ -686,6 +793,10 @@
     <string name="Settings.advanced">Avançadas</string>
     <!-- Advanced Settings title -->
     <string name="Settings.advancedTitle">Definições avançadas</string>
+    <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
+    <string name="Settings.atmMapMenuItemSubtitle">Disponível apenas nos EUA</string>
+    <!-- ATM map menu item title -->
+    <string name="Settings.atmMapMenuItemTitle">Crypto ATM mapa</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Mostrar moeda</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
@@ -746,16 +857,20 @@
     <string name="StartPaperPhrase.againButtonTitle">Escrever Novamente Chave de Papel</string>
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">A chave de papel é a única forma de restaurar a sua BRD se o seu telefone for perdido, roubado, partido ou atualizado.\n\nVamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
+    <!-- Paper key explanation text (Android-version) -->
+    <string name="StartPaperPhrase.Body.Android">A sua chave de papel é a única forma de restaurar a sua BRD se o seu telefone se perder, partir, for roubado ou atualizado.\n\nA sua chave de papel também é necessária se alterar as definições de segurança do seu dispositivo.\n\nVamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Escrever Chave de Papel</string>
-    <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">A última vez que escreveu a sua chave de papel foi em %1$s</string>
+    <!-- Argument is date; date should be on a new line -->
+    <string name="StartPaperPhrase.date">A última vez que escreveu a sua chave de papel foi em \n%1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Criar Carteira Nova</string>
     <!-- Start view message -->
     <string name="StartViewController.message">A forma mais protegida e segura de utilizar a bitcoin.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Recuperar Carteira</string>
+    <!-- Syncing view done syncing state header text -->
+    <string name="SyncingView.activity">Atividade</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Conectando</string>
     <!-- The sync has failed (to complete) -->
@@ -880,6 +995,9 @@
     <string name="TransactionDetails.commentsPlaceholder">Adicionar memorando...</string>
     <!-- Timestamp section header for complete tx -->
     <string name="TransactionDetails.completeTimestampHeader">Concluído</string>
+    <!-- Block height and confirmations label -->
+    <!--eg. 182930 (45061 confirmations)-->
+    <string name="TransactionDetails.confirmationsLabel">Confirmações</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">As suas transações aparecerão aqui.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
