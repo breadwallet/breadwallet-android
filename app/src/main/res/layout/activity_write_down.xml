@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/bread_margin"
-            android:text="@string/SecurityCenter.paperKeyTitle"
+            android:text="@string/SecurityCenter.paperKeyTitle.android"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"

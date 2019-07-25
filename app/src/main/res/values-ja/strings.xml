@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">ブレッド</string>
+    <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">ブログ</string>
     <!-- About screen footer -->
@@ -38,6 +38,12 @@
     <string name="Alert.error">エラー</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Android OSのKeystoreに問題があります。support@breadwallet.com にお問い合わせください。</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">お使いのAndroidロック画面が無効にされたため、暗号化されたブレッドのデータはつい最近無効になりました。</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">画面ロック設定が変更されたため（パスワードが無効になった、指紋が変更されたなど）、進めることができません。セキュリティ上の理由から、Androidはキーストアを永久にロックしました。したがって、BRDアプリのデータをアンインストールして消去する必要があります。\n\n心配はいりません、あなたの資金は今でも安全です！アプリを再インストールし、ペーパーキーを使用してウォレットを復元してください。</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">画面ロック設定が変更されたため（パスワードが無効になった、指紋が変更されたなど）、進めることができません。セキュリティ上の理由から、Androidはキーストアを永久にロックしました。したがって、BRDアプリのデータを消去する必要があります。\n\n心配はいりません、あなたの資金は今でも安全です！ペーパーキーを使用してウォレットを復元してください。</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStoreエラー</string>
     <!-- No internet alert message -->
@@ -74,22 +80,6 @@
     <string name="Android.screenAlteringMessage">画面変更アプリ(例: Twilight) が無効になっていなければ、BRDは正常に動作しません。</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">画面変更アプリが検出されました</string>
-    <!-- Body for an announcement promoting Coinify. -->
-    <string name="Announcement.coinfyPromoBody">2019年3月31日までにビットコインを100ユーロ購入して、20ユーロのAmazon.deギフトカードをもらおう*</string>
-    <!-- Button title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoActionTitle">ギフトカードをもらおう</string>
-    <!-- Footnote text for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoFootnote">*ギフトカードはお一人様1枚まで。オーストリア、ドイツ、ルクセンブルク、オランダでのみ利用可能</string>
-    <!-- Title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoTitle">20ユーロのAmazon.deギフトカードをもらおう！</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyOne">銀行経由のBTCとETHの購入はより高い上限額となり、デリバリーも迅速かつ低手数料となります。登録を行ってローンチの際通知を受け取りましょう。</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyTwo">変更の詳細についてお知らせいたします。</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleOne">近日中に新しい購入方法が登場予定です！</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleTwo">ありがとうございます！</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSONシリアル化エラー</string>
     <!-- Wallet not ready error message -->
@@ -134,14 +124,22 @@
     <string name="Button.buy">購入する</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">キャンセル</string>
+    <!-- Confirm button title -->
+    <string name="Button.confirm">確認</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">サポートに問い合わせ</string>
     <!-- prompt continue button -->
     <string name="Button.continueAction">続行する</string>
     <!-- prompt dismiss button -->
     <string name="Button.dismiss">却下する</string>
+    <!-- Done button title -->
+    <string name="Button.done">終了</string>
     <!-- Button to return to the "home" screen (the home screen is the top menu). -->
     <string name="Button.Home">ホーム</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">無視する</string>
+    <!-- Maybe Later button label -->
+    <string name="Button.maybeLater">また後で</string>
     <!-- menu button -->
     <string name="Button.menu">メニュー</string>
     <!-- More information button -->
@@ -150,16 +148,28 @@
     <string name="Button.no">いいえ</string>
     <!-- OK button label -->
     <string name="Button.ok">OK</string>
+    <!-- Open Settings button -->
+    <string name="Button.openSettings">設定を開く</string>
     <!-- receive button -->
     <string name="Button.receive">受取</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">セキュリティ設定</string>
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">売る</string>
     <!-- send button -->
     <string name="Button.send">送金する</string>
     <!-- Settings button label -->
     <string name="Button.settings">設定</string>
+    <!-- Setup button label -->
+    <string name="Button.setup">セットアップ</string>
+    <!-- Skip button title -->
+    <string name="Button.skip">スキップ</string>
     <!-- Settings button label -->
     <string name="Button.submit">確認</string>
+    <!-- Button label to uninstall the app. -->
+    <string name="Button.uninstall.android">アンインストール</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">消去</string>
     <!-- Yes button -->
     <string name="Button.yes">はい</string>
     <!-- Camera plugin instruction -->
@@ -202,6 +212,8 @@
     <string name="DefaultCurrency.rateLabel">為替レート</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">ウォレットが無効になっています</string>
+    <!-- Share address by e-mail subject -->
+    <string name="Email.address_subject">%1$s住所</string>
     <!-- Service capabilities description -->
     <string name="EME.permissions.accountRequest">%1$s のアカウント情報をリクエスト</string>
     <!-- Service capabilities description -->
@@ -256,6 +268,8 @@
     <string name="FeeSelector.regularTime">10～60分</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">処理速度</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
+    <string name="FileChooser.selectImageSource.android">画像ソースを選択</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -368,6 +382,14 @@
     <string name="MenuViewController.modalTitle">メニュー</string>
     <!-- button label -->
     <string name="MenuViewController.recoverButton">ウォレットを復元</string>
+    <!-- Paper Key Skip modal body (Android-version) -->
+    <string name="Modal.PaperKeySkip.Body.Android">ペーパー・キーはお客様の携帯電話でセキュリティ設定を変更した場合,ウォレットを開くために必要となります。\n\nペーパー・キーを後からセットアップしますか？</string>
+    <!-- Paper Key Skip modal Continue Set Up button -->
+    <string name="Modal.PaperKeySkip.Button.ContinueSetUp">セットアップを続けます</string>
+    <!-- Paper Key Skip modal I'll do it later button -->
+    <string name="Modal.PaperKeySkip.Button.IllDoItLater">後で行います</string>
+    <!-- Paper Key Skip modal title -->
+    <string name="Modal.PaperKeySkip.Title">注意</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">自動モードに切り替える</string>
     <!-- Node is connected label -->
@@ -411,7 +433,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">当社の保護下には,60億USドル超相当の資産があります。</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">世界中にいるBRDを信頼する150万人の仲間になりましょう。</string>
+    <string name="OnboardingPageTwo.title">世界中で何百万もの人々がBRDを利用しています。あなたもぜひ。</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">%2$sを購入するために%1$sを送金する</string>
     <!-- Payment confirmation view title -->
@@ -454,12 +476,14 @@
     <string name="Prompts.NoPasscode.body">ウォレットを保護するためには端末のパスコードが必要です。設定画面にてパスコードをオンにしてください。</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">端末のパスコードをオンにする</string>
-    <!-- Instruction how to enable device encryption -->
+    <!-- Instructions on how to enable screen lock settings -->
     <string name="Prompts.NoScreenLock.body.android">ウォレットを守るため機器の画面をロックする必要があります。「設定」 &gt; 「セキュリティ」 &gt; 「画面ロック」で有効にしてから続行してください。</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">画面ロックが無効になっています</string>
-    <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">携帯電話の紛失時や変更時に備えて、お客様の復元フレーズは必ず保管しておいてください。続けるにはここをタップしてください。</string>
+    <!-- Warning about recovery key (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">携帯電話の紛失時や変更時に備えて、お客様の復元フレーズは必ず保管しておいてください。</string>
+    <!-- Warning about paper key (Android-version) -->
+    <string name="Prompts.PaperKey.Body.Android">携帯電話を紛失または交換した場合に備え,ペーパー・キーをセットアップします。お客様のキーは,携帯電話のセキュリティ設定を変更した場合にも必要となります。</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">アクションが要求されました</string>
     <!-- Transaction rejected prompt body -->
@@ -484,20 +508,32 @@
     <string name="Prompts.UpgradePin.body">ブレッドのPINコードは6桁にアップグレードされました。こちらをタップして更新してください。</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">PINコードを更新する</string>
-    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">今後、BRDからの特別なメッセージを受け取るために通知をオンにしてください。</string>
+    <!-- Body text for the push notifications prompt. -->
+    <string name="PushNotifications.body">プッシュ通知をオンにして、新機能や特別オファーについての情報を誰よりも早くに入手しよう。</string>
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">通知が無効になっています</string>
-    <!-- Push notifications settings instructions -->
-    <string name="PushNotifications.enableInstructions">アラートを受け取るには,設定で通知をオンにしてください</string>
+    <!-- Body text when push notifications are disabled. -->
+    <string name="PushNotifications.disabledBody">BRDから特別オファーやアップデートを受信するには、通知を有効にします。</string>
+    <!-- Body text when push notifications are enabled. -->
+    <string name="PushNotifications.enabledBody">BRDから特別オファーや最新情報を受信します。</string>
+    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">通知がオフになっている可能性があります。[設定] に移動して、BRDからの通知を有効にしてください。</string>
     <!-- Push notifications toggle switch label -->
-    <string name="PushNotifications.label">プッシュ通知</string>
+    <string name="PushNotifications.label">プッシュ通知を受信</string>
     <!-- Push notifications are off label -->
     <string name="PushNotifications.off">オフ</string>
     <!-- Push notifications are on label -->
     <string name="PushNotifications.on">オン</string>
     <!-- Push notifications settings view title label -->
-    <string name="PushNotifications.title">通知</string>
+    <string name="PushNotifications.title">情報の輪からそのまま離れないで</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body.Android">当社のアプリをとても気に入っているなら、少しお時間をいただき評価とレビューをお願いします。</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss.Android">結構です</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp.Android">BRDを評価する</string>
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title.Android">BRDを評価する</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">クリップボードにコピーされました。</string>
     <!-- Share via email button label -->
@@ -534,6 +570,74 @@
     <string name="RecoverWallet.subheader">復元を希望するウォレットの復元フレーズを入力してください。</string>
     <!-- Reset PIN with paper key: sub-header -->
     <string name="RecoverWallet.subheader_reset_pin">PINコードをリセットするには、復元フレーズの中から当てはまる単語を下記ボックスの中に入力してください。</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryInputError">入力した単語は正しくありません。もう一度入力してください。</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">もうすぐです ! 復元キーから単語を入力してください。</string>
+    <!-- Title for the confirmation step of the recovery key flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">復元キーの確認</string>
+    <!-- Title displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">復元キーの入力</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">復元キーを入力して,端末からウォレットを解除してください。</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">復元キーの使用は後からでよろしいですか？</string>
+    <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">後から行う</string>
+    <!-- Button text for the 'Generate Recovery Key' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">復元キーを生成する</string>
+    <!-- Subtext for the recovery key landing page. -->
+    <string name="RecoveryKeyFlow.generateKeyExplanation">携帯のアップグレードや紛失の際に,保有資金を復元するためにこのキーが必要です。</string>
+    <!-- Default title for the recovery key landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">秘密復元キーを生成します</string>
+    <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
+    <string name="RecoveryKeyFlow.goToWalletButtonTitle">ウォレットへ</string>
+    <!-- Hint text for recovery key intro page, e.g., Step 2 -->
+    <string name="RecoveryKeyFlow.howItWorksStep">使い方 - ステップ%1$@</string>
+    <!-- Error text displayed when the user enters an incorrect recovery key -->
+    <string name="RecoveryKeyFlow.invalidPhrase">入力した単語にお客様の復元キーと一致しないものがあります。\nもう一度入力してください。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.keepSecure">安全に保管</string>
+    <!-- Informs the user that the recovery is only required for recovering a wallet. -->
+    <string name="RecoveryKeyFlow.keyUseHint">キーは復元時にのみ必要です。通常のウォレットへのアクセスには必要ありません。</string>
+    <!-- Reminds the user not to take screenshots or email the recovery key words -->
+    <string name="RecoveryKeyFlow.noScreenshotsOrEmailWarning">安全上の観点から,これらの単語のスクリーンショットやメール送信はおやめください</string>
+    <!-- Recommends that the user avoids capturing the paper key with a screenshot -->
+    <string name="RecoveryKeyFlow.noScreenshotsRecommendation">キーは紙にメモして,確認してください。安全上の理由からスクリーンショットでの保管はお勧めできません。</string>
+    <!-- Title displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWallet">ウォレットの復元</string>
+    <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">復元したいウォレットの復元キーを入力してください。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.relaxBuyTrade">安心の購入と取引</string>
+    <!-- Reminds the user to write down the recovery key words. -->
+    <string name="RecoveryKeyFlow.rememberToWriteDownReminder">単語はメモしましたか。忘れていたら,スワイプして戻ってください。</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">復元キーを入力して,PINコードをリセットしてください。</string>
+    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <string name="RecoveryKeyFlow.securityAssurance">お客様の資産は最も安全に個人情報を守りながら保護されていますので,安心して購入や取引ができます。</string>
+    <!-- Recommends that the user stores the recovery key in a secure location -->
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">キーは安全な場所に保管してください。ウォレットを復元できるのはこのキーだけです。BRD はキーを保存していません。</string>
+    <!-- Title for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">おつかれさまです ! 復元キーの設定は完了しました。</string>
+    <!-- Subtitle for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successSubheading">BRD ウォレットで仮想通貨を保管・購入・取引をする準備ができました。</string>
+    <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWallet">端末からウォレットを解除する。</string>
+    <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
+    <string name="RecoveryKeyFlow.unlinkWalletSubtext">端末から現在インストールされているウォレットを解除し,新しいウォレットを始めます。</string>
+    <!-- Warning displayed when the user starts the process of unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWalletWarning">ウォレットは再アクセスのために復元を開始します。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.writeItDown">復元キーをメモする</string>
+    <!-- Title for the recovery key landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">もう一度,復元キーをメモする</string>
+    <!-- Subtitle for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">以下の単語を順番通りにメモしてください。</string>
+    <!-- Title for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">お客様の復元キー</string>
+    <!-- Title for the step number when the user pages through the recovery words -->
+    <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@の%2$@</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">はじめに金額を入力してください。</string>
     <!-- Request a specific amount of bitcoin -->
@@ -582,8 +686,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">あなたが携帯電話を紛失したり、アップグレードした場合にご自身のビットコインへアクセスできる唯一の方法です。</string>
-    <!-- Paper Key button title -->
+    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">復元フレーズ</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">復元フレーズ</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">アクセス権限のないユーザーからあなたのブレッドを守ります。</string>
     <!-- PIN button title -->
@@ -686,6 +793,10 @@
     <string name="Settings.advanced">詳細</string>
     <!-- Advanced Settings title -->
     <string name="Settings.advancedTitle">詳細設定</string>
+    <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
+    <string name="Settings.atmMapMenuItemSubtitle">アメリカでのみ利用可能</string>
+    <!-- ATM map menu item title -->
+    <string name="Settings.atmMapMenuItemTitle">暗号ATMマップ</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">表示される通貨</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
@@ -746,16 +857,20 @@
     <string name="StartPaperPhrase.againButtonTitle">復元フレーズをもう一度書き留めてください</string>
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。\n\n単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
+    <!-- Paper key explanation text (Android-version) -->
+    <string name="StartPaperPhrase.Body.Android">お客様のペーパー・キーは携帯電話の紛失,盗難,故障またはアップグレードした際にBRDを復元する唯一の方法です。\n\nペーパー・キーはお客様のデバイスでセキュリティ設定を変更した際も必要となります。\n\n紙に書き留めて保管する単語リストを表示します。</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">復元フレーズを書き留めてください</string>
-    <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">あなたが最後に復元フレーズを書き留めたのは %1$sです</string>
+    <!-- Argument is date; date should be on a new line -->
+    <string name="StartPaperPhrase.date">あなたが最後に復元フレーズを書き留めたのは %1$@です</string>
     <!-- button label -->
     <string name="StartViewController.createButton">新しいウォレットを作成する</string>
     <!-- Start view message -->
     <string name="StartViewController.message">最も安全にビットコインを使う手段。</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">ウォレットを復元する</string>
+    <!-- Syncing view done syncing state header text -->
+    <string name="SyncingView.activity">アクティビティ</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">接続中</string>
     <!-- The sync has failed (to complete) -->
@@ -880,6 +995,9 @@
     <string name="TransactionDetails.commentsPlaceholder">メモを追加する...</string>
     <!-- Timestamp section header for complete tx -->
     <string name="TransactionDetails.completeTimestampHeader">完了</string>
+    <!-- Block height and confirmations label -->
+    <!--eg. 182930 (45061 confirmations)-->
+    <string name="TransactionDetails.confirmationsLabel">確認</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">あなたの取引はこちらに表示されます。</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
