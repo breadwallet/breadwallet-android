@@ -71,7 +71,7 @@ public class BrdWalletActivity extends WalletActivity {
      */
     public static void start(Activity callerActivity, String currencyCode) {
         Intent intent = new Intent(callerActivity, BrdWalletActivity.class);
-        intent.putExtra(EXTRA_CURRENCY_CODE, currencyCode);
+        intent.putExtra(WalletActivity.EXTRA_CURRENCY_CODE, currencyCode);
         callerActivity.startActivity(intent);
     }
 

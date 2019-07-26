@@ -137,7 +137,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                         }
                         BrdWalletActivity.start(HomeActivity.this, currencyCode);
                     } else {
-                        WalletActivity.start(HomeActivity.this, currencyCode);
+                        WalletActivity.Companion.start(HomeActivity.this, currencyCode);
                     }
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 } else {
