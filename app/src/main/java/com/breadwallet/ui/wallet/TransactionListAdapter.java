@@ -40,6 +40,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -70,25 +71,24 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private final Context mContext;
     private final int mTxResourceId;
-    private List<TxUiHolder> mItemFeed;
+    private List<WalletTransaction> mItemFeed = new ArrayList<>();
     private OnItemClickListener mOnItemClickListener;
+    private boolean mIsCryptoPreferred = false;
 
-    public TransactionListAdapter(Context context, List<TxUiHolder> items, OnItemClickListener onClickListener) {
+    public TransactionListAdapter(Context context, List<WalletTransaction> items, OnItemClickListener onClickListener) {
         this.mTxResourceId = R.layout.tx_item;
         this.mContext = context;
         this.mOnItemClickListener = onClickListener;
-        init(items);
     }
 
-    public void setItems(List<TxUiHolder> items) {
-        init(items);
-    }
-
-    private void init(List<TxUiHolder> items) {
-        if (items == null) {
-            items = new ArrayList<>();
-        }
+    public void setItems(@NonNull final List<WalletTransaction> items) {
         mItemFeed = items;
+    }
+
+    public void setIsCryptoPreferred(boolean isCryptoPreferred) { mIsCryptoPreferred = isCryptoPreferred;}
+
+    public List<WalletTransaction> getItems() {
+        return mItemFeed;
     }
 
     @NonNull
@@ -126,14 +126,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
-        TxUiHolder item = mItemFeed.get(position);
-        TxMetaData metaData = mItemFeed.get(position).getMetaData();
-        String commentString = "";
-        if (metaData != null) {
-            if (metaData.comment != null) {
-                commentString = metaData.comment;
-            }
-        }
+        WalletTransaction item = mItemFeed.get(position);
+        String commentString = item.getMemo();
 
         boolean received = item.isReceived();
         int amountColor = received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color;
@@ -148,51 +142,33 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BigDecimal cryptoAmount = item.getAmount().abs();
 
         BREthereumToken tkn = null;
-        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getTo())) {
-            tkn = WalletEthManager.getInstance(mContext.getApplicationContext()).node.lookupToken(item.getTo());
+        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getToAddress())) {
+            // TODO: Provide info from effect handler
+            tkn = WalletEthManager.getInstance(mContext.getApplicationContext()).node.lookupToken(item.getToAddress());
         }
         // it's a token transfer ETH tx
         if (tkn != null) {
             cryptoAmount = item.getFee();
         }
-        boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String preferredCurrencyCode = isCryptoPreferred ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(mContext);
-        BigDecimal amount = isCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
+
+        String preferredCurrencyCode = mIsCryptoPreferred ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(mContext);
+        BigDecimal amount = mIsCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         if (!received && amount != null) {
             amount = amount.negate();
         }
         String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredCurrencyCode, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
         convertView.getTransactionAmount().setText(formattedAmount);
-        int blockHeight = item.getBlockHeight();
-        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getCurrencyCode());
-        int confirms = (blockHeight == Integer.MAX_VALUE || blockHeight == 0) ? 0 : lastBlockHeight - blockHeight + 1;
-        int level;
-        if (confirms <= 0) {
-            long relayCount = wm.getRelayCount(item.getTxHash());
-            if (relayCount <= 0) {
-                level = 0;
-            } else if (relayCount == 1) {
-                level = 1;
-            } else {
-                level = 2;
-            }
-        } else {
-            if (confirms >= FOUR_CONFIRMATIONS) {
-                level = CONFIRMED_BLOCKS_NUMBER;
-            } else {
-                level = confirms + 2;
-            }
-        }
-        if (level > 0 && level < FIVE_CONFIRMATIONS) {
-            showTransactionProgress(convertView, level * PROGRESS_PACE);
-        }
-        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getTo()));
-        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getFrom()));
 
-        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getTo()));
-        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getFrom()));
+        if (item.isPending()) {
+            showTransactionProgress(convertView, item.getLevels() * PROGRESS_PACE);
+        }
+        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getToAddress()));
+        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getFromAddress()));
 
-        if (level > FOUR_CONFIRMATIONS) {
+        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getToAddress()));
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getFromAddress()));
+
+        if (item.getLevels() > FOUR_CONFIRMATIONS) {
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
@@ -234,7 +210,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
+    private void showTransactionFailed(TxHolder holder, WalletTransaction tx, boolean received) {
         holder.getTransactionDate().setVisibility(View.INVISIBLE);
         holder.getTransactionFailed().setVisibility(View.VISIBLE);
 
@@ -248,7 +224,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if (!received) {
             holder.getTransactionDetail().setText(String.format(mContext.getString(R.string.Transaction_sendingTo),
-                    wm.decorateAddress(tx.getTo())));
+                    wm.decorateAddress(tx.getToAddress())));
         }
     }
 
@@ -290,6 +266,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     interface OnItemClickListener {
-        void onItemClicked(TxUiHolder item);
+        void onItemClicked(WalletTransaction item);
     }
 }

@@ -29,7 +29,6 @@ import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 
-
 /**
  * Creates a [Connectable] that delegates connection creation to [effectHandlers]
  * and the corresponding [Connection]s.

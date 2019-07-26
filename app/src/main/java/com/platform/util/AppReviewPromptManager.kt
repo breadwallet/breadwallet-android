@@ -30,10 +30,8 @@ import android.content.Intent
 import android.net.Uri
 import android.text.format.DateUtils
 import com.breadwallet.R
-import com.breadwallet.presenter.entities.TxUiHolder
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
+import com.breadwallet.ui.wallet.WalletTransaction
 
 
 /**
@@ -55,7 +53,7 @@ object AppReviewPromptManager {
      * - There is at least one transaction in the [transactionsList] from the [currencyCode] that
      * has been received and completed in the last 24 hours.
      */
-    fun showReview(context: Context, currencyCode: String, transactionsList: List<TxUiHolder>): Boolean {
+    fun showReview(context: Context, currencyCode: String, transactionsList: List<WalletTransaction>): Boolean {
         val foregroundedTimes = BRSharedPrefs.getInt(context, BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0)
         return if (foregroundedTimes >= MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK
                 // check if we didn't already show the prompt
@@ -63,7 +61,7 @@ object AppReviewPromptManager {
                 && !BRSharedPrefs.getBoolean(context, BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, false)) {
             // Check if it has received a transaction in the last 24 hours.
             val tx = transactionsList.firstOrNull {
-                it.isReceived && it.isComplete(context, currencyCode)
+                it.isReceived && it.isComplete
                         && (System.currentTimeMillis() - it.timeStamp * DateUtils.SECOND_IN_MILLIS) < DateUtils.DAY_IN_MILLIS
             }
             return tx != null
