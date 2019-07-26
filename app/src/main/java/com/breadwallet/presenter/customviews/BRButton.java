@@ -286,6 +286,10 @@ public class BRButton extends Button {
         invalidate();
     }
 
+    public int getType() {
+        return type;
+    }
+
     public void makeGradient(int startColor, int endColor) {
         bPaint.setShader(new LinearGradient(0, 0, getWidth(), 0, startColor, endColor, Shader.TileMode.MIRROR));
         invalidate();

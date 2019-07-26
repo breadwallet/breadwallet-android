@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static com.breadwallet.ui.wallet.WalletActivity.EXTRA_CRYPTO_REQUEST;
+import static com.breadwallet.ui.wallet.WalletActivity.Companion.*;
 import static com.breadwallet.tools.util.BRConstants.BREAD;
 
 /**
@@ -329,7 +329,7 @@ public class CryptoUriParser {
                 BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
                 Intent newIntent = new Intent(context, WalletActivity.class);
                 newIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
-                newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
+                newIntent.putExtra(WalletActivity.EXTRA_CRYPTO_REQUEST, requestObject);
                 context.startActivity(newIntent);
             }
         });
