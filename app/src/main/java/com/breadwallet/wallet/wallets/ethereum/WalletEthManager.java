@@ -1139,6 +1139,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         for (OnTransactionEventListener listener : mTransactionEventListeners) {
             listener.onTransactionEvent(event, transaction, status);
         }
+        // Get the wallet manager helper for this txn's currency (assume ETH)
+        // TODO: Refactor logic such that WalletEthManager is not handling non-ETH events
+        WalletManagerHelper walletManagerHelper = getWalletManagerHelper();
+        if (WalletsMaster.getInstance().isCurrencyCodeErc20(mContext, currencyCode)) {
+            walletManagerHelper = WalletTokenManager.getTokenWalletByIso(mContext, currencyCode).getWalletManagerHelper();
+        }
         switch (event) {
             case CREATED:
                 printInfo("Transaction created: " + transaction.getAmount(), currencyCode, event.name());
@@ -1164,19 +1170,14 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     Log.e(TAG, "handleTransactionEvent: tx is null");
                 }
 
-                // Get the wallet manager helper for this txn's currency (assume ETH)
-                // TODO: Refactor logic such that WalletEthManager is not handling non-ETH events
-                WalletManagerHelper walletManagerHelper = getWalletManagerHelper();
-                if (WalletsMaster.getInstance().isCurrencyCodeErc20(mContext, currencyCode)) {
-                    walletManagerHelper = WalletTokenManager.getTokenWalletByIso(mContext, currencyCode).getWalletManagerHelper();
-                }
                 walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
 
                 Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getOriginationTransactionHash());
                 printInfo("Transaction submitted: " + transaction.getAmount(), currencyCode, event.name());
                 break;
             case INCLUDED:
-                printInfo("Transaction blocked: " + transaction.getAmount(), currencyCode, event.name());
+                walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
+                printInfo("Transaction included: " + transaction.getAmount(), currencyCode, event.name());
                 break;
             case ERRORED:
                 printInfo("Transaction error: " + transaction.getAmount(), currencyCode, event.name());
