@@ -248,7 +248,7 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle_android), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity, WriteDownActivity.class);
