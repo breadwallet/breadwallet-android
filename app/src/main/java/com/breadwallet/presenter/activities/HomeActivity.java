@@ -74,7 +74,8 @@ import java.util.Map;
 
 public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
     private static final String TAG = HomeActivity.class.getSimpleName();
-    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
+    public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_DATA";
+    public static final String EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_PUSH_CAMPAIGN_ID";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
     private static final String NETWORK_TESTNET = "TESTNET";
     private static final String NETWORK_MAINNET = "MAINNET";
@@ -188,6 +189,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private synchronized void processIntentData(Intent intent) {
+        if (intent.hasExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)) {
+            Map<String, String> attributes = new HashMap<>();
+            attributes.put(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID, intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID));
+            EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes);
+            EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN);
+        }
+
         String data = intent.getStringExtra(EXTRA_DATA);
         if (Utils.isNullOrEmpty(data)) {
             data = intent.getDataString();

@@ -1,10 +1,8 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,16 +10,13 @@ import android.widget.Toast;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.LogsUtils;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.FileHelper;
+import com.breadwallet.tools.util.LogsUtils;
 
-import java.io.File;
 import java.util.Locale;
 
 public class AboutActivity extends BaseSettingsActivity {

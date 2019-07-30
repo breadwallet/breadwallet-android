@@ -139,6 +139,17 @@ public final class EventUtils {
     public static final String EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED = "prompt.playstoreRate.trigger";
     public static final String EVENT_REVIEW_PROMPT_DISMISSED = "prompt.playstoreRate.dismissed";
 
+    // Push notifications
+    public static final String EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS = "pushNotifications.pushNotificationSettings.appeared";
+    public static final String EVENT_PUSH_NOTIFICATIONS_SETTING_TOGGLE_ON = "pushNotifications.pushNotificationSettings.pushNotificationsToggleOn";
+    public static final String EVENT_PUSH_NOTIFICATIONS_SETTING_TOGGLE_OFF = "pushNotifications.pushNotificationSettings.pushNotificationsToggleOff";
+    public static final String EVENT_PUSH_NOTIFICATIONS_OPEN_OS_SETTING = "pushNotifications.pushNotificationSettings.openNotificationSystemSettings";
+    public static final String EVENT_PUSH_NOTIFICATION_OPEN = "pushNotifications.openNotification";
+    public static final String EVENT_PUSH_NOTIFICATION_RECEIVED = "pushNotifications.receivedNotification";
+    // Used for campaign analysis
+    public static final String EVENT_MIXPANEL_APP_OPEN = "$app_open";
+    public static final String EVENT_ATTRIBUTE_CAMPAIGN_ID = "campaign_id";
+
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";
