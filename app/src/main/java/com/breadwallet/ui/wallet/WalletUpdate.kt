@@ -8,7 +8,6 @@ import com.breadwallet.ui.wallet.WalletScreenEffect.*
 
 val WalletUpdate = Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffect> { model, event ->
 
-
     when (event) {
         OnBackClicked ->
             dispatch(effects(
