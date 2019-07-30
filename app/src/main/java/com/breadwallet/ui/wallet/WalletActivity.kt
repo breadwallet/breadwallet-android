@@ -68,7 +68,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             Connectable { output -> WalletScreenEffectHandler(output) },
                             // Create nested handler, such that WalletScreenEffects are converted into WalletEffects and passed to WalletEffectHandler
                             // (events produced are converted into WalletScreenEvents)
-                            nestedConnectable({ output : Consumer<WalletEvent> -> WalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))
+                            nestedConnectable({ output : Consumer<WalletEvent> -> CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))
                             }, { effect : WalletScreenEffect ->
                                 // Map incoming effect
                                 when (effect) {

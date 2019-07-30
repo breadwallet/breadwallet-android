@@ -195,6 +195,7 @@ repositories {
 
 dependencies {
     implementation project(':CoreLibrary')
+    implementation project(':CoreCrypto')
 
     implementation 'commons-io:commons-io:2.4'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
