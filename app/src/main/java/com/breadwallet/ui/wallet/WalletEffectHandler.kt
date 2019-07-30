@@ -187,7 +187,8 @@ class WalletEffectHandler(
                 blockHeight = blockHeight,
                 confirmations = confirmations,
                 timeStamp = timeStamp,
-                levels = levels
+                levels = levels,
+                currencyCode = currencyCode
         )
     }
 }

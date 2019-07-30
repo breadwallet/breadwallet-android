@@ -85,7 +85,8 @@ data class WalletTransaction(
         val fee: BigDecimal,
         val blockHeight: Int,
         val confirmations: Int,
-        val levels: Int
+        val levels: Int,
+        val currencyCode: String
 ) {
     val isPending: Boolean
         get() = levels > 0 && levels < BRConstants.CONFIRMED_BLOCKS_NUMBER
