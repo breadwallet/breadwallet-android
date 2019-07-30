@@ -143,7 +143,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
 
             // Initialize the Firebase Messaging Service.
-            BRDFirebaseMessagingService.initialize(mInstance);
+            BRDFirebaseMessagingService.Companion.initialize(mInstance);
 
             // Initialize TokenUtil to load our tokens.json file from res/raw
             TokenUtil.initialize(mInstance);
