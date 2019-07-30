@@ -12,7 +12,6 @@ import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,12 +61,6 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
         mListView.addFooterView(view, null, true);
         mListView.addHeaderView(view, null, true);
         mListView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, mItems));
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
 }
