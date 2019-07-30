@@ -157,12 +157,6 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
     public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         public final String TAG = CurrencyListAdapter.class.getName();
 

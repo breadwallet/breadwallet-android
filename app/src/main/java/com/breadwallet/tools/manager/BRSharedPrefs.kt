@@ -376,7 +376,7 @@ object BRSharedPrefs {
 
     @JvmStatic
     fun getShowNotification(context: Context? = null): Boolean =
-            brdPrefs.getBoolean(SHOW_NOTIFICATION, false)
+            brdPrefs.getBoolean(SHOW_NOTIFICATION, true)
 
     @JvmStatic
     fun putShowNotification(context: Context? = null, show: Boolean) =
