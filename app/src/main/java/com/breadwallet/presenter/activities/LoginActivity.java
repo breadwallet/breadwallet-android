@@ -163,7 +163,7 @@ public class LoginActivity extends BRActivity implements PinLayout.PinLayoutList
                         } else if (currencyCode.equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
                             BrdWalletActivity.start(LoginActivity.this, currencyCode);
                         } else {
-                            WalletActivity.start(LoginActivity.this, currencyCode);
+                            WalletActivity.Companion.start(LoginActivity.this, currencyCode);
                         }
 
                         if (!LoginActivity.this.isDestroyed()) {

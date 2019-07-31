@@ -15,6 +15,13 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.corecrypto.CryptoApiProvider;
+import com.breadwallet.crypto.Account;
+import com.breadwallet.crypto.CryptoApi;
+import com.breadwallet.crypto.System;
+import com.breadwallet.crypto.WalletManager;
+import com.breadwallet.crypto.WalletManagerMode;
+import com.breadwallet.crypto.blockchaindb.BlockchainDb;
 import com.breadwallet.protocols.messageexchange.InboxPollingHandler;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.util.ServerBundlesHelper;
@@ -43,12 +50,22 @@ import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.fabric.sdk.android.Fabric;
+import okhttp3.OkHttpClient;
+
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * BreadWallet
@@ -91,6 +108,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static Activity mCurrentActivity;
     private boolean mDelayServerShutdown = false;
 
+    private static System cryptoSystem;
+    private static CryptoSystemListener listener;
+    // TODO: should not be hard-coded, should switch on debug vs. release etc and not be here
+    public static final String API_BASE_URL = "https://stage2.breadwallet.com";
+    public static final String BDB_BASE_URL = "https://test-blockchaindb-api.brd.tools";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -112,6 +135,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         mDisplayWidthPx = size.x;
         mDisplayHeightPx = size.y;
 
+        // TODO: initializing the Crypto System goes hand in hand with onboarding -- this must be refactored
+        // For now, initializing system here, with a hard-coded wallet etc.
+        initializeCryptoSystem();
+
         // Initialize application lifecycle observer and register this application for events.
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
         ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
@@ -123,6 +150,51 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         // Start our local server as soon as the application instance is created, since we need to
         // display support WebViews during onboarding.
         HTTPServer.getInstance().startServer(this);
+    }
+
+
+    // TODO: Temp -- refactor
+    private void initializeCryptoSystem() {
+        // Hard-code wallet and init settings to ease bootstrap
+        String paperKeyStr ="ginger settle marine tissue robot crane night number ramp coast roast critic";
+        byte[] paperKey = paperKeyStr.getBytes(StandardCharsets.UTF_8);
+        boolean wipe = true;
+        long timestamp = 1507168053L;
+        WalletManagerMode mode = WalletManagerMode.API_ONLY;
+
+        File storageFile = new File(this.getFilesDir(), "cryptocore");
+        if (wipe) {
+            if (storageFile.exists()) deleteRecursively(storageFile);
+            checkState(storageFile.mkdirs());
+        }
+
+        CryptoApi.initialize(CryptoApiProvider.getInstance());
+
+        List<String> currencyCodesNeeded = Arrays.asList("btc", "eth", "brd");
+        listener = new CryptoSystemListener(mode, currencyCodesNeeded);
+
+        String uids = UUID.nameUUIDFromBytes(paperKey).toString();
+        Account account = Account.createFromPhrase(paperKey, new Date(TimeUnit.SECONDS.toMillis(timestamp)), uids);
+
+        BlockchainDb query = new BlockchainDb(new OkHttpClient(), BDB_BASE_URL, API_BASE_URL);
+
+        cryptoSystem = System.create(Executors.newSingleThreadExecutor(), listener, account, storageFile.getAbsolutePath(), query);
+        cryptoSystem.configure();
+    }
+
+    public static System getCryptoSystem() {
+        return cryptoSystem;
+    }
+    public static CryptoSystemListener getCryptoSystemListener() { return listener; }
+
+
+    private static void deleteRecursively (File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                deleteRecursively(child);
+            }
+        }
+        file.delete();
     }
 
     /**
@@ -270,6 +342,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
 
+                for (WalletManager manager: cryptoSystem.getWalletManagers()) {
+                    manager.connect();
+                }
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
                 // initialized, we may need tell the user to enable the password.
                 if (isDeviceStateValid()) {
@@ -292,7 +367,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");
                 if (isBRDWalletInitialized()) {
-                    mBackgroundedTime = System.currentTimeMillis();
+                    mBackgroundedTime = java.lang.System.currentTimeMillis();
                     WalletConnectionCleanUpWorker.enqueueWork();
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
                         EventUtils.saveEvents(BreadApp.this);
@@ -307,6 +382,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 }
                 BRApiManager.getInstance().stopTimerTask();
                 SyncUpdateHandler.INSTANCE.cancelWalletSync();
+                cryptoSystem.stop();
                 break;
             case ON_DESTROY:
                 Log.d(TAG, "onLifeCycle: DESTROY");

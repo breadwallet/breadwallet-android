@@ -143,7 +143,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 return;
             }
 
-            node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), paperKey, words);
+            // Revert back once CORE-416 is merged into 'crypto' branch
+            //node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), paperKey, words);
+            node = new BREthereumEWM(this, network, FileHelper.getCoreDataFilePath(context), paperKey, words);
 
             mWallet = node.getWallet();
 
@@ -156,7 +158,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             BRKeyStore.putEthPublicKey(ethPubKey, context);
         } else {
             Log.d(TAG, "WalletEthManager: Using the pubkey to create");
-            node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), ethPubKey);
+            // Revert back once CORE-416 is merged into 'crypto' branch
+            //node = new BREthereumEWM(this, BREthereumEWM.Mode.API_WITH_P2P_SEND, network, FileHelper.getCoreDataFilePath(context), ethPubKey);
+            node = new BREthereumEWM(this, network, FileHelper.getCoreDataFilePath(context), ethPubKey);
 
             mWallet = node.getWallet();
 
@@ -1139,6 +1143,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         for (OnTransactionEventListener listener : mTransactionEventListeners) {
             listener.onTransactionEvent(event, transaction, status);
         }
+        // Get the wallet manager helper for this txn's currency (assume ETH)
+        // TODO: Refactor logic such that WalletEthManager is not handling non-ETH events
+        WalletManagerHelper walletManagerHelper = getWalletManagerHelper();
+        if (WalletsMaster.getInstance().isCurrencyCodeErc20(mContext, currencyCode)) {
+            walletManagerHelper = WalletTokenManager.getTokenWalletByIso(mContext, currencyCode).getWalletManagerHelper();
+        }
         switch (event) {
             case CREATED:
                 printInfo("Transaction created: " + transaction.getAmount(), currencyCode, event.name());
@@ -1151,7 +1161,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce()
                             + ", actual: " + transaction.getNonce());
                     if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
-                        String hash = transaction.getOriginationTransactionHash();
+                        // TODO: revert back once CORE-325 merged into 'crypto' branch
+                        //String hash = transaction.getOriginationTransactionHash();
+                        String hash = transaction.getIdentifier();
                         if (!Utils.isNullOrEmpty(hash)) {
                             if (mWatchListener != null) {
                                 mWatchListener.onUpdated(hash);
@@ -1164,19 +1176,19 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     Log.e(TAG, "handleTransactionEvent: tx is null");
                 }
 
-                // Get the wallet manager helper for this txn's currency (assume ETH)
-                // TODO: Refactor logic such that WalletEthManager is not handling non-ETH events
-                WalletManagerHelper walletManagerHelper = getWalletManagerHelper();
-                if (WalletsMaster.getInstance().isCurrencyCodeErc20(mContext, currencyCode)) {
-                    walletManagerHelper = WalletTokenManager.getTokenWalletByIso(mContext, currencyCode).getWalletManagerHelper();
-                }
-                walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
+                // TODO: revert back once CORE-325 merged into 'crypto' branch
+                //walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
+                //Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getOriginationTransactionHash());
+                walletManagerHelper.onTxListModified(transaction.getIdentifier());
+                Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getIdentifier());
 
-                Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getOriginationTransactionHash());
                 printInfo("Transaction submitted: " + transaction.getAmount(), currencyCode, event.name());
                 break;
             case INCLUDED:
-                printInfo("Transaction blocked: " + transaction.getAmount(), currencyCode, event.name());
+                // TODO: revert back once CORE-325 merged into 'crypto' branch
+                //walletManagerHelper.onTxListModified(transaction.getOriginationTransactionHash());
+                walletManagerHelper.onTxListModified(transaction.getIdentifier());
+                printInfo("Transaction included: " + transaction.getAmount(), currencyCode, event.name());
                 break;
             case ERRORED:
                 printInfo("Transaction error: " + transaction.getAmount(), currencyCode, event.name());

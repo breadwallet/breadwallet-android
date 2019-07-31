@@ -37,6 +37,7 @@ import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by byfieldj on 2/26/18.
@@ -178,14 +179,24 @@ public class FragmentTxDetails extends DialogFragment {
         super.onAttach(context);
     }
 
-    public void setTransaction(TxUiHolder item) {
-        this.mTransaction = item;
+    public void setTransaction(Context context, String txid) {
+        // TODO: Cheating again..
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(context);
+        List<TxUiHolder> txs = walletManager.getTxUiHolders(context);
+        for (TxUiHolder txUiHolder : txs) {
+            if (new String(txUiHolder.getTxHash()).equals(txid)) {
+                this.mTransaction = txUiHolder;
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Transaction id not found");
     }
 
     private void updateUi() {
         Activity app = getActivity();
 
-        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(app);
+        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getContext());
 
         // Set mTransction fields
         if (mTransaction != null) {
