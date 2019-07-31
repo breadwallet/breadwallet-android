@@ -165,7 +165,7 @@ public class UiUtils {
     }
 
 
-    public static void showTransactionDetails(Activity app, TxUiHolder item) {
+    public static void showTransactionDetails(Activity app, String txid) {
 
         FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.TAG);
 
@@ -175,7 +175,7 @@ public class UiUtils {
         }
 
         txDetails = new FragmentTxDetails();
-        txDetails.setTransaction(item);
+        txDetails.setTransaction(app, txid);
         txDetails.show(app.getFragmentManager(), FragmentTxDetails.TAG);
 
     }

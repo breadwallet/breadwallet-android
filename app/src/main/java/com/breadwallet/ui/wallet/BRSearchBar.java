@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.ui.wallet.model.TxFilter;
+import com.spotify.mobius.functions.Consumer;
 
 /**
  * BreadWallet
@@ -43,22 +43,14 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
     private static final int SHOW_KEYBOARD_DELAY = 300;
 
-    private enum Filter {
-        SENT,
-        RECEIVED,
-        PENDING,
-        COMPLETED
-    }
-
     private EditText searchEdit;
     private BRButton sentFilter;
     private BRButton receivedFilter;
     private BRButton pendingFilter;
     private BRButton completedFilter;
     private BRButton cancelButton;
-    private WalletActivity breadActivity;
-    private FilterListener mFilterListener;
-    private boolean[] mFilterSwitches = new boolean[Filter.values().length];
+    private Consumer<WalletScreenEvent> output = value -> {
+    };
 
     public BRSearchBar(Context context) {
         super(context);
@@ -77,13 +69,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
     private void init() {
         inflate(getContext(), R.layout.search_bar, this);
-        if (getContext() instanceof FilterListener) {
-            mFilterListener = (FilterListener) getContext();
-        } else {
-            throw new IllegalStateException("BRSearchBar's host must implement " + FilterListener.class.getName());
-        }
 
-        breadActivity = (WalletActivity) getContext();
         searchEdit = findViewById(R.id.search_edit);
         sentFilter = findViewById(R.id.sent_filter);
         receivedFilter = findViewById(R.id.received_filter);
@@ -91,9 +77,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         completedFilter = findViewById(R.id.complete_filter);
         cancelButton = findViewById(R.id.cancel_button);
 
-        clearSwitches();
         setListeners();
-
 
         searchEdit.requestFocus();
         searchEdit.postDelayed(() -> {
@@ -103,29 +87,20 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         }, SHOW_KEYBOARD_DELAY); // delay to make it run when coming back from lock screen
     }
 
-    private void updateFilterButtonsUI(boolean[] switches) {
-        sentFilter.setType(switches[Filter.SENT.ordinal()] ? 3 : 2);
-        receivedFilter.setType(switches[Filter.RECEIVED.ordinal()] ? 3 : 2);
-        pendingFilter.setType(switches[Filter.PENDING.ordinal()] ? 3 : 2);
-        completedFilter.setType(switches[Filter.COMPLETED.ordinal()] ? 3 : 2);
-        mFilterListener.onFilterChanged(getFilter(searchEdit.getText().toString()));
-    }
 
     private void setListeners() {
         searchEdit.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
-                if (breadActivity.mBarFlipper != null) {
-                    breadActivity.mBarFlipper.setDisplayedChild(0);
+            //TODO: What is this button?
+            /*if (!hasFocus) {
+                if (breadActivity.tool_bar_flipper != null) {
+                    breadActivity.tool_bar_flipper.setDisplayedChild(0);
                     clearSwitches();
                 }
-            }
+            }*/
         });
 
         cancelButton.setOnClickListener(view -> {
-            searchEdit.setText("");
-            breadActivity.resetFlipper();
-            clearSwitches();
-            onShow(false);
+            output.accept(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
         });
 
         searchEdit.addTextChangedListener(new TextWatcher() {
@@ -136,7 +111,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
-                mFilterListener.onFilterChanged(getFilter(sequence.toString()));
+                output.accept(new WalletScreenEvent.OnQueryChanged(sequence.toString()));
             }
 
             @Override
@@ -146,76 +121,72 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         });
         searchEdit.setOnKeyListener((view, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                onShow(false);
+                output.accept(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
                 return true;
             }
             return false;
         });
 
-        sentFilter.setOnClickListener(view -> {
-            mFilterSwitches[Filter.SENT.ordinal()] = !mFilterSwitches[Filter.SENT.ordinal()];
-            mFilterSwitches[Filter.RECEIVED.ordinal()] = false;
-            updateFilterButtonsUI(mFilterSwitches);
-
-        });
-
-        receivedFilter.setOnClickListener(view -> {
-            mFilterSwitches[Filter.RECEIVED.ordinal()] = !mFilterSwitches[Filter.RECEIVED.ordinal()];
-            mFilterSwitches[Filter.SENT.ordinal()] = false;
-            updateFilterButtonsUI(mFilterSwitches);
-        });
-
-        pendingFilter.setOnClickListener(view -> {
-            mFilterSwitches[Filter.PENDING.ordinal()] = !mFilterSwitches[Filter.PENDING.ordinal()];
-            mFilterSwitches[Filter.COMPLETED.ordinal()] = false;
-            updateFilterButtonsUI(mFilterSwitches);
-        });
-
-        completedFilter.setOnClickListener(view -> {
-            mFilterSwitches[Filter.COMPLETED.ordinal()] = !mFilterSwitches[Filter.COMPLETED.ordinal()];
-            mFilterSwitches[Filter.PENDING.ordinal()] = false;
-            updateFilterButtonsUI(mFilterSwitches);
-        });
-    }
-
-    public void clearSwitches() {
-        for (int i = 0; i < Filter.values().length; i++) {
-            mFilterSwitches[i] = false;
-        }
+        sentFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterSentClicked.INSTANCE));
+        receivedFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterReceivedClicked.INSTANCE));
+        pendingFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterPendingClicked.INSTANCE));
+        completedFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterCompleteClicked.INSTANCE));
     }
 
     public void onShow(boolean showKeyboard) {
-
         final InputMethodManager keyboard = (InputMethodManager)
                 getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        clearSwitches();
-        updateFilterButtonsUI(mFilterSwitches);
         if (showKeyboard) {
             new Handler().postDelayed(() -> {
                 searchEdit.requestFocus();
                 keyboard.showSoftInput(searchEdit, 0);
             }, SHOW_KEYBOARD_DELAY);
-
         } else {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
-            mFilterListener.onFilterChanged(new TxFilter());
         }
     }
 
-    private TxFilter getFilter(String query) {
-        return new TxFilter(query.toLowerCase().trim(), mFilterSwitches[Filter.SENT.ordinal()],
-                mFilterSwitches[Filter.RECEIVED.ordinal()], mFilterSwitches[Filter.PENDING.ordinal()],
-                mFilterSwitches[Filter.COMPLETED.ordinal()]);
+    public void setEventOutput(final Consumer<WalletScreenEvent> output) {
+        if (output == null) {
+            this.output = value -> {
+                // no-op
+            };
+        } else {
+            this.output = output;
+        }
     }
 
-    interface FilterListener {
+    private static final int BUTTON_ACTIVE_TYPE = 3;
+    private static final int BUTTON_INACTIVE_TYPE = 2;
 
-        /**
-         * Filter list of transactions by the given Filter.
-         *
-         * @param filter The filter to be applied.
-         */
-        void onFilterChanged(TxFilter filter);
+    public void render(final WalletScreenModel model) {
+        final int sentType = sentFilter.getType();
+        final int receivedType = receivedFilter.getType();
+        final int pendingType = pendingFilter.getType();
+        final int completedType = completedFilter.getType();
 
+        if (model.getFilterSent() && sentType != BUTTON_ACTIVE_TYPE) {
+            sentFilter.setType(BUTTON_ACTIVE_TYPE);
+        } else if (!model.getFilterSent() && sentType != BUTTON_INACTIVE_TYPE) {
+            sentFilter.setType(BUTTON_INACTIVE_TYPE);
+        }
+
+        if (model.getFilterReceived() && receivedType != BUTTON_ACTIVE_TYPE) {
+            receivedFilter.setType(BUTTON_ACTIVE_TYPE);
+        } else if (!model.getFilterReceived() && receivedType != BUTTON_INACTIVE_TYPE) {
+            receivedFilter.setType(BUTTON_INACTIVE_TYPE);
+        }
+
+        if (model.getFilterPending() && pendingType != BUTTON_ACTIVE_TYPE) {
+            pendingFilter.setType(BUTTON_ACTIVE_TYPE);
+        } else if (!model.getFilterPending() && pendingType != BUTTON_INACTIVE_TYPE) {
+            pendingFilter.setType(BUTTON_INACTIVE_TYPE);
+        }
+
+        if (model.getFilterComplete() && completedType != BUTTON_ACTIVE_TYPE) {
+            completedFilter.setType(BUTTON_ACTIVE_TYPE);
+        } else if (!model.getFilterComplete() && completedType != BUTTON_INACTIVE_TYPE) {
+            completedFilter.setType(BUTTON_INACTIVE_TYPE);
+        }
     }
 }
