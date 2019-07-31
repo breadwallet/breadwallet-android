@@ -271,7 +271,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 }
             }
 
-            String outputAddress = getWallet().getTransactionAmountSent(tx) > 0
+            String outputAddress = getWallet().getTransactionAmount(tx) < 0
                     ? otherAddress   // sent transaction
                     : myAddress;    // received transaction
 
