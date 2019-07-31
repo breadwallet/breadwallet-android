@@ -4,14 +4,11 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.util.BRCompressor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 
-import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -20,16 +17,11 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-//import static com.platform.APIClient.BREAD_POINT;
-import io.sigpipe.jbsdiff.InvalidHeaderException;
-import io.sigpipe.jbsdiff.Patch;
-import okhttp3.Request;
-import okhttp3.Response;
+import static org.junit.Assert.assertNotEquals;
 
 
 /**
@@ -60,6 +52,7 @@ import okhttp3.Response;
 @RunWith(AndroidJUnit4.class)
 public class PlatformTests {
     public static final String TAG = PlatformTests.class.getName();
+
     @Rule
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(
             TestActivity.class);
@@ -195,7 +188,7 @@ public class PlatformTests {
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         String token = apiClient.getToken();
         Assert.assertNotNull(token);
-        Assert.assertNotEquals(token.length(), 0);
+        assertNotEquals(token.length(), 0);
     }
 
     @Test
@@ -219,7 +212,7 @@ public class PlatformTests {
         Assert.assertFalse(BRCompressor.isGZIPStream(decompressedData));
         Assert.assertNotNull(decompressedData);
         Assert.assertEquals(new String(decompressedData), data);
-        Assert.assertNotEquals(compressedData.length, decompressedData.length);
+        assertNotEquals(compressedData.length, decompressedData.length);
     }
 
     @Test
@@ -239,7 +232,7 @@ public class PlatformTests {
         byte[] decompressedData = BRCompressor.bz2Extract(compressedData);
         Assert.assertNotNull(decompressedData);
         Assert.assertEquals(new String(decompressedData), data);
-        Assert.assertNotEquals(compressedData.length, decompressedData.length);
+        assertNotEquals(compressedData.length, decompressedData.length);
     }
 
     @Test
@@ -257,5 +250,4 @@ public class PlatformTests {
 //        Assert.assertEquals(expectedSig.length(), sig.length());
 //        Assert.assertEquals(expectedSig, sig);
     }
-
 }
