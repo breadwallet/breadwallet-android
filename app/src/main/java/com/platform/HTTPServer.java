@@ -186,7 +186,7 @@ public class HTTPServer extends AbstractLifeCycle {
     @Override
     protected void doStop() {
         Log.d(TAG, "doStop");
-        if (mServer != null && !mServer.isStopped() && !mServer.isStopping()) {
+        if (mServer != null && !mServer.isStopped()) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -226,8 +226,8 @@ public class HTTPServer extends AbstractLifeCycle {
             mPort = port;
             BRSharedPrefs.putHttpServerPort(mContext, port);
 
-            mServer.join();
             Log.d(TAG, "doStartServer: Server started in port " + mPort);
+            mServer.join();
             return true;
         } catch (Exception e) {
             Log.e(TAG, "doStart: Error starting the local server. Trying again on new port.", e);
