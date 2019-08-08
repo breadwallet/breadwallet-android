@@ -184,6 +184,7 @@ class CryptoSystemListener(private val mode: WalletManagerMode, currencyCodesNee
     }
 
     companion object {
-        private val TAG = CryptoSystemListener::class.simpleName
+        //private val TAG = CryptoSystemListener::class.simpleName
+        private val TAG = "CryptoSystemListener"
     }
 }

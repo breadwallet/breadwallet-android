@@ -2,15 +2,10 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +15,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.ShimmerLayout;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.home.Wallet;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
@@ -145,16 +140,16 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             } else {
                 decoratedHolderView.mShimmerLayout.stopShimmerAnimation();
             }
-            String name = wallet.getName();
-            String currencyCode = wallet.getCurrencyCode();
+            String name = wallet.getCurrencyName();
+            String currencyCode = wallet.getCurrencyCode().toUpperCase();
 
-            BigDecimal bigExchangeRate = wallet.getExchangeRate();
+            BigDecimal bigExchangeRate = wallet.getFiatPricePerUnit();
             BigDecimal bigFiatBalance = wallet.getFiatBalance();
 
             // Format numeric data
             String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
             String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
-            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getCurrencyCode(), wallet.getCryptoBalance());
+            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getCurrencyCode(), wallet.getBalance());
 
             if (Utils.isNullOrZero(bigExchangeRate)) {
                 decoratedHolderView.mWalletBalanceFiat.setVisibility(View.INVISIBLE);
