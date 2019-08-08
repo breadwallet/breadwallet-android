@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.widget.ToastKt;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -42,6 +40,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.ui.settings.NotificationsSettingsActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.platform.pricealert.PriceAlertWorker;
@@ -100,47 +99,32 @@ public final class SettingsUtil {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
         final BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(activity);
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UiUtils.openScanner(activity);
-            }
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", view -> {
+            UiUtils.openScanner(activity);
         }, false, R.drawable.ic_camera));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, ManageWalletsActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", view -> {
+            Intent intent = new Intent(activity, ManageWalletsActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }, false, R.drawable.ic_wallet));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_preferences), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, SettingsActivity.class);
-                intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_PREFERENCES);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_preferences), "", view -> {
+            Intent intent = new Intent(activity, SettingsActivity.class);
+            intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_PREFERENCES);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }, false, R.drawable.ic_preferences));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_security), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, SettingsActivity.class);
-                intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SECURITY);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_security), "", view -> {
+            Intent intent = new Intent(activity, SettingsActivity.class);
+            intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SECURITY);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }, false, R.drawable.ic_security_settings));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_support), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
-            }
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_support), "", view -> {
+            UiUtils.showSupportFragment((FragmentActivity) activity, null, walletManager);
         }, false, R.drawable.ic_support));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
@@ -192,30 +176,24 @@ public final class SettingsUtil {
 
         final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
         String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
-        items.add(new BRSettingsItem(bitcoinSettingsLabel, null, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
-                startCurrencySettings(activity);
-            }
+        items.add(new BRSettingsItem(bitcoinSettingsLabel, null, view -> {
+            BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
+            startCurrencySettings(activity);
         }, false, 0));
         final WalletBchManager walletBchManager = WalletBchManager.getInstance(activity);
         String bchSettingsLabel = String.format("%s %s", walletBchManager.getName(), activity.getString(R.string.Settings_title));
 
-        items.add(new BRSettingsItem(bchSettingsLabel, null, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBchManager.getCurrencyCode());
-                startCurrencySettings(activity);
-            }
+        items.add(new BRSettingsItem(bchSettingsLabel, null, view -> {
+            BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBchManager.getCurrencyCode());
+            startCurrencySettings(activity);
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), null, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity, ShareDataActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
+        items.add(new BRSettingsItem(activity.getString(R.string.Prompts_ShareData_title), null, view -> {
+            Intent intent = new Intent(activity, ShareDataActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        }, false, 0));
+        items.add(new BRSettingsItem(activity.getString(R.string.PushNotifications_title), null, view -> {
+            NotificationsSettingsActivity.Companion.start(activity);
         }, false, 0));
         return items;
     }
@@ -248,7 +226,7 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle_android), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity, WriteDownActivity.class);

@@ -85,6 +85,12 @@ public abstract class BRActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((BreadApp) getApplicationContext()).setDelayServerShutdown(false, -1);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -120,6 +126,7 @@ public abstract class BRActivity extends FragmentActivity {
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
+                ((BreadApp) getApplicationContext()).setDelayServerShutdown(false, requestCode);
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
@@ -249,7 +256,7 @@ public abstract class BRActivity extends FragmentActivity {
         // Filter obscured touches by consuming them.
         if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) != 0) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
+                BRDialog.showSimpleDialog(this, getString(R.string.Android_screenAlteringTitle),
                         getString(R.string.Android_screenAlteringMessage));
             }
             return true;

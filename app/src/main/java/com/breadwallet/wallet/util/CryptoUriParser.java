@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static com.breadwallet.ui.wallet.WalletActivity.Companion.*;
 import static com.breadwallet.tools.util.BRConstants.BREAD;
 
 /**

@@ -46,4 +46,6 @@ sealed class HomeScreenEffect {
     object GoToMenu : HomeScreenEffect()
 
     object GoToAddWallet : HomeScreenEffect()
+
+    data class RecordPushNotificationOpened(val campaignId: String) : HomeScreenEffect()
 }

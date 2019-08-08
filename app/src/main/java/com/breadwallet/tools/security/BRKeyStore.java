@@ -44,6 +44,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -899,6 +900,7 @@ public final class BRKeyStore {
                     context.getString(R.string.UnlockScreen_touchIdTitle_android),
                     context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {
+                ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
                 app.startActivityForResult(intent, requestCode);
             } else {
                 Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");

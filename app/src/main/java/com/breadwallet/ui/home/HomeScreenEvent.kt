@@ -65,4 +65,6 @@ sealed class HomeScreenEvent {
 
     data class OnPromptLoaded(val promptId: PromptManager.PromptItem) : HomeScreenEvent()
 
+    data class OnPushNotificationOpened(val campaignId : String) : HomeScreenEvent()
+
 }

@@ -38,6 +38,12 @@
     <string name="Alert.error">Ошибка</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">Имеется проблема с хранилищем ключей в вашей ОС Android, обратитесь по адресу: support@breadwallet.com</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">Ваши зашифрованные данные приложения BRD были недавно аннулированы, так как была отключена блокировка экрана вашего устройства Android.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль отключен, отпечатки пальцев изменены). В целях безопасности Android навсегда заблокировал ваше хранилище ключей. Поэтому ваши данные BRD следует стереть путем удаления приложения.\n\nНе волнуйтесь, ваши средства в безопасности! Переустановите приложение и восстановите свой кошелек с помощью бумажного ключа.</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль отключен, отпечатки пальцев изменены). В целях безопасности Android навсегда заблокировал ваше хранилище ключей. Поэтому данные вашего приложения BRD необходимо стереть. \nНе волнуйтесь, ваши средства в безопасности! Восстановите свой кошелек, используя бумажный ключ.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Ошибка хранилища ключей Android</string>
     <!-- No internet alert message -->
@@ -74,22 +80,6 @@
     <string name="Android.screenAlteringMessage">BRD не сможет нормально работать, если не отключить изменяющие экран приложения (такие как Twilight).</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Обнаружено изменяющее экран приложение</string>
-    <!-- Body for an announcement promoting Coinify. -->
-    <string name="Announcement.coinfyPromoBody">Купите биткойны на 100 евро до 31 марта 2019 года и получите подарочный сертификат Amazon.de на 20 евро*</string>
-    <!-- Button title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoActionTitle">Получите свой подарочный сертификат</string>
-    <!-- Footnote text for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoFootnote">⃰ Максимум один подарочный сертификат на одного клиента. Доступен только в Австрии, Германии, Люксембурге и Нидерландах.</string>
-    <!-- Title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoTitle">Получите подарочный сертификат Amazon.de на 20 евро!</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyOne">При покупке BTC и ETH через ваш банк, у вас будут более высокие лимиты, ускоренные сроки расчетов и низкие комиссии. Подпишитесь чтобы получить уведомление о запуске.</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyTwo">Мы сообщим вам об изменениях.</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleOne">Скоро, новый способ покупки!</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleTwo">Спасибо!</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">Ошибка JSON-сериализации</string>
     <!-- Wallet not ready error message -->
@@ -134,14 +124,22 @@
     <string name="Button.buy">Купить</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">Отменить</string>
+    <!-- Confirm button title -->
+    <string name="Button.confirm">Подтвердить</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">Связаться со службой поддержки</string>
     <!-- prompt continue button -->
     <string name="Button.continueAction">Продолжить</string>
     <!-- prompt dismiss button -->
     <string name="Button.dismiss">Отменить</string>
+    <!-- Done button title -->
+    <string name="Button.done">Готово</string>
     <!-- Button to return to the "home" screen (the home screen is the top menu). -->
     <string name="Button.Home">Главная</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">Игнорировать</string>
+    <!-- Maybe Later button label -->
+    <string name="Button.maybeLater">Может быть, позже</string>
     <!-- menu button -->
     <string name="Button.menu">Меню</string>
     <!-- More information button -->
@@ -150,16 +148,28 @@
     <string name="Button.no">Нет</string>
     <!-- OK button label -->
     <string name="Button.ok">ОК</string>
+    <!-- Open Settings button -->
+    <string name="Button.openSettings">Открыть Настройки</string>
     <!-- receive button -->
     <string name="Button.receive">Получить</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">Настройки безопасности</string>
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Продать</string>
     <!-- send button -->
     <string name="Button.send">отправить</string>
     <!-- Settings button label -->
     <string name="Button.settings">Настройки</string>
+    <!-- Setup button label -->
+    <string name="Button.setup">Настроить</string>
+    <!-- Skip button title -->
+    <string name="Button.skip">Пропустить</string>
     <!-- Settings button label -->
     <string name="Button.submit">Отправить</string>
+    <!-- Button label to uninstall the app. -->
+    <string name="Button.uninstall.android">Удалить</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">Стереть</string>
     <!-- Yes button -->
     <string name="Button.yes">Да</string>
     <!-- Camera plugin instruction -->
@@ -202,6 +212,8 @@
     <string name="DefaultCurrency.rateLabel">Обменный курс</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">Кошелек отключен</string>
+    <!-- Share address by e-mail subject -->
+    <string name="Email.address_subject">%1$s Адрес</string>
     <!-- Service capabilities description -->
     <string name="EME.permissions.accountRequest">Запросить %1$s информацию об учётной записи</string>
     <!-- Service capabilities description -->
@@ -256,6 +268,8 @@
     <string name="FeeSelector.regularTime">10-60 минут</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">Скорость обработки</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
+    <string name="FileChooser.selectImageSource.android">Выберите источник изображения</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Админ</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -368,6 +382,14 @@
     <string name="MenuViewController.modalTitle">Меню</string>
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Восстановить кошелек</string>
+    <!-- Paper Key Skip modal body (Android-version) -->
+    <string name="Modal.PaperKeySkip.Body.Android">Бумажный ключ будет необходим, чтобы открыть ваш кошелек, если вы измените настройки безопасности на вашем телефоне.\n\nВы уверены, что хотите настроить бумажный ключ позже?</string>
+    <!-- Paper Key Skip modal Continue Set Up button -->
+    <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Продолжить настройку</string>
+    <!-- Paper Key Skip modal I'll do it later button -->
+    <string name="Modal.PaperKeySkip.Button.IllDoItLater">Я сделаю это позже</string>
+    <!-- Paper Key Skip modal title -->
+    <string name="Modal.PaperKeySkip.Title">Внимание</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">Переключиться в автоматический режим</string>
     <!-- Node is connected label -->
@@ -411,7 +433,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">Под нашей защитой находятся активы общей суммой более 6 миллиардов долларов США.</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">Присоединяйтесь к 1,5 миллиона человек, которые доверяют BRD.</string>
+    <string name="OnboardingPageTwo.title">Присоединяйтесь к миллионам людей по всему миру, которые доверяют BRD.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Отправить %1$s, чтобы купить %2$s</string>
     <!-- Payment confirmation view title -->
@@ -454,12 +476,14 @@
     <string name="Prompts.NoPasscode.body">Для защиты вашего кошелька необходим код доступа к устройству. Перейдите к настройкам и включите код доступа.</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">Включить код доступа к устройству</string>
-    <!-- Instruction how to enable device encryption -->
+    <!-- Instructions on how to enable screen lock settings -->
     <string name="Prompts.NoScreenLock.body.android">Для защиты вашего кошелька требуется блокировка экрана вашего устройства. Перейдите в \"Настройки\" &gt; \"Безопасность\" &gt; \"Блокировка экрана\" и включите, чтобы продолжить.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Блокировка экрана отключена</string>
-    <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">Ваш бумажный ключ нужно сохранить на случай, если вы потеряете или смените свой телефон. Нажмите сюда, чтобы продолжить.</string>
+    <!-- Warning about recovery key (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Ваш бумажный ключ нужно сохранить на случай, если вы потеряете или смените свой телефон.</string>
+    <!-- Warning about paper key (Android-version) -->
+    <string name="Prompts.PaperKey.Body.Android">Создайте бумажный ключ на случай, если вы потеряете или смените ваш телефон. Ключ будет также необходим, если вы измените настройки безопасности на вашем телефоне.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Необходимо совершить действие</string>
     <!-- Transaction rejected prompt body -->
@@ -484,20 +508,32 @@
     <string name="Prompts.UpgradePin.body">BRD обновил свой интерфейс до использования 6-цифрового PIN-кода. Коснитесь здесь для обновления.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Обновить PIN-код</string>
-    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">Включите уведомления, чтобы в будущем получать от BRD важные сообщения.</string>
+    <!-- Body text for the push notifications prompt. -->
+    <string name="PushNotifications.body">Включите push-уведомления и первыми узнавайте о новых функциях и специальных предложениях.</string>
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">Уведомления Отключены</string>
-    <!-- Push notifications settings instructions -->
-    <string name="PushNotifications.enableInstructions">Включить уведомления в Настройках, чтобы получать оповещения</string>
+    <!-- Body text when push notifications are disabled. -->
+    <string name="PushNotifications.disabledBody">Включите уведомления, чтобы получать спецпредложения и новости от BRD.</string>
+    <!-- Body text when push notifications are enabled. -->
+    <string name="PushNotifications.enabledBody">Вы получаете спецпредложения и новости от BRD.</string>
+    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">Похоже, уведомления отключены. Перейдите в настройки, чтобы включить уведомления от BRD.</string>
     <!-- Push notifications toggle switch label -->
-    <string name="PushNotifications.label">Push-уведомления</string>
+    <string name="PushNotifications.label">Получать Push-уведомления</string>
     <!-- Push notifications are off label -->
     <string name="PushNotifications.off">Отключено</string>
     <!-- Push notifications are on label -->
     <string name="PushNotifications.on">Включено</string>
     <!-- Push notifications settings view title label -->
-    <string name="PushNotifications.title">Уведомления</string>
+    <string name="PushNotifications.title">Оставайтесь в курсе событий</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body.Android">Если вам понравилось наше приложение, уделите минутку, чтобы оценить его и написать нам отзыв.</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss.Android">Нет, спасибо</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp.Android">Оцените BRD</string>
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title.Android">Оцените BRD</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">Скопировано в буфер обмена.</string>
     <!-- Share via email button label -->
@@ -534,6 +570,74 @@
     <string name="RecoverWallet.subheader">Введите бумажный ключ для кошелька, который вы хотите восстановить.</string>
     <!-- Reset PIN with paper key: sub-header -->
     <string name="RecoverWallet.subheader_reset_pin">Для сброса PIN-кода введите слова из вашего бумажного ключа в расположенные ниже поля.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryInputError">Вы неверно ввели слово. Пожалуйста, повторите попытку.</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Почти готово! Введите следующие слова из вашего ключа восстановления.</string>
+    <!-- Title for the confirmation step of the recovery key flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Подтверждение ключа восстановления</string>
+    <!-- Title displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Введите ключ восстановления</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Пожалуйста, введите ваш ключ восстановления, чтобы отвязать этот кошелек от вашего устройства.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Вы уверены, что хотите выполнить настройку ключа восстановления позже?</string>
+    <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Настроить позже</string>
+    <!-- Button text for the 'Generate Recovery Key' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Сгенерировать ключ восстановления</string>
+    <!-- Subtext for the recovery key landing page. -->
+    <string name="RecoveryKeyFlow.generateKeyExplanation">Ключ необходим, чтобы вернуть ваши средства, если вы смените или потеряете ваш телефон.</string>
+    <!-- Default title for the recovery key landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Сгенерируйте приватный ключ восстановления</string>
+    <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
+    <string name="RecoveryKeyFlow.goToWalletButtonTitle">Перейти к кошельку</string>
+    <!-- Hint text for recovery key intro page, e.g., Step 2 -->
+    <string name="RecoveryKeyFlow.howItWorksStep">Как это работает — Шаг %1$@</string>
+    <!-- Error text displayed when the user enters an incorrect recovery key -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Некоторые из введенных вами слов не совпадают с вашим ключом восстановления. Пожалуйста, повторите попытку.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.keepSecure">Держите его в безопасности</string>
+    <!-- Informs the user that the recovery is only required for recovering a wallet. -->
+    <string name="RecoveryKeyFlow.keyUseHint">Ваш ключ необходим только для восстановления, а не для повседневного доступа к кошельку.</string>
+    <!-- Reminds the user not to take screenshots or email the recovery key words -->
+    <string name="RecoveryKeyFlow.noScreenshotsOrEmailWarning">В целях безопасности не делайте скриншот этих слов и не отправляйте их по электронной почте</string>
+    <!-- Recommends that the user avoids capturing the paper key with a screenshot -->
+    <string name="RecoveryKeyFlow.noScreenshotsRecommendation">Запишите ваш ключ на бумаге и подтвердите его. В целях безопасности не рекомендуется делать скриншоты.</string>
+    <!-- Title displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWallet">Восстановление кошелька</string>
+    <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Пожалуйста, введите ключ восстановления кошелька, который вы хотите восстановить.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.relaxBuyTrade">Расслабьтесь, покупайте и торгуйте</string>
+    <!-- Reminds the user to write down the recovery key words. -->
+    <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Не забудьте записать эти слова. Вернитесь к предыдущему шагу, если вы забыли это сделать.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Пожалуйста, введите ваш ключ восстановления, чтобы сбросить ваш PIN-код.</string>
+    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <string name="RecoveryKeyFlow.securityAssurance">Покупайте и торгуйте, зная, что ваши средства защищены лучшей системой безопасности и конфиденциальности в этой сфере.</string>
+    <!-- Recommends that the user stores the recovery key in a secure location -->
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Храните ваш ключ в безопасном месте. Только с помощью него вы сможете восстановить ваш кошелек. BRD не хранит его копию.</string>
+    <!-- Title for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Поздравляем! Вы закончили настройку ключа восстановления.</string>
+    <!-- Subtitle for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successSubheading">Теперь вы готовы вносить депозит, торговать и покупать криптовалюту из вашего кошелька BRD.</string>
+    <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWallet">Отвяжите ваш кошелек от этого устройства.</string>
+    <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
+    <string name="RecoveryKeyFlow.unlinkWalletSubtext">Создайте новый кошелек, отвязав ваше устройство от текущего кошелька.</string>
+    <!-- Warning displayed when the user starts the process of unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWalletWarning">Чтобы вернуть доступ, необходимо восстановить кошелек.</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.writeItDown">Запишите ваш ключ</string>
+    <!-- Title for the recovery key landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Запишите ваш ключ восстановления еще раз</string>
+    <!-- Subtitle for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Запишите эти слова по порядку.</string>
+    <!-- Title for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Ваш ключ восстановления</string>
+    <!-- Title for the step number when the user pages through the recovery words -->
+    <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ из %2$@</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">Сначала введите сумму.</string>
     <!-- Request a specific amount of bitcoin -->
@@ -582,8 +686,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Единственный способ получения доступа к вашим биткойнам в случае потери или изменения вашего телефона.</string>
-    <!-- Paper Key button title -->
+    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Бумажный ключ</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">Бумажный ключ</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Защищает ваш BRD от несанкционированных пользователей.</string>
     <!-- PIN button title -->
@@ -686,6 +793,10 @@
     <string name="Settings.advanced">Расширенные</string>
     <!-- Advanced Settings title -->
     <string name="Settings.advancedTitle">Расширенные настройки</string>
+    <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
+    <string name="Settings.atmMapMenuItemSubtitle">Доступно только в США</string>
+    <!-- ATM map menu item title -->
+    <string name="Settings.atmMapMenuItemTitle">Карта крипто-банкоматов</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Отображать валюту</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
@@ -746,16 +857,20 @@
     <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш BRD-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+    <!-- Paper key explanation text (Android-version) -->
+    <string name="StartPaperPhrase.Body.Android">Бумажный ключ — это единственный способ восстановить ваш кошелек BRD в случае, если ваш телефон окажется утерян, украден, сломан или обновлен.\n\nБумажный ключ будет также необходим, если вы измените настройки безопасности на вашем устройстве.\n\nМы покажем вам список слов, которые необходимо записать на бумаге и хранить в безопасном месте.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
-    <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">Вы выписывали свой бумажный ключ в последний раз %1$s</string>
+    <!-- Argument is date; date should be on a new line -->
+    <string name="StartPaperPhrase.date">Вы выписывали свой бумажный ключ в последний раз \n%1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Создать новый кошелек</string>
     <!-- Start view message -->
     <string name="StartViewController.message">Самый надежный и безопасный способ использования биткойна.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Восстановить кошелек</string>
+    <!-- Syncing view done syncing state header text -->
+    <string name="SyncingView.activity">Активность</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">Соединение</string>
     <!-- The sync has failed (to complete) -->
@@ -880,6 +995,9 @@
     <string name="TransactionDetails.commentsPlaceholder">Добавить заметку...</string>
     <!-- Timestamp section header for complete tx -->
     <string name="TransactionDetails.completeTimestampHeader">Завершить</string>
+    <!-- Block height and confirmations label -->
+    <!--eg. 182930 (45061 confirmations)-->
+    <string name="TransactionDetails.confirmationsLabel">Подтверждений/-ия</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Ваши транзакции будут отображаться здесь.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->

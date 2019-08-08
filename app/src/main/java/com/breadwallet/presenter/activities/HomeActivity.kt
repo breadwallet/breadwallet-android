@@ -50,9 +50,9 @@ import com.breadwallet.ui.global.event.InternetEvent
 import com.breadwallet.ui.global.eventsource.InternetConnectivityEventSource
 import com.breadwallet.ui.home.*
 import com.breadwallet.ui.util.CompositeEffectHandler
-import com.breadwallet.ui.util.QueuedConsumer
 import com.breadwallet.ui.util.nestedConnectable
 import com.breadwallet.ui.util.nestedEventSource
+import com.breadwallet.ui.wallet.QueuedConsumer
 import com.spotify.mobius.*
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
@@ -148,6 +148,10 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
 
     @Synchronized
     private fun processIntentData(intent: Intent) {
+        if (intent.hasExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)) {
+            eventConsumer.accept(HomeScreenEvent.OnPushNotificationOpened(intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)))
+        }
+
         var data: String? = intent.getStringExtra(EXTRA_DATA)
         if (data.isNullOrBlank())
             data = intent.dataString
@@ -254,6 +258,7 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
     companion object {
         private val TAG = HomeActivity::class.java.simpleName
         const val EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA"
+        const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_PUSH_CAMPAIGN_ID"
         private const val MAX_NUMBER_OF_CHILDREN = 2
         private const val NETWORK_TESTNET = "TESTNET"
         private const val NETWORK_MAINNET = "MAINNET"

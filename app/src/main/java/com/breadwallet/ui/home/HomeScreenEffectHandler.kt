@@ -77,6 +77,7 @@ class HomeScreenEffectHandler(
             HomeScreenEffect.LoadPrompt -> loadPrompt()
             HomeScreenEffect.LoadIsBuyBellNeeded -> loadIsBuyBellNeeded()
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
+            is HomeScreenEffect.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
         }
     }
 
@@ -131,6 +132,13 @@ class HomeScreenEffectHandler(
                 })
             }
         }
+    }
+
+    private fun recordPushNotificationOpened(campaignId: String) {
+        val attributes = HashMap<String, String>()
+        attributes.put(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID, campaignId)
+        EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
+        EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
     }
 
     private fun isEnabledWallet(currencyCode: String): Boolean {
