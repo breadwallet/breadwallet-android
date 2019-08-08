@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.wallet
+package com.breadwallet.ui.global.effect
 
 import com.breadwallet.crypto.*
 
@@ -40,6 +40,8 @@ import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.SyncTestLogger
+import com.breadwallet.ui.global.event.WalletEvent
+import com.breadwallet.ui.wallet.WalletTransaction
 import com.google.common.primitives.UnsignedLong
 import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
@@ -193,7 +195,7 @@ class CryptoWalletEffectHandler(
                 txHash = txHash,
                 amount = amount.doubleAmount(unit.base).or(0.0).toBigDecimal(),
                 fiatWhenSent = 0f, // TODO: Rates info
-                toAddress =  target.transform { it.toString() }.or("<unknown>"),
+                toAddress = target.transform { it.toString() }.or("<unknown>"),
                 fromAddress = source.transform { it.toString() }.or("<unknown>"),
                 isReceived = direction == TransferDirection.RECEIVED,
                 isErrored = state.type == TransferState.Type.FAILED,

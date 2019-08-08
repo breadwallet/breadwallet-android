@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.wallet
+package com.breadwallet.ui.util
 
 
 // TODO: Replace with our own Mobius interfaces
