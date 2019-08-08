@@ -31,6 +31,13 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.ui.global.effect.CryptoWalletEffectHandler
+import com.breadwallet.ui.global.effect.NavigationEffect
+import com.breadwallet.ui.global.effect.NavigationEffectHandler
+import com.breadwallet.ui.global.effect.WalletEffect
+import com.breadwallet.ui.global.event.WalletEvent
+import com.breadwallet.ui.util.CompositeEffectHandler
+import com.breadwallet.ui.util.nestedConnectable
 import com.breadwallet.wallet.WalletsMaster
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager
 import com.spotify.mobius.*
@@ -68,15 +75,16 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             Connectable { output -> WalletScreenEffectHandler(output) },
                             // Create nested handler, such that WalletScreenEffects are converted into WalletEffects and passed to WalletEffectHandler
                             // (events produced are converted into WalletScreenEvents)
-                            nestedConnectable({ output : Consumer<WalletEvent> -> CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))
-                            }, { effect : WalletScreenEffect ->
+                            nestedConnectable({ output: Consumer<WalletEvent> ->
+                                CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))
+                            }, { effect: WalletScreenEffect ->
                                 // Map incoming effect
                                 when (effect) {
                                     is WalletScreenEffect.LoadWalletBalance -> WalletEffect.LoadWalletBalance(effect.currencyId)
                                     is WalletScreenEffect.LoadTransactions -> WalletEffect.LoadTransactions(effect.currencyId)
                                     else -> null
                                 }
-                            }, { event : WalletEvent ->
+                            }, { event: WalletEvent ->
                                 // Map outgoing event
                                 when (event) {
                                     is WalletEvent.OnSyncProgressUpdated -> WalletScreenEvent.OnSyncProgressUpdated(event.progress, event.syncThroughMillis)
@@ -91,7 +99,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             }),
                             Connectable { output -> WalletReviewPromptHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
                             Connectable { output -> WalletRatesHandler(output, this@WalletActivity) },
-                            nestedConnectable({ NavigationEffectHandler( this@WalletActivity) }, { effect ->
+                            nestedConnectable({ NavigationEffectHandler(this@WalletActivity) }, { effect ->
                                 when (effect) {
                                     is WalletScreenEffect.GoToSend -> NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
                                     is WalletScreenEffect.GoToReceive -> NavigationEffect.GoToReceive(effect.currencyId)
