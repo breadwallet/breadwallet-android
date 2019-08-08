@@ -87,5 +87,6 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
         is HomeScreenEvent.OnPromptLoaded -> next(model.copy(promptId = event.promptId))
         is HomeScreenEvent.OnDeepLinkProvided -> dispatch(effects(HomeScreenEffect.GoToDeepLink(event.url)))
         is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))
+        is HomeScreenEvent.OnPushNotificationOpened -> dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))
     }
 }

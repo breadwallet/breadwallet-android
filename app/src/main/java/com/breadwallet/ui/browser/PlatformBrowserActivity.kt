@@ -28,14 +28,4 @@ class PlatformBrowserActivity: WebViewActivity() {
             context.startActivity(intent)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        (applicationContext as BreadApp).setDelayServerShutdown(true)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (applicationContext as BreadApp).setDelayServerShutdown(false)
-    }
 }
