@@ -74,7 +74,7 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         fun initialize(context: Context) {
             val firebaseToken = BRSharedPrefs.getFCMRegistrationToken(context)
             if (!firebaseToken.isNullOrBlank() && BRSharedPrefs.getShowNotification(context)) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, firebaseToken!!) }
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, firebaseToken) }
             }
         }
 

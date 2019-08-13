@@ -1203,4 +1203,8 @@
     <string name="PriceAlertNotification.percentChangeUp">%1$s is UP %2$s%% from %3$s to %4$s</string>
     <string name="PriceAlertNotification.percentChangeDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
 
+    <!-- TODO Missing from native.strings -->
+    <!-- Push notifications settings failed to update settings on the back end -->
+    <string name="PushNotifications.updateFailed">Failed to update push notifications settings</string>
+
 </resources>
