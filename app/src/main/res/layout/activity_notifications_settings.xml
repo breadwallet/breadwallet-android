@@ -56,6 +56,19 @@
 
     </android.support.v7.widget.Toolbar>
 
+    <include
+        android:id="@+id/progress_layout"
+        layout="@layout/loading_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:translationZ="1dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        tools:visibility="visible" />
+
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
