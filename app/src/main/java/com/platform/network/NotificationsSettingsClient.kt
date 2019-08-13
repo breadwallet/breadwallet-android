@@ -42,14 +42,16 @@ import org.json.JSONObject
 interface NotificationsSettingsClient {
 
     /**
-     * Send push notifications token.
+     * Send push notifications token. Return True if the token was successfully registered,
+     * otherwise false.
      */
-    fun registerToken(context: Context, token: String)
+    fun registerToken(context: Context, token: String): Boolean
 
     /**
-     * Remove push notifications token.
+     * Remove push notifications token. Return True if the token was successfully unregistered,
+     * otherwise false.
      */
-    fun unregisterToken(context: Context, token: String)
+    fun unregisterToken(context: Context, token: String): Boolean
 
 }
 
@@ -67,7 +69,7 @@ object NotificationsSettingsClientImpl : NotificationsSettingsClient {
     private const val ENVIRONMENT_DEVELOPMENT = "d"
     private const val ENVIRONMENT_PRODUCTION = "p"
 
-    override fun registerToken(context: Context, token: String) {
+    override fun registerToken(context: Context, token: String): Boolean {
         val url = APIClient.getBaseURL() + ENDPOINT_PUSH_DEVICES
         val deviceEnvironment = if (BuildConfig.DEBUG) {
             ENVIRONMENT_DEVELOPMENT
@@ -95,29 +97,22 @@ object NotificationsSettingsClientImpl : NotificationsSettingsClient {
                     .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON).post(requestBody).build()
 
             val response = APIClient.getInstance(context).sendRequest(request, true)
-            if (response.isSuccessful) {
-                Log.d(TAG, "Token registered")
-            } else {
-                Log.e(TAG, "Failed to register new token ${response.isSuccessful}")
-            }
+            return response.isSuccessful
 
         } catch (e: JSONException) {
             Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e)
         }
+        return false
     }
 
-    override fun unregisterToken(context: Context, token: String) {
+    override fun unregisterToken(context: Context, token: String): Boolean {
         val url = APIClient.getBaseURL() + ENDPOINT_DELETE_PUSH_DEVICES + token
         val request = Request.Builder()
                 .url(url)
                 .delete()
                 .build()
         val response = APIClient.getInstance(context).sendRequest(request, true)
-        if (response.isSuccessful) {
-            Log.d(TAG, "Token unregistered")
-        } else {
-            Log.e(TAG, "Failed to unregister token ${response.isSuccessful}")
-        }
+        return response.isSuccessful
     }
 
 }
