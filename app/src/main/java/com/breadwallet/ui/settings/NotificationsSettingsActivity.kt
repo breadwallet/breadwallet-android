@@ -36,8 +36,12 @@ import kotlinx.android.synthetic.main.activity_notifications_settings.*
 import android.os.Build
 import android.provider.Settings.EXTRA_APP_PACKAGE
 import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
+import android.util.Log
+import android.widget.Toast
+import androidx.work.Operation
 import com.breadwallet.R
 import com.breadwallet.repository.NotificationsState
+import com.breadwallet.tools.mvvm.Status
 import com.breadwallet.tools.util.EventUtils
 
 
@@ -47,6 +51,8 @@ import com.breadwallet.tools.util.EventUtils
 class NotificationsSettingsActivity : BaseSettingsActivity() {
 
     companion object {
+        private val TAG = NotificationsSettingsActivity::class.java.simpleName
+
         fun start(caller: Activity) {
             caller.startActivity(Intent(caller, NotificationsSettingsActivity::class.java))
             EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS)
@@ -102,7 +108,7 @@ class NotificationsSettingsActivity : BaseSettingsActivity() {
                 EventUtils.EVENT_PUSH_NOTIFICATIONS_SETTING_TOGGLE_OFF
             }
             EventUtils.pushEvent(event)
-            viewModel.togglePushNotifications(isChecked)
+            updateNotifications(isChecked)
         }
 
         // setup android settings button
@@ -126,5 +132,25 @@ class NotificationsSettingsActivity : BaseSettingsActivity() {
             }
         }
         startActivity(intent)
+    }
+
+    private fun updateNotifications(notificationsEnabled: Boolean) {
+        viewModel.togglePushNotifications(notificationsEnabled).observe(this, Observer { resource ->
+            when (resource?.status) {
+                Status.LOADING -> {
+                    progress_layout.visibility = View.VISIBLE
+                    Log.d(TAG, "Updating notification settings")
+                }
+                Status.ERROR -> {
+                    progress_layout.visibility = View.GONE
+                    Log.d(TAG, "Failed to update notifications settings")
+                    Toast.makeText(this, R.string.PushNotifications_updateFailed, Toast.LENGTH_LONG).show()
+                }
+                Status.SUCCESS -> {
+                    progress_layout.visibility = View.GONE
+                    Log.d(TAG, "Settings updated")
+                }
+            }
+        })
     }
 }
