@@ -115,7 +115,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
                 if (tx.isSubmitted()) {
                     BREthereumAmount.Unit feeUnit = getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
                             ? BREthereumAmount.Unit.ETHER_WEI : BREthereumAmount.Unit.ETHER_GWEI;
-                    /*
                     uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(getEthereumWallet().getWallet().getAccount().getPrimaryAddress()),
                             tx.getBlockTimestamp(), (int) tx.getBlockNumber(),
                             Utils.isNullOrEmpty(tx.getOriginationTransactionHash()) ? null : tx.getOriginationTransactionHash().getBytes(),
@@ -123,15 +122,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
                             tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                             new BigDecimal(tx.getAmount(getUnit())), true,
                             tx.isErrored(), tx.getErrorDescription()));
-                    */
-                    // TODO: revert back to above once CORE-325 + CORE-384 merged into 'crypto' branch
-                    uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(getEthereumWallet().getWallet().getAccount().getPrimaryAddress()),
-                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(),
-                            Utils.isNullOrEmpty(tx.getIdentifier()) ? null : tx.getIdentifier().getBytes(),
-                            tx.getIdentifier(), new BigDecimal(tx.getFee(feeUnit)),
-                            tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                            new BigDecimal(tx.getAmount(getUnit())), true,
-                            false, ""));
                 }
             }
             return uiTxs;

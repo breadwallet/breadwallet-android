@@ -189,9 +189,9 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
     }
 
     private fun connectViews(output: Consumer<HomeScreenEvent>): Connection<HomeScreenModel> {
-        buy_layout!!.setOnClickListener { output.accept(HomeScreenEvent.OnBuyClicked) }
-        trade_layout!!.setOnClickListener { output.accept(HomeScreenEvent.OnTradeClicked) }
-        menu_layout!!.setOnClickListener { output.accept(HomeScreenEvent.OnMenuClicked) }
+        buy_layout.setOnClickListener { output.accept(HomeScreenEvent.OnBuyClicked) }
+        trade_layout.setOnClickListener { output.accept(HomeScreenEvent.OnTradeClicked) }
+        menu_layout.setOnClickListener { output.accept(HomeScreenEvent.OnMenuClicked) }
 
         rv_wallet_list.addOnItemTouchListener(RecyclerItemClickListener(this, rv_wallet_list, object : RecyclerItemClickListener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int, x: Float, y: Float) {
@@ -217,18 +217,17 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
             override fun accept(model: HomeScreenModel) {
                 mAdapter!!.setWallets(model.wallets.values.toList())
 
-                total_assets_usd!!.text = CurrencyUtils.getFormattedAmount(this@HomeActivity,
-                        BRSharedPrefs.getPreferredFiatIso(this@HomeActivity), model.aggregatedFiatBalance)
+                total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(BRSharedPrefs.getPreferredFiatIso(this@HomeActivity), model.aggregatedFiatBalance)
 
                 if (previousShowPrompt != model.showPrompt) {
                     previousShowPrompt = model.showPrompt
 
                     if (model.showPrompt) {
                         val promptView = PromptManager.promptInfo(this@HomeActivity, model.promptId)
-                        if (list_group_layout!!.childCount >= MAX_NUMBER_OF_CHILDREN) {
-                            list_group_layout!!.removeViewAt(0)
+                        if (list_group_layout.childCount >= MAX_NUMBER_OF_CHILDREN) {
+                            list_group_layout.removeViewAt(0)
                         }
-                        list_group_layout!!.addView(promptView, 0)
+                        list_group_layout.addView(promptView, 0)
                     }
                 }
 

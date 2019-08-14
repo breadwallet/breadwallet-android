@@ -46,7 +46,6 @@ import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.wallet.WalletsMaster
 import com.platform.APIClient
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -136,7 +135,7 @@ class HomeScreenEffectHandler(
 
     private fun recordPushNotificationOpened(campaignId: String) {
         val attributes = HashMap<String, String>()
-        attributes.put(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID, campaignId)
+        attributes[EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID] = campaignId
         EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
         EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
     }
@@ -190,26 +189,28 @@ class HomeScreenEffectHandler(
     }
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
-        // TODO: replace old Wallet manager code
-        val walletManager = WalletsMaster.getInstance().getWalletByIso(context, currencyCode)
-        return walletManager.getFiatExchangeRate(context)
+        return RatesRepository.getInstance(context).getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
     }
 
-    private fun updateBalance(currencyCode: String, balance: Amount) {
-        val balanceInBase = getBalanceAmtInBase(balance)
-        val balanceInFiat = getBalanceInFiat(balance)
+    private fun updateBalance(currencyCode: String, balanceAmt: Amount) {
+        val balance = getBalance(balanceAmt)
+        val balanceInFiat = getBalanceInFiat(balanceAmt)
         val fiatPricePerUnit = getFiatPerPriceUnit(currencyCode)
 
-        output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balanceInBase, balanceInFiat, fiatPricePerUnit))
+        output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balance, balanceInFiat, fiatPricePerUnit))
     }
 
     private fun getBalanceAmtInBase(balance: Amount): BigDecimal {
         return balance.doubleAmount(balance.unit.base).or(0.0).toBigDecimal()
     }
 
-    private fun getBalanceInFiat(balance: Amount): BigDecimal {
-        val balanceAmt = balance.doubleAmount(balance.unit).or(0.0).toBigDecimal()
-        return RatesRepository.getInstance(context).getFiatForCrypto(balanceAmt, balance.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
+    private fun getBalance(balanceAmt: Amount) : BigDecimal {
+        return balanceAmt.doubleAmount(balanceAmt.unit).or(0.0).toBigDecimal()
+    }
+
+    private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
+        val balance = getBalance(balanceAmt)
+        return RatesRepository.getInstance(context).getFiatForCrypto(balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
     }
 
     private fun CryptoWallet.asWallet(): Wallet {
@@ -217,7 +218,7 @@ class HomeScreenEffectHandler(
                 currencyName = currency.name,
                 currencyCode = currency.code,
                 fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
-                balance = getBalanceAmtInBase(balance),
+                balance = getBalance(balance),
                 fiatBalance = getBalanceInFiat(balance),
                 syncProgress = 0.0, // will update via sync events
                 syncingThroughMillis = 0L // will update via sync events
