@@ -22,6 +22,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.home.Wallet;
+import com.breadwallet.ui.util.WalletDisplayUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
@@ -147,9 +148,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             BigDecimal bigFiatBalance = wallet.getFiatBalance();
 
             // Format numeric data
-            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
-            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
-            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getCurrencyCode(), wallet.getBalance());
+            String exchangeRate = CurrencyUtils.getFormattedFiatAmount(BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
+            String fiatBalance = CurrencyUtils.getFormattedFiatAmount(BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
+            String cryptoBalance = CurrencyUtils.getFormattedCryptoAmount(wallet.getCurrencyCode(), wallet.getBalance());
 
             if (Utils.isNullOrZero(bigExchangeRate)) {
                 decoratedHolderView.mWalletBalanceFiat.setVisibility(View.INVISIBLE);
@@ -190,7 +191,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 decoratedHolderView.mIconLetter.setText(currencyCode.substring(0, 1).toUpperCase());
             }
 
-            WalletUiConfiguration uiConfiguration = WalletsMaster.getInstance().getWalletByIso(mContext, wallet.getCurrencyCode()).getUiConfiguration();
+            WalletUiConfiguration uiConfiguration = WalletDisplayUtils.Companion.getUIConfiguration(currencyCode);
             String startColor = uiConfiguration.getStartColor();
             String endColor = uiConfiguration.getEndColor();
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();

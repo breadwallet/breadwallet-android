@@ -87,7 +87,8 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
 
     //expensive operation (uses the KVStore), only update when needed and not in a loop.
     public synchronized void updateWallets(Context app) {
-        WalletEthManager ethWallet = WalletEthManager.getInstance(app.getApplicationContext());
+        // TODO: Delete once replacement wallet management logic has been implemented; for now, comment out
+        /*WalletEthManager ethWallet = WalletEthManager.getInstance(app.getApplicationContext());
         if (ethWallet == null) {
             return; //return empty wallet list if ETH is null (meaning no public key yet)
         }
@@ -128,7 +129,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
 
         if (mUnloadedTokenSymbols.isEmpty()) {
             ethWallet.removeTokenLoadedListener(this);
-        }
+        }*/
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context context) {
@@ -152,6 +153,8 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
 
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String currencyCode) {
+        // TODO: Delete once all callers deleted or migrated; useful to return null for now, as crashes highlight where dependencies to old managers remain
+        /*
         if (WalletBitcoinManager.BITCOIN_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
             return WalletBitcoinManager.getInstance(app);
         }
@@ -162,7 +165,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
             return WalletEthManager.getInstance(app.getApplicationContext());
         } else if (isCurrencyCodeErc20(app, currencyCode)) {
             return WalletTokenManager.getTokenWalletByIso(app, currencyCode);
-        }
+        }*/
         return null;
     }
 

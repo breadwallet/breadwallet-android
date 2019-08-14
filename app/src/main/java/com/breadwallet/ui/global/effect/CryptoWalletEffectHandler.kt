@@ -86,13 +86,13 @@ class CryptoWalletEffectHandler(
                 ))
             }
             is WalletEffect.LoadWalletBalance -> {
-                val balance = wallet.balance
+                val balanceAmt = wallet.balance
 
-                val balanceInBase = getBalanceAmtInBase(balance)
-                val balanceInFiat = getBalanceInFiat(balance)
+                val balance = getBalance(balanceAmt)
+                val balanceInFiat = getBalanceInFiat(balanceAmt)
 
                 output.accept(WalletEvent.OnCurrencyNameUpdated(wallet.walletManager.network.name)) // TODO: should be wallet.name, but instead of 'Bitcoin', gives us 'btc' (discuss with CORE)
-                output.accept(WalletEvent.OnBalanceUpdated(balanceInBase, balanceInFiat))
+                output.accept(WalletEvent.OnBalanceUpdated(balance, balanceInFiat))
             }
         }
     }
@@ -110,11 +110,11 @@ class CryptoWalletEffectHandler(
                 if (event.balance.currency.code.toLowerCase() != currencyCode.toLowerCase())
                     return null
 
-                val balance = event.balance
-                val balanceInBase = getBalanceAmtInBase(balance)
-                val balanceInFiat = getBalanceInFiat(balance)
+                val balanceAmt = event.balance
+                val balance = getBalance(balanceAmt)
+                val balanceInFiat = getBalanceInFiat(balanceAmt)
 
-                output.accept(WalletEvent.OnBalanceUpdated(balanceInBase, balanceInFiat))
+                output.accept(WalletEvent.OnBalanceUpdated(balance, balanceInFiat))
 
                 return null
             }
@@ -148,13 +148,13 @@ class CryptoWalletEffectHandler(
         })
     }
 
-    private fun getBalanceAmtInBase(balance : Amount) : BigDecimal {
-        return balance.doubleAmount(balance.unit.base).or(0.0).toBigDecimal()
+    private fun getBalance(balanceAmt : Amount) : BigDecimal {
+        return balanceAmt.doubleAmount(balanceAmt.unit).or(0.0).toBigDecimal()
     }
 
-    private fun getBalanceInFiat(balance : Amount) : BigDecimal {
-        val balanceAmt = balance.doubleAmount(balance.unit).or(0.0).toBigDecimal()
-        return RatesRepository.getInstance(context).getFiatForCrypto( balanceAmt, balance.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
+    private fun getBalanceInFiat(balanceAmt : Amount) : BigDecimal {
+        val balance = getBalance(balanceAmt)
+        return RatesRepository.getInstance(context).getFiatForCrypto( balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
     }
 
     private fun updateTransfer(transfer : Transfer) {
@@ -193,7 +193,8 @@ class CryptoWalletEffectHandler(
 
         return WalletTransaction(
                 txHash = txHash,
-                amount = amount.doubleAmount(unit.base).or(0.0).toBigDecimal(),
+                amount = getBalance(amount),
+                amountInFiat = getBalanceInFiat(amount),
                 fiatWhenSent = 0f, // TODO: Rates info
                 toAddress = target.transform { it.toString() }.or("<unknown>"),
                 fromAddress = source.transform { it.toString() }.or("<unknown>"),
@@ -206,7 +207,8 @@ class CryptoWalletEffectHandler(
                 confirmations = confirmations,
                 timeStamp = timeStamp,
                 levels = levels,
-                currencyCode = currencyCode
+                currencyCode = currencyCode,
+                feeForToken = null // TODO: Either establish this via meta-data (like iOS) or compare toAddress with token addresses as in pre-Generic Core
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.breadwallet.ui.wallet
 
 import android.content.Context
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.EventUtils
@@ -9,6 +10,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
+import java.math.BigDecimal
 
 
 class WalletScreenEffectHandler(
@@ -61,12 +63,10 @@ class WalletReviewPromptHandler(
 
 class WalletRatesHandler(
         private val output : Consumer<WalletScreenEvent>,
-        private val context: Context
+        private val context: Context,
+        private val currencyCode : String
 ) : Connection<WalletScreenEffect>,
         RatesDataSource.OnDataChanged {
-
-    private val walletManager: BaseWalletManager =
-            WalletsMaster.getInstance().getCurrentWallet(context)
 
     init {
         RatesDataSource.getInstance(context).addOnDataChangedListener(this)
@@ -83,7 +83,7 @@ class WalletRatesHandler(
     }
 
     private fun loadFiatPerPriceUnit()  {
-        val fiatPricePerUnit = walletManager.getFiatExchangeRate(context)
+        val fiatPricePerUnit = RatesRepository.getInstance(context).getFiatForCrypto(BigDecimal.ZERO, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
         output.accept(WalletScreenEvent.OnFiatPricePerUpdated(fiatPricePerUnit.toFloat()))
     }
 

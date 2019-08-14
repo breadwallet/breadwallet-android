@@ -74,6 +74,7 @@ data class WalletScreenModel private constructor(
 data class WalletTransaction(
         val txHash: String,
         val amount: BigDecimal,
+        val amountInFiat: BigDecimal,
         val fiatWhenSent: Float,
         val toAddress: String,
         val fromAddress: String,
@@ -86,12 +87,16 @@ data class WalletTransaction(
         val blockHeight: Int,
         val confirmations: Int,
         val levels: Int,
-        val currencyCode: String
+        val currencyCode: String,
+        val feeForToken: String? // TODO: token symbol?
 ) {
     val isPending: Boolean
         get() = levels > 0 && levels < BRConstants.CONFIRMED_BLOCKS_NUMBER
 
     val isComplete: Boolean
         get() = confirmations >= BRConstants.CONFIRMED_BLOCKS_NUMBER
+
+    val isFeeForToken: Boolean
+        get() = !feeForToken.isNullOrBlank()
 }
 

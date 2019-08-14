@@ -184,7 +184,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         BlockchainDb query = new BlockchainDb(new OkHttpClient(), BDB_BASE_URL, API_BASE_URL);
 
-        cryptoSystem = System.create(Executors.newSingleThreadExecutor(), listener, account, storageFile.getAbsolutePath(), query);
+        cryptoSystem = System.create(Executors.newSingleThreadScheduledExecutor(), listener, account, false, storageFile.getAbsolutePath(), query);
         cryptoSystem.configure();
     }
 

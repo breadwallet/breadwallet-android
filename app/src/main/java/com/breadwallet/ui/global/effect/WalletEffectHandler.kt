@@ -54,6 +54,7 @@ import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import java.math.BigDecimal
 
+// TODO: Delete?
 class WalletEffectHandler(
         private val output: Consumer<WalletEvent>,
         private val context: Context,
@@ -182,7 +183,6 @@ class WalletEffectHandler(
         }
         metaData = txMetaData
     }
-
     private fun TxUiHolder.asWalletTransaction() : WalletTransaction {
         val confirmations = when (blockHeight) {
             Integer.MAX_VALUE -> 0
@@ -206,6 +206,7 @@ class WalletEffectHandler(
         return WalletTransaction(
                 txHash = txHash.toString(Charsets.UTF_8),
                 amount = amount,
+                amountInFiat = walletManager.getFiatForSmallestCrypto(context, amount, null),
                 fiatWhenSent = 0f, // TODO: Rates info
                 toAddress = to,
                 fromAddress = from,
@@ -218,7 +219,8 @@ class WalletEffectHandler(
                 confirmations = confirmations,
                 timeStamp = timeStamp,
                 levels = levels,
-                currencyCode = currencyCode
+                currencyCode = currencyCode,
+                feeForToken = null // TODO
         )
     }
 }
