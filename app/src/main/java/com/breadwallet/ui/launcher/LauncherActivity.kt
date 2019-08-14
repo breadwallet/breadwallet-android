@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.breadwallet.BreadApp
 import com.breadwallet.R
+import com.breadwallet.presenter.activities.HomeActivity
 import com.breadwallet.presenter.activities.LoginActivity
 import com.breadwallet.presenter.activities.intro.IntroActivity
 
@@ -52,11 +53,14 @@ class LauncherActivity : AppCompatActivity() {
         // TODO isDeviceStateValid is run twice per launch, here and in BreadApp, this is to avoid
         //  the possibility of bypassing​ the validation.
         if ((application as BreadApp).isDeviceStateValid) {
+            // TODO: Replace this entire class is new onboarding flow, but for now, hacked to go immediately to HomeActivity
+            /*
             val intent = if (mViewModel.hasWallet()) {
                 Intent(this, LoginActivity::class.java)
             } else {
                 Intent(this, IntroActivity::class.java)
-            }
+            }*/
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
         }

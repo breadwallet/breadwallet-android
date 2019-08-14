@@ -47,6 +47,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.util.WalletDisplayUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
@@ -125,7 +126,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
         WalletTransaction item = mItemFeed.get(position);
         String commentString = item.getMemo();
 
@@ -141,32 +141,29 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         BigDecimal cryptoAmount = item.getAmount().abs();
 
-        BREthereumToken tkn = null;
-        if (wm.getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && wm.isAddressValid(item.getToAddress())) {
-            // TODO: Provide info from effect handler
-            tkn = WalletEthManager.getInstance(mContext.getApplicationContext()).node.lookupToken(item.getToAddress());
-        }
-        // it's a token transfer ETH tx
-        if (tkn != null) {
+        // TODO: Properly handle fee case -- if fee & fiat preferred, need fee in fiat
+       if (item.isFeeForToken()) {
             cryptoAmount = item.getFee();
         }
 
-        String preferredCurrencyCode = mIsCryptoPreferred ? wm.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(mContext);
-        BigDecimal amount = mIsCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
+        String preferredCurrencyCode = mIsCryptoPreferred ? item.getCurrencyCode() : BRSharedPrefs.getPreferredFiatIso(mContext);
+        BigDecimal amount = mIsCryptoPreferred ? cryptoAmount : item.getAmountInFiat();
         if (!received && amount != null) {
             amount = amount.negate();
         }
-        String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredCurrencyCode, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
+        String formattedAmount = mIsCryptoPreferred ?
+                CurrencyUtils.getFormattedCryptoAmount(preferredCurrencyCode, amount) : CurrencyUtils.getFormattedFiatAmount(preferredCurrencyCode, amount);
+
         convertView.getTransactionAmount().setText(formattedAmount);
 
         if (item.isPending()) {
             showTransactionProgress(convertView, item.getLevels() * PROGRESS_PACE);
         }
-        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getToAddress()));
-        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getFromAddress()));
+        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getToAddress()));
+        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getFromAddress()));
 
-        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getToAddress()));
-        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getFromAddress()));
+        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getToAddress()));
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getFromAddress()));
 
         if (item.getLevels() > FOUR_CONFIRMATIONS) {
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
@@ -174,9 +171,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
         }
         // it's a token transfer ETH tx
-        if (tkn != null) {
+        if (item.isFeeForToken()) {
             convertView.getTransactionDetail()
-                    .setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
+                    .setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), item.getFeeForToken()));
         }
 
         //if it's 0 we use the current time.
@@ -220,11 +217,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         holder.getTransactionDetail().setLayoutParams(params);
         holder.getTransactionDetail().setGravity(Gravity.CENTER_VERTICAL);
 
-        BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(mContext);
-
         if (!received) {
             holder.getTransactionDetail().setText(String.format(mContext.getString(R.string.Transaction_sendingTo),
-                    wm.decorateAddress(tx.getToAddress())));
+                    WalletDisplayUtils.Companion.decorateAddress(tx.getCurrencyCode(), tx.getToAddress())));
         }
     }
 

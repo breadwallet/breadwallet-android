@@ -98,7 +98,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                                 }
                             }),
                             Connectable { output -> WalletReviewPromptHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
-                            Connectable { output -> WalletRatesHandler(output, this@WalletActivity) },
+                            Connectable { output -> WalletRatesHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
                             nestedConnectable({ NavigationEffectHandler(this@WalletActivity) }, { effect ->
                                 when (effect) {
                                     is WalletScreenEffect.GoToSend -> NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
@@ -294,19 +294,8 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
         super.onResume()
         controller.start()
 
-        val wallet = WalletsMaster.getInstance().getCurrentWallet(this)
-        if (wallet != null) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-                WalletEthManager.getInstance(applicationContext)!!.estimateGasPrice()
-                if (wallet.connectStatus != 2.0) {
-                    wallet.connect(this@WalletActivity)
-                }
-
-            }
-
-            if (!TokenUtil.isTokenSupported(controller.model.currencyCode)) {
-                showDelistedTokenBanner()
-            }
+        if (!TokenUtil.isTokenSupported(controller.model.currencyCode)) {
+            showDelistedTokenBanner()
         }
     }
 
@@ -383,7 +372,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                 // Update fiat balance
                 if (previousFiatBalance == null || previousFiatBalance != model.fiatBalance) {
                     previousFiatBalance = model.fiatBalance
-                    val formattedFiatBalance = CurrencyUtils.getFormattedAmount(this@WalletActivity,
+                    val formattedFiatBalance = CurrencyUtils.getFormattedFiatAmount(
                             // TODO: Move preferred fiat iso to model
                             BRSharedPrefs.getPreferredFiatIso(this@WalletActivity), model.fiatBalance)
 
@@ -393,9 +382,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                 // Update crypto balance
                 if (previousCryptoBalance == null || previousCryptoBalance != model.balance) {
                     previousCryptoBalance = model.balance
-                    val formattedCryptoBalance = CurrencyUtils.getFormattedAmount(this@WalletActivity,
-                            model.currencyCode, model.balance,
-                            5 /* TODO: Constant */)
+                    val formattedCryptoBalance = CurrencyUtils.getFormattedCryptoAmount(model.currencyCode, model.balance)
 
                     balance_secondary.text = formattedCryptoBalance
                 }
