@@ -178,9 +178,12 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun buildMixpanelNotification(remoteMessage: RemoteMessage): Pair<Int, Notification> {
+        val notificationBody = remoteMessage.data[MP_NOTIFICATION_MESSAGE]
         val notificationBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.brd_logo_gradient)
-                .setContentText(remoteMessage.data[MP_NOTIFICATION_MESSAGE])
+                .setContentText(notificationBody)
+                .setStyle(NotificationCompat.BigTextStyle()
+                        .bigText(notificationBody))
                 .setContentIntent(getHomePendingIntent())
                 .setAutoCancel(true)
                 .setContentIntent(getMixpanelPendingIntent(remoteMessage))
