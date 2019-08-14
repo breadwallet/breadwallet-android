@@ -66,9 +66,7 @@ public class CryptoTransaction {
         if (mCoreTx != null) {
             return mCoreTx.getReverseHash();
         } else if (mEtherTx != null) {
-            // TODO: revert back once CORE-325 merged into 'crypto' branch
-            //return mEtherTx.getOriginationTransactionHash();
-            return mEtherTx.getIdentifier();
+            return mEtherTx.getOriginationTransactionHash();
         } else {
             return null;
         }

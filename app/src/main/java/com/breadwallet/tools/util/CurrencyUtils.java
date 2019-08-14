@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.ui.util.WalletDisplayUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -45,7 +46,9 @@ public class CurrencyUtils {
     private static final String POUND = "GBP";
     private static final String EURO = "EUR";
 
+    @Deprecated
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+        // TODO: Once 40~ callers have been migrated to getFormattedCryptoAmount or getFormattedFiatAmount, delete this
         //Use default (wallet's maxDecimal places)
         return getFormattedAmount(app, iso, amount, -1);
     }
@@ -57,7 +60,9 @@ public class CurrencyUtils {
      * @param maxDecimalPlacesForCrypto - max decimal places to use or -1 for wallet's default
      * @return - the formatted amount e.g. $535.50 or b5000
      */
+    @Deprecated
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount, int maxDecimalPlacesForCrypto) {
+        // TODO: Once callers have been migrated to getFormattedCryptoAmount or getFormattedFiatAmount, delete this
         if (amount == null) {
             amount = BigDecimal.ZERO;
         }
@@ -93,6 +98,54 @@ public class CurrencyUtils {
             }
             return currencyFormat.format(amount);
         }
+    }
+
+    /**
+     * Returns a formatted fiat amount using the locale-specific format
+     *
+     * @param currencyCode the fiat currency code
+     * @param amount the amount to format
+     * @return the formatted string
+     */
+    public static String getFormattedFiatAmount(String currencyCode, BigDecimal amount) {
+        // This formats currency values as the user expects to read them (default locale)
+        DecimalFormat currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
+        DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+        currencyFormat.setGroupingUsed(true);
+        currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
+        try {
+            Currency currency = Currency.getInstance(currencyCode);
+            String symbol = currency.getSymbol();
+            decimalFormatSymbols.setCurrencySymbol(symbol);
+            currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+            currencyFormat.setNegativePrefix("-" + symbol);
+            currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+            currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Illegal Currency code: " + currencyCode);
+            BRReportsManager.reportBug(new IllegalArgumentException("illegal iso: " + currencyCode));
+        }
+        return currencyFormat.format(amount);
+    }
+
+    /**
+     * Returns a formatted crypto amount
+     *
+     * @param currencyCode the crypto currency code
+     * @param amount the amount to format
+     * @return the formatted string
+     */
+    public static String getFormattedCryptoAmount(String currencyCode, BigDecimal amount) {
+        // This formats currency values as the user expects to read them (default locale)
+        DecimalFormat currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
+        DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+        currencyFormat.setGroupingUsed(true);
+        currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
+        decimalFormatSymbols.setCurrencySymbol("");
+        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        currencyFormat.setMaximumFractionDigits(WalletDisplayUtils.Companion.getMaxDecimalPlaces(currencyCode));
+        currencyFormat.setMinimumFractionDigits(0);
+        return String.format("%s %s", currencyFormat.format(amount), currencyCode.toUpperCase());
     }
 
     public static String getSymbolByIso(Context app, String iso) {
