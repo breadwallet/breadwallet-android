@@ -24,25 +24,44 @@
  */
 package com.breadwallet.ui.settings
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.breadwallet.repository.NotificationsState
 import com.breadwallet.repository.PushNotificationsSettingsRepositoryImpl
+import com.breadwallet.tools.mvvm.Resource
 import com.breadwallet.tools.threads.executor.BRExecutor
 
 class NotificationsSettingsViewModel : ViewModel() {
 
     val notificationsEnable = MutableLiveData<NotificationsState>()
 
-    fun togglePushNotifications(enable: Boolean) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-            PushNotificationsSettingsRepositoryImpl.togglePushNotifications(enable)
-            notificationsEnable.postValue(PushNotificationsSettingsRepositoryImpl.getNotificationsState())
+    fun togglePushNotifications(enable: Boolean): LiveData<Resource<Void>> {
+        val state = PushNotificationsSettingsRepositoryImpl.getNotificationsState()
+        val resource = MutableLiveData<Resource<Void>>().apply { value = Resource.loading() }
+
+        // Check if we need to update the settings.
+        if ((state == NotificationsState.APP_ENABLED && !enable)
+                || (state == NotificationsState.APP_DISABLED && enable)) {
+
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+                val updated = PushNotificationsSettingsRepositoryImpl.togglePushNotifications(enable)
+                if (updated) {
+                    resource.postValue(Resource.success())
+                } else {
+                    resource.postValue(Resource.error())
+                }
+                notificationsEnable.postValue(PushNotificationsSettingsRepositoryImpl.getNotificationsState())
+            }
+
+        } else {
+            resource.value = Resource.success()
         }
+        return resource
     }
 
     /**
-     * Check what is the current state of the notification settings. This is ntended to be called
+     * Check what is the current state of the notification settings. This is intended to be called
      * when we return to the settings activity to verify if the notifications are enabled on the
      * OS settings.
      */
