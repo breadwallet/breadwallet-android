@@ -752,9 +752,6 @@ public class APIClient {
         }
 
         public int getCode() {
-            if (mCode == 0) {
-                throw new RuntimeException("code can't be 0");
-            }
             return mCode;
         }
 
