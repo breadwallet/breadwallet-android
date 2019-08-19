@@ -24,6 +24,7 @@ import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.KVStorePlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 import com.platform.middlewares.plugins.WalletPlugin;
+import com.platform.util.CachedInputHttpServletRequest;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -69,7 +70,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HTTPServer extends AbstractLifeCycle {
     public static final String TAG = HTTPServer.class.getSimpleName();
 
-    private static final String PLATFORM_BASE_URL = "http://localhost:";
+    private static final String PLATFORM_BASE_URL = "http://127.0.0.1:";
     public static final String URL_BUY = "/buy";
     public static final String URL_TRADE = "/trade";
     public static final String URL_SELL = "/sell";
@@ -237,7 +238,7 @@ public class HTTPServer extends AbstractLifeCycle {
 
     private static class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-            if (!dispatch(target, baseRequest, request, response)) {
+            if (!dispatch(target, baseRequest, new CachedInputHttpServletRequest(request), response)) {
                 Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST, 404-ing: " + target);
                 BRHTTPHelper.handleError(404, "No middleware could handle the request.", baseRequest, response);
             }
