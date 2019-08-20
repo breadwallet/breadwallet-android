@@ -22,23 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.util
+package com.breadwallet.ui.recovery
 
-import com.spotify.mobius.functions.Consumer
+import com.spotify.mobius.First
+import com.spotify.mobius.First.first
+import com.spotify.mobius.Init
 
-/**
- * Collects events and passes them in order to a new consumer via [dequeueAll].
- */
-class QueuedConsumer<V> : Consumer<V> {
-
-    private val queue = arrayListOf<V>()
-
-    override fun accept(value: V) = synchronized<Unit>(queue) {
-        queue.add(value)
-    }
-
-    fun dequeueAll(target: Consumer<V>) = synchronized(queue) {
-        queue.forEach(target::accept)
-        queue.clear()
+object RecoveryKeyInit : Init<RecoveryKeyModel, RecoveryKeyEffect> {
+    override fun init(model: RecoveryKeyModel): First<RecoveryKeyModel, RecoveryKeyEffect> {
+        return first(model)
     }
 }

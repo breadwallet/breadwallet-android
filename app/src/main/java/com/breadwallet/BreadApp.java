@@ -143,13 +143,15 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         // TODO: initializing the Crypto System goes hand in hand with onboarding -- this must be refactored
         // For now, initializing system here, with a hard-coded wallet etc.
-        initializeCryptoSystem();
+        // TODO: Disabled - initializeCryptoSystem();
 
         // Initialize application lifecycle observer and register this application for events.
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
-        ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
+        // TODO: enabled in initializeCryptoSystem
+        //  - ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        // TODO: enabled in initializeCryptoSystem
+        //  - ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
 
-        initialize(true);
+        // TODO: Disabled - initialize(true);
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -158,17 +160,22 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         HTTPServer.getInstance().startServer(this);
     }
 
+    // TODO: For code organization only, to be removed
+    public static boolean hasWallet(Context context) {
+        return (new File(context.getFilesDir(), "cryptocore")).exists();
+    }
 
     // TODO: Temp -- refactor
-    private void initializeCryptoSystem() {
+    // ginger settle marine tissue robot crane night number ramp coast roast critic
+    public static void initializeCryptoSystem(String paperKeyStr) {
         // Hard-code wallet and init settings to ease bootstrap
-        String paperKeyStr ="ginger settle marine tissue robot crane night number ramp coast roast critic";
+        // String paperKeyStr ="ginger settle marine tissue robot crane night number ramp coast roast critic";
         byte[] paperKey = paperKeyStr.getBytes(StandardCharsets.UTF_8);
-        boolean wipe = true;
+        boolean wipe = false;
         long timestamp = 1507168053L;
         WalletManagerMode mode = WalletManagerMode.API_ONLY;
 
-        File storageFile = new File(this.getFilesDir(), "cryptocore");
+        File storageFile = new File(getBreadContext().getFilesDir(), "cryptocore");
         if (wipe) {
             if (storageFile.exists()) deleteRecursively(storageFile);
             checkState(storageFile.mkdirs());
@@ -186,6 +193,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         cryptoSystem = System.create(Executors.newSingleThreadScheduledExecutor(), listener, account, false, storageFile.getAbsolutePath(), query);
         cryptoSystem.configure();
+
+        // TODO: remove when sanity is restored
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
     }
 
     public static System getCryptoSystem() {
