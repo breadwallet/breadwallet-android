@@ -37,6 +37,7 @@ import com.breadwallet.ui.global.effect.NavigationEffectHandler
 import com.breadwallet.ui.global.effect.WalletEffect
 import com.breadwallet.ui.global.event.WalletEvent
 import com.breadwallet.ui.util.CompositeEffectHandler
+import com.breadwallet.ui.util.QueuedConsumer
 import com.breadwallet.ui.util.nestedConnectable
 import com.breadwallet.wallet.WalletsMaster
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager

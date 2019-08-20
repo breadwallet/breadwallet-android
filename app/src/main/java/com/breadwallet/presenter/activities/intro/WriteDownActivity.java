@@ -15,6 +15,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.ui.onboarding.OnBoardingController;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -70,7 +71,7 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name().equals(doneAction)) {
-                    OnBoardingActivity.showBuyScreen(WriteDownActivity.this);
+                    OnBoardingController.showBuyScreen(WriteDownActivity.this);
                     WriteDownActivity.this.finishAffinity();
                 } else {
                     switch (viewReason) {

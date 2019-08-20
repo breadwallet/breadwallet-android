@@ -31,10 +31,10 @@ package com.breadwallet.ui.global.effect
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
 import com.breadwallet.model.InAppMessage
-import com.breadwallet.presenter.activities.AddWalletsActivity
-import com.breadwallet.presenter.activities.BrdWalletActivity
+import com.breadwallet.presenter.activities.*
 import com.breadwallet.presenter.activities.settings.SettingsActivity
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.entities.CryptoRequest
@@ -46,6 +46,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.wallet.WalletActivity
+import com.breadwallet.wallet.WalletsMaster
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
@@ -54,12 +55,13 @@ import java.util.HashMap
 
 class NavigationEffectHandler(
         private val activity: BRActivity // TODO: Don't depend on an activity
-) : Connection<NavigationEffect> {
+) : Connection<NavigationEffect>,
+        NavigationEffectHandlerSpec {
 
     companion object {
         private const val SEND_SHOW_DELAY = 300
         // TODO: Find a better place for these constants
-        private const val BITCOIN_CURRENCY_CODE = "BTC"
+        const val BITCOIN_CURRENCY_CODE = "BTC"
         private const val BRD_CURRENCY_CODE = "BRD"
     }
 
@@ -70,42 +72,70 @@ class NavigationEffectHandler(
         // Being an implementation detail we internalize the
         // MainThread usage and ignore the EffectRunner thread.
         workRunner.post {
-            when (value) {
-                is NavigationEffect.GoToSend -> goToSend(value.cryptoRequest)
-                is NavigationEffect.GoToReceive -> UiUtils.showReceiveFragment(activity, true)
-                is NavigationEffect.GoToTransaction -> UiUtils.showTransactionDetails(activity, value.txHash)
-                NavigationEffect.GoBack -> activity.onBackPressed()
-                NavigationEffect.GoToBrdRewards -> TODO("Go to brd rewards")
-                NavigationEffect.GoToReview -> {
-                    EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)
-                    AppReviewPromptManager.openGooglePlay(activity)
-                }
-                is NavigationEffect.GoToDeepLink -> AppEntryPointHandler.processDeepLink(activity, value.url)
-                is NavigationEffect.GoToInAppMessage -> goToInAppMessage(value.inAppMessage)
-                is NavigationEffect.GoToWallet -> goToWallet(value.currencyCode)
-                NavigationEffect.GoToBuy -> {
-                    val url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-                            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-                            BITCOIN_CURRENCY_CODE)
-                    UiUtils.startPlatformBrowser(activity, url)
-                }
-                NavigationEffect.GoToTrade -> UiUtils.startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE))
-                NavigationEffect.GoToMenu -> {
-                    val intent = Intent(activity, SettingsActivity::class.java)
-                    intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS)
-                    activity.startActivity(intent)
-                    activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300)
-                }
-                NavigationEffect.GoToAddWallet -> {
-                    val intent = Intent(activity, AddWalletsActivity::class.java)
-                    activity.startActivity(intent)
-                    activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-                }
-            }
+            patch(value)
         }
     }
 
-    private fun goToSend(cryptoRequest: CryptoRequest?) {
+    override fun dispose() {
+        workRunner.dispose()
+    }
+
+    override fun goToWallet(effect: NavigationEffect.GoToWallet) {
+        val currencyCode = effect.currencyCode
+        BRSharedPrefs.putCurrentWalletCurrencyCode(activity, currencyCode)
+        // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
+        if (BRD_CURRENCY_CODE.equals(currencyCode, ignoreCase = true)) {
+            if (!BRSharedPrefs.getRewardsAnimationShown(activity)) {
+                val attributes = HashMap<String, String>()
+                attributes[EventUtils.EVENT_ATTRIBUTE_CURRENCY] = BRD_CURRENCY_CODE
+                EventUtils.pushEvent(EventUtils.EVENT_REWARDS_OPEN_WALLET, attributes)
+            }
+            BrdWalletActivity.start(activity, currencyCode)
+        } else {
+            WalletActivity.start(activity, currencyCode)
+        }
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goBack() {
+        activity.onBackPressed()
+    }
+
+    override fun goToBrdRewards() {
+        TODO("Go to brd rewards")
+    }
+
+    override fun goToReview() {
+        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)
+        AppReviewPromptManager.openGooglePlay(activity)
+    }
+
+    override fun goToBuy() {
+        val url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+                HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+                BITCOIN_CURRENCY_CODE)
+        UiUtils.startPlatformBrowser(activity, url)
+    }
+
+    override fun goToTrade() {
+        UiUtils.startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE))
+    }
+
+    override fun goToMenu() {
+        val intent = Intent(activity, SettingsActivity::class.java)
+        intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS)
+        activity.startActivity(intent)
+        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300)
+    }
+
+    override fun goToAddWallet() {
+        val intent = Intent(activity, AddWalletsActivity::class.java)
+        activity.startActivity(intent)
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToSend(effect: NavigationEffect.GoToSend) {
+        val cryptoRequest = effect.cryptoRequest
         // TODO: Find a better solution.
         if (!FragmentSend.isIsSendShown()) {
             FragmentSend.setIsSendShown(true)
@@ -132,27 +162,52 @@ class NavigationEffectHandler(
         }
     }
 
-    private fun goToWallet(currencyCode: String) {
-        BRSharedPrefs.putCurrentWalletCurrencyCode(activity, currencyCode)
-        // Use BrdWalletActivity to show rewards view and animation if BRD and not shown yet.
-        if (BRD_CURRENCY_CODE.equals(currencyCode, ignoreCase = true)) {
-            if (!BRSharedPrefs.getRewardsAnimationShown(activity)) {
-                val attributes = HashMap<String, String>()
-                attributes[EventUtils.EVENT_ATTRIBUTE_CURRENCY] = BRD_CURRENCY_CODE
-                EventUtils.pushEvent(EventUtils.EVENT_REWARDS_OPEN_WALLET, attributes)
-            }
-            BrdWalletActivity.start(activity, currencyCode)
-        } else {
-            WalletActivity.start(activity, currencyCode)
+    override fun goToReceive(effect: NavigationEffect.GoToReceive) {
+        UiUtils.showReceiveFragment(activity, true)
+    }
+
+    override fun goToTransaction(effect: NavigationEffect.GoToTransaction) {
+        UiUtils.showTransactionDetails(activity, effect.txHash)
+    }
+
+    override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
+        AppEntryPointHandler.processDeepLink(activity, effect.url)
+    }
+
+    override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) {
+        InAppNotificationActivity.start(activity, effect.inAppMessage)
+    }
+
+    override fun goToFaq(effect: NavigationEffect.GoToFaq) {
+        val wm = WalletsMaster.getInstance().getCurrentWallet(activity)
+        UiUtils.showSupportFragment(activity as FragmentActivity, effect.articleId, wm)
+    }
+
+    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
+        val intent = Intent(activity, InputPinActivity::class.java).apply {
+            putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, effect.onboarding)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        activity.apply {
+            if (effect.onboarding) {
+                finish()
+                startActivity(intent)
+            } else
+                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE)
+        }
     }
 
-    private fun goToInAppMessage(inAppMessage : InAppMessage) {
-        InAppNotificationActivity.start(activity, inAppMessage)
+    override fun goToHome() {
+        activity.startActivity(Intent(activity, HomeActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        })
     }
 
-    override fun dispose() {
-        workRunner.dispose()
+    override fun goToLogin() {
+        activity.startActivity(Intent(activity, LoginActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        })
     }
 }

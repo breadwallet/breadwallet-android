@@ -31,7 +31,7 @@ package com.breadwallet.ui.global.eventsource
 import android.content.Context
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.ui.global.event.InternetEvent
-import com.breadwallet.ui.wallet.QueuedConsumer
+import com.breadwallet.ui.util.QueuedConsumer
 import com.spotify.mobius.EventSource
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer

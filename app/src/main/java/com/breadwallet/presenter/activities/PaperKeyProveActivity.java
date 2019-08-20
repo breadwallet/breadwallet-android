@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
+import com.breadwallet.ui.onboarding.OnBoardingController;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -122,7 +122,7 @@ public class PaperKeyProveActivity extends BRActivity {
                             PaperKeyActivity.DoneAction action = extraDoneAction == null
                                     ? null : PaperKeyActivity.DoneAction.valueOf(extraDoneAction);
                             if (action != null && action.equals(PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN)) {
-                                OnBoardingActivity.showBuyScreen(PaperKeyProveActivity.this);
+                                OnBoardingController.showBuyScreen(PaperKeyProveActivity.this);
                             } else {
                                 UiUtils.startBreadActivity(PaperKeyProveActivity.this, false);
                                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
