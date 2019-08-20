@@ -143,7 +143,7 @@ object BRSharedPrefs {
             brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
 
     @JvmStatic
-    fun putPhraseWroteDown(context: Context, check: Boolean) =
+    fun putPhraseWroteDown(context: Context? = null, check: Boolean) =
             brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
 
     @JvmStatic

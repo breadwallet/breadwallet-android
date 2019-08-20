@@ -52,7 +52,7 @@ import com.breadwallet.ui.home.*
 import com.breadwallet.ui.util.CompositeEffectHandler
 import com.breadwallet.ui.util.nestedConnectable
 import com.breadwallet.ui.util.nestedEventSource
-import com.breadwallet.ui.wallet.QueuedConsumer
+import com.breadwallet.ui.util.QueuedConsumer
 import com.spotify.mobius.*
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
@@ -62,7 +62,6 @@ import com.spotify.mobius.functions.Consumer
 import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.notification_bar
-import kotlinx.android.synthetic.main.activity_wallet.*
 
 /**
  * Home activity that will show a list of a user's wallets

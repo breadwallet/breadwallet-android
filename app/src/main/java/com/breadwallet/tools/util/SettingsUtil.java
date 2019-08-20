@@ -20,13 +20,13 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
-import com.breadwallet.presenter.activities.intro.OnBoardingActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.NodesActivity;
+import com.breadwallet.ui.global.effect.NavigationEffectHandler;
 import com.breadwallet.ui.pricealert.PriceAlertListActivity;
 import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
@@ -45,7 +45,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.platform.pricealert.PriceAlertWorker;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.util.AppReviewPromptManager;
 
 import java.util.ArrayList;
@@ -174,10 +173,10 @@ public final class SettingsUtil {
             }
         }, false, 0));
 
-        final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
-        String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
+        //TODO: Replace final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
+        String bitcoinSettingsLabel = String.format("%s %s", "Bitcoin"/*todo: walletBitcoinManager.getName()*/, activity.getString(R.string.Settings_title));
         items.add(new BRSettingsItem(bitcoinSettingsLabel, null, view -> {
-            BRSharedPrefs.putCurrentWalletCurrencyCode(activity, walletBitcoinManager.getCurrencyCode());
+            BRSharedPrefs.putCurrentWalletCurrencyCode(activity, NavigationEffectHandler.BITCOIN_CURRENCY_CODE);
             startCurrencySettings(activity);
         }, false, 0));
         final WalletBchManager walletBchManager = WalletBchManager.getInstance(activity);
@@ -251,9 +250,11 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(SEND_LOGS, "", view -> LogsUtils.shareLogs(activity),false, 0));
         items.add(new BRSettingsItem(API_SERVER, "", view -> showInputDialog(activity),false, 0));
         items.add(new BRSettingsItem(ONBOARDING_FLOW, "", view -> {
-            Intent intent = new Intent(activity, OnBoardingActivity.class);
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            // TODO: Not supported currently
+            Toast.makeText(activity, "TODO: Not Implemented!", Toast.LENGTH_SHORT).show();
+            //Intent intent = new Intent(activity, IntroActivity.class);
+            //activity.startActivity(intent);
+            //activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }, false, 0));
 
         String currentWebPlatformDebugURL = ServerBundlesHelper.getWebPlatformDebugURL(activity);

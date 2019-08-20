@@ -6,15 +6,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.MainActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
@@ -186,7 +185,7 @@ public final class AppEntryPointHandler {
         if (url != null && !url.isEmpty()) {
             if (!WalletsMaster.getInstance().isBrdWalletCreated(context)) {
                 // Go to intro screen if the wallet is not create yet.
-                Intent introIntent = new Intent(context, IntroActivity.class);
+                Intent introIntent = new Intent(context, MainActivity.class);
                 context.startActivity(introIntent);
             } else {
                 processIntentResult(context, url);

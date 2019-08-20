@@ -30,10 +30,11 @@ package com.breadwallet.ui.global.effect
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.presenter.entities.CryptoRequest
+import io.hypno.switchboard.MobiusHandlerSpec
 
-
+@MobiusHandlerSpec
 sealed class NavigationEffect {
-    data class GoToSend(val currencyId: String, val cryptoRequest: CryptoRequest? = null ) : NavigationEffect()
+    data class GoToSend(val currencyId: String, val cryptoRequest: CryptoRequest? = null) : NavigationEffect()
     data class GoToReceive(val currencyId: String) : NavigationEffect()
     data class GoToTransaction(val currencyId: String, val txHash: String) : NavigationEffect()
 
@@ -42,8 +43,13 @@ sealed class NavigationEffect {
     object GoToReview : NavigationEffect()
 
     data class GoToDeepLink(val url: String) : NavigationEffect()
-    data class GoToInAppMessage(val inAppMessage : InAppMessage) : NavigationEffect()
+    data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
+    data class GoToFaq(val articleId: String) : NavigationEffect()
+    data class GoToSetPin(val onboarding: Boolean = false) : NavigationEffect()
+
+    object GoToLogin : NavigationEffect()
+    object GoToHome : NavigationEffect()
     object GoToBuy : NavigationEffect()
     object GoToTrade : NavigationEffect()
     object GoToMenu : NavigationEffect()
