@@ -197,6 +197,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         // TODO: remove when sanity is restored
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
         ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
+        BRApiManager.getInstance().startTimer(getBreadContext());
     }
 
     public static System getCryptoSystem() {
