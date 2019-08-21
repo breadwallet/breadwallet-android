@@ -72,6 +72,7 @@ class RecoveryKeyController(
         // TODO: This request code is used in RecoveryKeyEffectHandler without calling
         //  Controller.startActivityForResult so we must register our interest manually.
         registerForActivityResult(BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE)
+        registerForActivityResult(InputPinActivity.SET_PIN_REQUEST_CODE)
     }
 
     override val layoutId: Int = R.layout.activity_input_words
@@ -116,7 +117,7 @@ class RecoveryKeyController(
             nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
                 when (effect) {
                     RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
-                    RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(onboarding = true)
+                    RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin()
                     RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
                     RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
                     else -> null
