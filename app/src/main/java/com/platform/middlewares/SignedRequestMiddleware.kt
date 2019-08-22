@@ -77,12 +77,17 @@ abstract class SignedRequestMiddleware : Middleware {
             contentDigest = BrdNativeJs.sha256(body)
         }
 
+        val requestUrlAndQuery = when {
+            request.queryString.isNullOrBlank() -> request.requestURI
+            else -> "${request.requestURI}?${request.queryString}"
+        }
+
         val signature = BrdNativeJs.sign(
                 request.method,
                 contentDigest,
                 contentType,
                 requestDateString,
-                target
+                requestUrlAndQuery
         )
 
         if (requestSignature != signature) {
