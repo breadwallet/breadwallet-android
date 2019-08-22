@@ -18,6 +18,9 @@ import androidx.work.WorkManager;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.model.Experiment;
+import com.breadwallet.model.Experiments;
+import com.breadwallet.platform.pricealert.PriceAlertWorker;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -26,8 +29,6 @@ import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.NodesActivity;
-import com.breadwallet.ui.global.effect.NavigationEffectHandler;
-import com.breadwallet.ui.pricealert.PriceAlertListActivity;
 import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
@@ -37,18 +38,27 @@ import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.repository.ExperimentsRepositoryImpl;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.ui.global.effect.NavigationEffectHandler;
+import com.breadwallet.ui.pricealert.PriceAlertListActivity;
 import com.breadwallet.ui.settings.NotificationsSettingsActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.platform.pricealert.PriceAlertWorker;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.platform.APIClient;
+import com.platform.HTTPServer;
+import com.platform.RequestBuilderKt;
+import com.platform.middlewares.plugins.LinkPlugin;
 import com.platform.util.AppReviewPromptManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Request;
 
 /**
  * BreadWallet
@@ -146,6 +156,17 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_about));
+        Experiment mapExperiment = ExperimentsRepositoryImpl.INSTANCE.getExperiments().get(Experiments.ATM_MAP.getKey());
+        if (mapExperiment != null && mapExperiment.getActive()) {
+            settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_atmMapMenuItemTitle), "", view -> {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                    String url = HTTPServer.getPlatformUrl(LinkPlugin.BROWSER_PATH);
+                    Request request = RequestBuilderKt.buildSignedRequest(url, mapExperiment.getMeta().replace("\\/", "/"), "POST", LinkPlugin.BROWSER_PATH);
+                    APIClient.getInstance(activity).sendRequest(request, false);
+                });
+            }, false, R.drawable.ic_atm_finder, activity.getString(R.string.Settings_atmMapMenuItemSubtitle)));
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        }
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
                 @Override
