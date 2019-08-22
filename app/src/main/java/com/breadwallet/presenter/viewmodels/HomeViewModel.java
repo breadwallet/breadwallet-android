@@ -35,7 +35,6 @@ import com.breadwallet.model.InAppMessage;
 import com.breadwallet.model.Wallet;
 import com.breadwallet.repository.MessagesRepository;
 import com.breadwallet.repository.WalletRepository;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
