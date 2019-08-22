@@ -69,6 +69,7 @@ public class SettingsAdapter extends ArrayAdapter<String> {
         } else {
             v = inflater.inflate(settings_list_item, parent, false);
             TextView addon = v.findViewById(R.id.item_addon);
+            TextView subHeader = v.findViewById(R.id.item_sub_header);
 
             if (Utils.isNullOrEmpty(item.addonText)) {
                 addon.setVisibility(View.INVISIBLE);
@@ -80,6 +81,12 @@ public class SettingsAdapter extends ArrayAdapter<String> {
             if (item.iconResId != 0) {
                 icon.setVisibility(View.VISIBLE);
                 icon.setBackgroundResource(item.iconResId);
+            }
+            if (Utils.isNullOrEmpty(item.subHeader)) {
+                subHeader.setVisibility(View.GONE);
+            } else {
+                subHeader.setVisibility(View.VISIBLE);
+                subHeader.setText(item.subHeader);
             }
 
             v.setOnClickListener(item.listener);
