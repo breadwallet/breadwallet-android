@@ -39,11 +39,14 @@ import com.breadwallet.crypto.events.walletmanager.DefaultWalletManagerEventVisi
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerListener
 import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
+import com.breadwallet.model.Experiments
+import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.repository.MessagesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.tools.sqlite.RatesDataSource
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
 import com.platform.APIClient
@@ -76,6 +79,7 @@ class HomeScreenEffectHandler(
             HomeScreenEffect.LoadPrompt -> loadPrompt()
             HomeScreenEffect.LoadIsBuyBellNeeded -> loadIsBuyBellNeeded()
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
+            HomeScreenEffect.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
             is HomeScreenEffect.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
         }
     }
@@ -108,7 +112,7 @@ class HomeScreenEffectHandler(
     }
 
     private fun loadIsBuyBellNeeded() {
-        val isBuyBellNeeded = BRSharedPrefs.getFeatureEnabled(context, APIClient.FeatureFlags.BUY_NOTIFICATION.toString()) && CurrencyUtils.isBuyNotificationNeeded(context)
+        val isBuyBellNeeded = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) && CurrencyUtils.isBuyNotificationNeeded(context)
         output.accept(HomeScreenEvent.OnBuyBellNeededLoaded(isBuyBellNeeded))
     }
 
@@ -223,5 +227,11 @@ class HomeScreenEffectHandler(
                 syncProgress = 0.0, // will update via sync events
                 syncingThroughMillis = 0L // will update via sync events
         )
+    }
+
+    private fun checkIfShowBuyAndSell() {
+        val showBuyAndSell = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
+                && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
+        output.accept(HomeScreenEvent.OnShowBuyAndSell(showBuyAndSell))
     }
 }

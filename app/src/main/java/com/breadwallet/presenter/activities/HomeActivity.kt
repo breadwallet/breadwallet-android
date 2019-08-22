@@ -243,6 +243,12 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
                         }
                     }
                 }
+
+                buy_text_view.text = if (model.showBuyAndSell) {
+                    getString(R.string.HomeScreen_buyAndSell)
+                } else {
+                    getString(R.string.HomeScreen_buy)
+                }
             }
 
             override fun dispose() {
