@@ -122,7 +122,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:src="@drawable/ic_buy_cash"
-                        app:layout_constraintBottom_toTopOf="@+id/baseTextView3"
+                        app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -135,11 +135,11 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginBottom="12dp"
                         android:src="@drawable/ic_buy_bell"
-                        app:layout_constraintBottom_toTopOf="@+id/baseTextView3"
+                        app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintStart_toStartOf="@+id/imageView4" />
 
                     <com.breadwallet.presenter.customviews.BaseTextView
-                        android:id="@+id/baseTextView3"
+                        android:id="@+id/buy_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
