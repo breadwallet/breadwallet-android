@@ -88,5 +88,6 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
         is HomeScreenEvent.OnDeepLinkProvided -> dispatch(effects(HomeScreenEffect.GoToDeepLink(event.url)))
         is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))
         is HomeScreenEvent.OnPushNotificationOpened -> dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))
+        is HomeScreenEvent.OnShowBuyAndSell -> next(model.copy(showBuyAndSell = event.showBuyAndSell))
     }
 }

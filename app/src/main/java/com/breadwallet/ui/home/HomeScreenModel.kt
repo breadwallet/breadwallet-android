@@ -36,7 +36,8 @@ data class HomeScreenModel private constructor(
     val wallets: Map<String, Wallet> = emptyMap(),
     val promptId: PromptManager.PromptItem? = null,
     val hasInternet: Boolean = true,
-    val isBuyBellNeeded: Boolean = false
+    val isBuyBellNeeded: Boolean = false,
+    val showBuyAndSell: Boolean = false
 ) {
 
     companion object {
@@ -56,7 +57,9 @@ data class HomeScreenModel private constructor(
                 "wallets=(size:${wallets.size}), " +
                 "showPrompt='$showPrompt', " +
                 "promptId=$promptId, " +
-                "hasInternet=$hasInternet)"
+                "hasInternet=$hasInternet, " +
+                "isBuyBellNeeded=$isBuyBellNeeded, " +
+                "showBuyAndSell=$showBuyAndSell)"
     }
 }
 

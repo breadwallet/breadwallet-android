@@ -2,7 +2,7 @@
  * BreadWallet
  *
  *
- * Created by Ahsan Butt <ahsan.butt@breadwallet.com> 8/1/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 8/14/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  *
@@ -26,17 +26,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.home
+package com.breadwallet.repository
 
-import com.spotify.mobius.Effects.effects
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
+import android.content.Context
+import com.breadwallet.model.Experiment
+import com.breadwallet.model.Experiments
+import com.platform.network.ExperimentsClientImpl
 
-val HomeScreenInit = Init<HomeScreenModel, HomeScreenEffect> { model ->
-    first(model, effects(
-            HomeScreenEffect.LoadWallets,
-            HomeScreenEffect.LoadIsBuyBellNeeded,
-            HomeScreenEffect.LoadPrompt,
-            HomeScreenEffect.CheckIfShowBuyAndSell
-    ))
+interface ExperimentsRepository {
+
+    val experiments: Map<String, Experiment>
+
+    /**
+     * Refresh the set of experiments.
+     */
+    fun refreshExperiments(context: Context)
+
+    /**
+     * Check if a experiment is available or not.
+     */
+    fun isExperimentActive(experiment: Experiments): Boolean
+
+}
+
+/**
+ * Implementation that stores the experiments in memory.
+ */
+object ExperimentsRepositoryImpl : ExperimentsRepository {
+
+    private var experimentsCache = mapOf<String, Experiment>()
+    override val experiments get() = experimentsCache
+
+    override fun refreshExperiments(context: Context) {
+        experimentsCache = ExperimentsClientImpl.getExperiments(context).map { it.name to it }.toMap()
+    }
+
+    override fun isExperimentActive(experiment: Experiments) = experiments[experiment.key]?.active ?: false
 }
