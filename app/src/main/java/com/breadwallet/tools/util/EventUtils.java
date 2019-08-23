@@ -155,6 +155,13 @@ public final class EventUtils {
 
     public static final String EVENT_ATTRIBUTE_BUY_AND_SELL = "buyAndSell";
     public static final String EVENT_ATTRIBUTE_SHOW = "show";
+    // Wallet events
+    // wallet.{currencyCode}.appeared
+    public static final String EVENT_WALLET_APPEARED = "wallet.%s.appeared";
+    // wallet.{currencyCode}.axisToggle
+    public static final String EVENT_WALLET_CHART_AXIS_TOGGLE = "wallet.%s.axisToggle";
+    // wallet.{currencyCode}.scrubbed
+    public static final String EVENT_WALLET_CHART_SCRUBBED = "wallet.%s.scrubbed";
 
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";

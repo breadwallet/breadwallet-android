@@ -56,7 +56,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private BRButton pendingFilter;
     private BRButton completedFilter;
     private BRButton cancelButton;
-    private WalletActivity breadActivity;
     private FilterListener mFilterListener;
     private boolean[] mFilterSwitches = new boolean[Filter.values().length];
 
@@ -83,7 +82,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             throw new IllegalStateException("BRSearchBar's host must implement " + FilterListener.class.getName());
         }
 
-        breadActivity = (WalletActivity) getContext();
         searchEdit = findViewById(R.id.search_edit);
         sentFilter = findViewById(R.id.sent_filter);
         receivedFilter = findViewById(R.id.received_filter);
@@ -114,16 +112,14 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private void setListeners() {
         searchEdit.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
-                if (breadActivity.mBarFlipper != null) {
-                    breadActivity.mBarFlipper.setDisplayedChild(0);
-                    clearSwitches();
-                }
+                mFilterListener.onDismiss();
+                clearSwitches();
             }
         });
 
         cancelButton.setOnClickListener(view -> {
             searchEdit.setText("");
-            breadActivity.resetFlipper();
+            mFilterListener.onDismiss();
             clearSwitches();
             onShow(false);
         });
@@ -216,6 +212,11 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
          * @param filter The filter to be applied.
          */
         void onFilterChanged(TxFilter filter);
+
+        /**
+         * Dismiss the search bar from the screen.
+         */
+        void onDismiss();
 
     }
 }
