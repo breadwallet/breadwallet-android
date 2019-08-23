@@ -30,7 +30,6 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 
@@ -192,17 +191,17 @@ public class PaperKeyProveActivity extends BRActivity {
     private boolean isWordCorrect(boolean first) {
         if (first) {
             String edit = Bip39Reader.cleanWord(mWordEditTextFirst.getText().toString());
-            return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(mWordsSparseArray.get(mWordsSparseArray.keyAt(0)));
+            return Bip39Reader.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(mWordsSparseArray.get(mWordsSparseArray.keyAt(0)));
         } else {
             String edit = Bip39Reader.cleanWord(mWordEditTextSecond.getText().toString());
-            return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(mWordsSparseArray.get(mWordsSparseArray.keyAt(1)));
+            return Bip39Reader.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(mWordsSparseArray.get(mWordsSparseArray.keyAt(1)));
         }
     }
 
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
-        boolean valid = SmartValidator.isWordValid(this, word);
+        boolean valid = Bip39Reader.isWordValid(this, word);
         view.setTextColor(getColor(valid ? R.color.light_gray : R.color.red_text));
         if (isWordCorrect(true)) {
             mCheckMark1.setVisibility(View.VISIBLE);
