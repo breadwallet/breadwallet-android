@@ -5,7 +5,6 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.security.SmartValidator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -133,12 +132,12 @@ public class Bip39Reader {
         return new ArrayList<>(wordList);
     }
 
-    public static List<String> detectWords(Context context, String paperKey) {
-        if (Utils.isNullOrEmpty(paperKey)) {
+    public static List<String> detectWords(Context context, String phrase) {
+        if (Utils.isNullOrEmpty(phrase)) {
             return null;
         }
-        String cleanPaperKey = SmartValidator.cleanPaperKey(context, paperKey);
-        String firstWord = cleanPaperKey.split(" ")[0];
+        String cleanPhrase = cleanPhrase(phrase);
+        String firstWord = cleanPhrase.split(" ")[0];
 
         for (SupportedLanguage supportedLanguage : SupportedLanguage.values()) {
             List<String> words = getBip39WordsByLanguage(context, supportedLanguage);
@@ -149,8 +148,17 @@ public class Bip39Reader {
         return null;
     }
 
+    public static Boolean isWordValid(Context context, String word) {
+        return Bip39Reader.getBip39Words(context, null).contains(Bip39Reader.cleanWord(word));
+    }
+
     public static String cleanWord(String word) {
         return Normalizer.normalize(word.trim().replace(UTF8_BOM, "").replace("　", "")
                 .replace(" ", ""), Normalizer.Form.NFKD);
+    }
+
+    private static String cleanPhrase(String phraseToCheck) {
+        return Normalizer.normalize(phraseToCheck.replace("　", " ")
+                .replace("\n", " ").trim().replaceAll(" +", " "), Normalizer.Form.NFKD);
     }
 }
