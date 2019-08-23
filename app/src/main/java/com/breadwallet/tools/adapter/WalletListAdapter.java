@@ -2,24 +2,19 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.model.PriceChange;
 import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.ShimmerLayout;
@@ -166,7 +161,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
             // Set wallet fields
             decoratedHolderView.mWalletName.setText(name);
-            decoratedHolderView.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, currencyCode));
+            decoratedHolderView.mTradePrice.setText(exchangeRate);
             decoratedHolderView.mWalletBalanceFiat.setText(fiatBalance);
             decoratedHolderView.mWalletBalanceFiat.setTextColor(mContext.getColor(wallet.isSyncing() ? R.color.wallet_balance_fiat_syncing : R.color.wallet_balance_fiat));
             decoratedHolderView.mWalletBalanceCurrency.setText(cryptoBalance);
@@ -178,6 +173,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 labelText.append(' ')
                         .append(NumberFormat.getPercentInstance().format(wallet.getSyncProgress()));
                 decoratedHolderView.mSyncingLabel.setText(labelText);
+            }
+            PriceChange priceChange = wallet.getPriceChange();
+            decoratedHolderView.mPriceChange.setVisibility(priceChange != null ? View.VISIBLE : View.INVISIBLE);
+            if (priceChange != null) {
+                decoratedHolderView.mPriceChange.setText(priceChange.getPercentageChange());
             }
 
             // Get icon for currency
@@ -267,11 +267,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         private BaseTextView mTradePrice;
         private BaseTextView mWalletBalanceFiat;
         private BaseTextView mWalletBalanceCurrency;
-        private RelativeLayout mParent;
+        private ViewGroup mParent;
         private BaseTextView mSyncingLabel;
         private ProgressBar mSyncingProgressBar;
         private ImageView mLogoIcon;
         private BaseTextView mIconLetter;
+        private BaseTextView mPriceChange;
 
         private DecoratedWalletItemViewHolder(View view) {
             super(view);
@@ -285,6 +286,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
             mLogoIcon = view.findViewById(R.id.currency_icon_white);
             mIconLetter = view.findViewById(R.id.icon_letter);
+            mPriceChange = view.findViewById(R.id.price_change);
         }
     }
 }
