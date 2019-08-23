@@ -52,6 +52,7 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:text="@string/HomeScreen.totalAssets"
                 android:textColor="@color/text_total_assets_label"
+                android:textSize="12sp"
                 app:brdFont="@string/Font.CircularPro_Bold" />
 
             <com.breadwallet.presenter.customviews.BaseTextView
