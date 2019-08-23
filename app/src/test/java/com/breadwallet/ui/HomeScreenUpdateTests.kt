@@ -1,5 +1,6 @@
 package com.breadwallet.ui
 
+import com.breadwallet.model.PriceChange
 import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.ui.home.*
 import com.spotify.mobius.test.NextMatchers.*
@@ -52,7 +53,7 @@ class HomeScreenUpdateTests {
 
         // Update ETH wallet balance
         val ethWalletAddedState = initialWalletsAddedState.copy(wallets = expectedWallets)
-        val updatedWallet = walletToAdd.copy(balance = BigDecimal.valueOf(1), fiatBalance = BigDecimal.valueOf(1000), fiatPricePerUnit = BigDecimal.valueOf(1000))
+        val updatedWallet = walletToAdd.copy(balance = BigDecimal.valueOf(1), fiatBalance = BigDecimal.valueOf(1000), fiatPricePerUnit = BigDecimal.valueOf(1000), priceChange = PriceChange(0.1, 10.0))
 
 
         expectedWallets = expectedWallets.toMutableMap()
@@ -60,7 +61,7 @@ class HomeScreenUpdateTests {
 
         spec.given(ethWalletAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletBalanceUpdated(updatedWallet.currencyCode, updatedWallet.balance, updatedWallet.fiatBalance, updatedWallet.fiatPricePerUnit))
+                HomeScreenEvent.OnWalletBalanceUpdated(updatedWallet.currencyCode, updatedWallet.balance, updatedWallet.fiatBalance, updatedWallet.fiatPricePerUnit, updatedWallet.priceChange!!))
             .then(
                 assertThatNext(
                         hasModel(ethWalletAddedState.copy(wallets = expectedWallets)),

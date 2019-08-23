@@ -39,19 +39,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.util.WalletDisplayUtils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.platform.entities.TxMetaData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

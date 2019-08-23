@@ -23,4 +23,8 @@ sealed class WalletScreenEffect {
     object RecordReviewPrompt : WalletScreenEffect()
     object RecordReviewPromptDismissed : WalletScreenEffect()
     object GoToReview : WalletScreenEffect()
+
+    data class LoadChartInterval(val interval: Interval): WalletScreenEffect()
+
+    data class TrackEvent(val eventName: String, val attributes: Map<String, String>? = null) : WalletScreenEffect()
 }

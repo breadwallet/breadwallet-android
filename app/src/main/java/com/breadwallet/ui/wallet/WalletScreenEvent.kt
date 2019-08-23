@@ -1,5 +1,7 @@
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.model.PriceChange
+import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.presenter.entities.CryptoRequest
 import java.math.BigDecimal
 
@@ -20,7 +22,7 @@ sealed class WalletScreenEvent {
     data class OnCurrencyNameUpdated(val name: String) : WalletScreenEvent()
     data class OnBrdRewardsUpdated(val showing: Boolean) : WalletScreenEvent()
     data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) : WalletScreenEvent()
-    data class OnFiatPricePerUpdated(val pricePerUnit: Float) : WalletScreenEvent()
+    data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange) : WalletScreenEvent()
     data class OnTransactionsUpdated(val walletTransactions: List<WalletTransaction>) : WalletScreenEvent()
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : WalletScreenEvent()
     data class OnTransactionRemoved(val walletTransaction: WalletTransaction) : WalletScreenEvent()
@@ -51,6 +53,11 @@ sealed class WalletScreenEvent {
     data class OnHideReviewPrompt(val isDismissed: Boolean) : WalletScreenEvent()
     object OnReviewPromptAccepted : WalletScreenEvent()
 
-    data class OnIsCryptoPreferredLoaded(val isCryptoPreferred : Boolean) : WalletScreenEvent()
+    data class OnIsCryptoPreferredLoaded(val isCryptoPreferred: Boolean) : WalletScreenEvent()
+
+    data class OnChartIntervalSelected(val interval: Interval) : WalletScreenEvent()
+    data class OnMarketChartDataUpdated(val priceDataPoints: List<PriceDataPoint>) : WalletScreenEvent()
+    data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : WalletScreenEvent()
+    object OnChartDataPointReleased : WalletScreenEvent()
 }
 

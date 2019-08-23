@@ -197,7 +197,7 @@ class RecoveryKeyController(
 
         // Bind keyboard enter event
         wordInputs.last().setOnEditorActionListener { _, actionId, event ->
-            if (event.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
+            if (event?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
                 output.accept(RecoveryKeyEvent.OnNextClicked)
             }
             false

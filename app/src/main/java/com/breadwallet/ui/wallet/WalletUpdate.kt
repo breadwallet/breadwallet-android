@@ -1,10 +1,11 @@
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.wallet.WalletScreenEffect.*
+import com.breadwallet.ui.wallet.WalletScreenEvent.*
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next.*
 import com.spotify.mobius.Update
-import com.breadwallet.ui.wallet.WalletScreenEvent.*
-import com.breadwallet.ui.wallet.WalletScreenEffect.*
 
 val WalletUpdate = Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffect> { model, event ->
 
@@ -77,7 +78,8 @@ val WalletUpdate = Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffe
             ))
         is OnFiatPricePerUpdated ->
             next(model.copy(
-                    fiatPricePerUnit = event.pricePerUnit
+                    fiatPricePerUnit = event.pricePerUnit,
+                    priceChange = event.priceChange
             ))
         is OnTransactionsUpdated ->
             if (model.transactions.isNullOrEmpty() && event.walletTransactions.isNotEmpty())
@@ -205,6 +207,30 @@ val WalletUpdate = Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffe
             dispatch(effects(
                     GoToReview
             ))
+        is OnChartIntervalSelected -> {
+            next<WalletScreenModel, WalletScreenEffect>(
+                model.copy(
+                    priceChartInterval = event.interval
+                ),
+                effects(
+                    LoadChartInterval(event.interval),
+                    TrackEvent(String.format(EventUtils.EVENT_WALLET_CHART_AXIS_TOGGLE, model.currencyCode))
+            ))
+        }
+        is OnMarketChartDataUpdated ->
+            next(
+                    model.copy(priceChartDataPoints = event.priceDataPoints)
+            )
+        is OnChartDataPointSelected ->
+            next(
+                    model.copy(selectedPriceDataPoint = event.priceDataPoint)
+            )
+        is OnChartDataPointReleased -> {
+            next<WalletScreenModel, WalletScreenEffect>(
+                    model.copy(selectedPriceDataPoint = null),
+                    effects(TrackEvent(String.format(EventUtils.EVENT_WALLET_CHART_SCRUBBED, model.currencyCode)))
+            )
+        }
     }
 }
 

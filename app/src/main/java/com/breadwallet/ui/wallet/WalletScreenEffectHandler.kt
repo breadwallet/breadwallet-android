@@ -4,9 +4,9 @@ import android.content.Context
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
+import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.wallet.WalletsMaster
-import com.breadwallet.wallet.abstracts.BaseWalletManager
+import com.platform.network.service.CurrencyHistoricalDataClient
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -54,6 +54,7 @@ class WalletReviewPromptHandler(
                 EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED)
                 AppReviewPromptManager.onReviewPromptDismissed(context)
             }
+            is WalletScreenEffect.TrackEvent -> { EventUtils.pushEvent(value.eventName, value.attributes) }
         }
     }
 
@@ -83,11 +84,42 @@ class WalletRatesHandler(
     }
 
     private fun loadFiatPerPriceUnit()  {
-        val fiatPricePerUnit = RatesRepository.getInstance(context).getFiatForCrypto(BigDecimal.ZERO, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
-        output.accept(WalletScreenEvent.OnFiatPricePerUpdated(fiatPricePerUnit.toFloat()))
+        RatesRepository.getInstance(context).let {
+            val exchangeRate = it.getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
+            val fiatPricePerUnit = CurrencyUtils.getFormattedAmount(context, BRSharedPrefs.getPreferredFiatIso(context), exchangeRate)
+            val priceChange = it.getPriceChange(currencyCode)
+            output.accept(WalletScreenEvent.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange))
+        }
     }
 
     override fun dispose() {
         RatesDataSource.getInstance(context).removeOnDataChangedListener(this)
+    }
+}
+
+class WalletHistoricalPriceIntervalHandler(
+        private val output : Consumer<WalletScreenEvent>,
+        private val context: Context,
+        private val currencyCode : String
+) : Connection<WalletScreenEffect> {
+
+    override fun accept(value: WalletScreenEffect) {
+        when(value) {
+            is WalletScreenEffect.LoadChartInterval -> {
+                val toCurrency = BRSharedPrefs.getPreferredFiatIso()
+                val dataPoints = when (value.interval) {
+                    Interval.ONE_DAY -> CurrencyHistoricalDataClient.getPastDay(context, currencyCode, toCurrency)
+                    Interval.ONE_WEEK -> CurrencyHistoricalDataClient.getPastWeek(context, currencyCode, toCurrency)
+                    Interval.ONE_MONTH -> CurrencyHistoricalDataClient.getPastMonth(context, currencyCode, toCurrency)
+                    Interval.THREE_MONTHS -> CurrencyHistoricalDataClient.getPastThreeMonths(context, currencyCode, toCurrency)
+                    Interval.ONE_YEAR -> CurrencyHistoricalDataClient.getPastYear(context, currencyCode, toCurrency)
+                    Interval.THREE_YEARS -> CurrencyHistoricalDataClient.getPastThreeYears(context, currencyCode, toCurrency)
+                }
+                output.accept(WalletScreenEvent.OnMarketChartDataUpdated(dataPoints))
+            }
+        }
+    }
+
+    override fun dispose() {
     }
 }

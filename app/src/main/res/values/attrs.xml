@@ -37,4 +37,21 @@
     <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
     <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
     <string name="Font.Celevenia">Celevenia.otf</string>
+
+    <declare-styleable name="SparkView">
+        <attr name="spark_lineColor" format="color|reference" />
+        <attr name="spark_lineWidth" format="dimension|reference" />
+        <attr name="spark_cornerRadius" format="dimension|reference" />
+        <attr name="spark_fillColor" format="color|reference" />
+        <attr name="spark_scrubLineColor" format="color|reference" />
+        <attr name="spark_scrubLineWidth" format="dimension|reference" />
+        <attr name="spark_scrubEnabled" format="boolean"/>
+        <attr name="spark_fillType" format="enum">
+            <!-- must match values in SparkView.FillType -->
+            <enum name="none" value="0" />
+            <enum name="up" value="1" />
+            <enum name="down" value="2" />
+            <enum name="towardZero" value="3" />
+        </attr>
+    </declare-styleable>
 </resources>
