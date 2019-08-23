@@ -63,14 +63,16 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
             when (val wallet = model.wallets[event.currencyCode]) {
                 null -> noChange<HomeScreenModel, HomeScreenEffect>()
                 else -> {
-                    when (wallet.balance == event.balance && wallet.fiatBalance == event.fiatBalance) {
+                    when (wallet.balance == event.balance && wallet.fiatBalance == event.fiatBalance
+                            && wallet.priceChange == event.priceChange && wallet.fiatPricePerUnit == event.fiatPricePerUnit) {
                         true -> noChange<HomeScreenModel, HomeScreenEffect>()
                         else -> {
                             val wallets = model.wallets.toMutableMap()
                             wallets[event.currencyCode] = wallet.copy(
                                     balance = event.balance,
                                     fiatBalance = event.fiatBalance,
-                                    fiatPricePerUnit = event.fiatPricePerUnit
+                                    fiatPricePerUnit = event.fiatPricePerUnit,
+                                    priceChange = event.priceChange
                             )
                             next(model.copy(wallets = wallets))
                         }
