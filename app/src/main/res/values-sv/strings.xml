@@ -274,6 +274,8 @@
     <string name="HomeScreen.admin">Admin</string>
     <!-- Home screen menu button to buy some bitcoin -->
     <string name="HomeScreen.buy">Köpa</string>
+    <!-- home screen toolbar 'Buy & Sell' button -->
+    <string name="HomeScreen.buyAndSell">Köp &amp; Sälj</string>
     <!-- Menu button on the home screen toolbar -->
     <string name="HomeScreen.menu">Meny</string>
     <!-- This section lists the users wallets -->
@@ -689,6 +691,8 @@
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">Ordnyckel</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Skyddar ditt BRD från obehöriga användare.</string>
     <!-- PIN button title -->
