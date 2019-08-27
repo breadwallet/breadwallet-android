@@ -156,4 +156,15 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
             }
         }
     }
+
+    override fun onShowPhraseGranted(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        return dispatch(setOf(RecoveryKeyEffect.Unlink(model.phrase)))
+    }
+
+    override fun onShowPhraseFailed(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        return next(model.copy(isLoading = false), setOf(
+                RecoveryKeyEffect.ErrorShake,
+                RecoveryKeyEffect.GoToPhraseError
+        ))
+    }
 }

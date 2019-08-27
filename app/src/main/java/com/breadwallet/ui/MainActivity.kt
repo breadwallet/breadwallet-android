@@ -39,6 +39,7 @@ import com.breadwallet.presenter.activities.LoginActivity
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.onboarding.IntroController
+import com.breadwallet.ui.util.logError
 
 /**
  * The main user entrypoint into the app.
@@ -60,6 +61,7 @@ class MainActivity : BRActivity() {
         if (!(application as BreadApp).isDeviceStateValid) {
             // Note: Calling isDeviceStateValid will handle user resolution
             //   making it safe to terminate here.
+            logError("Device state is invalid.")
             return
         }
 
