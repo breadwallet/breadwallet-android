@@ -22,130 +22,214 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+@file:JvmName("KLog")
+@file:JvmMultifileClass
 package com.breadwallet.ui.util
 
+import android.os.Build
 import android.util.Log
 
-/** Convenience method for retrieving the [Class.getSimpleName] of an object. */
-@Suppress("NOTHING_TO_INLINE")
-inline fun Any.tag(): String = this::class.java.simpleName
-
 /**
- * Logs [message] with [Log.d], using the receivers [Class.getSimpleName]
- * as the tag, and prints any accompanying [data] items.
+ * A simple and instantiable logger with a default implementation
+ * via [Companion].  Loggers can also be produced with a one-time
+ * tag via [tag] or with a permanent manual tag via [create].
  *
- * If the first item in [data] is an exception, it will be logged using
- * the correct [Log.d] overload.
+ * When a tag is not specified, the calling class name will be used.
  */
-fun Any.logDebug(message: String, vararg data: Any?) {
-    if (data.isEmpty())
-        Log.d(tag(), message)
-    else {
-        val hadException = when (val first = data.first()) {
-            is Throwable -> {
-                Log.d(tag(), message, first)
-                true
-            }
-            else -> {
-                Log.d(tag(), message)
-                false
-            }
-        }
+interface Logger {
+    companion object : Logger {
+        private val defaultLogger = DefaultLogger()
 
-        data.drop(if (hadException) 1 else 0)
-                .forEach { obj ->
-                    Log.d(tag(), "\t${obj?.tag()}:")
-                    Log.d(tag(), "\t\t$obj")
-                }
+        /** Acquire a default logger that will use [tag] for a single call. */
+        fun tag(tag: String): Logger = defaultLogger.withTagForCall(tag)
+
+        /** Create a new logger that will always use [tag]. */
+        fun create(tag: String): Logger = DefaultLogger(tag)
+
+        override fun verbose(message: String, vararg data: Any?) =
+                defaultLogger.verbose(message, data)
+
+        override fun debug(message: String, vararg data: Any?) =
+                defaultLogger.debug(message, data)
+
+        override fun info(message: String, vararg data: Any?) =
+                defaultLogger.info(message, data)
+
+        override fun warning(message: String, vararg data: Any?) =
+                defaultLogger.warning(message, data)
+
+        override fun error(message: String, vararg data: Any?) =
+                defaultLogger.error(message, data)
+
+        override fun wtf(message: String, vararg data: Any?) =
+                defaultLogger.wtf(message, data)
     }
+
+    /** Log verbose [message] and any [data] objects. */
+    fun verbose(message: String, vararg data: Any?)
+    /** Log debug [message] and any [data] objects. */
+    fun debug(message: String, vararg data: Any?)
+    /** Log info [message] and any [data] objects. */
+    fun info(message: String, vararg data: Any?)
+    /** Log warning [message] and any [data] objects. */
+    fun warning(message: String, vararg data: Any?)
+    /** Log error [message] and any [data] objects. */
+    fun error(message: String, vararg data: Any?)
+    /** Log wtf [message] and any [data] objects. */
+    fun wtf(message: String, vararg data: Any?)
 }
 
-/**
- * Logs [message] with [Log.v], using the receivers [Class.getSimpleName]
- * as the tag, and prints any accompanying [data] items.
- *
- * If the first item in [data] is an exception, it will be logged using
- * the correct [Log.v] overload.
- */
-fun Any.logVerbose(message: String, vararg data: Any?) {
-    if (data.isEmpty())
-        Log.v(tag(), message)
-    else {
-        val hadException = when (val first = data.first()) {
-            is Throwable -> {
-                Log.v(tag(), message, first)
-                true
-            }
-            else -> {
-                Log.v(tag(), message)
-                false
-            }
-        }
+/** Log verbose [message] and any [data] objects. */
+fun logVerbose(message: String, vararg data: Any?) = Logger.verbose(message, data)
+/** Log debug [message] and any [data] objects. */
+fun logDebug(message: String, vararg data: Any?) = Logger.debug(message, data)
+/** Log info [message] and any [data] objects. */
+fun logInfo(message: String, vararg data: Any?) = Logger.info(message, data)
+/** Log warning [message] and any [data] objects. */
+fun logWarning(message: String, vararg data: Any?) = Logger.warning(message, data)
+/** Log error [message] and any [data] objects. */
+fun logError(message: String, vararg data: Any?) = Logger.error(message, data)
+/** Log wtf [message] and any [data] objects. */
+fun logWtf(message: String, vararg data: Any?) = Logger.wtf(message, data)
 
-        data.drop(if (hadException) 1 else 0)
-                .forEach { obj ->
-                    Log.v(tag(), "\t${obj?.tag()}:")
-                    Log.v(tag(), "\t\t$obj")
-                }
+/** A default [Logger] implementation for use on Android. */
+private class DefaultLogger(
+        /** Used instead of looking up the calling element's name. */
+        private val manualTag: String? = null
+) : Logger {
+
+    companion object {
+        /** Max character count for Logcat tags below Android N. */
+        private const val MAX_TAG_LENGTH = 23
+        /** Pattern matching anonymous class name. */
+        private val ANONYMOUS_CLASS = "(\\$\\d+)+$".toPattern()
     }
-}
 
-/**
- * Logs [message] with [Log.i], using the receivers [Class.getSimpleName]
- * as the tag, and prints any accompanying [data] items.
- *
- * If the first item in [data] is an exception, it will be logged using
- * the correct [Log.i] overload.
- */
-fun Any.logInfo(message: String, vararg data: Any?) {
-    if (data.isEmpty())
-        Log.i(tag(), message)
-    else {
-        val hadException = when (val first = data.first()) {
-            is Throwable -> {
-                Log.i(tag(), message, first)
-                true
+    /** Holds a tag that will be used once after [withTagForCall]. */
+    private val overrideTag = ThreadLocal<String>()
+
+    /** Get the expected tag name for a given log call. */
+    private val nextTag: String?
+        get() {
+            val tag = overrideTag.get()
+            if (tag != null) {
+                overrideTag.remove()
+                return tag
             }
-            else -> {
-                Log.i(tag(), message)
-                false
-            }
+            return manualTag ?: Throwable().stackTrace
+                    .first { it.className !in ignoredStackClassNames }
+                    .asTag()
         }
 
-        data.drop(if (hadException) 1 else 0)
-                .forEach { obj ->
-                    Log.i(tag(), "\t${obj?.tag()}:")
-                    Log.i(tag(), "\t\t$obj")
-                }
+    /** A list of class names to filter when searching for the calling element name. */
+    private val ignoredStackClassNames = listOf(
+            DefaultLogger::class.java.name,
+            Logger::class.java.name,
+            Logger.Companion::class.java.name
+    )
+
+    /** Set the tag to use for the next log call. */
+    fun withTagForCall(tag: String): DefaultLogger {
+        overrideTag.set(tag)
+        return this
     }
-}
 
-/**
- * Logs [message] with [Log.e], using the receivers [Class.getSimpleName]
- * as the tag, and prints any accompanying [data] items.
- *
- * If the first item in [data] is an exception, it will be logged using
- * the correct [Log.e] overload.
- */
-fun Any.logError(message: String, vararg data: Any?) {
-    if (data.isEmpty())
-        Log.e(tag(), message)
-    else {
-        val hadException = when (val first = data.first()) {
-            is Throwable -> {
-                Log.e(tag(), message, first)
-                true
+    override fun verbose(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.v(tag, _message)
+                    else -> Log.v(tag, _message, error)
+                }
+            }, message, data)
+
+    override fun debug(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.d(tag, _message)
+                    else -> Log.d(tag, _message, error)
+                }
+            }, message, data)
+
+    override fun info(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.i(tag, _message)
+                    else -> Log.i(tag, _message, error)
+                }
+            }, message, data)
+
+    override fun warning(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.w(tag, _message)
+                    else -> Log.w(tag, _message, error)
+                }
+            }, message, data)
+
+    override fun error(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.e(tag, _message)
+                    else -> Log.e(tag, _message, error)
+                }
+            }, message, data)
+
+    override fun wtf(message: String, vararg data: Any?) =
+            logWith({ tag, _message, error ->
+                when (error) {
+                    null -> Log.wtf(tag, _message)
+                    else -> Log.wtf(tag, _message, error)
+                }
+            }, message, data)
+
+    /** Logs [message] and [data] objects using [logFunc]. */
+    private inline fun logWith(
+            crossinline logFunc: (
+                    @ParameterName("tag") String?,
+                    @ParameterName("message") String,
+                    @ParameterName("error") Throwable?
+            ) -> Unit,
+            message: String,
+            vararg data: Any?
+    ) {
+        val tag = nextTag
+        if (data.isEmpty())
+            logFunc(tag, message, null)
+        else {
+            val hadException = when (val first = data.first()) {
+                is Throwable -> {
+                    logFunc(tag, message, first)
+                    true
+                }
+                else -> {
+                    logFunc(tag, message, null)
+                    false
+                }
             }
-            else -> {
-                Log.e(tag(), message)
-                false
-            }
+
+            data.drop(if (hadException) 1 else 0)
+                    .forEachIndexed { index, obj ->
+                        logFunc(tag, "\tData ${index + 1}:", null)
+                        logFunc(tag, "\t\t$obj", null)
+                    }
         }
+    }
 
-        data.drop(if (hadException) 1 else 0)
-                .forEach { obj ->
-                    Log.e(tag(), "\t${obj?.tag()}:")
-                    Log.e(tag(), "\t\t$obj")
+    /**
+     * Returns a tag or null using [StackTraceElement.getClassName]
+     * removing anonymous class name suffix and trimming to 23
+     * characters when below Android N.
+     */
+    private fun StackTraceElement.asTag(): String? {
+        return className.substringAfterLast('.')
+                .let {
+                    val tag = ANONYMOUS_CLASS.matcher(it)
+                            .run { if (find()) replaceAll("") else it }
+                    if (tag.length <= MAX_TAG_LENGTH || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        tag
+                    } else {
+                        tag.take(MAX_TAG_LENGTH)
+                    }
                 }
     }
 }
