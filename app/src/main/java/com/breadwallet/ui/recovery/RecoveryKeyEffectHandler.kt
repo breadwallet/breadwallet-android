@@ -24,27 +24,36 @@
  */
 package com.breadwallet.ui.recovery
 
+import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BreadApp
-import com.breadwallet.core.BRCoreKey
-import com.breadwallet.core.BRCoreMasterPubKey
+import com.breadwallet.crypto.Account
+import com.breadwallet.crypto.Key
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.AuthManager
 import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.SmartValidator
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logInfo
+import com.platform.APIClient
+import com.platform.entities.WalletInfoData
+import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
+import kotlinx.coroutines.*
 import java.text.Normalizer
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class RecoveryKeyEffectHandler(
         private val output: Consumer<RecoveryKeyEvent>,
         val goToUnlink: () -> Unit,
         val goToErrorDialog: () -> Unit,
         val errorShake: () -> Unit
-) : Connection<RecoveryKeyEffect> {
+) : Connection<RecoveryKeyEffect>, CoroutineScope {
+
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     override fun accept(effect: RecoveryKeyEffect) {
         when (effect) {
@@ -58,11 +67,11 @@ class RecoveryKeyEffectHandler(
     }
 
     override fun dispose() {
-
+        coroutineContext.cancel()
     }
 
     private fun validateWord(effect: RecoveryKeyEffect.ValidateWord) {
-        val isValid = SmartValidator.isWordValid(BreadApp.getBreadContext(), effect.word)
+        val isValid = Bip39Reader.isWordValid(BreadApp.getBreadContext(), effect.word)
         output.accept(RecoveryKeyEvent.OnWordValidated(effect.index, !isValid))
     }
 
@@ -70,8 +79,20 @@ class RecoveryKeyEffectHandler(
         val context = BreadApp.getBreadContext()
         val phrase = normalizePhrase(effect.phrase)
 
+        val storedPhrase = try {
+            BRKeyStore.getPhrase(context, BRConstants.SHOW_PHRASE_REQUEST_CODE)
+        } catch (e: UserNotAuthenticatedException) {
+            logInfo("User not authenticated, attempting authentication before restoring wallet.", e)
+            return
+        } catch (e: Exception) {
+            logError("Error storing phrase", e)
+            // TODO: KeyStore read error
+            output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+            return
+        }
+
         output.accept(when {
-            SmartValidator.isPaperKeyCorrect(phrase, context) -> {
+            phrase.toByteArray().contentEquals(storedPhrase) -> {
                 AuthManager.getInstance().setPinCode(context, "")
                 RecoveryKeyEvent.OnPinCleared
             }
@@ -83,7 +104,19 @@ class RecoveryKeyEffectHandler(
         val context = BreadApp.getBreadContext()
         val phrase = normalizePhrase(effect.phrase)
 
-        if (SmartValidator.isPaperKeyCorrect(phrase, context)) {
+        val storedPhrase = try {
+            BRKeyStore.getPhrase(context, BRConstants.SHOW_PHRASE_REQUEST_CODE)
+        } catch (e: UserNotAuthenticatedException) {
+            logInfo("User not authenticated, attempting authentication before restoring wallet.", e)
+            return
+        } catch (e: Exception) {
+            logError("Error storing phrase", e)
+            // TODO: KeyStore read error
+            output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+            return
+        }
+
+        if (phrase.toByteArray().contentEquals(storedPhrase)) {
             goToUnlink()
         } else {
             output.accept(RecoveryKeyEvent.OnPhraseInvalid)
@@ -96,15 +129,17 @@ class RecoveryKeyEffectHandler(
     //  this function can be broken down into smaller pieces.
     private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet) {
         val context = BreadApp.getBreadContext()
-        val phrase = normalizePhrase(effect.phrase)
 
-        if (!SmartValidator.isPaperKeyValid(context, phrase)) {
-            logInfo("Paper key validation failed.")
+        val phraseBytes = normalizePhrase(effect.phrase).toByteArray()
+
+        val words = findWordsForPhrase(phraseBytes)
+        if (words == null) {
+            logInfo("Phrase validation failed.")
             output.accept(RecoveryKeyEvent.OnPhraseInvalid)
             return
         }
 
-        val phraseBytes = phrase.toByteArray()
+        Key.setDefaultWordList(words)
 
         val storePhraseSuccess = try {
             BRKeyStore.putPhrase(
@@ -113,48 +148,132 @@ class RecoveryKeyEffectHandler(
                     BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE
             )
         } catch (e: UserNotAuthenticatedException) {
-            // TODO: BRKeyStore.putPhrase launches an activity for result to authenticate the user.
-            //   The host Controller for this effect handler, will turn the result into a successful
-            //   event that repeats this operation.
-            logInfo("User not authenticated, attempting authentication before restoring wallet.", e)
-            return
-        } catch (e: Exception) {
-            logError("Error storing phrase", e)
-            // TODO: use non-phrase related error
-            output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+            logInfo("User not authenticated, attempting auth before restoring wallet.", e)
             return
         }
+
         if (!storePhraseSuccess) {
             logError("Failed to store phrase.")
-            // TODO: use non-phrase related error
-            output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+            output.accept(RecoveryKeyEvent.OnPhraseInvalid) // TODO: Define phrase write error
             return
         }
-        BreadApp.initializeCryptoSystem(phrase)
 
-        try {
-            val seed = BRCoreKey.getSeedFromPhrase(phraseBytes)
-            val authKey = BRCoreKey.getAuthPrivKeyForAPI(seed)
-            BRKeyStore.putAuthKey(authKey, context)
+        BRSharedPrefs.putPhraseWroteDown(check = true)
 
-            BRSharedPrefs.putPhraseWroteDown(check = true)
+        val apiKey = Key.createForBIP32ApiAuth(phraseBytes, words).apply {
+            if (!isPresent) {
+                logError("Failed to create api auth key from phrase.")
+                output.accept(RecoveryKeyEvent.OnPhraseInvalid) // TODO: Define unexpected error dialog
+                return
+            }
+        }.get()
 
-            // Recover wallet-info and token list before starting to sync wallets.
-            // TODO: KVStoreManager.syncWalletInfo(context)
-            // TODO: KVStoreManager.syncTokenList(context)
+        launch(Dispatchers.Main) {
+            val creationDate = getWalletCreationDate()
 
-            val mpk = BRCoreMasterPubKey(phraseBytes, true)
-            BRKeyStore.putMasterPublicKey(mpk.serialize(), context)
+            val uids = BRSharedPrefs.getDeviceId()
+            val account = Account.createFromPhrase(phraseBytes, creationDate, uids)
+            val accountKey = Key.createFromPhrase(phraseBytes, words).run {
+                when {
+                    isPresent -> get()
+                    else -> {
+                        logError("Failed to create key from phrase.")
+                        // TODO: Define generic initialization error with retry
+                        output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+                        return@launch
+                    }
+                }
+            }
 
-            // TODO: APIClient.getInstance(getApplication()).updatePlatform()
+            try {
+                setupWallet(account, accountKey, apiKey, creationDate, context)
+            } catch (e: Exception) {
+                logError("Error setting up wallet", e)
+                // TODO: Define generic initialization error with retry
+                output.accept(RecoveryKeyEvent.OnPhraseInvalid)
+                return@launch
+            }
+
+            try {
+                // TODO: This will be replaced with a cryptosystem initialization handler
+                BreadApp.initializeCryptoSystem(context, account)
+            } catch (e: Exception) {
+                logError("Error initializing crypto system", e)
+                output.accept(RecoveryKeyEvent.OnPhraseInvalid) // TODO: To be removed
+                return@launch
+            }
+
+            updateTokensAndPlatform(context)
 
             output.accept(RecoveryKeyEvent.OnRecoveryComplete)
-        } catch (e: Exception) {
-            logError("Error creating wallet", e)
-            //TODO: Define specific error event
-            output.accept(RecoveryKeyEvent.OnPhraseInvalid)
         }
     }
+
+    /** Stores [account], [accountKey], [apiKey], and [creationDate] in [BRKeyStore]. */
+    private fun setupWallet(account: Account, accountKey: Key, apiKey: Key, creationDate: Date, context: Context) {
+        BRKeyStore.putAccount(account, context)
+        BRKeyStore.putAuthKey(apiKey.encodeAsPrivate(), context)
+        BRKeyStore.putMasterPublicKey(accountKey.encodeAsPublic(), context)
+        BRKeyStore.putWalletCreationTime(creationDate.time.toInt(), context)
+    }
+
+    // TODO: These operations should occur elsewhere as a side-effect
+    //   of the crypto system being initialized.
+    private suspend fun updateTokensAndPlatform(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                KVStoreManager.syncTokenList(context)
+                APIClient.getInstance(context).updatePlatform()
+            } catch (e: Exception) {
+                logError("Failed to sync token list or update platform.", e)
+            }
+        }
+    }
+
+    /**
+     * Returns the list of words for the language resulting in
+     * a successful [Account.validatePhrase] call or null if
+     * the phrase is invalid.
+     */
+    private fun findWordsForPhrase(phraseBytes: ByteArray): List<String>? {
+        val defaultLanguage = Locale.getDefault().language
+        val availableLanguages = Locale.getAvailableLocales()
+                .asSequence()
+                .map(Locale::getLanguage)
+
+        return (sequenceOf(defaultLanguage) + availableLanguages)
+                .map { Bip39Reader.getBip39Words(BreadApp.getBreadContext(), it) }
+                .firstOrNull { Account.validatePhrase(phraseBytes, it) }
+    }
+
+    /**
+     * Sync and return [WalletInfoData] from [KVStoreManager]
+     * or null if anything goes wrong.
+     * TODO: Signing requests is not supported, we will always fail
+     *  here because of APIClient usage.
+     */
+    private suspend fun fetchWalletInfo(): WalletInfoData? {
+        val context = BreadApp.getBreadContext()
+        return withContext(Dispatchers.IO) {
+            try {
+                KVStoreManager.syncWalletInfo(context)
+                KVStoreManager.getWalletInfo(context)
+            } catch (e: Exception) {
+                logError("Failed to sync wallet info", e)
+                null
+            }
+        }
+    }
+
+    /**
+     * Returns the [Date] of [WalletInfoData.creationDate] or 0
+     * when [fetchWalletInfo] returns null.
+     */
+    private suspend fun getWalletCreationDate() =
+            Date(fetchWalletInfo()
+                    ?.creationDate
+                    ?.toLong()
+                    ?.let(TimeUnit.SECONDS::toMillis) ?: 0L)
 
     private fun normalizePhrase(phrase: List<String>) =
             Normalizer.normalize(phrase.joinToString(" ")
