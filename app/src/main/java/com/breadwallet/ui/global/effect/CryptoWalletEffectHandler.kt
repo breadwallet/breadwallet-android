@@ -140,8 +140,8 @@ class CryptoWalletEffectHandler(
         event.accept(object : DefaultWalletManagerEventVisitor<Void>() {
             override fun visit(event: WalletManagerSyncProgressEvent): Void? {
                 output.accept(WalletEvent.OnSyncProgressUpdated(
-                        progress = event.percentComplete,
-                        syncThroughMillis = 0L // TODO: how to get this from new core?)
+                        progress = event.percentComplete.toDouble(), // TODO: Use float to match core.
+                        syncThroughMillis = event.timestamp.transform { it?.time }.or(0L)
                 ))
                 return null
             }

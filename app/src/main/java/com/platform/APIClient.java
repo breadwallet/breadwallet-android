@@ -694,8 +694,10 @@ public class APIClient {
     private synchronized Key getCachedAuthKey() {
         if (mCachedAuthKey == null) {
             byte[] privateKeyBytes = BRKeyStore.getAuthKey(mContext);
-            Optional<Key> key = Key.createFromPrivateKeyString(privateKeyBytes);
-            mCachedAuthKey = key.orNull();
+            if (!Utils.isNullOrEmpty(privateKeyBytes)) {
+                Optional<Key> key = Key.createFromPrivateKeyString(privateKeyBytes);
+                mCachedAuthKey = key.orNull();
+            }
         }
         return mCachedAuthKey;
     }
