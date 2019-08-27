@@ -67,6 +67,8 @@ sealed class RecoveryKeyEvent {
     object OnPinSet : RecoveryKeyEvent()
     object OnPinSetCancelled : RecoveryKeyEvent()
 
+    object OnShowPhraseGranted : RecoveryKeyEvent()
+    object OnShowPhraseFailed : RecoveryKeyEvent()
     object OnRecoveryComplete : RecoveryKeyEvent()
     object OnFaqClicked : RecoveryKeyEvent()
     object OnNextClicked : RecoveryKeyEvent()

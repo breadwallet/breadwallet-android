@@ -7,13 +7,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.NetworkOnMainThreadException;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.crypto.Signer;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -25,8 +27,10 @@ import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.util.KLog;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.google.common.base.Optional;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.TokenHolder;
@@ -129,7 +133,7 @@ public class APIClient {
 
     private static APIClient ourInstance;
 
-    private byte[] mCachedAuthKey;
+    private Key mCachedAuthKey;
 
     private boolean mIsFetchingToken;
 
@@ -267,10 +271,9 @@ public class APIClient {
             String strUtl = getBaseURL() + TOKEN_PATH;
 
             JSONObject requestMessageJSON = new JSONObject();
-            byte[] cachedAuthKey = getCachedAuthKey();
-            if (!Utils.isNullOrEmpty(cachedAuthKey)) {
-                String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(cachedAuthKey);
-                requestMessageJSON.put(PUBKEY, base58PubKey);
+            Key authKey = getCachedAuthKey();
+            if (authKey != null) {
+                requestMessageJSON.put(PUBKEY, Base58.encode(authKey.encodeAsPublic()));
                 requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
 
                 final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
@@ -309,14 +312,13 @@ public class APIClient {
 
     public String signRequest(String request) {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
-        BRCoreKey key;
+        Key key;
         try {
-            byte[] authKey = getCachedAuthKey();
-            if (Utils.isNullOrEmpty(authKey)) {
+            key = getCachedAuthKey();
+            if (key == null) {
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
             }
-            key = new BRCoreKey(authKey);
         } catch (IllegalArgumentException ex) {
             key = null;
             Log.e(TAG, "signRequest: " + request, ex);
@@ -325,9 +327,15 @@ public class APIClient {
             Log.e(TAG, "signRequest: key is null, failed to create BRKey");
             return null;
         }
-        byte[] signedBytes = key.compactSign(doubleSha256);
-        return Base58.encode(signedBytes);
 
+        Signer compact = Signer.createForAlgorithm(Signer.Algorithm.COMPACT);
+        // TODO: Request signing not yet implemented
+        if (compact == null) {
+            KLog.logWarning("signRequest: TODO: Request signing not yet implemented");
+            return null;
+        }
+        byte[] signedBytes = compact.sign(doubleSha256, key);
+        return Base58.encode(signedBytes);
     }
 
     @VisibleForTesting
@@ -683,9 +691,11 @@ public class APIClient {
     }
 
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
-    private synchronized byte[] getCachedAuthKey() {
-        if (Utils.isNullOrEmpty(mCachedAuthKey)) {
-            mCachedAuthKey = BRKeyStore.getAuthKey(mContext);
+    private synchronized Key getCachedAuthKey() {
+        if (mCachedAuthKey == null) {
+            byte[] privateKeyBytes = BRKeyStore.getAuthKey(mContext);
+            Optional<Key> key = Key.createFromPrivateKeyString(privateKeyBytes);
+            mCachedAuthKey = key.orNull();
         }
         return mCachedAuthKey;
     }

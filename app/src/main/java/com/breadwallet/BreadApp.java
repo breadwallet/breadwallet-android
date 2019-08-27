@@ -126,6 +126,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         mInstance = this;
 
+        // TODO: Why is this required?
+        CryptoApi.initialize(CryptoApiProvider.getInstance());
+
         BRSharedPrefs.provideContext(this);
 
         final Fabric fabric = new Fabric.Builder(this)
@@ -162,32 +165,23 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     // TODO: For code organization only, to be removed
     public static boolean hasWallet(Context context) {
-        return (new File(context.getFilesDir(), "cryptocore")).exists();
+        return getStorageDir(context).exists();
+    }
+
+    // TODO: For code organization only, to be removed
+    public static File getStorageDir(Context context) {
+        return new File(context.getFilesDir(), "cryptocore");
     }
 
     // TODO: Temp -- refactor
     // ginger settle marine tissue robot crane night number ramp coast roast critic
-    public static void initializeCryptoSystem(String paperKeyStr) {
-        // Hard-code wallet and init settings to ease bootstrap
-        // String paperKeyStr ="ginger settle marine tissue robot crane night number ramp coast roast critic";
-        byte[] paperKey = paperKeyStr.getBytes(StandardCharsets.UTF_8);
-        boolean wipe = false;
-        long timestamp = 1507168053L;
+    public static void initializeCryptoSystem(Context context, Account account) {
         WalletManagerMode mode = WalletManagerMode.API_ONLY;
 
-        File storageFile = new File(getBreadContext().getFilesDir(), "cryptocore");
-        if (wipe) {
-            if (storageFile.exists()) deleteRecursively(storageFile);
-            checkState(storageFile.mkdirs());
-        }
-
-        CryptoApi.initialize(CryptoApiProvider.getInstance());
+        File storageFile = getStorageDir(context);
 
         List<String> currencyCodesNeeded = Arrays.asList("btc", "eth", "brd");
         listener = new CryptoSystemListener(mode, currencyCodesNeeded);
-
-        String uids = UUID.nameUUIDFromBytes(paperKey).toString();
-        Account account = Account.createFromPhrase(paperKey, new Date(TimeUnit.SECONDS.toMillis(timestamp)), uids);
 
         BlockchainDb query = new BlockchainDb(new OkHttpClient(), BDB_BASE_URL, API_BASE_URL);
 
@@ -203,10 +197,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static System getCryptoSystem() {
         return cryptoSystem;
     }
-    public static CryptoSystemListener getCryptoSystemListener() { return listener; }
 
+    public static CryptoSystemListener getCryptoSystemListener() {
+        return listener;
+    }
 
-    private static void deleteRecursively (File file) {
+    private static void deleteRecursively(File file) {
         if (file.isDirectory()) {
             for (File child : file.listFiles()) {
                 deleteRecursively(child);
@@ -360,7 +356,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
 
-                for (WalletManager manager: cryptoSystem.getWalletManagers()) {
+                for (WalletManager manager : cryptoSystem.getWalletManagers()) {
                     manager.connect();
                 }
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
@@ -443,6 +439,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     /**
      * Get the time when the app was sent to background.
+     *
      * @return the timestamp when the app was sent sent to background or 0 if it's in the foreground.
      */
     public long getBackgroundedTime() {
