@@ -172,8 +172,8 @@ class HomeScreenEffectHandler(
             override fun visit(event: WalletManagerSyncProgressEvent): Void? {
                 output.accept(HomeScreenEvent.OnWalletSyncProgressUpdated(
                         currencyCode = manager.currency.code,
-                        progress = event.percentComplete,
-                        syncThroughMillis = 0L // TODO: how to get this from new core?
+                        progress = event.percentComplete.toDouble(), // TODO: Use float to match core.
+                        syncThroughMillis = event.timestamp.transform { it?.time }.or(0L)
                 ))
                 return null
             }
