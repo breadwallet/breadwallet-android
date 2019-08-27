@@ -72,6 +72,7 @@ class RecoveryKeyController(
         // TODO: This request code is used in RecoveryKeyEffectHandler without calling
         //  Controller.startActivityForResult so we must register our interest manually.
         registerForActivityResult(BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE)
+        registerForActivityResult(BRConstants.SHOW_PHRASE_REQUEST_CODE)
         registerForActivityResult(InputPinActivity.SET_PIN_REQUEST_CODE)
     }
 
@@ -273,6 +274,8 @@ class RecoveryKeyController(
                 eventConsumer.accept(handleSetPinResult(data))
             BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE ->
                 eventConsumer.accept(handlePutPhraseResult(resultCode))
+            BRConstants.SHOW_PHRASE_REQUEST_CODE ->
+                eventConsumer.accept(handleShowPhraseResult(resultCode))
             else ->
                 logError("Registered for onActivityResult of $requestCode but was unhandled.", resultCode, data)
         }
@@ -293,5 +296,11 @@ class RecoveryKeyController(
             when (resultCode) {
                 Activity.RESULT_OK -> RecoveryKeyEvent.OnPhraseSaved
                 else -> RecoveryKeyEvent.OnPhraseSaveFailed
+            }
+
+    private fun handleShowPhraseResult(resultCode: Int): RecoveryKeyEvent =
+            when (resultCode) {
+                Activity.RESULT_OK -> RecoveryKeyEvent.OnShowPhraseGranted
+                else -> RecoveryKeyEvent.OnShowPhraseFailed
             }
 }

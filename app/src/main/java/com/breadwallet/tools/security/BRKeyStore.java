@@ -46,6 +46,7 @@ import android.view.View;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.crypto.Account;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.UiUtils;
@@ -57,6 +58,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.util.KLog;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -126,6 +128,7 @@ public final class BRKeyStore {
     private static final String TOTAL_LIMIT_IV = "ivtotallimit";
     private static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     private static final String AUTH_KEY_IV = "ivauthkey";
+    private static final String ACCOUNT_IV = "ivaccount";
     private static final String TOKEN_IV = "ivtoken";
     private static final String PASS_TIME_IV = "ivpasstimetoken";
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
@@ -139,6 +142,7 @@ public final class BRKeyStore {
     public static final String TOTAL_LIMIT_ALIAS = "totallimit";
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
     public static final String AUTH_KEY_ALIAS = "authKey";
+    public static final String ACCOUNT_ALIAS = "account";
     public static final String TOKEN_ALIAS = "token";
     public static final String PASS_TIME_ALIAS = "passTime";
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
@@ -152,6 +156,7 @@ public final class BRKeyStore {
     private static final String TOTAL_LIMIT_FILENAME = "my_total_limit";
     private static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
     private static final String AUTH_KEY_FILENAME = "my_auth_key";
+    private static final String ACCOUNT_FILENAME = "my_account";
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
@@ -183,6 +188,7 @@ public final class BRKeyStore {
         ALIAS_OBJECT_MAP.put(SPEND_LIMIT_ALIAS, new AliasObject(SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV));
         ALIAS_OBJECT_MAP.put(FAIL_TIMESTAMP_ALIAS, new AliasObject(FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV));
         ALIAS_OBJECT_MAP.put(AUTH_KEY_ALIAS, new AliasObject(AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV));
+        ALIAS_OBJECT_MAP.put(ACCOUNT_ALIAS, new AliasObject(ACCOUNT_ALIAS, ACCOUNT_FILENAME, ACCOUNT_IV));
         ALIAS_OBJECT_MAP.put(TOKEN_ALIAS, new AliasObject(TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV));
         ALIAS_OBJECT_MAP.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         ALIAS_OBJECT_MAP.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
@@ -579,6 +585,30 @@ public final class BRKeyStore {
             return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean putAccount(final Account account, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
+        try {
+            return account != null && setData(context, account.serialize(), obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            KLog.logError("Failed to store Account.", e);
+        }
+        return false;
+    }
+
+    public static Account getAccount(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
+        try {
+            byte[] accountBytes = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+            if (accountBytes == null || accountBytes.length == 0) {
+                return null;
+            }
+            return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId(context)).orNull();
+        } catch (UserNotAuthenticatedException e) {
+            KLog.logError("Failed to get Account.", e);
         }
         return null;
     }
