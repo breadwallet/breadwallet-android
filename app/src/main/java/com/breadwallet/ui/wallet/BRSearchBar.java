@@ -93,7 +93,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         setListeners();
 
 
-        searchEdit.requestFocus();
         searchEdit.postDelayed(() -> {
             InputMethodManager keyboard = (InputMethodManager)
                     getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
