@@ -58,7 +58,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.util.KLog;
+import com.breadwallet.ui.util.Logger;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -594,7 +594,7 @@ public final class BRKeyStore {
         try {
             return account != null && setData(context, account.serialize(), obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
         } catch (UserNotAuthenticatedException e) {
-            KLog.logError("Failed to store Account.", e);
+            Logger.Companion.error("Failed to store Account.", e);
         }
         return false;
     }
@@ -608,7 +608,7 @@ public final class BRKeyStore {
             }
             return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId(context)).orNull();
         } catch (UserNotAuthenticatedException e) {
-            KLog.logError("Failed to get Account.", e);
+            Logger.Companion.error("Failed to get Account.", e);
         }
         return null;
     }

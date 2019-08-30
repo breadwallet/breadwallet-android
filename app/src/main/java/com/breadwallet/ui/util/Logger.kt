@@ -22,8 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@file:JvmName("KLog")
-@file:JvmMultifileClass
+@file:Suppress("NOTHING_TO_INLINE")
 package com.breadwallet.ui.util
 
 import android.os.Build
@@ -47,22 +46,22 @@ interface Logger {
         fun create(tag: String): Logger = DefaultLogger(tag)
 
         override fun verbose(message: String, vararg data: Any?) =
-                defaultLogger.verbose(message, data)
+                defaultLogger.verbose(message, *data)
 
         override fun debug(message: String, vararg data: Any?) =
-                defaultLogger.debug(message, data)
+                defaultLogger.debug(message, *data)
 
         override fun info(message: String, vararg data: Any?) =
-                defaultLogger.info(message, data)
+                defaultLogger.info(message, *data)
 
         override fun warning(message: String, vararg data: Any?) =
-                defaultLogger.warning(message, data)
+                defaultLogger.warning(message, *data)
 
         override fun error(message: String, vararg data: Any?) =
-                defaultLogger.error(message, data)
+                defaultLogger.error(message, *data)
 
         override fun wtf(message: String, vararg data: Any?) =
-                defaultLogger.wtf(message, data)
+                defaultLogger.wtf(message, *data)
     }
 
     /** Log verbose [message] and any [data] objects. */
@@ -80,17 +79,17 @@ interface Logger {
 }
 
 /** Log verbose [message] and any [data] objects. */
-fun logVerbose(message: String, vararg data: Any?) = Logger.verbose(message, data)
+inline fun logVerbose(message: String, vararg data: Any?) = Logger.verbose(message, *data)
 /** Log debug [message] and any [data] objects. */
-fun logDebug(message: String, vararg data: Any?) = Logger.debug(message, data)
+inline fun logDebug(message: String, vararg data: Any?) = Logger.debug(message, *data)
 /** Log info [message] and any [data] objects. */
-fun logInfo(message: String, vararg data: Any?) = Logger.info(message, data)
+inline fun logInfo(message: String, vararg data: Any?) = Logger.info(message, *data)
 /** Log warning [message] and any [data] objects. */
-fun logWarning(message: String, vararg data: Any?) = Logger.warning(message, data)
+inline fun logWarning(message: String, vararg data: Any?) = Logger.warning(message, *data)
 /** Log error [message] and any [data] objects. */
-fun logError(message: String, vararg data: Any?) = Logger.error(message, data)
+inline fun logError(message: String, vararg data: Any?) = Logger.error(message, *data)
 /** Log wtf [message] and any [data] objects. */
-fun logWtf(message: String, vararg data: Any?) = Logger.wtf(message, data)
+inline fun logWtf(message: String, vararg data: Any?) = Logger.wtf(message, *data)
 
 /** A default [Logger] implementation for use on Android. */
 private class DefaultLogger(
@@ -186,11 +185,11 @@ private class DefaultLogger(
     private inline fun logWith(
             crossinline logFunc: (
                     @ParameterName("tag") String?,
-                    @ParameterName("message") String,
+                    @ParameterName("_message") String,
                     @ParameterName("error") Throwable?
             ) -> Unit,
             message: String,
-            vararg data: Any?
+            data: Array<out Any?>
     ) {
         val tag = nextTag
         if (data.isEmpty())
