@@ -105,6 +105,7 @@ object BRSharedPrefs {
     private const val READ_IN_APP_NOTIFICATIONS = "readInAppNotifications"
     private const val PRICE_ALERTS = "priceAlerts"
     private const val PRICE_ALERTS_INTERVAL = "priceAlertsInterval"
+    private const val LANGUAGE = "language"
     const val APP_FOREGROUNDED_COUNT = "appForegroundedCount"
     const val APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated"
     const val APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed"
@@ -662,4 +663,17 @@ object BRSharedPrefs {
      */
     fun putPriceAlertsInterval(interval: Int) =
             brdPrefs.edit { putInt(PRICE_ALERTS_INTERVAL, interval) }
+
+    /** The user's language string as provided by [Locale.getLanguage]. */
+    var recoveryKeyLanguage: String
+      get() = brdPrefs.getString(LANGUAGE, Locale.getDefault().language)!!
+      set(value) {
+          val isLanguageValid = (sequenceOf(Locale.getDefault()) + Locale.getAvailableLocales())
+              .map { it.language }
+              .contains(value)
+
+          require(isLanguageValid) { "language must be a valid Locale.getLanguage() string." }
+
+          brdPrefs.edit { putString(LANGUAGE, value) }
+      }
 }
