@@ -251,8 +251,8 @@ dependencies {
     implementation 'com.spotify.mobius:mobius-android:1.3.0'
     testImplementation 'com.spotify.mobius:mobius-test:1.3.0'
 
-    compileOnly 'com.github.DrewCarlson.switchboard:api-mobius:0.5.2'
-    kapt 'com.github.DrewCarlson.switchboard:generator-mobius:0.5.2'
+    compileOnly 'com.github.DrewCarlson.switchboard:api-mobius:0.5.5'
+    kapt 'com.github.DrewCarlson.switchboard:generator-mobius:0.5.5'
 
     implementation 'com.bluelinelabs:conductor:3.0.0-rc2'
     implementation 'com.bluelinelabs:conductor-support:2.1.5' // appcompat viewpager adapter
