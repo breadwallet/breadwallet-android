@@ -39,6 +39,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -138,14 +139,12 @@ public abstract class WebViewActivity extends BRActivity {
                 } else {
                     mBackButton.setBackground(getDrawable(R.drawable.ic_webview_left_inactive));
                 }
+
                 if (view.canGoForward()) {
                     mForwardButton.setBackground(getDrawable(R.drawable.ic_webview_right));
-
                 } else {
                     mForwardButton.setBackground(getDrawable(R.drawable.ic_webview_right_inactive));
-
                 }
-
             }
         });
 
@@ -183,6 +182,12 @@ public abstract class WebViewActivity extends BRActivity {
                 url = String.format(URL_FORMAT, url, CURRENCY, WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode().toLowerCase());
 
             }
+
+            if (url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))) {
+                Log.d(TAG, "Adding BrdNativeJs hooks.");
+                mWebView.addJavascriptInterface(BrdNativeJs.INSTANCE, BrdNativeJs.JS_NAME);
+            }
+
             mWebView.loadUrl(url);
             if (articleId != null && !articleId.isEmpty()) {
                 navigate(articleId);
@@ -540,6 +545,7 @@ public abstract class WebViewActivity extends BRActivity {
 
     @Override
     protected void onDestroy() {
+        mWebView.removeJavascriptInterface(BrdNativeJs.JS_NAME);
         super.onDestroy();
 
         if (mKeyboardListenersAttached) {

@@ -36,6 +36,7 @@ sealed class HomeScreenEffect {
     object LoadIsBuyBellNeeded : HomeScreenEffect()
     object LoadPrompt : HomeScreenEffect()
     object CheckInAppNotification : HomeScreenEffect()
+    object CheckIfShowBuyAndSell : HomeScreenEffect()
 
     data class GoToDeepLink(val url: String) : HomeScreenEffect()
     data class GoToInappMessage(val inAppMessage : InAppMessage) : HomeScreenEffect()
