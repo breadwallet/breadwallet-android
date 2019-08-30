@@ -128,7 +128,7 @@ public final class BRConstants {
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_ACCEPT = "Accept";
     // OkHttp standard; use for all outgoing HTTP requests.
-    public static final String CONTENT_TYPE_JSON_CHARSET_UTF8 = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_JSON_CHARSET_UTF8 = "application/json; charset=UTF-8";
     // Server response content type; user to verify all incoming HTTP responses.
     public static final String CONTENT_TYPE_JSON = "application/json";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
@@ -219,10 +219,6 @@ public final class BRConstants {
     public static final String POST = "POST";
     public static final String HEADER_WWW_AUTHENTICATE = "www-authenticate";
     public static final String NAME = "name";
-    public static final String DESCRIPTION = "selected";
-    public static final String SELECTED = "selected";
-    public static final String ENABLED = "enabled";
-    public static final String PRIVATE = "private";
     public static final String TOKEN = "token";
     public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
@@ -231,6 +227,7 @@ public final class BRConstants {
     public static final String RATES = "rates";
     public static final String CURRENCY = "currency";
     public static final String UTF_8 = "UTF-8";
+    public static final String USD = "USD";
 
     // Number of confirmations required to consider a transaction completed.
     public static final int CONFIRMED_BLOCKS_NUMBER = 6;

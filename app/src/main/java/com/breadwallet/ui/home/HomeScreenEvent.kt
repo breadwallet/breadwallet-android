@@ -67,4 +67,5 @@ sealed class HomeScreenEvent {
 
     data class OnPushNotificationOpened(val campaignId : String) : HomeScreenEvent()
 
+    data class OnShowBuyAndSell(val showBuyAndSell: Boolean) : HomeScreenEvent()
 }

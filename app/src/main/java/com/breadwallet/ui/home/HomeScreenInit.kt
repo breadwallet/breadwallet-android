@@ -36,6 +36,7 @@ val HomeScreenInit = Init<HomeScreenModel, HomeScreenEffect> { model ->
     first(model, effects(
             HomeScreenEffect.LoadWallets,
             HomeScreenEffect.LoadIsBuyBellNeeded,
-            HomeScreenEffect.LoadPrompt
+            HomeScreenEffect.LoadPrompt,
+            HomeScreenEffect.CheckIfShowBuyAndSell
     ))
 }
