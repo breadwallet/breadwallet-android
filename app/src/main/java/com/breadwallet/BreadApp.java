@@ -18,21 +18,16 @@ import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.corecrypto.CryptoApiProvider;
-import com.breadwallet.crypto.Account;
-import com.breadwallet.crypto.CryptoApi;
+import com.breadwallet.crypto.*;
 import com.breadwallet.crypto.System;
-import com.breadwallet.crypto.WalletManager;
-import com.breadwallet.crypto.WalletManagerMode;
 import com.breadwallet.crypto.blockchaindb.BlockchainDb;
 import com.breadwallet.protocols.messageexchange.InboxPollingHandler;
 import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.util.ServerBundlesHelper;
+import com.breadwallet.tools.util.*;
 import com.breadwallet.view.dialog.DialogActivity;
 import com.breadwallet.view.dialog.DialogActivity.DialogType;
 import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -41,9 +36,6 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.util.TokenUtil;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.util.SyncUpdateHandler;
 import com.breadwallet.wallet.util.WalletConnectionCleanUpWorker;
 import com.breadwallet.wallet.util.WalletConnectionWorker;
@@ -54,20 +46,15 @@ import com.platform.HTTPServer;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * BreadWallet
@@ -130,6 +117,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         CryptoApi.initialize(CryptoApiProvider.getInstance());
 
         BRSharedPrefs.provideContext(this);
+
+        Key.setDefaultWordList(Bip39Reader.getBip39Words(this, BRSharedPrefs.INSTANCE.getRecoveryKeyLanguage()));
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().build())

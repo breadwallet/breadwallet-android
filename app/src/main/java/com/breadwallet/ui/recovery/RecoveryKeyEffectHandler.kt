@@ -139,8 +139,6 @@ class RecoveryKeyEffectHandler(
             return
         }
 
-        Key.setDefaultWordList(words)
-
         val storePhraseSuccess = try {
             BRKeyStore.putPhrase(
                     phraseBytes,
@@ -236,14 +234,21 @@ class RecoveryKeyEffectHandler(
      * the phrase is invalid.
      */
     private fun findWordsForPhrase(phraseBytes: ByteArray): List<String>? {
-        val defaultLanguage = Locale.getDefault().language
-        val availableLanguages = Locale.getAvailableLocales()
-                .asSequence()
-                .map(Locale::getLanguage)
+        val context = BreadApp.getBreadContext()
+        val allLocales = Locale.getAvailableLocales().asSequence()
 
-        return (sequenceOf(defaultLanguage) + availableLanguages)
-                .map { Bip39Reader.getBip39Words(BreadApp.getBreadContext(), it) }
-                .firstOrNull { Account.validatePhrase(phraseBytes, it) }
+        return (sequenceOf(Locale.getDefault()) + allLocales)
+                .map(Locale::getLanguage)
+                .map { it to Bip39Reader.getBip39Words(context, it) }
+                .firstOrNull { (language, words) ->
+                    Account.validatePhrase(phraseBytes, words)
+                        .also { matched ->
+                            if (matched) {
+                                BRSharedPrefs.recoveryKeyLanguage = language
+                                Key.setDefaultWordList(words)
+                            }
+                        }
+                }?.second
     }
 
     /**

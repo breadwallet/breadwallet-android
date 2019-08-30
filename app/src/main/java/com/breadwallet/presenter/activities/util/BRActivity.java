@@ -180,22 +180,6 @@ public abstract class BRActivity extends FragmentActivity {
                     });
                 }
                 break;
-
-            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, null);
-                        }
-                    });
-                } else {
-                    Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
-                    // TODO: Should this be BreadApp.clearApplicationUserData();?
-                    WalletsMaster.getInstance().wipeWalletButKeystore(this);
-                    finish();
-                }
-                break;
         }
     }
 

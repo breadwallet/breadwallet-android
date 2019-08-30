@@ -46,7 +46,15 @@ sealed class NavigationEffect {
     data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
     data class GoToFaq(val articleId: String) : NavigationEffect()
-    data class GoToSetPin(val onboarding: Boolean = false) : NavigationEffect()
+    data class GoToSetPin(
+        val onboarding: Boolean = false,
+        val buy: Boolean = false
+    ) : NavigationEffect()
+
+    data class GoToErrorDialog(
+        val title: String,
+        val message: String
+    ) : NavigationEffect()
 
     object GoToLogin : NavigationEffect()
     object GoToHome : NavigationEffect()
