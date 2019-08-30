@@ -27,7 +27,7 @@ import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.util.KLog;
+import com.breadwallet.ui.util.Logger;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.common.base.Optional;
@@ -317,7 +317,7 @@ public class APIClient {
         Signer compact = Signer.createForAlgorithm(Signer.Algorithm.COMPACT);
         // TODO: Request signing not yet implemented
         if (compact == null) {
-            KLog.logWarning("signRequest: TODO: Request signing not yet implemented");
+            Logger.Companion.warning("signRequest: TODO: Request signing not yet implemented");
             return null;
         }
         byte[] signedBytes = compact.sign(doubleSha256, key);
