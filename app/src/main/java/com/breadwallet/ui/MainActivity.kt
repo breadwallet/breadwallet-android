@@ -37,6 +37,7 @@ import com.breadwallet.BreadApp
 import com.breadwallet.BuildConfig
 import com.breadwallet.presenter.activities.LoginActivity
 import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.util.logError
@@ -96,6 +97,7 @@ class MainActivity : BRActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
+        KeyStore.onActivityResult(requestCode, resultCode)
     }
 
     override fun onBackPressed() {

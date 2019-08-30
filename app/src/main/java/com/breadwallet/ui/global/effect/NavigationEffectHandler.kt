@@ -33,12 +33,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
-import com.breadwallet.model.InAppMessage
 import com.breadwallet.presenter.activities.*
 import com.breadwallet.presenter.activities.settings.SettingsActivity
 import com.breadwallet.presenter.activities.util.BRActivity
-import com.breadwallet.presenter.entities.CryptoRequest
+import com.breadwallet.presenter.customviews.BRDialogView
 import com.breadwallet.presenter.fragments.FragmentSend
+import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -186,6 +186,12 @@ class NavigationEffectHandler(
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
         val intent = Intent(activity, InputPinActivity::class.java).apply {
             putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, effect.onboarding)
+            if (effect.buy) {
+                putExtra(
+                    InputPinActivity.EXTRA_PIN_NEXT_SCREEN,
+                    PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name
+                )
+            }
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         activity.apply {
@@ -209,5 +215,19 @@ class NavigationEffectHandler(
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })
+    }
+
+    override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
+        BRDialog.showCustomDialog(
+            activity,
+            effect.title,
+            effect.message,
+            activity.getString(R.string.AccessibilityLabels_close),
+            null,
+            BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+            null,
+            null,
+            0
+        )
     }
 }

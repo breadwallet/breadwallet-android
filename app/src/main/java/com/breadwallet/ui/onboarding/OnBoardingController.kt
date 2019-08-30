@@ -1,10 +1,8 @@
 /**
  * BreadWallet
  *
- *
  * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/12/19.
  * Copyright (c) 2019 breadwallet LLC
- *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -13,10 +11,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,30 +25,35 @@
 package com.breadwallet.ui.onboarding
 
 import android.app.Activity
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.InputPinActivity
-import com.breadwallet.presenter.activities.PaperKeyActivity
+import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.PostAuth
-import com.breadwallet.tools.threads.executor.BRExecutor
-import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
-import com.platform.APIClient
+import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.global.effect.NavigationEffect
+import com.breadwallet.ui.global.effect.NavigationEffectHandler
+import com.breadwallet.ui.util.CompositeEffectHandler
+import com.breadwallet.ui.util.nestedConnectable
 import com.platform.HTTPServer
+import com.spotify.mobius.Connectable
+import com.spotify.mobius.disposables.Disposable
+import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_on_boarding.*
 import kotlinx.android.synthetic.main.fragment_onboarding.*
+import kotlinx.coroutines.SupervisorJob
 
-class OnBoardingController(args: Bundle? = null) : BaseController(args) {
+class OnBoardingController(
+    args: Bundle? = null
+) : BaseMobiusController<OnBoardingModel, OnBoardingEvent, OnBoardingEffect>(args) {
 
     companion object {
         @JvmStatic
@@ -63,99 +64,103 @@ class OnBoardingController(args: Bundle? = null) : BaseController(args) {
         }
     }
 
+    private val activeIndicator by lazy {
+        val resId = R.drawable.page_indicator_active
+        checkNotNull(resources).getDrawable(resId, checkNotNull(activity).theme)
+    }
+    private val inactiveIndicator by lazy {
+        val resId = R.drawable.page_indicator_inactive
+        checkNotNull(resources).getDrawable(resId, checkNotNull(activity).theme)
+    }
+
     override val layoutId = R.layout.activity_on_boarding
 
-    override fun onCreateView(view: View) {
-        super.onCreateView(view)
-        button_skip.setOnClickListener {
-            EventUtils.pushEvent(EventUtils.EVENT_SKIP_BUTTON)
-            EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
+    private val effectJob = SupervisorJob()
+    private val _effectHandler = OnBoardingEffectHandler(effectJob, { eventConsumer }, { router }, { activity as Context })
 
-            button_skip.isEnabled = false
-
-            if (BRKeyStore.getPinCode(applicationContext).isNotEmpty()) {
-                UiUtils.startBreadActivity(activity, true)
-            } else {
-                setupPin(false)
-            }
-        }
-        button_back.setOnClickListener {
-            EventUtils.pushEvent(EventUtils.EVENT_BACK_BUTTON)
-            router.handleBack()
-        }
-
-        view_pager.apply {
-            adapter = object : RouterPagerAdapter(this@OnBoardingController) {
-                override fun configureRouter(router: Router, position: Int) {
-                    if (!router.hasRootController()) {
-                        router.setRoot(RouterTransaction.with(
-                                when (position) {
-                                    0 -> PageOneController()
-                                    1 -> PageTwoController()
-                                    2 -> PageThreeController()
-                                    else -> error("Unknown position")
-                                }
-                        ))
-                    }
-                }
-
-                override fun getCount(): Int = 3
-            }
-            addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-                override fun onPageSelected(position: Int) {
-                    val isFirstPage = position == 0
-                    button_skip.isVisible = isFirstPage
-                    button_back.isVisible = isFirstPage
-
-                    updateIndicators(position)
-                    dispatchEvent(position)
+    override val defaultModel = OnBoardingModel.DEFAULT
+    override val init = OnBoardingInit
+    override val update = OnBoardingUpdate
+    override val effectHandler: Connectable<OnBoardingEffect, OnBoardingEvent> =
+        CompositeEffectHandler.from(
+            Connectable { _effectHandler },
+            nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
+                when (effect) {
+                    OnBoardingEffect.Browse,
+                    OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
+                    OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(onboarding = true, buy = true)
+                    is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
+                        title = "",
+                        message = effect.message
+                    )
+                    else -> null
                 }
             })
-        }
-    }
+        )
 
-    private fun updateIndicators(page: Int) {
-        listOf(indicator1, indicator2, indicator3)
-                .forEachIndexed { index, indicator ->
-                    indicator.background = resources!!.getDrawable(when (index) {
-                        page -> R.drawable.page_indicator_active
-                        else -> R.drawable.page_indicator_inactive
-                    })
-                }
-    }
-
-    private fun dispatchEvent(page: Int) {
-        EventUtils.pushEvent(when (page) {
-            0 -> EventUtils.EVENT_GLOBE_PAGE_APPEARED
-            1 -> EventUtils.EVENT_COINS_PAGE_APPEARED
-            2 -> EventUtils.EVENT_FINAL_PAGE_APPEARED
-            else -> error("invalid position")
+    override fun bindView(output: Consumer<OnBoardingEvent>): Disposable {
+        view_pager.adapter = OnBoardingPageAdapter()
+        view_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                output.accept(OnBoardingEvent.OnPageChanged(position + 1))
+            }
         })
+        button_skip.setOnClickListener {
+            output.accept(OnBoardingEvent.OnSkipClicked)
+        }
+        button_back.setOnClickListener {
+            output.accept(OnBoardingEvent.OnBackClicked)
+        }
+
+        return Disposable {}
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        loading_view.isVisible = false
-    }
-
-    fun setupPin(goToBuy: Boolean) {
-        loading_view.isVisible = true
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-            PostAuth.getInstance().onCreateWalletAuth(activity, false) {
-                APIClient.getInstance(applicationContext).updatePlatform()
-                activity?.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-                startActivity(Intent(applicationContext, InputPinActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    if (goToBuy) {
-                        putExtra(
-                                InputPinActivity.EXTRA_PIN_NEXT_SCREEN,
-                                PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name
-                        )
+    override fun render(model: OnBoardingModel) {
+        with(model) {
+            ifChanged(OnBoardingModel::page) { page ->
+                listOf(indicator1, indicator2, indicator3)
+                    .forEachIndexed { index, indicator ->
+                        indicator.background = when (page) {
+                            index + 1 -> activeIndicator
+                            else -> inactiveIndicator
+                        }
                     }
-                    putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, true)
-                })
+            }
+
+            ifChanged(OnBoardingModel::isFirstPage) { isFirstPage ->
+                button_skip.isVisible = isFirstPage
+                button_back.isVisible = isFirstPage
+            }
+
+            ifChanged(OnBoardingModel::isLoading) { isLoading ->
+                loading_view.isVisible = isLoading
+
+                button_skip.isEnabled = !isLoading
             }
         }
+    }
+
+    inner class OnBoardingPageAdapter : RouterPagerAdapter(this) {
+        override fun configureRouter(router: Router, position: Int) {
+            if (!router.hasRootController()) {
+                val root = when (position) {
+                    0 -> PageOneController()
+                    1 -> PageTwoController()
+                    2 -> PageThreeController()
+                    else -> error("Unknown position")
+                }
+                router.setRoot(RouterTransaction.with(root))
+            }
+        }
+
+        override fun getCount(): Int = 3
+    }
+
+    override fun handleBack() = currentModel.isLoading
+
+    override fun onDestroy() {
+        effectJob.cancel()
+        super.onDestroy()
     }
 }
 
@@ -172,9 +177,11 @@ class PageTwoController(args: Bundle? = null) : BaseController(args) {
     override val layoutId = R.layout.fragment_onboarding
     override fun onCreateView(view: View) {
         super.onCreateView(view)
+        val resources = checkNotNull(resources)
+        val theme = checkNotNull(activity).theme
         primary_text.setText(R.string.OnboardingPageThree_title)
         secondary_text.setText(R.string.OnboardingPageThree_subtitle)
-        image_view.setImageDrawable(resources!!.getDrawable(R.drawable.ic_currencies))
+        image_view.setImageDrawable(resources.getDrawable(R.drawable.ic_currencies, theme))
     }
 }
 
@@ -183,7 +190,8 @@ class PageThreeController(args: Bundle? = null) : BaseController(args) {
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        val onBoardingController = (parentController as? OnBoardingController)
+        val onBoardingController = (parentController as OnBoardingController)
+
         last_screen_title.isVisible = true
         button_buy.isVisible = true
         button_browse.isVisible = true
@@ -191,16 +199,10 @@ class PageThreeController(args: Bundle? = null) : BaseController(args) {
         secondary_text.isVisible = false
         image_view.isVisible = false
         button_buy.setOnClickListener {
-            button_browse.isEnabled = false
-            button_buy.isEnabled = false
-            onBoardingController?.setupPin(true)
+            onBoardingController.eventConsumer.accept(OnBoardingEvent.OnBuyClicked)
         }
         button_browse.setOnClickListener {
-            button_browse.isEnabled = false
-            button_buy.isEnabled = false
-
-            EventUtils.pushEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
-            onBoardingController?.setupPin(false)
+            onBoardingController.eventConsumer.accept(OnBoardingEvent.OnBrowseClicked)
         }
     }
 }
