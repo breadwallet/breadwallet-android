@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:drawableStart="@drawable/ic_add_wallets"
         android:drawablePadding="16dp"
         android:text="@string/TokenList.addTitle"
         android:textColor="@color/white"
