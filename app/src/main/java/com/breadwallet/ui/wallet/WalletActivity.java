@@ -150,6 +150,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         setContentView(R.layout.activity_wallet);
 
         BRSharedPrefs.putIsNewWallet(this, false);
+        mCurrencyCode = getIntent().hasExtra(EXTRA_CURRENCY_CODE) ? getIntent().getStringExtra(EXTRA_CURRENCY_CODE)
+                : WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode(); // TODO USE A SINGLE SOURCE FOR CURRENCY
 
         mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
@@ -215,9 +217,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             UiUtils.showTransactionDetails(this, item);
         });
         txList.setAdapter(mAdapter);
-
-        mCurrencyCode = getIntent().hasExtra(EXTRA_CURRENCY_CODE) ? getIntent().getStringExtra(EXTRA_CURRENCY_CODE)
-                : WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode(); // TODO USE A SINGLE SOURCE FOR CURRENCY
 
         mViewModel = ViewModelProviders.of(this).get(WalletViewModel.class);
         mViewModel.setTargetCurrencyCode(mCurrencyCode);
