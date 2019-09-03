@@ -217,6 +217,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 decoratedHolderView.mParent.setBackground(drawable);
                 setWalletItemColors(decoratedHolderView, R.dimen.token_background_with_alpha);
             }
+        } else {
+            BaseTextView addWalletLabel = holderView.itemView.findViewById(R.id.add_wallets);
+            addWalletLabel.setText("+ " + R.string.TokenList_addTitle);
         }
     }
 

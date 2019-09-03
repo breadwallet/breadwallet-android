@@ -222,15 +222,9 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         public AddWalletItemViewHolder(View view) {
             super(view);
-
             mAddWalletsLabel = view.findViewById(R.id.add_wallets);
+            mAddWalletsLabel.setText("+ " + mContext.getString(R.string.TokenList_addTitle));
             mParent = view.findViewById(R.id.wallet_card);
-
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, mAddWalletsLabel.getId());
-            mAddWalletsLabel.setLayoutParams(layoutParams);
-            int leftPadding = (int) mContext.getResources().getDimension(R.dimen.manage_wallets_footer_padding_left);
-            mAddWalletsLabel.setPadding(Utils.getPixelsFromDps(mContext, leftPadding), 0, 0, 0);
         }
     }
 
