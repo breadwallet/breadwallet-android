@@ -219,7 +219,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             }
         } else {
             BaseTextView addWalletLabel = holderView.itemView.findViewById(R.id.add_wallets);
-            addWalletLabel.setText("+ " + R.string.TokenList_addTitle);
+            addWalletLabel.setText("+ " + mContext.getString(R.string.TokenList_addTitle));
         }
     }
 
