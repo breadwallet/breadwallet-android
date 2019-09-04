@@ -211,12 +211,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             // Initialize the wallet id (also called rewards id).
             initializeWalletId();
 
-            // Initialize message exchange inbox polling.
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(new InboxPollingAppLifecycleObserver(mInstance));
-            if (!isApplicationOnCreate) {
-                InboxPollingHandler.getInstance().startPolling(mInstance);
-            }
-
             // Initialize the Firebase Messaging Service.
             BRDFirebaseMessagingService.Companion.initialize(mInstance);
 
