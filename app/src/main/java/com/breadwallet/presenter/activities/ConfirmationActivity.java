@@ -5,15 +5,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentLinkWallet;
-import com.breadwallet.presenter.fragments.FragmentPaymentConfirmation;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
-import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -40,9 +37,8 @@ import com.breadwallet.tools.util.Utils;
  */
 
 /**
- * This Activity is used to confirm a request.  Currently it supports Link, Payment and Call requests from the
- * {@link MessageExchangeService}.  Accordingly, it uses either {@link FragmentLinkWallet} or
- * {@link FragmentPaymentConfirmation}.
+ * This Activity is used to confirm a request.  Currently it supports Link from the
+ * {@link MessageExchangeService}.  Accordingly, it uses either {@link FragmentLinkWallet}.
  */
 public class ConfirmationActivity extends BRActivity {
     private static final String TAG = ConfirmationActivity.class.getSimpleName();
@@ -59,8 +55,6 @@ public class ConfirmationActivity extends BRActivity {
             final Parcelable metaData = receivedIntent.getExtras().getParcelable(MessageExchangeService.EXTRA_METADATA);
             String action = receivedIntent.getAction();
 
-            View headerView = findViewById(R.id.header);
-
             if (!Utils.isNullOrEmpty(action) && action == MessageExchangeService.ACTION_GET_USER_CONFIRMATION) {
                 if (metaData != null) {
                     Log.d(TAG, "Found metaData.");
@@ -69,16 +63,6 @@ public class ConfirmationActivity extends BRActivity {
                         // Handles link messages.
                         FragmentLinkWallet linkWalletFragment = FragmentLinkWallet.newInstance((LinkMetaData) metaData);
                         getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
-
-                    } else if (metaData instanceof RequestMetaData) {
-                        // Handles payment and call requests.
-                        Log.d(TAG, "ConfirmationType PAYMENT OR CALL");
-                        headerView.setVisibility(View.VISIBLE);
-                        // Display FragmentPaymentConfirmation and set up new listeners for positive
-                        // and negative buttons
-                        FragmentPaymentConfirmation paymentConfirmationFragment = FragmentPaymentConfirmation.newInstance((RequestMetaData) metaData);
-                        getFragmentManager().beginTransaction().add(R.id.fragment_container, paymentConfirmationFragment).commit();
-
                     } else {
                         throw new IllegalArgumentException("ConfirmationActivity received an unknown MetaData type!");
                     }
