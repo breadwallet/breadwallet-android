@@ -29,10 +29,10 @@ import android.content.Context
 import android.util.Log
 import com.breadwallet.core.BRCorePeer
 import com.breadwallet.model.Wallet
-import com.breadwallet.tools.services.SyncService
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.wallet.WalletsMaster
 import com.breadwallet.wallet.abstracts.BaseWalletManager
+import com.breadwallet.wallet.util.SyncUpdateHandler
 import java.math.BigDecimal
 import java.util.ArrayList
 import java.util.HashMap
@@ -70,10 +70,10 @@ class WalletRepository private constructor() {
     fun updateProgress(currencyCode: String, progress: Double) {
         mWallets.findLast { it.currencyCode == currencyCode }?.apply {
             syncProgress = progress
-            setIsSyncing(progress > SyncService.PROGRESS_START
-                    && progress < SyncService.PROGRESS_FINISH)
+            setIsSyncing(progress > SyncUpdateHandler.PROGRESS_START
+                    && progress < SyncUpdateHandler.PROGRESS_FINISH)
         }
-        if (progress == SyncService.PROGRESS_FINISH) {
+        if (progress == SyncUpdateHandler.PROGRESS_FINISH) {
             Log.d(TAG, "updateProgress: $currencyCode sync completed, starting next wallet sync")
             mContext?.let { startNextWalletSync(it) }
         }
@@ -168,7 +168,7 @@ class WalletRepository private constructor() {
                     return@Runnable  // exit -- do not set next wallet to sync
                 }
 
-                if (wallet.syncProgress == SyncService.PROGRESS_FINISH) {
+                if (wallet.syncProgress == SyncUpdateHandler.PROGRESS_FINISH) {
                     continue // skip this wallet
                 }
 
@@ -190,7 +190,7 @@ class WalletRepository private constructor() {
             if (syncWallet != null) {
                 val walletManager = mCurrencyToWalletManager[syncWallet.currencyCode]
                 walletManager!!.connect(context)
-                SyncService.scheduleSyncService(context, syncWallet.currencyCode)
+                SyncUpdateHandler.startWalletSync(context, syncWallet.currencyCode)
             }
         })
     }
