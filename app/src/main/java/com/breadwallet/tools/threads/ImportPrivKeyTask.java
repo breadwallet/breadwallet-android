@@ -209,52 +209,28 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String fee = CurrencyUtils.getFormattedAmount(mContext, walletManager.getCurrencyCode(), bigFee.abs());
         String message = String.format(mContext.getString(R.string.Import_confirm), amount, fee);
         String posButton = String.format("%s (%s)", amount, formattedFiatAmount);
-        BRDialog.showCustomDialog(mContext, "", message, posButton, mContext.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
+        BRDialog.showCustomDialog(mContext, "", message, posButton, mContext.getString(R.string.Button_cancel), brDialogView -> {
+            if (mTransaction == null) {
+                BRDialog.showCustomDialog(mContext, mContext.getString(R.string.JailbreakWarnings_title),
+                        mContext.getString(R.string.Import_Error_notValid), mContext.getString(R.string.Button_ok),
+                        null, BRDialogView::dismissWithAnimation, null, null, 0);
+            } else {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                    mTransaction.getCoreTx().sign(mKey, walletManager.getForkId());
+                    BRCorePeerManager peerManager = mCurrencyCode.equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) walletManager).getPeerManager() : ((WalletBchManager) walletManager).getPeerManager();
 
-                        if (mTransaction == null) {
-                            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    BRDialog.showCustomDialog(mContext, mContext.getString(R.string.JailbreakWarnings_title),
-                                            mContext.getString(R.string.Import_Error_notValid), mContext.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                                @Override
-                                                public void onClick(BRDialogView brDialogView) {
-                                                    brDialogView.dismissWithAnimation();
-                                                }
-                                            }, null, null, 0);
-                                }
-                            });
-                            return;
-                        }
-
-                        mTransaction.getCoreTx().sign(mKey, walletManager.getForkId());
-                        BRCorePeerManager peerManager = mCurrencyCode.equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) walletManager).getPeerManager() : ((WalletBchManager) walletManager).getPeerManager();
-
-                        if (!mTransaction.getCoreTx().isSigned()) {
-                            String err = "transaction is not signed";
-                            Log.e(TAG, "run: " + err);
-                            BRReportsManager.reportBug(new IllegalArgumentException(err));
-                            return;
-                        }
-
-                        peerManager.publishTransaction(mTransaction.getCoreTx());
+                    if (!mTransaction.getCoreTx().isSigned()) {
+                        String err = "transaction is not signed";
+                        Log.e(TAG, "run: " + err);
+                        BRReportsManager.reportBug(new IllegalArgumentException(err));
+                        return;
                     }
+
+                    peerManager.publishTransaction(mTransaction.getCoreTx());
                 });
-
-                brDialogView.dismissWithAnimation();
-
             }
-        }, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismissWithAnimation();
-            }
-        }, null, 0);
+            brDialogView.dismissWithAnimation();
+        }, BRDialogView::dismissWithAnimation, null, 0);
 
     }
 

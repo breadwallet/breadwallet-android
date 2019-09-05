@@ -44,7 +44,7 @@ public class BRExecutor implements RejectedExecutionHandler {
     /*
      * Number of cores to decide the number of threads
      */
-    public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     /*
      * thread pool executor for background tasks
@@ -54,10 +54,6 @@ public class BRExecutor implements RejectedExecutionHandler {
      * thread pool executor for light weight background tasks
      */
     private final ThreadPoolExecutor mForLightWeightBackgroundTasks;
-    //    /*
-//    * thread pool executor for serialized tasks (one at the time)
-//    */
-//    private final ThreadPoolExecutor mForSerializedTasks;
     /*
      * thread pool executor for main thread tasks
      */
@@ -91,8 +87,8 @@ public class BRExecutor implements RejectedExecutionHandler {
 
         // setting the thread pool executor for mForBackgroundTasks;
         mForBackgroundTasks = new ThreadPoolExecutor(
+                NUMBER_OF_CORES * 4,
                 NUMBER_OF_CORES * 8,
-                NUMBER_OF_CORES * 16,
                 30,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
@@ -102,53 +98,35 @@ public class BRExecutor implements RejectedExecutionHandler {
 
         // setting the thread pool executor for mForLightWeightBackgroundTasks;
         mForLightWeightBackgroundTasks = new ThreadPoolExecutor(
+                NUMBER_OF_CORES * 8,
                 NUMBER_OF_CORES * 16,
-                NUMBER_OF_CORES * 32,
                 20,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,
                 this
         );
-//        // setting the thread pool executor for mForLightWeightBackgroundTasks;
-//        mForSerializedTasks = new ThreadPoolExecutor(
-//                1,
-//                1,
-//                30L,
-//                TimeUnit.SECONDS,
-//                new LinkedBlockingQueue<Runnable>(),
-//                backgroundPriorityThreadFactory,
-//                this
-//        );
 
         // setting the thread pool executor for mMainThreadExecutor;
         mMainThreadExecutor = new MainThreadExecutor();
     }
 
-    /*
-     * returns the thread pool executor for background task
+    /**
+     * Returns the thread pool executor for background task such as API calls.
      */
-
     public ThreadPoolExecutor forBackgroundTasks() {
         return mForBackgroundTasks;
     }
 
-    /*
-     * returns the thread pool executor for light weight background task
+    /**
+     * Returns the thread pool executor for light weight background task such as interacting with the Core or BRKeyStore.
      */
     public ThreadPoolExecutor forLightWeightBackgroundTasks() {
         return mForLightWeightBackgroundTasks;
     }
 
-//    /*
-//    * returns the thread pool executor for serialized task
-//    */
-//    public ThreadPoolExecutor forSerializedTasks() {
-//        return mForSerializedTasks;
-//    }
-
-    /*
-     * returns the thread pool executor for main thread task
+    /**
+     * Returns the thread pool executor for main thread task.
      */
     public Executor forMainThreadTasks() {
         return mMainThreadExecutor;

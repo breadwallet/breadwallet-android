@@ -1206,6 +1206,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 } else {
                     Log.e(TAG, "handleTransactionEvent: tx is null");
                 }
+
                 // Get the wallet manager helper for this txn's currency (assume ETH)
                 // TODO: Refactor logic such that WalletEthManager is not handling non-ETH events
                 WalletManagerHelper walletManagerHelper = getWalletManagerHelper();

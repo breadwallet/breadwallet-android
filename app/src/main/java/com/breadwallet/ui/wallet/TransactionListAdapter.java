@@ -90,10 +90,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         mItemFeed = items;
     }
 
-    public List<TxUiHolder> getItems() {
-        return mItemFeed;
-    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -107,7 +103,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (holder.getItemViewType() == TX_TYPE) {
             holder.setIsRecyclable(false);
             holder.itemView.setOnClickListener(v -> {
-                mOnItemClickListener.onItemClicked(mItemFeed.get(holder.getAdapterPosition()));
+                if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    mOnItemClickListener.onItemClicked(mItemFeed.get(holder.getAdapterPosition()));
+                }
             });
             setTexts((TxHolder) holder, position);
         }
