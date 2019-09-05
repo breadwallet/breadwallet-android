@@ -33,7 +33,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,19 +111,7 @@ public class RatesRepository {
      * them, returns an empty list if no rates are found for the specified currency
      */
     public List<CurrencyEntity> getAllRatesForCurrency(String currencyCode) {
-        ArrayList<CurrencyEntity> rates = new ArrayList<>();
-
-        if (!Utils.isNullOrEmpty(currencyCode)) {
-            for (String cacheKey : mCache.keySet()) {
-                String cacheFromCurrency = getCurrencyFromKey(cacheKey);
-
-                if (cacheFromCurrency.equals(currencyCode.toLowerCase())) {
-                    rates.add(mCache.get(cacheKey));
-                }
-            }
-        }
-
-        return rates;
+        return RatesDataSource.getInstance(mContext).getAllCurrencies(mContext, currencyCode);
     }
 
     /**

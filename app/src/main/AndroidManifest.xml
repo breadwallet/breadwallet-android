@@ -302,12 +302,7 @@
             android:name=".presenter.activities.ConfirmationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
-        <service
-            android:name=".tools.services.SyncService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        
         <service
             android:name=".protocols.messageexchange.MessageExchangeService"
             android:enabled="true"
