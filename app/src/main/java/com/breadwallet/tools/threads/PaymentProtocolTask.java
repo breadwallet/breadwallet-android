@@ -417,23 +417,21 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                         CurrencyUtils.getFormattedAmount(mContext, iso, bigFee),
                         CurrencyUtils.getFormattedAmount(mContext, iso, bigTotal));
 
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-
-                    public void run() {
-                        AuthManager.getInstance().authPrompt(mContext, mContext.getString(R.string.Confirmation_title),
-                                message, false, false, new BRAuthCompletion() {
-                                    @Override
-                                    public void onComplete() {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    AuthManager.getInstance().authPrompt(mContext, mContext.getString(R.string.Confirmation_title),
+                            message, false, false, new BRAuthCompletion() {
+                                @Override
+                                public void onComplete() {
+                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
                                         PostAuth.getInstance().onPaymentProtocolRequest(mContext, false, transaction);
-                                    }
+                                    });
+                                }
 
-                                    @Override
-                                    public void onCancel() {
-                                        Log.e(TAG, "onCancel: ");
-                                    }
-                                });
-                    }
+                                @Override
+                                public void onCancel() {
+                                    Log.e(TAG, "onCancel: ");
+                                }
+                            });
                 });
             }
         });
