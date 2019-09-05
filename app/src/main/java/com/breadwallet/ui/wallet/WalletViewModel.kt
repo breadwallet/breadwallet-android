@@ -33,7 +33,6 @@ import android.util.Log
 import com.breadwallet.presenter.entities.TxUiHolder
 import com.breadwallet.repository.WalletRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.services.SyncService
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.CurrencyUtils
@@ -43,6 +42,7 @@ import com.breadwallet.ui.wallet.model.TxFilter
 import com.breadwallet.wallet.WalletsMaster
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener
 import com.breadwallet.wallet.abstracts.OnTxListModified
+import com.breadwallet.wallet.util.SyncUpdateHandler
 import com.breadwallet.wallet.wallets.CryptoTransaction
 import com.platform.tools.KVStoreManager
 import java.math.BigDecimal
@@ -57,7 +57,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     val progressLiveData = Transformations.map(WalletRepository.getInstance(application).walletsLiveData)
     { wallets ->
         val wallet = wallets.findLast { wallet -> wallet.currencyCode == targetCurrencyCode }
-        if (wallet?.isSyncing == true) wallet.syncProgress else SyncService.PROGRESS_FINISH
+        if (wallet?.isSyncing == true) wallet.syncProgress else SyncUpdateHandler.PROGRESS_FINISH
     }
     var targetCurrencyCode = ""
         set(value) {
@@ -68,7 +68,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     var filter: TxFilter = TxFilter()
         set(value) {
             field = value
-            BRExecutor.getInstance().forBackgroundTasks().execute {
+            // Apply filter out of the main thread.
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
                 txListLiveData.postValue(filteredTxList())
             }
         }
@@ -138,7 +139,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
      * Refresh the wallet's transactions list.
      */
     private fun refreshTxList() {
-        BRExecutor.getInstance().forBackgroundTasks().execute {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
             // TODO this code belongs to a repository
             val wallet = WalletsMaster.getInstance().getCurrentWallet(getApplication())
             if (wallet == null) {
