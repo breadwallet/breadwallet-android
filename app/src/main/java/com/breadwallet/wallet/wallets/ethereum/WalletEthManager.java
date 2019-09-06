@@ -43,6 +43,7 @@ import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
@@ -105,7 +106,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private static final String JSON_ERROR_MESSAGE_REPLY = "json exception (reply)";
     private static final int JSON_ERROR_CODE = -1;
 
-    private static final String FEE_URL_FORMAT = "%s/fee-per-kb?currency=%s";
 
     public BREthereumEWM node;
     private static WalletEthManager mInstance;
@@ -359,48 +359,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void updateFee(Context app) {
-        if (app == null) {
-            app = BreadApp.getBreadContext();
-
-            if (app == null) {
-                Log.d(TAG, "updateFee: FAILED, app is null");
-                return;
-            }
-        }
-
-        String jsonString = BRApiManager.urlGET(app, String.format(FEE_URL_FORMAT, APIClient.getBaseURL(), getCurrencyCode()));
-
-        if (jsonString == null || jsonString.isEmpty()) {
-            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
-            return;
-        }
-
-        BigDecimal fee;
-        BigDecimal economyFee;
-        try {
-            JSONObject obj = new JSONObject(jsonString);
-            fee = new BigDecimal(obj.getString("fee_per_kb"));
-            economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.d(TAG, "updateFee: " + getCurrencyCode() + ":" + fee + "|" + economyFee);
-
-            if (fee.compareTo(BigDecimal.ZERO) > 0) {
-                BRSharedPrefs.putFeeRate(app, getCurrencyCode(), fee);
-                BRSharedPrefs.putFeeTime(app, getCurrencyCode(), System.currentTimeMillis()); //store the time of the last successful fee fetch
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
-                Log.d(TAG, "Error: Fee is unexpected value");
-
-            }
-            if (economyFee.compareTo(BigDecimal.ZERO) > 0) {
-                BRSharedPrefs.putEconomyFeeRate(app, getCurrencyCode(), economyFee);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
-                Log.d(TAG, "Error: Economy fee is unexpected value");
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
-        }
-
+        // do nothing
     }
 
     @Override
@@ -1145,7 +1104,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     printInfo("New Gas Limit: ...", currencyCode, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(context, getCurrencyCode()), currencyCode, event.name());
+                    printInfo("New Gas Price: ...", currencyCode, event.name());
                     break;
                 case DELETED:
                     BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
