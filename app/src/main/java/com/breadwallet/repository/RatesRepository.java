@@ -27,6 +27,7 @@ package com.breadwallet.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.model.PriceChange;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.Utils;
@@ -35,6 +36,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -47,6 +49,7 @@ public class RatesRepository {
     private static RatesRepository mInstance;
 
     private ConcurrentHashMap<String, CurrencyEntity> mCache;
+    private ConcurrentHashMap<String, PriceChange> mPriceChanges;
 
     private Context mContext;
 
@@ -61,6 +64,7 @@ public class RatesRepository {
     private RatesRepository(Context context) {
         mContext = context;
         mCache = new ConcurrentHashMap<>();
+        mPriceChanges = new ConcurrentHashMap<>();
     }
 
     /**
@@ -176,5 +180,22 @@ public class RatesRepository {
                 mCache.put(cacheKey, currencyEntity);
             }
         }
+    }
+
+    /**
+     * Update the price changes over the last 24hrs.
+     */
+    public void updatePriceChanges(Map<String, PriceChange> priceChanges) {
+        mPriceChanges.putAll(priceChanges);
+    }
+
+    /**
+     * Get the price change over the last 24 hours for the given currency.
+     *
+     * @param currencyCode the currency we want to get the price change.
+     * @return the price change.
+     */
+    public PriceChange getPriceChange(String currencyCode) {
+        return mPriceChanges.get(currencyCode.toUpperCase());
     }
 }

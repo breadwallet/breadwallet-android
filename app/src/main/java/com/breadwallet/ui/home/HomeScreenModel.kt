@@ -28,6 +28,7 @@
  */
 package com.breadwallet.ui.home
 
+import com.breadwallet.model.PriceChange
 import com.breadwallet.tools.manager.PromptManager
 import java.math.BigDecimal
 
@@ -70,7 +71,8 @@ data class Wallet(
     val balance: BigDecimal = BigDecimal.ZERO,
     val fiatBalance: BigDecimal = BigDecimal.ZERO,
     val syncProgress: Double = 0.0,
-    val syncingThroughMillis: Long = 0L
+    val syncingThroughMillis: Long = 0L,
+    val priceChange: PriceChange? = null
 ) {
 
     val isSyncing: Boolean = syncProgress < 1.0 && syncProgress > 0
