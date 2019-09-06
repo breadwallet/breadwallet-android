@@ -246,6 +246,10 @@
     <string name="FeeSelector.estimatedDeliver">Ожидаемое исполнение: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 минут</string>
+    <!-- Priority fee -->
+    <string name="FeeSelector.priority">Приоритет</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
+    <string name="FeeSelector.priorityTime">10-30 минут</string>
     <!-- Regular fee -->
     <string name="FeeSelector.regular">Обычна сумма</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
