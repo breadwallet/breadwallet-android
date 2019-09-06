@@ -80,6 +80,7 @@ class HomeScreenEffectHandler(
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
             HomeScreenEffect.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
             is HomeScreenEffect.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
+            is HomeScreenEffect.TrackEvent -> { EventUtils.pushEvent(value.eventName, value.attributes) }
         }
     }
 
@@ -235,6 +236,10 @@ class HomeScreenEffectHandler(
     private fun checkIfShowBuyAndSell() {
         val showBuyAndSell = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
                 && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
+        EventUtils.pushEvent(
+                EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
+                mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())
+        )
         output.accept(HomeScreenEvent.OnShowBuyAndSell(showBuyAndSell))
     }
 }

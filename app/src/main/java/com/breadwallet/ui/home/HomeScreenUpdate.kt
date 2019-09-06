@@ -28,6 +28,7 @@
  */
 package com.breadwallet.ui.home
 
+import com.breadwallet.tools.util.EventUtils
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next.*
 import com.spotify.mobius.Update
@@ -90,6 +91,12 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
         is HomeScreenEvent.OnDeepLinkProvided -> dispatch(effects(HomeScreenEffect.GoToDeepLink(event.url)))
         is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))
         is HomeScreenEvent.OnPushNotificationOpened -> dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))
-        is HomeScreenEvent.OnShowBuyAndSell -> next(model.copy(showBuyAndSell = event.showBuyAndSell))
+        is HomeScreenEvent.OnShowBuyAndSell -> {
+            val clickAttributes = mapOf(EventUtils.EVENT_ATTRIBUTE_BUY_AND_SELL to model.showBuyAndSell.toString())
+            next<HomeScreenModel, HomeScreenEffect>(
+                    model.copy(showBuyAndSell = event.showBuyAndSell),
+                    effects(HomeScreenEffect.TrackEvent(EventUtils.EVENT_HOME_DID_TAP_BUY, clickAttributes))
+            )
+        }
     }
 }
