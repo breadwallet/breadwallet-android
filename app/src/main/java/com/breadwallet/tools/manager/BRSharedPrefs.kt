@@ -122,13 +122,13 @@ object BRSharedPrefs {
     private lateinit var brdPrefs: SharedPreferences
 
     @JvmStatic
-    fun getPreferredFiatIso(context: Context? = null): String? =
+    fun getPreferredFiatIso(context: Context? = null): String =
             brdPrefs.getString(CURRENT_CURRENCY, try {
                 Currency.getInstance(Locale.getDefault()).currencyCode
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
                 Currency.getInstance(Locale.US).currencyCode
-            })
+            })!!
 
     @JvmStatic
     fun putPreferredFiatIso(context: Context? = null, iso: String) =

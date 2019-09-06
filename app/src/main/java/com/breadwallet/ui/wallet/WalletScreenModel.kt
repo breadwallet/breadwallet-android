@@ -1,5 +1,7 @@
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.model.PriceChange
+import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.tools.util.BRConstants
 import java.math.BigDecimal
 
@@ -8,7 +10,7 @@ data class WalletScreenModel private constructor(
         val currencyCode: String,
         val currencyName: String = "",
         val address: String = "",
-        val fiatPricePerUnit: Float = 0f,
+        val fiatPricePerUnit: String = "",
         val balance: BigDecimal = BigDecimal.ZERO,
         val fiatBalance: BigDecimal = BigDecimal.ZERO,
         val transactions: List<WalletTransaction> = emptyList(),
@@ -25,7 +27,11 @@ data class WalletScreenModel private constructor(
         val filterComplete: Boolean = false,
         val syncProgress: Double = 0.0,
         val syncingThroughMillis: Long = 0,
-        val hasInternet: Boolean = true
+        val hasInternet: Boolean = true,
+        val priceChartInterval: Interval = Interval.ONE_YEAR,
+        val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
+        val selectedPriceDataPoint: PriceDataPoint? = null,
+        val priceChange: PriceChange? = null
 ) {
 
     companion object {
@@ -43,9 +49,6 @@ data class WalletScreenModel private constructor(
         get() = filterQuery.isNotBlank() ||
                 filterSent || filterReceived ||
                 filterPending || filterComplete
-
-    val hasPricePerUnit: Boolean
-        get() = fiatPricePerUnit != 0f
 
     override fun toString(): String {
         return "WalletScreenModel(currencyCode='$currencyCode', " +
@@ -67,8 +70,13 @@ data class WalletScreenModel private constructor(
                 "filterPending=$filterPending, " +
                 "filterComplete=$filterComplete, " +
                 "syncProgress=$syncProgress, " +
-                "syncingThroughMillis=$syncingThroughMillis)"
+                "syncingThroughMillis=$syncingThroughMillis," +
+                "hasInternet=$hasInternet, " +
+                "priceChartInterval=$priceChartInterval, " +
+                "priceChartDataPoints=$priceChartDataPoints, " +
+                "priceChange=$priceChange)"
     }
+
 }
 
 data class WalletTransaction(

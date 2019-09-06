@@ -1,14 +1,13 @@
 package com.breadwallet.tools.manager;
 
-import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.model.FeeOption;
+import com.breadwallet.model.PriceChange;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
@@ -21,6 +20,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
+import com.platform.network.service.CurrencyHistoricalDataClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -209,14 +210,20 @@ public final class BRApiManager {
     @WorkerThread
     private void updateData(final Context context) {
         Log.d(TAG, "Fetching rates");
+        final List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 //Update Crypto Rates
-                List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
                 updateCryptoRates(context, codeList);
                 //Update new tokens rate (e.g. CCC)
                 fetchNewTokensData(context);
+            }
+        });
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                fetchPriceChanges(context, codeList);
             }
         });
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -435,5 +442,11 @@ public final class BRApiManager {
             Log.e(TAG, "urlGET: ", e);
         }
         return bodyText;
+    }
+
+    private void fetchPriceChanges(Context context, List<String> tokenList) {
+        String toCurrency = BRSharedPrefs.getPreferredFiatIso(context);
+        Map<String, PriceChange> priceChanges = CurrencyHistoricalDataClient.fetch24HrsChange(context, tokenList, toCurrency);
+        RatesRepository.getInstance(context).updatePriceChanges(priceChanges);
     }
 }

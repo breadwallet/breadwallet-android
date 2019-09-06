@@ -1,6 +1,8 @@
 package com.breadwallet.ui.wallet
 
+
 import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Intent
@@ -12,24 +14,24 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
 import android.transition.TransitionManager
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
-import android.view.animation.AnimationUtils
+import android.view.animation.AccelerateInterpolator
 import android.widget.Button
 import android.widget.ImageButton
-
+import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.presenter.activities.HomeActivity
 import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.presenter.customviews.BaseTextView
 import com.breadwallet.presenter.entities.CryptoRequest
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.manager.FontManager
-import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.global.effect.CryptoWalletEffectHandler
 import com.breadwallet.ui.global.effect.NavigationEffect
@@ -38,25 +40,26 @@ import com.breadwallet.ui.global.effect.WalletEffect
 import com.breadwallet.ui.global.event.WalletEvent
 import com.breadwallet.ui.util.CompositeEffectHandler
 import com.breadwallet.ui.util.QueuedConsumer
+import com.breadwallet.ui.util.logDebug
 import com.breadwallet.ui.util.nestedConnectable
-import com.breadwallet.wallet.WalletsMaster
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager
+import com.breadwallet.ui.wallet.spark.SparkAdapter
+import com.breadwallet.ui.wallet.spark.SparkView
+import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
+import com.breadwallet.wallet.configs.WalletUiConfiguration
 import com.spotify.mobius.*
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
-import com.spotify.mobius.android.runners.MainThreadWorkRunner
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.synthetic.main.activity_wallet.*
+import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
-
-
-
+import kotlinx.android.synthetic.main.wallet_toolbar.*
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -67,6 +70,10 @@ import java.util.Locale
 open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
 
     private var mAdapter: TransactionListAdapter? = null
+    private var mPriceDataAdapter = SparkAdapter()
+    private val mIntervalButtons : List<BaseTextView> by lazy {
+        listOf<BaseTextView>(one_day, one_week, one_month, three_months, one_year, three_years)
+    }
     var eventConsumer: Consumer<WalletScreenEvent> = QueuedConsumer()
         private set
 
@@ -100,6 +107,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             }),
                             Connectable { output -> WalletReviewPromptHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
                             Connectable { output -> WalletRatesHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
+                            Connectable { output -> WalletHistoricalPriceIntervalHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) },
                             nestedConnectable({ NavigationEffectHandler(this@WalletActivity) }, { effect ->
                                 when (effect) {
                                     is WalletScreenEffect.GoToSend -> NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
@@ -118,8 +126,8 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
             .effectRunner {
                 // TODO: The wallet manager and repositories are not thread safe,
                 //   to avoid concurrent modifications.  In the future this should
-                //   be changed to a background worker.
-                MainThreadWorkRunner.create()
+                //   be changed to WorkRunners.cachedThreadPool().
+                WorkRunners.singleThread()
             }
             .eventRunner { WorkRunners.cachedThreadPool() }
             .logger(AndroidLogger.tag("WalletLoop"))
@@ -146,19 +154,12 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
     private val isFragmentOnTop: Boolean
         get() = supportFragmentManager.backStackEntryCount > 0 || supportFragmentManager.findFragmentByTag(FragmentTxDetails.TAG) != null
 
-    protected enum class FlipperViewState {
-        BALANCE, SEARCH, NETWORK
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_wallet)
 
         BRSharedPrefs.putIsNewWallet(this, false)
-
-        tool_bar_flipper.inAnimation = AnimationUtils.loadAnimation(this, R.anim.flipper_enter)
-        tool_bar_flipper.outAnimation = AnimationUtils.loadAnimation(this, R.anim.flipper_exit)
 
         // TODO: Add sell click event sell_button.setOnClickListener(view -> UiUtils.startPlatformBrowser(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));
 
@@ -188,14 +189,17 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
 
     private fun updateUi() {
         // TODO: Not 100% sure where to move this but it harms nothing by remaining here at this time
-        val walletManager = WalletsMaster.getInstance().getCurrentWallet(this)
-        if (walletManager == null) {
-            Log.e(TAG, "updateUi: wallet is null")
-            return
-        }
 
-        val startColor = walletManager.uiConfiguration.startColor
-        val endColor = walletManager.uiConfiguration.endColor
+        // TODO: load uiConfiguration for the wallet
+        val uiConfiguration = WalletUiConfiguration("#ff5193", "#f9a43a", true, 2)
+//        val walletManager = WalletsMaster.getInstance().getCurrentWallet(this)
+//        if (walletManager == null) {
+//            Log.e(TAG, "updateUi: wallet is null")
+//            return
+//        }
+
+        val startColor = uiConfiguration.startColor
+        val endColor = uiConfiguration.endColor
         val currentTheme = UiUtils.getThemeId(this)
 
         if (currentTheme == R.style.AppTheme_Dark) {
@@ -218,22 +222,22 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                     GradientDrawable.Orientation.LEFT_RIGHT,
                     intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor)))
             gd.cornerRadius = 0f
-            bread_bar!!.background = gd
+            bread_bar.background = gd
+            appbar.background = gd
         } else {
             //it's a solid color
-            bread_bar!!.setBackgroundColor(Color.parseColor(startColor))
+            bread_bar.setBackgroundColor(Color.parseColor(startColor))
+            appbar.setBackgroundColor(Color.parseColor(startColor))
         }
     }
 
     private fun setPriceTags(cryptoPreferred: Boolean, animate: Boolean) {
         val set = ConstraintSet()
-        set.clone(bread_toolbar!!)
+        set.clone(balance_row)
         if (animate) {
-            TransitionManager.beginDelayedTransition(bread_toolbar)
+            TransitionManager.beginDelayedTransition(balance_row)
         }
         val balanceTextMargin = resources.getDimension(R.dimen.balance_text_margin).toInt()
-        val balancePrimaryPadding = resources.getDimension(R.dimen.balance_primary_padding).toInt()
-        val balanceSecondaryPadding = resources.getDimension(R.dimen.balance_secondary_padding).toInt()
         val primaryTextSize = TypedValue()
         resources.getValue(R.dimen.wallet_balance_primary_text_size, primaryTextSize, true)
         val secondaryTextSize = TypedValue()
@@ -243,52 +247,45 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
             // Align crypto balance to the right parent
             set.connect(R.id.balance_secondary, ConstraintSet.END,
                     ConstraintSet.PARENT_ID, ConstraintSet.END, balanceTextMargin)
-            balance_primary!!.setPadding(0, balancePrimaryPadding, 0, 0)
-            balance_secondary!!.setPadding(0, balanceSecondaryPadding, 0, 0)
+            set.centerVertically(R.id.balance_secondary, ConstraintSet.PARENT_ID)
 
             // Align swap icon to left of crypto balance
             set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, balanceTextMargin)
+            set.centerVertically(R.id.swap, ConstraintSet.PARENT_ID)
 
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, balanceTextMargin)
+            set.centerVertically(R.id.balance_primary, ConstraintSet.PARENT_ID)
 
-            balance_secondary!!.textSize = primaryTextSize.float
-            balance_primary!!.textSize = secondaryTextSize.float
-
-            set.applyTo(bread_toolbar!!)
-
+            balance_secondary.textSize = primaryTextSize.float
+            balance_primary.textSize = secondaryTextSize.float
         } else {
             // CRYPTO on LEFT
             // Align primary to right of parent
             set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID,
                     ConstraintSet.END, balanceTextMargin)
+            set.centerVertically(R.id.balance_primary, ConstraintSet.PARENT_ID)
 
             // Align swap icon to left of usd balance
             set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, balanceTextMargin)
-
+            set.centerVertically(R.id.swap, ConstraintSet.PARENT_ID)
 
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, balanceTextMargin)
-            balance_primary!!.setPadding(0, balanceSecondaryPadding, 0, 0)
-            balance_secondary!!.setPadding(0, balancePrimaryPadding, 0, 0)
+            set.centerVertically(R.id.balance_secondary, ConstraintSet.PARENT_ID)
 
-            balance_secondary!!.textSize = secondaryTextSize.float
-            balance_primary!!.textSize = primaryTextSize.float
-
-            set.applyTo(bread_toolbar!!)
+            balance_secondary.textSize = secondaryTextSize.float
+            balance_primary.textSize = primaryTextSize.float
         }
-        balance_secondary!!.setTextColor(resources.getColor(if (cryptoPreferred)
+        set.applyTo(balance_row)
+        balance_secondary.setTextColor(resources.getColor(if (cryptoPreferred)
             R.color.white
         else
             R.color.currency_subheading_color, null))
-        balance_primary!!.setTextColor(resources.getColor(if (cryptoPreferred)
+        balance_primary.setTextColor(resources.getColor(if (cryptoPreferred)
             R.color.currency_subheading_color
         else
             R.color.white, null))
-        val circularBoldFont = getString(R.string.Font_CircularPro_Bold)
-        val circularBookFont = getString(R.string.Font_CircularPro_Book)
-        balance_secondary!!.typeface = FontManager.get(this, if (cryptoPreferred) circularBoldFont else circularBookFont)
-        balance_primary!!.typeface = FontManager.get(this, if (cryptoPreferred) circularBookFont else circularBoldFont)
     }
 
     override fun onResume() {
@@ -344,7 +341,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
 
         // Search button
         val searchIcon = findViewById<ImageButton>(R.id.search_icon)
-        searchIcon.setOnClickListener { view -> output.accept(WalletScreenEvent.OnSearchClicked) }
+        searchIcon.setOnClickListener { output.accept(WalletScreenEvent.OnSearchClicked) }
         search_bar.setEventOutput(output)
 
         // Display currency buttons
@@ -357,12 +354,48 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
         // Back button
         back_icon.setOnClickListener { output.accept(WalletScreenEvent.OnBackClicked) }
 
+        val intervalClickListener = View.OnClickListener { v ->
+            output.accept(WalletScreenEvent.OnChartIntervalSelected(
+                    when (v) {
+                        one_day -> Interval.ONE_DAY
+                        one_week -> Interval.ONE_WEEK
+                        one_month -> Interval.ONE_MONTH
+                        three_months -> Interval.THREE_MONTHS
+                        one_year -> Interval.ONE_YEAR
+                        three_years -> Interval.THREE_YEARS
+                        else -> error("Unknown button pressed")
+                    }
+            ))
+        }
+        arrayOf(one_day, one_week, one_month, three_months, one_year, three_years)
+                .forEach { it.setOnClickListener(intervalClickListener) }
+        spark_line.setAdapter(mPriceDataAdapter)
+        spark_line.sparkAnimator = LineSparkAnimator().apply {
+            duration = MARKET_CHART_ANIMATION_DURATION
+            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
+        }
+        spark_line.scrubListener = object : SparkView.OnScrubListener {
+            override fun onScrubbed(value: Any?) {
+                val event = if (value == null) {
+                    WalletScreenEvent.OnChartDataPointReleased
+                } else {
+                    val dataPoint = value as PriceDataPoint
+                    logDebug("dataPoint: $dataPoint")
+                    WalletScreenEvent.OnChartDataPointSelected(dataPoint)
+                }
+                output.accept(event)
+            }
+        }
+
         val connection = object : Connection<WalletScreenModel> {
 
             private var previousIsCryptoPreferred: Boolean? = !controller.model.isCryptoPreferred // opposite of initial state to force an initial render
             private var previousFiatBalance: BigDecimal? = null // null to force an initial render
             private var previousCryptoBalance: BigDecimal? = null // null to force an initial render
             private var previousSyncProgress = controller.model.syncProgress
+            private var previousInterval : Interval? = null
+            private var previousPriceDataPoints = emptyList<PriceDataPoint>()
+            private var isShowingSearchBar : Boolean = false
 
             override fun accept(model: WalletScreenModel) {
                 currency_label.text = model.currencyName
@@ -391,24 +424,15 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                 if (switchingIsCryptoPreferred)
                     setPriceTags(model.isCryptoPreferred, true)
 
-                // Update price per unit
-                currency_usd_price.text = String.format(getString(R.string.Account_exchangeRate),
-                        model.fiatPricePerUnit, model.currencyCode)
-                if (model.hasPricePerUnit) {
-                    currency_usd_price.visibility = View.VISIBLE
-                } else {
-                    currency_usd_price.visibility = View.INVISIBLE
-                }
-
                 // Refresh adapter if tx list is updated or display fiat changed
                 var adapterHasChanged = false
                 if (model.isFilterApplied) {
                     if (mAdapter!!.items !== model.filteredTransactions) {
-                        mAdapter!!.setItems(model.filteredTransactions)
+                        mAdapter!!.items = model.filteredTransactions
                         adapterHasChanged = true
                     }
                 } else if (mAdapter!!.items !== model.transactions) {
-                    mAdapter!!.setItems(model.transactions)
+                    mAdapter!!.items = model.transactions
                     adapterHasChanged = true
                 }
 
@@ -421,24 +445,25 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                     mAdapter!!.notifyDataSetChanged()
 
                 // Update header area
-                val displayedChild = tool_bar_flipper.displayedChild
+//                val displayedChild = tool_bar_flipper.displayedChild
                 if (model.hasInternet) {
+                    notification_bar.isVisible = false
                     if (model.isShowingSearch) {
-                        if (displayedChild != FlipperViewState.SEARCH.ordinal) {
-                            tool_bar_flipper.displayedChild = FlipperViewState.SEARCH.ordinal
-                        }
+                        // TODO revisit this animation with conductor
                         search_bar.onShow(true)
+                        val searchBarAnimation = AnimatorInflater.loadAnimator(this@WalletActivity, R.animator.from_top)
+                        searchBarAnimation.setTarget(search_bar)
+                        searchBarAnimation.start()
                         search_bar.render(model)
-                    } else {
-                        if (displayedChild != FlipperViewState.BALANCE.ordinal) {
-                            tool_bar_flipper.displayedChild = FlipperViewState.BALANCE.ordinal
-                        }
+                    } else if (model.isShowingSearch != isShowingSearchBar){
+                        val searchBarAnimation = AnimatorInflater.loadAnimator(this@WalletActivity, R.animator.to_top)
+                        searchBarAnimation.setTarget(search_bar)
+                        searchBarAnimation.start()
                         search_bar.onShow(false)
                     }
+                    isShowingSearchBar = model.isShowingSearch
                 } else {
-                    if (displayedChild != FlipperViewState.NETWORK.ordinal) {
-                        tool_bar_flipper.displayedChild = FlipperViewState.NETWORK.ordinal
-                    }
+                    notification_bar.isVisible = true
                 }
 
                 // Update sync progress
@@ -504,6 +529,34 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                         // dispatch showReviewPrompt not shown evt (turn both showReviewPrompt and isShowing == false)
                     }
                 }
+
+                // Load price chart
+                if (previousPriceDataPoints != model.priceChartDataPoints) {
+                    previousPriceDataPoints = model.priceChartDataPoints
+                    mPriceDataAdapter.dataSet = previousPriceDataPoints
+                    mPriceDataAdapter.notifyDataSetChanged()
+                }
+                if (previousInterval != model.priceChartInterval) {
+                    previousInterval = model.priceChartInterval
+                    val deselectedColor = getColor(R.color.trans_white)
+                    val selectedColor = getColor(R.color.white)
+                    mIntervalButtons.forEachIndexed { index, baseTextView ->
+                        val color = if (model.priceChartInterval.ordinal == index) selectedColor else deselectedColor
+                        baseTextView.setTextColor(color)
+                    }
+                }
+                if (model.selectedPriceDataPoint == null) {
+                    chart_label.text = model.priceChange?.toString().orEmpty()
+                    currency_usd_price.text = model.fiatPricePerUnit
+                } else {
+                    val dataPoint = model.selectedPriceDataPoint
+                    currency_usd_price.text = CurrencyUtils.getFormattedAmount(this@WalletActivity, BRSharedPrefs.getPreferredFiatIso(), dataPoint.closePrice.toBigDecimal())
+                    val dateFormat = when (model.priceChartInterval) {
+                        Interval.ONE_DAY, Interval.ONE_WEEK -> { SimpleDateFormat(MARKET_CHART_DATE_WITH_HOUR, Locale.getDefault()) }
+                        else -> { SimpleDateFormat(MARKET_CHART_DATE_WITH_YEAR, Locale.getDefault()) }
+                    }
+                    chart_label.text = dateFormat.format(dataPoint.time)
+                }
             }
 
             override fun dispose() {
@@ -522,7 +575,11 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
         const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.wallet.WalletActivity.EXTRA_CRYPTO_REQUEST"
         protected const val EXTRA_CURRENCY_CODE = "com.breadwallet.ui.wallet.WalletActivity.EXTRA_CURRENCY_CODE"
         private const val SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm"
+        private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
+        private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, YYYY"
         private const val SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f
+        private const val MARKET_CHART_ANIMATION_DURATION = 500L
+        private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
 
         /**
          * Start the wallet activity for the given currency.

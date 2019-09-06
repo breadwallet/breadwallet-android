@@ -93,8 +93,8 @@ public class CurrencyUtils {
                 currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
                 currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                BRReportsManager.reportBug(new IllegalArgumentException("illegal iso: " + iso));
+                Log.e(TAG, "Currency not found for " + iso, e);
+                BRReportsManager.reportBug(new IllegalArgumentException("Illegal currency code: " + iso));
             }
             return currencyFormat.format(amount);
         }

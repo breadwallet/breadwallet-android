@@ -49,7 +49,6 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.platform.APIClient
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import com.squareup.picasso.Callback
@@ -200,8 +199,9 @@ class HomeScreenEffectHandler(
         val balance = getBalance(balanceAmt)
         val balanceInFiat = getBalanceInFiat(balanceAmt)
         val fiatPricePerUnit = getFiatPerPriceUnit(currencyCode)
+        val priceChange = getPriceChange(currencyCode)
 
-        output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balance, balanceInFiat, fiatPricePerUnit))
+        output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balance, balanceInFiat, fiatPricePerUnit, priceChange))
     }
 
     private fun getBalanceAmtInBase(balance: Amount): BigDecimal {
@@ -217,6 +217,8 @@ class HomeScreenEffectHandler(
         return RatesRepository.getInstance(context).getFiatForCrypto(balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
     }
 
+    private fun getPriceChange(currencyCode: String) = RatesRepository.getInstance(context).getPriceChange(currencyCode)
+
     private fun CryptoWallet.asWallet(): Wallet {
         return Wallet(
                 currencyName = currency.name,
@@ -225,7 +227,8 @@ class HomeScreenEffectHandler(
                 balance = getBalance(balance),
                 fiatBalance = getBalanceInFiat(balance),
                 syncProgress = 0.0, // will update via sync events
-                syncingThroughMillis = 0L // will update via sync events
+                syncingThroughMillis = 0L, // will update via sync events
+                priceChange = getPriceChange(currency.code)
         )
     }
 

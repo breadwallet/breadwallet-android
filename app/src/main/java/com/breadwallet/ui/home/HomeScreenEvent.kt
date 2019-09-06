@@ -29,6 +29,7 @@
 package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
+import com.breadwallet.model.PriceChange
 import com.breadwallet.tools.manager.PromptManager
 import java.math.BigDecimal
 
@@ -47,7 +48,12 @@ sealed class HomeScreenEvent {
     }
     data class OnWalletsAdded(val wallets: List<Wallet>) : HomeScreenEvent()
     data class OnWalletAdded(val wallet: Wallet) : HomeScreenEvent()
-    data class OnWalletBalanceUpdated(val currencyCode: String, val balance : BigDecimal, val fiatBalance: BigDecimal, val fiatPricePerUnit: BigDecimal) : HomeScreenEvent()
+    data class OnWalletBalanceUpdated(val currencyCode: String,
+                                      val balance : BigDecimal,
+                                      val fiatBalance: BigDecimal,
+                                      val fiatPricePerUnit: BigDecimal,
+                                      val priceChange: PriceChange
+    ) : HomeScreenEvent()
 
     data class OnBuyBellNeededLoaded(val isBuyBellNeeded:Boolean) : HomeScreenEvent()
 
