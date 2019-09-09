@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -236,4 +237,8 @@ public class PaperKeyProveActivity extends BRActivity {
         }
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
+    }
 }

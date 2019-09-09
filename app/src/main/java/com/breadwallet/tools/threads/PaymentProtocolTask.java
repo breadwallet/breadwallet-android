@@ -2,8 +2,6 @@ package com.breadwallet.tools.threads;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -38,13 +36,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +92,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     private static final String PAYMENT_ID = "paymentId";
     private static final int KB_IN_B = 1000;
     private static final int ONE_HUNDRED = 100;
-    private static final int FAILED_HTTP_CODE = 599;
-    private static final String CONNECTION_TIMED_OUT_MESSAGE = "Connection timed-out";
     private static final String UNTRUSTED_LOCK_SYMBOL = "\u274C";
     private static final String TRUSTED_LOCK_SYMBOL = "\uD83D\uDD12";
     private static final String NONE = "none";
@@ -114,7 +108,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     //params[0] = uri, params[1] = label
     @Override
     protected String doInBackground(String... params) {
-        InputStream in;
         String distinguishedName = null;
         try {
             URL url = new URL(params[0]);
@@ -124,81 +117,35 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     ? String.format(ACCEPT_HEADER_FORMAT, walletManager.getName().toLowerCase())
                     : ACCEPT_HEADER_BITPAY;
             Request request = new Request.Builder().url(url).get().addHeader(BRConstants.HEADER_ACCEPT, acceptHeaderValue).build();
-            final APIClient.BRResponse response = APIClient.getInstance(mContext).sendRequest(request, false);
+            APIClient.BRResponse response = APIClient.getInstance(mContext).sendRequest(request, false);
 
             if (!response.isSuccessful()) {
                 Log.e(TAG, "doInBackground: The response is empty");
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRDialog.showSimpleDialog(mContext, mContext.getString(R.string.Send_remoteRequestError),
-                                String.format(Locale.getDefault(), "(%d) %s", response.getCode(), response.getBodyText()));
-                    }
+                BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
+                    BRDialog.showSimpleDialog(mContext, mContext.getString(R.string.Send_remoteRequestError),
+                            String.format(Locale.getDefault(), "(%d) %s", response.getCode(), response.getBodyText()));
                 });
                 return null;
             }
-            byte[] paymentData;
+            byte[] paymentData = null;
+            JSONObject jsonPaymentData = null;
             try {
                 String data = response.getBodyText();
-                JSONObject jsonObject = new JSONObject(data);
+                jsonPaymentData = new JSONObject(data);
                 //did not throw, meaning there is a valid Json data and needs to be parsed into a protobuf payment protocol
-                try {
-                    String network = jsonObject.has(NETWORK) ? jsonObject.getString(NETWORK) : null;
-                    String currency = jsonObject.has(CURRENCY) ? jsonObject.getString(CURRENCY) : null;
-                    WalletsMaster walletsMaster = WalletsMaster.getInstance();
-                    if (walletsMaster.hasWallet(currency)) {
-                        walletManager = walletsMaster.getWalletByIso(mContext, currency);
-                        if (walletManager != null) {
-                            BRSharedPrefs.putCurrentWalletCurrencyCode(mContext, currency);
-                        }
-                    }
-                    String requiredFeeRate = jsonObject.has(REQUIRED_FEE_RATE) ? jsonObject.getString(REQUIRED_FEE_RATE) : null;
-                    String paymentId = jsonObject.has(PAYMENT_ID) ? jsonObject.getString(PAYMENT_ID) : null;
-                    mPaymentRequestExtra = new PaymentRequestExtra(requiredFeeRate, currency, paymentId);
-                    List<Protos.Output> outputs = new ArrayList<>();
-                    if (jsonObject.has(OUTPUTS)) {
-                        JSONArray jsonOutputs = jsonObject.getJSONArray(OUTPUTS);
-                        for (int i = 0; i < jsonOutputs.length(); i++) {
-                            JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
-                            long amount = jsonOutput.getLong(AMOUNT);
-                            String legacyAddress = walletManager.undecorateAddress(jsonOutput.getString(ADDRESS));
-                            ByteString script = ByteString.copyFrom(new BRCoreAddress(legacyAddress).getPubKeyScript());
-                            outputs.add(Protos.Output.newBuilder().setAmount(amount).setScript(script).build());
-                        }
-                    }
-                    DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-                    long time = jsonObject.has(TIME) ? dateFormat.parse(jsonObject.getString(TIME)).getTime() : 0;
-                    long expires = jsonObject.has(EXPIRES) ? dateFormat.parse(jsonObject.getString(EXPIRES)).getTime() : 0;
-
-                    String memo = jsonObject.has(MEMO) ? jsonObject.getString(MEMO) : null;
-                    String paymentUrl = jsonObject.has(PAYMENT_URL) ? jsonObject.getString(PAYMENT_URL) : null;
-
-                    Protos.PaymentDetails paymentDetails = Protos.PaymentDetails.newBuilder()
-                            .setNetwork(network)
-                            .setTime(time)
-                            .setExpires(expires)
-                            .setMemo(memo)
-                            .setPaymentUrl(paymentUrl)
-                            .addAllOutputs(outputs).build();
-
-                    Protos.PaymentRequest paymentRequestProto = Protos.PaymentRequest.getDefaultInstance().toBuilder()
-                            .setSerializedPaymentDetails(paymentDetails.toByteString())
-                            .build();
-                    paymentData = paymentRequestProto.toByteArray();
-                } catch (final JSONException e) {
-                    Log.e(TAG, "doInBackground: ", e);
-                    BRReportsManager.reportBug(e);
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showSimpleDialog(mContext, mContext.getString(R.string.Send_remoteRequestError), "");
-                        }
-                    });
-                    return null;
-                }
             } catch (JSONException ex) {
                 //no valid json format, assume it's protobuf data.
                 paymentData = response.getBody();
+            }
+            if (paymentData == null) {
+                try {
+                    paymentData = buildPaymentData(walletManager, jsonPaymentData);
+                } catch (final JSONException e) {
+                    Log.e(TAG, "doInBackground: ", e);
+                    BRReportsManager.reportBug(e);
+                    BRExecutor.getInstance().forMainThreadTasks().execute((() -> BRDialog.showSimpleDialog(mContext, mContext.getString(R.string.Send_remoteRequestError), "")));
+                    return null;
+                }
             }
 
             mPaymentProtocolRequest = new BRCorePaymentProtocolRequest(paymentData);
@@ -209,15 +156,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 allAddresses.append(output.getAddress()).append(", ");
                 if (Utils.isNullOrEmpty(output.getAddress()) || !new BRCoreAddress(output.getAddress()).isValid()) {
                     if (mContext != null) {
-                        BRDialog.showCustomDialog(mContext, mContext.getString(R.string.Alert_error),
-                                mContext.getString(R.string.Send_invalidAddressTitle)
-                                        + ": " + output.getAddress(), mContext.getString(R.string.Button_ok),
-                                null, new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismissWithAnimation();
-                                    }
-                                }, null, null, 0);
+                        showErrorDialog(mContext.getString(R.string.Alert_error),
+                                mContext.getString(R.string.Send_invalidAddressTitle) + ": " + output.getAddress());
                     }
                     mPaymentProtocolRequest = null;
                     return null;
@@ -231,25 +171,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 totalAmount += output.getAmount();
             }
 
-            CustomLogger.logThis("Signature", String.valueOf(mPaymentProtocolRequest.getSignature().length),
-                    "pkiType", mPaymentProtocolRequest.getPKIType(), "pkiData", String.valueOf(mPaymentProtocolRequest.getPKIData().length));
-            CustomLogger.logThis("network", mPaymentProtocolRequest.getNetwork(), "time", String.valueOf(mPaymentProtocolRequest.getTime()),
-                    "expires", String.valueOf(mPaymentProtocolRequest.getExpires()), "memo", mPaymentProtocolRequest.getMemo(),
-                    "paymentURL", mPaymentProtocolRequest.getPaymentURL(), "merchantDataSize",
-                    String.valueOf(mPaymentProtocolRequest.getMerchantData().length), "address", allAddresses.toString(),
-                    "amount", String.valueOf(totalAmount));
-            //end logging
+            logPaymentData(allAddresses, totalAmount);
             if (mPaymentProtocolRequest.getExpires() != 0 && mPaymentProtocolRequest.getTime() > mPaymentProtocolRequest.getExpires()) {
                 Log.e(TAG, "Request is expired");
                 if (mContext != null) {
-                    BRDialog.showCustomDialog(mContext, mContext.getString(R.string.Alert_error),
-                            mContext.getString(R.string.PaymentProtocol_Errors_requestExpired),
-                            mContext.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismissWithAnimation();
-                                }
-                            }, null, null, 0);
+                    showErrorDialog(mContext.getString(R.string.Alert_error), mContext.getString(R.string.PaymentProtocol_Errors_requestExpired));
                 }
                 mPaymentProtocolRequest = null;
                 return null;
@@ -258,33 +184,18 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             if (certificateChain != null && certificateChain.size() > 0) {
                 distinguishedName = X509CertificateValidator.certificateValidation(certificateChain, mPaymentProtocolRequest);
             }
-
         } catch (Exception e) {
             Log.e(TAG, "doInBackground: ", e);
-            //todo convert this if/else block into catches
-            if (e instanceof java.net.UnknownHostException) {
-                if (mContext != null) {
-                    showErrorDialog(mContext.getString(R.string.Alert_error), mContext.getString(R.string.PaymentProtocol_Errors_corruptedDocument));
-                }
-            } else if (e instanceof FileNotFoundException) {
-                if (mContext != null) {
-                    showErrorDialog(mContext.getString(R.string.Alert_error), mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest));
-                }
-            } else if (e instanceof SocketTimeoutException) {
-                if (mContext != null) {
-                    showErrorDialog(mContext.getString(R.string.Alert_error), CONNECTION_TIMED_OUT_MESSAGE);
-                }
-            } else {
-                if (mContext != null) {
-                    showErrorDialog(mContext.getString(R.string.Alert_error),
-                            mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest) + ":" + e.getMessage());
-                }
+            BRReportsManager.reportBug(e);
+            if (mContext != null) {
+                showErrorDialog(mContext.getString(R.string.Alert_error),
+                        mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest) + ":" + e.getMessage());
             }
         }
+
         if (mPaymentProtocolRequest == null) {
             return null;
         }
-
         mCommonName = getAttributeFromDistinguishedName(distinguishedName, COMMON_NAME_ATTRIBUTE_KEY);
         if (mCommonName == null || mCommonName.isEmpty()) {
             mCommonName = params[1];
@@ -295,36 +206,87 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         return null;
     }
 
+    /**
+     * Build paymentData by creating a protobuf with the json object.
+     *
+     * @param walletManager Manager from the wallet we are using to pay.
+     * @param jsonPaymentData    Object with the payment data.
+     * @return The payment data as an array of bytes.
+     * @throws JSONException
+     * @throws ParseException
+     */
+    private byte[] buildPaymentData(BaseWalletManager walletManager, JSONObject jsonPaymentData) throws JSONException, ParseException {
+        byte[] paymentData;
+        String network = jsonPaymentData.has(NETWORK) ? jsonPaymentData.getString(NETWORK) : null;
+        String currency = jsonPaymentData.has(CURRENCY) ? jsonPaymentData.getString(CURRENCY) : null;
+        WalletsMaster walletsMaster = WalletsMaster.getInstance();
+        if (walletsMaster.hasWallet(currency)) {
+            walletManager = walletsMaster.getWalletByIso(mContext, currency);
+            if (walletManager != null) {
+                BRSharedPrefs.putCurrentWalletCurrencyCode(mContext, currency);
+            }
+        }
+        String requiredFeeRate = jsonPaymentData.has(REQUIRED_FEE_RATE) ? jsonPaymentData.getString(REQUIRED_FEE_RATE) : null;
+        String paymentId = jsonPaymentData.has(PAYMENT_ID) ? jsonPaymentData.getString(PAYMENT_ID) : null;
+        mPaymentRequestExtra = new PaymentRequestExtra(requiredFeeRate, currency, paymentId);
+        List<Protos.Output> outputs = new ArrayList<>();
+        if (jsonPaymentData.has(OUTPUTS)) {
+            JSONArray jsonOutputs = jsonPaymentData.getJSONArray(OUTPUTS);
+            for (int i = 0; i < jsonOutputs.length(); i++) {
+                JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
+                long amount = jsonOutput.getLong(AMOUNT);
+                String legacyAddress = walletManager.undecorateAddress(jsonOutput.getString(ADDRESS));
+                ByteString script = ByteString.copyFrom(new BRCoreAddress(legacyAddress).getPubKeyScript());
+                outputs.add(Protos.Output.newBuilder().setAmount(amount).setScript(script).build());
+            }
+        }
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        long time = jsonPaymentData.has(TIME) ? dateFormat.parse(jsonPaymentData.getString(TIME)).getTime() : 0;
+        long expires = jsonPaymentData.has(EXPIRES) ? dateFormat.parse(jsonPaymentData.getString(EXPIRES)).getTime() : 0;
+
+        String memo = jsonPaymentData.has(MEMO) ? jsonPaymentData.getString(MEMO) : null;
+        String paymentUrl = jsonPaymentData.has(PAYMENT_URL) ? jsonPaymentData.getString(PAYMENT_URL) : null;
+
+        Protos.PaymentDetails paymentDetails = Protos.PaymentDetails.newBuilder()
+                .setNetwork(network)
+                .setTime(time)
+                .setExpires(expires)
+                .setMemo(memo)
+                .setPaymentUrl(paymentUrl)
+                .addAllOutputs(outputs).build();
+
+        Protos.PaymentRequest paymentRequestProto = Protos.PaymentRequest.getDefaultInstance().toBuilder()
+                .setSerializedPaymentDetails(paymentDetails.toByteString())
+                .build();
+        paymentData = paymentRequestProto.toByteArray();
+        return paymentData;
+    }
+
+    private void logPaymentData(StringBuilder allAddresses, long totalAmount) {
+        CustomLogger.logThis("Signature", String.valueOf(mPaymentProtocolRequest.getSignature().length),
+                "pkiType", mPaymentProtocolRequest.getPKIType(), "pkiData", String.valueOf(mPaymentProtocolRequest.getPKIData().length));
+        CustomLogger.logThis("network", mPaymentProtocolRequest.getNetwork(), "time", String.valueOf(mPaymentProtocolRequest.getTime()),
+                "expires", String.valueOf(mPaymentProtocolRequest.getExpires()), "memo", mPaymentProtocolRequest.getMemo(),
+                "paymentURL", mPaymentProtocolRequest.getPaymentURL(), "merchantDataSize",
+                String.valueOf(mPaymentProtocolRequest.getMerchantData().length), "address", allAddresses.toString(),
+                "amount", String.valueOf(totalAmount));
+    }
+
     private void showErrorDialog(String title, String message) {
         BRDialog.showCustomDialog(mContext, title, message,
-                mContext.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
+                mContext.getString(R.string.Button_ok), null, BRDialogView::dismissWithAnimation, null, null, 0);
     }
 
     @Override
     protected void onPostExecute(String result) {
-        super.onPostExecute(result);
         if (mContext != null && mPaymentProtocolRequest != null && mPaymentProtocolRequest.getOutputs() != null
                 && mPaymentProtocolRequest.getOutputs()[0].getAddress().length() != 0) {
+
             if (mPaymentProtocolRequest.getPKIType().equals(NONE) || Utils.isNullOrEmpty(mCommonName)) {
                 mCommonName = String.format("%s %s", UNTRUSTED_LOCK_SYMBOL, mCommonName);
                 BRDialog.showCustomDialog(mContext, mContext.getString(R.string.PaymentProtocol_Errors_untrustedCertificate),
                         "", mContext.getString(R.string.JailbreakWarnings_ignore),
-                        mContext.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                continueWithThePayment();
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, 0);
+                        mContext.getString(R.string.Button_cancel), brDialogView -> continueWithThePayment(), BRDialogView::dismissWithAnimation, null, 0);
             } else {
                 mCommonName = String.format("%s %s", TRUSTED_LOCK_SYMBOL, mCommonName);
                 continueWithThePayment();
@@ -382,58 +344,46 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final String iso = BRSharedPrefs.getPreferredFiatIso(mContext);
         final StringBuilder finalAllAddresses = allAddresses;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                BigDecimal txAmt = walletManager.getTransactionAmount(transaction).abs();
-                BigDecimal minOutput = walletManager.getMinOutputAmount(mContext);
-                if (txAmt.compareTo(minOutput) < 0) {
-                    final String bitcoinMinMessage = String.format(Locale.getDefault(), mContext.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                            BRConstants.BITS_SYMBOL + minOutput.divide(new BigDecimal(ONE_HUNDRED), BRConstants.ROUNDING_MODE));
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(mContext, mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest),
-                                    bitcoinMinMessage, mContext.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                        @Override
-                                        public void onClick(BRDialogView brDialogView) {
-                                            brDialogView.dismissWithAnimation();
-                                        }
-                                    }, null, null, 0);
-                        }
-                    });
-
-                    return;
-                }
-                WalletsMaster master = WalletsMaster.getInstance();
-
-                final BigDecimal total = amount.add(fee);
-
-                BigDecimal bigAm = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, amount, null);
-                BigDecimal bigFee = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, fee, null);
-                BigDecimal bigTotal = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, total, null);
-                final String message = String.format(PAYMENT_MESSAGE_FORMAT, mCommonName,
-                        memo, finalAllAddresses.toString(), CurrencyUtils.getFormattedAmount(mContext, iso, bigAm),
-                        CurrencyUtils.getFormattedAmount(mContext, iso, bigFee),
-                        CurrencyUtils.getFormattedAmount(mContext, iso, bigTotal));
-
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    AuthManager.getInstance().authPrompt(mContext, mContext.getString(R.string.Confirmation_title),
-                            message, false, false, new BRAuthCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
-                                        PostAuth.getInstance().onPaymentProtocolRequest(mContext, false, transaction);
-                                    });
-                                }
-
-                                @Override
-                                public void onCancel() {
-                                    Log.e(TAG, "onCancel: ");
-                                }
-                            });
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            BigDecimal txAmt = walletManager.getTransactionAmount(transaction).abs();
+            BigDecimal minOutput = walletManager.getMinOutputAmount(mContext);
+            if (txAmt.compareTo(minOutput) < 0) {
+                final String bitcoinMinMessage = String.format(Locale.getDefault(), mContext.getString(R.string.PaymentProtocol_Errors_smallTransaction),
+                        BRConstants.BITS_SYMBOL + minOutput.divide(new BigDecimal(ONE_HUNDRED), BRConstants.ROUNDING_MODE));
+                BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
+                    BRDialog.showCustomDialog(mContext, mContext.getString(R.string.PaymentProtocol_Errors_badPaymentRequest),
+                            bitcoinMinMessage, mContext.getString(R.string.Button_ok), null, BRDialogView::dismissWithAnimation, null, null, 0);
                 });
+                return;
             }
+            WalletsMaster master = WalletsMaster.getInstance();
+
+            final BigDecimal total = amount.add(fee);
+
+            BigDecimal bigAm = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, amount, null);
+            BigDecimal bigFee = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, fee, null);
+            BigDecimal bigTotal = master.getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, total, null);
+            final String message = String.format(PAYMENT_MESSAGE_FORMAT, mCommonName,
+                    memo, finalAllAddresses.toString(), CurrencyUtils.getFormattedAmount(mContext, iso, bigAm),
+                    CurrencyUtils.getFormattedAmount(mContext, iso, bigFee),
+                    CurrencyUtils.getFormattedAmount(mContext, iso, bigTotal));
+
+            BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
+                AuthManager.getInstance().authPrompt(mContext, mContext.getString(R.string.Confirmation_title),
+                        message, false, false, new BRAuthCompletion() {
+                            @Override
+                            public void onComplete() {
+                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                                    PostAuth.getInstance().onPaymentProtocolRequest(mContext, false, transaction);
+                                });
+                            }
+
+                            @Override
+                            public void onCancel() {
+                                Log.e(TAG, "onCancel: ");
+                            }
+                        });
+            });
         });
 
     }
