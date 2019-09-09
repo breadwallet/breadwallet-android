@@ -34,6 +34,7 @@ import com.breadwallet.tools.mvvm.Resource
 import com.breadwallet.tools.security.PostAuth
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager
+import com.platform.APIClient
 
 /**
  * View model encapsulating input words validation and  wallet recovery.
@@ -57,6 +58,7 @@ class RecoveryKeyViewModel(application: Application) : AndroidViewModel(applicat
             BRSharedPrefs.putAllowSpend(getApplication(),
                     BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false)
             if (PostAuth.getInstance().onRecoverWalletAuth(activity, false)) {
+                APIClient.getInstance(getApplication()).updatePlatform()
                 liveData.postValue(Resource.success(null))
             } else {
                 liveData.postValue(Resource.error("Failed to recover the wallet", null))

@@ -69,7 +69,7 @@
     <!-- The "home" screen is the name of the top level menu for the app. -->
     <string name="Android.BCH.welcome.message">Any BCH in your wallet can be accessed through the home screen.</string>
     <!-- Warning about using apps that can alter the screen -->
-    <string name="Android.screenAlteringMessage">BRD will not function properly unless screen-altering apps (such as Twilight) are disabled.</string>
+    <string name="Android.screenAlteringMessage">We\'ve detected an app that is incompatible with BRD running on your device. For security reasons, please disable any screen altering or light filtering apps to proceed.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">Screen-Altering App Detected</string>
     <!-- Body for an announcement promoting Coinify. -->
