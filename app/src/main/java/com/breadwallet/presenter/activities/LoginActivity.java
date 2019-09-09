@@ -72,11 +72,8 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
         mKeyboard.setButtonTextColor(pinDigitButtonColors);
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                WalletsMaster.getInstance().getAllWallets(LoginActivity.this);
-            }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            WalletsMaster.getInstance().getAllWallets(LoginActivity.this);
         });
 
         final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
@@ -119,12 +116,9 @@ public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted
         super.onResume();
 
         mPinDigitViews.setup(mKeyboard, this);
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":initLastWallet");
-                WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
-            }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            Thread.currentThread().setName("BG:" + TAG + ":initLastWallet");
+            WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
         });
 
     }
