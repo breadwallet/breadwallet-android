@@ -383,17 +383,11 @@ public class PostAuth {
             return;
         }
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                byte[] txHash = WalletsMaster.getInstance().getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
-                if (Utils.isNullOrEmpty(txHash)) {
-                    Log.e(TAG, "run: txHash is null");
-                }
-                mPaymentProtocolTx = null;
-            }
-        });
-
+        byte[] txHash = WalletsMaster.getInstance().getCurrentWallet(context).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
+        if (Utils.isNullOrEmpty(txHash)) {
+            Log.e(TAG, "run: txHash is null");
+        }
+        mPaymentProtocolTx = null;
     }
 
     public void setCachedPaperKey(String paperKey) {

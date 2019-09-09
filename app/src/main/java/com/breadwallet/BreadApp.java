@@ -33,6 +33,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.util.SyncUpdateHandler;
 import com.breadwallet.wallet.util.WalletConnectionCleanUpWorker;
 import com.breadwallet.wallet.util.WalletConnectionWorker;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
@@ -290,6 +291,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                     });
                     HTTPServer.getInstance().stopServer();
                 }
+                SyncUpdateHandler.INSTANCE.cancelWalletSync();
                 break;
             default:
                 break;

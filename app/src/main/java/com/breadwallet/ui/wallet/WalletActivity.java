@@ -39,7 +39,6 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
@@ -50,6 +49,7 @@ import com.breadwallet.ui.wallet.model.TxFilter;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.util.SyncUpdateHandler;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
@@ -176,7 +176,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
         mViewModel.getProgressLiveData().observe(this, progress -> {
-            if (progress != null && progress > SyncService.PROGRESS_START) {
+            if (progress != null && progress > SyncUpdateHandler.PROGRESS_START) {
                 WalletActivity.this.updateSyncProgress(progress);
             } else {
                 Log.e(TAG, "onChanged: Progress not set:" + progress);
@@ -385,7 +385,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             wallet.addSyncListener(this);
         }
 
-        SyncService.Companion.scheduleSyncService(getApplicationContext(), mCurrencyCode);
+        SyncUpdateHandler.INSTANCE.startWalletSync(getApplicationContext(), mCurrencyCode);
         showSendIfNeeded(getIntent());
     }
 
@@ -420,7 +420,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void syncStarted() {
-        SyncService.Companion.scheduleSyncService(getApplicationContext(), mCurrencyCode);
+        SyncUpdateHandler.INSTANCE.startWalletSync(getApplicationContext(), mCurrencyCode);
     }
     /* SyncListener methods End*/
 
@@ -441,7 +441,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == FlipperViewState.NETWORK.ordinal()) {
                 mBarFlipper.setDisplayedChild(FlipperViewState.BALANCE.ordinal());
             }
-            SyncService.Companion.scheduleSyncService(getApplicationContext(), mCurrencyCode);
+            SyncUpdateHandler.INSTANCE.startWalletSync(getApplicationContext(), mCurrencyCode);
 
         } else {
             if (mBarFlipper != null) {
@@ -467,7 +467,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void updateSyncProgress(double progress) {
-        if (progress != SyncService.PROGRESS_FINISH) {
+        if (progress != SyncUpdateHandler.PROGRESS_FINISH) {
             StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
             labelText.append(' ')
                     .append(NumberFormat.getPercentInstance().format(progress));

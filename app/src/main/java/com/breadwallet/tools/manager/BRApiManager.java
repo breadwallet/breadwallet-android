@@ -311,7 +311,7 @@ public final class BRApiManager implements ApplicationLifecycleObserver.Applicat
                 }
             }
             RatesRepository.getInstance(context).putCurrencyRates(currencyEntities);
-        } catch (JSONException ex) {
+        } catch (JSONException | NumberFormatException ex) {
             Log.e(TAG, "fetchNewTokensData: ", ex);
         }
     }
