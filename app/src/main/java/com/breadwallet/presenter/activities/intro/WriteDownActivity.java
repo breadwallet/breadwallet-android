@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,7 +29,7 @@ public class WriteDownActivity extends BRActivity {
         /* Activity was shown from settings.  */
         SETTINGS(1),
 
-        /* Activity was shown from settings.  */
+        /* Activity was shown from onboarding.  */
         ON_BOARDING(2),
 
         /* Invalid reason.  */
@@ -129,4 +130,8 @@ public class WriteDownActivity extends BRActivity {
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
+    }
 }

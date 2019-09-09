@@ -20,12 +20,12 @@
 
     <Button
         android:id="@+id/button_skip"
-        android:layout_width="40dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
-        android:padding="0dp"
+        android:padding="8dp"
         android:text="@string/Onboarding.skip"
         android:textColor="@color/white"
         android:textSize="14sp"
@@ -76,5 +76,18 @@
             android:background="@drawable/page_indicator_inactive" />
 
     </LinearLayout>
+
+    <include
+        android:id="@+id/loading_view"
+        layout="@layout/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

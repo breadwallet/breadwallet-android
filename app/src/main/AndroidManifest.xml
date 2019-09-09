@@ -66,7 +66,7 @@
             android:value="false" />
 
         <activity
-            android:name=".presenter.activities.intro.IntroActivity"
+            android:name=".ui.launcher.LauncherActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -74,6 +74,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".presenter.activities.intro.IntroActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.wallet.WalletActivity"
@@ -161,7 +167,13 @@
             android:screenOrientation="portrait" />
         <!-- Use launchMode="standard for WebViewActivity in order to be able to have multiple instances" -->
         <activity
-            android:name=".presenter.activities.settings.WebViewActivity"
+            android:name=".ui.browser.PlatformBrowserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.browser.BrdBrowserActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="standard"
             android:screenOrientation="portrait"
@@ -322,7 +334,9 @@
             android:name=".presenter.activities.intro.OnBoardingActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".view.dialog.DialogActivity" />
+        <activity android:name=".view.dialog.DialogActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
