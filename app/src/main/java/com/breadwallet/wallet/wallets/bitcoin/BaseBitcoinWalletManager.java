@@ -24,6 +24,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.model.FeeOption;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -32,10 +33,9 @@ import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -48,7 +48,6 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -61,12 +60,8 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
-import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -243,37 +238,15 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 return;
             }
         }
-        String jsonString = BRApiManager.urlGET(app, APIClient.getBaseURL() + "/fee-per-kb?currency=" + getCurrencyCode());
-        if (jsonString == null || jsonString.isEmpty()) {
-            Log.e(getTag(), "updateFeePerKb: failed to update fee, response string: " + jsonString);
-            return;
-        }
-        BigDecimal fee;
-        BigDecimal economyFee;
-        try {
-            JSONObject obj = new JSONObject(jsonString);
-            fee = new BigDecimal(obj.getString("fee_per_kb"));
-            economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.d(getTag(), "updateFee: " + getCurrencyCode() + ":" + fee + "|" + economyFee);
 
-            if (fee.compareTo(BigDecimal.ZERO) > 0 && fee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
-                BRSharedPrefs.putFeeRate(app, getCurrencyCode(), fee);
-                boolean favorStandardFee = BRSharedPrefs.getFavorStandardFee(app, getCurrencyCode());
-                getWallet().setFeePerKb(favorStandardFee ? fee.longValue() : economyFee.longValue());
-                BRSharedPrefs.putFeeTime(app, getCurrencyCode(), System.currentTimeMillis()); //store the time of the last successful fee fetch
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
-            }
-            if (economyFee.compareTo(BigDecimal.ZERO) > 0 && economyFee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
-                BRSharedPrefs.putEconomyFeeRate(app, getCurrencyCode(), economyFee);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
-            }
-        } catch (JSONException e) {
-            Log.e(getTag(), "updateFeePerKb: FAILED: " + jsonString, e);
-            BRReportsManager.reportBug(e);
-            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
-        }
+        // Retrieve update fee
+        String currencyCode = getCurrencyCode();
+        BRApiManager.updateFeeForCurrency(app, currencyCode);
+
+        // Set updated fee in wallet
+        FeeOption preferredFeeOption = FeeRepository.getInstance(app).getPreferredFeeOptionByCurrency(currencyCode);
+        BigDecimal preferredFee = FeeRepository.getInstance(app).getFeeByCurrency(currencyCode, preferredFeeOption);
+        getWallet().setFeePerKb(preferredFee.longValue());
     }
 
     @Override
