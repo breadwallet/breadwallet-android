@@ -1,6 +1,11 @@
 package com.breadwallet.presenter.viewmodels;
 
-import android.arch.lifecycle.ViewModel;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
+
+import com.breadwallet.model.FeeOption;
+import com.breadwallet.repository.FeeRepository;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.math.BigDecimal;
 
@@ -28,7 +33,8 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SendViewModel extends ViewModel {
+public class SendViewModel extends AndroidViewModel {
+    private static final String TAG = SendViewModel.class.getSimpleName();
     private static final String DECIMAL = ".";
     private static final String DECIMAL_WITH_LEADING_ZERO = "0.";
 
@@ -37,6 +43,10 @@ public class SendViewModel extends ViewModel {
     //Raw amount, ETH, BTC..
     private String mAmount;
     private String mChosenCode;
+
+    public SendViewModel(final Application app) {
+        super(app);
+    }
 
     public String getAddress() {
         return mAddress;
@@ -75,6 +85,22 @@ public class SendViewModel extends ViewModel {
 
     public void setChosenCode(String chosenCode) {
         this.mChosenCode = chosenCode;
+    }
+
+    /**
+     * Updates the fee option preference in the repository and updates the wallet with the appropriate fee.
+     * @param walletManager the wallet manager for which the fee option is being updated
+     * @param feeOption the selected fee option
+     */
+    public void updateFeeOptionPreference(BaseBitcoinWalletManager walletManager, FeeOption feeOption) {
+        String currencyCode = walletManager.getCurrencyCode();
+
+        // Set Preferred fee and get fee amount
+        FeeRepository.getInstance(getApplication()).putPreferredFeeOptionForCurrency(currencyCode, feeOption);
+        BigDecimal fee = FeeRepository.getInstance(getApplication()).getFeeByCurrency(currencyCode, feeOption);
+
+        // Update wallet with preferred fee
+        walletManager.getWallet().setFeePerKb(fee.longValue());
     }
 
     public void clear() {
