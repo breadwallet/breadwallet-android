@@ -34,6 +34,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
@@ -52,6 +53,7 @@ import com.breadwallet.wallet.util.SyncUpdateHandler;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
+import com.platform.util.AppReviewPromptManager;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -178,6 +180,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 WalletActivity.this.updateSyncProgress(progress);
             } else {
                 Log.e(TAG, "onChanged: Progress not set:" + progress);
+            }
+        });
+        mViewModel.getRequestFeedbackLiveData().observe(this, showDialog -> {
+            if (Boolean.TRUE == showDialog) {
+                showRateAppDialog();
             }
         });
 
@@ -533,4 +540,43 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     // endregion
+
+    /**
+     * Show the dialog to request a review in Google Play if there are no other fragment over the screen.
+     */
+    private void showRateAppDialog() {
+        if (isFragmentOnTop()) {
+            return;
+        }
+        
+        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED);
+        BRDialog.showCustomDialog(
+                this,
+                getString(R.string.RateAppPrompt_Title),
+                getString(R.string.RateAppPrompt_Body),
+                getString(R.string.RateAppPrompt_Button_RateApp),
+                getString(R.string.RateAppPrompt_Button_Dismiss),
+                brDialogView -> { // positiveButton
+                    EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED);
+                    AppReviewPromptManager.INSTANCE.openGooglePlay(this);
+                    brDialogView.dismiss();
+                },
+                brDialogView -> { // negativeButton
+                    brDialogView.dismiss();
+                },
+                brDialogView -> { // onDismiss
+                    EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED);
+                    mViewModel.onRateAppPromptDismissed();
+                },
+                0
+        );
+    }
+
+    /**
+     * Check the back stack to see if send or receive fragment are present and look for FragmentTxDetail by tag.
+     */
+    private boolean isFragmentOnTop() {
+        return getSupportFragmentManager().getBackStackEntryCount() > 0
+                || getSupportFragmentManager().findFragmentByTag(FragmentTxDetails.TAG) != null;
+    }
 }

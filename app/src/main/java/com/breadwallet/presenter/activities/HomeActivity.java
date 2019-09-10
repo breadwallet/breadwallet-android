@@ -44,7 +44,7 @@ import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.presenter.viewmodels.MainViewModel;
+import com.breadwallet.presenter.viewmodels.HomeViewModel;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -56,6 +56,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.notification.InAppNotificationActivity;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
@@ -86,7 +87,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private LinearLayout mTradeLayout;
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
-    private MainViewModel mViewModel;
+    private HomeViewModel mViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,7 +162,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mWalletRecycler.setAdapter(mAdapter);
 
         // Get ViewModel, observe updates to Wallet and aggregated balance data
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mViewModel.getWallets().observe(this, wallets -> mAdapter.setWallets(wallets));
 
         mViewModel.getAggregatedFiatBalance().observe(this, aggregatedFiatBalance -> {
@@ -172,6 +173,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
                     BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), aggregatedFiatBalance));
         });
+        mViewModel.getNotificationLiveData().observe(this, notification -> {
+            if (notification != null) {
+                InAppNotificationActivity.Companion.start(HomeActivity.this, notification);
+            }
+        });
+        mViewModel.checkForInAppNotification();
     }
 
     @Override
@@ -242,7 +249,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private void setUpBuildInfoLabel() {
         TextView buildInfoTextView = findViewById(R.id.testnet_label);
         String network = BuildConfig.BITCOIN_TESTNET ? NETWORK_TESTNET : NETWORK_MAINNET;
-        String buildInfo = network + " " + BuildConfig.VERSION_NAME + " build " +  BuildConfig.BUILD_VERSION;
+        String buildInfo = network + " " + BuildConfig.VERSION_NAME + " build " + BuildConfig.BUILD_VERSION;
         buildInfoTextView.setText(buildInfo);
         buildInfoTextView.setVisibility(BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
     }
