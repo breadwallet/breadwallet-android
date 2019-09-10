@@ -25,7 +25,6 @@
 
 package com.breadwallet.presenter.activities;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,9 +36,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.model.Wallet;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
@@ -62,9 +62,7 @@ import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,6 +75,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
     public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_DATA";
     public static final int MAX_NUMBER_OF_CHILDREN = 2;
+    private static final String NETWORK_TESTNET = "TESTNET";
+    private static final String NETWORK_MAINNET = "MAINNET";
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
@@ -93,6 +93,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Show build info as a watermark on non prod builds like: TESTNET 3.10.1 build 1
+        setUpBuildInfoLabel();
+
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
         mNotificationBar = findViewById(R.id.notification_bar);
@@ -105,9 +108,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
                     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                     WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
-            UiUtils.startWebActivity(HomeActivity.this, url);
+            UiUtils.startPlatformBrowser(HomeActivity.this, url);
         });
-        mTradeLayout.setOnClickListener(view -> UiUtils.startWebActivity(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)));
+        mTradeLayout.setOnClickListener(view -> UiUtils.startPlatformBrowser(HomeActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)));
         mMenuLayout.setOnClickListener(view -> {
             Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
             intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS);
@@ -234,5 +237,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void closeNotificationBar() {
         mNotificationBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void setUpBuildInfoLabel() {
+        TextView buildInfoTextView = findViewById(R.id.testnet_label);
+        String network = BuildConfig.BITCOIN_TESTNET ? NETWORK_TESTNET : NETWORK_MAINNET;
+        String buildInfo = network + " " + BuildConfig.VERSION_NAME + " build " +  BuildConfig.BUILD_VERSION;
+        buildInfoTextView.setText(buildInfo);
+        buildInfoTextView.setVisibility(BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
     }
 }

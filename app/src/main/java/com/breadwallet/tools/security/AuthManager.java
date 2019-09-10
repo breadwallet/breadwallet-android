@@ -76,12 +76,6 @@ public class AuthManager {
         return (long) (failTimestamp + pow);
     }
 
-    public void setWalletDisabled(Activity app) {
-        if (!(app instanceof DisabledActivity)) {
-            UiUtils.showWalletDisabled(app);
-        }
-    }
-
     public void setPinCode(Context context, String pass) {
         BRKeyStore.putFailCount(0, context);
         BRKeyStore.putPinCode(pass, context);
