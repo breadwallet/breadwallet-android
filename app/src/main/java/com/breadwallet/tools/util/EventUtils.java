@@ -125,6 +125,20 @@ public final class EventUtils {
     public static final String EVENT_REWARDS_BANNER = "rewards.banner";
     public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
 
+    // In-app messages
+    public static final String EVENT_IN_APP_NOTIFICATION_RECEIVED = "inAppNotifications.receivedNotification";
+    public static final String EVENT_IN_APP_NOTIFICATION_APPEARED = "inAppNotifications.inAppNotification.appeared";
+    public static final String EVENT_IN_APP_NOTIFICATION_DISMISSED = "inAppNotifications.inAppNotification.dismissed";
+    public static final String EVENT_IN_APP_NOTIFICATION_CTA_BUTTON = "inAppNotifications.inAppNotification.notificationCTAButton";
+    public static final String EVENT_ATTRIBUTE_NOTIFICATION_ID = "id";
+    public static final String EVENT_ATTRIBUTE_NOTIFICATION_CTA_URL = "cta_url";
+    public static final String EVENT_ATTRIBUTE_MESSAGE_ID = "message_id";
+
+    // Google Play review prompt
+    public static final String EVENT_REVIEW_PROMPT_DISPLAYED = "prompt.playstoreRate.displayed";
+    public static final String EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED = "prompt.playstoreRate.trigger";
+    public static final String EVENT_REVIEW_PROMPT_DISMISSED = "prompt.playstoreRate.dismissed";
+
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";
