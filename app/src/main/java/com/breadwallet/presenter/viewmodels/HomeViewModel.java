@@ -28,15 +28,21 @@ package com.breadwallet.presenter.viewmodels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import com.breadwallet.model.InAppMessage;
 import com.breadwallet.model.Wallet;
+import com.breadwallet.repository.MessagesRepository;
 import com.breadwallet.repository.WalletRepository;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -44,18 +50,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * MainViewModel encapsulates the wallet-related logic for a Wallet-centric Activity
+ * HomeViewModel encapsulates the wallet-related logic for a Wallet-centric Activity
  * (e.g., HomeActivity). It listens for balance and rate updates, providing updates back
  * to the Activity in a life-cycle aware manner using LiveData. It also initiates the
  * sync'ing of wallets, one at a time.
  */
-public class MainViewModel extends AndroidViewModel {
-    private static final String TAG = MainViewModel.class.getSimpleName();
+public class HomeViewModel extends AndroidViewModel {
+    private static final String TAG = HomeViewModel.class.getSimpleName();
 
     private BalanceUpdater mBalanceUpdater;
     private ExchangeRatesUpdater mExchangeRatesUpdater;
     private ConnectionListener mConnectionListener;
     private WalletRepository mWalletRepository;
+    private MutableLiveData<InAppMessage> mNotificationLiveData;
 
     /**
      * Constructor initializes data, registers listeners, and kicks off various
@@ -63,7 +70,7 @@ public class MainViewModel extends AndroidViewModel {
      *
      * @param app The application context.
      */
-    public MainViewModel(final Application app) {
+    public HomeViewModel(final Application app) {
         super(app);
 
         mWalletRepository = WalletRepository.Companion.getInstance(app);
@@ -78,6 +85,7 @@ public class MainViewModel extends AndroidViewModel {
         mConnectionListener = new ConnectionListener();
         InternetManager.registerConnectionReceiver(app, mConnectionListener);
         mConnectionListener.onConnectionChanged(InternetManager.getInstance().isConnected(app));
+        mNotificationLiveData = new MutableLiveData<>();
     }
 
     /**
@@ -96,6 +104,39 @@ public class MainViewModel extends AndroidViewModel {
      */
     public LiveData<BigDecimal> getAggregatedFiatBalance() {
         return mWalletRepository.getAggregatedFiatBalance();
+    }
+
+    public LiveData<InAppMessage> getNotificationLiveData() { return mNotificationLiveData; }
+
+    /**
+     * Fetch the latest unread in-app notifications.
+     *
+     * @return The last unread in app notification or null.
+     */
+    public void checkForInAppNotification() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            InAppMessage notification = MessagesRepository.INSTANCE.getInAppNotification(getApplication());
+            if (notification == null) {
+                return;
+            }
+            // If the notification contains an image we need to pre fetch it to avoid showing the image space empty
+            // while we fetch the image while the notification is shown.
+            if (notification.getImageUrl() == null) {
+                mNotificationLiveData.postValue(notification);
+            } else {
+                Picasso.get().load(notification.getImageUrl()).fetch(new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mNotificationLiveData.postValue(notification);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Failed to fetch the notification image.");
+                    }
+                });
+            }
+        });
     }
 
     /**

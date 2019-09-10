@@ -1,5 +1,9 @@
 package com.breadwallet.presenter.entities;
 
+import android.content.Context;
+
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.platform.entities.TxMetaData;
 
 import java.math.BigDecimal;
@@ -127,6 +131,19 @@ public class TxUiHolder {
 
     public boolean isReceived() {
         return isReceived;
+    }
+
+    /**
+     * Return whether the transaction is complete or not.
+     *
+     * @param context      Execution context.
+     * @param currencyCode The transaction's currency code.
+     * @return True, if the transaction is complete; false, otherwise.
+     */
+    public boolean isComplete(Context context, String currencyCode) {
+        int confirms = (blockHeight == Integer.MAX_VALUE || blockHeight == 0) ?
+                0 : BRSharedPrefs.getLastBlockHeight(context, currencyCode) - blockHeight + 1;
+        return confirms >= BRConstants.CONFIRMED_BLOCKS_NUMBER;
     }
 
 }
