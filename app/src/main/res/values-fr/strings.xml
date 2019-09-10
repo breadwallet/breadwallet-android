@@ -246,6 +246,10 @@
     <string name="FeeSelector.estimatedDeliver">Délai de réception estimé : %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2 à 5 minutes</string>
+    <!-- Priority fee -->
+    <string name="FeeSelector.priority">Priorité</string>
+    <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
+    <string name="FeeSelector.priorityTime">10-30 minutes</string>
     <!-- Regular fee -->
     <string name="FeeSelector.regular">Régulier</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
