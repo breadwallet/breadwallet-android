@@ -24,6 +24,7 @@
  */
 package com.breadwallet.wallet.util;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -36,6 +37,7 @@ import java.util.List;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 /**
  * Worker in charge of Connecting the wallets.
@@ -44,6 +46,10 @@ public class WalletConnectionWorker extends Worker {
     private static final String TAG = WalletConnectionWorker.class.getName();
 
     private static final String TAG_WALLETS_CONNECT = "wallets-connect";
+
+    public WalletConnectionWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
+    }
 
     /**
      * Enqueue job to connect all wallets.
@@ -68,6 +74,6 @@ public class WalletConnectionWorker extends Worker {
         for (final BaseWalletManager walletManager : list) {
             walletManager.connect(getApplicationContext());
         }
-        return Result.SUCCESS;
+        return Result.success();
     }
 }

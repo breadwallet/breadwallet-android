@@ -89,12 +89,15 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Activity mCurrentActivity;
+    private boolean mDelayServerShutdown = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         mInstance = this;
+
+        BRSharedPrefs.provideContext(this);
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().build())
@@ -295,11 +298,23 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         EventUtils.saveEvents(BreadApp.this);
                         EventUtils.pushToServer(BreadApp.this);
                     });
-                    HTTPServer.getInstance().stopServer();
+                    if (!mDelayServerShutdown) {
+                        Log.i(TAG, "Shutting down HTTPServer.");
+                        HTTPServer.getInstance().stopServer();
+                    } else {
+                        Log.i(TAG, "Delaying HTTPServer shutdown.");
+                    }
                 }
                 BRApiManager.getInstance().stopTimerTask();
                 SyncUpdateHandler.INSTANCE.cancelWalletSync();
                 break;
+            case ON_DESTROY:
+                Log.d(TAG, "onLifeCycle: DESTROY");
+                if (HTTPServer.getInstance().isRunning()) {
+                    Log.i(TAG, "Shutting down HTTPServer.");
+                    HTTPServer.getInstance().stopServer();
+                    mDelayServerShutdown = false;
+                }
             default:
                 break;
         }
@@ -389,4 +404,11 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 BRSharedPrefs.getInt(this, BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0) + 1);
     }
 
+    /**
+     * When delayServerShutdown is true, the HTTPServer will remain
+     * running after onStop, until onDestroy.
+     */
+    public void setDelayServerShutdown(boolean delayServerShutdown) {
+        mDelayServerShutdown = delayServerShutdown;
+    }
 }
