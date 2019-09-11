@@ -552,10 +552,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED);
         BRDialog.showCustomDialog(
                 this,
-                getString(R.string.RateAppPrompt_Title),
-                getString(R.string.RateAppPrompt_Body),
-                getString(R.string.RateAppPrompt_Button_RateApp),
-                getString(R.string.RateAppPrompt_Button_Dismiss),
+                getString(R.string.RateAppPrompt_Title_Android),
+                getString(R.string.RateAppPrompt_Body_Android),
+                getString(R.string.RateAppPrompt_Button_RateApp_Android),
+                getString(R.string.RateAppPrompt_Button_Dismiss_Android),
                 brDialogView -> { // positiveButton
                     EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED);
                     AppReviewPromptManager.INSTANCE.openGooglePlay(this);

@@ -53,7 +53,8 @@
     <item name="recover_wallet_header_gradient_start" type="color">#EF8BB1</item>
     <item name="recover_wallet_header_gradient_end" type="color">#FF5193</item>
 
-    <item name="pin_pad_text" type="color">#A3A8AE</item>
+    <item name="web_view_toolbar" type="color">#A3A8AE</item>
+    <item name="pin_pad_text" type="color">#141233</item>
     <item name="extra_light_blue_background" type="color">#f2f2f2</item>
 
     <item name="button_primary_normal" type="color">#29ABE2</item>

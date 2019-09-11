@@ -2,6 +2,7 @@ package com.breadwallet.ui.browser
 
 import android.content.Context
 import android.content.Intent
+import com.breadwallet.BreadApp
 import com.breadwallet.tools.util.BRConstants
 
 /**
@@ -28,4 +29,13 @@ class PlatformBrowserActivity: WebViewActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        (applicationContext as BreadApp).setDelayServerShutdown(true)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (applicationContext as BreadApp).setDelayServerShutdown(false)
+    }
 }
