@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.browser.BrdNativeJs;
 import com.platform.APIClient;
 import com.platform.interfaces.Middleware;
 
@@ -47,7 +48,7 @@ import okhttp3.RequestBody;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class APIProxy implements Middleware {
+public class APIProxy extends SignedRequestMiddleware {
     public static final String TAG = APIProxy.class.getName();
 
     private APIClient apiInstance;
@@ -60,7 +61,9 @@ public class APIProxy implements Middleware {
             "connection",
             "authorization",
             "host",
-            "user-agent"};
+            "user-agent",
+            BrdNativeJs.SIGNATURE_HEADER,
+            BrdNativeJs.DATE_HEADER};
 
     private final String[] bannedReceiveHeaders = new String[]{
             "content-length",
@@ -78,6 +81,9 @@ public class APIProxy implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith(MOUNT_POINT)) return false;
+        if (!super.handle(target, baseRequest, request, response)) {
+            return false;
+        }
         Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
         String path = target.substring(MOUNT_POINT.length());
         String queryString = baseRequest.getQueryString();

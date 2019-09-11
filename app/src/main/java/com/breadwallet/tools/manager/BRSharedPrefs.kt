@@ -524,8 +524,8 @@ object BRSharedPrefs {
      * @return Returns the web platform debug URL or empty.
      */
     @JvmStatic
-    fun getWebPlatformDebugURL(context: Context? = null): String? =
-            brdPrefs.getString(DEBUG_WEB_PLATFORM_URL, "")
+    fun getWebPlatformDebugURL(context: Context? = null): String =
+            brdPrefs.getString(DEBUG_WEB_PLATFORM_URL, "")!!
 
     /**
      * Saves the web platform debug URL to the shared preferences.

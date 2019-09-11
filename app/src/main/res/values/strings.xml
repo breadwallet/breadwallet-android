@@ -1207,4 +1207,6 @@
     <!-- Push notifications settings failed to update settings on the back end -->
     <string name="PushNotifications.updateFailed">Failed to update push notifications settings</string>
 
+    <string name="HomeScreen.buyAndSell">Buy &amp; Sell</string>
+
 </resources>
