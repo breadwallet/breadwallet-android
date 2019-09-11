@@ -17,6 +17,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/testnet_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#4DFFFFFF"
+            android:text="TESTNET" />
+
         <RelativeLayout
             android:id="@+id/home_header"
             android:layout_width="match_parent"
