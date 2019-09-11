@@ -102,7 +102,7 @@ public class FragmentReceive extends ModalDialogFragment implements BalanceUpdat
         mRequestButton = rootView.findViewById(R.id.request_button);
         mKeyboard = rootView.findViewById(R.id.keyboard);
         mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
-        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_black);
         mKeyboard.setBRKeyboardColor(R.color.white);
         mSeparatorRequestView = rootView.findViewById(R.id.separator);
         mCloseButton = rootView.findViewById(R.id.close_button);

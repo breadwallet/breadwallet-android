@@ -28,7 +28,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/bread_margin"
             android:layout_weight="0.5"
-            android:text="@string/SecurityCenter.paperKeyTitle"
+            android:text="@string/SecurityCenter.paperKeyTitle.android"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"

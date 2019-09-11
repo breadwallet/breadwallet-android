@@ -241,8 +241,16 @@ public class FragmentTxDetails extends DialogFragment {
                 hideConfirmedView();
             }
 
-            if (!mTransaction.isValid()) {
+            if (mTransaction.isValid() && !mTransaction.isErrored()) {
+                if (mTransaction.isComplete(getContext(), walletManager.getCurrencyCode())) {
+                    mTxStatus.setText(getText(R.string.Transaction_complete));
+                } else {
+                    mTxStatus.setText(getText(R.string.Transaction_confirming));
+                }
+            } else {
+                // Failed txn -- hide checkmark and set text appropriately
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                mTxStatus.setText(getText(R.string.TransactionDetails_initializedTimestampHeader));
             }
 
             BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
@@ -358,16 +366,6 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the transaction block number
             mConfirmedInBlock.setText(String.valueOf(mTransaction.getBlockHeight()));
-
-            // Calculate the number of confirmations for this transaction and set its status
-            int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(getContext(), walletManager.getCurrencyCode());
-            int confirmations = mTransaction.getBlockHeight() == 0 ? 0 : lastBlockHeight - mTransaction.getBlockHeight() + 1;
-
-            if (walletManager.checkConfirmations(confirmations)) {
-                mTxStatus.setText(getText(R.string.Transaction_complete));
-            } else {
-                mTxStatus.setText(getText(R.string.Transaction_confirming));
-            }
 
         } else {
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();

@@ -105,7 +105,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         mAmountLayout = rootView.findViewById(R.id.amount_layout);
         mAmountLayout.setVisibility(View.VISIBLE);
         mKeyboard = rootView.findViewById(R.id.keyboard);
-        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_black);
         mKeyboard.setBRKeyboardColor(R.color.white);
         mCurrencyCodeText = rootView.findViewById(R.id.iso_text);
         mAmountEdit = rootView.findViewById(R.id.amount_edit);
