@@ -101,12 +101,6 @@ public class SegWitActivity extends BaseSettingsActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
-    @Override
     public int getLayoutId() {
         return R.layout.activity_segwit;
     }
