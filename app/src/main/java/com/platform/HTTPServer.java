@@ -11,6 +11,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.browser.WebViewActivity;
 import com.crashlytics.android.Crashlytics;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
@@ -23,6 +24,7 @@ import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.KVStorePlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 import com.platform.middlewares.plugins.WalletPlugin;
+import com.platform.util.CachedInputHttpServletRequest;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -68,7 +70,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HTTPServer extends AbstractLifeCycle {
     public static final String TAG = HTTPServer.class.getSimpleName();
 
-    private static final String PLATFORM_BASE_URL = "http://localhost:";
+    private static final String PLATFORM_BASE_URL = "http://127.0.0.1:";
     public static final String URL_BUY = "/buy";
     public static final String URL_TRADE = "/trade";
     public static final String URL_SELL = "/sell";
@@ -121,7 +123,8 @@ public class HTTPServer extends AbstractLifeCycle {
         try {
             mServer.dump(System.err);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Server dump failed", e);
+            Crashlytics.logException(e);
         }
 
         HandlerCollection handlerCollection = new HandlerCollection();
@@ -169,16 +172,13 @@ public class HTTPServer extends AbstractLifeCycle {
     @Override
     protected void doStart() {
         Log.d(TAG, "doStart");
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                int retries = 0;
-                while (!doStartServer() && retries < MAX_RETRIES) { // if failed to start the server retry with new port
-                    retries++;
-                }
-                if (retries == MAX_RETRIES) {
-                    Log.e(TAG, "doStart: Failed to start local server, MAX_RETRIES reached.");
-                }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            int retries = 0;
+            while (!doStartServer() && retries < MAX_RETRIES) { // if failed to start the server retry with new port
+                retries++;
+            }
+            if (retries == MAX_RETRIES) {
+                Log.e(TAG, "doStart: Failed to start local server, MAX_RETRIES reached.");
             }
         });
     }
@@ -210,15 +210,14 @@ public class HTTPServer extends AbstractLifeCycle {
      * @return True if server was started; false, otherwise.
      */
     private boolean doStartServer() {
-        Log.d(TAG, "doStartServer: Starting the server in port: " + mPort);
+        // Get the last port used in case we are restarting the server.
+        int port = BRSharedPrefs.getHttpServerPort(mContext);
+        if (port < MIN_PORT || port > MAX_PORT) {
+            Random rand = new Random();
+            port = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
+        }
+        Log.d(TAG, "doStartServer: Starting the server in port: " + port);
         try {
-            // Get the last port used in case we are restarting the server.
-            int port = BRSharedPrefs.getHttpServerPort(mContext);
-            if (port < MIN_PORT || port > MAX_PORT) {
-                Random rand = new Random();
-                port = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
-            }
-
             init(port);
             mServer.start();
 
@@ -232,13 +231,14 @@ public class HTTPServer extends AbstractLifeCycle {
         } catch (Exception e) {
             Log.e(TAG, "doStart: Error starting the local server. Trying again on new port.", e);
             Crashlytics.logException(e);
+            BRSharedPrefs.putHttpServerPort(mContext, 0);
             return false;
         }
     }
 
     private static class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-            if (!dispatch(target, baseRequest, request, response)) {
+            if (!dispatch(target, baseRequest, new CachedInputHttpServletRequest(request), response)) {
                 Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST, 404-ing: " + target);
                 BRHTTPHelper.handleError(404, "No middleware could handle the request.", baseRequest, response);
             }
@@ -247,18 +247,15 @@ public class HTTPServer extends AbstractLifeCycle {
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
-        final Context app = BreadApp.getBreadContext();
+        final Context context = BreadApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase(BRConstants.CLOSE)) {
-            if (app != null) {
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mOnCloseListener != null) {
-                            mOnCloseListener.onClose();
-                        } else {
-                            ((Activity) app).onBackPressed();
-                        }
+            if (context != null) {
+                BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
+                    if (mOnCloseListener != null) {
+                        mOnCloseListener.onClose();
+                    } else if (context instanceof WebViewActivity) {
+                        ((Activity) context).onBackPressed();
                     }
                 });
                 APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
@@ -279,7 +276,7 @@ public class HTTPServer extends AbstractLifeCycle {
             //need this to prompts email client only
             email.setType("message/rfc822");
 
-            app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            context.startActivity(Intent.createChooser(email, "Choose an Email client :"));
             APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.toLowerCase().startsWith("/didload")) {

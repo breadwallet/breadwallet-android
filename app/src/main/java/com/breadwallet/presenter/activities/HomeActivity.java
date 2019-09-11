@@ -40,11 +40,13 @@ import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.model.Experiments;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.viewmodels.HomeViewModel;
+import com.breadwallet.repository.ExperimentsRepositoryImpl;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -60,7 +62,6 @@ import com.breadwallet.ui.notification.InAppNotificationActivity;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
-import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.util.HashMap;
@@ -89,6 +90,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private LinearLayout mMenuLayout;
     private LinearLayout mListGroupLayout;
     private HomeViewModel mViewModel;
+    private BaseTextView mBuyMenuLabel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,8 +107,18 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mTradeLayout = findViewById(R.id.trade_layout);
         mMenuLayout = findViewById(R.id.menu_layout);
         mListGroupLayout = findViewById(R.id.list_group_layout);
+        mBuyMenuLabel = findViewById(R.id.buy_text_view);
 
+        boolean showBuyAndSell = BRConstants.USD.equals(BRSharedPrefs.getPreferredFiatIso(this)) &&
+                ExperimentsRepositoryImpl.INSTANCE.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON);
+        mBuyMenuLabel.setText(showBuyAndSell ? R.string.HomeScreen_buyAndSell : R.string.HomeScreen_buy);
+        Map<String, String> eventAttributes = new HashMap<>();
+        eventAttributes.put(EventUtils.EVENT_ATTRIBUTE_SHOW, Boolean.toString(showBuyAndSell));
+        EventUtils.pushEvent(EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON, eventAttributes);
         mBuyLayout.setOnClickListener(view -> {
+            Map<String, String> clickAttributes = new HashMap<>();
+            eventAttributes.put(EventUtils.EVENT_ATTRIBUTE_BUY_AND_SELL, Boolean.toString(showBuyAndSell));
+            EventUtils.pushEvent(EventUtils.EVENT_HOME_DID_TAP_BUY, clickAttributes);
             String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
                     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
                     WalletBitcoinManager.getInstance(HomeActivity.this).getCurrencyCode());
@@ -155,7 +167,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         processIntentData(getIntent());
 
         ImageView buyBell = findViewById(R.id.buy_bell);
-        boolean isBellNeeded = BRSharedPrefs.getFeatureEnabled(this, APIClient.FeatureFlags.BUY_NOTIFICATION.toString())
+        boolean isBellNeeded = ExperimentsRepositoryImpl.INSTANCE.isExperimentActive(Experiments.BUY_NOTIFICATION)
                 && CurrencyUtils.isBuyNotificationNeeded(this);
         buyBell.setVisibility(isBellNeeded ? View.VISIBLE : View.INVISIBLE);
 
