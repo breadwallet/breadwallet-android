@@ -210,8 +210,9 @@ public class PostAuth {
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, activity);
 
-                    // Recover wallet-info before starting to sync wallets.
+                    // Recover wallet-info and token list before starting to sync wallets.
                     KVStoreManager.syncWalletInfo(activity);
+                    KVStoreManager.syncTokenList(activity);
 
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);

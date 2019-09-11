@@ -213,18 +213,15 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     if (filter.received && !item.isReceived) {
                         willAdd = false
                     }
-                    val confirms = if (item.blockHeight == Integer.MAX_VALUE) {
-                        0
-                    } else {
-                        val wallet = WalletsMaster.getInstance().getCurrentWallet(getApplication())
-                        BRSharedPrefs.getLastBlockHeight(getApplication(), wallet.currencyCode) - item.blockHeight + 1
-                    }
+
+                    val isComplete = item.isComplete(getApplication(), wallet.currencyCode)
+
                     //complete
-                    if (filter.pending && confirms >= BRConstants.CONFIRMED_BLOCKS_NUMBER) {
+                    if (filter.pending && isComplete) {
                         willAdd = false
                     }
                     //pending
-                    if (filter.completed && confirms < BRConstants.CONFIRMED_BLOCKS_NUMBER) {
+                    if (filter.completed && !isComplete) {
                         willAdd = false
                     }
                 }
