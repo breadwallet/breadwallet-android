@@ -38,6 +38,12 @@ public abstract class BaseSettingsActivity extends BRActivity implements View.On
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
+
+    @Override
     public void onClick(View v) {
         onBackPressed();
     }

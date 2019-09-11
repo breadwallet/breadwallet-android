@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -94,7 +95,8 @@ public class APIClient {
     private static final String PROTO = "https";
     private static final String HTTPS_SCHEME = "https://";
     private static final String GMT = "GMT";
-    private static final String BREAD = "bread";
+    @VisibleForTesting
+    public static final String BREAD = "bread";
     private static final int NETWORK_ERROR_CODE = 599;
     private static final int SYNC_ITEMS_COUNT = 4;
     private static final String FEATURE_FLAG_PATH = "/me/features";
@@ -137,7 +139,6 @@ public class APIClient {
     private static final String BUY_NOTIFICATION_KEY = "buy-notification";
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-    private static final int MAX_RETRY = 3;
     private static final int CONNECTION_TIMEOUT_SECONDS = 30;
 
     private boolean mIsPlatformUpdating = false;
@@ -168,7 +169,13 @@ public class APIClient {
         return ourInstance;
     }
 
-    private APIClient(Context context) {
+    @VisibleForTesting
+    public static synchronized void setInstance(APIClient instance) {
+        ourInstance = instance;
+    }
+
+    @VisibleForTesting
+    public APIClient(Context context) {
         mContext = context;
 
         // Split the default device user agent string by spaces and take the first string.
@@ -260,29 +267,31 @@ public class APIClient {
             String strUtl = getBaseURL() + TOKEN_PATH;
 
             JSONObject requestMessageJSON = new JSONObject();
-            String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(getCachedAuthKey());
-            requestMessageJSON.put(PUBKEY, base58PubKey);
-            requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
+            byte[] cachedAuthKey = getCachedAuthKey();
+            if (!Utils.isNullOrEmpty(cachedAuthKey)) {
+                String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(cachedAuthKey);
+                requestMessageJSON.put(PUBKEY, base58PubKey);
+                requestMessageJSON.put(DEVICE_ID, BRSharedPrefs.getDeviceId(mContext));
 
-            final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
-            RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
-            Request request = new Request.Builder()
-                    .url(strUtl)
-                    .header(HEADER_CONTENT_TYPE, CONTENT_TYPE_JSON_CHARSET_UTF8)
-                    .header(HEADER_ACCEPT, CONTENT_TYPE_JSON_CHARSET_UTF8)
-                    .post(requestBody).build();
-            BRResponse response = sendRequest(request, false);
-            if (Utils.isNullOrEmpty(response.getBodyText())) {
-                Log.e(TAG, "getToken: retrieving token failed");
-                return null;
+                final MediaType JSON = MediaType.parse(CONTENT_TYPE_JSON_CHARSET_UTF8);
+                RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
+                Request request = new Request.Builder()
+                        .url(strUtl)
+                        .header(HEADER_CONTENT_TYPE, CONTENT_TYPE_JSON_CHARSET_UTF8)
+                        .header(HEADER_ACCEPT, CONTENT_TYPE_JSON_CHARSET_UTF8)
+                        .post(requestBody).build();
+                BRResponse response = sendRequest(request, false);
+                if (Utils.isNullOrEmpty(response.getBodyText())) {
+                    Log.e(TAG, "getToken: retrieving token failed");
+                    return null;
+                }
+                JSONObject obj = null;
+                obj = new JSONObject(response.getBodyText());
+
+                return obj.getString(TOKEN);
             }
-            JSONObject obj = null;
-            obj = new JSONObject(response.getBodyText());
-
-            return obj.getString(TOKEN);
         } catch (JSONException e) {
             Log.e(TAG, "getToken: ", e);
-
         } finally {
             mIsFetchingToken = false;
         }
@@ -321,7 +330,8 @@ public class APIClient {
 
     }
 
-    private Response sendHttpRequest(Request locRequest, boolean withAuth) {
+    @VisibleForTesting
+    public Response sendHttpRequest(Request locRequest, boolean withAuth, String token) {
         if (UiUtils.isMainThread()) {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
@@ -348,7 +358,7 @@ public class APIClient {
 
         Request request = newBuilder.build();
         if (withAuth) {
-            AuthenticatedRequest authenticatedRequest = authenticateRequest(request);
+            AuthenticatedRequest authenticatedRequest = authenticateRequest(request, token);
             if (authenticatedRequest == null) {
                 return null;
             }
@@ -412,7 +422,8 @@ public class APIClient {
 
     @NonNull
     public BRResponse sendRequest(Request request, boolean withAuth) {
-        try (Response response = sendHttpRequest(request, withAuth)) {
+        String tokenUsed = withAuth ? TokenHolder.retrieveToken(mContext) : null;
+        try (Response response = sendHttpRequest(request, withAuth, tokenUsed)) {
             if (response == null) {
                 BRReportsManager.reportBug(new AuthenticatorException("Request: " + request.url() + " response is null"));
                 return new BRResponse();
@@ -436,20 +447,16 @@ public class APIClient {
                             .body(ResponseBody.create(null, new byte[0])).message("").protocol(Protocol.HTTP_1_1).build());
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
-                    return createBrResponse(sendHttpRequest(new Request.Builder().url(newLocation).get().build(), withAuth));
+                    return createBrResponse(sendHttpRequest(new Request.Builder().url(newLocation).get().build(), withAuth, tokenUsed));
                 }
-
             } else if (withAuth && isBreadChallenge(response)) {
                 Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + request.url().toString());
-                int i = 0;
-                Response newResponse;
-                do {
-                    i++;
-                    String tokenUsed = TokenHolder.retrieveToken(mContext);
-                    TokenHolder.updateToken(mContext, tokenUsed);
-                    newResponse = sendHttpRequest(request, true);
-                } while (isBreadChallenge(response) && i < MAX_RETRY);
-                return createBrResponse(newResponse);
+                String newToken = TokenHolder.updateToken(mContext, tokenUsed);
+                if (tokenUsed == null || tokenUsed.equals(newToken)) {
+                    // Failed to update token
+                    return new BRResponse();
+                }
+                return createBrResponse(sendHttpRequest(request, true, newToken));
             }
             return createBrResponse(response);
         }
@@ -490,7 +497,7 @@ public class APIClient {
         return brRsp;
     }
 
-    private AuthenticatedRequest authenticateRequest(Request request) {
+    private AuthenticatedRequest authenticateRequest(Request request, String token) {
         Request.Builder modifiedRequest = request.newBuilder();
         String base58Body = "";
         RequestBody body = request.body();
@@ -510,7 +517,6 @@ public class APIClient {
             Log.e(TAG, "authenticateRequest: ", e);
         }
 
-
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone(GMT));
         String httpDate = DATE_FORMAT.format(new Date());
 
@@ -525,7 +531,6 @@ public class APIClient {
         if (signedRequest == null) {
             return null;
         }
-        String token = TokenHolder.retrieveToken(mContext);
         String authValue = BREAD + " " + token + ":" + signedRequest;
         modifiedRequest = request.newBuilder();
 
@@ -802,7 +807,11 @@ public class APIClient {
     public static String getBaseURL() {
         if (BuildConfig.DEBUG) {
             // In the debug case, the user may have changed the host.
-            return HTTPS_SCHEME + BreadApp.getHost();
+            String host = BreadApp.getHost();
+            if (host.startsWith("http")) {
+                return host;
+            }
+            return HTTPS_SCHEME + host;
         }
         return BASE_URL;
     }

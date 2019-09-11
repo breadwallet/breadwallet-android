@@ -56,12 +56,6 @@ public class AdvancedActivity extends BaseSettingsActivity {
         listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
     private void populateItems() {
 
         items.add(new BRSettingsItem(getString(R.string.NodeSelector_title), "", new View.OnClickListener() {

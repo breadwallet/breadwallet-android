@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -83,13 +85,17 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
     private static final String WALLET_ID_SEPARATOR = " ";
     private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
+    private static final long SERVER_SHUTDOWN_DELAY_MILLIS = 60000; // 60 seconds
 
     private static BreadApp mInstance;
     public static int mDisplayHeightPx;
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Activity mCurrentActivity;
+    private int mDelayServerShutdownCode = -1;
     private boolean mDelayServerShutdown = false;
+    private Handler mServerShutdownHandler = null;
+    private Runnable mServerShutdownRunnable = null;
 
     @Override
     public void onCreate() {
@@ -143,7 +149,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
 
             // Initialize the Firebase Messaging Service.
-            BRDFirebaseMessagingService.initialize(mInstance);
+            BRDFirebaseMessagingService.Companion.initialize(mInstance);
 
             // Initialize TokenUtil to load our tokens.json file from res/raw
             TokenUtil.initialize(mInstance);
@@ -302,7 +308,23 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         Log.i(TAG, "Shutting down HTTPServer.");
                         HTTPServer.getInstance().stopServer();
                     } else {
+                        // If server shutdown needs to be delayed, it will occur after
+                        // SERVER_SHUTDOWN_DELAY_MILLIS.  This may be cancelled if the app
+                        // is closed before execution or the user returns to the app.
                         Log.i(TAG, "Delaying HTTPServer shutdown.");
+                        if (mServerShutdownHandler == null) {
+                            mServerShutdownHandler = new Handler(Looper.getMainLooper());
+                        }
+                        mServerShutdownRunnable = () -> {
+                            Log.i(TAG, "Shutdown delay elapsed, shutting down HTTPServer.");
+                            HTTPServer.getInstance().stopServer();
+                            mServerShutdownRunnable = null;
+                            mServerShutdownHandler = null;
+                        };
+                        mServerShutdownHandler.postDelayed(
+                                mServerShutdownRunnable,
+                                SERVER_SHUTDOWN_DELAY_MILLIS
+                        );
                     }
                 }
                 BRApiManager.getInstance().stopTimerTask();
@@ -311,6 +333,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_DESTROY:
                 Log.d(TAG, "onLifeCycle: DESTROY");
                 if (HTTPServer.getInstance().isRunning()) {
+                    if (mServerShutdownHandler != null && mServerShutdownRunnable != null) {
+                        Log.d(TAG, "Preempt delayed server shutdown callback");
+                        mServerShutdownHandler.removeCallbacks(mServerShutdownRunnable);
+                    }
                     Log.i(TAG, "Shutting down HTTPServer.");
                     HTTPServer.getInstance().stopServer();
                     mDelayServerShutdown = false;
@@ -408,7 +434,27 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
      * When delayServerShutdown is true, the HTTPServer will remain
      * running after onStop, until onDestroy.
      */
-    public void setDelayServerShutdown(boolean delayServerShutdown) {
-        mDelayServerShutdown = delayServerShutdown;
+    public void setDelayServerShutdown(final boolean delayServerShutdown, final int requestCode) {
+        synchronized (this) {
+            Log.d(TAG, "setDelayServerShutdown(" + delayServerShutdown + ", " + requestCode + ")");
+            boolean isMatchingRequestCode = mDelayServerShutdownCode == requestCode ||
+                    requestCode == -1 || // Force the update regardless of current request
+                    mDelayServerShutdownCode == -1; // No initial request
+            if (isMatchingRequestCode) {
+                mDelayServerShutdown = delayServerShutdown;
+                mDelayServerShutdownCode = requestCode;
+                if (!mDelayServerShutdown &&
+                        mServerShutdownRunnable != null &&
+                        mServerShutdownHandler != null) {
+                    Log.d(TAG, "Cancelling delayed HTTPServer execution.");
+                    mServerShutdownHandler.removeCallbacks(mServerShutdownRunnable);
+                    mServerShutdownHandler = null;
+                    mServerShutdownRunnable = null;
+                }
+                if (!mDelayServerShutdown) {
+                    mDelayServerShutdownCode = -1;
+                }
+            }
+        }
     }
 }
