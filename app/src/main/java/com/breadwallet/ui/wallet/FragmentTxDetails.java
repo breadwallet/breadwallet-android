@@ -46,7 +46,7 @@ import java.math.BigDecimal;
 
 public class FragmentTxDetails extends DialogFragment {
 
-    private static final String TAG = FragmentTxDetails.class.getSimpleName();
+    public static final String TAG = FragmentTxDetails.class.getSimpleName();
 
     private TxUiHolder mTransaction;
 

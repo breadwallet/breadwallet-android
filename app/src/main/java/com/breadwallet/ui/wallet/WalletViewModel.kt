@@ -35,6 +35,7 @@ import com.breadwallet.repository.WalletRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.threads.executor.BRExecutor
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.wallet.model.Balance
@@ -45,7 +46,10 @@ import com.breadwallet.wallet.abstracts.OnTxListModified
 import com.breadwallet.wallet.util.SyncUpdateHandler
 import com.breadwallet.wallet.wallets.CryptoTransaction
 import com.platform.tools.KVStoreManager
+import com.platform.util.AppReviewPromptManager
 import java.math.BigDecimal
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * ViewModel encapsulating WalletActivity's balance and transactions refresh.
@@ -54,6 +58,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     val balanceLiveData = MutableLiveData<Balance>()
     val txListLiveData = MutableLiveData<List<TxUiHolder>>()
+    val requestFeedbackLiveData = MutableLiveData<Boolean>()
     val progressLiveData = Transformations.map(WalletRepository.getInstance(application).walletsLiveData)
     { wallets ->
         val wallet = wallets.findLast { wallet -> wallet.currencyCode == targetCurrencyCode }
@@ -80,7 +85,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     companion object {
         private val TAG = WalletViewModel::class.java.toString()
-        private const val CONFIRMED_BLOCKS_NUMBER = 6
+        private const val REVIEW_PROMPT_DELAY_SECONDS = 3L
     }
 
     init {
@@ -136,6 +141,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     /**
+     * Save that the user dismissed the review prompt.
+     */
+    fun onRateAppPromptDismissed() = AppReviewPromptManager.onReviewPromptDismissed(getApplication())
+
+    /**
      * Refresh the wallet's transactions list.
      */
     private fun refreshTxList() {
@@ -164,6 +174,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 txUiHolder.metaData = txMetaData
                 transactionsList.add(txUiHolder)
             }
+
+            // The first time we get the list of transactions check if we should request the user to
+            // rate the app in Google Play.
+            if (mTxList.isEmpty() && transactionsList.isNotEmpty()) {
+                checkIfShouldShowReviewPrompt()
+            }
+
             mTxList = transactionsList
             txListLiveData.postValue(filteredTxList())
         }
@@ -203,11 +220,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                         BRSharedPrefs.getLastBlockHeight(getApplication(), wallet.currencyCode) - item.blockHeight + 1
                     }
                     //complete
-                    if (filter.pending && confirms >= CONFIRMED_BLOCKS_NUMBER) {
+                    if (filter.pending && confirms >= BRConstants.CONFIRMED_BLOCKS_NUMBER) {
                         willAdd = false
                     }
                     //pending
-                    if (filter.completed && confirms < CONFIRMED_BLOCKS_NUMBER) {
+                    if (filter.completed && confirms < BRConstants.CONFIRMED_BLOCKS_NUMBER) {
                         willAdd = false
                     }
                 }
@@ -215,4 +232,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    private fun checkIfShouldShowReviewPrompt() {
+        // Done with a delay to let the user see the the list of the transactions before showing the prompt
+        Executors.newSingleThreadScheduledExecutor().schedule({
+            val showPrompt = AppReviewPromptManager.showReview(getApplication(), targetCurrencyCode, mTxList)
+            requestFeedbackLiveData.postValue(showPrompt)
+        }, REVIEW_PROMPT_DELAY_SECONDS, TimeUnit.SECONDS)
+    }
+
 }

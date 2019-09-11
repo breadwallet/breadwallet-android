@@ -337,6 +337,9 @@
         <activity android:name=".view.dialog.DialogActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ui.notification.InAppNotificationActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

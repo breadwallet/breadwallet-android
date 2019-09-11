@@ -15,8 +15,10 @@ import org.json.JSONArray;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -94,6 +96,10 @@ public class BRSharedPrefs {
     private static final String DEBUG_WEB_PLATFORM_URL = "debug_web_platform_url";
     private static final String HTTP_SERVER_PORT = "http_server_port";
     private static final String REWARDS_ANIMATION_SHOWN = "rewardsAnimationShown";
+    private static final String READ_IN_APP_NOTIFICATIONS = "readInAppNotifications";
+    public static final String APP_FOREGROUNDED_COUNT = "appForegroundedCount";
+    public static final String APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated";
+    public static final String APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -671,7 +677,7 @@ public class BRSharedPrefs {
     /**
      * Saves the web platform debug URL to the shared preferences.
      *
-     * @param context Execution context.
+     * @param context             Execution context.
      * @param webPlatformDebugURL The web platform debug URL to be persisted.
      */
     public static void putWebPlatformDebugURL(Context context, String webPlatformDebugURL) {
@@ -701,4 +707,85 @@ public class BRSharedPrefs {
         prefs.edit().putInt(HTTP_SERVER_PORT, port).apply();
     }
 
+    /**
+     * Save the given in-app notification id into the collection of read message.
+     *
+     * @param context        Execution context.
+     * @param notificationId The id of the message that has been read.
+     */
+    public static void putReadInAppNotificationId(Context context, String notificationId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        Set<String> readIds = prefs.getStringSet(READ_IN_APP_NOTIFICATIONS, new HashSet<>());
+        String stringId = notificationId;
+        if (!readIds.contains(stringId)) {
+            Set<String> updatedSet = new HashSet<>(readIds);
+            updatedSet.add(stringId);
+            prefs.edit().putStringSet(READ_IN_APP_NOTIFICATIONS, updatedSet).apply();
+        }
+    }
+
+    /**
+     * Get the ids of the in-app notification that has been read.
+     *
+     * @param context Execution context.
+     * @return A set with the ids of the messages that has been read.
+     */
+    public static Set<String> getReadInAppNotificationIds(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getStringSet(READ_IN_APP_NOTIFICATIONS, new HashSet<>());
+    }
+
+    /**
+     * Save an int with the given key in the shared preferences.
+     *
+     * @param context Execution context.
+     * @param key     The name of the preference.
+     * @param value   The new value for the preference.
+     */
+    public static void putInt(Context context, String key, int value) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putInt(key, value).apply();
+    }
+
+    /**
+     * Retrieve an int value from the preferences.
+     *
+     * @param key          The name of the preference to retrieve.
+     * @param defaultValue Value to return if this preference does not exist.
+     * @param context      Execution context.
+     * @param key          The name of the preference.
+     * @param defaultValue The default value to return if not present.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    public static int getInt(Context context, String key, int defaultValue) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(key, defaultValue);
+    }
+
+    /**
+     * Save an boolean with the given key in the shared preferences.
+     *
+     * @param context Execution context.
+     * @param key     The name of the preference.
+     * @param value   The new value for the preference.
+     */
+    public static void putBoolean(Context context, String key, boolean value) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(key, value).apply();
+    }
+
+    /**
+     * Retrieve an boolean value from the preferences.
+     *
+     * @param key          The name of the preference to retrieve.
+     * @param defaultValue Value to return if this preference does not exist.
+     * @param context      Execution context.
+     * @param key          The name of the preference.
+     * @param defaultValue The default value to return if not present.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    public static boolean getBoolean(Context context, String key, boolean defaultValue) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(key, defaultValue);
+    }
 }
