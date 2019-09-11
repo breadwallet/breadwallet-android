@@ -2,7 +2,6 @@ package com.breadwallet.tools.manager;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
-import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
@@ -90,10 +89,8 @@ public final class BRApiManager {
     private static BRApiManager mInstance;
     private Timer mTimer;
     private TimerTask mTimerTask;
-    private Handler mHandler;
 
     private BRApiManager() {
-        mHandler = new Handler();
     }
 
     public static BRApiManager getInstance() {
@@ -195,6 +192,18 @@ public final class BRApiManager {
                 updateData(context);
             }
         };
+    }
+
+    /** Synchronously updates RateRepository data. */
+    @WorkerThread
+    public void updateRatesSync(final Context context) {
+        Log.d(TAG, "Fetching rates");
+        //Update Crypto Rates
+        List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
+        updateCryptoRates(context, codeList);
+
+        //Update BTC/Fiat rates
+        updateFiatRates(context);
     }
 
     @WorkerThread

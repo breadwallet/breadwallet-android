@@ -256,33 +256,40 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             return null;
         }
         List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+        for (int i = txs.length - 1; i >= 0; i--) { //reverse order
             BRCoreTransaction tx = txs[i];
-            String toAddress = null;
-            //if sent
-            if (getWallet().getTransactionAmount(tx) < 0) {
-                toAddress = tx.getOutputAddresses()[0];
-            } else {
-                for (String to : tx.getOutputAddresses()) {
-                    if (containsAddress(to)) {
-                        toAddress = to;
-                        break;
-                    }
+
+            String myAddress = null;
+            String otherAddress = null;
+            for (String outputAddress : tx.getOutputAddresses()) {
+                if (myAddress == null && containsAddress(outputAddress)) {
+                    myAddress = outputAddress;
+                }
+
+                if (otherAddress == null && !containsAddress(outputAddress)) {
+                    otherAddress = outputAddress;
                 }
             }
-            if (toAddress == null) {
-                throw new NullPointerException("Failed to retrieve toAddress");
+
+            String outputAddress = getWallet().getTransactionAmount(tx) < 0
+                    ? otherAddress   // sent transaction
+                    : myAddress;    // received transaction
+
+            if (outputAddress == null) {
+                throw new IllegalArgumentException("Failed to retrieve outputAddress");
             }
+
             boolean isReceived = getWallet().getTransactionAmount(tx) > 0;
             if (!isReceived) {
-                //store the latest send transaction blockheight
+                //store the latest send transaction block height
                 BRSharedPrefs.putLastSendTransactionBlockheight(app, getCurrencyCode(), tx.getBlockHeight());
             }
             uiTxs.add(new TxUiHolder(tx, isReceived, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
-                    toAddress, tx.getInputAddresses()[0],
+                    outputAddress, outputAddress,
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
-                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
+                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx),
+                    false, null));
         }
 
         return uiTxs;

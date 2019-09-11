@@ -157,7 +157,7 @@ public final class PromptManager {
                 break;
             case PAPER_KEY:
                 title.setText(context.getString(R.string.Prompts_PaperKey_title));
-                description.setText(context.getString(R.string.Prompts_PaperKey_body));
+                description.setText(context.getString(R.string.Prompts_PaperKey_Body_Android));
                 continueButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

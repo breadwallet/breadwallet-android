@@ -249,7 +249,7 @@ public abstract class BRActivity extends FragmentActivity {
         // Filter obscured touches by consuming them.
         if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) != 0) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
+                BRDialog.showSimpleDialog(this, getString(R.string.Android_screenAlteringTitle),
                         getString(R.string.Android_screenAlteringMessage));
             }
             return true;

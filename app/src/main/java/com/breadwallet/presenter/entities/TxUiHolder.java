@@ -49,11 +49,13 @@ public class TxUiHolder {
     public TxMetaData metaData;
     private Object transaction;
     private boolean isReceived;
+    private boolean isErrored;
+    private String errorDescription;
 
     //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
                       BigDecimal fee, String to, String from,
-                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isErrored, String errorDescription) {
         this.transaction = transaction;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
@@ -67,6 +69,8 @@ public class TxUiHolder {
         this.amount = amount;
         this.isValid = isValid;
         this.txSize = txSize;
+        this.isErrored = isErrored;
+        this.errorDescription = errorDescription;
     }
 
     public int getBlockHeight() {
@@ -134,6 +138,23 @@ public class TxUiHolder {
     }
 
     /**
+     * Returns true if this transaction is in an error state.
+     *
+     * @return whether the transaction is in an error state
+     */
+    public boolean isErrored() {
+        return isErrored;
+    }
+
+    /**
+     * Returns a description of the transaction's error, if in an error state, otherwise null.
+     * @return description of the transaction's error, if in an error state, otherwise null
+     */
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    /**
      * Return whether the transaction is complete or not.
      *
      * @param context      Execution context.
@@ -145,5 +166,4 @@ public class TxUiHolder {
                 0 : BRSharedPrefs.getLastBlockHeight(context, currencyCode) - blockHeight + 1;
         return confirms >= BRConstants.CONFIRMED_BLOCKS_NUMBER;
     }
-
 }
