@@ -122,6 +122,22 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.pricealert.PriceAlertListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pricealert.SelectAlertCryptoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pricealert.NewPriceAlertActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pricealert.SelectForCurrencyActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".presenter.activities.settings.SyncBlockchainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
@@ -314,7 +330,7 @@
             android:name=".presenter.activities.ConfirmationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        
+
         <service
             android:name=".protocols.messageexchange.MessageExchangeService"
             android:enabled="true"

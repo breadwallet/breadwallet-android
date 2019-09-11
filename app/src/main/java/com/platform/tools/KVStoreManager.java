@@ -186,6 +186,16 @@ public class KVStoreManager {
         replicatedKVStore.syncKey(KEY_WALLET_INFO);
     }
 
+    /**
+     * Synchronize token list with KV store.
+     *
+     * @param context Caller context.
+     */
+    public static void syncTokenList(Context context) {
+        ReplicatedKVStore replicatedKVStore = getReplicatedKvStore(context);
+        replicatedKVStore.syncKey(KEY_TOKEN_LIST_META_DATA);
+    }
+
     public static PairingMetaData getPairingMetadata(Context context, byte[] pubKey) {
         Log.e(TAG, "putPairingMetadata: hexPubkey: " + BRCoreKey.encodeHex(pubKey));
         String key = pairingKey(pubKey);
