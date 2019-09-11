@@ -11,8 +11,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -38,7 +36,7 @@ import okhttp3.Response;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPRouter implements Middleware {
+public class HTTPRouter extends SignedRequestMiddleware {
     public static final String TAG = HTTPRouter.class.getName();
     Set<Plugin> plugins;
 
@@ -48,6 +46,9 @@ public class HTTPRouter implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (!super.handle(target, baseRequest, request, response)) {
+            return false;
+        }
         for (Plugin plugin : plugins) {
             boolean success = plugin.handle(target, baseRequest, request, response);
             if (success) {
