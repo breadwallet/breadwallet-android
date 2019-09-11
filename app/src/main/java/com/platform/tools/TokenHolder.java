@@ -1,6 +1,8 @@
 package com.platform.tools;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
@@ -31,8 +33,7 @@ import com.platform.APIClient;
  * THE SOFTWARE.
  */
 public class TokenHolder {
-
-
+    private static final String TAG = TokenHolder.class.getSimpleName();
     private static String mApiToken;
     private static String mOldApiToken;
 
@@ -51,12 +52,13 @@ public class TokenHolder {
         return mApiToken;
     }
 
-    public synchronized static void updateToken(Context app, String expiredToken) {
+    public synchronized static String updateToken(Context app, String expiredToken) {
         if (mOldApiToken == null || !mOldApiToken.equals(expiredToken)) {
+            Log.e(TAG, "updateToken: updating the token");
             mOldApiToken = mApiToken;
             fetchNewToken(app);
         }
-
+        return mApiToken;
     }
 
     private synchronized static void fetchNewToken(Context app) {
@@ -66,4 +68,9 @@ public class TokenHolder {
         }
     }
 
+    @VisibleForTesting
+    public synchronized static void reset() {
+        mApiToken = null;
+        mOldApiToken = null;
+    }
 }

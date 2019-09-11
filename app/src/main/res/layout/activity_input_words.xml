@@ -101,9 +101,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word2"
                     android:textAlignment="center"
                     android:textCursorDrawable="@null"
@@ -135,9 +135,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word3"
                     android:textAlignment="center" />
 
@@ -167,9 +167,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word4"
                     android:textAlignment="center" />
 
@@ -206,9 +206,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word5"
                     android:textAlignment="center" />
 
@@ -238,9 +238,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word6"
                     android:textAlignment="center" />
 
@@ -270,9 +270,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word7"
                     android:textAlignment="center" />
 
@@ -309,9 +309,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word8"
                     android:textAlignment="center" />
 
@@ -341,9 +341,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word9"
                     android:textAlignment="center" />
 
@@ -373,9 +373,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word10"
                     android:textAlignment="center" />
 
@@ -414,9 +414,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word11"
                     android:textAlignment="center" />
 
@@ -447,9 +447,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionNext"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionNext|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:nextFocusForward="@+id/word12"
                     android:textAlignment="center" />
 
@@ -480,9 +480,9 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
-                    android:imeOptions="actionDone"
-                    android:inputType="textVisiblePassword"
-                    android:lines="1"
+                    android:imeOptions="actionDone|flagNoPersonalizedLearning"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:textAlignment="center" />
 
                 <com.breadwallet.presenter.customviews.BaseTextView
