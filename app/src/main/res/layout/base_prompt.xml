@@ -33,7 +33,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/Prompts.PaperKey.body"
+            android:text="@string/Prompts.PaperKey.Body.Android"
             android:textColor="@color/almost_black"
             android:textSize="14sp" />
 

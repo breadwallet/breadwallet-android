@@ -1,23 +1,16 @@
 package com.breadwallet.wallet;
 
-import android.app.Activity;
-import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -42,6 +35,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,13 +65,14 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class WalletsMaster {
+public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
     private static final String TAG = WalletsMaster.class.getName();
 
     private static WalletsMaster instance;
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
     private TokenListMetaData mTokenListMetaData;
+    private List<String> mUnloadedTokenSymbols = new ArrayList<>();
     private List<BalanceUpdateListener> mBalancesUpdateListeners = new ArrayList<>();
 
     private WalletsMaster() {
@@ -96,40 +91,43 @@ public class WalletsMaster {
         if (ethWallet == null) {
             return; //return empty wallet list if ETH is null (meaning no public key yet)
         }
+        ethWallet.addTokenLoadedListener(this);
 
         mWallets.clear();
         mTokenListMetaData = KVStoreManager.getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
-            List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
-            enabled.add(new TokenListMetaData.TokenInfo(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, false, null));
-            enabled.add(new TokenListMetaData.TokenInfo(WalletBchManager.BITCASH_CURRENCY_CODE, false, null));
-            enabled.add(new TokenListMetaData.TokenInfo(WalletEthManager.ETH_CURRENCY_CODE, false, null));
-            enabled.add(new TokenListMetaData.TokenInfo(WalletTokenManager.BRD_CURRENCY_CODE, true, WalletTokenManager.BRD_CONTRACT_ADDRESS));
-            mTokenListMetaData = new TokenListMetaData(enabled, null);
+            mTokenListMetaData = new TokenListMetaData(BRConstants.DEFAULT_WALLETS, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
 
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
 
-            boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
-
-            if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE) && !isHidden) {
-                //BTC wallet
-                mWallets.add(WalletBitcoinManager.getInstance(app));
-            } else if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE) && !isHidden) {
-                //BCH wallet
-                mWallets.add(WalletBchManager.getInstance(app));
-            } else if (enabled.symbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && !isHidden) {
-                //ETH wallet
-                mWallets.add(ethWallet);
-            } else {
-                //add ERC20 wallet
-                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, enabled.symbol);
-                if (tokenWallet != null && !isHidden) {
-                    mWallets.add(tokenWallet);
+            if (!mTokenListMetaData.isCurrencyHidden(enabled.symbol)) {
+                if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE)) {
+                    //BTC wallet
+                    mWallets.add(WalletBitcoinManager.getInstance(app));
+                } else if (enabled.symbol.equalsIgnoreCase(BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE)) {
+                    //BCH wallet
+                    mWallets.add(WalletBchManager.getInstance(app));
+                } else if (enabled.symbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                    //ETH wallet
+                    mWallets.add(ethWallet);
+                } else {
+                    //add ERC20 wallet
+                    WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, enabled.symbol);
+                    if (tokenWallet == null) {
+                        Log.d(TAG, "Storing unloaded token(" + enabled.symbol + ").");
+                        mUnloadedTokenSymbols.add(enabled.symbol);
+                    } else {
+                        mWallets.add(tokenWallet);
+                    }
                 }
             }
 
+        }
+
+        if (mUnloadedTokenSymbols.isEmpty()) {
+            ethWallet.removeTokenLoadedListener(this);
         }
     }
 
@@ -142,15 +140,14 @@ public class WalletsMaster {
     }
 
     public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
-        List<String> currencyCodes = new ArrayList<>();
-        currencyCodes.add(WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        currencyCodes.add(WalletBitcoinManager.BITCASH_CURRENCY_CODE);
-        currencyCodes.add(WalletEthManager.ETH_CURRENCY_CODE);
-        currencyCodes.add(WalletTokenManager.BRD_CURRENCY_CODE);
+        LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
+        for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
+            currencyCodes.add(tokenInfo.symbol);
+        }
         for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
             currencyCodes.add(tokenItem.symbol.toUpperCase());
         }
-        return currencyCodes;
+        return new ArrayList<>(currencyCodes);
     }
 
     //return the needed wallet for the iso
@@ -422,4 +419,19 @@ public class WalletsMaster {
         mBalancesUpdateListeners.remove(onBalancesUpdated);
     }
 
+    @Override
+    public void onTokenLoaded(String symbol) {
+        if (mUnloadedTokenSymbols.contains(symbol)) {
+            Log.d(TAG, "Restoring now loaded token(" + symbol + ").");
+            WalletTokenManager manager = WalletTokenManager.getTokenWalletByIso(BreadApp.getBreadContext(), symbol);
+            if (manager != null) {
+                mWallets.add(manager);
+                refreshBalances();
+                Log.d(TAG, "Restoration of token(" + symbol + ") complete.");
+            } else {
+                Log.e(TAG, "Failed to obtain WalletTokenManager for loaded token(" + symbol + ").");
+            }
+            mUnloadedTokenSymbols.remove(symbol);
+        }
+    }
 }

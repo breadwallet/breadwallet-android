@@ -38,6 +38,12 @@
     <string name="Alert.error">错误</string>
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">您的安卓操作系统密钥库存在问题，请联系support@breadwallet.com</string>
+    <!-- KeyStore error, keys are invalidated -->
+    <string name="Alert.keystore.invalidated.android">您的 BRD 加密数据最近因为您的安卓系统屏幕锁定被禁用而失效。</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
+    <string name="Alert.keystore.invalidated.uninstall.android">我们无法继续，因为您的屏幕锁定设置已更改(例如，密码已禁用，指纹已更改)。出于安全考虑，安卓已永久锁定了您的密钥存储。因此，您必须通过卸载删除BRD应用数据。\n\n请放心，您的资金很安全！ 重新安装应用后才能用纸质密匙还原您的钱包。</string>
+    <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
+    <string name="Alert.keystore.invalidated.wipe.android">我们无法继续，因为您的屏幕锁定设置已更改(例如，密码已禁用，指纹已更改)。出于安全考虑，安卓已永久锁定了您的密钥存储。因此，必须擦除您的BRD应用数据。\n\n请放心，您的资金很安全！ 用你的纸质密匙还原您的钱包。</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">安卓系统密钥库错误</string>
     <!-- No internet alert message -->
@@ -74,22 +80,6 @@
     <string name="Android.screenAlteringMessage">您应禁用屏幕更改应用（如 Twilight），否则 BRD 将无法正常工作。</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">检测到屏幕更改应用</string>
-    <!-- Body for an announcement promoting Coinify. -->
-    <string name="Announcement.coinfyPromoBody">在2019年3月31日前购买100欧元的比特币并获得一张在Amazon.de网上消费的20欧元礼品卡 ⃰。</string>
-    <!-- Button title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoActionTitle">拿到你的礼品卡</string>
-    <!-- Footnote text for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoFootnote">每位客户限拿一张礼品卡。仅适用于奥地利，德国，卢森堡和荷兰</string>
-    <!-- Title for an announcement promoting Coinify. -->
-    <string name="Announcement.coinifyPromoTitle">获得一张20欧元的Amazon.de礼品卡！</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyOne">通过你的银行购买BTC和ETH会有较高的限额，且可加快送货时间并降低费用。登记注册后，在计划启动或上线时会收到通知。</string>
-    <!-- Body text for in-app announcement about our partner Glidera. Glidera should be capitalized and not translated. -->
-    <string name="Announcement.glideraBodyTwo">如果有任何更改，我们将让你知道。</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleOne">即将推出新的购买方式！</string>
-    <!-- Title for in-app announcement about our partner Glidera. -->
-    <string name="Announcement.glideraTitleTwo">谢谢你！</string>
     <!-- JSON Serialization error message -->
     <string name="ApiClient.jsonError">JSON 串行化错误</string>
     <!-- Wallet not ready error message -->
@@ -134,14 +124,22 @@
     <string name="Button.buy">购买</string>
     <!-- Cancel button label -->
     <string name="Button.cancel">取消</string>
+    <!-- Confirm button title -->
+    <string name="Button.confirm">确认</string>
+    <!-- Button label to open a email compose window with our support email in the to field. -->
+    <string name="Button.contactSupport.android">联系支持人员</string>
     <!-- prompt continue button -->
     <string name="Button.continueAction">继续</string>
     <!-- prompt dismiss button -->
     <string name="Button.dismiss">撤销</string>
+    <!-- Done button title -->
+    <string name="Button.done">完成</string>
     <!-- Button to return to the "home" screen (the home screen is the top menu). -->
     <string name="Button.Home">主页</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">忽略</string>
+    <!-- Maybe Later button label -->
+    <string name="Button.maybeLater">也许以后</string>
     <!-- menu button -->
     <string name="Button.menu">菜单</string>
     <!-- More information button -->
@@ -150,16 +148,28 @@
     <string name="Button.no">不</string>
     <!-- OK button label -->
     <string name="Button.ok">好</string>
+    <!-- Open Settings button -->
+    <string name="Button.openSettings">打开设置</string>
     <!-- receive button -->
     <string name="Button.receive">收到</string>
+    <!-- Button label to open Security Settings. -->
+    <string name="Button.securitySettings.android">安全中心</string>
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">出售</string>
     <!-- send button -->
     <string name="Button.send">发送</string>
     <!-- Settings button label -->
     <string name="Button.settings">设置</string>
+    <!-- Setup button label -->
+    <string name="Button.setup">设置</string>
+    <!-- Skip button title -->
+    <string name="Button.skip">跳过</string>
     <!-- Settings button label -->
     <string name="Button.submit">提交</string>
+    <!-- Button label to uninstall the app. -->
+    <string name="Button.uninstall.android">卸载</string>
+    <!-- Button label to wipe the user's application data. -->
+    <string name="Button.wipe.android">擦除</string>
     <!-- Yes button -->
     <string name="Button.yes">是</string>
     <!-- Camera plugin instruction -->
@@ -202,6 +212,8 @@
     <string name="DefaultCurrency.rateLabel">汇率</string>
     <!-- The wallet is disabled. -->
     <string name="Disabled.title">钱包已禁用</string>
+    <!-- Share address by e-mail subject -->
+    <string name="Email.address_subject">%1$s地址</string>
     <!-- Service capabilities description -->
     <string name="EME.permissions.accountRequest">请求%1$s 帐户信息</string>
     <!-- Service capabilities description -->
@@ -256,6 +268,8 @@
     <string name="FeeSelector.regularTime">10-60 分钟</string>
     <!-- Fee Selector title -->
     <string name="FeeSelector.title">处理速度</string>
+    <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
+    <string name="FileChooser.selectImageSource.android">选择图像源</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -368,6 +382,14 @@
     <string name="MenuViewController.modalTitle">菜单</string>
     <!-- button label -->
     <string name="MenuViewController.recoverButton">恢复钱包</string>
+    <!-- Paper Key Skip modal body (Android-version) -->
+    <string name="Modal.PaperKeySkip.Body.Android">更改手机安全设置后,打开钱包需要输入纸钥。\n\n您希望稍后再设置纸钥吗？</string>
+    <!-- Paper Key Skip modal Continue Set Up button -->
+    <string name="Modal.PaperKeySkip.Button.ContinueSetUp">继续设置</string>
+    <!-- Paper Key Skip modal I'll do it later button -->
+    <string name="Modal.PaperKeySkip.Button.IllDoItLater">稍后进行</string>
+    <!-- Paper Key Skip modal title -->
+    <string name="Modal.PaperKeySkip.Title">注意</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">切换到自动模式</string>
     <!-- Node is connected label -->
@@ -411,7 +433,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">我们有价值超过 600 亿美元的资产受到保护。</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">成为全世界信任 BRD 的 150 万人中的一员。</string>
+    <string name="OnboardingPageTwo.title">加入全球数百万人信赖的BRD。</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">发送%1$s以购买%2$s</string>
     <!-- Payment confirmation view title -->
@@ -454,12 +476,14 @@
     <string name="Prompts.NoPasscode.body">需要设备密码才能保护您的钱包。转到设置并开启密码。</string>
     <!-- No Passcode set warning title -->
     <string name="Prompts.NoPasscode.title">开启设备密码</string>
-    <!-- Instruction how to enable device encryption -->
+    <!-- Instructions on how to enable screen lock settings -->
     <string name="Prompts.NoScreenLock.body.android">需要设备屏幕锁定才能保护您的钱包。在“设置”&gt;“安全”&gt;“屏幕锁定”中启用它以便继续。</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">屏幕锁定已禁用</string>
-    <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">为了应对手机丢失或者更换， 请您务必写下你的纸键。点击此处继续。</string>
+    <!-- Warning about recovery key (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">为了应对手机丢失或者更换， 请您务必写下你的纸键。</string>
+    <!-- Warning about paper key (Android-version) -->
+    <string name="Prompts.PaperKey.Body.Android">设置纸钥,避免手机丢失或更换带来的不便。您需要提供密钥以更改手机安全设置。</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">需要采取的行动</string>
     <!-- Transaction rejected prompt body -->
@@ -484,20 +508,32 @@
     <string name="Prompts.UpgradePin.body">BRD 已升级到使用 6 位 PIN。点击此处升级。</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">升级 PIN</string>
-    <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-    <string name="PushNotifications.body">打开推送通知，以便将来从 BRD 接收特殊消息。</string>
+    <!-- Body text for the push notifications prompt. -->
+    <string name="PushNotifications.body">打开推送通知，抢先了解新功能和特惠。</string>
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">提示已禁用</string>
-    <!-- Push notifications settings instructions -->
-    <string name="PushNotifications.enableInstructions">在设置里开启提示以接收提醒</string>
+    <!-- Body text when push notifications are disabled. -->
+    <string name="PushNotifications.disabledBody">开启接收 BRD 特惠版更新通知。</string>
+    <!-- Body text when push notifications are enabled. -->
+    <string name="PushNotifications.enabledBody">您正在接收 BRD 特惠版更新。</string>
+    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">疑似关闭通知。请进入设置启用 BRD 通知。</string>
     <!-- Push notifications toggle switch label -->
-    <string name="PushNotifications.label">推送通知</string>
+    <string name="PushNotifications.label">接收推送通知</string>
     <!-- Push notifications are off label -->
     <string name="PushNotifications.off">关闭</string>
     <!-- Push notifications are on label -->
     <string name="PushNotifications.on">开启</string>
     <!-- Push notifications settings view title label -->
-    <string name="PushNotifications.title">通知</string>
+    <string name="PushNotifications.title">敬请保持同步</string>
+    <!-- Google play review prompt body -->
+    <string name="RateAppPrompt.Body.Android">如果您喜欢我们的应用程式，请花点时间对其进行评分并给我们一个评论。</string>
+    <!-- Google play review prompt, revivew button -->
+    <string name="RateAppPrompt.Button.Dismiss.Android">不了，谢谢。</string>
+    <!-- Google play review prompt, dismiss button -->
+    <string name="RateAppPrompt.Button.RateApp.Android">评价BRD</string>
+    <!-- Google play review prompt title -->
+    <string name="RateAppPrompt.Title.Android">评价BRD</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">已复制到剪贴板。</string>
     <!-- Share via email button label -->
@@ -534,6 +570,74 @@
     <string name="RecoverWallet.subheader">输入您想恢复的钱包的纸键。</string>
     <!-- Reset PIN with paper key: sub-header -->
     <string name="RecoverWallet.subheader_reset_pin">要重置 PIN 码，请在下面的框中输入纸上密钥中的单词。</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryInputError">您输入的字词不正确。请再试一次。</string>
+    <!-- Instructs the user to enter words from the set of recovery key words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">就快完成了！请输入以下来自您的恢复密钥中的字词。</string>
+    <!-- Title for the confirmation step of the recovery key flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">确认恢复密钥</string>
+    <!-- Title displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">输入恢复密钥</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">请输入恢复密钥以取消此钱包与设备的关联。</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">您确定要稍后设置恢复密钥吗？</string>
+    <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">稍后设置</string>
+    <!-- Button text for the 'Generate Recovery Key' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">生成恢复密钥</string>
+    <!-- Subtext for the recovery key landing page. -->
+    <string name="RecoveryKeyFlow.generateKeyExplanation">如果您升级或丢失手机,需要使用此密钥来恢复您的财产。</string>
+    <!-- Default title for the recovery key landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">生成您的私有恢复密钥</string>
+    <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
+    <string name="RecoveryKeyFlow.goToWalletButtonTitle">前往钱包</string>
+    <!-- Hint text for recovery key intro page, e.g., Step 2 -->
+    <string name="RecoveryKeyFlow.howItWorksStep">如何进行 - 第 %1$@ 步</string>
+    <!-- Error text displayed when the user enters an incorrect recovery key -->
+    <string name="RecoveryKeyFlow.invalidPhrase">您输入的部分字词与恢复密钥不匹配。请再试一次。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.keepSecure">妥善保管</string>
+    <!-- Informs the user that the recovery is only required for recovering a wallet. -->
+    <string name="RecoveryKeyFlow.keyUseHint">您的密钥仅用于恢复时,日常访问钱包时无需此密钥。</string>
+    <!-- Reminds the user not to take screenshots or email the recovery key words -->
+    <string name="RecoveryKeyFlow.noScreenshotsOrEmailWarning">出于安全考虑,请勿截图或通过电子邮件发送这些字词</string>
+    <!-- Recommends that the user avoids capturing the paper key with a screenshot -->
+    <string name="RecoveryKeyFlow.noScreenshotsRecommendation">请将您的密钥记录在纸上并确认无误。为安全起见,不建议使用屏幕截图。</string>
+    <!-- Title displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWallet">恢复您的钱包</string>
+    <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">请输入您想要恢复的钱包的恢复密钥。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.relaxBuyTrade">放心,购买和交易</string>
+    <!-- Reminds the user to write down the recovery key words. -->
+    <string name="RecoveryKeyFlow.rememberToWriteDownReminder">请记得将这些字词写下来。如果您忘记了,请滑动以返回。</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">请输入恢复密钥以重置您的 PIN 码。</string>
+    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <string name="RecoveryKeyFlow.securityAssurance">鉴于在交易中您的资金可得到最佳的安全和隐私保障,您可放心购买和交易。</string>
+    <!-- Recommends that the user stores the recovery key in a secure location -->
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">请将您的密钥存放在安全的地方。此密钥为恢复您的钱包的唯一方法。BRD 不会保留副本。</string>
+    <!-- Title for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">恭喜！您已完成恢复密钥设置。</string>
+    <!-- Subtitle for the success page after the recovery key has been set up -->
+    <string name="RecoveryKeyFlow.successSubheading">您现已可以在您的 BRD 钱包中进行存款,交易以及购买加密货币。</string>
+    <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWallet">取消钱包与此设备的关联。</string>
+    <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
+    <string name="RecoveryKeyFlow.unlinkWalletSubtext">要启用新钱包,请取消您的设备与当前设置的钱包间的关联。</string>
+    <!-- Warning displayed when the user starts the process of unlinking a wallet -->
+    <string name="RecoveryKeyFlow.unlinkWalletWarning">必须恢复钱包才能重新获得访问权限。</string>
+    <!-- Title for recovery key intro page -->
+    <string name="RecoveryKeyFlow.writeItDown">记下您的密钥</string>
+    <!-- Title for the recovery key landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">再次记下您的恢复密钥</string>
+    <!-- Subtitle for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">按顺序记下下列字词。</string>
+    <!-- Title for the write recovery key screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">您的恢复密钥</string>
+    <!-- Title for the step number when the user pages through the recovery words -->
+    <string name="RecoveryKeyFlow.writeKeyStepTitle">共 %2$@ 步,第 %1$@ 步</string>
     <!-- No amount entered error message. -->
     <string name="RequestAnAmount.noAmount">请先输入金额。</string>
     <!-- Request a specific amount of bitcoin -->
@@ -582,8 +686,11 @@
     <string name="SecurityCenter.faceIdTitle">面部识别</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的比特币的唯一方法。</string>
-    <!-- Paper Key button title -->
+    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">纸键</string>
+    <!-- Paper Key button title -->
+    <string name="SecurityCenter.paperKeyTitle.android">纸键</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">保护您的 BRD 免遭未授权用户盗用。</string>
     <!-- PIN button title -->
@@ -686,6 +793,10 @@
     <string name="Settings.advanced">高级</string>
     <!-- Advanced Settings title -->
     <string name="Settings.advancedTitle">高级设置</string>
+    <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
+    <string name="Settings.atmMapMenuItemSubtitle">仅在美国提供</string>
+    <!-- ATM map menu item title -->
+    <string name="Settings.atmMapMenuItemTitle">加密ATM地图</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">显示币种</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
@@ -746,16 +857,20 @@
     <string name="StartPaperPhrase.againButtonTitle">再次书写纸键</string>
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 BRD 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
+    <!-- Paper key explanation text (Android-version) -->
+    <string name="StartPaperPhrase.Body.Android">在手机丢失,被盗,损坏或升级情况下,纸钥是您恢复 BRD 的唯一方法。\n\n您需要提供纸钥以更改手机安全设置。\n\n我们将向您展示一份单词列表,请您记录在纸上并妥善保管。</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">写下纸键</string>
-    <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 %1$s</string>
+    <!-- Argument is date; date should be on a new line -->
+    <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 \n%1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">创建新钱包</string>
     <!-- Start view message -->
     <string name="StartViewController.message">使用比特币最安全且最可靠的方式。</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">恢复钱包</string>
+    <!-- Syncing view done syncing state header text -->
+    <string name="SyncingView.activity">活动</string>
     <!-- Syncing view connectiong state header text -->
     <string name="SyncingView.connecting">连接中</string>
     <!-- The sync has failed (to complete) -->
@@ -880,6 +995,9 @@
     <string name="TransactionDetails.commentsPlaceholder">添加备忘录...</string>
     <!-- Timestamp section header for complete tx -->
     <string name="TransactionDetails.completeTimestampHeader">完成</string>
+    <!-- Block height and confirmations label -->
+    <!--eg. 182930 (45061 confirmations)-->
+    <string name="TransactionDetails.confirmationsLabel">确认</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">您的交易将显示在这里。</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
