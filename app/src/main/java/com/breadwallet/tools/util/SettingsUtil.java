@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.widget.ToastKt;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
@@ -25,6 +29,7 @@ import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.NodesActivity;
+import com.breadwallet.ui.pricealert.PriceAlertListActivity;
 import com.breadwallet.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
@@ -39,6 +44,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.platform.pricealert.PriceAlertWorker;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.util.AppReviewPromptManager;
@@ -242,7 +248,7 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle_android), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity, WriteDownActivity.class);
@@ -291,6 +297,16 @@ public final class SettingsUtil {
         String currentTokenBundle = ServerBundlesHelper.getBundle(activity, ServerBundlesHelper.Type.TOKEN);
         items.add(new BRSettingsItem(TOKEN_BUNDLE, currentTokenBundle, view -> {
             showBundleTextDialog(activity, ServerBundlesHelper.Type.TOKEN, currentTokenBundle);
+        }, false, 0));
+
+        items.add(new BRSettingsItem(activity.getString(R.string.PriceAlertList_title), "", view -> {
+            Intent intent = new Intent(activity, PriceAlertListActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        }, false, 0));
+        items.add(new BRSettingsItem("Check Price Alerts", "", view -> {
+            Toast.makeText(view.getContext(), "Checking your Price Alerts in the background.", Toast.LENGTH_LONG).show();
+            WorkManager.getInstance().enqueue(OneTimeWorkRequest.from(PriceAlertWorker.class));
         }, false, 0));
         return items;
     }

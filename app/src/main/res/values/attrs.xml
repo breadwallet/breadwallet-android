@@ -31,4 +31,10 @@
     <declare-styleable name="BRNotificationBar">
         <attr name="breadText" format="string"/>
     </declare-styleable>
+
+    <!-- Font file names -->
+    <string name="Font.CircularPro_Bold">CircularPro-Bold.otf</string>
+    <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
+    <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
+    <string name="Font.Celevenia">Celevenia.otf</string>
 </resources>
