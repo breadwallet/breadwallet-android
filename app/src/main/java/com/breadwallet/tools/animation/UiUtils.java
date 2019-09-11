@@ -168,17 +168,16 @@ public class UiUtils {
 
     public static void showTransactionDetails(Activity app, TxUiHolder item) {
 
-        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.class.getName());
+        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.TAG);
 
         if (txDetails != null && txDetails.isAdded()) {
             Log.e(TAG, "showTransactionDetails: Already showing");
-
             return;
         }
 
         txDetails = new FragmentTxDetails();
         txDetails.setTransaction(item);
-        txDetails.show(app.getFragmentManager(), "txDetails");
+        txDetails.show(app.getFragmentManager(), FragmentTxDetails.TAG);
 
     }
 
