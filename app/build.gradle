@@ -9,7 +9,7 @@ android {
     buildToolsVersion = '28.0.3'
     ext {
         brdMarketingVersion = 3   // Major version. Usually affected by marketing. Maximum value: 99
-        brdProductVersion = 12    // Minor version. Usually affected by product. Maximum value: 99
+        brdProductVersion = 13    // Minor version. Usually affected by product. Maximum value: 99
         brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 9       // Build version. Increase for each new build. Maximum value: 999
 
@@ -234,6 +234,8 @@ dependencies {
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
+    androidTestImplementation "org.mockito:mockito-android:2.25.0"
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:3.10.0"
     androidTestImplementation "android.arch.work:work-testing:1.0.1"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
