@@ -96,7 +96,7 @@ public final class EventUtils {
     public static final String EVENT_ENABLE_BIOMETRICS = "event.enableBiometrics";
     public static final String EVENT_IS_BTC_SWAPPED = "event.isBTCSwapped";
     public static final String EVENT_SYNC_ERROR_MESSAGE = "event.syncErrorMessage";
-    public static final String EVENT_CURRENCY_DID_TAP_BUY_BITCOIN = "currency.didTapBuyBitcoin";
+    public static final String EVENT_HOME_DID_TAP_BUY = "home.didTapBuy";
     public static final String EVENT_CURRENCY_DID_TAP_SELL_BITCOIN = "currency.didTapSellBitcoin";
     public static final String EVENT_CURRENCY_DID_TAP_TRADE = "currency.didTapTrade";
     public static final String EVENT_PUSH_FIRST_PROMPT_DENIED = "push.firstPromptDenied";
@@ -149,6 +149,12 @@ public final class EventUtils {
     // Used for campaign analysis
     public static final String EVENT_MIXPANEL_APP_OPEN = "$app_open";
     public static final String EVENT_ATTRIBUTE_CAMPAIGN_ID = "campaign_id";
+
+    // Experiment events
+    public static final String EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON = "experiment.buySellMenuButton";
+
+    public static final String EVENT_ATTRIBUTE_BUY_AND_SELL = "buyAndSell";
+    public static final String EVENT_ATTRIBUTE_SHOW = "show";
 
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";

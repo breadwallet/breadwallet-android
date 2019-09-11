@@ -14,11 +14,12 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.repository.ExperimentsRepositoryImpl;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRCompressor;
@@ -32,7 +33,6 @@ import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.TokenHolder;
 
 import org.eclipse.jetty.http.HttpStatus;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +60,11 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
-import static com.breadwallet.tools.util.BRConstants.*;
+import static com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8;
+import static com.breadwallet.tools.util.BRConstants.FALSE;
+import static com.breadwallet.tools.util.BRConstants.FEE_PER_KB;
+import static com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT;
+import static com.breadwallet.tools.util.BRConstants.TRUE;
 
 
 /**
@@ -136,8 +140,6 @@ public class APIClient {
     private OkHttpClient mHTTPClient;
     private static final Map<String, String> mHttpHeaders = new HashMap<>();
 
-    private static final String BUY_NOTIFICATION_KEY = "buy-notification";
-
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
     private static final int CONNECTION_TIMEOUT_SECONDS = 30;
 
@@ -145,21 +147,6 @@ public class APIClient {
     private AtomicInteger mItemsLeftToUpdate = new AtomicInteger(0);
 
     private Context mContext;
-
-    public enum FeatureFlags {
-        BUY_NOTIFICATION(BUY_NOTIFICATION_KEY);
-
-        private final String mText;
-
-        FeatureFlags(final String text) {
-            mText = text;
-        }
-
-        @Override
-        public String toString() {
-            return mText;
-        }
-    }
 
     public static synchronized APIClient getInstance(Context context) {
 
@@ -543,43 +530,6 @@ public class APIClient {
         return new AuthenticatedRequest(request, token);
     }
 
-    private void updateFeatureFlag() {
-        if (UiUtils.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-
-        Request req = new Request.Builder()
-                .url(buildUrl(FEATURE_FLAG_PATH))
-                .get().build();
-        BRResponse res = sendRequest(req, true);
-
-        try {
-            if (res.getBodyText().isEmpty()) {
-                Log.e(TAG, "updateFeatureFlag: JSON empty");
-                return;
-            }
-
-            JSONArray arr = new JSONArray(res.getBodyText());
-            for (int i = 0; i < arr.length(); i++) {
-                try {
-                    JSONObject obj = arr.getJSONObject(i);
-                    String name = obj.getString(NAME);
-                    String description = obj.getString(DESCRIPTION);
-                    boolean selected = obj.getBoolean(SELECTED);
-                    boolean enabled = obj.getBoolean(ENABLED);
-                    boolean isPrivate = obj.getBoolean(PRIVATE);
-                    BRSharedPrefs.putFeatureEnabled(mContext, enabled, name);
-                } catch (Exception e) {
-                    Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + res, e);
-                }
-
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "updateFeatureFlag: failed to pull up features", e);
-        }
-
-    }
-
     private boolean isBreadChallenge(Response resp) {
         String challenge = resp.header(BRConstants.HEADER_WWW_AUTHENTICATE);
         return challenge != null && challenge.startsWith(BREAD);
@@ -630,8 +580,7 @@ public class APIClient {
         //update feature flags
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
             final long startTime = System.currentTimeMillis();
-            APIClient apiClient = APIClient.getInstance(mContext);
-            apiClient.updateFeatureFlag();
+            ExperimentsRepositoryImpl.INSTANCE.refreshExperiments(mContext);
             long endTime = System.currentTimeMillis();
             Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
             itemFinished();
@@ -752,9 +701,6 @@ public class APIClient {
         }
 
         public int getCode() {
-            if (mCode == 0) {
-                throw new RuntimeException("code can't be 0");
-            }
             return mCode;
         }
 
