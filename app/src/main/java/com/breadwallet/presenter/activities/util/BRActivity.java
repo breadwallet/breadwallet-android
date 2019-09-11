@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities.util;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -9,11 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.tools.animation.UiUtils;
@@ -52,9 +56,10 @@ import com.breadwallet.wallet.WalletsMaster;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends FragmentActivity {
+public abstract class BRActivity extends FragmentActivity {
     private static final String TAG = BRActivity.class.getName();
-    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+
+    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,9 +80,8 @@ public class BRActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
-        //init first
-        init();
         super.onResume();
+        init();
     }
 
     @Override
@@ -112,7 +116,7 @@ public class BRActivity extends FragmentActivity {
     }
 
     @Override
-        protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
@@ -188,21 +192,15 @@ public class BRActivity extends FragmentActivity {
         }
     }
 
-    public void init() {
-        //set status bar color
-        InternetManager.getInstance();
-        if (WalletsMaster.isBrdWalletCreated(this)) {
-            BRApiManager.getInstance().startTimer(this);
-        }
+    private void init() {
         //show wallet locked if it is and we're not in an illegal activity.
         if (!(this instanceof InputPinActivity || this instanceof RecoveryKeyActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {
-                AuthManager.getInstance().setWalletDisabled(this);
+                showWalletDisabled();
             }
         }
         BreadApp.setBreadContext(this);
-
-        BreadApp.lockIfNeeded(this);
+        lockIfNeeded();
     }
 
     private void saveScreenSizesIfNeeded() {
@@ -214,6 +212,48 @@ public class BRActivity extends FragmentActivity {
             BRSharedPrefs.putScreenHeight(this, size.y);
             BRSharedPrefs.putScreenWidth(this, size.x);
         }
+    }
 
+    private void lockIfNeeded() {
+        //lock wallet if 3 minutes passed
+        BreadApp breadApp = (BreadApp) getApplication();
+
+        long backgroudedTime = breadApp.getBackgroundedTime();
+        if (backgroudedTime != 0
+                && (System.currentTimeMillis() - backgroudedTime >= LOCK_TIMEOUT)
+                && !(this instanceof DisabledActivity)) {
+            if (!BRKeyStore.getPinCode(this).isEmpty()) {
+                UiUtils.startBreadActivity(this, true);
+            }
+        }
+        breadApp.resetBackgroundedTime();
+    }
+
+    /**
+     * Start DisabledActivity.
+     */
+    public void showWalletDisabled() {
+        if (!(this instanceof DisabledActivity)) {
+            UiUtils.showWalletDisabled(this);
+        }
+    }
+
+    /**
+     * Check if there is an overlay view over the screen, if an overlay view is found the event won't be dispatched and
+     * a dialog with a warning will be shown.
+     *
+     * @param event The touch screen event.
+     * @return boolean Return true if this event was consumed or if an overlay view was found.
+     */
+    protected boolean checkOverlayAndDispatchTouchEvent(MotionEvent event) {
+        // Filter obscured touches by consuming them.
+        if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) != 0) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
+                        getString(R.string.Android_screenAlteringMessage));
+            }
+            return true;
+        }
+        return super.dispatchTouchEvent(event);
     }
 }

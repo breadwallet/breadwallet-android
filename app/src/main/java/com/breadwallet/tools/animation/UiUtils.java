@@ -27,9 +27,9 @@ import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.ui.browser.PlatformBrowserActivity;
 import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
@@ -354,7 +354,7 @@ public class UiUtils {
      * @param activity The Activity.
      */
     public static void openRewardsWebView(Activity activity) {
-        startWebActivity(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
+        startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
                 R.anim.empty_300, R.anim.fade_up, R.anim.exit_to_right);
     }
 
@@ -378,19 +378,13 @@ public class UiUtils {
         return false;
     }
 
-    public static void startWebActivity(Activity activity, String url) {
-        startWebActivity(activity, url, R.anim.enter_from_bottom, R.anim.fade_down, 0, 0);
+    public static void startPlatformBrowser(Activity activity, String url) {
+        startPlatformBrowser(activity, url, R.anim.enter_from_bottom, R.anim.fade_down, 0, 0);
     }
 
-    public static void startWebActivity(Activity activity, String url, int enterAnimation,
-                                        int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
-        Intent intent = new Intent(activity, WebViewActivity.class);
-        intent.putExtra(BRConstants.EXTRA_URL, url);
-        if (returnEnterAnimation != 0 && returnExitAnimation != 0) {
-            intent.putExtra(WebViewActivity.EXTRA_ENTER_TRANSITION, returnEnterAnimation);
-            intent.putExtra(WebViewActivity.EXTRA_EXIT_TRANSITION, returnExitAnimation);
-        }
-        activity.startActivity(intent);
+    private static void startPlatformBrowser(Activity activity, String url, int enterAnimation,
+                                            int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
+        PlatformBrowserActivity.Companion.start(activity, url, returnEnterAnimation, returnExitAnimation);
         if (enterAnimation != 0 && exitAnimation != 0) {
             activity.overridePendingTransition(enterAnimation, exitAnimation);
         }

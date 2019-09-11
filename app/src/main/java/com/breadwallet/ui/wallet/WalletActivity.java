@@ -35,7 +35,6 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
@@ -69,7 +68,6 @@ import java.util.Locale;
 public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, SyncListener,
         BRSearchBar.FilterListener, FragmentTxDetails.TxDetailListener {
     private static final String TAG = WalletActivity.class.getName();
-    private static final String URBAN_APP_PACKAGE_NAME = "com.urbandroid.lux";
 
     public static final String EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.wallet.WalletActivity.EXTRA_CRYPTO_REQUEST";
     protected static final String EXTRA_CURRENCY_CODE = "com.breadwallet.ui.wallet.WalletActivity.EXTRA_CURRENCY_CODE";
@@ -206,7 +204,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mSearchBar.onShow(true);
         });
 
-        mSellButton.setOnClickListener(view -> UiUtils.startWebActivity(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));
+        mSellButton.setOnClickListener(view -> UiUtils.startPlatformBrowser(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));
 
         mBalancePrimary.setOnClickListener(view -> swap());
         mBalanceSecondary.setOnClickListener(view -> swap());
@@ -215,12 +213,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         updateUi();
         mWallet = WalletsMaster.getInstance().getCurrentWallet(this);
-
-        // Check if the "Twilight" screen altering app is currently running
-        if (Utils.checkIfScreenAlteringAppIsRunning(this, URBAN_APP_PACKAGE_NAME)) {
-            BRDialog.showSimpleDialog(this, getString(R.string.Alert_ScreenAlteringAppDetected),
-                    getString(R.string.Android_screenAlteringMessage));
-        }
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 

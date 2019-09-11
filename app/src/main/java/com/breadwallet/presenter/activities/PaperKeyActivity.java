@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -243,5 +244,10 @@ public class PaperKeyActivity extends BRActivity {
             return words == null ? 0 : words.length;
         }
 
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return checkOverlayAndDispatchTouchEvent(event);
     }
 }
