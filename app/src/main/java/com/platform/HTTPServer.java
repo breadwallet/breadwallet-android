@@ -76,6 +76,7 @@ public class HTTPServer extends AbstractLifeCycle {
     public static final String URL_SELL = "/sell";
     public static final String URL_SUPPORT = "/support";
     public static final String URL_REWARDS = "/rewards";
+    public static final String URL_MAP = "/map";
     private static final int MIN_PORT = 8000;
     private static final int MAX_PORT = 49152;
     private static final int MAX_RETRIES = 10;
