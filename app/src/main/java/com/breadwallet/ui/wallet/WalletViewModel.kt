@@ -30,12 +30,12 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.text.format.DateUtils
 import android.util.Log
+import com.breadwallet.model.PriceChange
 import com.breadwallet.presenter.entities.TxUiHolder
 import com.breadwallet.repository.WalletRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.threads.executor.BRExecutor
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.wallet.model.Balance
@@ -43,11 +43,15 @@ import com.breadwallet.ui.wallet.model.TxFilter
 import com.breadwallet.wallet.WalletsMaster
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener
 import com.breadwallet.wallet.abstracts.OnTxListModified
+import com.breadwallet.model.PriceDataPoint
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.wallet.util.SyncUpdateHandler
 import com.breadwallet.wallet.wallets.CryptoTransaction
+import com.platform.network.service.CurrencyHistoricalDataClient
 import com.platform.tools.KVStoreManager
 import com.platform.util.AppReviewPromptManager
 import java.math.BigDecimal
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -59,6 +63,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     val balanceLiveData = MutableLiveData<Balance>()
     val txListLiveData = MutableLiveData<List<TxUiHolder>>()
     val requestFeedbackLiveData = MutableLiveData<Boolean>()
+    val priceDataPoints = MutableLiveData<List<PriceDataPoint>>()
+    val priceChange = MutableLiveData<PriceChange>()
     val progressLiveData = Transformations.map(WalletRepository.getInstance(application).walletsLiveData)
     { wallets ->
         val wallet = wallets.findLast { wallet -> wallet.currencyCode == targetCurrencyCode }
@@ -78,6 +84,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 txListLiveData.postValue(filteredTxList())
             }
         }
+    var chartInterval = MutableLiveData<Interval>().apply { value = Interval.ONE_DAY }
     private var mTxList = listOf<TxUiHolder>()
     private val mBalanceListener: BalanceUpdateListener
     private val mRatesListener: RatesDataSource.OnDataChanged
@@ -119,6 +126,48 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 .removeTxListModifiedListener(mTxModifiedListener)
     }
 
+    fun getInterval(interval: Interval) {
+        val context = (getApplication() as Application).applicationContext
+        chartInterval.value = interval
+        BRExecutor.getInstance()
+                .forLightWeightBackgroundTasks()
+                .execute {
+                    val toCurrency: String = BRSharedPrefs.getPreferredFiatIso()
+                            ?: Currency.getInstance(Locale.US).currencyCode
+                    val newPriceDataPoints = when (interval) {
+                        Interval.ONE_DAY -> {
+                            CurrencyHistoricalDataClient.getPastDay(context, targetCurrencyCode, toCurrency)
+                        }
+                        Interval.ONE_WEEK -> {
+                            CurrencyHistoricalDataClient.getPastWeek(context, targetCurrencyCode, toCurrency)
+                        }
+                        Interval.ONE_MONTH -> {
+                            CurrencyHistoricalDataClient.getPastMonth(context, targetCurrencyCode, toCurrency)
+                        }
+                        Interval.THREE_MONTHS -> {
+                            CurrencyHistoricalDataClient.getPastThreeMonths(context, targetCurrencyCode, toCurrency)
+                        }
+                        Interval.ONE_YEAR -> {
+                            CurrencyHistoricalDataClient.getPastYear(context, targetCurrencyCode, toCurrency)
+                        }
+                        Interval.THREE_YEARS -> {
+                            CurrencyHistoricalDataClient.getPastThreeYears(context, targetCurrencyCode, toCurrency)
+                        }
+                    }
+                    priceDataPoints.postValue(newPriceDataPoints)
+                }
+    }
+
+    fun refreshPriceChange() {
+        val context = getApplication<Application>()
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+            val refCurrency = BRSharedPrefs.getPreferredFiatIso()
+                    ?: Currency.getInstance(Locale.US).currencyCode
+            val response = CurrencyHistoricalDataClient.fetch24HrsChange(context, listOf(targetCurrencyCode), refCurrency)
+            priceChange.postValue(response[targetCurrencyCode])
+        }
+    }
+
     /**
      * Refresh the wallet's balance and transactions list.
      */
@@ -133,11 +182,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 BRSharedPrefs.getPreferredFiatIso(context), walletManager.getFiatBalance(context))
         val cryptoBalance = CurrencyUtils.getFormattedAmount(context,
                 walletManager.currencyCode, walletManager.balance,
-                walletManager.uiConfiguration.maxDecimalPlacesForUi)
+                walletManager.uiConfiguration.maxDecimalPlacesForUi, false)
         val balance = Balance(targetCurrencyCode, bigExchangeRate, fiatExchangeRate,
                 fiatBalance, cryptoBalance)
         balanceLiveData.postValue(balance)
+        priceChange.postValue(RatesRepository.getInstance(context).getPriceChange(targetCurrencyCode))
         refreshTxList()
+        refreshPriceChange()
     }
 
     /**

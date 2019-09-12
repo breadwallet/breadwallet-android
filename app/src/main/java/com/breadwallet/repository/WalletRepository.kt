@@ -116,6 +116,7 @@ class WalletRepository private constructor() {
                 wallet.exchangeRate = walletManager.getFiatExchangeRate(mContext)
                 wallet.fiatBalance = walletManager.getFiatBalance(mContext)
                 wallet.cryptoBalance = walletManager.balance
+                wallet.priceChange = RatesRepository.getInstance(mContext).getPriceChange(wallet.currencyCode)
             } else {
                 Log.e(TAG, "refreshBalances: No wallet manager for currency code: ${wallet.currencyCode}")
             }

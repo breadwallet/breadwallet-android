@@ -32,6 +32,7 @@ public class BRSettingsItem {
     public int iconResId;
     public String title;
     public String addonText;
+    public String subHeader;
     public View.OnClickListener listener;
 
     public BRSettingsItem(String title, String addonText, View.OnClickListener listener, boolean isSection, int iconResId) {
@@ -40,6 +41,16 @@ public class BRSettingsItem {
         this.listener = listener;
         this.isSection = isSection;
         this.iconResId = iconResId;
+        this.subHeader = null;
+    }
+
+    public BRSettingsItem(String title, String addonText, View.OnClickListener listener, boolean isSection, int iconResId, String subHeader) {
+        this.title = title;
+        this.addonText = addonText;
+        this.listener = listener;
+        this.isSection = isSection;
+        this.iconResId = iconResId;
+        this.subHeader = subHeader;
     }
 
 }

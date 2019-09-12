@@ -1,24 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <com.breadwallet.presenter.customviews.ShimmerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shimmerLayout"
     android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp">
 
-    <RelativeLayout
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/wallet_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/crypto_card_shape">
 
-        <RelativeLayout
-            android:id="@+id/icon_background"
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/icon_container"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/asset_icon_background_transparent"
-            android:orientation="vertical">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/icon_letter"
@@ -27,80 +34,78 @@
                 android:layout_centerInParent="true"
                 android:textSize="16sp"
                 android:visibility="gone"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                app:brdFont="@string/Font.CircularPro_Bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/currency_icon_white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
-        </RelativeLayout>
+                android:layout_centerVertical="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/wallet_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_toEndOf="@+id/icon_background"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/icon_container"
             android:ellipsize="end"
             android:maxWidth="180dp"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintStart_toEndOf="@+id/icon_container" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/wallet_trade_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/wallet_name"
-            android:layout_marginStart="16sp"
-            android:layout_toEndOf="@+id/icon_background"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/icon_container"
             android:textColor="@color/balance_crypto_color"
             android:textSize="14sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintStart_toEndOf="@+id/icon_container"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/price_change"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_below="@id/wallet_name"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@+id/icon_container"
+            android:textColor="@color/balance_crypto_color"
+            android:textSize="14sp"
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/wallet_balance_fiat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="16sp"
-            android:layout_marginTop="16sp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:text="$12.00"
             android:textColor="@color/wallet_balance_fiat"
             android:textSize="18sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/syncing_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/wallet_balance_fiat"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@id/sync_progress"
-            android:text="@string/SyncingView.syncing"
-            android:textColor="@color/sync_text"
-            android:textSize="14sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
-
-        <ProgressBar
-            android:id="@+id/sync_progress"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_below="@id/wallet_balance_fiat"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="10dp"
-            android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
-            android:indeterminateTint="@color/sync_text"
-            android:keepScreenOn="true" />
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/wallet_balance_currency"
@@ -110,7 +115,58 @@
             android:layout_alignEnd="@id/wallet_balance_fiat"
             android:textColor="@color/balance_crypto_color"
             android:textSize="14sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintEnd_toEndOf="@+id/wallet_balance_fiat"
+            app:layout_constraintTop_toBottomOf="@+id/wallet_balance_fiat" />
 
-    </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/sync_progress"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_below="@id/wallet_balance_fiat"
+            android:layout_alignParentEnd="true"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
+            android:indeterminateTint="@color/sync_text"
+            android:keepScreenOn="true"
+            app:layout_constraintBottom_toBottomOf="@+id/syncing_label"
+            app:layout_constraintEnd_toEndOf="@+id/wallet_balance_fiat"
+            app:layout_constraintTop_toTopOf="@+id/syncing_label" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/syncing_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wallet_balance_fiat"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@id/sync_progress"
+            android:text="@string/SyncingView.syncing"
+            android:textColor="@color/sync_text"
+            android:textSize="14sp"
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintEnd_toStartOf="@+id/sync_progress"
+            app:layout_constraintTop_toBottomOf="@+id/wallet_balance_fiat" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.50" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@color/white_transparent_25"
+            app:layout_constraintBottom_toBottomOf="@+id/wallet_trade_price"
+            app:layout_constraintStart_toEndOf="@+id/wallet_trade_price"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </com.breadwallet.presenter.customviews.ShimmerLayout>
