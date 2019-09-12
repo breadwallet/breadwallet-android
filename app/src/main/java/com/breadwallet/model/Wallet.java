@@ -39,6 +39,7 @@ public class Wallet {
     private BigDecimal mCryptoBalance = BigDecimal.ZERO;
     private boolean mIsSyncing;
     private double mSyncProgress;
+    private PriceChange mPriceChange;
 
     /**
      * Constructor takes both name and currency code, which both identify a wallet.
@@ -157,5 +158,13 @@ public class Wallet {
      */
     public double getSyncProgress() {
         return mSyncProgress;
+    }
+
+    public PriceChange getPriceChange() {
+        return mPriceChange;
+    }
+
+    public void setPriceChange(PriceChange priceChange) {
+        this.mPriceChange = priceChange;
     }
 }

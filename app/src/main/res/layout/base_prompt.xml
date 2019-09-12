@@ -1,84 +1,80 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/prompt_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@color/extra_light_blue_background"
+    android:layout_marginBottom="16dp"
+    android:background="@color/secondary_background"
+    android:padding="8dp"
     app:cardCornerRadius="4dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/extra_light_blue_background">
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/prompt_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prompt_title"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/Prompts.PaperKey.Body.Android"
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        app:brdFont="@string/Font.CircularPro_Book"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/prompt_title"
+        app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/prompt_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/Prompts.PaperKey.title"
-            android:textColor="@color/almost_black"
-            android:textSize="16sp"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/prompt_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/Prompts.PaperKey.title"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:brdFont="@string/Font.CircularPro_Book"
+        app:layout_constraintEnd_toStartOf="@+id/dismiss_button"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/prompt_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/prompt_title"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/Prompts.PaperKey.Body.Android"
-            android:textColor="@color/almost_black"
-            android:textSize="14sp" />
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/continue_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/Button.continueAction"
+        android:textAllCaps="false"
+        android:textColor="@color/prompt_action_button"
+        app:brdFont="@string/Font.CircularPro_Book"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
 
-        <LinearLayout
-            android:id="@+id/button_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/prompt_description"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:weightSum="2">
+    <ImageButton
+        android:id="@+id/dismiss_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_close_black_24dp"
+        android:tint="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/prompt_title" />
 
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/dismiss_button"
-                android:layout_width="10dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:background="@color/light_gray"
-                android:text="@string/Button.dismiss"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:brdFont="@string/Font.CircularPro_Bold"
-                app:buttonType="4"
-                app:hasShadow="false"
-                app:isBreadButton="true" />
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/action_icon_background"
+        android:src="@drawable/ic_action_required"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/continue_button"
-                android:layout_width="10dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@color/dark_blue"
-                android:text="@string/Button.continueAction"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:brdFont="@string/Font.CircularPro_Bold"
-                app:buttonType="4"
-                app:hasShadow="false"
-                app:isBreadButton="true" />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>
