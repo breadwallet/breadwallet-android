@@ -198,7 +198,7 @@
         app:layout_constraintTop_toBottomOf="@+id/select_alert_when" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/value_label"
+        android:id="@+id/chart_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
