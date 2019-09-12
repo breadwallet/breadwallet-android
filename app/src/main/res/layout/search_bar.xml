@@ -13,6 +13,7 @@
     android:elevation="8dp"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp"
+    android:focusableInTouchMode="true"
     tools:layout_constraintTop_creator="1">
 
     <android.support.constraint.ConstraintLayout
