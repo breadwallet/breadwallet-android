@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
@@ -131,120 +133,86 @@ public final class PromptManager {
         final View baseLayout = context.getLayoutInflater().inflate(R.layout.base_prompt, null);
         BaseTextView title = baseLayout.findViewById(R.id.prompt_title);
         BaseTextView description = baseLayout.findViewById(R.id.prompt_description);
-        BRButton continueButton = baseLayout.findViewById(R.id.continue_button);
-        BRButton dismissButton = baseLayout.findViewById(R.id.dismiss_button);
-        dismissButton.setColor(context.getColor(R.color.settings_chevron_right));
-        continueButton.setColor(context.getColor(R.color.button_add_wallet_text));
-        dismissButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hidePrompt(context, baseLayout);
-            }
-        });
+        Button continueButton = baseLayout.findViewById(R.id.continue_button);
+        ImageButton dismissButton = baseLayout.findViewById(R.id.dismiss_button);
+        dismissButton.setOnClickListener(view -> hidePrompt(context, baseLayout));
         switch (promptItem) {
             case FINGER_PRINT:
                 title.setText(context.getString(R.string.Prompts_TouchId_title_android));
                 description.setText(context.getString(R.string.Prompts_TouchId_body_android));
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(context, FingerprintActivity.class);
-                        context.startActivity(intent);
-                        context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        sendPromptClickedEvent(promptItem);
-                    }
+                continueButton.setOnClickListener(view -> {
+                    Intent intent = new Intent(context, FingerprintActivity.class);
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    sendPromptClickedEvent(promptItem);
                 });
                 break;
             case PAPER_KEY:
                 title.setText(context.getString(R.string.Prompts_PaperKey_title));
                 description.setText(context.getString(R.string.Prompts_PaperKey_Body_Android));
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(context, WriteDownActivity.class);
-                        intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
-                        context.startActivity(intent);
-                        context.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                        sendPromptClickedEvent(promptItem);
-                    }
+                continueButton.setOnClickListener(view -> {
+                    Intent intent = new Intent(context, WriteDownActivity.class);
+                    intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    sendPromptClickedEvent(promptItem);
                 });
                 break;
             case UPGRADE_PIN:
                 title.setText(context.getString(R.string.Prompts_UpgradePin_title));
                 description.setText(context.getString(R.string.Prompts_UpgradePin_body));
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(context, InputPinActivity.class);
-                        intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
-                        context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        context.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-                        sendPromptClickedEvent(promptItem);
-                    }
+                continueButton.setOnClickListener(view -> {
+                    Intent intent = new Intent(context, InputPinActivity.class);
+                    intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
+                    context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    context.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                    sendPromptClickedEvent(promptItem);
                 });
                 break;
             case RECOMMEND_RESCAN:
                 title.setText(context.getString(R.string.Prompts_RecommendRescan_title));
                 description.setText(context.getString(R.string.Prompts_RecommendRescan_body));
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), 0);
-                                BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(context);
-                                wallet.rescan(context);
-                                BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), false);
-                                sendPromptClickedEvent(promptItem);
-                            }
-                        });
-                    }
-                });
+                continueButton.setOnClickListener(view -> BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                    BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), 0);
+                    BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(context);
+                    wallet.rescan(context);
+                    BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletCurrencyCode(context), false);
+                    sendPromptClickedEvent(promptItem);
+                }));
                 break;
             case EMAIL_COLLECTION:
                 final View customLayout = context.getLayoutInflater().inflate(R.layout.email_prompt, null);
-                BaseTextView customTitle = customLayout.findViewById(R.id.prompt_title);
-                BaseTextView customDescription = customLayout.findViewById(R.id.prompt_description);
-                final BaseTextView customConfirmation = customLayout.findViewById(R.id.prompt_confirmation);
+                final BaseTextView customTitle = customLayout.findViewById(R.id.prompt_title);
+                final BaseTextView customDescription = customLayout.findViewById(R.id.prompt_description);
+                final BaseTextView footNote = customLayout.findViewById(R.id.prompt_footnote);
                 final BRButton submitButton = customLayout.findViewById(R.id.submit_button);
                 ImageView closeButton = customLayout.findViewById(R.id.close_button);
-                final ImageView promptIcon = customLayout.findViewById(R.id.prompt_icon);
                 final BREdit emailEditText = customLayout.findViewById(R.id.email_edit);
                 submitButton.setColor(context.getColor(R.color.create_new_wallet_button_dark));
                 customTitle.setText(context.getString(R.string.Prompts_Email_title));
                 customDescription.setText(context.getString(R.string.Prompts_Email_body));
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        hidePrompt(context, customLayout);
-                        BRSharedPrefs.putEmailOptInDismissed(context, true);
-                    }
+                closeButton.setOnClickListener(view -> {
+                    hidePrompt(context, customLayout);
+                    BRSharedPrefs.putEmailOptInDismissed(context, true);
                 });
-                submitButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final String email = emailEditText.getText().toString().trim();
-                        if (isEmailValid(email)) {
-                            UserMetricsUtil.makeEmailOptInRequest(context, email);
-                            promptIcon.setImageResource(R.drawable.ic_yay);
-                            emailEditText.setVisibility(View.INVISIBLE);
-                            submitButton.clearAnimation();
-                            submitButton.setVisibility(View.INVISIBLE);
-                            customConfirmation.setVisibility(View.VISIBLE);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!context.isDestroyed()) {
-                                        hidePrompt(context, customLayout);
-                                    }
-                                }
-                            }, HIDE_PROMPT_DELAY_MILLISECONDS);
-                            BRSharedPrefs.putEmailOptIn(context, true);
-                            sendPromptClickedEvent(promptItem);
-                        } else {
-                            SpringAnimator.failShakeAnimation(context, emailEditText);
-                        }
+                submitButton.setOnClickListener(view -> {
+                    final String email = emailEditText.getText().toString().trim();
+                    if (isEmailValid(email)) {
+                        UserMetricsUtil.makeEmailOptInRequest(context, email);
+                        emailEditText.setVisibility(View.INVISIBLE);
+                        submitButton.setVisibility(View.INVISIBLE);
+                        footNote.setVisibility(View.VISIBLE);
+                        customTitle.setText(context.getString(R.string.Prompts_Email_successTitle));
+                        customDescription.setText(context.getString(R.string.Prompts_Email_successBody));
+                        BRSharedPrefs.putEmailOptIn(context, true);
+                        new Handler().postDelayed(() -> {
+                            if (!context.isDestroyed()) {
+                                hidePrompt(context, customLayout);
+                            }
+                        }, HIDE_PROMPT_DELAY_MILLISECONDS);
+                        sendPromptClickedEvent(promptItem);
+                    } else {
+                        SpringAnimator.failShakeAnimation(context, emailEditText);
                     }
                 });
                 return customLayout;
