@@ -49,6 +49,7 @@ import org.mockito.Mockito.*
 
 
 @RunWith(AndroidJUnit4::class)
+@Ignore("Request Signing not yet implemented")
 class APIClientTests {
 
     companion object {
