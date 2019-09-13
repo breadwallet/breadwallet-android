@@ -93,7 +93,7 @@ class APIClientTests {
     fun testFetchesNewTokenWhenMissingFromUnauthorizedRequest() {
         val context = InstrumentationRegistry.getContext()
         // Mock HTTP interactions
-        server.setDispatcher(object : Dispatcher() {
+        server.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 // Return 401 with challenge for every request
                 // Note this means the app will not be able to retrieve a new token
@@ -101,10 +101,10 @@ class APIClientTests {
                         .addHeader(BRConstants.HEADER_WWW_AUTHENTICATE, APIClient.BREAD)
                         .setResponseCode(401)
             }
-        })
+        }
         startServer()
         val url = server.url("/")
-        BRSharedPrefs.putDebugHost(host = "http://${url.host()}:${url.port()}")
+        BRSharedPrefs.putDebugHost(host = "http://${url.host}:${url.port}")
 
         // Enter an authenticated state
         BRKeyStore.putAuthKey(Hex.stringToBytes(AUTH_KEY), context)
@@ -132,7 +132,7 @@ class APIClientTests {
     fun testFetchesNewTokenWhenExistingTokenIsInvalid() {
         val context = InstrumentationRegistry.getContext()
         // Mock HTTP interactions
-        server.setDispatcher(object : Dispatcher() {
+        server.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 // Return 401 with challenge for every request
                 // Note this means the app will not be able to retrieve a new token
@@ -140,10 +140,10 @@ class APIClientTests {
                         .addHeader(BRConstants.HEADER_WWW_AUTHENTICATE, APIClient.BREAD)
                         .setResponseCode(401)
             }
-        })
+        }
         startServer()
         val url = server.url("/")
-        BRSharedPrefs.putDebugHost(host = "http://${url.host()}:${url.port()}")
+        BRSharedPrefs.putDebugHost(host = "http://${url.host}:${url.port}")
 
         // Enter an authenticated state
         BRKeyStore.putAuthKey(Hex.stringToBytes(AUTH_KEY), context)
@@ -174,7 +174,7 @@ class APIClientTests {
         val context = InstrumentationRegistry.getContext()
 
         // Mock HTTP interactions
-        server.setDispatcher(object : Dispatcher() {
+        server.dispatcher = object : Dispatcher() {
             private var callCount = 0
             override fun dispatch(
                     request: RecordedRequest
@@ -199,10 +199,10 @@ class APIClientTests {
                 }
                 else -> throw AssertionError("Unhandled request.")
             }
-        })
+        }
         startServer()
         val url = server.url("/")
-        BRSharedPrefs.putDebugHost(host = "http://${url.host()}:${url.port()}")
+        BRSharedPrefs.putDebugHost(host = "http://${url.host}:${url.port}")
 
         // Enter an authenticated state
         BRKeyStore.putAuthKey(Hex.stringToBytes(AUTH_KEY), context)
