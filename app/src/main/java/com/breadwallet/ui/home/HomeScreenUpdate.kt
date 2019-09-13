@@ -42,7 +42,8 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                     val wallets = model.wallets.toMutableMap()
                     wallets[event.currencyCode] = wallet.copy(
                             syncProgress = event.progress,
-                            syncingThroughMillis = event.syncThroughMillis
+                            syncingThroughMillis = event.syncThroughMillis,
+                            isSyncing = event.isSyncing
                     )
                     next(model.copy(wallets = wallets))
                 }

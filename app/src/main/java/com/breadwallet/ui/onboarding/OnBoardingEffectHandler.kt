@@ -110,10 +110,9 @@ class OnBoardingEffectHandler(
         }
 
         try {
-            // TODO: This will be replaced with a cryptosystem initialization handler
-            BreadApp.initializeCryptoSystem(contextProvider(), account)
+            BreadApp.getBreadBox().open(account)
             outputProvider().accept(OnBoardingEvent.OnWalletCreated)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             logError("Error initializing crypto system", e)
             outputProvider().accept(OnBoardingEvent.SetupError.CryptoSystemBootError)
         }

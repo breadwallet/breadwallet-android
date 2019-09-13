@@ -759,30 +759,14 @@ public final class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
+    @Deprecated
     public static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(SPEND_LIMIT_ALIAS);
-        byte[] bytesToStore = spendLimit.toPlainString().getBytes();
-        try {
-            return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
         return false;
     }
 
+    @Deprecated
     public static BigDecimal getSpendLimit(final Context context, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(SPEND_LIMIT_ALIAS);
-        byte[] result = null;
-        try {
-            result = getData(context, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(context, iso);
-        WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
-        return (result != null && result.length > 0)
-                ? new BigDecimal(new String(result))
-                : (configs.getFingerprintLimits().size() != 0 ? configs.getFingerprintLimits().get(1) : BigDecimal.ZERO);
+        return BigDecimal.ZERO;
     }
 
     public static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {

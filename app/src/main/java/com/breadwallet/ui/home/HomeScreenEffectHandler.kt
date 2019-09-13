@@ -31,14 +31,7 @@ package com.breadwallet.ui.home
 import android.content.Context
 import com.breadwallet.BreadApp
 import com.breadwallet.crypto.Amount
-import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Wallet as CryptoWallet
-import com.breadwallet.crypto.WalletManager
-import com.breadwallet.crypto.events.wallet.*
-import com.breadwallet.crypto.events.walletmanager.DefaultWalletManagerEventVisitor
-import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
-import com.breadwallet.crypto.events.walletmanager.WalletManagerListener
-import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
 import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.RatesRepository
@@ -49,26 +42,41 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.util.bindConsumerIn
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import java.lang.Exception
 import java.math.BigDecimal
 
+@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenEffectHandler(
     private val output: Consumer<HomeScreenEvent>,
     private val context: Context
-) : Connection<HomeScreenEffect>, WalletListener, WalletManagerListener, RatesDataSource.OnDataChanged {
+) : Connection<HomeScreenEffect>,
+    CoroutineScope,
+    RatesDataSource.OnDataChanged {
 
-    private val enabledWallets = listOf("btc", "eth", "brd") // TODO: this should be replaced with a wallet management store -- also, should be listening for updates to this
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     init {
-        BreadApp.getCryptoSystemListener()?.apply {
-            addListener(this as WalletListener)
-            addListener(this as WalletManagerListener)
-        }
-
         RatesDataSource.getInstance(context).addOnDataChangedListener(this)
     }
 
@@ -84,20 +92,53 @@ class HomeScreenEffectHandler(
     }
 
     override fun dispose() {
-        BreadApp.getCryptoSystemListener()?.apply {
-            removeListener(this as WalletListener)
-            removeListener(this as WalletManagerListener)
-        }
+        coroutineContext.cancelChildren()
 
         RatesDataSource.getInstance(context).removeOnDataChangedListener(this)
     }
 
     private fun loadWallets() {
-        output.accept(HomeScreenEvent.OnWalletsAdded(
-                wallets = BreadApp.getCryptoSystem().wallets
-                            .filter { isEnabledWallet(it.currency.code) }
-                            .map { it.asWallet() }
-        ))
+        val breadBox = BreadApp.getBreadBox()
+
+        // Update wallets list
+        breadBox.wallets()
+            .mapLatest { wallets -> wallets.map { it.asWallet() } }
+            .map { HomeScreenEvent.OnWalletsAdded(it) }
+            .bindConsumerIn(output, this)
+
+        // Update wallet balances
+        breadBox.currencyCodes()
+            .flatMapLatest { it.asFlow() }
+            .flatMapMerge { currencyCode ->
+                breadBox.wallet(currencyCode)
+                    .distinctUntilChangedBy { it.balance }
+            }
+            .map {
+                HomeScreenEvent.OnWalletBalanceUpdated(
+                    currencyCode = it.currency.code,
+                    balance = getBalance(it.balance),
+                    fiatBalance = getBalanceInFiat(it.balance),
+                    fiatPricePerUnit = getFiatPerPriceUnit(it.currency.code),
+                    priceChange = getPriceChange(it.currency.code)
+                )
+            }
+            .bindConsumerIn(output, this)
+
+        // Update wallet sync state
+        breadBox.currencyCodes()
+            .flatMapLatest { it.asFlow() }
+            .flatMapMerge {
+                breadBox.walletSyncState(it)
+                    .mapLatest { syncState ->
+                        HomeScreenEvent.OnWalletSyncProgressUpdated(
+                            currencyCode = syncState.currencyCode,
+                            progress = syncState.percentComplete,
+                            syncThroughMillis = syncState.timestamp,
+                            isSyncing = syncState.isSyncing
+                        )
+                    }
+            }
+            .bindConsumerIn(output, this)
     }
 
     private fun loadPrompt() {
@@ -143,52 +184,15 @@ class HomeScreenEffectHandler(
         EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
     }
 
-    private fun isEnabledWallet(currencyCode: String): Boolean {
-        return enabledWallets.indexOfFirst { currencyCode.equals(it, true) } != -1
-    }
-
-    override fun handleWalletEvent(system: System, manager: WalletManager, wallet: CryptoWallet, event: WalletEvent) {
-        if (!isEnabledWallet(wallet.currency.code))
-            return
-
-        event.accept(object : DefaultWalletEventVisitor<Void>() {
-            override fun visit(event: WalletBalanceUpdatedEvent): Void? {
-                val balance = event.balance
-                updateBalance(wallet.currency.code, balance)
-                return null
-            }
-
-            override fun visit(event: WalletCreatedEvent): Void? {
-                output.accept(HomeScreenEvent.OnWalletAdded(
-                        wallet = wallet.asWallet()
-                ))
-                return null
-            }
-        })
-    }
-
-    override fun handleManagerEvent(system: System?, manager: WalletManager, event: WalletManagerEvent) {
-        if (!isEnabledWallet(manager.currency.code))
-            return
-
-        event.accept(object : DefaultWalletManagerEventVisitor<Void>() {
-            override fun visit(event: WalletManagerSyncProgressEvent): Void? {
-                output.accept(HomeScreenEvent.OnWalletSyncProgressUpdated(
-                        currencyCode = manager.currency.code,
-                        progress = event.percentComplete.toDouble(), // TODO: Use float to match core.
-                        syncThroughMillis = event.timestamp.transform { it?.time }.or(0L)
-                ))
-                return null
-            }
-        })
-    }
-
     override fun onChanged() {
-        BreadApp.getCryptoSystem().wallets
-            .filter { isEnabledWallet(it.currency.code) }
-            .forEach {
-                updateBalance(it.currency.code, it.balance)
-            }
+        val breadBox = BreadApp.getBreadBox()
+
+        breadBox.currencyCodes()
+            .take(1)
+            .flatMapLatest { it.asFlow() }
+            .flatMapConcat { breadBox.wallet(it).take(1) }
+            .onEach { updateBalance(it.currency.code, it.balance) }
+            .launchIn(this)
     }
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
@@ -226,7 +230,7 @@ class HomeScreenEffectHandler(
                 fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
                 balance = getBalance(balance),
                 fiatBalance = getBalanceInFiat(balance),
-                syncProgress = 0.0, // will update via sync events
+                syncProgress = 0f, // will update via sync events
                 syncingThroughMillis = 0L, // will update via sync events
                 priceChange = getPriceChange(currency.code)
         )

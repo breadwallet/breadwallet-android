@@ -34,8 +34,9 @@ import java.math.BigDecimal
 
 sealed class WalletEvent {
     data class OnSyncProgressUpdated(
-            val progress: Double,
-            val syncThroughMillis: Long
+            val progress: Float,
+            val syncThroughMillis: Long,
+            val isSyncing: Boolean
     ) : WalletEvent() {
         init {
             require(progress in 0.0..1.0) {

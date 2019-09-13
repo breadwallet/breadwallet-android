@@ -30,6 +30,7 @@ import com.breadwallet.BreadApp
 import com.breadwallet.crypto.Account
 import com.breadwallet.ui.util.logInfo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.withContext
 
@@ -52,6 +53,7 @@ interface KeyStore {
     suspend fun getWalletCreationTime(): Long?
 }
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 abstract class DefaultKeyStore : KeyStore {
 
     companion object {
