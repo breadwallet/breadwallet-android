@@ -56,11 +56,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int DP_120 = 120;
     private static final int DP_36 = 36;
     private static final int DP_16 = 16;
-    private static final int CONFIRMED_BLOCKS_NUMBER = 6;
     private static final int PROGRESS_FULL = 100;
     private static final int PROGRESS_PACE = 20;
     private static final int FOUR_CONFIRMATIONS = 4;
-    private static final int FIVE_CONFIRMATIONS = 5;
     private static final int TX_TYPE = 0;
 
     private final Context mContext;
@@ -150,7 +148,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.getTransactionAmount().setText(formattedAmount);
 
         if (item.isPending()) {
-            showTransactionProgress(convertView, item.getLevels() * PROGRESS_PACE);
+            showTransactionProgress(convertView, item.getConfirmations() * PROGRESS_PACE);
         }
         String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getToAddress()));
         String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getFromAddress()));
@@ -158,7 +156,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getToAddress()));
         String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), WalletDisplayUtils.Companion.decorateAddress(item.getCurrencyCode(), item.getFromAddress()));
 
-        if (item.getLevels() > FOUR_CONFIRMATIONS) {
+        if (item.getConfirmations() > FOUR_CONFIRMATIONS) { // TODO: Four is still a magic number, even as a constant.  What do we do about levels?
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
             convertView.getTransactionDetail().setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));

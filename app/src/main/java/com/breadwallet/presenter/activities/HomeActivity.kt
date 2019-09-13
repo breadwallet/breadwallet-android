@@ -59,6 +59,7 @@ import com.spotify.mobius.android.MobiusAndroid
 import com.spotify.mobius.android.runners.MainThreadWorkRunner
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
+import com.spotify.mobius.runners.WorkRunner
 import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.notification_bar
@@ -101,12 +102,7 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
                     }
             )
             .init(HomeScreenInit)
-            .effectRunner {
-                // TODO: The wallet manager and repositories are not thread safe,
-                //   to avoid concurrent modifications.  In the future this should
-                //   be changed to a background worker.
-                MainThreadWorkRunner.create()
-            }
+            .effectRunner { WorkRunners.cachedThreadPool() }
             .eventRunner { WorkRunners.cachedThreadPool() }
             .logger(AndroidLogger.tag("HomeScreenLoop"))
 

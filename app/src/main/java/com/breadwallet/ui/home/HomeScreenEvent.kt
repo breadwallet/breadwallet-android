@@ -37,11 +37,12 @@ sealed class HomeScreenEvent {
 
     data class OnWalletSyncProgressUpdated(
             val currencyCode: String,
-            val progress: Double,
-            val syncThroughMillis: Long
+            val progress: Float,
+            val syncThroughMillis: Long,
+            val isSyncing: Boolean
     ) : HomeScreenEvent() {
         init {
-            require(progress in 0.0..1.0) {
+            require(progress in 0f..1f) {
                 "Sync progress must be in 0..1 but was $progress"
             }
         }
@@ -52,7 +53,7 @@ sealed class HomeScreenEvent {
                                       val balance : BigDecimal,
                                       val fiatBalance: BigDecimal,
                                       val fiatPricePerUnit: BigDecimal,
-                                      val priceChange: PriceChange
+                                      val priceChange: PriceChange? = null
     ) : HomeScreenEvent()
 
     data class OnBuyBellNeededLoaded(val isBuyBellNeeded:Boolean) : HomeScreenEvent()

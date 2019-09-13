@@ -17,17 +17,15 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
-import com.breadwallet.corecrypto.CryptoApiProvider;
+import com.breadwallet.breadbox.BreadBox;
 import com.breadwallet.crypto.*;
 import com.breadwallet.crypto.System;
-import com.breadwallet.crypto.blockchaindb.BlockchainDb;
-import com.breadwallet.protocols.messageexchange.InboxPollingHandler;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.util.*;
+import com.breadwallet.ui.util.Logger;
 import com.breadwallet.view.dialog.DialogActivity;
 import com.breadwallet.view.dialog.DialogActivity.DialogType;
 import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.protocols.messageexchange.InboxPollingAppLifecycleObserver;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -36,10 +34,8 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.wallet.util.SyncUpdateHandler;
-import com.breadwallet.wallet.util.WalletConnectionCleanUpWorker;
+import com.breadwallet.wallet.util.BreadBoxCloseWorker;
 import com.breadwallet.wallet.util.WalletConnectionWorker;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
@@ -47,13 +43,10 @@ import com.platform.HTTPServer;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.fabric.sdk.android.Fabric;
-import okhttp3.OkHttpClient;
 
 
 /**
@@ -101,11 +94,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private Handler mServerShutdownHandler = null;
     private Runnable mServerShutdownRunnable = null;
 
-    private static System cryptoSystem;
-    private static CryptoSystemListener listener;
-    // TODO: should not be hard-coded, should switch on debug vs. release etc and not be here
-    public static final String API_BASE_URL = "https://stage2.breadwallet.com";
-    public static final String BDB_BASE_URL = "https://test-blockchaindb-api.brd.tools";
+    private static BreadBox breadBox = null;
 
     @Override
     public void onCreate() {
@@ -113,12 +102,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         mInstance = this;
 
-        // TODO: Why is this required?
-        CryptoApi.initialize(CryptoApiProvider.getInstance());
-
         BRSharedPrefs.provideContext(this);
 
-        Key.setDefaultWordList(Bip39Reader.getBip39Words(this, BRSharedPrefs.INSTANCE.getRecoveryKeyLanguage()));
+        breadBox = BreadBox.Companion.create(getStorageDir(this), false, WalletManagerMode.API_ONLY);
 
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().build())
@@ -133,17 +119,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         mDisplayWidthPx = size.x;
         mDisplayHeightPx = size.y;
 
-        // TODO: initializing the Crypto System goes hand in hand with onboarding -- this must be refactored
-        // For now, initializing system here, with a hard-coded wallet etc.
-        // TODO: Disabled - initializeCryptoSystem();
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
 
-        // Initialize application lifecycle observer and register this application for events.
-        // TODO: enabled in initializeCryptoSystem
-        //  - ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
-        // TODO: enabled in initializeCryptoSystem
-        //  - ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
-
-        // TODO: Disabled - initialize(true);
+        initialize(true);
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -162,44 +141,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         return new File(context.getFilesDir(), "cryptocore");
     }
 
-    // TODO: Temp -- refactor
-    // ginger settle marine tissue robot crane night number ramp coast roast critic
-    public static void initializeCryptoSystem(Context context, Account account) {
-        WalletManagerMode mode = WalletManagerMode.API_ONLY;
-
-        File storageFile = getStorageDir(context);
-
-        List<String> currencyCodesNeeded = Arrays.asList("btc", "eth", "brd");
-        listener = new CryptoSystemListener(mode, currencyCodesNeeded);
-
-        BlockchainDb query = new BlockchainDb(new OkHttpClient(), BDB_BASE_URL, API_BASE_URL);
-
-        cryptoSystem = System.create(Executors.newSingleThreadScheduledExecutor(), listener, account, false, storageFile.getAbsolutePath(), query);
-        cryptoSystem.configure();
-
-        // TODO: remove when sanity is restored
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
-        ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
-        BRApiManager.getInstance().startTimer(getBreadContext());
-    }
-
-    public static System getCryptoSystem() {
-        return cryptoSystem;
-    }
-
-    public static CryptoSystemListener getCryptoSystemListener() {
-        return listener;
-    }
-
-    private static void deleteRecursively(File file) {
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                deleteRecursively(child);
-            }
-        }
-        file.delete();
-    }
-
     /**
      * Initializes the application state.
      *
@@ -215,7 +156,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             BRDFirebaseMessagingService.Companion.initialize(mInstance);
 
             // Initialize TokenUtil to load our tokens.json file from res/raw
-            TokenUtil.initialize(mInstance);
+            // TODO: Depends on eth wallet manager: TokenUtil.initialize(mInstance);
         } else {
             // extract the bundles from the resources to be ready when the wallet is initialized
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() ->
@@ -229,7 +170,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
      * @return True if the BRD wallet is initialized; false, otherwise.
      */
     private static boolean isBRDWalletInitialized() {
-        return BRKeyStore.getMasterPublicKey(mInstance) != null;
+        return BRKeyStore.getAccount(mInstance) != null;
     }
 
     /**
@@ -255,7 +196,18 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static synchronized String generateWalletId() {
         try {
             // Retrieve the ETH address since the wallet id is based on this.
-            String address = WalletEthManager.getInstance(mInstance).getAddress(mInstance);
+            final System system = breadBox.getSystemUnsafe();
+            if (system == null) return null;
+            Wallet ethWallet = null;
+            for (Wallet wallet : system.getWallets()) {
+                if ("eth".equals(wallet.getCurrency().getCode())) { // TODO: Hardcoded currency code
+                    ethWallet = wallet;
+                    break;
+                }
+            }
+            if (ethWallet == null) return null;
+
+            String address = ethWallet.getSource().toString();
 
             // Remove the first 2 characters i.e. 0x
             String rawAddress = address.substring(2, address.length());
@@ -339,16 +291,20 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
 
-                for (WalletManager manager : cryptoSystem.getWalletManagers()) {
-                    manager.connect();
-                }
                 // Each time the app resumes, check to see if the device state is valid. Even if the wallet is not
                 // initialized, we may need tell the user to enable the password.
                 if (isDeviceStateValid()) {
                     if (isBRDWalletInitialized()) {
-                        WalletConnectionCleanUpWorker.cancelEnqueuedWork();
+                        BreadBoxCloseWorker.Companion.cancelEnqueuedWork();
 
-                        WalletConnectionWorker.enqueueWork();
+                        if (!breadBox.isOpen()) {
+                            Account account = BRKeyStore.getAccount(this);
+                            if (account == null) {
+                                Logger.Companion.error("Wallet is initialized but Account is null");
+                            } else {
+                                breadBox.open(account);
+                            }
+                        }
 
                         HTTPServer.getInstance().startServer(this);
 
@@ -365,7 +321,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 Log.d(TAG, "onLifeCycle: STOP");
                 if (isBRDWalletInitialized()) {
                     mBackgroundedTime = java.lang.System.currentTimeMillis();
-                    WalletConnectionCleanUpWorker.enqueueWork();
+                    BreadBoxCloseWorker.Companion.enqueueWork();
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
                         EventUtils.saveEvents(BreadApp.this);
                         EventUtils.pushToServer(BreadApp.this);
@@ -394,8 +350,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                     }
                 }
                 BRApiManager.getInstance().stopTimerTask();
-                SyncUpdateHandler.INSTANCE.cancelWalletSync();
-                cryptoSystem.stop();
                 break;
             case ON_DESTROY:
                 Log.d(TAG, "onLifeCycle: DESTROY");
@@ -407,6 +361,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                     Log.i(TAG, "Shutting down HTTPServer.");
                     HTTPServer.getInstance().stopServer();
                     mDelayServerShutdown = false;
+                }
+
+                if (breadBox.isOpen()) {
+                    breadBox.close();
                 }
             default:
                 break;
@@ -524,5 +482,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 }
             }
         }
+    }
+
+    public static BreadBox getBreadBox() {
+        return breadBox;
     }
 }

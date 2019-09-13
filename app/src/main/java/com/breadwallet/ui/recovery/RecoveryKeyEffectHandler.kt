@@ -193,11 +193,11 @@ class RecoveryKeyEffectHandler(
             }
 
             try {
-                // TODO: This will be replaced with a cryptosystem initialization handler
-                BreadApp.initializeCryptoSystem(context, account)
-            } catch (e: Exception) {
-                logError("Error initializing crypto system", e)
-                output.accept(RecoveryKeyEvent.OnPhraseInvalid) // TODO: To be removed
+                BreadApp.getBreadBox().open(account)
+            } catch (e: IllegalStateException) {
+                logError("Error opening BreadBox", e)
+                // TODO: Define initialization error
+                output.accept(RecoveryKeyEvent.OnPhraseInvalid)
                 return@launch
             }
 
