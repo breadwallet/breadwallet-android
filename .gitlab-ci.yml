@@ -40,6 +40,17 @@ lintDebug:
     paths:
     - app/lint/reports/
 
+detekt:
+  stage: build
+  script:
+    - rm -rf app/build/reports/detekt
+    - ./gradlew --console=plain detekt
+  artifacts:
+    paths:
+      - app/build/reports/detekt
+  only:
+    - merge_requests
+
 assembleDebug:
   stage: build
   script:
