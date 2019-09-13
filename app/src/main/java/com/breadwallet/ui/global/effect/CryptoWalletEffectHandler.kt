@@ -29,186 +29,123 @@ import com.breadwallet.crypto.*
 import com.breadwallet.BreadApp
 
 import android.content.Context
-import com.breadwallet.BuildConfig
-import com.breadwallet.crypto.events.wallet.*
-import com.breadwallet.crypto.events.wallet.WalletEvent as CoreWalletEvent
-import com.breadwallet.crypto.events.walletmanager.DefaultWalletManagerEventVisitor
-import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
-import com.breadwallet.crypto.events.walletmanager.WalletManagerListener
-import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.SyncTestLogger
 import com.breadwallet.ui.global.event.WalletEvent
+import com.breadwallet.ui.util.bindConsumerIn
 import com.breadwallet.ui.wallet.WalletTransaction
-import com.google.common.primitives.UnsignedLong
 import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import java.math.BigDecimal
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class CryptoWalletEffectHandler(
-        private val output: Consumer<WalletEvent>,
-        private val context: Context,
-        private val currencyCode: String
-) : Connection<WalletEffect>, WalletListener, WalletManagerListener {
+    private val output: Consumer<WalletEvent>,
+    private val context: Context,
+    private val currencyCode: String
+) : Connection<WalletEffect>, CoroutineScope {
 
-    companion object {
-        private const val RUN_LOGGER = false
-    }
-
-    private val wallet = BreadApp.getCryptoSystem()
-            .wallets
-            .single { currencyCode.equals(it.currency.code, true) }
-
-    private val testLogger by lazy { SyncTestLogger(context) }
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     init {
-        if (BuildConfig.DEBUG && RUN_LOGGER) {
-            testLogger.start()
-        }
+        val breadBox = BreadApp.getBreadBox()
+        val walletFlow = breadBox.wallet(currencyCode)
 
-        BreadApp.getCryptoSystemListener()?.apply {
-            addListener(this as WalletListener)
-            addListener(this as WalletManagerListener)
-        }
+        // Balance
+        walletFlow
+            .map { it.balance }
+            .distinctUntilChanged()
+            .map { WalletEvent.OnBalanceUpdated(getBalance(it), getBalanceInFiat(it)) }
+            .bindConsumerIn(output, this)
+
+        // Currency name
+        walletFlow
+            .map { it.currency.name }
+            .distinctUntilChanged()
+            .map { WalletEvent.OnCurrencyNameUpdated(it) }
+            .bindConsumerIn(output, this)
+
+        // Wallet transfers
+        breadBox.walletTransfers(currencyCode)
+            .mapLatest { transfers ->
+                WalletEvent.OnTransactionsUpdated(
+                    transfers
+                        .map { it.asWalletTransaction() }
+                        .sortedByDescending { it.timeStamp }
+                )
+            }
+            .bindConsumerIn(output, this)
+
+        // Wallet sync state
+        breadBox.walletSyncState(currencyCode)
+            .mapLatest {
+                WalletEvent.OnSyncProgressUpdated(
+                    it.percentComplete,
+                    it.timestamp,
+                    it.isSyncing
+                )
+            }
+            .bindConsumerIn(output, this)
     }
 
     override fun accept(value: WalletEffect) {
-        when (value) {
-            is WalletEffect.LoadTransactions -> {
-                output.accept(WalletEvent.OnTransactionsUpdated(
-                        (wallet.transfers ?: emptyList())
-                                .map {
-                                    it.asWalletTransaction()
-                                }.sortedByDescending(WalletTransaction::timeStamp)
-                ))
-            }
-            is WalletEffect.LoadWalletBalance -> {
-                val balanceAmt = wallet.balance
-
-                val balance = getBalance(balanceAmt)
-                val balanceInFiat = getBalanceInFiat(balanceAmt)
-
-                output.accept(WalletEvent.OnCurrencyNameUpdated(wallet.walletManager.network.name)) // TODO: should be wallet.name, but instead of 'Bitcoin', gives us 'btc' (discuss with CORE)
-                output.accept(WalletEvent.OnBalanceUpdated(balance, balanceInFiat))
-            }
-        }
     }
 
     override fun dispose() {
-        BreadApp.getCryptoSystemListener()?.apply {
-            removeListener(this as WalletListener)
-            removeListener(this as WalletManagerListener)
-        }
+        coroutineContext.cancelChildren()
     }
 
-    override fun handleWalletEvent(system: System, manager: WalletManager, wallet: Wallet, event: CoreWalletEvent) {
-        event.accept(object : DefaultWalletEventVisitor<Void>() {
-            override fun visit(event: WalletBalanceUpdatedEvent): Void? {
-                if (event.balance.currency.code.toLowerCase() != currencyCode.toLowerCase())
-                    return null
-
-                val balanceAmt = event.balance
-                val balance = getBalance(balanceAmt)
-                val balanceInFiat = getBalanceInFiat(balanceAmt)
-
-                output.accept(WalletEvent.OnBalanceUpdated(balance, balanceInFiat))
-
-                return null
-            }
-
-            override fun visit(event: WalletTransferAddedEvent): Void? {
-                updateTransfer(event.transfer)
-                return null
-            }
-
-            override fun visit(event: WalletTransferChangedEvent): Void? {
-                updateTransfer(event.transfer)
-                return null
-            }
-
-            override fun visit(event: WalletTransferSubmittedEvent): Void? {
-                updateTransfer(event.transfer)
-                return null
-            }
-        })
-    }
-
-    override fun handleManagerEvent(system: System?, manager: WalletManager, event: WalletManagerEvent) {
-        event.accept(object : DefaultWalletManagerEventVisitor<Void>() {
-            override fun visit(event: WalletManagerSyncProgressEvent): Void? {
-                output.accept(WalletEvent.OnSyncProgressUpdated(
-                        progress = event.percentComplete.toDouble(), // TODO: Use float to match core.
-                        syncThroughMillis = event.timestamp.transform { it?.time }.or(0L)
-                ))
-                return null
-            }
-        })
-    }
-
-    private fun getBalance(balanceAmt : Amount) : BigDecimal {
+    private fun getBalance(balanceAmt: Amount): BigDecimal {
         return balanceAmt.doubleAmount(balanceAmt.unit).or(0.0).toBigDecimal()
     }
 
-    private fun getBalanceInFiat(balanceAmt : Amount) : BigDecimal {
+    private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
         val balance = getBalance(balanceAmt)
-        return RatesRepository.getInstance(context).getFiatForCrypto( balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
+        return RatesRepository.getInstance(context).getFiatForCrypto(
+            balance,
+            balanceAmt.currency.code,
+            BRSharedPrefs.getPreferredFiatIso(context)
+        ) ?: BigDecimal.ZERO
     }
 
-    private fun updateTransfer(transfer : Transfer) {
-        val updatedTx = wallet.transfers
-                .find { it.getHashAsString() == transfer.getHashAsString()} ?: return
-
-        output.accept(WalletEvent.OnTransactionUpdated(updatedTx.asWalletTransaction()))
-    }
-
-    private fun Transfer.getHashAsString() : String {
+    private fun Transfer.getHashAsString(): String {
         return hash.transform { it.toString() }.or("")
     }
 
-    private fun Transfer.asWalletTransaction() : WalletTransaction {
+    private fun Transfer.asWalletTransaction(): WalletTransaction {
 
         val txHash = getHashAsString()
         val metaData = KVStoreManager.getTxMetaData(context, txHash.toByteArray())
 
-        val confirmations = getConfirmations().or(UnsignedLong.ZERO).toInt()
-
-        val levels = when {
-            confirmations > 4 -> BRConstants.CONFIRMED_BLOCKS_NUMBER
-            confirmations <= 0 -> 2 //TODO: how to replace relay count logic?
-            else -> confirmations + 2
-        }
-
-        val blockHeight = when (confirmation.isPresent) {
-            true -> confirmation.get().blockNumber.toInt()
-            false -> 0
-        }
-
-        val timeStamp = when (confirmation.isPresent) {
-            true -> confirmation.get().confirmationTime.time
-            false -> 0L
-        }
+        val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
 
         return WalletTransaction(
-                txHash = txHash,
-                amount = getBalance(amount),
-                amountInFiat = getBalanceInFiat(amount),
-                fiatWhenSent = 0f, // TODO: Rates info
-                toAddress = target.transform { it.toString() }.or("<unknown>"),
-                fromAddress = source.transform { it.toString() }.or("<unknown>"),
-                isReceived = direction == TransferDirection.RECEIVED,
-                isErrored = state.type == TransferState.Type.FAILED,
-                memo = metaData?.comment.orEmpty(),
-                isValid = true, // TODO: do we have this info?
-                fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
-                blockHeight = blockHeight,
-                confirmations = confirmations,
-                timeStamp = timeStamp,
-                levels = levels,
-                currencyCode = currencyCode,
-                feeForToken = null // TODO: Either establish this via meta-data (like iOS) or compare toAddress with token addresses as in pre-Generic Core
+            txHash = txHash,
+            amount = getBalance(amount),
+            amountInFiat = getBalanceInFiat(amount),
+            fiatWhenSent = 0f, // TODO: Rates info
+            toAddress = target.transform { it.toString() }.or("<unknown>"),
+            fromAddress = source.transform { it.toString() }.or("<unknown>"),
+            isReceived = direction == TransferDirection.RECEIVED,
+            isErrored = state.type == TransferState.Type.FAILED,
+            memo = metaData?.comment.orEmpty(),
+            isValid = true, // TODO: do we have this info?
+            fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
+            blockHeight = confirmation.transform { it?.blockNumber?.toInt() }.or(0),
+            confirmations = confirmations.transform { it?.toInt() }.or(0),
+            confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
+            timeStamp = confirmation.transform { it?.confirmationTime?.time }.or(0L),
+            currencyCode = currencyCode,
+            feeForToken = null // TODO: Either establish this via meta-data (like iOS) or compare toAddress with token addresses as in pre-Generic Core
         )
     }
 }

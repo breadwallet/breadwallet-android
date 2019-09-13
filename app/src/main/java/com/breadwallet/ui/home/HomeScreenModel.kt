@@ -70,13 +70,11 @@ data class Wallet(
     val fiatPricePerUnit: BigDecimal = BigDecimal.ZERO,
     val balance: BigDecimal = BigDecimal.ZERO,
     val fiatBalance: BigDecimal = BigDecimal.ZERO,
-    val syncProgress: Double = 0.0,
+    val syncProgress: Float = 0f,
     val syncingThroughMillis: Long = 0L,
+    val isSyncing: Boolean = false,
     val priceChange: PriceChange? = null
 ) {
-
-    val isSyncing: Boolean = syncProgress < 1.0 && syncProgress > 0
-
     val hasSyncTime: Boolean = syncingThroughMillis != 0L
 
     val hasPricePerUnit: Boolean = fiatPricePerUnit != BigDecimal.ZERO

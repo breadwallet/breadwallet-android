@@ -25,8 +25,9 @@ data class WalletScreenModel private constructor(
         val filterReceived: Boolean = false,
         val filterPending: Boolean = false,
         val filterComplete: Boolean = false,
-        val syncProgress: Double = 0.0,
+        val syncProgress: Float = 0f,
         val syncingThroughMillis: Long = 0,
+        val isSyncing: Boolean = false,
         val hasInternet: Boolean = true,
         val priceChartInterval: Interval = Interval.ONE_YEAR,
         val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
@@ -38,9 +39,6 @@ data class WalletScreenModel private constructor(
         fun createDefault(currencyCode: String) =
                 WalletScreenModel(currencyCode = currencyCode)
     }
-
-    val isSyncing: Boolean
-        get() = syncProgress < 1.0
 
     val hasSyncTime: Boolean
         get() = syncingThroughMillis != 0L
@@ -94,17 +92,14 @@ data class WalletTransaction(
         val fee: BigDecimal,
         val blockHeight: Int,
         val confirmations: Int,
-        val levels: Int,
+        val confirmationsUntilFinal: Int,
         val currencyCode: String,
         val feeForToken: String? // TODO: token symbol?
 ) {
-    val isPending: Boolean
-        get() = levels > 0 && levels < BRConstants.CONFIRMED_BLOCKS_NUMBER
+    val isPending: Boolean = confirmations < confirmationsUntilFinal
 
-    val isComplete: Boolean
-        get() = confirmations >= BRConstants.CONFIRMED_BLOCKS_NUMBER
+    val isComplete: Boolean = confirmations >= confirmationsUntilFinal
 
-    val isFeeForToken: Boolean
-        get() = !feeForToken.isNullOrBlank()
+    val isFeeForToken: Boolean = !feeForToken.isNullOrBlank()
 }
 
