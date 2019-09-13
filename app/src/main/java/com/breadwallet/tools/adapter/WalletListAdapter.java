@@ -170,8 +170,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             decoratedHolderView.mSyncingLabel.setVisibility(wallet.isSyncing() ? View.VISIBLE : View.INVISIBLE);
             if (wallet.isSyncing()) {
                 StringBuffer labelText = new StringBuffer(mContext.getString(R.string.SyncingView_syncing));
-                labelText.append(' ')
-                        .append(NumberFormat.getPercentInstance().format(wallet.getSyncProgress()));
+                if (wallet.getSyncProgress() > 0) {
+                    labelText.append(' ')
+                            .append(NumberFormat.getPercentInstance().format(wallet.getSyncProgress()));
+                }
                 decoratedHolderView.mSyncingLabel.setText(labelText);
             }
             PriceChange priceChange = wallet.getPriceChange();

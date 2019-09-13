@@ -7,8 +7,9 @@ import java.math.BigDecimal
 
 sealed class WalletScreenEvent {
     data class OnSyncProgressUpdated(
-            val progress: Double,
-            val syncThroughMillis: Long
+            val progress: Float,
+            val syncThroughMillis: Long,
+            val isSyncing: Boolean
     ) : WalletScreenEvent() {
         init {
             require(progress in 0.0..1.0) {

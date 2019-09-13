@@ -95,7 +95,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             }, { event: WalletEvent ->
                                 // Map outgoing event
                                 when (event) {
-                                    is WalletEvent.OnSyncProgressUpdated -> WalletScreenEvent.OnSyncProgressUpdated(event.progress, event.syncThroughMillis)
+                                    is WalletEvent.OnSyncProgressUpdated -> WalletScreenEvent.OnSyncProgressUpdated(event.progress, event.syncThroughMillis, event.isSyncing)
                                     is WalletEvent.OnBalanceUpdated -> WalletScreenEvent.OnBalanceUpdated(event.balance, event.fiatBalance)
                                     is WalletEvent.OnConnectionUpdated -> WalletScreenEvent.OnConnectionUpdated(event.isConnected)
                                     is WalletEvent.OnCurrencyNameUpdated -> WalletScreenEvent.OnCurrencyNameUpdated(event.name)
