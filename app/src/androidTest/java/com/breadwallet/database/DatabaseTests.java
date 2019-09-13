@@ -25,6 +25,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +62,6 @@ import java.util.concurrent.CountDownLatch;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-
 public class DatabaseTests {
     public static final String TAG = DatabaseTests.class.getName();
     final CountDownLatch signal = new CountDownLatch(1000);
@@ -103,6 +103,7 @@ public class DatabaseTests {
     }
 
     @Test
+    @Ignore
     public void testSetLocal() {
 
         // Test BTC transaction insert

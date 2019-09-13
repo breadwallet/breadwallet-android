@@ -75,13 +75,13 @@ class HomeScreenUpdateTests {
         val wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy())
         val initState = HomeScreenModel.createDefault().copy(wallets = wallets)
 
-        val progress = 0.15
-        val expectedWallet = WALLET_BITCOIN.copy(syncProgress = progress)
+        val progress = 0.15f
+        val expectedWallet = WALLET_BITCOIN.copy(syncProgress = progress, isSyncing = true)
         wallets[expectedWallet.currencyCode] = expectedWallet
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletSyncProgressUpdated(currencyCode = WALLET_BITCOIN.currencyCode, progress = progress, syncThroughMillis = 0L))
+                HomeScreenEvent.OnWalletSyncProgressUpdated(currencyCode = WALLET_BITCOIN.currencyCode, progress = progress, syncThroughMillis = 0L, isSyncing = true))
             .then(
                 assertThatNext(
                         hasModel(initState.copy(wallets = wallets)),

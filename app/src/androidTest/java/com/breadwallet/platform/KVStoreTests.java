@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,6 +65,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+@Ignore("Signing not yet implemented.")
 public class KVStoreTests {
     public static final String TAG = KVStoreTests.class.getName();
 
