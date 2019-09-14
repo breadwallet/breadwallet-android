@@ -32,6 +32,14 @@ detekt:
   only:
     - merge_requests
 
+unitTests:
+  stage: build
+  script:
+    - ./gradlew --console=plain test
+  artifacts:
+    paths:
+      - app/build/test-results
+
 assembleDebug:
   stage: build
   script:
