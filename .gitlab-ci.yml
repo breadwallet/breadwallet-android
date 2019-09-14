@@ -1,53 +1,50 @@
 image: circleci/android:api-29-ndk
 
 variables:
-  ANDROID_COMPILE_SDK: "28"
-  ANDROID_BUILD_TOOLS: "28.0.2"
-  ANDROID_SDK_TOOLS:   "4333796"
-  ANDROID_NDK: "r18b"
   GIT_SUBMODULE_STRATEGY: recursive
+
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+    - .m2/
+    - .gradle/
 
 stages:
   - build
 
-lintDebug:
-  stage: build
-  script:
-    - ./gradlew -Pci --console=plain :app:lintBrdDebug -PbuildDir=lint
-  only:
-    - develop
-    - /^release.*$/
-  artifacts:
-    paths:
-    - app/lint/reports/
-
-detekt:
-  stage: build
-  script:
-    - rm -rf app/build/reports/detekt
-    - ./gradlew --console=plain detekt
-  artifacts:
-    paths:
-      - app/build/reports/detekt
-  only:
-    - merge_requests
-
-unitTests:
-  stage: build
-  script:
-    - ./gradlew --console=plain test
-  artifacts:
-    paths:
-      - app/build/test-results
-
-assembleDebug:
+debug:
   stage: build
   script:
     - ./gradlew assembleDebug
+    - ./gradlew --console=plain testBrdDebugUnitTest
+    - ./gradlew --console=plain detekt
+    # - ./gradlew -Pci --console=plain :app:lintBrdDebug -PbuildDir=lint
   only:
     - develop
+    - master
+    - /^release.*$/
+    - merge_requests
+  artifacts:
+    paths:
+      - app/build/outputs/
+      - app/build/test-results
+      - app/lint/reports/
+      - app/build/reports/detekt
+
+release:
+  stage: build
+  script:
+    - ./gradlew assembleRelease
+    - ./gradlew --console=plain testBrdReleaseUnitTest
+    - ./gradlew --console=plain detekt
+    # - ./gradlew -Pci --console=plain :app:lintBrdRelease -PbuildDir=lint
+  only:
+    - develop
+    - master
     - /^release.*$/
   artifacts:
     paths:
-    - app/build/outputs/
-
+      - app/build/outputs/
+      - app/build/test-results
+      - app/lint/reports/
+      - app/build/reports/detekt
