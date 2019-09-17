@@ -49,4 +49,6 @@ sealed class HomeScreenEffect {
     object GoToAddWallet : HomeScreenEffect()
 
     data class RecordPushNotificationOpened(val campaignId: String) : HomeScreenEffect()
+
+    data class TrackEvent(val eventName: String, val attributes: Map<String, String>? = null) : HomeScreenEffect()
 }
