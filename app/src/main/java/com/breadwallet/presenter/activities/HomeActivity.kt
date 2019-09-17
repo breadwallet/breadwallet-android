@@ -219,8 +219,8 @@ class HomeActivity : BRActivity(), EventSource<HomeScreenEvent> {
 
                     if (model.showPrompt) {
                         val promptView = PromptManager.promptInfo(this@HomeActivity, model.promptId)
-                        if (list_group_layout.childCount >= MAX_NUMBER_OF_CHILDREN) {
-                            list_group_layout.removeViewAt(0)
+                        if (list_group_layout.childCount > 0) {
+                            list_group_layout.removeAllViews()
                         }
                         list_group_layout.addView(promptView, 0)
                     }

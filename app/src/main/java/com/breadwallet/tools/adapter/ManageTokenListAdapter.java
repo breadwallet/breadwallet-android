@@ -9,7 +9,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.AddWalletsActivity;
@@ -222,15 +220,9 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         public AddWalletItemViewHolder(View view) {
             super(view);
-
             mAddWalletsLabel = view.findViewById(R.id.add_wallets);
+            mAddWalletsLabel.setText("+ " + mContext.getString(R.string.TokenList_addTitle));
             mParent = view.findViewById(R.id.wallet_card);
-
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, mAddWalletsLabel.getId());
-            mAddWalletsLabel.setLayoutParams(layoutParams);
-            int leftPadding = (int) mContext.getResources().getDimension(R.dimen.manage_wallets_footer_padding_left);
-            mAddWalletsLabel.setPadding(Utils.getPixelsFromDps(mContext, leftPadding), 0, 0, 0);
         }
     }
 
