@@ -1,5 +1,5 @@
 plugins {
-    id("org.jlleitschuh.gradle.ktlint") version "8.2.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.1"
 }
 
 apply plugin: 'com.android.application'
@@ -8,6 +8,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.protobuf'
+
+detekt {
+    toolVersion = "1.0.1"
+    input = files("src/main/java", "src/test/java")
+    baseline = file("detekt-baseline.xml")
+}
 
 android {
     compileSdkVersion = 28
@@ -261,6 +267,8 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.0.1"
 }
 
 apply plugin: 'com.google.gms.google-services'
