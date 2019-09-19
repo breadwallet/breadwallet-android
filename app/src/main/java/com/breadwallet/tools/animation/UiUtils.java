@@ -25,25 +25,23 @@ import android.view.animation.OvershootInterpolator;
 import com.breadwallet.R;
 import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.LoginActivity;
-import com.breadwallet.ui.browser.PlatformBrowserActivity;
-import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentWebModal;
-import com.breadwallet.ui.wallet.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.MainActivity;
+import com.breadwallet.ui.browser.PlatformBrowserActivity;
+import com.breadwallet.ui.wallet.FragmentTxDetails;
+import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.HTTPServer;
@@ -321,13 +319,13 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
+        Class toStart = auth ? MainActivity.class : WalletActivity.class;
 
         // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
         if (toStart.equals(WalletActivity.class)) {
 
             if (BRSharedPrefs.isNewWallet(from)) {
-                toStart = HomeActivity.class;
+                toStart = MainActivity.class;
             }
         }
 

@@ -35,10 +35,10 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.HomeActivity
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.platform.network.NotificationsSettingsClientImpl
@@ -205,18 +205,18 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         val campaignId = remoteMessage.data[MP_CAMPAIGN_ID]
 
         return PendingIntent.getActivity(applicationContext, 0,
-                Intent(applicationContext, HomeActivity::class.java).apply {
+                Intent(applicationContext, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     if (!url.isNullOrEmpty()) {
-                        putExtra(HomeActivity.EXTRA_DATA, url)
+                        putExtra(MainActivity.EXTRA_DATA, url)
                     }
-                    putExtra(HomeActivity.EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID, campaignId)
+                    putExtra(MainActivity.EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID, campaignId)
                 }, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun getHomePendingIntent(): PendingIntent =
             PendingIntent.getActivity(applicationContext, 0,
-                    Intent(applicationContext, HomeActivity::class.java).apply {
+                    Intent(applicationContext, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }, 0)
 
