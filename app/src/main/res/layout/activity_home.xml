@@ -13,7 +13,7 @@
     android:orientation="vertical"
     tools:context="com.breadwallet.presenter.activities.HomeActivity">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,22 +21,29 @@
             android:id="@+id/testnet_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="TESTNET"
+            android:textColor="#4DFFFFFF"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:textColor="#4DFFFFFF"
-            android:text="TESTNET" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RelativeLayout
             android:id="@+id/home_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:layout_width="80dp"
-                android:layout_height="28dp"
+                android:layout_height="30dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
@@ -52,7 +59,8 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:text="@string/HomeScreen.totalAssets"
                 android:textColor="@color/text_total_assets_label"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:textSize="12sp"
+                app:brdFont="@string/Font.CircularPro_Medium" />
 
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
@@ -63,30 +71,39 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                app:brdFont="@string/Font.CircularPro_Medium" />
         </RelativeLayout>
 
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/list_group_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/menu_table"
-            android:layout_below="@id/home_header">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/home_header"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/home_header" />
 
-            <LinearLayout
-                android:id="@+id/list_group_layout"
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/menu_table"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/list_group_layout">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_wallet_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/bread_margin"
-                android:paddingTop="@dimen/bread_margin"
-                android:paddingEnd="@dimen/bread_margin">
+                android:layout_height="wrap_content" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_wallet_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
 
         </ScrollView>
 
@@ -95,12 +112,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="?attr/primary_background"
+            android:background="?attr/secondary_background"
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:padding="8dp"
-            android:stretchColumns="0,1,2">
+            android:stretchColumns="0,1,2"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <TableRow>
 
@@ -121,7 +139,8 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_buy_cash"
+                        android:src="@drawable/ic_menu_buy_sell"
+                        android:tint="@color/white"
                         app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -147,7 +166,7 @@
                         android:layout_marginEnd="8dp"
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.buy"
-                        android:textColor="@color/sync_toolbar_retry_text"
+                        android:textColor="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -168,7 +187,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/ic_trade" />
+                        android:src="@drawable/ic_menu_trade"
+                        android:tint="@color/white" />
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:layout_width="wrap_content"
@@ -176,7 +196,7 @@
                         android:layout_gravity="center"
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.trade"
-                        android:textColor="@color/sync_toolbar_retry_text" />
+                        android:textColor="@color/white" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -194,7 +214,8 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="4dp"
-                        android:background="@drawable/ic_menu" />
+                        android:src="@drawable/ic_menu_more"
+                        android:tint="@color/white" />
 
                     <com.breadwallet.presenter.customviews.BaseTextView
                         android:layout_width="wrap_content"
@@ -202,25 +223,26 @@
                         android:layout_gravity="center"
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.menu"
-                        android:textColor="@color/sync_toolbar_retry_text" />
+                        android:textColor="@color/white" />
                 </LinearLayout>
 
             </TableRow>
 
         </TableLayout>
 
-        <com.breadwallet.presenter.customviews.BRNotificationBar
-            android:id="@+id/notification_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/blue"
-            android:contentInsetStart="0dp"
-            android:contentInsetLeft="0dp"
-            app:breadText="@string/Alert.noInternet"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp" />
+    </android.support.constraint.ConstraintLayout>
 
-    </RelativeLayout>
+    <com.breadwallet.presenter.customviews.BRNotificationBar
+        android:id="@+id/notification_bar"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/blue"
+        android:contentInsetStart="0dp"
+        tools:visibility="gone"
+        android:contentInsetLeft="0dp"
+        app:breadText="@string/Alert.noInternet"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp" />
 
 </RelativeLayout>

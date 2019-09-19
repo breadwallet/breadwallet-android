@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bread_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="false"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:showIn="@layout/activity_wallet">
+
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/currency_usd_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/large_header"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="$16,904.34" />
+
+    <com.breadwallet.ui.wallet.spark.SparkView
+        android:id="@+id/spark_line"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chart_label"
+        app:spark_cornerRadius="1dp"
+        app:spark_fillColor="@color/wallet_orange"
+        app:spark_lineColor="@color/white"
+        app:spark_lineWidth="2dp"
+        app:spark_scrubEnabled="true"
+        app:spark_scrubLineColor="@color/trans_white"
+        app:spark_scrubLineWidth="1dp" />
+
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/chart_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/spark_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/spark_line"
+        app:layout_constraintTop_toBottomOf="@+id/currency_usd_price"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="TextView" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/one_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/Wallet.one_day"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintEnd_toStartOf="@id/one_week"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spark_line" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/one_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="@string/Wallet.one_week"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/one_day"
+        app:layout_constraintEnd_toStartOf="@id/one_month"
+        app:layout_constraintStart_toEndOf="@id/one_day"
+        app:layout_constraintTop_toTopOf="@+id/one_day" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/one_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="@string/Wallet.one_month"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/one_week"
+        app:layout_constraintEnd_toStartOf="@id/three_months"
+        app:layout_constraintStart_toEndOf="@id/one_week"
+        app:layout_constraintTop_toTopOf="@+id/one_week" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/three_months"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="@string/Wallet.three_months"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/one_month"
+        app:layout_constraintEnd_toStartOf="@id/one_year"
+        app:layout_constraintStart_toEndOf="@id/one_month"
+        app:layout_constraintTop_toTopOf="@+id/one_month" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/one_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="@string/Wallet.one_year"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/three_months"
+        app:layout_constraintEnd_toStartOf="@id/three_years"
+        app:layout_constraintStart_toEndOf="@id/three_months"
+        app:layout_constraintTop_toTopOf="@+id/three_months" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/three_years"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="@string/Wallet.three_years"
+        android:textColor="@color/white"
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/one_year"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/one_year"
+        app:layout_constraintTop_toTopOf="@+id/one_year" />
+
+    <View
+        android:id="@+id/bottom_line"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white_transparent_25"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/one_month" />
+
+</android.support.constraint.ConstraintLayout>

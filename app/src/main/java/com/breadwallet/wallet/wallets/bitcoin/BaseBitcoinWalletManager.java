@@ -37,7 +37,6 @@ import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -944,10 +943,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                                         Log.e(getTag(), "run: ", ex);
                                     }
                                 }
-                                if (ctx instanceof Activity && BRSharedPrefs.getShowNotification(ctx))
-                                    BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
-                                else
-                                    Log.e(getTag(), "onTxAdded: ctx is not activity");
                             }
                         }
                     }, DateUtils.SECOND_IN_MILLIS);
