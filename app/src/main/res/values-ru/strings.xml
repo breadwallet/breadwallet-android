@@ -274,6 +274,8 @@
     <string name="HomeScreen.admin">Админ</string>
     <!-- Home screen menu button to buy some bitcoin -->
     <string name="HomeScreen.buy">Купить</string>
+    <!-- home screen toolbar 'Buy & Sell' button -->
+    <string name="HomeScreen.buyAndSell">Купить и продать</string>
     <!-- Menu button on the home screen toolbar -->
     <string name="HomeScreen.menu">Меню</string>
     <!-- This section lists the users wallets -->

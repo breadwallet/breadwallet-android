@@ -274,6 +274,8 @@
     <string name="HomeScreen.admin">Admin</string>
     <!-- Home screen menu button to buy some bitcoin -->
     <string name="HomeScreen.buy">Buy</string>
+    <!-- home screen toolbar 'Buy & Sell' button -->
+    <string name="HomeScreen.buyAndSell">Buy &amp; Sell</string>
     <!-- Menu button on the home screen toolbar -->
     <string name="HomeScreen.menu">Menu</string>
     <!-- This section lists the users wallets -->
@@ -1207,6 +1209,12 @@
     <!-- Push notifications settings failed to update settings on the back end -->
     <string name="PushNotifications.updateFailed">Failed to update push notifications settings</string>
 
-    <string name="HomeScreen.buyAndSell">Buy &amp; Sell</string>
+    <!-- TODO: Alan - these need translation -->
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_years">3y</string>
 
 </resources>

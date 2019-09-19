@@ -77,7 +77,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
     public static final String EXTRA_DATA = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_DATA";
     public static final String EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_PUSH_CAMPAIGN_ID";
-    public static final int MAX_NUMBER_OF_CHILDREN = 2;
     private static final String NETWORK_TESTNET = "TESTNET";
     private static final String NETWORK_MAINNET = "MAINNET";
 
@@ -221,8 +220,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         PromptManager.PromptItem toShow = PromptManager.nextPrompt(this);
         if (toShow != null) {
             View promptView = PromptManager.promptInfo(this, toShow);
-            if (mListGroupLayout.getChildCount() >= MAX_NUMBER_OF_CHILDREN) {
-                mListGroupLayout.removeViewAt(0);
+            if (mListGroupLayout.getChildCount() > 0) {
+                mListGroupLayout.removeAllViews();
             }
             mListGroupLayout.addView(promptView, 0);
             EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX

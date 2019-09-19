@@ -26,5 +26,6 @@ package com.breadwallet.model
 
 enum class Experiments(val key: String) {
     BUY_NOTIFICATION("buy-notification"),
-    BUY_SELL_MENU_BUTTON("buy-sell-menu-button");
+    BUY_SELL_MENU_BUTTON("buy-sell-menu-button"),
+    ATM_MAP("map");
 }
