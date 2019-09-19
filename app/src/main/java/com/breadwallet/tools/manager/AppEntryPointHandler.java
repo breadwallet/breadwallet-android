@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.animation.UiUtils;
@@ -171,7 +170,7 @@ public final class AppEntryPointHandler {
             ServerBundlesHelper.setDebugBundle(context, ServerBundlesHelper.Type.WEB, webBundle);
         }
 
-        Intent intent = new Intent(context, HomeActivity.class);
+        Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
     }
 

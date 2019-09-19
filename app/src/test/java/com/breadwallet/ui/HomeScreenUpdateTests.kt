@@ -81,7 +81,13 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletSyncProgressUpdated(currencyCode = WALLET_BITCOIN.currencyCode, progress = progress, syncThroughMillis = 0L, isSyncing = true))
+                HomeScreenEvent.OnWalletSyncProgressUpdated(
+                        currencyCode = WALLET_BITCOIN.currencyCode,
+                        progress = progress,
+                        syncThroughMillis = 0L,
+                        isSyncing = true
+                )
+            )
             .then(
                 assertThatNext(
                         hasModel(initState.copy(wallets = wallets)),

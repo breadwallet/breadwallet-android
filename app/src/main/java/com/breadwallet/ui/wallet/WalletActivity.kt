@@ -22,7 +22,6 @@ import android.widget.ImageButton
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.presenter.activities.HomeActivity
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.customviews.BaseTextView
 import com.breadwallet.presenter.entities.CryptoRequest
@@ -31,8 +30,8 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
-import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.global.effect.CryptoWalletEffectHandler
 import com.breadwallet.ui.global.effect.NavigationEffect
 import com.breadwallet.ui.global.effect.NavigationEffectHandler
@@ -317,7 +316,8 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
         if (entryCount > 0) {
             super.onBackPressed()
         } else {
-            val intent = Intent(this, HomeActivity::class.java)
+            // TODO show home controller
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right)
             if (!isDestroyed) {

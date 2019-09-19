@@ -1,11 +1,9 @@
 package com.breadwallet.presenter.activities.camera;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,12 +13,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.ui.MainActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -178,8 +175,9 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                     @Override
                     public void run() {
                         mCameraGuide.setImageResource(R.drawable.cameraguide);
-                        Intent intent = new Intent(ScanQRActivity.this, HomeActivity.class);
-                        intent.putExtra(HomeActivity.EXTRA_DATA, url);
+                        // TODO show home controller without requesting PIN
+                        Intent intent = new Intent(ScanQRActivity.this, MainActivity.class);
+                        intent.putExtra(MainActivity.EXTRA_DATA, url);
                         intent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         finish();
