@@ -44,6 +44,7 @@ import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.wallet.WalletActivity
 import com.breadwallet.wallet.WalletsMaster
@@ -204,14 +205,20 @@ class NavigationEffectHandler(
     }
 
     override fun goToHome() {
-        activity.startActivity(Intent(activity, HomeActivity::class.java).apply {
+        // TODO navigate to the HomeController once wallet
+        // TODO("Go to brd rewards")
+        activity.startActivity(Intent(activity, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })
+//        activity.startActivity(Intent(activity, HomeActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        })
     }
 
     override fun goToLogin() {
-        activity.startActivity(Intent(activity, LoginActivity::class.java).apply {
+        activity.startActivity(Intent(activity, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })

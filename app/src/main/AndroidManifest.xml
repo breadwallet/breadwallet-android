@@ -101,10 +101,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presenter.activities.LoginActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".presenter.activities.settings.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
