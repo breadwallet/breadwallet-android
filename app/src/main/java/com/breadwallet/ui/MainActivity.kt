@@ -35,10 +35,12 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BreadApp
 
 import com.breadwallet.BuildConfig
-import com.breadwallet.presenter.activities.LoginActivity
 import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.util.logError
 
@@ -49,6 +51,11 @@ import com.breadwallet.ui.util.logError
  * platform events into Mobius events.
  */
 class MainActivity : BRActivity() {
+
+    companion object {
+        const val EXTRA_DATA = "com.breadwallet.ui.MainActivity.EXTRA_DATA"
+        const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
+    }
 
     private lateinit var router: Router
 
@@ -68,26 +75,19 @@ class MainActivity : BRActivity() {
 
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
-            if (BreadApp.hasWallet(applicationContext)) {
-                // Wallet exists, launch login activity as normal
-                startActivity(Intent(applicationContext, LoginActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
-                })
-                finish()
-            } else {
-                // No wallet, launch IntroController
-                val rootController = when {
-                    // TODO: We would display home controller instead of the old activity
-                    //   BreadApp.hasWallet(applicationContext) -> LoginController()
-                    else -> IntroController()
+            val rootController = when {
+                BreadApp.hasWallet(applicationContext) -> {
+                    val intentUrl = processIntentData(intent)
+                    LoginController(intentUrl)
                 }
-                router.setRoot(RouterTransaction.with(rootController)
-                        .popChangeHandler(FadeChangeHandler())
-                        .pushChangeHandler(FadeChangeHandler()))
+                else -> IntroController()
             }
+            router.setRoot(RouterTransaction.with(rootController)
+                    .popChangeHandler(FadeChangeHandler())
+                    .pushChangeHandler(FadeChangeHandler()))
+        } else {
+            // open browser for the new intent
         }
-
         // TODO: Move this: Print once when app is first launched in debug mode.
         if (BuildConfig.DEBUG) {
             Utils.printPhoneSpecs(this)
@@ -110,4 +110,31 @@ class MainActivity : BRActivity() {
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         return checkOverlayAndDispatchTouchEvent(ev)
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            val url = processIntentData(it)
+            if (!url.isNullOrBlank()) {
+                AppEntryPointHandler.processDeepLink(this, url)
+            }
+        }
+    }
+
+    /** Process the new intent and return the url to browse if available */
+    private fun processIntentData(intent: Intent): String? {
+        if (intent.hasExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)) {
+            val campaignId = intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)
+            val attributes = mapOf<String, String>(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to campaignId)
+            EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
+            EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
+        }
+
+        var data: String? = intent.getStringExtra(EXTRA_DATA)
+        if (data.isNullOrBlank()) {
+            data = intent.dataString
+        }
+        return data
+    }
+
 }

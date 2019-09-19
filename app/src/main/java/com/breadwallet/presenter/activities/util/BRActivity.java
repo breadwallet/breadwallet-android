@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities.util;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -15,22 +14,19 @@ import android.view.MotionEvent;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.ui.recovery.RecoveryKeyActivity;
-import com.breadwallet.ui.wallet.WalletActivity;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.ui.MainActivity;
+import com.breadwallet.ui.recovery.RecoveryKeyActivity;
+import com.breadwallet.ui.wallet.WalletActivity;
 
 /**
  * BreadWallet
@@ -73,7 +69,7 @@ public abstract class BRActivity extends FragmentActivity {
         //open back to HomeActivity if needed
         if (this instanceof WalletActivity)
             BRSharedPrefs.putAppBackgroundedFromHome(this, false);
-        else if (this instanceof HomeActivity)
+        else if (this instanceof MainActivity)
             BRSharedPrefs.putAppBackgroundedFromHome(this, true);
 
     }

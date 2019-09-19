@@ -32,10 +32,10 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.ui.MainActivity;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 /**
@@ -71,7 +71,8 @@ public class SegWitActivity extends BaseSettingsActivity {
                 enableButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(SegWitActivity.this, HomeActivity.class);
+                        // TODO show home controller without requesting PIN
+                        Intent intent = new Intent(SegWitActivity.this, MainActivity.class);
                         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                     }
