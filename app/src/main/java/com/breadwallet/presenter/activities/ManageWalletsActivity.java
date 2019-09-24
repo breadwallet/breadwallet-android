@@ -57,20 +57,20 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        mTokens = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
+        mTokens = KVStoreManager.INSTANCE.getTokenListMetaData(ManageWalletsActivity.this).getEnabledCurrencies();
 
         for (int i = 0; i < mTokens.size(); i++) {
 
             TokenListMetaData.TokenInfo info = mTokens.get(i);
             TokenItem tokenItem = null;
-            String tokenSymbol = mTokens.get(i).symbol;
+            String tokenSymbol = mTokens.get(i).getSymbol();
 
             if (!tokenSymbol.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) && !tokenSymbol.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE) &&
                     !tokenSymbol.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) && !tokenSymbol.equalsIgnoreCase(WalletTokenManager.BRD_CURRENCY_CODE)) {
 
-                BREthereumToken tk = WalletEthManager.getInstance(getApplicationContext()).node.lookupToken(info.contractAddress);
+                BREthereumToken tk = WalletEthManager.getInstance(getApplicationContext()).node.lookupToken(info.getContractAddress());
                 if (tk == null) {
-                    BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
+                    BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.getContractAddress()));
                 } else {
                     tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null, true);
                 }
@@ -98,16 +98,16 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             public void onShowToken(TokenItem token) {
                 Log.d(TAG, "onShowToken");
 
-                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.INSTANCE.getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
 
-                if (metaData.hiddenCurrencies == null)
-                    metaData.hiddenCurrencies = new ArrayList<>();
-                metaData.showCurrency(item.symbol);
+                if (metaData.getHiddenCurrencies() == null)
+                    metaData.setHiddenCurrencies(new ArrayList<>());
+                metaData.showCurrency(item.getSymbol());
 
                 final TokenListMetaData finalMetaData = metaData;
-                KVStoreManager.putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
+                KVStoreManager.INSTANCE.putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
                 mAdapter.notifyDataSetChanged();
 
             }
@@ -116,16 +116,16 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             public void onHideToken(TokenItem token) {
                 Log.d(TAG, "onHideToken");
 
-                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.INSTANCE.getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
 
-                if (metaData.hiddenCurrencies == null)
-                    metaData.hiddenCurrencies = new ArrayList<>();
+                if (metaData.getHiddenCurrencies() == null)
+                    metaData.setHiddenCurrencies(new ArrayList<>());
 
-                metaData.hiddenCurrencies.add(item);
+                metaData.getHiddenCurrencies().add(item);
 
-                KVStoreManager.putTokenListMetaData(ManageWalletsActivity.this, metaData);
+                KVStoreManager.INSTANCE.putTokenListMetaData(ManageWalletsActivity.this, metaData);
                 mAdapter.notifyDataSetChanged();
 
             }

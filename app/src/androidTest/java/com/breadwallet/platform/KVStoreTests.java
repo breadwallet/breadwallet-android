@@ -545,20 +545,20 @@ public class KVStoreTests {
 
         TxMetaData tx = new TxMetaData();
         byte[] theHash = new byte[]{3, 5, 64, 2, 4, 5, 63, 7, 0, 56, 34};
-        tx.blockHeight = 123;
-        tx.classVersion = 3;
-        tx.comment = "hehey !";
-        tx.creationTime = 21324;
-        tx.deviceId = "someDevice2324";
-        tx.fee = "234";
-        tx.txSize = 23423;
-        tx.exchangeCurrency = "curr";
-        tx.exchangeRate = 23.4343;
-        KVStoreManager.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
+        tx.setBlockHeight(123);
+        tx.setClassVersion(3);
+        tx.setComment("hehey !");
+        tx.setCreationTime(21324);
+        tx.setDeviceId("someDevice2324");
+        tx.setFee("234");
+        tx.setTxSize(23423);
+        tx.setExchangeCurrency("curr");
+        tx.setExchangeRate(23.4343);
+        KVStoreManager.INSTANCE.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(7, items.size());
 
-        Map<String, TxMetaData> mds = KVStoreManager.getAllTxMD(mActivityRule.getActivity());
+        Map<String, TxMetaData> mds = KVStoreManager.INSTANCE.getAllTxMD(mActivityRule.getActivity());
         Assert.assertEquals(mds.size(), 1);
 
 //        Assert.assertEquals(mds.(0).blockHeight, 123);
@@ -594,29 +594,29 @@ public class KVStoreTests {
     public void testTxMetaData() {
         TxMetaData tx = new TxMetaData();
         byte[] theHash = new byte[]{3, 5, 64, 2, 4, 5, 63, 7, 0, 56, 34};
-        tx.blockHeight = 123;
-        tx.classVersion = 3;
-        tx.comment = "hehey !";
-        tx.creationTime = 21324;
-        tx.deviceId = "someDevice2324";
-        tx.fee = "234";
-        tx.txSize = 23423;
-        tx.exchangeCurrency = "curr";
-        tx.exchangeRate = 23.4343;
-        KVStoreManager.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
+        tx.setBlockHeight(123);
+        tx.setClassVersion(3);
+        tx.setComment("hehey !");
+        tx.setCreationTime(21324);
+        tx.setDeviceId("someDevice2324");
+        tx.setFee("234");
+        tx.setTxSize(23423);
+        tx.setExchangeCurrency("curr");
+        tx.setExchangeRate(23.4343);
+        KVStoreManager.INSTANCE.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(1, items.size());
 
-        TxMetaData newTx = KVStoreManager.getTxMetaData(mActivityRule.getActivity(), theHash);
-        Assert.assertEquals(newTx.blockHeight, 123);
-        Assert.assertEquals(newTx.classVersion, 3);
-        Assert.assertEquals(newTx.comment, "hehey !");
-        Assert.assertEquals(newTx.creationTime, 21324);
-        Assert.assertEquals(newTx.deviceId, "someDevice2324");
-        Assert.assertEquals(newTx.fee, "234");
-        Assert.assertEquals(newTx.txSize, 23423);
-        Assert.assertEquals(newTx.exchangeCurrency, "curr");
-        Assert.assertEquals(newTx.exchangeRate, 23.4343, 0);
+        TxMetaData newTx = KVStoreManager.INSTANCE.getTxMetaData(mActivityRule.getActivity(), theHash);
+        Assert.assertEquals(newTx.getBlockHeight(), 123);
+        Assert.assertEquals(newTx.getClassVersion(), 3);
+        Assert.assertEquals(newTx.getComment(), "hehey !");
+        Assert.assertEquals(newTx.getCreationTime(), 21324);
+        Assert.assertEquals(newTx.getDeviceId(), "someDevice2324");
+        Assert.assertEquals(newTx.getFee(), "234");
+        Assert.assertEquals(newTx.getTxSize(), 23423);
+        Assert.assertEquals(newTx.getExchangeCurrency(), "curr");
+        Assert.assertEquals(newTx.getExchangeRate(), 23.4343, 0);
 
     }
 
@@ -631,11 +631,11 @@ public class KVStoreTests {
         Assert.assertArrayEquals(rawPubKey, newPubKey);
 
         PairingMetaData putMD = new PairingMetaData("some id", BRCoreKey.encodeHex(rawPubKey), "pwb", "some.url");
-        KVStoreManager.putPairingMetadata(mActivityRule.getActivity(), putMD);
+        KVStoreManager.INSTANCE.putPairingMetadata(mActivityRule.getActivity(), putMD);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(1, items.size());
 
-        PairingMetaData getMD = KVStoreManager.getPairingMetadata(mActivityRule.getActivity(), rawPubKey);
+        PairingMetaData getMD = KVStoreManager.INSTANCE.getPairingMetadata(mActivityRule.getActivity(), rawPubKey);
         Assert.assertEquals(getMD.getId(), "some id");
         Assert.assertEquals(getMD.getPublicKeyHex(), BRCoreKey.encodeHex(rawPubKey));
         Assert.assertEquals(getMD.getService(), "pwb");

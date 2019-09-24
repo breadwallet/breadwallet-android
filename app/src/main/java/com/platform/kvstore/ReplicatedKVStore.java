@@ -877,6 +877,10 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             Log.e(TAG, "encrypt: authKey is empty: " + (mTempAuthKey == null ? null : mTempAuthKey.length));
             return null;
         }
+
+        // TODO: Replace with new crypto APIs (once implemented by CORE)
+        // Encrypter encrypter = Encrypter.createForChaCha20Poly1305(Key key, byte[] nonce12, byte[] ad); // ad can be empty array
+        // encrypter.encrypt(data);
         BRCoreKey key = new BRCoreKey(mTempAuthKey);
         byte[] nonce = CryptoHelper.generateRandomNonce();
         if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
@@ -907,6 +911,10 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         if (app == null) return null;
         if (mTempAuthKey == null)
             cacheKeyIfNeeded(app);
+
+        // TODO: Replace with new crypto APIs (once implemented by CORE)
+        // Encrypter encrypter = Encrypter.createForChaCha20Poly1305(Key key, byte[] nonce12, byte[] ad); // ad can be empty array, get nonce from 0-12 bytes from data (same as below)
+        // encrypter.decrypter(data);
         BRCoreKey key = new BRCoreKey(mTempAuthKey);
         //12 bytes is the nonce
         return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));

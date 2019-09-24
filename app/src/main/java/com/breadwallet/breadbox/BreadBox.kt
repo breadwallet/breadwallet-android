@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 /** Provides access to data from a lazily created [System] using [Flow]s. */
+@Suppress("TooManyFunctions")
 interface BreadBox {
 
     companion object {
@@ -57,6 +58,9 @@ interface BreadBox {
 
     /** Cleanup [System] and stop emitting events. */
     fun close()
+
+    /** Final clean-up: cancel flows. */
+    fun empty()
 
     /** Emits the [System] objects produced when calling [open]. */
     fun system(): Flow<System>
