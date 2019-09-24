@@ -276,13 +276,13 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);
 
             BigDecimal fiatAmountWhenSent;
-            TxMetaData metaData = KVStoreManager.getTxMetaData(app, mTransaction.getTxHash());
-            if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
+            TxMetaData metaData = KVStoreManager.INSTANCE.getTxMetaData(app, mTransaction.getTxHash());
+            if (metaData == null || metaData.getExchangeRate() == 0 || Utils.isNullOrEmpty(metaData.getExchangeCurrency())) {
                 fiatAmountWhenSent = BigDecimal.ZERO;
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
-                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getCurrencyCode());
+                CurrencyEntity ent = new CurrencyEntity(metaData.getExchangeCurrency(), null, (float) metaData.getExchangeRate(), walletManager.getCurrencyCode());
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);
@@ -335,18 +335,18 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the memo text if one is available
             String memo;
-            mTxMetaData = KVStoreManager.getTxMetaData(app, mTransaction.getTxHash());
+            mTxMetaData = KVStoreManager.INSTANCE.getTxMetaData(app, mTransaction.getTxHash());
 
             if (mTxMetaData != null) {
-                if (mTxMetaData.comment != null) {
-                    memo = mTxMetaData.comment;
+                if (mTxMetaData.getComment() != null) {
+                    memo = mTxMetaData.getComment();
                     mMemoText.setText(memo);
                 } else {
                     mMemoText.setText("");
                 }
-                String metaIso = Utils.isNullOrEmpty(mTxMetaData.exchangeCurrency) ? "USD" : mTxMetaData.exchangeCurrency;
+                String metaIso = Utils.isNullOrEmpty(mTxMetaData.getExchangeCurrency()) ? "USD" : mTxMetaData.getExchangeCurrency();
 
-                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(mTxMetaData.exchangeRate));
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(mTxMetaData.getExchangeRate()));
                 mExchangeRate.setText(exchangeRateFormatted);
             }
             if (tkn != null) { // it's a token transfer ETH tx
@@ -419,14 +419,14 @@ public class FragmentTxDetails extends DialogFragment {
     public void onPause() {
         super.onPause();
         // Update the memo field on the transaction and save it
-        mTxMetaData = KVStoreManager.getTxMetaData(getActivity(), mTransaction.getTxHash());
+        mTxMetaData = KVStoreManager.INSTANCE.getTxMetaData(getActivity(), mTransaction.getTxHash());
         if (mTxMetaData == null) {
             mTxMetaData = new TxMetaData();
         }
         String memo = mMemoText.getText().toString();
         if (!memo.isEmpty()) {
-            mTxMetaData.comment = memo;
-            KVStoreManager.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+            mTxMetaData.setComment(memo);
+            KVStoreManager.INSTANCE.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
             if (getContext() instanceof TxDetailListener) {
                 ((TxDetailListener) getContext()).onDetailUpdate();
             }

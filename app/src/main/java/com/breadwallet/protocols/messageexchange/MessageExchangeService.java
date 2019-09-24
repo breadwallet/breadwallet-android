@@ -375,7 +375,7 @@ public final class MessageExchangeService extends JobIntentService {
     }
 
     public static PairingMetaData getPairingMetaDataFromKvStore(Context context, byte[] publicKey) {
-        return KVStoreManager.getPairingMetadata(context, publicKey);
+        return KVStoreManager.INSTANCE.getPairingMetadata(context, publicKey);
     }
 
     /**
@@ -390,18 +390,18 @@ public final class MessageExchangeService extends JobIntentService {
         }
 
         mPairingMetaData = pairingMetaData;
-        KVStoreManager.putPairingMetadata(this, pairingMetaData);
+        KVStoreManager.INSTANCE.putPairingMetadata(this, pairingMetaData);
     }
 
     private String getLastProcessedCursor() {
-        return KVStoreManager.getLastCursor(this);
+        return KVStoreManager.INSTANCE.getLastCursor(this);
     }
 
 
     private void setLastProcessedCursor(String lastProcessedCursor) {
         Log.e(TAG, "setLastProcessedCursor: " + lastProcessedCursor);
         if (!Utils.isNullOrEmpty(lastProcessedCursor)) {
-            KVStoreManager.putLastCursor(this, lastProcessedCursor);
+            KVStoreManager.INSTANCE.putLastCursor(this, lastProcessedCursor);
         }
     }
 

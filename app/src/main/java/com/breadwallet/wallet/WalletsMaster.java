@@ -143,7 +143,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
     public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
         LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
         for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
-            currencyCodes.add(tokenInfo.symbol);
+            currencyCodes.add(tokenInfo.getSymbol());
         }
         for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
             currencyCodes.add(tokenItem.symbol.toUpperCase());
@@ -187,6 +187,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         return totalBalance;
     }
 
+    /* not used
     public synchronized boolean generateRandomSeed(final Context ctx) {
         if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(ctx))) {
             SecureRandom sr = new SecureRandom();
@@ -236,7 +237,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
             BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
             final WalletInfoData info = new WalletInfoData();
             info.creationDate = walletCreationTime;
-            KVStoreManager.putWalletInfo(ctx, info); //push the creation time to the kv store
+            KVStoreManager.INSTANCE.putWalletInfo(ctx, info); //push the creation time to the kv store
 
             //store the serialized in the KeyStore
             byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
@@ -245,6 +246,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
 
         return true;
     }
+    */
 
     public boolean isIsoCrypto(Context app, String iso) {
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
