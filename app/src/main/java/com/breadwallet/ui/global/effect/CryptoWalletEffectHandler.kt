@@ -29,6 +29,7 @@ import com.breadwallet.crypto.*
 import com.breadwallet.BreadApp
 
 import android.content.Context
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.global.event.WalletEvent
@@ -51,13 +52,13 @@ import java.math.BigDecimal
 class CryptoWalletEffectHandler(
     private val output: Consumer<WalletEvent>,
     private val context: Context,
-    private val currencyCode: String
+    private val currencyCode: String,
+    private val breadBox: BreadBox
 ) : Connection<WalletEffect>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     init {
-        val breadBox = BreadApp.getBreadBox()
         val walletFlow = breadBox.wallet(currencyCode)
 
         // Balance

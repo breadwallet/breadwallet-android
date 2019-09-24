@@ -50,6 +50,8 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_on_boarding.*
 import kotlinx.android.synthetic.main.fragment_onboarding.*
 import kotlinx.coroutines.SupervisorJob
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 class OnBoardingController(
     args: Bundle? = null
@@ -76,7 +78,10 @@ class OnBoardingController(
     override val layoutId = R.layout.activity_on_boarding
 
     private val effectJob = SupervisorJob()
-    private val _effectHandler = OnBoardingEffectHandler(effectJob, { eventConsumer }, { router }, { activity as Context })
+    private val _effectHandler by lazy {
+        OnBoardingEffectHandler(
+            effectJob, direct.instance(), { eventConsumer }, { router }, { activity as Context })
+    }
 
     override val defaultModel = OnBoardingModel.DEFAULT
     override val init = OnBoardingInit

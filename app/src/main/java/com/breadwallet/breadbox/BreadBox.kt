@@ -37,19 +37,6 @@ import java.io.File
 @Suppress("TooManyFunctions")
 interface BreadBox {
 
-    companion object {
-        /** Create an instance of [CoreBreadBox]. */
-        fun create(
-            storageFile: File,
-            isMainnet: Boolean = false,
-            walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
-        ): BreadBox = CoreBreadBox(
-            storageFile,
-            isMainnet,
-            walletManagerMode
-        )
-    }
-
     /** True when all systems are expected to be running and a [System] is available. */
     val isOpen: Boolean
 
@@ -58,9 +45,6 @@ interface BreadBox {
 
     /** Cleanup [System] and stop emitting events. */
     fun close()
-
-    /** Final clean-up: cancel flows. */
-    fun empty()
 
     /** Emits the [System] objects produced when calling [open]. */
     fun system(): Flow<System>
