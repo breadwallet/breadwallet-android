@@ -67,6 +67,12 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
         onLifeCycleEvent(Lifecycle.Event.ON_STOP);
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        onLifeCycleEvent(Lifecycle.Event.ON_DESTROY);
+    }
+
     /**
      * Passes a lifecycle event to all registered listeners.
      *

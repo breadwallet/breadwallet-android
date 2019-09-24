@@ -25,6 +25,7 @@
 package com.breadwallet.ui.recovery
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -58,7 +59,9 @@ import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_input_words.*
-
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
+import org.kodein.di.erased.on
 
 class RecoveryKeyController(
         args: Bundle? = null
@@ -85,16 +88,20 @@ class RecoveryKeyController(
     override val init = RecoveryKeyInit
     override val update = RecoveryKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
-            Connectable {
+            Connectable { output ->
                 val resources = resources!!
-                RecoveryKeyEffectHandler(it, {
+                RecoveryKeyEffectHandler(output, direct.instance(), {
                     // unlink
                     BRDialog.showCustomDialog(activity!!,
                             resources.getString(R.string.WipeWallet_alertTitle),
                             resources.getString(R.string.WipeWallet_alertMessage),
                             resources.getString(R.string.WipeWallet_wipe),
                             resources.getString(R.string.Button_cancel),
-                            { BreadApp.clearApplicationUserData() },
+                            {
+                                it.context
+                                    .getSystemService(ActivityManager::class.java)
+                                    .clearApplicationUserData()
+                            },
                             { brDialogView -> brDialogView.dismissWithAnimation() },
                             { eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed) },
                             0)

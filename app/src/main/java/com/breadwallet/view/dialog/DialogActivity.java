@@ -1,6 +1,7 @@
 package com.breadwallet.view.dialog;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -121,7 +122,7 @@ public class DialogActivity extends AppCompatActivity {
                 getString(R.string.Button_wipe_android),
                 brDialogView -> {
                     Log.d(TAG, "showKeyStoreInvalidDialogAndWipe: Clearing app data.");
-                    BreadApp.clearApplicationUserData();
+                    getSystemService(ActivityManager.class).clearApplicationUserData();
                 });
     }
 

@@ -27,6 +27,7 @@ package com.breadwallet.ui.onboarding
 import android.content.Context
 import com.bluelinelabs.conductor.Router
 import com.breadwallet.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.tools.security.KeyStore
@@ -47,6 +48,7 @@ import java.util.Date
 
 class OnBoardingEffectHandler(
     coroutineJob: Job,
+    private val breadBox: BreadBox,
     private val outputProvider: () -> Consumer<OnBoardingEvent>,
     private val routerProvider: () -> Router,
     private val contextProvider: () -> Context // TODO: Remove context dependency
@@ -110,7 +112,7 @@ class OnBoardingEffectHandler(
         }
 
         try {
-            BreadApp.getBreadBox().open(account)
+            breadBox.open(account)
             outputProvider().accept(OnBoardingEvent.OnWalletCreated)
         } catch (e: IllegalStateException) {
             logError("Error initializing crypto system", e)

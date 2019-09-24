@@ -203,6 +203,7 @@ clean {
 repositories {
     mavenCentral()
     google()
+    maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI' } // TODO: Remove when kodein inclusion is handled
     maven { url 'https://jitpack.io' }
 }
 
@@ -260,6 +261,9 @@ dependencies {
 
     implementation 'com.bluelinelabs:conductor:3.0.0-rc2'
     implementation 'com.bluelinelabs:conductor-support:2.1.5' // appcompat viewpager adapter
+
+    implementation 'org.kodein.di:kodein-di-erased-jvm:6.4.0'
+    implementation 'org.kodein.di:kodein-di-framework-android-support:6.4.0'
 
     androidTestImplementation "org.mockito:mockito-android:2.25.0"
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.2.0"

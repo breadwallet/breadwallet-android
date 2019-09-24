@@ -27,6 +27,7 @@ package com.breadwallet.ui.recovery
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit
 
 class RecoveryKeyEffectHandler(
         private val output: Consumer<RecoveryKeyEvent>,
+        private val breadBox: BreadBox,
         val goToUnlink: () -> Unit,
         val goToErrorDialog: () -> Unit,
         val errorShake: () -> Unit
@@ -193,7 +195,7 @@ class RecoveryKeyEffectHandler(
             }
 
             try {
-                BreadApp.getBreadBox().open(account)
+                breadBox.open(account)
             } catch (e: IllegalStateException) {
                 logError("Error opening BreadBox", e)
                 // TODO: Define initialization error
