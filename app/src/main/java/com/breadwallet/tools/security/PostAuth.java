@@ -96,6 +96,7 @@ public class PostAuth {
      * @param authAsked Device authentication for this action was asked already
      * @param listener  Action on device authentication or null if using the cached listener.
      */
+    /* not used
     public void onCreateWalletAuth(final Context context, boolean authAsked, AuthenticationSuccessListener listener) {
         if (listener != null) {
             mAuthenticationSuccessListener = listener;
@@ -111,6 +112,8 @@ public class PostAuth {
             }
         }
     }
+    */
+
 
     /**
      * Start the PaperKeyActivity with an extra action to be done on key confirmed or null for default action
@@ -211,8 +214,8 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
 
                     // Recover wallet-info and token list before starting to sync wallets.
-                    KVStoreManager.syncWalletInfo(activity);
-                    KVStoreManager.syncTokenList(activity);
+                    KVStoreManager.INSTANCE.syncWalletInfo(activity);
+                    KVStoreManager.INSTANCE.syncTokenList(activity);
 
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
@@ -267,16 +270,16 @@ public class PostAuth {
                         }
 
                         mTxMetaData = new TxMetaData();
-                        mTxMetaData.comment = mCryptoRequest.getMessage();
-                        mTxMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
+                        mTxMetaData.setComment(mCryptoRequest.getMessage());
+                        mTxMetaData.setExchangeCurrency(BRSharedPrefs.getPreferredFiatIso(context));
                         BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(context);
-                        mTxMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                        mTxMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
-                        mTxMetaData.txSize = tx.getTxSize().intValue();
-                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getCurrencyCode());
-                        mTxMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
-                        mTxMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
-                        mTxMetaData.classVersion = 1;
+                        mTxMetaData.setExchangeRate(fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue());
+                        mTxMetaData.setFee(mWalletManager.getTxFee(tx).toPlainString());
+                        mTxMetaData.setTxSize(tx.getTxSize().intValue());
+                        mTxMetaData.setBlockHeight(BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getCurrencyCode()));
+                        mTxMetaData.setCreationTime((int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS));
+                        mTxMetaData.setDeviceId(BRSharedPrefs.getDeviceId(context));
+                        mTxMetaData.setClassVersion(1);
 
 
                     } else {
@@ -359,7 +362,7 @@ public class PostAuth {
 
     public static void stampMetaData(Context activity, byte[] txHash) {
         if (mTxMetaData != null) {
-            KVStoreManager.putTxMetaData(activity, mTxMetaData, txHash);
+            KVStoreManager.INSTANCE.putTxMetaData(activity, mTxMetaData, txHash);
         } else {
             Log.e(TAG, "stampMetaData: mTxMetaData is null!");
         }

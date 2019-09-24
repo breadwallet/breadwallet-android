@@ -86,7 +86,7 @@ public class AddWalletsActivity extends BRActivity {
         super.onResume();
 
         List<TokenItem> tokenItems = new ArrayList<>();
-        TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
+        TokenListMetaData tokenListMetaData = KVStoreManager.INSTANCE.getTokenListMetaData(this);
         for (TokenItem tokenItem : TokenUtil.getTokenItems(this)) {
             if (!tokenListMetaData.isCurrencyEnabled(tokenItem.symbol) && TokenUtil.isTokenSupported(tokenItem.symbol)) {
                 tokenItems.add(tokenItem);
@@ -99,15 +99,13 @@ public class AddWalletsActivity extends BRActivity {
 
                 Log.d(TAG, "onTokenAdded, -> " + token.symbol);
 
-                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.INSTANCE.getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
-                if (metaData == null) metaData = new TokenListMetaData(null, null);
-                if (metaData.enabledCurrencies == null)
-                    metaData.enabledCurrencies = new ArrayList<>();
-                if (!metaData.isCurrencyEnabled(item.symbol))
-                    metaData.enabledCurrencies.add(item);
+                if (metaData == null) metaData = new TokenListMetaData();
+                if (!metaData.isCurrencyEnabled(item.getSymbol()))
+                    metaData.getEnabledCurrencies().add(item);
 
-                KVStoreManager.putTokenListMetaData(AddWalletsActivity.this, metaData);
+                KVStoreManager.INSTANCE.putTokenListMetaData(AddWalletsActivity.this, metaData);
 
                 mAdapter.notifyDataSetChanged();
 
@@ -118,12 +116,12 @@ public class AddWalletsActivity extends BRActivity {
             public void onTokenRemoved(TokenItem token) {
                 Log.d(TAG, "onTokenRemoved, -> " + token.name);
 
-                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.INSTANCE.getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
-                if (metaData == null) metaData = new TokenListMetaData(null, null);
-                metaData.disableCurrency(item.symbol);
+                if (metaData == null) metaData = new TokenListMetaData();
+                metaData.disableCurrency(item.getSymbol());
 
-                KVStoreManager.putTokenListMetaData(AddWalletsActivity.this, metaData);
+                KVStoreManager.INSTANCE.putTokenListMetaData(AddWalletsActivity.this, metaData);
 
                 mAdapter.notifyDataSetChanged();
             }

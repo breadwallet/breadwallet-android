@@ -365,6 +365,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
                 if (breadBox.isOpen()) {
                     breadBox.close();
+                    breadBox.empty();
                 }
             default:
                 break;

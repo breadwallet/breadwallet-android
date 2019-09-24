@@ -89,7 +89,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
             holder.showHide.setTypeface(typeface);
 
-            boolean isHidden = KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
+            boolean isHidden = KVStoreManager.INSTANCE.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
             TypedValue showWalletTypedValue = new TypedValue();
             TypedValue hideWalletTypedValue = new TypedValue();
@@ -105,7 +105,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                 @Override
                 public void onClick(View v) {
                     // If token is already hidden, show it
-                    if (KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
+                    if (KVStoreManager.INSTANCE.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
                         mListener.onShowToken(item);
                         // If token is already showing, hide it
                     } else {
@@ -235,14 +235,14 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     public void onItemMove(int fromPosition, int toPosition) {
         notifyItemMoved(fromPosition, toPosition);
 
-        TokenListMetaData currentMd = KVStoreManager.getTokenListMetaData(mContext);
+        TokenListMetaData currentMd = KVStoreManager.INSTANCE.getTokenListMetaData(mContext);
 
         // Only move this token to position that is not the last position, which is the "Add Wallet"
         // button
         if (toPosition < mTokens.size()) {
-            Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
+            Collections.swap(currentMd.getEnabledCurrencies(), fromPosition, toPosition);
             Collections.swap(mTokens, fromPosition, toPosition);
-            KVStoreManager.putTokenListMetaData(mContext, currentMd);
+            KVStoreManager.INSTANCE.putTokenListMetaData(mContext, currentMd);
         }
 
     }
