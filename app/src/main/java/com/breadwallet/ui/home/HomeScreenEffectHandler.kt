@@ -30,6 +30,7 @@ package com.breadwallet.ui.home
 
 import android.content.Context
 import com.breadwallet.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Wallet as CryptoWallet
 import com.breadwallet.model.Experiments
@@ -69,7 +70,8 @@ import java.math.BigDecimal
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenEffectHandler(
     private val output: Consumer<HomeScreenEvent>,
-    private val context: Context
+    private val context: Context,
+    private val breadBox: BreadBox
 ) : Connection<HomeScreenEffect>,
     CoroutineScope,
     RatesDataSource.OnDataChanged {
@@ -99,8 +101,6 @@ class HomeScreenEffectHandler(
     }
 
     private fun loadWallets() {
-        val breadBox = BreadApp.getBreadBox()
-
         // Update wallets list
         breadBox.wallets()
             .mapLatest { wallets -> wallets.map { it.asWallet() } }
@@ -186,8 +186,6 @@ class HomeScreenEffectHandler(
     }
 
     override fun onChanged() {
-        val breadBox = BreadApp.getBreadBox()
-
         breadBox.currencyCodes()
             .take(1)
             .flatMapLatest { it.asFlow() }

@@ -46,6 +46,8 @@ import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_home.*
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 class HomeController(
         args: Bundle? = null
@@ -62,7 +64,9 @@ class HomeController(
     override val init = HomeScreenInit
     override val effectHandler: Connectable<HomeScreenEffect, HomeScreenEvent> =
             CompositeEffectHandler.from(
-                    Connectable { output -> HomeScreenEffectHandler(output, activity as BRActivity) },
+                    Connectable { output ->
+                        HomeScreenEffectHandler(output, activity as BRActivity, direct.instance())
+                    },
                     nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
                         when (effect) {
                             is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)

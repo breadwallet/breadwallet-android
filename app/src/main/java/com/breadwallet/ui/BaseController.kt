@@ -31,6 +31,8 @@ import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.kodein
 
 /**
  * A simple controller that automatically inflates the
@@ -38,7 +40,14 @@ import kotlinx.android.synthetic.*
  */
 abstract class BaseController(
         args: Bundle? = null
-) : Controller(args), LayoutContainer {
+) : Controller(args), KodeinAware, LayoutContainer {
+
+    /** Provides the root Application Kodein instance. */
+    override val kodein by kodein {
+        checkNotNull(applicationContext) {
+            "Controller cannot access Kodein bindings until attached to an Activity."
+        }
+    }
 
     final override var containerView: View? = null
         private set
