@@ -58,23 +58,32 @@ import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.util.logDebug
 import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logInfo
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelChildren
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.Executors
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@Suppress("TooManyFunctions")
 internal class CoreBreadBox(
     private val storageFile: File,
     private val isMainnet: Boolean = false,
@@ -82,7 +91,8 @@ internal class CoreBreadBox(
     private val walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
 ) : BreadBox,
     SystemListener,
-    SystemEventVisitor<Unit> {
+    SystemEventVisitor<Unit>,
+    CoroutineScope {
 
     companion object {
         init {
@@ -107,7 +117,8 @@ internal class CoreBreadBox(
     //  expect an overload of createForTest without URL params
     private val blockchainDb =
         BlockchainDb.createForTest(OkHttpClient(), BDB_AUTH_TOKEN)
-    private val trackedCurrencies = listOf("btc", "eth", "brd", "bch")
+
+    override val coroutineContext = SupervisorJob() + systemExecutor.asCoroutineDispatcher()
 
     private val systemChannel = BroadcastChannel<System>(BUFFERED)
     private val accountChannel = BroadcastChannel<Account>(BUFFERED)
@@ -187,6 +198,12 @@ internal class CoreBreadBox(
         }
 
         isOpen = false
+    }
+
+    @Synchronized
+    override fun empty() {
+        check(!isOpen) { "empty() called while BreadBox was open." }
+        coroutineContext.cancelChildren()
     }
 
     override fun system() =
@@ -282,12 +299,19 @@ internal class CoreBreadBox(
         event.accept(object : DefaultWalletManagerEventVisitor<Unit>() {
             override fun visit(event: WalletManagerCreatedEvent) {
                 logDebug("Wallet Manager Created: '${manager.name}'")
-                if (trackedCurrencies.contains(manager.currency.code)) {
-                    manager.connect()
-                    logDebug("Wallet Manager Connected: '${manager.name}'")
-                } else {
-                    logDebug("Wallet Manager Not Tracked: '${manager.name}'")
-                }
+
+                KVStoreManager.walletMetaData(manager.currency.code)
+                    .take(1)
+                    .onEach {
+                        when (it.isEnabled) {
+                            true -> {
+                                manager.connect()
+                                logDebug("Wallet Manager Connected: '${manager.name}'")
+                            }
+                            else -> logDebug("Wallet Manager Not Tracked: '${manager.name}'")
+                        }
+                    }
+                    .launchIn(this@CoreBreadBox)
             }
 
             override fun visit(event: WalletManagerDeletedEvent) {
@@ -372,20 +396,25 @@ internal class CoreBreadBox(
 
         logDebug("Network '${network.name}' added.")
 
-        // TODO: Ignore networks if user does not track a wallet on it.
-        trackedCurrencies.find { network.getCurrencyByCode(it).isPresent } ?: return
+        KVStoreManager.walletsMetaData()
+            .take(1)
+            .onEach{ wallets ->
+                val enableNetwork = wallets
+                    .filter { it.isEnabled }
+                    .any { network.getCurrencyByCode(it.currencyCode.toLowerCase()).isPresent }
+                if (enableNetwork && network.isMainnet == isMainnet) {
+                    logDebug("Creating wallet manager for network '${network.name}'.")
 
-        logDebug("Creating wallet manager for network '${network.name}'.")
+                    val wmMode = when {
+                        system.supportsWalletManagerModes(network, walletManagerMode) ->
+                            walletManagerMode
+                        else -> system.getDefaultWalletManagerMode(network)
+                    }
 
-        if (network.isMainnet == isMainnet) {
-            val wmMode = when {
-                system.supportsWalletManagerModes(network, walletManagerMode) ->
-                    walletManagerMode
-                else -> system.getDefaultWalletManagerMode(network)
+                    val addressScheme = system.getDefaultAddressScheme(network)
+                    system.createWalletManager(event.network, wmMode, addressScheme)
+                }
             }
-
-            val addressScheme = system.getDefaultAddressScheme(network)
-            system.createWalletManager(event.network, wmMode, addressScheme)
-        }
+            .launchIn(this@CoreBreadBox)
     }
 }

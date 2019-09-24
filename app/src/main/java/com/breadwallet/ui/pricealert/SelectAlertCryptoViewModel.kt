@@ -62,7 +62,7 @@ class SelectAlertCryptoViewModel : ViewModel() {
         if (tokenItems.value == null) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
                 tokenItems.postValue(
-                        KVStoreManager.getTokenListMetaData(context)
+                        KVStoreManager.getTokenListMetaData(context)!!
                                 .enabledCurrencies
                                 .filterMissingErc20Tokens()
                                 .mapToTokenItem())

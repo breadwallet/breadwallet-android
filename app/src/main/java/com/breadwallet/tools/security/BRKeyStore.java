@@ -674,9 +674,9 @@ public final class BRKeyStore {
         }
         if (Utils.isNullOrEmpty(result)) {
             //if none, try getting from KVStore
-            WalletInfoData info = KVStoreManager.getWalletInfo(context);
+            WalletInfoData info = KVStoreManager.INSTANCE.getWalletInfo(context);
             if (info != null) {
-                int creationDate = info.creationDate;
+                int creationDate = info.getCreationDate();
                 putWalletCreationTime(creationDate, context);
                 return creationDate;
             } else {
