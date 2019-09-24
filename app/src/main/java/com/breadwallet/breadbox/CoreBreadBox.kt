@@ -95,10 +95,6 @@ internal class CoreBreadBox(
     CoroutineScope {
 
     companion object {
-        init {
-            CryptoApi.initialize(CryptoApiProvider.getInstance())
-        }
-
         // TODO: Used until auth flow is implemented
         const val BDB_AUTH_TOKEN =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZWI2M2UyOC0wMzQ1LTQ4ZjYtOWQxNy1jZTgwY2JkNjE3Y2IiLCJicmQ6Y3QiOiJjbGkiLCJleHAiOjkyMjMzNzIwMzY4NTQ3NzUsImlhdCI6MTU2Njg2MzY0OX0.FvLLDUSk1p7iFLJfg2kA-vwhDWTDulVjdj8YpFgnlE62OBFCYt4b3KeTND_qAhLynLKbGJ1UDpMMihsxtfvA0A"
@@ -190,6 +186,8 @@ internal class CoreBreadBox(
 
         check(isOpen) { "BreadBox must be opened before calling close()." }
 
+        coroutineContext.cancelChildren()
+
         try {
             checkNotNull(system).stop()
             logDebug("System stopped successfully")
@@ -198,12 +196,6 @@ internal class CoreBreadBox(
         }
 
         isOpen = false
-    }
-
-    @Synchronized
-    override fun empty() {
-        check(!isOpen) { "empty() called while BreadBox was open." }
-        coroutineContext.cancelChildren()
     }
 
     override fun system() =

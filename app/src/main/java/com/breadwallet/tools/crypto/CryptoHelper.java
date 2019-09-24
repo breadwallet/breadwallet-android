@@ -1,5 +1,6 @@
 package com.breadwallet.tools.crypto;
 
+import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 
 import java.math.BigInteger;
@@ -47,6 +48,7 @@ public class CryptoHelper {
         return sha256(sha256First);
     }
 
+    @Nullable
     public static byte[] sha256(byte[] data) {
         MessageDigest digest = null;
         try {
@@ -58,6 +60,7 @@ public class CryptoHelper {
         return digest.digest(data);
     }
 
+    @Nullable
     public static byte[] md5(byte[] data) {
         MessageDigest digest = null;
         try {

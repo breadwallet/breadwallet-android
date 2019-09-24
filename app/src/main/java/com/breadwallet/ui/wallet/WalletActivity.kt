@@ -55,6 +55,10 @@ import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.kodein
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -66,7 +70,9 @@ import java.util.*
  * This activity will display pricing and transaction information for any currency the user has access to
  * (BTC, BCH, ETH)
  */
-open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
+@Suppress("TooManyFunctions", "MaxLineLength", "ForbiddenComment")
+// TODO: Resolve detekt issues when converting to a controller
+open class WalletActivity : BRActivity(), KodeinAware, EventSource<WalletScreenEvent> {
 
     private var mAdapter: TransactionListAdapter? = null
     private var mPriceDataAdapter = SparkAdapter()
@@ -76,6 +82,8 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
     var eventConsumer: Consumer<WalletScreenEvent> = QueuedConsumer()
         private set
 
+    override val kodein by kodein { applicationContext }
+
     private var loopFactory: MobiusLoop.Factory<WalletScreenModel, WalletScreenEvent, WalletScreenEffect> = Mobius
             .loop(WalletUpdate,
                     CompositeEffectHandler.from(
@@ -83,7 +91,7 @@ open class WalletActivity : BRActivity(), EventSource<WalletScreenEvent> {
                             // Create nested handler, such that WalletScreenEffects are converted into WalletEffects and passed to WalletEffectHandler
                             // (events produced are converted into WalletScreenEvents)
                             nestedConnectable({ output: Consumer<WalletEvent> ->
-                                CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))
+                                CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE), direct.instance())
                             }, { effect: WalletScreenEffect ->
                                 // Map incoming effect
                                 when (effect) {
