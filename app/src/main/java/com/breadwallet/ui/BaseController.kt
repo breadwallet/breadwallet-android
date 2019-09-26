@@ -28,10 +28,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.toast
 import com.bluelinelabs.conductor.Controller
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 import org.kodein.di.android.kodein
 
 /**
@@ -39,11 +42,11 @@ import org.kodein.di.android.kodein
  * [layoutId] and implements [LayoutContainer].
  */
 abstract class BaseController(
-        args: Bundle? = null
+    args: Bundle? = null
 ) : Controller(args), KodeinAware, LayoutContainer {
 
     /** Provides the root Application Kodein instance. */
-    override val kodein by kodein {
+    override val kodein by closestKodein {
         checkNotNull(applicationContext) {
             "Controller cannot access Kodein bindings until attached to an Activity."
         }
@@ -71,4 +74,27 @@ abstract class BaseController(
         super.onDestroyView(view)
         clearFindViewByIdCache()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> argOptional(key: String, default: T? = null): T? =
+        (args[key] as T) ?: default
+
+    /** Returns the value for [key] stored in the [args] [Bundle] as [T]. */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> arg(key: String, default: T? = null): T =
+        checkNotNull(args[key] ?: default) {
+            "No value for $key and no default provided (or it was null)."
+        } as T
+
+    /** Display a [Toast] message of [resId] with a short duration. */
+    fun toast(resId: Int) = checkNotNull(applicationContext).toast(resId, Toast.LENGTH_SHORT)
+
+    /** Display a [Toast] message of [text] with a short duration. */
+    fun toast(text: String) = checkNotNull(applicationContext).toast(text, Toast.LENGTH_SHORT)
+
+    /** Display a [Toast] message of [resId] with a long duration. */
+    fun toastLong(resId: Int) = checkNotNull(applicationContext).toast(resId, Toast.LENGTH_LONG)
+
+    /** Display a [Toast] message of [text] with a long duration. */
+    fun toastLong(text: String) = checkNotNull(applicationContext).toast(text, Toast.LENGTH_LONG)
 }

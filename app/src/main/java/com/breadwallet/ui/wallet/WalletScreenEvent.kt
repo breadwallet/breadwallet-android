@@ -24,7 +24,11 @@ sealed class WalletScreenEvent {
     data class OnBrdRewardsUpdated(val showing: Boolean) : WalletScreenEvent()
     data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) : WalletScreenEvent()
     data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange) : WalletScreenEvent()
-    data class OnTransactionsUpdated(val walletTransactions: List<WalletTransaction>) : WalletScreenEvent()
+    data class OnTransactionsUpdated(
+        val walletTransactions: List<WalletTransaction>
+    ) : WalletScreenEvent() {
+        override fun toString() = "OnTransactionsUpdated(walletTransactions=(size:${walletTransactions.size}))"
+    }
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : WalletScreenEvent()
     data class OnTransactionRemoved(val walletTransaction: WalletTransaction) : WalletScreenEvent()
     data class OnTransactionUpdated(val walletTransaction: WalletTransaction) : WalletScreenEvent()
@@ -57,7 +61,11 @@ sealed class WalletScreenEvent {
     data class OnIsCryptoPreferredLoaded(val isCryptoPreferred: Boolean) : WalletScreenEvent()
 
     data class OnChartIntervalSelected(val interval: Interval) : WalletScreenEvent()
-    data class OnMarketChartDataUpdated(val priceDataPoints: List<PriceDataPoint>) : WalletScreenEvent()
+    data class OnMarketChartDataUpdated(
+        val priceDataPoints: List<PriceDataPoint>
+    ) : WalletScreenEvent() {
+        override fun toString() = "OnMarketChartDataUpdated(priceDataPoints=(size:${priceDataPoints.size}))"
+    }
     data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : WalletScreenEvent()
     object OnChartDataPointReleased : WalletScreenEvent()
 }

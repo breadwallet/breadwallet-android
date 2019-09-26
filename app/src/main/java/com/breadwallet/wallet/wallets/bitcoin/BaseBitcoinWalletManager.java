@@ -32,7 +32,6 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
@@ -247,52 +246,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         FeeOption preferredFeeOption = FeeRepository.getInstance(app).getPreferredFeeOptionByCurrency(currencyCode);
         BigDecimal preferredFee = FeeRepository.getInstance(app).getFeeByCurrency(currencyCode, preferredFeeOption);
         getWallet().setFeePerKb(preferredFee.longValue());
-    }
-
-    @Override
-    public List<TxUiHolder> getTxUiHolders(Context app) {
-        BRCoreTransaction[] txs = getWallet().getTransactions();
-        if (txs == null || txs.length <= 0) {
-            return null;
-        }
-        List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (int i = txs.length - 1; i >= 0; i--) { //reverse order
-            BRCoreTransaction tx = txs[i];
-
-            String myAddress = null;
-            String otherAddress = null;
-            for (String outputAddress : tx.getOutputAddresses()) {
-                if (myAddress == null && containsAddress(outputAddress)) {
-                    myAddress = outputAddress;
-                }
-
-                if (otherAddress == null && !containsAddress(outputAddress)) {
-                    otherAddress = outputAddress;
-                }
-            }
-
-            String outputAddress = getWallet().getTransactionAmount(tx) < 0
-                    ? otherAddress   // sent transaction
-                    : myAddress;    // received transaction
-
-            if (outputAddress == null) {
-                throw new IllegalArgumentException("Failed to retrieve outputAddress");
-            }
-
-            boolean isReceived = getWallet().getTransactionAmount(tx) > 0;
-            if (!isReceived) {
-                //store the latest send transaction block height
-                BRSharedPrefs.putLastSendTransactionBlockheight(app, getCurrencyCode(), tx.getBlockHeight());
-            }
-            uiTxs.add(new TxUiHolder(tx, isReceived, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
-                    outputAddress, outputAddress,
-                    new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
-                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx),
-                    false, null));
-        }
-
-        return uiTxs;
     }
 
     @Override

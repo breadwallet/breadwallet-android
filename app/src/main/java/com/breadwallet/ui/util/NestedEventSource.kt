@@ -1,6 +1,5 @@
 package com.breadwallet.ui.util
 
-// TODO: Replace with our own Mobius interfaces
 import com.spotify.mobius.EventSource
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer

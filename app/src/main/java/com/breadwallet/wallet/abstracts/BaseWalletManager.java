@@ -6,7 +6,6 @@ import android.support.annotation.WorkerThread;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
@@ -141,9 +140,6 @@ public interface BaseWalletManager {
 
     //get the core address and store it locally
     void refreshAddress(Context app);
-
-    //get a list of all the transactions UI holders sorted by timestamp
-    List<TxUiHolder> getTxUiHolders(Context app);
 
     //return true if this wallet owns this address
     boolean containsAddress(String address);

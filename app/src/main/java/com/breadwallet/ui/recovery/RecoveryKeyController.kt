@@ -40,10 +40,8 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import com.breadwallet.BreadApp
 import com.breadwallet.R
 import com.breadwallet.presenter.activities.InputPinActivity
-import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.customviews.BRDialogView
 import com.breadwallet.presenter.customviews.BREdit
 import com.breadwallet.tools.animation.BRDialog
@@ -61,15 +59,16 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_input_words.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
-import org.kodein.di.erased.on
 
 class RecoveryKeyController(
-        args: Bundle? = null
+    args: Bundle? = null
 ) : BaseMobiusController<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKeyEffect>(args) {
 
-    constructor(mode: RecoveryKeyModel.Mode) : this(bundleOf(
-            "mode" to mode.name
-    ))
+    constructor(mode: RecoveryKeyModel.Mode) : this(
+        bundleOf("mode" to mode.name)
+    )
+
+    private val mode = arg("mode", RecoveryKeyModel.Mode.RECOVER.name)
 
     init {
         // TODO: This request code is used in RecoveryKeyEffectHandler without calling
@@ -82,63 +81,66 @@ class RecoveryKeyController(
     override val layoutId: Int = R.layout.activity_input_words
 
     override val defaultModel = RecoveryKeyModel.createDefault(
-            RecoveryKeyModel.Mode.valueOf(args?.getString("mode")
-                    ?: RecoveryKeyModel.Mode.RECOVER.name)
+        RecoveryKeyModel.Mode.valueOf(mode)
     )
     override val init = RecoveryKeyInit
     override val update = RecoveryKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
-            Connectable { output ->
-                val resources = resources!!
-                RecoveryKeyEffectHandler(output, direct.instance(), {
-                    // unlink
-                    BRDialog.showCustomDialog(activity!!,
-                            resources.getString(R.string.WipeWallet_alertTitle),
-                            resources.getString(R.string.WipeWallet_alertMessage),
-                            resources.getString(R.string.WipeWallet_wipe),
-                            resources.getString(R.string.Button_cancel),
-                            {
-                                it.context
-                                    .getSystemService(ActivityManager::class.java)
-                                    .clearApplicationUserData()
-                            },
-                            { brDialogView -> brDialogView.dismissWithAnimation() },
-                            { eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed) },
-                            0)
-                }, {
-                    // error dialog
-                    BRDialog.showCustomDialog(activity!!,
-                            "",
-                            resources.getString(R.string.RecoverWallet_invalid),
-                            resources.getString(R.string.AccessibilityLabels_close),
-                            null,
-                            BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                            null,
-                            DialogInterface.OnDismissListener {
-                                eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed)
-                            },
-                            0)
-                }, {
-                    SpringAnimator.failShakeAnimation(applicationContext, view)
-                })
-            },
-            nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
-                when (effect) {
-                    RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
-                    RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin()
-                    RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                    RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
-                    else -> null
-                }
+        Connectable { output ->
+            val resources = resources!!
+            RecoveryKeyEffectHandler(output, direct.instance(), {
+                // unlink
+                BRDialog.showCustomDialog(
+                    activity!!,
+                    resources.getString(R.string.WipeWallet_alertTitle),
+                    resources.getString(R.string.WipeWallet_alertMessage),
+                    resources.getString(R.string.WipeWallet_wipe),
+                    resources.getString(R.string.Button_cancel),
+                    {
+                        it.context
+                            .getSystemService(ActivityManager::class.java)
+                            .clearApplicationUserData()
+                    },
+                    { brDialogView -> brDialogView.dismissWithAnimation() },
+                    { eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed) },
+                    0
+                )
+            }, {
+                // error dialog
+                BRDialog.showCustomDialog(
+                    activity!!,
+                    "",
+                    resources.getString(R.string.RecoverWallet_invalid),
+                    resources.getString(R.string.AccessibilityLabels_close),
+                    null,
+                    BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+                    null,
+                    DialogInterface.OnDismissListener {
+                        eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed)
+                    },
+                    0
+                )
+            }, {
+                SpringAnimator.failShakeAnimation(applicationContext, view)
             })
+        },
+        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
+            when (effect) {
+                RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
+                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin()
+                RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+                RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
+                else -> null
+            }
+        })
     )
 
     private val wordInputs: List<BREdit>
         get() = listOf(
-                word1, word2, word3,
-                word4, word5, word6,
-                word7, word8, word9,
-                word10, word11, word12
+            word1, word2, word3,
+            word4, word5, word6,
+            word7, word8, word9,
+            word10, word11, word12
         )
 
     private val inputTextColorValue = TypedValue()
@@ -157,19 +159,21 @@ class RecoveryKeyController(
         // TODO: This needs a better home
         if (Utils.isUsingCustomInputMethod(applicationContext)) {
             BRDialog.showCustomDialog(
-                    applicationContext!!,
-                    resources.getString(R.string.JailbreakWarnings_title),
-                    resources.getString(R.string.Alert_customKeyboard_android),
-                    resources.getString(R.string.Button_ok),
-                    resources.getString(R.string.JailbreakWarnings_close),
-                    BRDialogView.BROnClickListener { brDialogView ->
-                        val imeManager = applicationContext!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imeManager.showInputMethodPicker()
-                        brDialogView.dismissWithAnimation()
-                    },
-                    BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                    null,
-                    0)
+                applicationContext!!,
+                resources.getString(R.string.JailbreakWarnings_title),
+                resources.getString(R.string.Alert_customKeyboard_android),
+                resources.getString(R.string.Button_ok),
+                resources.getString(R.string.JailbreakWarnings_close),
+                BRDialogView.BROnClickListener { brDialogView ->
+                    val imeManager =
+                        applicationContext!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imeManager.showInputMethodPicker()
+                    brDialogView.dismissWithAnimation()
+                },
+                BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+                null,
+                0
+            )
         }
     }
 
@@ -225,48 +229,46 @@ class RecoveryKeyController(
 
         return Disposable {
             wordInputs.zip(watchers)
-                    .forEach { (input, watcher) ->
-                        input.removeTextChangedListener(watcher)
-                    }
+                .forEach { (input, watcher) ->
+                    input.removeTextChangedListener(watcher)
+                }
         }
     }
 
-    override fun render(model: RecoveryKeyModel) {
-        with(model) {
-            ifChanged(RecoveryKeyModel::phrase) { phrase ->
-                wordInputs.zip(phrase)
-                        .filter { (input, word) ->
-                            input.text.toString() != word
-                        }
-                        .forEach { (input, word) ->
-                            input.setText(word, TextView.BufferType.EDITABLE)
-                        }
-            }
+    override fun RecoveryKeyModel.render() {
+        ifChanged(RecoveryKeyModel::phrase) { phrase ->
+            wordInputs.zip(phrase)
+                .filter { (input, word) ->
+                    input.text.toString() != word
+                }
+                .forEach { (input, word) ->
+                    input.setText(word, TextView.BufferType.EDITABLE)
+                }
+        }
 
-            ifChanged(RecoveryKeyModel::isLoading) {
-                loading_view.isVisible = it
-            }
+        ifChanged(RecoveryKeyModel::isLoading) {
+            loading_view.isVisible = it
+        }
 
-            ifChanged(RecoveryKeyModel::errors) { errors ->
-                wordInputs.zip(errors)
-                        .forEach { (input, error) ->
-                            if (error) {
-                                if (input.currentTextColor != errorTextColor)
-                                    input.setTextColor(errorTextColor)
-                            } else {
-                                if (input.currentTextColor != normalTextColor)
-                                    input.setTextColor(normalTextColor)
-                            }
-                        }
-            }
+        ifChanged(RecoveryKeyModel::errors) { errors ->
+            wordInputs.zip(errors)
+                .forEach { (input, error) ->
+                    if (error) {
+                        if (input.currentTextColor != errorTextColor)
+                            input.setTextColor(errorTextColor)
+                    } else {
+                        if (input.currentTextColor != normalTextColor)
+                            input.setTextColor(normalTextColor)
+                    }
+                }
         }
     }
 
     /** Creates a recovery word input text watcher and attaches it to [input]. */
     private fun createTextWatcher(
-            output: Consumer<RecoveryKeyEvent>,
-            index: Int,
-            input: EditText
+        output: Consumer<RecoveryKeyEvent>,
+        index: Int,
+        input: EditText
     ) = object : DefaultTextWatcher() {
         override fun afterTextChanged(s: Editable?) {
             val word = s?.toString() ?: ""
@@ -292,7 +294,7 @@ class RecoveryKeyController(
 
     private fun handleSetPinResult(data: Intent?): RecoveryKeyEvent {
         val isPinAccepted = data?.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false)
-                ?: false
+            ?: false
         return when {
             isPinAccepted -> RecoveryKeyEvent.OnPinSet
             else -> RecoveryKeyEvent.OnPinSetCancelled
@@ -300,14 +302,14 @@ class RecoveryKeyController(
     }
 
     private fun handlePutPhraseResult(resultCode: Int): RecoveryKeyEvent =
-            when (resultCode) {
-                Activity.RESULT_OK -> RecoveryKeyEvent.OnPhraseSaved
-                else -> RecoveryKeyEvent.OnPhraseSaveFailed
-            }
+        when (resultCode) {
+            Activity.RESULT_OK -> RecoveryKeyEvent.OnPhraseSaved
+            else -> RecoveryKeyEvent.OnPhraseSaveFailed
+        }
 
     private fun handleShowPhraseResult(resultCode: Int): RecoveryKeyEvent =
-            when (resultCode) {
-                Activity.RESULT_OK -> RecoveryKeyEvent.OnShowPhraseGranted
-                else -> RecoveryKeyEvent.OnShowPhraseFailed
-            }
+        when (resultCode) {
+            Activity.RESULT_OK -> RecoveryKeyEvent.OnShowPhraseGranted
+            else -> RecoveryKeyEvent.OnShowPhraseFailed
+        }
 }

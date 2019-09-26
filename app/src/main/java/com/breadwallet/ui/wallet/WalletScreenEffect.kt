@@ -19,7 +19,11 @@ sealed class WalletScreenEffect {
 
     object LoadCryptoPreferred : WalletScreenEffect()
 
-    data class CheckReviewPrompt(val transactions: List<WalletTransaction>) : WalletScreenEffect()
+    data class CheckReviewPrompt(
+        val transactions: List<WalletTransaction>
+    ) : WalletScreenEffect() {
+        override fun toString() = "CheckReviewPrompt(transactions=(size:${transactions.size}))"
+    }
     object RecordReviewPrompt : WalletScreenEffect()
     object RecordReviewPromptDismissed : WalletScreenEffect()
     object GoToReview : WalletScreenEffect()
