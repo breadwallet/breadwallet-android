@@ -39,7 +39,7 @@ import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.BrdWalletActivity
+import com.breadwallet.presenter.activities.BrdWalletController
 import com.breadwallet.presenter.activities.InputPinActivity
 import com.breadwallet.presenter.customviews.PinLayout
 import com.breadwallet.presenter.interfaces.BRAuthCompletion
@@ -53,9 +53,9 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
+import com.breadwallet.ui.util.isBrd
 import com.breadwallet.ui.util.logError
-import com.breadwallet.ui.wallet.WalletActivity
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager
+import com.breadwallet.ui.wallet.WalletController
 import kotlinx.android.synthetic.main.activity_pin.*
 import kotlinx.android.synthetic.main.pin_digits.*
 
@@ -68,11 +68,21 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
     override val layoutId = R.layout.activity_pin
 
     constructor(intentUrl: String?) : this(
-            bundleOf(EXTRA_URL to intentUrl)
+        bundleOf(EXTRA_URL to intentUrl)
     )
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
+        brkeyboard.setShowDecimal(false)
+        brkeyboard.setDeleteButtonBackgroundColor(resources!!.getColor(android.R.color.transparent))
+        brkeyboard.setDeleteImage(R.drawable.ic_delete_dark)
+
+        val pinDigitButtonColors = resources!!.getIntArray(R.array.pin_digit_button_colors)
+        brkeyboard.setButtonTextColor(pinDigitButtonColors)
+    }
+
+    override fun onAttach(view: View) {
+        super.onAttach(view)
         val pin = BRKeyStore.getPinCode(activity)
         if (pin.isEmpty()) {
             val intent = Intent(activity, InputPinActivity::class.java)
@@ -82,18 +92,17 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
         }
         check(PinLayout.isPinLengthValid(pin.length)) { "Pin length illegal: " + pin.length }
 
-        brkeyboard.setShowDecimal(false)
-        brkeyboard.setDeleteButtonBackgroundColor(activity!!.getColor(android.R.color.transparent))
-        brkeyboard.setDeleteImage(R.drawable.ic_delete_dark)
-
-        val pinDigitButtonColors = resources?.getIntArray(R.array.pin_digit_button_colors)
-        brkeyboard.setButtonTextColor(pinDigitButtonColors)
-
         val useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(activity)
-                && BRSharedPrefs.getUseFingerprint(activity)
-        fingerprint_icon.isVisible = useFingerprint
+            && BRSharedPrefs.getUseFingerprint(activity)
 
+        fingerprint_icon.isVisible = useFingerprint
         fingerprint_icon.setOnClickListener { showFingerprintPrompt() }
+
+        Handler().postDelayed({
+            if (fingerprint_icon != null && useFingerprint) {
+                showFingerprintPrompt()
+            }
+        }, DateUtils.SECOND_IN_MILLIS / 2)
 
         pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
             override fun onPinLocked() {
@@ -108,12 +117,6 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
                 }
             }
         })
-
-        Handler().postDelayed({
-            if (fingerprint_icon != null && useFingerprint) {
-                showFingerprintPrompt()
-            }
-        }, DateUtils.SECOND_IN_MILLIS / 2)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -150,27 +153,22 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
                     val pendingUrl = args.getString(EXTRA_URL).orEmpty()
                     val showHomeScreen = BRSharedPrefs.wasAppBackgroundedFromHome(activity)
                     val currencyCode = BRSharedPrefs.getCurrentWalletCurrencyCode(activity)
-                    when {
+                    val rootController = when {
                         pendingUrl.isNotBlank() -> {
-                            router.replaceTopController(RouterTransaction.with(HomeController()))
+                            // TODO: Open deep link as a Controller
                             AppEntryPointHandler.processDeepLink(activity, pendingUrl)
+                            HomeController()
                         }
-                        showHomeScreen -> {
-                            router.replaceTopController(RouterTransaction.with(HomeController())
-                                    .popChangeHandler(HorizontalChangeHandler())
-                                    .pushChangeHandler(HorizontalChangeHandler()))
-                        }
-                        currencyCode.equals(WalletTokenManager.BRD_CURRENCY_CODE, ignoreCase = true) -> {
-                            BrdWalletActivity.start(activity, currencyCode)
-                        }
-                        currencyCode.isNotBlank() -> {
-                            WalletActivity.start(activity!!, currencyCode)
-                        }
-                        else -> {
-                            router.replaceTopController(RouterTransaction.with(HomeController()))
-                            WalletActivity.start(activity!!, currencyCode)
-                        }
+                        showHomeScreen -> HomeController()
+                        currencyCode.isBrd() -> BrdWalletController()
+                        currencyCode.isNotBlank() -> WalletController(currencyCode)
+                        else -> HomeController()
                     }
+                    router.replaceTopController(
+                        RouterTransaction.with(rootController)
+                            .popChangeHandler(HorizontalChangeHandler())
+                            .pushChangeHandler(HorizontalChangeHandler())
+                    )
                 }, DateUtils.SECOND_IN_MILLIS / 2)
             }
         })
@@ -184,13 +182,12 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
 
     private fun showFingerprintPrompt() {
         AuthManager.getInstance().authPrompt(activity, "", "", false, true,
-                object : BRAuthCompletion {
-                    override fun onComplete() {
-                        unlockWallet()
-                    }
+            object : BRAuthCompletion {
+                override fun onComplete() {
+                    unlockWallet()
+                }
 
-                    override fun onCancel() = Unit
-                })
+                override fun onCancel() = Unit
+            })
     }
-
 }

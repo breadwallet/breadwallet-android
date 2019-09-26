@@ -2,7 +2,6 @@ package com.breadwallet.ui.wallet
 
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.tools.util.BRConstants
 import java.math.BigDecimal
 
 @Suppress("DataClassPrivateConstructor")
@@ -68,10 +67,11 @@ data class WalletScreenModel private constructor(
                 "filterPending=$filterPending, " +
                 "filterComplete=$filterComplete, " +
                 "syncProgress=$syncProgress, " +
-                "syncingThroughMillis=$syncingThroughMillis," +
+                "syncingThroughMillis=$syncingThroughMillis, " +
+                "isSyncing=$isSyncing, " +
                 "hasInternet=$hasInternet, " +
                 "priceChartInterval=$priceChartInterval, " +
-                "priceChartDataPoints=$priceChartDataPoints, " +
+                "priceChartDataPoints=(size:${priceChartDataPoints.size}), " +
                 "priceChange=$priceChange)"
     }
 

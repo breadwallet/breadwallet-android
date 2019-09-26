@@ -23,11 +23,11 @@ val WalletUpdate = Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffe
                     GoToSend(model.currencyCode, event.cryptoRequest)
             ))
         is OnSyncProgressUpdated ->
-            if (model.syncProgress == event.progress) noChange()
-            else
-                next(model.copy(
-                    syncProgress = event.progress
-                ))
+            next(model.copy(
+                isSyncing = event.isSyncing,
+                syncProgress = event.progress,
+                syncingThroughMillis = event.syncThroughMillis
+            ))
         OnSearchClicked ->
             next(model.copy(
                     isShowingSearch = true,

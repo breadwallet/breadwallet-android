@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.util
 
-// TODO: Replace with our own Mobius interfaces
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer

@@ -2,13 +2,9 @@ package com.breadwallet.wallet.wallets.ethereum;
 
 import android.content.Context;
 
-import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumEWM;
-import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.BRSettingsItem;
-import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.BalanceUpdateListener;
@@ -17,7 +13,6 @@ import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -100,35 +95,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     }
 
     protected abstract WalletEthManager getEthereumWallet();
-
-    @Override
-    public List<TxUiHolder> getTxUiHolders(Context app) {
-        BREthereumTransfer[] txs = getWallet().getTransfers();
-        int blockHeight = (int) getEthereumWallet().getBlockHeight();
-        if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-            BRSharedPrefs.putLastBlockHeight(app, getCurrencyCode(), blockHeight);
-        }
-        if (txs != null && txs.length > 0) {
-            List<TxUiHolder> uiTxs = new ArrayList<>();
-            for (int i = txs.length - 1; i >= 0; i--) { //revere order
-                BREthereumTransfer tx = txs[i];
-                if (tx.isSubmitted()) {
-                    BREthereumAmount.Unit feeUnit = getCurrencyCode().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)
-                            ? BREthereumAmount.Unit.ETHER_WEI : BREthereumAmount.Unit.ETHER_GWEI;
-                    uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(getEthereumWallet().getWallet().getAccount().getPrimaryAddress()),
-                            tx.getBlockTimestamp(), (int) tx.getBlockNumber(),
-                            Utils.isNullOrEmpty(tx.getOriginationTransactionHash()) ? null : tx.getOriginationTransactionHash().getBytes(),
-                            tx.getOriginationTransactionHash(), new BigDecimal(tx.getFee(feeUnit)),
-                            tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                            new BigDecimal(tx.getAmount(getUnit())), true,
-                            tx.isErrored(), tx.getErrorDescription()));
-                }
-            }
-            return uiTxs;
-        } else {
-            return null;
-        }
-    }
 
     @Override
     public boolean checkConfirmations(int conformations) {
