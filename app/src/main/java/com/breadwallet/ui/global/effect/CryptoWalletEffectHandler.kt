@@ -1,19 +1,19 @@
 /**
  * BreadWallet
- * <p/>
+ *
  * Created by Ahsan Butt on <ahsan.butt@breadwallet.com> 7/30/19.
  * Copyright (c) 2019 breadwallet LLC
- * <p/>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,18 +24,22 @@
  */
 package com.breadwallet.ui.global.effect
 
-import com.breadwallet.crypto.*
-
 import com.breadwallet.BreadApp
 
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.hashString
+import com.breadwallet.crypto.Amount
+import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.TransferDirection
+import com.breadwallet.crypto.TransferState
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.global.event.WalletEvent
 import com.breadwallet.ui.util.bindConsumerIn
+import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.ui.wallet.WalletTransaction
-import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +69,7 @@ class CryptoWalletEffectHandler(
         walletFlow
             .map { it.balance }
             .distinctUntilChanged()
-            .map { WalletEvent.OnBalanceUpdated(getBalance(it), getBalanceInFiat(it)) }
+            .map { WalletEvent.OnBalanceUpdated(it.toBigDecimal(), getBalanceInFiat(it)) }
             .bindConsumerIn(output, this)
 
         // Currency name
@@ -104,49 +108,45 @@ class CryptoWalletEffectHandler(
     override fun dispose() {
         coroutineContext.cancelChildren()
     }
+}
 
-    private fun getBalance(balanceAmt: Amount): BigDecimal {
-        return balanceAmt.doubleAmount(balanceAmt.unit).or(0.0).toBigDecimal()
-    }
+private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
+    val context = BreadApp.getBreadContext()
+    return RatesRepository.getInstance(context).getFiatForCrypto(
+        balanceAmt.toBigDecimal(),
+        balanceAmt.currency.code,
+        BRSharedPrefs.getPreferredFiatIso(context)
+    ) ?: BigDecimal.ZERO
+}
 
-    private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
-        val balance = getBalance(balanceAmt)
-        return RatesRepository.getInstance(context).getFiatForCrypto(
-            balance,
-            balanceAmt.currency.code,
-            BRSharedPrefs.getPreferredFiatIso(context)
-        ) ?: BigDecimal.ZERO
-    }
+fun Transfer.asWalletTransaction(): WalletTransaction {
+    // TODO: val context = BreadApp.getBreadContext()
+    val txHash = hashString()
+    // TODO: KVStoreManager.getTxMetaData(context, txHash.toByteArray())
 
-    private fun Transfer.getHashAsString(): String {
-        return hash.transform { it.toString() }.or("")
-    }
+    val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
+    val confirmation = confirmation.orNull()
+    val state = state
 
-    private fun Transfer.asWalletTransaction(): WalletTransaction {
-
-        val txHash = getHashAsString()
-        val metaData = KVStoreManager.getTxMetaData(context, txHash.toByteArray())
-
-        val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
-
-        return WalletTransaction(
-            txHash = txHash,
-            amount = getBalance(amount),
-            amountInFiat = getBalanceInFiat(amount),
-            fiatWhenSent = 0f, // TODO: Rates info
-            toAddress = target.transform { it.toString() }.or("<unknown>"),
-            fromAddress = source.transform { it.toString() }.or("<unknown>"),
-            isReceived = direction == TransferDirection.RECEIVED,
-            isErrored = state.type == TransferState.Type.FAILED,
-            memo = metaData?.comment.orEmpty(),
-            isValid = true, // TODO: do we have this info?
-            fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
-            blockHeight = confirmation.transform { it?.blockNumber?.toInt() }.or(0),
-            confirmations = confirmations.transform { it?.toInt() }.or(0),
-            confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
-            timeStamp = confirmation.transform { it?.confirmationTime?.time }.or(0L),
-            currencyCode = currencyCode,
-            feeForToken = null // TODO: Either establish this via meta-data (like iOS) or compare toAddress with token addresses as in pre-Generic Core
-        )
-    }
+    return WalletTransaction(
+        txHash = txHash,
+        amount = amount.toBigDecimal(),
+        amountInFiat = getBalanceInFiat(amount),
+        fiatWhenSent = 0f, // TODO: Rates info
+        toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
+        fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
+        isReceived = direction == TransferDirection.RECEIVED,
+        isErrored = state.type == TransferState.Type.FAILED,
+        memo = "", // TODO: metaData?.comment.orEmpty(),
+        isValid = state.type != TransferState.Type.FAILED, // TODO: Is this correct?
+        fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
+        blockHeight = confirmation?.blockNumber?.toInt() ?: 0, // TODO: Use long to match core
+        confirmations = confirmations.orNull()?.toInt() ?: 0,
+        confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
+        timeStamp = confirmation?.confirmationTime?.time ?: 0,
+        currencyCode = wallet.currency.code,
+        // TODO: Either establish this via meta-data (like iOS)
+        //  or compare toAddress with token addresses as in pre-Generic Core
+        feeForToken = null
+    )
 }

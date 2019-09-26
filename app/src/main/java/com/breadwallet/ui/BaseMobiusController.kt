@@ -28,21 +28,40 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.ui.global.effect.NavigationEffectHandler
+import com.breadwallet.ui.global.effect.RouterNavigationEffectHandler
 import com.breadwallet.ui.util.QueuedConsumer
 import com.spotify.mobius.*
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
-import com.spotify.mobius.android.runners.MainThreadWorkRunner
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.extensions.LayoutContainer
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
+import org.kodein.di.erased.bind
+import org.kodein.di.erased.provider
 
+@Suppress("TooManyFunctions") // TODO: Extract render DSL or replace with Flows
 abstract class BaseMobiusController<M, E, F>(
-        args: Bundle? = null
+    args: Bundle? = null
 ) : BaseController(args),
-        LayoutContainer,
-        EventSource<E> {
+    LayoutContainer,
+    EventSource<E> {
+
+    override val kodein by Kodein.lazy {
+        extend(super.kodein)
+
+        bind<RouterNavigationEffectHandler>() with provider {
+            RouterNavigationEffectHandler(router)
+        }
+
+        bind<NavigationEffectHandler>() with provider {
+            NavigationEffectHandler(activity as BRActivity)
+        }
+    }
 
     /** The default model used to construct [loopController]. */
     abstract val defaultModel: M
@@ -55,11 +74,11 @@ abstract class BaseMobiusController<M, E, F>(
 
     private val loopFactory by lazy {
         Mobius.loop(update, effectHandler)
-                .init(init)
-                .eventRunner { WorkRunners.cachedThreadPool() }
-                .effectRunner { MainThreadWorkRunner.create() }
-                .logger(AndroidLogger.tag(this::class.java.simpleName))
-                .eventSource(this)
+            .init(init)
+            .eventRunner { WorkRunners.cachedThreadPool() }
+            .effectRunner { WorkRunners.cachedThreadPool() }
+            .logger(AndroidLogger.tag(this::class.java.simpleName))
+            .eventSource(this)
     }
 
     private val loopController by lazy {
@@ -89,20 +108,20 @@ abstract class BaseMobiusController<M, E, F>(
     abstract fun bindView(output: Consumer<E>): Disposable
 
     /** Called when the model is updated or additional rendering is required. */
-    abstract fun render(model: M)
+    abstract fun M.render()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return super.onCreateView(inflater, container).apply {
             loopController.connect { output ->
                 object : Connection<M>, Disposable by bindView(output) {
                     override fun accept(value: M) {
-                        render(value)
+                        value.render()
                         previousModel = value
                     }
                 }.also {
                     /* Initial render */
                     previousModel = null
-                    render(loopController.model)
+                    loopController.model.render()
                     previousModel = loopController.model
                 }
             }
@@ -139,13 +158,89 @@ abstract class BaseMobiusController<M, E, F>(
      * [block] supplies the value extracted from [currentModel].
      */
     inline fun <T> M.ifChanged(
-            crossinline extract: (M) -> T,
-            crossinline block: (@ParameterName("value") T) -> Unit
+        crossinline extract: (M) -> T,
+        crossinline block: (@ParameterName("value") T) -> Unit
     ) {
         val currentValue = extract(this)
         val previousValue = previousModel?.let(extract)
         if (currentValue != previousValue) {
             block(currentValue)
+        }
+    }
+
+    /**
+     * Invokes [block] if the result of any extract functions on
+     * [this] are not equal to the same function on the [previousModel].
+     */
+    inline fun <T1, T2> M.ifChanged(
+        crossinline extract1: (M) -> T1,
+        crossinline extract2: (M) -> T2,
+        crossinline block: () -> Unit
+    ) {
+        val currentValue1 = extract1(this)
+        val previousValue1 = previousModel?.let(extract1)
+        val currentValue2 = extract2(this)
+        val previousValue2 = previousModel?.let(extract2)
+        if (
+            currentValue1 != previousValue1 ||
+            currentValue2 != previousValue2
+        ) {
+            block()
+        }
+    }
+
+    /**
+     * Invokes [block] if the result of any extract functions on
+     * [this] are not equal to the same function on the [previousModel].
+     */
+    inline fun <T1, T2, T3> M.ifChanged(
+        crossinline extract1: (M) -> T1,
+        crossinline extract2: (M) -> T2,
+        crossinline extract3: (M) -> T3,
+        crossinline block: () -> Unit
+    ) {
+        val currentValue1 = extract1(this)
+        val previousValue1 = previousModel?.let(extract1)
+        val currentValue2 = extract2(this)
+        val previousValue2 = previousModel?.let(extract2)
+        val currentValue3 = extract3(this)
+        val previousValue3 = previousModel?.let(extract3)
+        if (
+            currentValue1 != previousValue1 ||
+            currentValue2 != previousValue2 ||
+            currentValue3 != previousValue3
+        ) {
+            block()
+        }
+    }
+
+    /**
+     * Invokes [block] if the result of any extract functions on
+     * [this] are not equal to the same function on the [previousModel].
+     */
+    @Suppress("ComplexCondition")
+    inline fun <T1, T2, T3, T4> M.ifChanged(
+        crossinline extract1: (M) -> T1,
+        crossinline extract2: (M) -> T2,
+        crossinline extract3: (M) -> T3,
+        crossinline extract4: (M) -> T4,
+        crossinline block: () -> Unit
+    ) {
+        val currentValue1 = extract1(this)
+        val previousValue1 = previousModel?.let(extract1)
+        val currentValue2 = extract2(this)
+        val previousValue2 = previousModel?.let(extract2)
+        val currentValue3 = extract3(this)
+        val previousValue3 = previousModel?.let(extract3)
+        val currentValue4 = extract4(this)
+        val previousValue4 = previousModel?.let(extract4)
+        if (
+            currentValue1 != previousValue1 ||
+            currentValue2 != previousValue2 ||
+            currentValue3 != previousValue3 ||
+            currentValue4 != previousValue4
+        ) {
+            block()
         }
     }
 }

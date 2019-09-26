@@ -36,7 +36,6 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.global.effect.NavigationEffect
@@ -120,28 +119,25 @@ class OnBoardingController(
         return Disposable {}
     }
 
-    override fun render(model: OnBoardingModel) {
-        with(model) {
-            ifChanged(OnBoardingModel::page) { page ->
-                listOf(indicator1, indicator2, indicator3)
-                    .forEachIndexed { index, indicator ->
-                        indicator.background = when (page) {
-                            index + 1 -> activeIndicator
-                            else -> inactiveIndicator
-                        }
+    override fun OnBoardingModel.render() {
+        ifChanged(OnBoardingModel::page) { page ->
+            listOf(indicator1, indicator2, indicator3)
+                .forEachIndexed { index, indicator ->
+                    indicator.background = when (page) {
+                        index + 1 -> activeIndicator
+                        else -> inactiveIndicator
                     }
-            }
+                }
+        }
 
-            ifChanged(OnBoardingModel::isFirstPage) { isFirstPage ->
-                button_skip.isVisible = isFirstPage
-                button_back.isVisible = isFirstPage
-            }
+        ifChanged(OnBoardingModel::isFirstPage) { isFirstPage ->
+            button_skip.isVisible = isFirstPage
+            button_back.isVisible = isFirstPage
+        }
 
-            ifChanged(OnBoardingModel::isLoading) { isLoading ->
-                loading_view.isVisible = isLoading
-
-                button_skip.isEnabled = !isLoading
-            }
+        ifChanged(OnBoardingModel::isLoading) { isLoading ->
+            loading_view.isVisible = isLoading
+            button_skip.isEnabled = !isLoading
         }
     }
 

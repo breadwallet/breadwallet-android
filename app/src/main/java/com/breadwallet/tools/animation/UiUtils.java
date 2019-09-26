@@ -40,8 +40,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.browser.PlatformBrowserActivity;
-import com.breadwallet.ui.wallet.FragmentTxDetails;
-import com.breadwallet.ui.wallet.WalletActivity;
+import com.breadwallet.ui.wallet.WalletController;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.HTTPServer;
@@ -159,22 +158,6 @@ public class UiUtils {
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
-
-    }
-
-
-    public static void showTransactionDetails(Activity app, String txid) {
-
-        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.TAG);
-
-        if (txDetails != null && txDetails.isAdded()) {
-            Log.e(TAG, "showTransactionDetails: Already showing");
-            return;
-        }
-
-        txDetails = new FragmentTxDetails();
-        txDetails.setTransaction(app, txid);
-        txDetails.show(app.getFragmentManager(), FragmentTxDetails.TAG);
 
     }
 
@@ -319,10 +302,10 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? MainActivity.class : WalletActivity.class;
+        Class toStart = auth ? MainActivity.class : WalletController.class;
 
         // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
-        if (toStart.equals(WalletActivity.class)) {
+        if (toStart.equals(WalletController.class)) {
 
             if (BRSharedPrefs.isNewWallet(from)) {
                 toStart = MainActivity.class;

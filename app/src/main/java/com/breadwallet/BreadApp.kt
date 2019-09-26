@@ -116,8 +116,8 @@ class BreadApp : Application(), KodeinAware {
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
 
         // TODO: For code organization only, to be removed
-        fun hasWallet(context: Context): Boolean {
-            return getStorageDir(context).exists()
+        fun hasWallet(): Boolean {
+            return isBRDWalletInitialized
         }
 
         // TODO: For code organization only, to be removed
@@ -279,7 +279,7 @@ class BreadApp : Application(), KodeinAware {
         }
     }
 
-    override val kodein = Kodein.lazy {
+    override val kodein by Kodein.lazy {
         importOnce(androidSupportModule(this@BreadApp))
 
         bind<BreadBox>() with singleton {

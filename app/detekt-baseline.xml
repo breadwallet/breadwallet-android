@@ -12,67 +12,18 @@
     <ID>ComplexMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
     <ID>ComplexMethod:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet)</ID>
     <ID>ComplexMethod:SignedRequestMiddleware.kt$SignedRequestMiddleware$override fun handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Boolean</ID>
-    <ID>ComplexMethod:WalletActivity.kt$WalletActivity$private fun connectViews(output: Consumer&lt;WalletScreenEvent&gt;): Connection&lt;WalletScreenModel&gt;</ID>
-    <ID>ComplexMethod:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$// TODO: I think this should come from model (originating in wallet effect handler) fun getCryptoForSmallestCrypto(currencyCode: CurrencyCode, amountInSmallestUnit: BigDecimal) : BigDecimal?</ID>
+    <ID>ComplexMethod:WalletController.kt$WalletController$override fun bindView(output: Consumer&lt;WalletScreenEvent&gt;): Disposable</ID>
     <ID>ComplexMethod:WalletUpdate.kt$ private fun List&lt;WalletTransaction&gt;.filtered( filterQuery: String, filterSent: Boolean, filterReceived: Boolean, filterComplete: Boolean, filterPending: Boolean )</ID>
     <ID>EmptyFunctionBlock:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler${ }</ID>
     <ID>EmptyFunctionBlock:DefaultTextWatcher.kt$DefaultTextWatcher${ }</ID>
-    <ID>EmptyFunctionBlock:HomeActivity.kt$HomeActivity.&lt;no name provided&gt;${ }</ID>
-    <ID>EmptyFunctionBlock:HomeActivity.kt$HomeActivity.&lt;no name provided&gt;${}</ID>
     <ID>EmptyFunctionBlock:HomeScreenEffectHandler.kt$HomeScreenEffectHandler.&lt;no name provided&gt;${ }</ID>
     <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler${ }</ID>
     <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletReviewPromptHandler${ }</ID>
     <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletScreenEffectHandler${ }</ID>
     <ID>FinalNewline:</ID>
-    <ID>ForbiddenComment:CompositeEffectHandler.kt$// TODO: Replace with our own Mobius interfaces</ID>
-    <ID>ForbiddenComment:CoreBreadBox.kt$CoreBreadBox$// TODO: Allow reconfiguring manager mode</ID>
-    <ID>ForbiddenComment:CoreBreadBox.kt$CoreBreadBox$// TODO: Ignore networks if user does not track a wallet on it.</ID>
-    <ID>ForbiddenComment:CoreBreadBox.kt$CoreBreadBox$// TODO: Use createForTest until auth flow is implemented.</ID>
-    <ID>ForbiddenComment:CoreBreadBox.kt$CoreBreadBox.Companion$// TODO: Used until auth flow is implemented</ID>
-    <ID>ForbiddenComment:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler$// TODO: Either establish this via meta-data (like iOS) or compare toAddress with token addresses as in pre-Generic Core</ID>
-    <ID>ForbiddenComment:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler$// TODO: Rates info</ID>
-    <ID>ForbiddenComment:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler$// TODO: do we have this info?</ID>
-    <ID>ForbiddenComment:HomeScreenEffectHandler.kt$HomeScreenEffectHandler$// TODO: refactor to its own generic effect handler</ID>
-    <ID>ForbiddenComment:MainActivity.kt$MainActivity$// TODO: Move this: Print once when app is first launched in debug mode.</ID>
-    <ID>ForbiddenComment:MainActivity.kt$MainActivity$// TODO: We would display home controller instead of the old activity</ID>
-    <ID>ForbiddenComment:NavigationEffectHandler.kt$NavigationEffectHandler$// TODO: Don't depend on an activity</ID>
-    <ID>ForbiddenComment:NavigationEffectHandler.kt$NavigationEffectHandler$// TODO: Find a better solution.</ID>
-    <ID>ForbiddenComment:NavigationEffectHandler.kt$NavigationEffectHandler.Companion$// TODO: Find a better place for these constants</ID>
-    <ID>ForbiddenComment:NestedConnectable.kt$// TODO: Replace with our own Mobius interfaces</ID>
-    <ID>ForbiddenComment:NestedEventSource.kt$// TODO: Replace with our own Mobius interfaces</ID>
-    <ID>ForbiddenComment:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$// TODO: Inject classes that require a Context</ID>
-    <ID>ForbiddenComment:OnBoardingController.kt$OnBoardingController.Companion$// TODO: Don't hardcode currency code, don't rely on WalletBitcoinManager</ID>
-    <ID>ForbiddenComment:OnBoardingEffectHandler.kt$OnBoardingEffectHandler$// TODO: Remove context dependency</ID>
-    <ID>ForbiddenComment:OnBoardingEffectHandler.kt$OnBoardingEffectHandler$// TODO: We will remove mpk and use it to trigger migration</ID>
-    <ID>ForbiddenComment:OnBoardingUpdate.kt$OnBoardingUpdate$// TODO: For now, we collapse all errors into a</ID>
-    <ID>ForbiddenComment:PriceAlertWorker.kt$PriceAlertWorker.Companion$// TODO: Maybe UNMETERED, maybe user preference, maybe not at all?</ID>
-    <ID>ForbiddenComment:RecoveryKeyController.kt$RecoveryKeyController$// TODO: This needs a better home</ID>
-    <ID>ForbiddenComment:RecoveryKeyController.kt$RecoveryKeyController$// TODO: This request code is used in RecoveryKeyEffectHandler without calling</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: Define generic initialization error with retry</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: Define initialization error</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: Define phrase write error</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: Define unexpected error dialog</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: KeyStore read error</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: These operations should occur elsewhere as a side-effect</ID>
-    <ID>ForbiddenComment:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all</ID>
-    <ID>ForbiddenComment:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$// TODO: Inject classes that require a Context</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: Add sell click event sell_button.setOnClickListener(view -&gt; UiUtils.startPlatformBrowser(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: Do not rely on shared prefs</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: Migrate delisted token check and "more info" button to new framework (effect for checking if delisted, event for showing fragment etc.)</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: Not 100% sure where to move this but it harms nothing by remaining here at this time</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: The wallet manager and repositories are not thread safe,</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: This fixes janky animations when using animateLayoutChanges</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity$// TODO: load uiConfiguration for the wallet</ID>
-    <ID>ForbiddenComment:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$// TODO: Move preferred fiat iso to model</ID>
-    <ID>ForbiddenComment:WalletDisplayUtils.kt$WalletDisplayUtils$// TODO: Collecting wallet display methods from Wallet Managers here for now -- class organization (whether hierarchy or not) is TBD, once we figure out what's needed</ID>
-    <ID>ForbiddenComment:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$// TODO: I think this should come from model (originating in wallet effect handler)</ID>
-    <ID>ForbiddenComment:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$// TODO: Revert to above once Token File issue is resolved</ID>
-    <ID>ForbiddenComment:WalletScreenEffectHandler.kt$WalletScreenEffectHandler$// TODO: Is this needed?</ID>
-    <ID>ForbiddenComment:WalletScreenModel.kt$WalletTransaction$// TODO: token symbol?</ID>
     <ID>LongMethod:NewPriceAlertActivity.kt$NewPriceAlertActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
     <ID>LongMethod:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet)</ID>
-    <ID>LongMethod:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$override fun accept(model: WalletScreenModel)</ID>
     <ID>MagicNumber:BRSharedPrefs.kt$BRSharedPrefs$15</ID>
     <ID>MagicNumber:CoreBreadBox.kt$CoreBreadBox.&lt;no name provided&gt;$100</ID>
     <ID>MagicNumber:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$1000</ID>
@@ -109,33 +60,17 @@
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService$BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, token) }</ID>
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService$val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.PushNotifications_title), NotificationManager.IMPORTANCE_DEFAULT)</ID>
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService.Companion$BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, firebaseToken) }</ID>
-    <ID>MaxLineLength:CoreBreadBox.kt$CoreBreadBox.&lt;no name provided&gt;$logDebug("(${manager.currency.code}) State Changed from='${event.oldState.name}' to='${event.newState.name}'")</ID>
-    <ID>MaxLineLength:CoreBreadBox.kt$CoreBreadBox.&lt;no name provided&gt;$logDebug("(${manager.currency.code}) Sync Progress progress=${event.percentComplete} time=${event.timestamp?.get()?.time}")</ID>
     <ID>MaxLineLength:CoreBreadBox.kt$CoreBreadBox.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZWI2M2UyOC0wMzQ1LTQ4ZjYtOWQxNy1jZTgwY2JkNjE3Y2IiLCJicmQ6Y3QiOiJjbGkiLCJleHAiOjkyMjMzNzIwMzY4NTQ3NzUsImlhdCI6MTU2Njg2MzY0OX0.FvLLDUSk1p7iFLJfg2kA-vwhDWTDulVjdj8YpFgnlE62OBFCYt4b3KeTND_qAhLynLKbGJ1UDpMMihsxtfvA0A"</ID>
-    <ID>MaxLineLength:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler$feeForToken = null</ID>
     <ID>MaxLineLength:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$val requestUrl = String.format(HISTORICAL_DATA_URL, history.value, fromCurrency.toUpperCase(), toCurrency, limit.value)</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity$eventConsumer.accept(HomeScreenEvent.OnPushNotificationOpened(intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)))</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity$is HomeScreenEffect.GoToInappMessage -&gt; NavigationEffect.GoToInAppMessage(effect.inAppMessage)</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity$is InternetEvent.OnConnectionUpdated -&gt; HomeScreenEvent.OnConnectionUpdated(event.isConnected)</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity$rv_wallet_list</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity.&lt;no name provided&gt;$private var previousHasInternet = !controller.model.hasInternet // opposite of initial state to force an initial render</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity.&lt;no name provided&gt;$total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(BRSharedPrefs.getPreferredFiatIso(this@HomeActivity), model.aggregatedFiatBalance)</ID>
-    <ID>MaxLineLength:HomeActivity.kt$HomeActivity.Companion$const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.presenter.activities.HomeActivity.EXTRA_PUSH_CAMPAIGN_ID"</ID>
-    <ID>MaxLineLength:HomeScreenEffectHandler.kt$HomeScreenEffectHandler$output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balance, balanceInFiat, fiatPricePerUnit, priceChange))</ID>
-    <ID>MaxLineLength:HomeScreenEffectHandler.kt$HomeScreenEffectHandler$return RatesRepository.getInstance(context).getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))</ID>
-    <ID>MaxLineLength:HomeScreenEffectHandler.kt$HomeScreenEffectHandler$return RatesRepository.getInstance(context).getFiatForCrypto(balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO</ID>
-    <ID>MaxLineLength:HomeScreenEffectHandler.kt$HomeScreenEffectHandler$val isBuyBellNeeded = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &amp;&amp; CurrencyUtils.isBuyNotificationNeeded(context)</ID>
     <ID>MaxLineLength:HomeScreenUpdate.kt$is HomeScreenEvent.OnInAppNotificationProvided -&gt; dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))</ID>
     <ID>MaxLineLength:HomeScreenUpdate.kt$is HomeScreenEvent.OnPushNotificationOpened -&gt; dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))</ID>
     <ID>MaxLineLength:HomeScreenUpdate.kt$wallet.priceChange == event.priceChange</ID>
     <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$HomeScreenEvent.OnWalletBalanceUpdated(updatedWallet.currencyCode, updatedWallet.balance, updatedWallet.fiatBalance, updatedWallet.fiatPricePerUnit, updatedWallet.priceChange!!)</ID>
-    <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$HomeScreenEvent.OnWalletSyncProgressUpdated(currencyCode = WALLET_BITCOIN.currencyCode, progress = progress, syncThroughMillis = 0L)</ID>
     <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$val initState = HomeScreenModel.createDefault().copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))</ID>
     <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$val updatedWallet = walletToAdd.copy(balance = BigDecimal.valueOf(1), fiatBalance = BigDecimal.valueOf(1000), fiatPricePerUnit = BigDecimal.valueOf(1000), priceChange = PriceChange(0.1, 10.0))</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageChangedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageDecreasedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageIncreasedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
-    <ID>MaxLineLength:OnBoardingController.kt$OnBoardingController$private val _effectHandler = OnBoardingEffectHandler(effectJob, { eventConsumer }, { router }, { activity as Context })</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE, direction, forCurrencyCode, value, currencyCode, pinnedPrice = pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY, Direction.BOTH, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY, Direction.DECREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
@@ -143,44 +78,10 @@
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.BOTH, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.DECREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.INCREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
-    <ID>MaxLineLength:RecoveryKeyController.kt$RecoveryKeyController$val imeManager = applicationContext!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager</ID>
     <ID>MaxLineLength:RecoveryKeyUpdate.kt$RecoveryKeyUpdate$override</ID>
     <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$BRReportsManager.reportBug(NullPointerException("No token for contract: ${tokenInfo.contractAddress}"))</ID>
     <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$TokenItem(null, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, WalletBitcoinManager.NAME, null, true)</ID>
     <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$TokenItem(null, WalletTokenManager.BRD_CURRENCY_CODE, WalletTokenManager.BRD_CURRENCY_CODE, null, true)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$( Connectable { output -&gt; WalletScreenEffectHandler(output) }, // Create nested handler, such that WalletScreenEffects are converted into WalletEffects and passed to WalletEffectHandler // (events produced are converted into WalletScreenEvents) nestedConnectable({ output: Consumer&lt;WalletEvent&gt; -&gt; CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }, { effect: WalletScreenEffect -&gt; // Map incoming effect when (effect) { is WalletScreenEffect.LoadWalletBalance -&gt; WalletEffect.LoadWalletBalance(effect.currencyId) is WalletScreenEffect.LoadTransactions -&gt; WalletEffect.LoadTransactions(effect.currencyId) else -&gt; null } }, { event: WalletEvent -&gt; // Map outgoing event when (event) { is WalletEvent.OnSyncProgressUpdated -&gt; WalletScreenEvent.OnSyncProgressUpdated(event.progress, event.syncThroughMillis, event.isSyncing) is WalletEvent.OnBalanceUpdated -&gt; WalletScreenEvent.OnBalanceUpdated(event.balance, event.fiatBalance) is WalletEvent.OnConnectionUpdated -&gt; WalletScreenEvent.OnConnectionUpdated(event.isConnected) is WalletEvent.OnCurrencyNameUpdated -&gt; WalletScreenEvent.OnCurrencyNameUpdated(event.name) is WalletEvent.OnTransactionAdded -&gt; WalletScreenEvent.OnTransactionAdded(event.walletTransaction) is WalletEvent.OnTransactionRemoved -&gt; WalletScreenEvent.OnTransactionRemoved(event.walletTransaction) is WalletEvent.OnTransactionUpdated -&gt; WalletScreenEvent.OnTransactionUpdated(event.walletTransaction) is WalletEvent.OnTransactionsUpdated -&gt; WalletScreenEvent.OnTransactionsUpdated(event.walletTransactions) } }), Connectable { output -&gt; WalletReviewPromptHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }, Connectable { output -&gt; WalletRatesHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }, Connectable { output -&gt; WalletHistoricalPriceIntervalHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }, nestedConnectable({ NavigationEffectHandler(this@WalletActivity) }, { effect -&gt; when (effect) { is WalletScreenEffect.GoToSend -&gt; NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest) is WalletScreenEffect.GoToReceive -&gt; NavigationEffect.GoToReceive(effect.currencyId) is WalletScreenEffect.GoToTransaction -&gt; NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash) WalletScreenEffect.GoBack -&gt; NavigationEffect.GoBack WalletScreenEffect.GoToBrdRewards -&gt; NavigationEffect.GoToBrdRewards WalletScreenEffect.GoToReview -&gt; NavigationEffect.GoToReview else -&gt; null } }) )</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$Connectable { output -&gt; WalletHistoricalPriceIntervalHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$Connectable { output -&gt; WalletRatesHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$Connectable { output -&gt; WalletReviewPromptHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE)) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$CryptoWalletEffectHandler(output, this@WalletActivity, intent.getStringExtra(EXTRA_CURRENCY_CODE))</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$get() = supportFragmentManager.backStackEntryCount &gt; 0 || supportFragmentManager.findFragmentByTag(FragmentTxDetails.TAG) != null</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnBalanceUpdated -&gt; WalletScreenEvent.OnBalanceUpdated(event.balance, event.fiatBalance)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnConnectionUpdated -&gt; WalletScreenEvent.OnConnectionUpdated(event.isConnected)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnCurrencyNameUpdated -&gt; WalletScreenEvent.OnCurrencyNameUpdated(event.name)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnSyncProgressUpdated -&gt; WalletScreenEvent.OnSyncProgressUpdated(event.progress, event.syncThroughMillis, event.isSyncing)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnTransactionAdded -&gt; WalletScreenEvent.OnTransactionAdded(event.walletTransaction)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnTransactionRemoved -&gt; WalletScreenEvent.OnTransactionRemoved(event.walletTransaction)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnTransactionUpdated -&gt; WalletScreenEvent.OnTransactionUpdated(event.walletTransaction)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletEvent.OnTransactionsUpdated -&gt; WalletScreenEvent.OnTransactionsUpdated(event.walletTransactions)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletScreenEffect.GoToSend -&gt; NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletScreenEffect.GoToTransaction -&gt; NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletScreenEffect.LoadTransactions -&gt; WalletEffect.LoadTransactions(effect.currencyId)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$is WalletScreenEffect.LoadWalletBalance -&gt; WalletEffect.LoadWalletBalance(effect.currencyId)</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$mAdapter = TransactionListAdapter(this, null) { (txHash) -&gt; output.accept(WalletScreenEvent.OnTransactionClicked(txHash)) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity$moreInfoButton.setOnClickListener { view -&gt; UiUtils.showSupportFragment(this@WalletActivity, BRConstants.FAQ_UNSUPPORTED_TOKEN, null) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity${ super.onCreate(savedInstanceState) setContentView(R.layout.activity_wallet) BRSharedPrefs.putIsNewWallet(this, false) // TODO: Add sell click event sell_button.setOnClickListener(view -&gt; UiUtils.startPlatformBrowser(WalletActivity.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL))); updateUi() // TODO: Migrate delisted token check and "more info" button to new framework (effect for checking if delisted, event for showing fragment etc.) // Not sure, if Generic Core has a notion of delisted token and whether it manages this val moreInfoButton = delisted_token_layout!!.findViewById&lt;Button&gt;(R.id.more_info_button) moreInfoButton.setOnClickListener { view -&gt; UiUtils.showSupportFragment(this@WalletActivity, BRConstants.FAQ_UNSUPPORTED_TOKEN, null) } controller.connect { this.connectViews(it) } }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$Interval.ONE_DAY, Interval.ONE_WEEK -&gt; { SimpleDateFormat(MARKET_CHART_DATE_WITH_HOUR, Locale.getDefault()) }</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$brDialogView.dismiss()</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$currency_usd_price.text = CurrencyUtils.getFormattedAmount(this@WalletActivity, BRSharedPrefs.getPreferredFiatIso(), dataPoint.closePrice.toBigDecimal())</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$private var previousIsCryptoPreferred: Boolean? = !controller.model.isCryptoPreferred // opposite of initial state to force an initial render</ID>
-    <ID>MaxLineLength:WalletActivity.kt$WalletActivity.&lt;no name provided&gt;$val formattedCryptoBalance = CurrencyUtils.getFormattedCryptoAmount(model.currencyCode, model.balance)</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$BRConstants.CURRENT_UNIT_BITCOINS -&gt; amountInSmallestUnit.divide(BigDecimal("100000000"), 8, BRConstants.ROUNDING_MODE)</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$BRConstants.CURRENT_UNIT_BITS -&gt; amountInSmallestUnit.divide(BigDecimal("100"), 2, BRConstants.ROUNDING_MODE)</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$BRConstants.CURRENT_UNIT_MBITS -&gt; amountInSmallestUnit.divide(BigDecimal("100000"), 5, BRConstants.ROUNDING_MODE)</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$currencyCode.isBrd() -&gt; WalletUiConfiguration("#5e6fa5", null, true, MAX_DECIMAL_PLACES_FOR_UI)</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$when { amountInSmallestUnit == BigDecimal.ZERO -&gt; amountInSmallestUnit currencyCode.isBitcoin() || currencyCode.isBitcash() -&gt; { return when (BRSharedPrefs.getCryptoDenomination(null, currencyCode)) { BRConstants.CURRENT_UNIT_BITS -&gt; amountInSmallestUnit.divide(BigDecimal("100"), 2, BRConstants.ROUNDING_MODE) BRConstants.CURRENT_UNIT_MBITS -&gt; amountInSmallestUnit.divide(BigDecimal("100000"), 5, BRConstants.ROUNDING_MODE) BRConstants.CURRENT_UNIT_BITCOINS -&gt; amountInSmallestUnit.divide(BigDecimal("100000000"), 8, BRConstants.ROUNDING_MODE) else -&gt; null } } currencyCode.isEth() -&gt; amountInSmallestUnit.divide(ONE_ETH, SCALE_ETH, BRConstants.ROUNDING_MODE) currencyCode.isBrd() -&gt; amountInSmallestUnit.divide(BigDecimal.TEN.pow(5), 5, BRConstants.ROUNDING_MODE) // else -&gt; amountInSmallestUnit.divide(BigDecimal(BigDecimal.TEN.pow(mWalletToken.getToken().getDecimals()).toPlainString()), mWalletToken.getToken().getDecimals(), BRConstants.ROUNDING_MODE) else -&gt; null }</ID>
-    <ID>MaxLineLength:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$when { currencyCode.isBitcoin() -&gt; WalletUiConfiguration("#f29500", null, true, MAX_DECIMAL_PLACES_FOR_UI) currencyCode.isBitcash() -&gt; WalletUiConfiguration("#478559", null, true, MAX_DECIMAL_PLACES_FOR_UI) currencyCode.isEth() -&gt; WalletUiConfiguration("#5e6fa5", null, true, MAX_DECIMAL_PLACES_FOR_UI) currencyCode.isBrd() -&gt; WalletUiConfiguration("#5e6fa5", null, true, MAX_DECIMAL_PLACES_FOR_UI) // TODO: Revert to above once Token File issue is resolved else -&gt; null // else -&gt; WalletUiConfiguration(TokenUtil.getTokenStartColor(currencyCode), TokenUtil.getTokenEndColor(currencyCode), false, MAX_DECIMAL_PLACES_FOR_UI) }</ID>
     <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler$Interval.THREE_MONTHS -&gt; CurrencyHistoricalDataClient.getPastThreeMonths(context, currencyCode, toCurrency)</ID>
     <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler$Interval.THREE_YEARS -&gt; CurrencyHistoricalDataClient.getPastThreeYears(context, currencyCode, toCurrency)</ID>
     <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletRatesHandler$val exchangeRate = it.getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))</ID>
@@ -216,7 +117,6 @@
     <ID>TooGenericExceptionCaught:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$e: Exception</ID>
     <ID>TooManyFunctions:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService : FirebaseMessagingService</ID>
     <ID>TooManyFunctions:BRSharedPrefs.kt$BRSharedPrefs</ID>
-    <ID>TooManyFunctions:CoreBreadBox.kt$CoreBreadBox : BreadBoxSystemListenerSystemEventVisitor</ID>
     <ID>TooManyFunctions:HomeScreenEffectHandler.kt$HomeScreenEffectHandler : ConnectionCoroutineScopeOnDataChanged</ID>
     <ID>TooManyFunctions:NavigationEffectHandler.kt$NavigationEffectHandler : ConnectionNavigationEffectHandlerSpec</ID>
     <ID>TooManyFunctions:NewPriceAlertViewModel.kt$NewPriceAlertViewModel : ViewModel</ID>
@@ -226,12 +126,8 @@
     <ID>TooManyFunctions:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler : ConnectionCoroutineScope</ID>
     <ID>TooManyFunctions:RecoveryKeyUpdate.kt$RecoveryKeyUpdate : UpdateRecoveryKeyUpdateSpec</ID>
     <ID>TooManyFunctions:SparkView.kt$SparkView : ViewScrubListener</ID>
-    <ID>TooManyFunctions:WalletActivity.kt$WalletActivity : BRActivityEventSource</ID>
     <ID>VariableNaming:PriceAlertListViewModel.kt$PriceAlertListViewModel$private val TAG: String = PriceAlertListViewModel::class.java.simpleName</ID>
     <ID>WildcardImport:BaseMobiusController.kt$import com.spotify.mobius.*</ID>
-    <ID>WildcardImport:CryptoWalletEffectHandler.kt$import com.breadwallet.crypto.*</ID>
-    <ID>WildcardImport:HomeActivity.kt$import com.breadwallet.ui.home.*</ID>
-    <ID>WildcardImport:HomeActivity.kt$import com.spotify.mobius.*</ID>
     <ID>WildcardImport:HomeScreenUpdate.kt$import com.spotify.mobius.Next.*</ID>
     <ID>WildcardImport:LifecycleExtensions.kt$import android.arch.lifecycle.*</ID>
     <ID>WildcardImport:NavigationEffectHandler.kt$import com.breadwallet.presenter.activities.*</ID>
@@ -241,7 +137,6 @@
     <ID>WildcardImport:RecoveryKeyEffectHandler.kt$import kotlinx.coroutines.*</ID>
     <ID>WildcardImport:RecoveryKeyUpdate.kt$import com.spotify.mobius.Next.*</ID>
     <ID>WildcardImport:Resource.kt$import com.breadwallet.tools.mvvm.Status.*</ID>
-    <ID>WildcardImport:WalletActivity.kt$import com.spotify.mobius.*</ID>
     <ID>WildcardImport:WalletUpdate.kt$import com.breadwallet.ui.wallet.WalletScreenEffect.*</ID>
     <ID>WildcardImport:WalletUpdate.kt$import com.breadwallet.ui.wallet.WalletScreenEvent.*</ID>
     <ID>WildcardImport:WalletUpdate.kt$import com.spotify.mobius.Next.*</ID>

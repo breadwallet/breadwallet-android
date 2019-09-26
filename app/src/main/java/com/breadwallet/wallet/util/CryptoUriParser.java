@@ -2,13 +2,11 @@ package com.breadwallet.wallet.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.ui.wallet.WalletActivity;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
@@ -17,7 +15,6 @@ import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -35,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import static com.breadwallet.tools.util.BRConstants.BREAD;
 
 /**
@@ -321,17 +317,17 @@ public class CryptoUriParser {
     private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
         if (requestObject == null || requestObject.getAddress() == null || requestObject.getAddress().isEmpty())
             return false;
-        BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+        /* TODO: support crypto urls when send fragment becomes a controller
+           BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 BRSharedPrefs.putCurrentWalletCurrencyCode(context, requestObject.getCurrencyCode());
-                Intent newIntent = new Intent(context, WalletActivity.class);
+                Intent newIntent = new Intent(context, WalletController.class);
                 newIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
-                newIntent.putExtra(WalletActivity.EXTRA_CRYPTO_REQUEST, requestObject);
+                newIntent.putExtra(WalletController.EXTRA_CRYPTO_REQUEST, requestObject);
                 context.startActivity(newIntent);
             }
-        });
+        });*/
         return true;
     }
 
