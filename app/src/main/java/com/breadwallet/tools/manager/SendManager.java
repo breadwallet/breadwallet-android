@@ -9,8 +9,11 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.model.FeeOption;
+import com.breadwallet.model.TxConfirmationDetail;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.fragments.FragmentFingerprint;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
@@ -21,6 +24,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.auth.TxDetailConfirmationFragment;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.exceptions.AmountSmallerThanMinException;
@@ -34,7 +38,6 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -85,7 +88,7 @@ public class SendManager {
 
             // Check whether the fee (for BTC and BCH) value we have is old, then try updating the fee
             if (walletManager.getCurrencyCode().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) ||
-                walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
+                    walletManager.getCurrencyCode().equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
 
                 if (now - BRSharedPrefs.getFeeTime(app, walletManager.getCurrencyCode()) >= FEE_EXPIRATION_MILLIS) {
                     new Thread(() -> {
@@ -279,11 +282,17 @@ public class SendManager {
             Log.e(TAG, "confirmPay: context is null");
             return;
         }
-        String message = createConfirmation(ctx, request, wm);
-        if (message == null) {
+
+        TxConfirmationDetail confirmationDetail = createConfirmation(ctx, request, wm);
+        if (confirmationDetail == null) {
             BRDialog.showSimpleDialog(ctx, "Failed", "Confirmation message failed");
             return;
         }
+
+        if (!(ctx instanceof Activity)) {
+            return;
+        }
+        Activity host = (Activity) ctx;
 
         BigDecimal minOutput = request.isAmountRequested() ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
@@ -293,20 +302,16 @@ public class SendManager {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), minOutput));
 
-            ((Activity) ctx).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    BRDialog.showCustomDialog(ctx, ctx.getString(R.string.Alerts_sendFailure), bitcoinMinMessage, ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
-                }
-            });
+            host.runOnUiThread(() -> BRDialog.showCustomDialog(
+                    ctx,
+                    ctx.getString(R.string.Alerts_sendFailure),
+                    bitcoinMinMessage,
+                    ctx.getString(R.string.AccessibilityLabels_close),
+                    null,
+                    brDialogView -> brDialogView.dismiss(), null, null, 0
+            ));
             return;
         }
-        boolean forcePin = false;
 
         if (BuildConfig.DEBUG) {
             Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
@@ -315,39 +320,39 @@ public class SendManager {
             Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getCurrencyCode()));
         }
 
-        if (wm.getTotalSent(ctx).add(request.getAmount()).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode())) > 0) {
-            forcePin = true;
-        }
+        final boolean forcePin = wm.getTotalSent(ctx).add(request.getAmount()).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode())) > 0;
 
-        //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), message, forcePin, false, new BRAuthCompletion() {
-            @Override
-            public void onComplete() {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        PostAuth.getInstance().onPublishTxAuth(ctx, wm, false, completion);
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                UiUtils.killAllFragments((Activity) ctx);
-                            }
-                        });
+        //successfully created the transaction, confirm the transaction details and authenticate the user
+        TxDetailConfirmationFragment txDetailFragment = TxDetailConfirmationFragment.Companion.newInstance(
+                confirmationDetail,
+                () -> { // onAccept : request user auth
+                    AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), "", forcePin, false, new BRAuthCompletion() {
+                        @Override
+                        public void onComplete() {
+                            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                                PostAuth.getInstance().onPublishTxAuth(ctx, wm, false, completion);
+                                BRExecutor.getInstance().forMainThreadTasks().execute(() -> UiUtils.killAllFragments(host));
+                            });
 
-                    }
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            //nothing
+                        }
+                    });
+                    return null;
                 });
 
-            }
-
-            @Override
-            public void onCancel() {
-                //nothing
-            }
-        });
-
+        host.getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, txDetailFragment, FragmentFingerprint.class.getName())
+                .addToBackStack(null)
+                .commit();
     }
 
-    private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager wm) {
+    private static TxConfirmationDetail createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager wm) {
 
         String receiver = wm.decorateAddress(request.getAddress());
 
@@ -385,31 +390,24 @@ public class SendManager {
         final BigDecimal total = amount.add(feeForTx);
         String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), amount);
         String formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), feeForTx);
-        String formattedCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), total);
 
         String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, amount, null));
         String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
 
         boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(ctx, wm.getCurrencyCode());
-        String feeLabel = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
 
         if (isErc20) {
-            formattedCryptoTotal = "";
             formattedTotal = "";
             BaseWalletManager ethWm = WalletEthManager.getInstance(ctx.getApplicationContext());
             formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getCurrencyCode(), feeForTx);
             formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
-            feeLabel = ctx.getString(R.string.Confirmation_feeLabelETH) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
         }
 
-        String receiverLabel = receiver + "\n\n";
-        String amountLabel = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
-        String totalLabel = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
-        String messageLabel = Utils.isNullOrEmpty(request.getMessage()) ? "" : "\n\n" + request.getMessage();
+        FeeOption feeOption = FeeOption.valueOf(BRSharedPrefs.getPreferredFeeOption(ctx, wm.getCurrencyCode()));
 
-        //formatted text
-        return receiverLabel + amountLabel + feeLabel + (isErc20 ? "" : totalLabel) + messageLabel;
+        return new TxConfirmationDetail(wm.getCurrencyCode(), receiver, formattedCryptoAmount, formattedAmount,
+                formattedCryptoFee, formattedFee, formattedTotal, feeOption, isErc20);
     }
 
     public interface SendCompletion {
