@@ -29,8 +29,8 @@
 package com.breadwallet.ui.home
 
 import android.content.Context
-import com.breadwallet.BreadApp
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Wallet as CryptoWallet
 import com.breadwallet.model.Experiments
@@ -56,6 +56,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
@@ -90,7 +91,7 @@ class HomeScreenEffectHandler(
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
             HomeScreenEffect.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
             is HomeScreenEffect.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
-            is HomeScreenEffect.TrackEvent -> { EventUtils.pushEvent(value.eventName, value.attributes) }
+            is HomeScreenEffect.TrackEvent -> EventUtils.pushEvent(value.eventName, value.attributes)
         }
     }
 
@@ -117,7 +118,7 @@ class HomeScreenEffectHandler(
             .map {
                 HomeScreenEvent.OnWalletBalanceUpdated(
                     currencyCode = it.currency.code,
-                    balance = getBalance(it.balance),
+                    balance = it.balance.toBigDecimal(),
                     fiatBalance = getBalanceInFiat(it.balance),
                     fiatPricePerUnit = getFiatPerPriceUnit(it.currency.code),
                     priceChange = getPriceChange(it.currency.code)
@@ -146,14 +147,17 @@ class HomeScreenEffectHandler(
         // TODO: refactor to its own generic effect handler
         val promptId = PromptManager.nextPrompt(context)
         if (promptId != null) {
-            EventUtils.pushEvent(EventUtils.EVENT_PROMPT_PREFIX +
-                    PromptManager.getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
+            EventUtils.pushEvent(
+                EventUtils.EVENT_PROMPT_PREFIX +
+                    PromptManager.getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED
+            )
         }
         output.accept(HomeScreenEvent.OnPromptLoaded(promptId))
     }
 
     private fun loadIsBuyBellNeeded() {
-        val isBuyBellNeeded = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) && CurrencyUtils.isBuyNotificationNeeded(context)
+        val isBuyBellNeeded = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
+            CurrencyUtils.isBuyNotificationNeeded(context)
         output.accept(HomeScreenEvent.OnBuyBellNeededLoaded(isBuyBellNeeded))
     }
 
@@ -189,58 +193,63 @@ class HomeScreenEffectHandler(
         breadBox.currencyCodes()
             .take(1)
             .flatMapLatest { it.asFlow() }
-            .flatMapConcat { breadBox.wallet(it).take(1) }
+            .flatMapMerge { breadBox.wallet(it).take(1) }
             .onEach { updateBalance(it.currency.code, it.balance) }
             .launchIn(this)
     }
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
-        return RatesRepository.getInstance(context).getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
+        return RatesRepository.getInstance(context)
+            .getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
+            ?: BigDecimal.ZERO
     }
 
     private fun updateBalance(currencyCode: String, balanceAmt: Amount) {
-        val balance = getBalance(balanceAmt)
         val balanceInFiat = getBalanceInFiat(balanceAmt)
         val fiatPricePerUnit = getFiatPerPriceUnit(currencyCode)
         val priceChange = getPriceChange(currencyCode)
 
-        output.accept(HomeScreenEvent.OnWalletBalanceUpdated(currencyCode, balance, balanceInFiat, fiatPricePerUnit, priceChange))
-    }
-
-    private fun getBalanceAmtInBase(balance: Amount): BigDecimal {
-        return balance.doubleAmount(balance.unit.base).or(0.0).toBigDecimal()
-    }
-
-    private fun getBalance(balanceAmt: Amount) : BigDecimal {
-        return balanceAmt.doubleAmount(balanceAmt.unit).or(0.0).toBigDecimal()
+        output.accept(
+            HomeScreenEvent.OnWalletBalanceUpdated(
+                currencyCode,
+                balanceAmt.toBigDecimal(),
+                balanceInFiat,
+                fiatPricePerUnit,
+                priceChange
+            )
+        )
     }
 
     private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
-        val balance = getBalance(balanceAmt)
-        return RatesRepository.getInstance(context).getFiatForCrypto(balance, balanceAmt.currency.code, BRSharedPrefs.getPreferredFiatIso(context)) ?: BigDecimal.ZERO
+        return RatesRepository.getInstance(context).getFiatForCrypto(
+            balanceAmt.toBigDecimal(),
+            balanceAmt.currency.code,
+            BRSharedPrefs.getPreferredFiatIso(context)
+        ) ?: BigDecimal.ZERO
     }
 
-    private fun getPriceChange(currencyCode: String) = RatesRepository.getInstance(context).getPriceChange(currencyCode)
+    private fun getPriceChange(currencyCode: String) =
+        RatesRepository.getInstance(context).getPriceChange(currencyCode)
 
     private fun CryptoWallet.asWallet(): Wallet {
         return Wallet(
-                currencyName = currency.name,
-                currencyCode = currency.code,
-                fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
-                balance = getBalance(balance),
-                fiatBalance = getBalanceInFiat(balance),
-                syncProgress = 0f, // will update via sync events
-                syncingThroughMillis = 0L, // will update via sync events
-                priceChange = getPriceChange(currency.code)
+            currencyName = currency.name,
+            currencyCode = currency.code,
+            fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
+            balance = balance.toBigDecimal(),
+            fiatBalance = getBalanceInFiat(balance),
+            syncProgress = 0f, // will update via sync events
+            syncingThroughMillis = 0L, // will update via sync events
+            priceChange = getPriceChange(currency.code)
         )
     }
 
     private fun checkIfShowBuyAndSell() {
         val showBuyAndSell = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
-                && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
+            && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
         EventUtils.pushEvent(
-                EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
-                mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())
+            EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
+            mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())
         )
         output.accept(HomeScreenEvent.OnShowBuyAndSell(showBuyAndSell))
     }

@@ -26,7 +26,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
-import com.breadwallet.ui.wallet.WalletActivity;
 
 /**
  * BreadWallet
@@ -67,11 +66,10 @@ public abstract class BRActivity extends FragmentActivity {
     protected void onStop() {
         super.onStop();
         //open back to HomeActivity if needed
-        if (this instanceof WalletActivity)
-            BRSharedPrefs.putAppBackgroundedFromHome(this, false);
-        else if (this instanceof MainActivity)
+        //if (this instanceof WalletController)
+        // TODO:     BRSharedPrefs.putAppBackgroundedFromHome(this, false);
+        if (this instanceof MainActivity)
             BRSharedPrefs.putAppBackgroundedFromHome(this, true);
-
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.breadwallet.BreadApp
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.presenter.entities.CryptoRequest
 import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -54,18 +55,15 @@ class MainActivity : BRActivity() {
 
     companion object {
         const val EXTRA_DATA = "com.breadwallet.ui.MainActivity.EXTRA_DATA"
-        const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID = "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
+        const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.MainActivity.EXTRA_CRYPTO_REQUEST"
+        const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
+            "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
     }
 
     private lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // The view of this activity is nothing more than a Controller host with animation support
-        setContentView(ChangeHandlerFrameLayout(this).also { view ->
-            router = Conductor.attachRouter(this, view, savedInstanceState)
-        })
-
         if (!(application as BreadApp).isDeviceStateValid) {
             // Note: Calling isDeviceStateValid will handle user resolution
             //   making it safe to terminate here.
@@ -73,22 +71,29 @@ class MainActivity : BRActivity() {
             return
         }
 
+        // The view of this activity is nothing more than a Controller host with animation support
+        setContentView(ChangeHandlerFrameLayout(this).also { view ->
+            router = Conductor.attachRouter(this, view, savedInstanceState)
+        })
+
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
             val rootController = when {
-                BreadApp.hasWallet(applicationContext) -> {
+                BreadApp.hasWallet() -> {
                     val intentUrl = processIntentData(intent)
                     LoginController(intentUrl)
                 }
                 else -> IntroController()
             }
-            router.setRoot(RouterTransaction.with(rootController)
+            router.setRoot(
+                RouterTransaction.with(rootController)
                     .popChangeHandler(FadeChangeHandler())
-                    .pushChangeHandler(FadeChangeHandler()))
+                    .pushChangeHandler(FadeChangeHandler())
+            )
         } else {
-            // open browser for the new intent
+            // TODO: open browser for the new intent
         }
-        // TODO: Move this: Print once when app is first launched in debug mode.
+
         if (BuildConfig.DEBUG) {
             Utils.printPhoneSpecs(this)
         }
@@ -113,11 +118,18 @@ class MainActivity : BRActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.let {
-            val url = processIntentData(it)
-            if (!url.isNullOrBlank()) {
-                AppEntryPointHandler.processDeepLink(this, url)
-            }
+        intent ?: return
+
+        val request = intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST)
+        if (request is CryptoRequest) {
+            intent.removeExtra(EXTRA_CRYPTO_REQUEST)
+            // TODO: Create backstack and handle request when Send
+            //   fragment is converted to a controller.
+        }
+
+        val url = processIntentData(intent)
+        if (!url.isNullOrBlank()) {
+            AppEntryPointHandler.processDeepLink(this, url)
         }
     }
 
@@ -136,5 +148,4 @@ class MainActivity : BRActivity() {
         }
         return data
     }
-
 }

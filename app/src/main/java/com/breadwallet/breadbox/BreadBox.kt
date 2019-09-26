@@ -67,6 +67,12 @@ interface BreadBox {
     /** Emits the [List] of [Transfer]s for the [Wallet] of [currencyCode]. */
     fun walletTransfers(currencyCode: String): Flow<List<Transfer>>
 
+    /** Emits the [Transfer] for the [transferHash] of [currencyCode]. */
+    fun walletTransfer(currencyCode: String, transferHash: String): Flow<Transfer>
+
+    /** Emits individual [Transfer]s for [currencyCode] when they have been changed. */
+    fun walletTransferUpdates(currencyCode: String): Flow<Transfer>
+
     /** Returns [System] when [isOpen] or null when it is not. */
     fun getSystemUnsafe(): System?
 }

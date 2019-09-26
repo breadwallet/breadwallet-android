@@ -27,8 +27,12 @@ package com.breadwallet.ui.global.effect
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.presenter.activities.BrdWalletController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
+import com.breadwallet.ui.util.isBrd
+import com.breadwallet.ui.wallet.TxDetailsController
+import com.breadwallet.ui.wallet.WalletController
 import com.spotify.mobius.Connection
 import com.spotify.mobius.android.runners.MainThreadWorkRunner
 
@@ -53,7 +57,15 @@ class RouterNavigationEffectHandler(
         workRunner.dispose()
     }
 
-    override fun goToWallet(effect: NavigationEffect.GoToWallet) = Unit
+    override fun goToWallet(effect: NavigationEffect.GoToWallet) {
+        val walletController = when {
+            effect.currencyCode.isBrd() -> BrdWalletController()
+            else -> WalletController(effect.currencyCode)
+        }
+        router.pushController(RouterTransaction.with(walletController)
+            .popChangeHandler(HorizontalChangeHandler())
+            .pushChangeHandler(HorizontalChangeHandler()))
+    }
 
     override fun goBack() {
         if (!router.handleBack()) {
@@ -77,7 +89,10 @@ class RouterNavigationEffectHandler(
 
     override fun goToReceive(effect: NavigationEffect.GoToReceive) = Unit
 
-    override fun goToTransaction(effect: NavigationEffect.GoToTransaction) = Unit
+    override fun goToTransaction(effect: NavigationEffect.GoToTransaction) {
+        val controller = TxDetailsController(effect.currencyId, effect.txHash)
+        router.pushController(RouterTransaction.with(controller))
+    }
 
     override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) = Unit
 

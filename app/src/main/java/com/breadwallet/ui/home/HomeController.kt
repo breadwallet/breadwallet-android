@@ -32,7 +32,6 @@ import androidx.core.view.isVisible
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.presenter.activities.util.BRActivity
-import com.breadwallet.tools.adapter.WalletListAdapter
 import com.breadwallet.tools.listeners.RecyclerItemClickListener
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.PromptManager
@@ -40,6 +39,7 @@ import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.global.effect.NavigationEffect
 import com.breadwallet.ui.global.effect.NavigationEffectHandler
+import com.breadwallet.ui.global.effect.RouterNavigationEffectHandler
 import com.breadwallet.ui.util.CompositeEffectHandler
 import com.breadwallet.ui.util.nestedConnectable
 import com.spotify.mobius.Connectable
@@ -50,7 +50,7 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 class HomeController(
-        args: Bundle? = null
+    args: Bundle? = null
 ) : BaseMobiusController<HomeScreenModel, HomeScreenEvent, HomeScreenEffect>(args) {
 
     companion object {
@@ -63,24 +63,31 @@ class HomeController(
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit
     override val effectHandler: Connectable<HomeScreenEffect, HomeScreenEvent> =
-            CompositeEffectHandler.from(
-                    Connectable { output ->
-                        HomeScreenEffectHandler(output, activity as BRActivity, direct.instance())
-                    },
-                    nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
-                        when (effect) {
-                            is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
-                            is HomeScreenEffect.GoToInappMessage ->
-                                NavigationEffect.GoToInAppMessage(effect.inAppMessage)
-                            is HomeScreenEffect.GoToWallet -> NavigationEffect.GoToWallet(effect.currencyCode)
-                            HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
-                            HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
-                            HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu
-                            HomeScreenEffect.GoToAddWallet -> NavigationEffect.GoToAddWallet
-                            else -> null
-                        }
-                    })
-            )
+        CompositeEffectHandler.from(
+            Connectable { output ->
+                HomeScreenEffectHandler(output, activity as BRActivity, direct.instance())
+            },
+            nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
+                when (effect) {
+                    is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                    is HomeScreenEffect.GoToInappMessage ->
+                        NavigationEffect.GoToInAppMessage(effect.inAppMessage)
+                    HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
+                    HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
+                    HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu
+                    HomeScreenEffect.GoToAddWallet -> NavigationEffect.GoToAddWallet
+                    else -> null
+                }
+            }),
+            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
+                when (effect) {
+                    is HomeScreenEffect.GoToWallet ->
+                        NavigationEffect.GoToWallet(effect.currencyCode)
+                    else -> null
+                }
+            }
+        )
+
     private var walletAdapter: WalletListAdapter? = null
 
     override fun bindView(output: Consumer<HomeScreenEvent>): Disposable {
@@ -88,10 +95,13 @@ class HomeController(
         trade_layout.setOnClickListener { output.accept(HomeScreenEvent.OnTradeClicked) }
         menu_layout.setOnClickListener { output.accept(HomeScreenEvent.OnMenuClicked) }
 
-        walletAdapter = WalletListAdapter(activity)
+        walletAdapter = WalletListAdapter()
         rv_wallet_list.adapter = walletAdapter
         rv_wallet_list.layoutManager = LinearLayoutManager(activity)
-        rv_wallet_list.addOnItemTouchListener(RecyclerItemClickListener(activity, rv_wallet_list,
+        // TODO: The adapter is responsible for handling click events.
+        //  Move all of this and RecyclerItemClickListener
+        rv_wallet_list.addOnItemTouchListener(
+            RecyclerItemClickListener(activity, rv_wallet_list,
                 object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int, x: Float, y: Float) {
                         if (position >= walletAdapter!!.itemCount || position < 0)
@@ -106,7 +116,8 @@ class HomeController(
                     }
 
                     override fun onLongItemClick(view: View, position: Int) = Unit
-                }))
+                })
+        )
         return Disposable {}
     }
 
@@ -115,48 +126,46 @@ class HomeController(
         setUpBuildInfoLabel()
     }
 
-    override fun render(model: HomeScreenModel) {
-        with(model) {
-            ifChanged(HomeScreenModel::wallets) {
-                walletAdapter!!.setWallets(wallets.values.toList())
-            }
+    override fun HomeScreenModel.render() {
+        ifChanged(HomeScreenModel::wallets) {
+            walletAdapter!!.setWallets(wallets.values.toList())
+        }
 
-            ifChanged(HomeScreenModel::aggregatedFiatBalance) {
-                total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
-                        BRSharedPrefs.getPreferredFiatIso(activity),
-                        aggregatedFiatBalance)
-            }
+        ifChanged(HomeScreenModel::aggregatedFiatBalance) {
+            total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
+                BRSharedPrefs.getPreferredFiatIso(activity),
+                aggregatedFiatBalance
+            )
+        }
 
-            ifChanged(HomeScreenModel::showPrompt) {
-                if (model.showPrompt) {
-                    val promptView = PromptManager.promptInfo(activity, model.promptId)
-                    if (list_group_layout.childCount > 0) {
-                        list_group_layout.removeAllViews()
-                    }
-                    list_group_layout.addView(promptView, 0)
+        ifChanged(HomeScreenModel::showPrompt) {
+            if (showPrompt) {
+                val promptView = PromptManager.promptInfo(activity, promptId)
+                if (list_group_layout.childCount > 0) {
+                    list_group_layout.removeAllViews()
                 }
+                list_group_layout.addView(promptView, 0)
             }
+        }
 
-            ifChanged(HomeScreenModel::hasInternet) {
-                when (hasInternet) {
-                    true -> notification_bar.isGone = true
-                    false -> {
-                        notification_bar.isGone = false
-                        notification_bar.bringToFront()
-                    }
-                }
+        ifChanged(HomeScreenModel::hasInternet) {
+            notification_bar.apply {
+                isGone = hasInternet
+                if (hasInternet) bringToFront()
             }
+        }
 
-            ifChanged(HomeScreenModel::isBuyBellNeeded) {
-                buy_bell.isVisible = isBuyBellNeeded
-            }
+        ifChanged(HomeScreenModel::isBuyBellNeeded) {
+            buy_bell.isVisible = isBuyBellNeeded
+        }
 
-            ifChanged(HomeScreenModel::hasInternet) {
-                buy_text_view.setText(when {
+        ifChanged(HomeScreenModel::hasInternet) {
+            buy_text_view.setText(
+                when {
                     showBuyAndSell -> R.string.HomeScreen_buyAndSell
                     else -> R.string.HomeScreen_buy
-                })
-            }
+                }
+            )
         }
     }
 
@@ -164,6 +173,6 @@ class HomeController(
         val network = if (BuildConfig.BITCOIN_TESTNET) NETWORK_TESTNET else NETWORK_MAINNET
         val buildInfo = "$network ${BuildConfig.VERSION_NAME} build ${BuildConfig.BUILD_VERSION}"
         testnet_label.text = buildInfo
-        testnet_label.visibility = if (BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        testnet_label.isVisible = BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG
     }
 }

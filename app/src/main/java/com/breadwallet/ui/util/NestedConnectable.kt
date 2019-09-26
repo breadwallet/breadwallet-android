@@ -24,8 +24,6 @@
  */
 package com.breadwallet.ui.util
 
-
-// TODO: Replace with our own Mobius interfaces
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -38,17 +36,12 @@ import com.spotify.mobius.functions.Consumer
 fun <OuterI, OuterO, InnerI, InnerO> nestedConnectable(
         connectionProducer: (Consumer<InnerO>) -> Connection<InnerI>,
         mapEffect: (OuterI) -> InnerI?,
-        mapEvent: ((InnerO) -> OuterO?)
+        mapEvent: (InnerO) -> OuterO?
 ): Connectable<OuterI, OuterO> = object : Connectable<OuterI, OuterO> {
     override fun connect(output: Consumer<OuterO>): Connection<OuterI> {
-        val mappedOutput = when (mapEvent) {
-            null -> Consumer {}
-            else -> Consumer<InnerO> { innerEvent ->
-                output.accept(mapEvent(innerEvent) ?: return@Consumer)
-            }
-        }
-
-        val connection = connectionProducer(mappedOutput)
+        val connection = connectionProducer(Consumer {
+            output.accept(mapEvent(it) ?: return@Consumer)
+        })
         return object : Connection<OuterI> {
             override fun accept(value: OuterI) {
                 connection.accept(mapEffect(value) ?: return)
