@@ -88,7 +88,7 @@ class RecoveryKeyController(
     override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
         Connectable { output ->
             val resources = resources!!
-            RecoveryKeyEffectHandler(output, direct.instance(), {
+            RecoveryKeyEffectHandler(output, direct.instance(), direct.instance(), {
                 // unlink
                 BRDialog.showCustomDialog(
                     activity!!,
@@ -286,7 +286,11 @@ class RecoveryKeyController(
             BRConstants.SHOW_PHRASE_REQUEST_CODE ->
                 eventConsumer.accept(handleShowPhraseResult(resultCode))
             else ->
-                logError("Registered for onActivityResult of $requestCode but was unhandled.", resultCode, data)
+                logError(
+                    "Registered for onActivityResult of $requestCode but was unhandled.",
+                    resultCode,
+                    data
+                )
         }
     }
 

@@ -28,6 +28,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.presenter.activities.BrdWalletController
+import com.breadwallet.presenter.activities.ManageWalletsController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.util.isBrd
@@ -38,9 +39,9 @@ import com.spotify.mobius.android.runners.MainThreadWorkRunner
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
-        private val router: Router
+    private val router: Router
 ) : Connection<NavigationEffect>,
-        NavigationEffectHandlerSpec {
+    NavigationEffectHandlerSpec {
 
     private val workRunner = MainThreadWorkRunner.create()
 
@@ -62,9 +63,11 @@ class RouterNavigationEffectHandler(
             effect.currencyCode.isBrd() -> BrdWalletController()
             else -> WalletController(effect.currencyCode)
         }
-        router.pushController(RouterTransaction.with(walletController)
-            .popChangeHandler(HorizontalChangeHandler())
-            .pushChangeHandler(HorizontalChangeHandler()))
+        router.pushController(
+            RouterTransaction.with(walletController)
+                .popChangeHandler(HorizontalChangeHandler())
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
     }
 
     override fun goBack() {
@@ -104,16 +107,28 @@ class RouterNavigationEffectHandler(
 
     override fun goToHome() {
         // TODO clear backstack
-        router.pushController(RouterTransaction.with(HomeController())
+        router.pushController(
+            RouterTransaction.with(HomeController())
                 .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler()))
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
     }
 
     override fun goToLogin() {
-        router.pushController(RouterTransaction.with(LoginController())
+        router.pushController(
+            RouterTransaction.with(LoginController())
                 .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler()))
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
     }
 
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) = Unit
+
+    override fun goToManageWallets() {
+        router.pushController(
+            RouterTransaction.with(ManageWalletsController())
+                .popChangeHandler(HorizontalChangeHandler())
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
+    }
 }

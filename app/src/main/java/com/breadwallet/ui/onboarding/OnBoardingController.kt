@@ -79,7 +79,12 @@ class OnBoardingController(
     private val effectJob = SupervisorJob()
     private val _effectHandler by lazy {
         OnBoardingEffectHandler(
-            effectJob, direct.instance(), { eventConsumer }, { router }, { activity as Context })
+            effectJob,
+            direct.instance(),
+            direct.instance(),
+            { eventConsumer },
+            { router },
+            { activity as Context })
     }
 
     override val defaultModel = OnBoardingModel.DEFAULT
@@ -92,7 +97,10 @@ class OnBoardingController(
                 when (effect) {
                     OnBoardingEffect.Browse,
                     OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
-                    OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(onboarding = true, buy = true)
+                    OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(
+                        onboarding = true,
+                        buy = true
+                    )
                     is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
                         title = "",
                         message = effect.message

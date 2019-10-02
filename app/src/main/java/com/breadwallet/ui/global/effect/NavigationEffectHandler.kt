@@ -51,9 +51,9 @@ import com.spotify.mobius.android.runners.MainThreadWorkRunner
 import java.util.HashMap
 
 class NavigationEffectHandler(
-        private val activity: BRActivity // TODO: Don't depend on an activity
+    private val activity: BRActivity // TODO: Don't depend on an activity
 ) : Connection<NavigationEffect>,
-        NavigationEffectHandlerSpec {
+    NavigationEffectHandlerSpec {
 
     companion object {
         // TODO: Find a better place for these constants
@@ -91,9 +91,11 @@ class NavigationEffectHandler(
     }
 
     override fun goToBuy() {
-        val url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-                HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-                BITCOIN_CURRENCY_CODE)
+        val url = String.format(
+            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+            BITCOIN_CURRENCY_CODE
+        )
         UiUtils.startPlatformBrowser(activity, url)
     }
 
@@ -203,4 +205,6 @@ class NavigationEffectHandler(
             0
         )
     }
+
+    override fun goToManageWallets() = Unit
 }

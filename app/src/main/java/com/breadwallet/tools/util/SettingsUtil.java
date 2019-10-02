@@ -22,7 +22,7 @@ import com.breadwallet.model.Experiment;
 import com.breadwallet.model.Experiments;
 import com.breadwallet.platform.pricealert.PriceAlertWorker;
 import com.breadwallet.presenter.activities.InputPinActivity;
-import com.breadwallet.presenter.activities.ManageWalletsActivity;
+import com.breadwallet.presenter.activities.ManageWalletsController;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -113,9 +113,7 @@ public final class SettingsUtil {
         }, false, R.drawable.ic_camera));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", view -> {
-            Intent intent = new Intent(activity, ManageWalletsActivity.class);
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            // TODO: Once converted to conductor, route to Manage Wallets controller
         }, false, R.drawable.ic_wallet));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_preferences), "", view -> {

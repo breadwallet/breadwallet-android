@@ -26,11 +26,8 @@ package com.breadwallet.ui.pricealert
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Context
-import com.breadwallet.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.presenter.entities.TokenItem
-import com.breadwallet.tools.manager.BRReportsManager
-import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.ui.util.map
 import com.breadwallet.ui.util.mutableLiveData
 import com.breadwallet.ui.util.switchMap
@@ -38,17 +35,21 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager
-import com.platform.entities.TokenListMetaData
-import com.platform.tools.KVStoreManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import com.breadwallet.crypto.Wallet as CryptoWallet
 
-class SelectAlertCryptoViewModel : ViewModel() {
+class SelectAlertCryptoViewModel(
+    private val breadBox: BreadBox
+) : ViewModel(), CoroutineScope {
 
-    // TODO: Inject classes that require a Context
-    private val context: Context
-        get() = BreadApp.getBreadContext().applicationContext
-
-    private val walletEthManager
-        get() = WalletEthManager.getInstance(context)
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     private val selectedCrypto = mutableLiveData<TokenItem>()
     private val filterQuery = mutableLiveData("")
@@ -60,13 +61,11 @@ class SelectAlertCryptoViewModel : ViewModel() {
      */
     fun getTokenItems(): LiveData<List<TokenItem>> {
         if (tokenItems.value == null) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-                tokenItems.postValue(
-                        KVStoreManager.getTokenListMetaData(context)!!
-                                .enabledCurrencies
-                                .filterMissingErc20Tokens()
-                                .mapToTokenItem())
-            }
+            breadBox.wallets()
+                .take(1)
+                .map { wallets -> wallets.mapToTokenItem() }
+                .onEach { tokenItems.postValue(it) }
+                .launchIn(this@SelectAlertCryptoViewModel)
         }
 
         return filterQuery.switchMap { queryString ->
@@ -74,12 +73,11 @@ class SelectAlertCryptoViewModel : ViewModel() {
             else tokenItems.map { tokenItems ->
                 tokenItems.filter {
                     it.name.equals(queryString, false) ||
-                            it.symbol.equals(queryString, false)
+                        it.symbol.equals(queryString, false)
                 }
             }
         }
     }
-
 
     /**
      * Set the filter query used by [getTokenItems].
@@ -100,41 +98,59 @@ class SelectAlertCryptoViewModel : ViewModel() {
         selectedCrypto.value = tokenInfo
     }
 
-    /**
-     * Filter out erc20 missing tokens from a list of
-     * [TokenListMetaData.TokenInfo].
-     */
-    private fun List<TokenListMetaData.TokenInfo>.filterMissingErc20Tokens() =
-            filter { tokenInfo ->
-                if (tokenInfo.erc20 && tokenInfo.symbol != WalletTokenManager.BRD_CURRENCY_CODE) {
-                    val tk = walletEthManager.node.lookupToken(tokenInfo.contractAddress)
-                    if (tk == null) {
-                        BRReportsManager.reportBug(NullPointerException("No token for contract: ${tokenInfo.contractAddress}"))
-                        false
-                    } else true
-                } else true
-            }
+    override fun onCleared() {
+        super.onCleared()
+        coroutineContext.cancelChildren()
+    }
 
     /**
-     * Transform a list of [TokenListMetaData.TokenInfo] into
+     * Transform a list of [CryptoWallet] into
      * a list of [TokenItem]s for the UI.
      */
-    private fun List<TokenListMetaData.TokenInfo>.mapToTokenItem() =
-            map { tokenInfo ->
-                when (tokenInfo.symbol) {
-                    WalletBitcoinManager.BITCOIN_CURRENCY_CODE ->
-                        TokenItem(null, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, WalletBitcoinManager.NAME, null, true)
-                    WalletBchManager.BITCASH_CURRENCY_CODE ->
-                        TokenItem(null, WalletBchManager.BITCASH_CURRENCY_CODE, WalletBchManager.NAME, null, true)
-                    WalletEthManager.ETH_CURRENCY_CODE ->
-                        TokenItem(null, WalletEthManager.ETH_CURRENCY_CODE, WalletEthManager.NAME, null, true)
-                    WalletTokenManager.BRD_CURRENCY_CODE ->
-                        TokenItem(null, WalletTokenManager.BRD_CURRENCY_CODE, WalletTokenManager.BRD_CURRENCY_CODE, null, true)
-                    else -> {
-                        walletEthManager.node
-                                .lookupToken(tokenInfo.contractAddress)!!
-                                .run { TokenItem(address, symbol, name, null, true) }
-                    }
+    private fun List<CryptoWallet>.mapToTokenItem() =
+        map { wallet ->
+            when (wallet.currency.code) {
+                WalletBitcoinManager.BITCOIN_CURRENCY_CODE ->
+                    TokenItem(
+                        null,
+                        WalletBitcoinManager.BITCOIN_CURRENCY_CODE,
+                        WalletBitcoinManager.NAME,
+                        null,
+                        true
+                    )
+                WalletBchManager.BITCASH_CURRENCY_CODE ->
+                    TokenItem(
+                        null,
+                        WalletBchManager.BITCASH_CURRENCY_CODE,
+                        WalletBchManager.NAME,
+                        null,
+                        true
+                    )
+                WalletEthManager.ETH_CURRENCY_CODE ->
+                    TokenItem(
+                        null,
+                        WalletEthManager.ETH_CURRENCY_CODE,
+                        WalletEthManager.NAME,
+                        null,
+                        true
+                    )
+                WalletTokenManager.BRD_CURRENCY_CODE ->
+                    TokenItem(
+                        null,
+                        WalletTokenManager.BRD_CURRENCY_CODE,
+                        WalletTokenManager.BRD_CURRENCY_CODE,
+                        null,
+                        true
+                    )
+                else -> {
+                    TokenItem(
+                        wallet.target.toString(),
+                        wallet.currency.code,
+                        wallet.name,
+                        null,
+                        true
+                    )
                 }
             }
+        }
 }

@@ -864,6 +864,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public void onTxAdded(BRCoreTransaction transaction) {
         super.onTxAdded(transaction);
+        /*
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance();
 
@@ -914,7 +915,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         else
             Log.e(getTag(), "onTxAdded: ctx is null!");
 
-        onTxListModified(transaction.getReverseHash());
+        onTxListModified(transaction.getReverseHash());*/
     }
 
     public void onTxDeleted(final String hash, int notifyUser, int recommendRescan) {

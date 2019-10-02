@@ -36,10 +36,10 @@ import java.math.BigDecimal
 sealed class HomeScreenEvent {
 
     data class OnWalletSyncProgressUpdated(
-            val currencyCode: String,
-            val progress: Float,
-            val syncThroughMillis: Long,
-            val isSyncing: Boolean
+        val currencyCode: String,
+        val progress: Float,
+        val syncThroughMillis: Long,
+        val isSyncing: Boolean
     ) : HomeScreenEvent() {
         init {
             require(progress in 0f..1f) {
@@ -47,32 +47,35 @@ sealed class HomeScreenEvent {
             }
         }
     }
-    data class OnWalletsAdded(val wallets: List<Wallet>) : HomeScreenEvent()
+
+    data class OnWalletsUpdated(val wallets: List<Wallet>) : HomeScreenEvent()
     data class OnWalletAdded(val wallet: Wallet) : HomeScreenEvent()
-    data class OnWalletBalanceUpdated(val currencyCode: String,
-                                      val balance : BigDecimal,
-                                      val fiatBalance: BigDecimal,
-                                      val fiatPricePerUnit: BigDecimal,
-                                      val priceChange: PriceChange? = null
+    data class OnWalletBalanceUpdated(
+        val currencyCode: String,
+        val balance: BigDecimal,
+        val fiatBalance: BigDecimal,
+        val fiatPricePerUnit: BigDecimal,
+        val priceChange: PriceChange? = null
     ) : HomeScreenEvent()
 
-    data class OnBuyBellNeededLoaded(val isBuyBellNeeded:Boolean) : HomeScreenEvent()
+    data class OnBuyBellNeededLoaded(val isBuyBellNeeded: Boolean) : HomeScreenEvent()
 
     data class OnConnectionUpdated(val isConnected: Boolean) : HomeScreenEvent()
 
-    object OnAddWalletClicked : HomeScreenEvent()
     data class OnWalletClicked(val currencyCode: String) : HomeScreenEvent()
+
+    object OnManageWalletsClicked : HomeScreenEvent()
 
     object OnBuyClicked : HomeScreenEvent()
     object OnTradeClicked : HomeScreenEvent()
     object OnMenuClicked : HomeScreenEvent()
 
     data class OnDeepLinkProvided(val url: String) : HomeScreenEvent()
-    data class OnInAppNotificationProvided(val inAppMessage : InAppMessage) : HomeScreenEvent()
+    data class OnInAppNotificationProvided(val inAppMessage: InAppMessage) : HomeScreenEvent()
 
     data class OnPromptLoaded(val promptId: PromptManager.PromptItem) : HomeScreenEvent()
 
-    data class OnPushNotificationOpened(val campaignId : String) : HomeScreenEvent()
+    data class OnPushNotificationOpened(val campaignId: String) : HomeScreenEvent()
 
     data class OnShowBuyAndSell(val showBuyAndSell: Boolean) : HomeScreenEvent()
 }
