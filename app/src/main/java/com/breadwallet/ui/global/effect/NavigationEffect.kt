@@ -34,9 +34,16 @@ import io.hypno.switchboard.MobiusHandlerSpec
 
 @MobiusHandlerSpec
 sealed class NavigationEffect {
-    data class GoToSend(val currencyId: String, val cryptoRequest: CryptoRequest? = null) : NavigationEffect()
+    data class GoToSend(
+        val currencyId: String,
+        val cryptoRequest: CryptoRequest? = null
+    ) : NavigationEffect()
+
     data class GoToReceive(val currencyId: String) : NavigationEffect()
-    data class GoToTransaction(val currencyId: String, val txHash: String) : NavigationEffect()
+    data class GoToTransaction(
+        val currencyId: String,
+        val txHash: String
+    ) : NavigationEffect()
 
     object GoBack : NavigationEffect()
     object GoToBrdRewards : NavigationEffect()
@@ -62,4 +69,5 @@ sealed class NavigationEffect {
     object GoToTrade : NavigationEffect()
     object GoToMenu : NavigationEffect()
     object GoToAddWallet : NavigationEffect()
+    object GoToManageWallets : NavigationEffect()
 }

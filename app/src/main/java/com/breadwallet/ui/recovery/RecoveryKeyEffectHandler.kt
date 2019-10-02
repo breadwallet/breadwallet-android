@@ -39,6 +39,7 @@ import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logInfo
 import com.platform.APIClient
 import com.platform.entities.WalletInfoData
+import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -48,11 +49,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class RecoveryKeyEffectHandler(
-        private val output: Consumer<RecoveryKeyEvent>,
-        private val breadBox: BreadBox,
-        val goToUnlink: () -> Unit,
-        val goToErrorDialog: () -> Unit,
-        val errorShake: () -> Unit
+    private val output: Consumer<RecoveryKeyEvent>,
+    private val breadBox: BreadBox,
+    private val metaDataProvider: AccountMetaDataProvider,
+    val goToUnlink: () -> Unit,
+    val goToErrorDialog: () -> Unit,
+    val errorShake: () -> Unit
 ) : Connection<RecoveryKeyEffect>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
@@ -93,13 +95,15 @@ class RecoveryKeyEffectHandler(
             return
         }
 
-        output.accept(when {
-            phrase.toByteArray().contentEquals(storedPhrase) -> {
-                AuthManager.getInstance().setPinCode(context, "")
-                RecoveryKeyEvent.OnPinCleared
+        output.accept(
+            when {
+                phrase.toByteArray().contentEquals(storedPhrase) -> {
+                    AuthManager.getInstance().setPinCode(context, "")
+                    RecoveryKeyEvent.OnPinCleared
+                }
+                else -> RecoveryKeyEvent.OnPhraseInvalid
             }
-            else -> RecoveryKeyEvent.OnPhraseInvalid
-        })
+        )
     }
 
     private fun unlink(effect: RecoveryKeyEffect.Unlink) {
@@ -143,9 +147,9 @@ class RecoveryKeyEffectHandler(
 
         val storePhraseSuccess = try {
             BRKeyStore.putPhrase(
-                    phraseBytes,
-                    context,
-                    BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE
+                phraseBytes,
+                context,
+                BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE
             )
         } catch (e: UserNotAuthenticatedException) {
             logInfo("User not authenticated, attempting auth before restoring wallet.", e)
@@ -168,6 +172,9 @@ class RecoveryKeyEffectHandler(
             }
         }.get()
 
+        // Must be set up before wallet creation date can be retrieved
+        setupApiKey(apiKey, context)
+
         launch(Dispatchers.Main) {
             val creationDate = getWalletCreationDate()
 
@@ -186,7 +193,7 @@ class RecoveryKeyEffectHandler(
             }
 
             try {
-                setupWallet(account, accountKey, apiKey, creationDate, context)
+                setupWallet(account, accountKey, creationDate, context)
             } catch (e: Exception) {
                 logError("Error setting up wallet", e)
                 // TODO: Define generic initialization error with retry
@@ -209,10 +216,19 @@ class RecoveryKeyEffectHandler(
         }
     }
 
-    /** Stores [account], [accountKey], [apiKey], and [creationDate] in [BRKeyStore]. */
-    private fun setupWallet(account: Account, accountKey: Key, apiKey: Key, creationDate: Date, context: Context) {
-        BRKeyStore.putAccount(account, context)
+    /** Stores [apiKey]. */
+    private fun setupApiKey(apiKey: Key, context: Context) {
         BRKeyStore.putAuthKey(apiKey.encodeAsPrivate(), context)
+    }
+
+    /** Stores [account], [accountKey], and [creationDate] in [BRKeyStore]. */
+    private fun setupWallet(
+        account: Account,
+        accountKey: Key,
+        creationDate: Date,
+        context: Context
+    ) {
+        BRKeyStore.putAccount(account, context)
         BRKeyStore.putMasterPublicKey(accountKey.encodeAsPublic(), context)
         BRKeyStore.putWalletCreationTime(creationDate.time.toInt(), context)
     }
@@ -222,7 +238,7 @@ class RecoveryKeyEffectHandler(
     private suspend fun updateTokensAndPlatform(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                KVStoreManager.syncTokenList(context)
+                metaDataProvider.syncAssetIndex()
                 APIClient.getInstance(context).updatePlatform()
             } catch (e: Exception) {
                 logError("Failed to sync token list or update platform.", e)
@@ -240,17 +256,17 @@ class RecoveryKeyEffectHandler(
         val allLocales = Locale.getAvailableLocales().asSequence()
 
         return (sequenceOf(Locale.getDefault()) + allLocales)
-                .map(Locale::getLanguage)
-                .map { it to Bip39Reader.getBip39Words(context, it) }
-                .firstOrNull { (language, words) ->
-                    Account.validatePhrase(phraseBytes, words)
-                        .also { matched ->
-                            if (matched) {
-                                BRSharedPrefs.recoveryKeyLanguage = language
-                                Key.setDefaultWordList(words)
-                            }
+            .map(Locale::getLanguage)
+            .map { it to Bip39Reader.getBip39Words(context, it) }
+            .firstOrNull { (language, words) ->
+                Account.validatePhrase(phraseBytes, words)
+                    .also { matched ->
+                        if (matched) {
+                            BRSharedPrefs.recoveryKeyLanguage = language
+                            Key.setDefaultWordList(words)
                         }
-                }?.second
+                    }
+            }?.second
     }
 
     /**
@@ -263,8 +279,9 @@ class RecoveryKeyEffectHandler(
         val context = BreadApp.getBreadContext()
         return withContext(Dispatchers.IO) {
             try {
-                KVStoreManager.syncWalletInfo(context)
-                KVStoreManager.getWalletInfo(context)
+                // TODO: switch to metaDataProvider.recover()
+                metaDataProvider.syncWalletInfo()
+                metaDataProvider.getWalletInfoUnsafe()
             } catch (e: Exception) {
                 logError("Failed to sync wallet info", e)
                 null
@@ -277,15 +294,19 @@ class RecoveryKeyEffectHandler(
      * when [fetchWalletInfo] returns null.
      */
     private suspend fun getWalletCreationDate() =
-            Date(fetchWalletInfo()
-                    ?.creationDate
-                    ?.toLong()
-                    ?.let(TimeUnit.SECONDS::toMillis) ?: 0L)
+        Date(
+            fetchWalletInfo()
+                ?.creationDate
+                ?.toLong()
+                ?.let(TimeUnit.SECONDS::toMillis) ?: 0L
+        )
 
     private fun normalizePhrase(phrase: List<String>) =
-            Normalizer.normalize(phrase.joinToString(" ")
-                    .replace("　", " ")
-                    .replace("\n", " ")
-                    .trim()
-                    .replace(" +".toRegex(), " "), Normalizer.Form.NFKD)
+        Normalizer.normalize(
+            phrase.joinToString(" ")
+                .replace("　", " ")
+                .replace("\n", " ")
+                .trim()
+                .replace(" +".toRegex(), " "), Normalizer.Form.NFKD
+        )
 }

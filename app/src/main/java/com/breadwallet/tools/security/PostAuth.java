@@ -31,12 +31,15 @@ import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
+import com.platform.interfaces.AccountMetaDataProvider;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static org.kodein.di.TypesKt.TT;
 
 
 /**
@@ -214,8 +217,10 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
 
                     // Recover wallet-info and token list before starting to sync wallets.
-                    KVStoreManager.INSTANCE.syncWalletInfo(activity);
-                    KVStoreManager.INSTANCE.syncTokenList(activity);
+                    AccountMetaDataProvider metadataProvider =
+                            BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+                    metadataProvider.syncWalletInfo();
+                    metadataProvider.syncAssetIndex();
 
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
@@ -345,7 +350,7 @@ public class PostAuth {
                         mSendCompletion.onCompleted(hash, true);
                         mSendCompletion = null;
                     }
-                    stampMetaData(context, hash.getBytes());
+                    stampMetaData(hash.getBytes());
                 }
             });
         }
@@ -355,14 +360,16 @@ public class PostAuth {
                 mSendCompletion.onCompleted(transaction.getHash(), true);
                 mSendCompletion = null;
             }
-            stampMetaData(context, txHash);
+            stampMetaData(txHash);
         }
 
     }
 
-    public static void stampMetaData(Context activity, byte[] txHash) {
+    public static void stampMetaData(byte[] txHash) {
         if (mTxMetaData != null) {
-            KVStoreManager.INSTANCE.putTxMetaData(activity, mTxMetaData, txHash);
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            metadataProvider.putTxMetaData(mTxMetaData, txHash);
         } else {
             Log.e(TAG, "stampMetaData: mTxMetaData is null!");
         }
@@ -423,11 +430,11 @@ public class PostAuth {
         /**
          * Constructor takes various state variables that are necessary when processing transaction events
          *
-         * @param context the application context
+         * @param context          the application context
          * @param walletEthManager reference to the WalletEthManager
-         * @param transaction the transaction for which this listener is listening to events
-         * @param rawPhrase the phrase used in processing transactions
-         * @param timeoutTimer the timer that signals when a timeout has occurred
+         * @param transaction      the transaction for which this listener is listening to events
+         * @param rawPhrase        the phrase used in processing transactions
+         * @param timeoutTimer     the timer that signals when a timeout has occurred
          */
         TransactionEventListener(Context context, WalletEthManager walletEthManager, CryptoTransaction transaction, byte[] rawPhrase, Timer timeoutTimer) {
             mContext = context;

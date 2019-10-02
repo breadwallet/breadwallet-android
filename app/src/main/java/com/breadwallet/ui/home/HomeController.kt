@@ -29,8 +29,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.presenter.activities.ManageWalletsController
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.tools.listeners.RecyclerItemClickListener
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -63,6 +66,7 @@ class HomeController(
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit
     override val effectHandler: Connectable<HomeScreenEffect, HomeScreenEvent> =
+
         CompositeEffectHandler.from(
             Connectable { output ->
                 HomeScreenEffectHandler(output, activity as BRActivity, direct.instance())
@@ -75,7 +79,6 @@ class HomeController(
                     HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
                     HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
                     HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu
-                    HomeScreenEffect.GoToAddWallet -> NavigationEffect.GoToAddWallet
                     else -> null
                 }
             }),
@@ -83,6 +86,8 @@ class HomeController(
                 when (effect) {
                     is HomeScreenEffect.GoToWallet ->
                         NavigationEffect.GoToWallet(effect.currencyCode)
+                    is HomeScreenEffect.GoToManageWallets ->
+                        NavigationEffect.GoToManageWallets
                     else -> null
                 }
             }
@@ -111,7 +116,7 @@ class HomeController(
                             val currencyCode = walletAdapter!!.getItemAt(position)!!.currencyCode
                             output.accept(HomeScreenEvent.OnWalletClicked(currencyCode))
                         } else {
-                            output.accept(HomeScreenEvent.OnAddWalletClicked)
+                            output.accept(HomeScreenEvent.OnManageWalletsClicked)
                         }
                     }
 

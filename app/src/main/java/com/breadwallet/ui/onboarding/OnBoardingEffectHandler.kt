@@ -35,8 +35,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.util.logError
-import com.platform.entities.WalletInfoData
-import com.platform.tools.KVStoreManager
+import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +48,7 @@ import java.util.Date
 class OnBoardingEffectHandler(
     coroutineJob: Job,
     private val breadBox: BreadBox,
+    private val metadataProvider: AccountMetaDataProvider,
     private val outputProvider: () -> Consumer<OnBoardingEvent>,
     private val routerProvider: () -> Router,
     private val contextProvider: () -> Context // TODO: Remove context dependency
@@ -89,9 +89,6 @@ class OnBoardingEffectHandler(
         val uids = BRSharedPrefs.getDeviceId()
         val creationDate = Date()
 
-        // Note: Ignore wallet info write failures
-        putWalletInfoData(creationDate)
-
         val account = Account.createFromPhrase(storedPhrase, creationDate, uids)
 
         // Create signing keys
@@ -110,6 +107,9 @@ class OnBoardingEffectHandler(
             logError("Error storing wallet data.", e)
             outputProvider().accept(OnBoardingEvent.SetupError.StoreWalletFailed)
         }
+
+        // Note: Ignore write failures
+        createAccountMetaData(creationDate)
 
         try {
             breadBox.open(account)
@@ -194,13 +194,10 @@ class OnBoardingEffectHandler(
         KeyStore.putWalletCreationTime(creationDate.time)
     }
 
-    private suspend fun putWalletInfoData(creationDate: Date): Boolean {
-        val context = contextProvider().applicationContext
+    private suspend fun createAccountMetaData(creationDate: Date): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                KVStoreManager.putWalletInfo(context, WalletInfoData().apply {
-                    this.creationDate = creationDate.time.toInt()
-                })
+                metadataProvider.create(creationDate, BreadApp.getDefaultEnabledWallets())
                 true
             } catch (e: Exception) {
                 // Note: If we fail to set WalletInfo, let the whole

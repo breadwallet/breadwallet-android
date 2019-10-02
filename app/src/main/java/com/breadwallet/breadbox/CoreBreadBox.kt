@@ -61,7 +61,7 @@ import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.util.logDebug
 import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logInfo
-import com.platform.tools.KVStoreManager
+import com.platform.interfaces.WalletsProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -75,15 +75,15 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.Executors
@@ -93,6 +93,7 @@ import java.util.concurrent.Executors
 internal class CoreBreadBox(
     private val storageFile: File,
     private val isMainnet: Boolean = false,
+    private val walletsProvider: WalletsProvider,
     // TODO: Allow reconfiguring manager mode
     private val walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
 ) : BreadBox,
@@ -131,6 +132,8 @@ internal class CoreBreadBox(
 
     private val walletTransfersChannelMap = createChannelMap<String, List<Transfer>>()
     private val transferUpdatedChannelMap = createChannelMap<String, Transfer>()
+
+    private val walletTracker = SystemWalletTracker(walletsProvider, system())
 
     private fun <K, V> createChannelMap(): MutableMap<K, BroadcastChannel<V>> =
         mutableMapOf<K, BroadcastChannel<V>>().run {
@@ -189,6 +192,10 @@ internal class CoreBreadBox(
 
         isOpen = true
 
+        walletTracker
+            .monitorTrackedWallets()
+            .launchIn(openScope)
+
         logInfo("BreadBox opened successfully")
     }
 
@@ -224,10 +231,18 @@ internal class CoreBreadBox(
                 system?.account?.let { emit(it) }
             }
 
-    override fun wallets() =
+    override fun wallets(filterByTracked: Boolean) =
         walletsChannel
             .asFlow()
             .onStart { system?.wallets?.let { emit(it) } }
+            .mapLatest { wallets ->
+                when {
+                    filterByTracked -> {
+                        wallets.filter { it.walletManager.state.isTracked() }
+                    }
+                    else -> wallets
+                }
+            }
             .distinctUntilChangedBy { wallets ->
                 wallets.map { it.currency.code }
             }
@@ -343,16 +358,21 @@ internal class CoreBreadBox(
         manager: WalletManager,
         event: WalletManagerEvent
     ) {
+        walletsChannel.offer(system.wallets)
+
         event.accept(object : DefaultWalletManagerEventVisitor<Unit>() {
             override fun visit(event: WalletManagerCreatedEvent) {
                 logDebug("Wallet Manager Created: '${manager.name}'")
 
-                KVStoreManager.walletMetaData(manager.currency.code)
+                walletTracker
+                    .trackedWallets()
                     .take(1)
-                    .onEach {
+                    .onEach { wallets ->
+                        val connectManager =
+                            wallets.any { it.equals(manager.currency.code, true) }
                         when {
-                            it.isEnabled -> {
-                                manager.connect(null) // TODO: Support custom node
+                            connectManager -> {
+                                manager.connect(null) //TODO: Support custom node
                                 logDebug("Wallet Manager Connected: '${manager.name}'")
                             }
                             else -> logDebug("Wallet Manager Not Tracked: '${manager.name}'")
@@ -384,6 +404,7 @@ internal class CoreBreadBox(
                 val fromStateType = event.oldState.type
                 val toStateType = event.newState.type
                 logDebug("(${manager.currency.code}) State Changed from='$fromStateType' to='$toStateType'")
+
                 // Syncing is complete, manually signal change to observers
                 if (fromStateType == WalletManagerState.Type.SYNCING) {
                     walletSyncStateChannel.offer(
@@ -410,7 +431,8 @@ internal class CoreBreadBox(
         })
     }
 
-    override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) = Unit
+    override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) =
+        Unit
 
     @Synchronized
     override fun handleSystemEvent(system: System, event: SystemEvent) {
@@ -437,12 +459,12 @@ internal class CoreBreadBox(
 
         logDebug("Network '${network.name}' added.")
 
-        KVStoreManager.walletsMetaData()
+        walletTracker
+            .trackedWallets()
             .take(1)
             .onEach { wallets ->
                 val enableNetwork = wallets
-                    .filter { it.isEnabled }
-                    .any { network.getCurrencyByCode(it.currencyCode.toLowerCase()).isPresent }
+                    .any { network.getCurrencyByCode(it.toLowerCase()).isPresent }
                 if (enableNetwork && network.isMainnet == isMainnet) {
                     logDebug("Creating wallet manager for network '${network.name}'.")
 
