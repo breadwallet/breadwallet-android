@@ -38,6 +38,9 @@ import com.breadwallet.ui.util.DefaultTextWatcher
 import com.breadwallet.ui.util.bindCreated
 import com.breadwallet.ui.util.viewModel
 import kotlinx.android.synthetic.main.activity_select_alert_crypto.*
+import org.kodein.di.android.closestKodein
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 /**
  * Displays a list of the user's wallets and finishes with
@@ -57,7 +60,9 @@ class SelectAlertCryptoActivity : BRActivity() {
         }
     }
 
-    private val viewModel by viewModel<SelectAlertCryptoViewModel>()
+    private val kodein by closestKodein { applicationContext }
+
+    private val viewModel by viewModel<SelectAlertCryptoViewModel>(kodein.direct.instance())
 
     private val adapter by bindCreated {
         SelectAlertTokenAdapter(this, viewModel::setSelectedCrypto)

@@ -42,18 +42,18 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                 else -> {
                     val wallets = model.wallets.toMutableMap()
                     wallets[event.currencyCode] = wallet.copy(
-                            syncProgress = event.progress,
-                            syncingThroughMillis = event.syncThroughMillis,
-                            isSyncing = event.isSyncing
+                        syncProgress = event.progress,
+                        syncingThroughMillis = event.syncThroughMillis,
+                        isSyncing = event.isSyncing
                     )
                     next(model.copy(wallets = wallets))
                 }
             }
         }
         is HomeScreenEvent.OnBuyBellNeededLoaded -> next(model.copy(isBuyBellNeeded = event.isBuyBellNeeded))
-        is HomeScreenEvent.OnWalletsAdded -> {
+        is HomeScreenEvent.OnWalletsUpdated -> {
             next(model.copy(
-                    wallets = model.wallets + event.wallets.associateBy { it.currencyCode }
+                wallets = event.wallets.associateBy { it.currencyCode }
             ))
         }
         is HomeScreenEvent.OnWalletAdded -> {
@@ -66,15 +66,15 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                 null -> noChange<HomeScreenModel, HomeScreenEffect>()
                 else -> {
                     when (wallet.balance == event.balance && wallet.fiatBalance == event.fiatBalance
-                            && wallet.priceChange == event.priceChange && wallet.fiatPricePerUnit == event.fiatPricePerUnit) {
+                        && wallet.priceChange == event.priceChange && wallet.fiatPricePerUnit == event.fiatPricePerUnit) {
                         true -> noChange<HomeScreenModel, HomeScreenEffect>()
                         else -> {
                             val wallets = model.wallets.toMutableMap()
                             wallets[event.currencyCode] = wallet.copy(
-                                    balance = event.balance,
-                                    fiatBalance = event.fiatBalance,
-                                    fiatPricePerUnit = event.fiatPricePerUnit,
-                                    priceChange = event.priceChange
+                                balance = event.balance,
+                                fiatBalance = event.fiatBalance,
+                                fiatPricePerUnit = event.fiatPricePerUnit,
+                                priceChange = event.priceChange
                             )
                             next(model.copy(wallets = wallets))
                         }
@@ -83,20 +83,44 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
             }
         }
         is HomeScreenEvent.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
-        HomeScreenEvent.OnAddWalletClicked -> dispatch(effects(HomeScreenEffect.GoToAddWallet))
         is HomeScreenEvent.OnWalletClicked -> dispatch(effects(HomeScreenEffect.GoToWallet(event.currencyCode)))
+        is HomeScreenEvent.OnManageWalletsClicked -> dispatch(effects(HomeScreenEffect.GoToManageWallets))
         HomeScreenEvent.OnBuyClicked -> dispatch(effects(HomeScreenEffect.GoToBuy))
         HomeScreenEvent.OnTradeClicked -> dispatch(effects(HomeScreenEffect.GoToTrade))
         HomeScreenEvent.OnMenuClicked -> dispatch(effects(HomeScreenEffect.GoToMenu))
         is HomeScreenEvent.OnPromptLoaded -> next(model.copy(promptId = event.promptId))
-        is HomeScreenEvent.OnDeepLinkProvided -> dispatch(effects(HomeScreenEffect.GoToDeepLink(event.url)))
-        is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))
-        is HomeScreenEvent.OnPushNotificationOpened -> dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))
+        is HomeScreenEvent.OnDeepLinkProvided -> dispatch(
+            effects(
+                HomeScreenEffect.GoToDeepLink(
+                    event.url
+                )
+            )
+        )
+        is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(
+            effects(
+                HomeScreenEffect.GoToInappMessage(
+                    event.inAppMessage
+                )
+            )
+        )
+        is HomeScreenEvent.OnPushNotificationOpened -> dispatch(
+            effects(
+                HomeScreenEffect.RecordPushNotificationOpened(
+                    event.campaignId
+                )
+            )
+        )
         is HomeScreenEvent.OnShowBuyAndSell -> {
-            val clickAttributes = mapOf(EventUtils.EVENT_ATTRIBUTE_BUY_AND_SELL to model.showBuyAndSell.toString())
+            val clickAttributes =
+                mapOf(EventUtils.EVENT_ATTRIBUTE_BUY_AND_SELL to model.showBuyAndSell.toString())
             next<HomeScreenModel, HomeScreenEffect>(
-                    model.copy(showBuyAndSell = event.showBuyAndSell),
-                    effects(HomeScreenEffect.TrackEvent(EventUtils.EVENT_HOME_DID_TAP_BUY, clickAttributes))
+                model.copy(showBuyAndSell = event.showBuyAndSell),
+                effects(
+                    HomeScreenEffect.TrackEvent(
+                        EventUtils.EVENT_HOME_DID_TAP_BUY,
+                        clickAttributes
+                    )
+                )
             )
         }
     }

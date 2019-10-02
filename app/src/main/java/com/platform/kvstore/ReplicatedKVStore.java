@@ -57,7 +57,8 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
-    private static final boolean ENCRYPTED = true;
+    //private static final boolean ENCRYPTED = true;
+    private static final boolean ENCRYPTED = false; // TODO: revert once migrated to new crypto interface
     private static final boolean ENCRYPTED_REPLICATION = true;
     private static final String[] ALL_COLUMNS = {
             PlatformSqliteHelper.KV_VERSION,

@@ -26,7 +26,8 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletsAdded(wallets.values.toList()))
+                HomeScreenEvent.OnWalletsUpdated(wallets.values.toList())
+            )
             .then(
                 assertThatNext(
                     hasModel(initState.copy(wallets = wallets)),
@@ -43,17 +44,23 @@ class HomeScreenUpdateTests {
 
         spec.given(initialWalletsAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletAdded(walletToAdd))
+                HomeScreenEvent.OnWalletAdded(walletToAdd)
+            )
             .then(
                 assertThatNext(
-                        hasModel(initialWalletsAddedState.copy(wallets = expectedWallets)),
-                        hasNoEffects()
+                    hasModel(initialWalletsAddedState.copy(wallets = expectedWallets)),
+                    hasNoEffects()
                 )
             )
 
         // Update ETH wallet balance
         val ethWalletAddedState = initialWalletsAddedState.copy(wallets = expectedWallets)
-        val updatedWallet = walletToAdd.copy(balance = BigDecimal.valueOf(1), fiatBalance = BigDecimal.valueOf(1000), fiatPricePerUnit = BigDecimal.valueOf(1000), priceChange = PriceChange(0.1, 10.0))
+        val updatedWallet = walletToAdd.copy(
+            balance = BigDecimal.valueOf(1),
+            fiatBalance = BigDecimal.valueOf(1000),
+            fiatPricePerUnit = BigDecimal.valueOf(1000),
+            priceChange = PriceChange(0.1, 10.0)
+        )
 
 
         expectedWallets = expectedWallets.toMutableMap()
@@ -61,11 +68,18 @@ class HomeScreenUpdateTests {
 
         spec.given(ethWalletAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletBalanceUpdated(updatedWallet.currencyCode, updatedWallet.balance, updatedWallet.fiatBalance, updatedWallet.fiatPricePerUnit, updatedWallet.priceChange!!))
+                HomeScreenEvent.OnWalletBalanceUpdated(
+                    updatedWallet.currencyCode,
+                    updatedWallet.balance,
+                    updatedWallet.fiatBalance,
+                    updatedWallet.fiatPricePerUnit,
+                    updatedWallet.priceChange!!
+                )
+            )
             .then(
                 assertThatNext(
-                        hasModel(ethWalletAddedState.copy(wallets = expectedWallets)),
-                        hasNoEffects()
+                    hasModel(ethWalletAddedState.copy(wallets = expectedWallets)),
+                    hasNoEffects()
                 )
             )
     }
@@ -82,16 +96,16 @@ class HomeScreenUpdateTests {
         spec.given(initState)
             .`when`(
                 HomeScreenEvent.OnWalletSyncProgressUpdated(
-                        currencyCode = WALLET_BITCOIN.currencyCode,
-                        progress = progress,
-                        syncThroughMillis = 0L,
-                        isSyncing = true
+                    currencyCode = WALLET_BITCOIN.currencyCode,
+                    progress = progress,
+                    syncThroughMillis = 0L,
+                    isSyncing = true
                 )
             )
             .then(
                 assertThatNext(
-                        hasModel(initState.copy(wallets = wallets)),
-                        hasNoEffects()
+                    hasModel(initState.copy(wallets = wallets)),
+                    hasNoEffects()
                 )
             )
     }
@@ -102,41 +116,30 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnConnectionUpdated(isConnected = false))
-            .then(
-                assertThatNext(
-                        hasModel(initState.copy(hasInternet = false)),
-                        hasNoEffects()
-                )
+                HomeScreenEvent.OnConnectionUpdated(isConnected = false)
             )
-    }
-
-    @Test
-    fun addWalletClick() {
-        val initState = HomeScreenModel.createDefault()
-
-        spec.given(initState)
-            .`when`(
-                HomeScreenEvent.OnAddWalletClicked)
             .then(
                 assertThatNext(
-                    hasEffects(HomeScreenEffect.GoToAddWallet as HomeScreenEffect)
+                    hasModel(initState.copy(hasInternet = false)),
+                    hasNoEffects()
                 )
             )
     }
 
     @Test
     fun walletClick() {
-        val initState = HomeScreenModel.createDefault().copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))
+        val initState = HomeScreenModel.createDefault()
+            .copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))
 
         val expectedEffect = HomeScreenEffect.GoToWallet(WALLET_BITCOIN.currencyCode)
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletClicked(currencyCode = WALLET_BITCOIN.currencyCode))
+                HomeScreenEvent.OnWalletClicked(currencyCode = WALLET_BITCOIN.currencyCode)
+            )
             .then(
                 assertThatNext(
-                        hasEffects(expectedEffect as HomeScreenEffect)
+                    hasEffects(expectedEffect as HomeScreenEffect)
                 )
             )
     }
@@ -147,10 +150,11 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnBuyClicked)
+                HomeScreenEvent.OnBuyClicked
+            )
             .then(
                 assertThatNext(
-                        hasEffects(HomeScreenEffect.GoToBuy as HomeScreenEffect)
+                    hasEffects(HomeScreenEffect.GoToBuy as HomeScreenEffect)
                 )
             )
     }
@@ -161,10 +165,11 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnTradeClicked)
+                HomeScreenEvent.OnTradeClicked
+            )
             .then(
                 assertThatNext(
-                        hasEffects(HomeScreenEffect.GoToTrade as HomeScreenEffect)
+                    hasEffects(HomeScreenEffect.GoToTrade as HomeScreenEffect)
                 )
             )
     }
@@ -175,10 +180,11 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnMenuClicked)
+                HomeScreenEvent.OnMenuClicked
+            )
             .then(
                 assertThatNext(
-                        hasEffects(HomeScreenEffect.GoToMenu as HomeScreenEffect)
+                    hasEffects(HomeScreenEffect.GoToMenu as HomeScreenEffect)
                 )
             )
     }
@@ -189,10 +195,11 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnPromptLoaded(promptId = PromptManager.PromptItem.NO_PASSCODE))
+                HomeScreenEvent.OnPromptLoaded(promptId = PromptManager.PromptItem.NO_PASSCODE)
+            )
             .then(
                 assertThatNext(
-                        hasModel(initState.copy(promptId = PromptManager.PromptItem.NO_PASSCODE))
+                    hasModel(initState.copy(promptId = PromptManager.PromptItem.NO_PASSCODE))
                 )
             )
     }

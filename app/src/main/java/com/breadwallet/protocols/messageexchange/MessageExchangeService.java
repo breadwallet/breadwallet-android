@@ -10,6 +10,7 @@ import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.crypto.Coder;
 import com.breadwallet.crypto.Encrypter;
 import com.breadwallet.crypto.Key;
@@ -29,6 +30,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.common.base.Optional;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.platform.interfaces.AccountMetaDataProvider;
 import com.platform.tools.KVStoreManager;
 
 import java.security.SecureRandom;
@@ -37,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static org.kodein.di.TypesKt.TT;
 
 /**
  * BreadWallet
@@ -369,13 +372,15 @@ public final class MessageExchangeService extends JobIntentService {
      */
     private PairingMetaData getPairingMetaData(byte[] publicKey) {
         if (mPairingMetaData == null) {
-            mPairingMetaData = getPairingMetaDataFromKvStore(this, publicKey);
+            mPairingMetaData = getPairingMetaDataFromKvStore(publicKey);
         }
         return mPairingMetaData;
     }
 
-    public static PairingMetaData getPairingMetaDataFromKvStore(Context context, byte[] publicKey) {
-        return KVStoreManager.INSTANCE.getPairingMetadata(context, publicKey);
+    public static PairingMetaData getPairingMetaDataFromKvStore(byte[] publicKey) {
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        return metadataProvider.getPairingMetadata(publicKey);
     }
 
     /**
@@ -390,18 +395,24 @@ public final class MessageExchangeService extends JobIntentService {
         }
 
         mPairingMetaData = pairingMetaData;
-        KVStoreManager.INSTANCE.putPairingMetadata(this, pairingMetaData);
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        metadataProvider.putPairingMetadata(pairingMetaData);
     }
 
     private String getLastProcessedCursor() {
-        return KVStoreManager.INSTANCE.getLastCursor(this);
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        return metadataProvider.getLastCursor();
     }
 
 
     private void setLastProcessedCursor(String lastProcessedCursor) {
         Log.e(TAG, "setLastProcessedCursor: " + lastProcessedCursor);
         if (!Utils.isNullOrEmpty(lastProcessedCursor)) {
-            KVStoreManager.INSTANCE.putLastCursor(this, lastProcessedCursor);
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            metadataProvider.putLastCursor(lastProcessedCursor);
         }
     }
 
@@ -441,9 +452,9 @@ public final class MessageExchangeService extends JobIntentService {
     /**
      * Encrypts the specified message.
      *
-     * @param pairingKey            The local entity's pairing key.
-     * @param senderPublicKeyBytes  The remote identity's public key.
-     * @param message               The message to encrypt.
+     * @param pairingKey           The local entity's pairing key.
+     * @param senderPublicKeyBytes The remote identity's public key.
+     * @param message              The message to encrypt.
      * @return The encrypted message.
      */
     public EncryptedMessage encrypt(Key pairingKey, byte[] senderPublicKeyBytes, byte[] message) {
@@ -466,10 +477,10 @@ public final class MessageExchangeService extends JobIntentService {
     }
 
     /**
-     * @param key                   The key to decrypt with
-     * @param senderPublicKeyBytes  Sender public key
-     * @param encryptedMessage      The message to decrypt
-     * @param nonce                 The nonce used to encrypt the message
+     * @param pairingKey           The key to decrypt with
+     * @param senderPublicKeyBytes Sender public key
+     * @param encryptedMessage     The message to decrypt
+     * @param nonce                The nonce used to encrypt the message
      * @return The decrypted message bytes
      */
     @VisibleForTesting

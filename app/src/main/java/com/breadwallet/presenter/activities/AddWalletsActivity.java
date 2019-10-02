@@ -84,7 +84,7 @@ public class AddWalletsActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+/*
         List<TokenItem> tokenItems = new ArrayList<>();
         TokenListMetaData tokenListMetaData = KVStoreManager.INSTANCE.getTokenListMetaData(this);
         for (TokenItem tokenItem : TokenUtil.getTokenItems(this)) {
@@ -127,7 +127,7 @@ public class AddWalletsActivity extends BRActivity {
             }
         });
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mRecycler.setAdapter(mAdapter);
+        mRecycler.setAdapter(mAdapter);*/
 
     }
 
