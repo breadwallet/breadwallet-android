@@ -61,9 +61,10 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.util.Logger;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.platform.entities.WalletInfoData;
-import com.platform.tools.KVStoreManager;
+import com.platform.interfaces.AccountMetaDataProvider;
+
+import static org.kodein.di.TypesKt.TT;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -200,10 +201,10 @@ public final class BRKeyStore {
      * used because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
      * Android key store has been invalidated, our entire app data should be wiped and the app should be
      * re-initialized.  We cannot recover from this otherwise.
-     *
+     * <p>
      * We found on Google devices a wipe is sufficient to recover except on Android 8.1 which requires an uninstall.
      * On non-Google devices a wipe is required on Android 6-7.1 and an uninstall is required on Android 8+.
-     *
+     * <p>
      * See {@link KeyPermanentlyInvalidatedException} for further details.
      *
      * @return A {@link ValidityStatus} based on the current status of the Android key store.
@@ -337,6 +338,7 @@ public final class BRKeyStore {
 
     /**
      * Creates a new key for encrypting the specified alias.
+     *
      * @param alias        The mAlias to be used (key name).
      * @param authRequired Needs user authentication to retrieve if true.
      * @return The newly created key.
@@ -672,9 +674,11 @@ public final class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
+
         if (Utils.isNullOrEmpty(result)) {
-            //if none, try getting from KVStore
-            WalletInfoData info = KVStoreManager.INSTANCE.getWalletInfo(context);
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            WalletInfoData info = metadataProvider.getWalletInfoUnsafe();
             if (info != null) {
                 int creationDate = info.getCreationDate();
                 putWalletCreationTime(creationDate, context);

@@ -478,7 +478,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
         BigDecimal fiatData = RatesRepository.getInstance(app)
-                .getFiatForCrypto( BigDecimal.ONE, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(app));
+                .getFiatForCrypto(BigDecimal.ONE, getCurrencyCode(), BRSharedPrefs.getPreferredFiatIso(app));
         if (fiatData == null) {
             return BigDecimal.ZERO;
         }
@@ -782,7 +782,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final Context context = BreadApp.getBreadContext();
                 if (context instanceof Activity) {
                     if (!Utils.isNullOrEmpty(finalTxHash)) {
-                        PostAuth.stampMetaData(context, finalTxHash.getBytes());
+                        PostAuth.stampMetaData(finalTxHash.getBytes());
                         EventUtils.sendTransactionEvent(null);
                         UiUtils.showBreadSignal((Activity) context, context.getString(R.string.Alerts_sendSuccess),
                                 context.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
@@ -1240,9 +1240,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         /**
          * Handles a given transaction event
          *
-         * @param event an enum indicating what type of transaction event has occurred
+         * @param event       an enum indicating what type of transaction event has occurred
          * @param transaction the associated transaction
-         * @param status the status of the event
+         * @param status      the status of the event
          */
         void onTransactionEvent(BREthereumEWM.TransactionEvent event, BREthereumTransfer transaction, BREthereumEWM.Status status);
     }
@@ -1266,7 +1266,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         mOnTokenLoadedListeners.remove(listener);
     }
 
-    /** Callback for observing loaded tokens. */
+    /**
+     * Callback for observing loaded tokens.
+     */
     public interface OnTokenLoadedListener {
         /**
          * Called when a new token is available.

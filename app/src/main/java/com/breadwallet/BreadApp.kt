@@ -49,6 +49,7 @@ import com.breadwallet.breadbox.CoreBreadBox
 import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.protocols.messageexchange.entities.MetaData
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
@@ -66,6 +67,11 @@ import com.breadwallet.wallet.util.BreadBoxCloseWorker
 import com.crashlytics.android.Crashlytics
 import com.platform.APIClient
 import com.platform.HTTPServer
+import com.platform.interfaces.AccountMetaDataProvider
+import com.platform.interfaces.KVStoreProvider
+import com.platform.interfaces.MetaDataManager
+import com.platform.interfaces.WalletsProvider
+import com.platform.tools.KVStoreManager
 
 import java.io.File
 import java.io.UnsupportedEncodingException
@@ -73,6 +79,7 @@ import java.util.Arrays
 import java.util.regex.Pattern
 
 import io.fabric.sdk.android.Fabric
+import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.androidSupportModule
@@ -82,6 +89,7 @@ import org.kodein.di.erased.instance
 import org.kodein.di.erased.on
 import org.kodein.di.erased.singleton
 
+@Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware {
 
     companion object {
@@ -124,6 +132,16 @@ class BreadApp : Application(), KodeinAware {
         fun getStorageDir(context: Context): File {
             return File(context.filesDir, "cryptocore")
         }
+
+        // TODO: Find better place/means for this
+        fun getDefaultEnabledWallets() = listOf(
+            "bitcoin-testnet:__native__",
+            "bitcoincash-testnet:__native__",
+            "ethereum-ropsten:__native__",
+            "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",
+            "ethereum-mainnet:0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+            "ethereum-mainnet:0x0000000000085d4780B73119b644AE5ecd22b376"
+        )
 
         /**
          * Initializes the application state.
@@ -277,13 +295,40 @@ class BreadApp : Application(), KodeinAware {
                 BRSharedPrefs.putDebugHost(mCurrentActivity, host)
             }
         }
+
+        /** Provides access to [DKodein]. Meant only for Java compatibility. **/
+        @JvmStatic
+        fun getKodeinInstance(): DKodein {
+            return mInstance.direct
+        }
     }
 
     override val kodein by Kodein.lazy {
         importOnce(androidSupportModule(this@BreadApp))
 
+        bind<KVStoreProvider>() with singleton {
+            KVStoreManager(this@BreadApp)
+        }
+
+        bind<MetaDataManager>() with singleton {
+            MetaDataManager(instance())
+        }
+
+        bind<WalletsProvider>() with singleton {
+            instance<MetaDataManager>()
+        }
+
+        bind<AccountMetaDataProvider>() with singleton {
+            instance<MetaDataManager>()
+        }
+
         bind<BreadBox>() with singleton {
-            CoreBreadBox(getStorageDir(this@BreadApp), false, WalletManagerMode.API_ONLY)
+            CoreBreadBox(
+                getStorageDir(this@BreadApp),
+                false,
+                instance(),
+                WalletManagerMode.API_ONLY
+            )
         }
     }
 

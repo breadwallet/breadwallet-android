@@ -27,11 +27,9 @@ package com.breadwallet.breadbox
 import com.breadwallet.crypto.Account
 
 import com.breadwallet.crypto.Wallet
-import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import kotlinx.coroutines.flow.Flow
-import java.io.File
 
 /** Provides access to data from a lazily created [System] using [Flow]s. */
 @Suppress("TooManyFunctions")
@@ -52,8 +50,8 @@ interface BreadBox {
     /** Emits the [Account] provided to [open]. */
     fun account(): Flow<Account>
 
-    /** Emits the [Wallet]s tracked by the [System]. */
-    fun wallets(): Flow<List<Wallet>>
+    /** Emits the [Wallet]s created by the [System], defaults to only those tracked. */
+    fun wallets(filterByTracked: Boolean = true): Flow<List<Wallet>>
 
     /** Emits the list of tracked currency codes. */
     fun currencyCodes(): Flow<List<String>>

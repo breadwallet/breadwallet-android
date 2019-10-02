@@ -56,8 +56,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.flatMap
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.launchIn
@@ -91,7 +89,10 @@ class HomeScreenEffectHandler(
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
             HomeScreenEffect.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
             is HomeScreenEffect.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
-            is HomeScreenEffect.TrackEvent -> EventUtils.pushEvent(value.eventName, value.attributes)
+            is HomeScreenEffect.TrackEvent -> EventUtils.pushEvent(
+                value.eventName,
+                value.attributes
+            )
         }
     }
 
@@ -105,7 +106,7 @@ class HomeScreenEffectHandler(
         // Update wallets list
         breadBox.wallets()
             .mapLatest { wallets -> wallets.map { it.asWallet() } }
-            .map { HomeScreenEvent.OnWalletsAdded(it) }
+            .map { HomeScreenEvent.OnWalletsUpdated(it) }
             .bindConsumerIn(output, this)
 
         // Update wallet balances
@@ -156,8 +157,9 @@ class HomeScreenEffectHandler(
     }
 
     private fun loadIsBuyBellNeeded() {
-        val isBuyBellNeeded = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
-            CurrencyUtils.isBuyNotificationNeeded(context)
+        val isBuyBellNeeded =
+            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
+                CurrencyUtils.isBuyNotificationNeeded(context)
         output.accept(HomeScreenEvent.OnBuyBellNeededLoaded(isBuyBellNeeded))
     }
 
@@ -200,7 +202,11 @@ class HomeScreenEffectHandler(
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
         return RatesRepository.getInstance(context)
-            .getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))
+            .getFiatForCrypto(
+                BigDecimal.ONE,
+                currencyCode,
+                BRSharedPrefs.getPreferredFiatIso(context)
+            )
             ?: BigDecimal.ZERO
     }
 
@@ -245,8 +251,9 @@ class HomeScreenEffectHandler(
     }
 
     private fun checkIfShowBuyAndSell() {
-        val showBuyAndSell = ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
-            && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
+        val showBuyAndSell =
+            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
+                && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
         EventUtils.pushEvent(
             EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
             mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())

@@ -2,7 +2,6 @@ package com.breadwallet.ui.util
 
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.wallet.configs.WalletUiConfiguration
 import java.math.BigDecimal
 
@@ -17,9 +16,24 @@ class WalletDisplayUtils {
 
         fun getUIConfiguration(currencyCode: CurrencyCode): WalletUiConfiguration {
             return when {
-                currencyCode.isBitcoin() -> WalletUiConfiguration("#f29500", null, true, MAX_DECIMAL_PLACES_FOR_UI)
-                currencyCode.isBitcash() -> WalletUiConfiguration("#478559", null, true, MAX_DECIMAL_PLACES_FOR_UI)
-                currencyCode.isEth() -> WalletUiConfiguration("#5e6fa5", null, true, MAX_DECIMAL_PLACES_FOR_UI)
+                currencyCode.isBitcoin() -> WalletUiConfiguration(
+                    "#f29500",
+                    null,
+                    true,
+                    MAX_DECIMAL_PLACES_FOR_UI
+                )
+                currencyCode.isBitcoinCash() -> WalletUiConfiguration(
+                    "#478559",
+                    null,
+                    true,
+                    MAX_DECIMAL_PLACES_FOR_UI
+                )
+                currencyCode.isEth() -> WalletUiConfiguration(
+                    "#5e6fa5",
+                    null,
+                    true,
+                    MAX_DECIMAL_PLACES_FOR_UI
+                )
                 currencyCode.isBrd() -> WalletUiConfiguration(
                     "#5e6fa5",
                     null,
@@ -34,10 +48,13 @@ class WalletDisplayUtils {
 
         // TODO: I think this should come from model (originating in wallet effect handler)
         @Suppress("ComplexMethod")
-        fun getCryptoForSmallestCrypto(currencyCode: CurrencyCode, amountInSmallestUnit: BigDecimal): BigDecimal? {
+        fun getCryptoForSmallestCrypto(
+            currencyCode: CurrencyCode,
+            amountInSmallestUnit: BigDecimal
+        ): BigDecimal? {
             return when {
                 amountInSmallestUnit == BigDecimal.ZERO -> amountInSmallestUnit
-                currencyCode.isBitcoin() || currencyCode.isBitcash() -> {
+                currencyCode.isBitcoin() || currencyCode.isBitcoinCash() -> {
                     return when (BRSharedPrefs.getCryptoDenomination(null, currencyCode)) {
                         BRConstants.CURRENT_UNIT_BITS -> amountInSmallestUnit.divide(
                             BigDecimal("100"),
@@ -57,8 +74,16 @@ class WalletDisplayUtils {
                         else -> null
                     }
                 }
-                currencyCode.isEth() -> amountInSmallestUnit.divide(ONE_ETH, SCALE_ETH, BRConstants.ROUNDING_MODE)
-                currencyCode.isBrd() -> amountInSmallestUnit.divide(BigDecimal.TEN.pow(5), 5, BRConstants.ROUNDING_MODE)
+                currencyCode.isEth() -> amountInSmallestUnit.divide(
+                    ONE_ETH,
+                    SCALE_ETH,
+                    BRConstants.ROUNDING_MODE
+                )
+                currencyCode.isBrd() -> amountInSmallestUnit.divide(
+                    BigDecimal.TEN.pow(5),
+                    5,
+                    BRConstants.ROUNDING_MODE
+                )
                 //else -> amountInSmallestUnit.divide(BigDecimal(BigDecimal.TEN.pow(mWalletToken.getToken()
                 // .getDecimals()).toPlainString()), mWalletToken.getToken().getDecimals(), BRConstants.ROUNDING_MODE)
                 else -> null

@@ -51,6 +51,7 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.platform.entities.TxMetaData
+import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.tools.KVStoreManager
 import kotlinx.android.synthetic.main.transaction_details.*
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +62,8 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -105,6 +108,8 @@ class TxDetailsController(
     override val layoutId = R.layout.transaction_details
 
     private var mTxMetaData: TxMetaData? = null
+
+    private val metaDataProvider: AccountMetaDataProvider by instance()
 
     /** The gas unit for Ethereum transactions. */
     private val weiUnit by lazy {
@@ -160,11 +165,11 @@ class TxDetailsController(
         // TODO: Cleanup when memo is functional
         // Update the memo field on the transaction and save it
         val txHash = transferHash.toByteArray()
-        KVStoreManager.getTxMetaData(activity, txHash)?.let { txMetaData ->
+        metaDataProvider.getTxMetaData(txHash)?.let { txMetaData ->
             val memo = memo_input.text.toString()
             if (memo.isNotEmpty()) {
                 txMetaData.comment = memo
-                KVStoreManager.putTxMetaData(activity.applicationContext, txMetaData, txHash)
+                metaDataProvider.putTxMetaData(txMetaData, txHash)
             }
         }
 
@@ -272,7 +277,7 @@ class TxDetailsController(
         val fiatAmountNow = BigDecimal.ZERO// TODO: get Fiat now
 
         val fiatAmountWhenSent: BigDecimal
-        val metaData = KVStoreManager.getTxMetaData(app, transferHash.toByteArray())
+        val metaData = metaDataProvider.getTxMetaData(transferHash.toByteArray())
         val hasData = metaData?.run {
             exchangeRate == 0.0 || exchangeCurrency.isNullOrBlank()
         } ?: false
@@ -328,7 +333,8 @@ class TxDetailsController(
         tx_to_from_address.text = when {
             received -> transfer.source
             else -> transfer.target
-        }.orNull()?.toSanitizedString() ?: "<unknown>" // TODO: Do we need a string res for no hash text?
+        }.orNull()?.toSanitizedString()
+            ?: "<unknown>" // TODO: Do we need a string res for no hash text?
 
         // Allow the to/from address to be copyable
         tx_to_from_address.setOnClickListener {
@@ -348,7 +354,7 @@ class TxDetailsController(
         }
 
         // Set the memo text if one is available
-        mTxMetaData = KVStoreManager.getTxMetaData(app, transferHash.toByteArray())
+        mTxMetaData = metaDataProvider.getTxMetaData(transferHash.toByteArray())
         mTxMetaData?.let { txMetaData ->
             memo_input.setText(txMetaData.comment ?: "")
 

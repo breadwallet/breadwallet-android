@@ -39,16 +39,18 @@ sealed class HomeScreenEffect {
     object CheckIfShowBuyAndSell : HomeScreenEffect()
 
     data class GoToDeepLink(val url: String) : HomeScreenEffect()
-    data class GoToInappMessage(val inAppMessage : InAppMessage) : HomeScreenEffect()
+    data class GoToInappMessage(val inAppMessage: InAppMessage) : HomeScreenEffect()
     data class GoToWallet(val currencyCode: String) : HomeScreenEffect()
+    object GoToManageWallets : HomeScreenEffect()
 
     object GoToBuy : HomeScreenEffect()
     object GoToTrade : HomeScreenEffect()
     object GoToMenu : HomeScreenEffect()
 
-    object GoToAddWallet : HomeScreenEffect()
-
     data class RecordPushNotificationOpened(val campaignId: String) : HomeScreenEffect()
 
-    data class TrackEvent(val eventName: String, val attributes: Map<String, String>? = null) : HomeScreenEffect()
+    data class TrackEvent(
+        val eventName: String,
+        val attributes: Map<String, String>? = null
+    ) : HomeScreenEffect()
 }
