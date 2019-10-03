@@ -310,17 +310,11 @@ class BreadApp : Application(), KodeinAware {
             KVStoreManager(this@BreadApp)
         }
 
-        bind<MetaDataManager>() with singleton {
-            MetaDataManager(instance())
-        }
+        val metaDataManager by lazy { MetaDataManager(direct.instance()) }
 
-        bind<WalletsProvider>() with singleton {
-            instance<MetaDataManager>()
-        }
-
-        bind<AccountMetaDataProvider>() with singleton {
-            instance<MetaDataManager>()
-        }
+        bind<WalletsProvider>() with singleton { metaDataManager }
+        
+        bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
         bind<BreadBox>() with singleton {
             CoreBreadBox(
