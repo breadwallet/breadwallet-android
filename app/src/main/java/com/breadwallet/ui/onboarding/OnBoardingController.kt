@@ -40,6 +40,7 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.global.effect.NavigationEffect
 import com.breadwallet.ui.global.effect.NavigationEffectHandler
+import com.breadwallet.ui.global.effect.RouterNavigationEffectHandler
 import com.breadwallet.ui.util.CompositeEffectHandler
 import com.breadwallet.ui.util.nestedConnectable
 import com.platform.HTTPServer
@@ -95,15 +96,20 @@ class OnBoardingController(
             Connectable { _effectHandler },
             nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
                 when (effect) {
+                    is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
+                        title = "",
+                        message = effect.message
+                    )
+                    else -> null
+                }
+            }),
+            nestedConnectable({ RouterNavigationEffectHandler(router) }, { effect ->
+                when (effect) {
                     OnBoardingEffect.Browse,
                     OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
                     OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(
                         onboarding = true,
                         buy = true
-                    )
-                    is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
-                        title = "",
-                        message = effect.message
                     )
                     else -> null
                 }

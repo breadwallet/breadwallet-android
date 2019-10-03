@@ -31,6 +31,7 @@ import com.breadwallet.presenter.activities.BrdWalletController
 import com.breadwallet.presenter.activities.ManageWalletsController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
+import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.util.isBrd
 import com.breadwallet.ui.wallet.TxDetailsController
 import com.breadwallet.ui.wallet.WalletController
@@ -103,14 +104,20 @@ class RouterNavigationEffectHandler(
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) = Unit
 
-    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) = Unit
+    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
+        val transaction = RouterTransaction.with(InputPinController(effect.onboarding, effect.buy))
+            .pushChangeHandler(HorizontalChangeHandler())
+            .popChangeHandler(HorizontalChangeHandler())
+        if (effect.onboarding) {
+            router.setBackstack(listOf(transaction), HorizontalChangeHandler())
+        } else {
+            router.pushController(transaction)
+        }
+    }
 
     override fun goToHome() {
-        // TODO clear backstack
-        router.pushController(
-            RouterTransaction.with(HomeController())
-                .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler())
+        router.setBackstack(
+            listOf(RouterTransaction.with(HomeController())), HorizontalChangeHandler()
         )
     }
 
@@ -131,4 +138,8 @@ class RouterNavigationEffectHandler(
                 .pushChangeHandler(HorizontalChangeHandler())
         )
     }
+
+    override fun goToDisabledScreen() = Unit
+
+    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) = Unit
 }
