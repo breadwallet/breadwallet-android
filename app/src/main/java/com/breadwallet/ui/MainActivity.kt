@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
@@ -38,11 +39,13 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.entities.CryptoRequest
 import com.breadwallet.tools.manager.AppEntryPointHandler
+import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.IntroController
+import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.util.logError
 
 /**
@@ -58,6 +61,16 @@ class MainActivity : BRActivity() {
         const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.MainActivity.EXTRA_CRYPTO_REQUEST"
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
+
+        // TODO Remove after refactoring settings into controllers
+        private const val EXTRA_OPEN_PIN_UPDATE =
+            "com.breadwallet.ui.MainActivity.EXTRA_OPEN_PIN_UPDATE"
+
+        fun openPinUpdate(context: Context) {
+            context.startActivity(Intent(context, MainActivity::class.java).apply {
+                putExtra(EXTRA_OPEN_PIN_UPDATE, true)
+            })
+        }
     }
 
     private lateinit var router: Router
@@ -80,8 +93,12 @@ class MainActivity : BRActivity() {
         if (!router.hasRootController()) {
             val rootController = when {
                 BreadApp.hasWallet() -> {
-                    val intentUrl = processIntentData(intent)
-                    LoginController(intentUrl)
+                    if (BRKeyStore.getPinCode(this).isNotBlank()) {
+                        val intentUrl = processIntentData(intent)
+                        LoginController(intentUrl)
+                    } else {
+                        InputPinController()
+                    }
                 }
                 else -> IntroController()
             }
@@ -120,6 +137,15 @@ class MainActivity : BRActivity() {
         super.onNewIntent(intent)
         intent ?: return
 
+        if (intent.hasExtra(EXTRA_OPEN_PIN_UPDATE)) {
+            router.pushController(
+                RouterTransaction.with(InputPinController(pinUpdate = true))
+                    .popChangeHandler(FadeChangeHandler())
+                    .pushChangeHandler(FadeChangeHandler())
+            )
+            return
+        }
+
         val request = intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST)
         if (request is CryptoRequest) {
             intent.removeExtra(EXTRA_CRYPTO_REQUEST)
@@ -137,7 +163,8 @@ class MainActivity : BRActivity() {
     private fun processIntentData(intent: Intent): String? {
         if (intent.hasExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)) {
             val campaignId = intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)
-            val attributes = mapOf<String, String>(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to campaignId)
+            val attributes =
+                mapOf<String, String>(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to campaignId)
             EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
             EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
         }
