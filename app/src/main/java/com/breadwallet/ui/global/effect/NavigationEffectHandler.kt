@@ -31,14 +31,15 @@ package com.breadwallet.ui.global.effect
 import android.content.Intent
 import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.*
+import com.breadwallet.presenter.activities.AddWalletsActivity
+import com.breadwallet.presenter.activities.PaperKeyProveActivity
+import com.breadwallet.presenter.activities.intro.WriteDownActivity
 import com.breadwallet.presenter.activities.settings.SettingsActivity
 import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.customviews.BRDialogView
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.AppEntryPointHandler
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
@@ -48,7 +49,6 @@ import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.android.runners.MainThreadWorkRunner
-import java.util.HashMap
 
 class NavigationEffectHandler(
     private val activity: BRActivity // TODO: Don't depend on an activity
@@ -163,25 +163,7 @@ class NavigationEffectHandler(
         UiUtils.showSupportFragment(activity as FragmentActivity, effect.articleId, wm)
     }
 
-    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
-        val intent = Intent(activity, InputPinActivity::class.java).apply {
-            putExtra(InputPinActivity.EXTRA_PIN_IS_ONBOARDING, effect.onboarding)
-            if (effect.buy) {
-                putExtra(
-                    InputPinActivity.EXTRA_PIN_NEXT_SCREEN,
-                    PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name
-                )
-            }
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        activity.apply {
-            if (effect.onboarding) {
-                finish()
-                startActivity(intent)
-            } else
-                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE)
-        }
-    }
+    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) = Unit
 
     override fun goToHome() = Unit
 
@@ -207,4 +189,25 @@ class NavigationEffectHandler(
     }
 
     override fun goToManageWallets() = Unit
+
+    override fun goToDisabledScreen() {
+        UiUtils.showWalletDisabled(activity)
+    }
+
+    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
+        val intent = Intent(activity, WriteDownActivity::class.java).apply {
+            putExtra(
+                WriteDownActivity.EXTRA_VIEW_REASON,
+                WriteDownActivity.ViewReason.ON_BOARDING.value
+            )
+            if (effect.nextScreen.isNotBlank()) {
+                putExtra(
+                    PaperKeyProveActivity.EXTRA_DONE_ACTION,
+                    effect.nextScreen // TODO PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name
+                )
+            }
+        }
+        activity.startActivity(intent)
+        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down)
+    }
 }

@@ -26,8 +26,6 @@ package com.breadwallet.ui.login
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -40,7 +38,6 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.presenter.activities.BrdWalletController
-import com.breadwallet.presenter.activities.InputPinActivity
 import com.breadwallet.presenter.customviews.PinLayout
 import com.breadwallet.presenter.interfaces.BRAuthCompletion
 import com.breadwallet.tools.animation.SpringAnimator
@@ -84,12 +81,6 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
     override fun onAttach(view: View) {
         super.onAttach(view)
         val pin = BRKeyStore.getPinCode(activity)
-        if (pin.isEmpty()) {
-            val intent = Intent(activity, InputPinActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE)
-            return
-        }
         check(PinLayout.isPinLengthValid(pin.length)) { "Pin length illegal: " + pin.length }
 
         val useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(activity)
@@ -119,19 +110,13 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val isPinAccepted = data?.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false) ?: false
-            if (isPinAccepted) {
-                UiUtils.startBreadActivity(activity, false)
-            }
-        }
-    }
-
     override fun handleBack() = router.backstackSize > 1 || activity?.isTaskRoot == false
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -144,8 +129,10 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
 
     private fun unlockWallet() {
         fingerprint_icon.visibility = View.INVISIBLE
-        pinLayout.animate().translationY(-R.dimen.animation_long.toFloat()).setInterpolator(AccelerateInterpolator())
-        brkeyboard.animate().translationY(R.dimen.animation_long.toFloat()).setInterpolator(AccelerateInterpolator())
+        pinLayout.animate().translationY(-R.dimen.animation_long.toFloat())
+            .setInterpolator(AccelerateInterpolator())
+        brkeyboard.animate().translationY(R.dimen.animation_long.toFloat())
+            .setInterpolator(AccelerateInterpolator())
         unlocked_image.animate().alpha(1f).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
