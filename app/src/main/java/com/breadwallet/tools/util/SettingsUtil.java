@@ -21,8 +21,6 @@ import com.breadwallet.R;
 import com.breadwallet.model.Experiment;
 import com.breadwallet.model.Experiments;
 import com.breadwallet.platform.pricealert.PriceAlertWorker;
-import com.breadwallet.presenter.activities.InputPinActivity;
-import com.breadwallet.presenter.activities.ManageWalletsController;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
@@ -43,6 +41,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.global.effect.NavigationEffectHandler;
 import com.breadwallet.ui.pricealert.PriceAlertListActivity;
 import com.breadwallet.ui.settings.NotificationsSettingsActivity;
@@ -237,11 +236,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(activity.getString(R.string.UpdatePin_updateTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, InputPinActivity.class);
-                intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                MainActivity.Companion.openPinUpdate(activity);
             }
         }, false, 0));
         items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle_android), "", new View.OnClickListener() {
@@ -266,8 +261,8 @@ public final class SettingsUtil {
 
     public static List<BRSettingsItem> getDeveloperOptionsSettings(final Activity activity) {
         List<BRSettingsItem> items = new ArrayList<>();
-        items.add(new BRSettingsItem(SEND_LOGS, "", view -> LogsUtils.shareLogs(activity),false, 0));
-        items.add(new BRSettingsItem(API_SERVER, "", view -> showInputDialog(activity),false, 0));
+        items.add(new BRSettingsItem(SEND_LOGS, "", view -> LogsUtils.shareLogs(activity), false, 0));
+        items.add(new BRSettingsItem(API_SERVER, "", view -> showInputDialog(activity), false, 0));
         items.add(new BRSettingsItem(ONBOARDING_FLOW, "", view -> {
             // TODO: Not supported currently
             Toast.makeText(activity, "TODO: Not Implemented!", Toast.LENGTH_SHORT).show();
@@ -449,31 +444,31 @@ public final class SettingsUtil {
     /**
      * Displays an Alert Dialog with an input text field for entering a Bundle setting.
      *
-     * @param activity The activity context.
-     * @param bundleType The type of bundle (whether WEB or TOKEN).
+     * @param activity      The activity context.
+     * @param bundleType    The type of bundle (whether WEB or TOKEN).
      * @param defaultBundle The default bundle name that will initially appear in the input text field.
      */
     private static void showBundleTextDialog(final Activity activity, final ServerBundlesHelper.Type bundleType, final String defaultBundle) {
         final EditText bundleEditText = new EditText(activity);
         bundleEditText.setText(defaultBundle, TextView.BufferType.EDITABLE);
         AlertDialog bundleDialog = new AlertDialog.Builder(activity)
-            .setMessage(BUNDLE_PROMPT)
-            .setView(bundleEditText)
-            .setPositiveButton(APPLY, (DialogInterface dialogInterface, int which) -> {
-                String bundleName = String.valueOf(bundleEditText.getText());
-                Toast.makeText(activity, BUNDLE_SET + bundleName, Toast.LENGTH_LONG).show();
-                ServerBundlesHelper.setDebugBundle(activity.getApplicationContext(), bundleType, bundleName);
-                activity.recreate();
-            })
-            .setNegativeButton(CANCEL, null)
-            .create();
+                .setMessage(BUNDLE_PROMPT)
+                .setView(bundleEditText)
+                .setPositiveButton(APPLY, (DialogInterface dialogInterface, int which) -> {
+                    String bundleName = String.valueOf(bundleEditText.getText());
+                    Toast.makeText(activity, BUNDLE_SET + bundleName, Toast.LENGTH_LONG).show();
+                    ServerBundlesHelper.setDebugBundle(activity.getApplicationContext(), bundleType, bundleName);
+                    activity.recreate();
+                })
+                .setNegativeButton(CANCEL, null)
+                .create();
         bundleDialog.show();
     }
 
     /**
      * Displays an Alert Dialog with an input text field for entering a Platform Web URL.
      *
-     * @param activity The activity context.
+     * @param activity              The activity context.
      * @param defaultWebPlatformURL The default URL that will initially appear in the input text field.
      */
     private static void showWebPlatformDebugURLTextDialog(final Activity activity, String defaultWebPlatformURL) {

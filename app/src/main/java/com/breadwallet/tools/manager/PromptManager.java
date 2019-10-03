@@ -12,18 +12,18 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BREdit;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.MainActivity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -162,10 +162,7 @@ public final class PromptManager {
                 title.setText(context.getString(R.string.Prompts_UpgradePin_title));
                 description.setText(context.getString(R.string.Prompts_UpgradePin_body));
                 continueButton.setOnClickListener(view -> {
-                    Intent intent = new Intent(context, InputPinActivity.class);
-                    intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
-                    context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    context.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                    MainActivity.Companion.openPinUpdate(context);
                     sendPromptClickedEvent(promptItem);
                 });
                 break;

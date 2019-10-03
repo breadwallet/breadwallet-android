@@ -70,4 +70,7 @@ sealed class NavigationEffect {
     object GoToMenu : NavigationEffect()
     object GoToAddWallet : NavigationEffect()
     object GoToManageWallets : NavigationEffect()
+    object GoToDisabledScreen : NavigationEffect()
+
+    data class GoToWriteDownKey(val nextScreen: String = "") : NavigationEffect()
 }

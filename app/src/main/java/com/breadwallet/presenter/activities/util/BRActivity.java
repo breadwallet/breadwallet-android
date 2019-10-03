@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -179,7 +178,7 @@ public abstract class BRActivity extends FragmentActivity {
 
     private void init() {
         //show wallet locked if it is and we're not in an illegal activity.
-        if (!(this instanceof InputPinActivity || this instanceof RecoveryKeyActivity)) {
+        if (!(this instanceof RecoveryKeyActivity)) {
             if (AuthManager.getInstance().isWalletDisabled(this)) {
                 showWalletDisabled();
             }

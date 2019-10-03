@@ -41,7 +41,6 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.InputPinActivity
 import com.breadwallet.presenter.customviews.BRDialogView
 import com.breadwallet.presenter.customviews.BREdit
 import com.breadwallet.tools.animation.BRDialog
@@ -52,7 +51,11 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.global.effect.NavigationEffect
 import com.breadwallet.ui.global.effect.NavigationEffectHandler
-import com.breadwallet.ui.util.*
+import com.breadwallet.ui.global.effect.RouterNavigationEffectHandler
+import com.breadwallet.ui.util.CompositeEffectHandler
+import com.breadwallet.ui.util.DefaultTextWatcher
+import com.breadwallet.ui.util.logError
+import com.breadwallet.ui.util.nestedConnectable
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -75,7 +78,6 @@ class RecoveryKeyController(
         //  Controller.startActivityForResult so we must register our interest manually.
         registerForActivityResult(BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE)
         registerForActivityResult(BRConstants.SHOW_PHRASE_REQUEST_CODE)
-        registerForActivityResult(InputPinActivity.SET_PIN_REQUEST_CODE)
     }
 
     override val layoutId: Int = R.layout.activity_input_words
@@ -126,10 +128,15 @@ class RecoveryKeyController(
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
-                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin()
                 RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+                else -> null
+            }
+        }),
+        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
+            when (effect) {
+                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(true)
                 RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
+                RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
                 else -> null
             }
         })
@@ -279,8 +286,6 @@ class RecoveryKeyController(
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            InputPinActivity.SET_PIN_REQUEST_CODE ->
-                eventConsumer.accept(handleSetPinResult(data))
             BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE ->
                 eventConsumer.accept(handlePutPhraseResult(resultCode))
             BRConstants.SHOW_PHRASE_REQUEST_CODE ->
@@ -295,15 +300,6 @@ class RecoveryKeyController(
     }
 
     override fun handleBack(): Boolean = currentModel.isLoading
-
-    private fun handleSetPinResult(data: Intent?): RecoveryKeyEvent {
-        val isPinAccepted = data?.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false)
-            ?: false
-        return when {
-            isPinAccepted -> RecoveryKeyEvent.OnPinSet
-            else -> RecoveryKeyEvent.OnPinSetCancelled
-        }
-    }
 
     private fun handlePutPhraseResult(resultCode: Int): RecoveryKeyEvent =
         when (resultCode) {
