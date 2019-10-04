@@ -320,7 +320,11 @@ public class APIClient {
             Logger.Companion.warning("signRequest: TODO: Request signing not yet implemented");
             return null;
         }
-        byte[] signedBytes = compact.sign(doubleSha256, key);
+        byte[] signedBytes = compact.sign(doubleSha256, key).orNull();
+        if (signedBytes == null || signedBytes.length == 0) {
+            Logger.Companion.error("Failed to sign request.");
+            return null;
+        }
         return Base58.encode(signedBytes);
     }
 
@@ -621,6 +625,7 @@ public class APIClient {
         if (mCachedAuthKey == null) {
             byte[] privateKeyBytes = BRKeyStore.getAuthKey(mContext);
             if (!Utils.isNullOrEmpty(privateKeyBytes)) {
+                // TODO: A Key is never returned here.
                 Optional<Key> key = Key.createFromPrivateKeyString(privateKeyBytes);
                 mCachedAuthKey = key.orNull();
             }
