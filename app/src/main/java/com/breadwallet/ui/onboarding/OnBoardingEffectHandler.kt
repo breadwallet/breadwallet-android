@@ -197,7 +197,7 @@ class OnBoardingEffectHandler(
     private suspend fun createAccountMetaData(creationDate: Date): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                metadataProvider.create(creationDate, BreadApp.getDefaultEnabledWallets())
+                metadataProvider.create(creationDate)
                 true
             } catch (e: Exception) {
                 // Note: If we fail to set WalletInfo, let the whole

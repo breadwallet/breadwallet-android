@@ -190,6 +190,7 @@ public class PostAuth {
         BRBitId.completeBitID(context, authenticated);
     }
 
+    /*
     public boolean onRecoverWalletAuth(final Activity activity, boolean authAsked) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
@@ -239,6 +240,7 @@ public class PostAuth {
         }
         return false;
     }
+     */
 
     @WorkerThread
     public void onPublishTxAuth(final Context context, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {

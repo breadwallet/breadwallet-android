@@ -49,7 +49,6 @@ import com.breadwallet.breadbox.CoreBreadBox
 import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
 import com.breadwallet.crypto.WalletManagerMode
-import com.breadwallet.protocols.messageexchange.entities.MetaData
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
@@ -79,6 +78,11 @@ import java.util.Arrays
 import java.util.regex.Pattern
 
 import io.fabric.sdk.android.Fabric
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -121,7 +125,10 @@ class BreadApp : Application(), KodeinAware {
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
 
+        private val startedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
+        fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
 
         // TODO: For code organization only, to be removed
         fun hasWallet(): Boolean {
@@ -313,7 +320,7 @@ class BreadApp : Application(), KodeinAware {
         val metaDataManager by lazy { MetaDataManager(direct.instance()) }
 
         bind<WalletsProvider>() with singleton { metaDataManager }
-        
+
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
         bind<BreadBox>() with singleton {
@@ -436,6 +443,10 @@ class BreadApp : Application(), KodeinAware {
                 }
             }
 
+            getAccountMetaDataProvider()
+                .recoverAll()
+                .launchIn(startedScope)
+
             HTTPServer.getInstance().startServer(this)
 
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
@@ -481,6 +492,7 @@ class BreadApp : Application(), KodeinAware {
             }
         }
         BRApiManager.getInstance().stopTimerTask()
+        startedScope.cancel()
     }
 
     private fun handleOnDestroy() {
