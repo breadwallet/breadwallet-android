@@ -36,21 +36,20 @@ import java.util.Date
 interface AccountMetaDataProvider {
     // TODO: Refine/refactor this API. For now it includes all leftover KVStoreManager functions
 
-    /** Initializes metadata for a newly created [Account], optionally enabling
-    [defaultEnabledWallets], a list of currency ids (uid). */
-    fun create(accountCreationDate: Date, defaultEnabledWallets: List<String>?)
+    /** Initializes metadata for a newly created [Account]. */
+    fun create(accountCreationDate: Date)
 
-    /** Recovers metadata for a recovered [Account]. */
-    // fun recover()
+    /** Recovers all metadata for a recovered [Account] and returns true if successful. */
+    fun recoverAll(): Flow<Boolean>
 
-    /** Clean up. */
-    //fun close()
+    /** Returns a [Flow] of enabled wallet currency ids (addresses), will recover them if necessary. */
+    fun enabledWallets(): Flow<List<String>>
 
+    /** Returns a [Flow] of [WalletInfoData], will recover it if necessary. */
     fun walletInfo(): Flow<WalletInfoData>
 
+    /** Returns [WalletInfoData] if recovered, or null when it is not. */
     fun getWalletInfoUnsafe(): WalletInfoData?
-
-    fun syncWalletInfo()
 
     /** Enables the wallet for this Account. */
     fun enableWallet(currencyId: String): Flow<Unit>
@@ -58,7 +57,8 @@ interface AccountMetaDataProvider {
     /** Disables the wallet for this Account. */
     fun disableWallet(currencyId: String): Flow<Unit>
 
-    fun syncAssetIndex()
+    /** Clean up. */
+    //fun close()
 
     /** Returns [TxMetaData] for given transaction hash. */
     fun getTxMetaData(txHash: ByteArray): TxMetaData?
