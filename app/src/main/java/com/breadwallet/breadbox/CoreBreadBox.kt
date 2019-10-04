@@ -207,12 +207,7 @@ internal class CoreBreadBox(
 
         openScope.coroutineContext.cancelChildren()
 
-        try {
-            checkNotNull(system).stop()
-            logDebug("System stopped successfully")
-        } catch (e: Exception) {
-            logError("Failed calling System.stop()", e)
-        }
+        checkNotNull(system).disconnectAll()
 
         isOpen = false
     }
