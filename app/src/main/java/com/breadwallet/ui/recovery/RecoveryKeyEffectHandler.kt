@@ -40,14 +40,15 @@ import com.breadwallet.ui.util.logInfo
 import com.platform.APIClient
 import com.platform.entities.WalletInfoData
 import com.platform.interfaces.AccountMetaDataProvider
-import com.platform.tools.KVStoreManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import java.text.Normalizer
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class RecoveryKeyEffectHandler(
     private val output: Consumer<RecoveryKeyEvent>,
     private val breadBox: BreadBox,
@@ -210,6 +211,7 @@ class RecoveryKeyEffectHandler(
                 return@launch
             }
 
+            recoverAccountMetaData()
             updateTokensAndPlatform(context)
 
             output.accept(RecoveryKeyEvent.OnRecoveryComplete)
@@ -238,12 +240,16 @@ class RecoveryKeyEffectHandler(
     private suspend fun updateTokensAndPlatform(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                metaDataProvider.syncAssetIndex()
                 APIClient.getInstance(context).updatePlatform()
             } catch (e: Exception) {
                 logError("Failed to sync token list or update platform.", e)
             }
         }
+    }
+
+    private suspend fun recoverAccountMetaData() {
+        metaDataProvider.enabledWallets().first()
+        metaDataProvider.recoverAll().first()
     }
 
     /**
@@ -270,35 +276,16 @@ class RecoveryKeyEffectHandler(
     }
 
     /**
-     * Sync and return [WalletInfoData] from [KVStoreManager]
-     * or null if anything goes wrong.
+     * Returns the [Date] of [WalletInfoData.creationDate].
      * TODO: Signing requests is not supported, we will always fail
      *  here because of APIClient usage.
      */
-    private suspend fun fetchWalletInfo(): WalletInfoData? {
-        val context = BreadApp.getBreadContext()
-        return withContext(Dispatchers.IO) {
-            try {
-                // TODO: switch to metaDataProvider.recover()
-                metaDataProvider.syncWalletInfo()
-                metaDataProvider.getWalletInfoUnsafe()
-            } catch (e: Exception) {
-                logError("Failed to sync wallet info", e)
-                null
-            }
-        }
-    }
-
-    /**
-     * Returns the [Date] of [WalletInfoData.creationDate] or 0
-     * when [fetchWalletInfo] returns null.
-     */
     private suspend fun getWalletCreationDate() =
         Date(
-            fetchWalletInfo()
-                ?.creationDate
-                ?.toLong()
-                ?.let(TimeUnit.SECONDS::toMillis) ?: 0L
+            metaDataProvider.walletInfo().first()
+                .creationDate
+                .toLong()
+                .let(TimeUnit.SECONDS::toMillis)
         )
 
     private fun normalizePhrase(phrase: List<String>) =

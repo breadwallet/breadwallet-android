@@ -37,9 +37,11 @@ import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logWarning
 import com.platform.APIClient
 import com.platform.interfaces.KVStoreProvider
+import com.breadwallet.tools.util.netRetry
 import com.platform.kvstore.CompletionObject
 import com.platform.kvstore.RemoteKVStore
 import com.platform.kvstore.ReplicatedKVStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -47,6 +49,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 
 import org.json.JSONObject
 
@@ -59,7 +62,11 @@ internal class KVStoreManager(
 ) : KVStoreProvider {
 
     // TODO: Compose with data store interface passed in constructor
-    // TODO: Add retry/timeout behaviors?
+
+    companion object {
+        private const val SYNC_KEY_NUM_RETRY = 3
+        private const val SYNC_KEY_TIMEOUT_MS = 3000L
+    }
 
     private val keyChannelMap = mutableMapOf<String, BroadcastChannel<JSONObject>>().run {
         withDefault { key -> getOrPut(key) { BroadcastChannel(Channel.BUFFERED) } }
@@ -95,22 +102,35 @@ internal class KVStoreManager(
         }
     }
 
-    override fun sync(key: String) {
-        getReplicatedKvStore(context).syncKey(key)
-        get(key)?.let { keyChannelMap.getValue(key).offer(it) }
+    override suspend fun sync(key: String): JSONObject? {
+        var value: JSONObject? = null
+        try {
+            // TODO: ReplicatedKVStore swallows exceptions, so retry logic is moot
+            // At some point, need to reconsider the interface between these two layers
+            netRetry(SYNC_KEY_NUM_RETRY, SYNC_KEY_TIMEOUT_MS) {
+                withContext(Dispatchers.IO) {
+                    getReplicatedKvStore(context).syncKey(key)
+                }
+                value = get(key)?.also { keyChannelMap.getValue(key).offer(it) }
+            }
+        } catch (ex: Exception) {
+            logError("Sync exception for key: $key", ex)
+        }
+        return value
     }
 
-    override fun syncAll(): Boolean =
-        getReplicatedKvStore(context).syncAllKeys()
-            .also {
-                if (it) {
-                    keyChannelMap.keys.forEach { key ->
-                        get(key)?.let { value ->
-                            keyChannelMap.getValue(key).offer(value)
-                        }
+    override suspend fun syncAll(): Boolean =
+        withContext(Dispatchers.IO) {
+            getReplicatedKvStore(context).syncAllKeys()
+        }.also { syncSuccess ->
+            if (syncSuccess) {
+                keyChannelMap.keys.forEach { key ->
+                    get(key)?.let { value ->
+                        keyChannelMap.getValue(key).offer(value)
                     }
                 }
             }
+        }
 
     override fun keyFlow(key: String): Flow<JSONObject> =
         keyChannelMap.getValue(key).asFlow().onStart { get(key)?.let { emit(it) } }

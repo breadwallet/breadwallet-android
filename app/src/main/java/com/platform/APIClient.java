@@ -593,17 +593,6 @@ public class APIClient {
             itemFinished();
         });
 
-        //update kvStore
-        BRExecutor.getInstance().forBackgroundTasks().execute(() -> {
-            Thread.currentThread().setName("updatePlatform");
-            final long startTime = System.currentTimeMillis();
-            APIClient apiClient = APIClient.getInstance(mContext);
-            apiClient.syncKvStore();
-            long endTime = System.currentTimeMillis();
-            Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
-            itemFinished();
-        });
-
         //update fee
         BRExecutor.getInstance().forBackgroundTasks().execute(() -> {
             final long startTime = System.currentTimeMillis();
@@ -625,17 +614,6 @@ public class APIClient {
             mIsPlatformUpdating = false;
             mItemsLeftToUpdate.set(0);
         }
-    }
-
-    private void syncKvStore() {
-        if (UiUtils.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        final APIClient client = this;
-        //sync the kv stores
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
-        kvStore.syncAllKeys();
     }
 
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
@@ -792,7 +770,7 @@ public class APIClient {
 
     /**
      * Convert {@link Request} to a {@link String}.
-     *
+     * <p>
      * Reference: <a href="https://stackoverflow.com/a/29033727/3211679">stackoverflow</a>
      *
      * @param request The request to convert to a {@link String}.
