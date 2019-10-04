@@ -20,7 +20,7 @@ import com.platform.entities.WalletInfoData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
 import kotlinx.coroutines.flow.mapLatest
@@ -53,23 +53,32 @@ class MetaDataManager(
         private const val EXCHANGE_RATE_SCALE = 8
     }
 
-    override fun create(accountCreationDate: Date, defaultEnabledWallets: List<String>?) {
+    override fun create(accountCreationDate: Date) {
         WalletInfoData().apply {
             creationDate = accountCreationDate.time.toInt()
             putWalletInfo(this)
         }
-
-        defaultEnabledWallets?.let { putEnabledWallets(it) }
+        putEnabledWallets(BreadApp.getDefaultEnabledWallets())
 
         logInfo("MetaDataManager created successfully")
+    }
+
+    override fun recoverAll() = flow {
+        emit(storeProvider.syncAll())
     }
 
     override fun walletInfo(): Flow<WalletInfoData> =
         storeProvider.keyFlow(KEY_WALLET_INFO)
             .mapLatest { WalletInfoData(it) }
             .onStart {
-                getWalletInfoUnsafe()?.let { emit(it) }
+                emit(
+                    getOrSync(
+                        KEY_WALLET_INFO,
+                        WalletInfoData().toJSON()
+                    ).run(::WalletInfoData)
+                )
             }
+            .distinctUntilChanged()
 
     override fun getWalletInfoUnsafe(): WalletInfoData? =
         try {
@@ -81,21 +90,22 @@ class MetaDataManager(
             null
         }
 
-    // TODO: Until KVStore backend is working and network failure semantics are worked out, always
-    // return default wallets
     override fun enabledWallets(): Flow<List<String>> =
-        listOf(BreadApp.getDefaultEnabledWallets()).asFlow()
-    /*
-    storeProvider.keyFlow(KEY_ASSET_INDEX)
-        .mapLatest {
-            it.getJSONArray(ENABLED_ASSET_IDS).run {
-                List(length(), this::getString)
+        storeProvider.keyFlow(KEY_ASSET_INDEX)
+            .mapLatest {
+                jsonToEnabledWallets(it)
             }
-        }
-        .onStart {
-            getEnabledWallets()?.let { emit(it) } ?: emit(emptyList())
-        }
-     */
+            .onStart {
+                emit(
+                    getOrSync(
+                        KEY_ASSET_INDEX,
+                        enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets())
+                    ).run {
+                        jsonToEnabledWallets(this)
+                    }
+                )
+            }
+            .distinctUntilChanged()
 
     override fun enableWallet(currencyId: String): Flow<Unit> = flow {
         putEnabledWallets(
@@ -116,10 +126,6 @@ class MetaDataManager(
                 emit(Unit)
             }
     }
-
-    override fun syncWalletInfo() = storeProvider.sync(KEY_WALLET_INFO)
-
-    override fun syncAssetIndex() = storeProvider.sync(KEY_ASSET_INDEX)
 
     override fun getPairingMetadata(pubKey: ByteArray): PairingMetaData? =
         try {
@@ -185,12 +191,6 @@ class MetaDataManager(
         }
     }
 
-    fun List<String>.toJSON(): JSONArray {
-        val json = JSONArray()
-        forEach { json.put(it) }
-        return json
-    }
-
     private fun getEnabledWallets(): List<String>? =
         try {
             storeProvider.get(KEY_ASSET_INDEX)
@@ -204,8 +204,7 @@ class MetaDataManager(
         }
 
     private fun putEnabledWallets(enabledWallets: List<String>) =
-        JSONObject()
-            .put(ENABLED_ASSET_IDS, enabledWallets.toJSON())
+        enabledWalletsToJSON(enabledWallets)
             .also {
                 storeProvider.put(KEY_ASSET_INDEX, it)
             }
@@ -240,6 +239,34 @@ class MetaDataManager(
             null, oldVal -> null
             else -> newVal
         }
+
+    private suspend fun getOrSync(key: String, defaultValue: JSONObject): JSONObject {
+        var value = storeProvider.get(key) ?: storeProvider.sync(key)
+        return when (value) {
+            null -> {
+                logDebug("Sync failed. Putting default value: $key -> $defaultValue")
+                storeProvider.put(key, defaultValue)
+                defaultValue
+            }
+            else -> value
+        }
+    }
+
+    private fun enabledWalletsToJSON(wallets: List<String>) =
+        JSONObject().put(ENABLED_ASSET_IDS, wallets.toJSON())
+
+    private fun jsonToEnabledWallets(walletsJSON: JSONObject) =
+        walletsJSON
+            .getJSONArray(ENABLED_ASSET_IDS)
+            .run {
+                List(length(), this::getString)
+            }
+
+    private fun List<String>.toJSON(): JSONArray {
+        val json = JSONArray()
+        forEach { json.put(it) }
+        return json
+    }
 
     // TODO: refactor to avoid wallet manager
     fun createMetadata(app: Context, wm: BaseWalletManager, tx: CryptoTransaction): TxMetaData {
