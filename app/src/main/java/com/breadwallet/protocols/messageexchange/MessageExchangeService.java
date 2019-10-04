@@ -11,8 +11,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.crypto.Cipher;
 import com.breadwallet.crypto.Coder;
-import com.breadwallet.crypto.Encrypter;
 import com.breadwallet.crypto.Key;
 import com.breadwallet.crypto.Signer;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
@@ -212,7 +212,7 @@ public final class MessageExchangeService extends JobIntentService {
                 ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
         //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
 
-        byte[] signature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(envelope.toByteArray()), pairingKey);
+        byte[] signature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(envelope.toByteArray()), pairingKey).get();
         envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
         Log.d(TAG, "pair: request envelope:" + envelope.toString());
 
@@ -460,8 +460,8 @@ public final class MessageExchangeService extends JobIntentService {
     public EncryptedMessage encrypt(Key pairingKey, byte[] senderPublicKeyBytes, byte[] message) {
         Key senderPublicKey = Key.createFromPublicKeyString(senderPublicKeyBytes).get();
         byte[] nonce = generateRandomNonce();
-        Encrypter encrypter = Encrypter.createForPigeon(pairingKey, senderPublicKey, nonce);
-        return new EncryptedMessage(encrypter.encrypt(message), nonce);
+        Cipher cipher = Cipher.createForPigeon(pairingKey, senderPublicKey, nonce);
+        return new EncryptedMessage(cipher.encrypt(message).get(), nonce);
     }
 
     /**
@@ -486,8 +486,8 @@ public final class MessageExchangeService extends JobIntentService {
     @VisibleForTesting
     protected byte[] decrypt(Key pairingKey, byte[] senderPublicKeyBytes, byte[] encryptedMessage, byte[] nonce) {
         Key senderPublicKey = Key.createFromPublicKeyString(senderPublicKeyBytes).get();
-        Encrypter decrypter = Encrypter.createForPigeon(pairingKey, senderPublicKey, nonce);
-        return decrypter.decrypt(encryptedMessage);
+        Cipher cipher = Cipher.createForPigeon(pairingKey, senderPublicKey, nonce);
+        return cipher.decrypt(encryptedMessage).get();
     }
 
     /**
@@ -579,7 +579,7 @@ public final class MessageExchangeService extends JobIntentService {
                 ByteString.copyFrom(responseEncryptedMessage.getNonce()));
 
         // Sign message envelope.
-        byte[] responseSignature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(responseEnvelope.toByteArray()), pairingKey);
+        byte[] responseSignature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(responseEnvelope.toByteArray()), pairingKey).get();
 
         // Add signature to message envelope.
         return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();

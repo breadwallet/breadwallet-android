@@ -185,7 +185,7 @@ public final class MessageExchangeNetworkHelper {
 
     public static void sendAssociatedKey(Context context, byte[] publicKey) {
         String associatedUrl = APIClient.getBaseURL() + ASSOCIATED_KEYS;
-        String base58PublicKey = Coder.createForAlgorithm(Coder.Algorithm.BASE58).encode(publicKey);
+        String base58PublicKey = Coder.createForAlgorithm(Coder.Algorithm.BASE58).encode(publicKey).get();
         RequestBody requestBody = RequestBody.create(null, base58PublicKey);
         Request request = new Request.Builder()
                 .url(associatedUrl)
