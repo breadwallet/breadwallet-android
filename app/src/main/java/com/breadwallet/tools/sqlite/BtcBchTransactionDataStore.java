@@ -31,7 +31,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 

@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/baseTextView2"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 app:layout_constraintStart_toEndOf="@+id/confetti_video_view"
                 app:layout_constraintTop_toTopOf="@+id/confetti_video_view" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -71,7 +71,7 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <com.breadwallet.presenter.customviews.NonClickableToolbar
+        <com.breadwallet.legacy.presenter.customviews.NonClickableToolbar
             android:id="@+id/collapsed_rewards_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -85,7 +85,7 @@
                 android:layout_margin="8dp"
                 android:src="@drawable/rewards_gradient_icon" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/RewardsView.normalTitle"
@@ -98,7 +98,7 @@
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/chevron_right_light" />
 
-        </com.breadwallet.presenter.customviews.NonClickableToolbar>
+        </com.breadwallet.legacy.presenter.customviews.NonClickableToolbar>
 
     </android.support.design.widget.CollapsingToolbarLayout>
 </android.support.design.widget.AppBarLayout>

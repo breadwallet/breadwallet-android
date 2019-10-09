@@ -8,7 +8,7 @@
     android:filterTouchesWhenObscured="true"
     android:orientation="horizontal">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         app:layout_constraintVertical_bias="0.0"
         tools:text="Display Currency" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toTopOf="@+id/item_title"
         tools:visibility="visible" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_sub_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -2,13 +2,12 @@ package com.breadwallet.ui.browser
 
 import android.content.Context
 import android.content.Intent
-import com.breadwallet.BreadApp
 import com.breadwallet.tools.util.BRConstants
 
 /**
  * Platform content web browser.
  */
-class PlatformBrowserActivity: WebViewActivity() {
+class PlatformBrowserActivity : WebViewActivity() {
 
     companion object {
         /**

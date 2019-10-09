@@ -29,8 +29,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.legacy.presenter.entities.TokenItem;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;

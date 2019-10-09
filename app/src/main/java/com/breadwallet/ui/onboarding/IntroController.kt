@@ -32,13 +32,12 @@ import android.support.v4.app.FragmentActivity
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-
 import com.breadwallet.R
+import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
-import com.breadwallet.wallet.WalletsMaster
 import kotlinx.android.synthetic.main.activity_intro.*
 
 /**

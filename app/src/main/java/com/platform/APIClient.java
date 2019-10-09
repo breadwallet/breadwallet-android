@@ -11,10 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.crypto.Key;
 import com.breadwallet.crypto.Signer;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.logger.Logger;
 import com.breadwallet.repository.ExperimentsRepositoryImpl;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
@@ -27,12 +30,7 @@ import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.util.Logger;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.common.base.Optional;
-import com.platform.kvstore.RemoteKVStore;
-import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.TokenHolder;
 
 import org.eclipse.jetty.http.HttpStatus;

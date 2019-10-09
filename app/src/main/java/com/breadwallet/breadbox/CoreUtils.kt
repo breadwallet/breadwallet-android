@@ -30,10 +30,10 @@ import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.Wallet
+import com.breadwallet.legacy.wallet.wallets.WalletManagerHelper
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.util.WalletDisplayUtils
-import com.breadwallet.ui.util.logError
-import com.breadwallet.wallet.wallets.WalletManagerHelper
+import com.breadwallet.util.WalletDisplayUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal

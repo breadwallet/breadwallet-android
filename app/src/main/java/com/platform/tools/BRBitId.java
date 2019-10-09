@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;

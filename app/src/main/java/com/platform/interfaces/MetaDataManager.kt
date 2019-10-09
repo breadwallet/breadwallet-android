@@ -2,19 +2,19 @@ package com.platform.interfaces
 
 import android.content.Context
 import android.text.format.DateUtils
-import com.breadwallet.BreadApp
+import com.breadwallet.app.BreadApp
 import com.breadwallet.core.BRCoreKey
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager
+import com.breadwallet.legacy.wallet.wallets.CryptoTransaction
+import com.breadwallet.logger.logDebug
+import com.breadwallet.logger.logError
+import com.breadwallet.logger.logInfo
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Utils
-import com.breadwallet.ui.util.logDebug
-import com.breadwallet.ui.util.logError
-import com.breadwallet.ui.util.logInfo
-import com.breadwallet.wallet.abstracts.BaseWalletManager
-import com.breadwallet.wallet.wallets.CryptoTransaction
 import com.platform.entities.TxMetaData
 import com.platform.entities.WalletInfoData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +22,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import org.json.JSONArray

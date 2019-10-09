@@ -27,11 +27,11 @@ package com.breadwallet.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.model.PriceChange;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.Collection;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.breadwallet.legacy.presenter.customviews.BRLockScreenConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_pit"
@@ -26,4 +25,4 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-</com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
+</com.breadwallet.legacy.presenter.customviews.BRLockScreenConstraintLayout>

@@ -23,17 +23,18 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.fragments.FragmentReceive;
-import com.breadwallet.presenter.fragments.FragmentRequestAmount;
-import com.breadwallet.presenter.fragments.FragmentSend;
-import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
-import com.breadwallet.presenter.fragments.FragmentSignal;
-import com.breadwallet.presenter.fragments.FragmentWebModal;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.legacy.presenter.activities.DisabledActivity;
+import com.breadwallet.legacy.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.legacy.presenter.customviews.BRDialogView;
+import com.breadwallet.legacy.presenter.fragments.FragmentReceive;
+import com.breadwallet.legacy.presenter.fragments.FragmentRequestAmount;
+import com.breadwallet.legacy.presenter.fragments.FragmentSend;
+import com.breadwallet.legacy.presenter.fragments.FragmentShowLegacyAddress;
+import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
+import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
+import com.breadwallet.legacy.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -41,14 +42,13 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.browser.PlatformBrowserActivity;
 import com.breadwallet.ui.wallet.WalletController;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.util.usermetrics.UserMetricsUtil;
 import com.platform.HTTPServer;
 
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
+import static com.breadwallet.legacy.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 
 /**
  * BreadWallet

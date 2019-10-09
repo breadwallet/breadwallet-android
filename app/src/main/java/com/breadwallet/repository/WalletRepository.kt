@@ -28,11 +28,11 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.util.Log
 import com.breadwallet.core.BRCorePeer
+import com.breadwallet.legacy.wallet.WalletsMaster
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager
+import com.breadwallet.legacy.wallet.util.SyncUpdateHandler
 import com.breadwallet.model.Wallet
 import com.breadwallet.tools.threads.executor.BRExecutor
-import com.breadwallet.wallet.WalletsMaster
-import com.breadwallet.wallet.abstracts.BaseWalletManager
-import com.breadwallet.wallet.util.SyncUpdateHandler
 import java.math.BigDecimal
 import java.util.ArrayList
 import java.util.HashMap

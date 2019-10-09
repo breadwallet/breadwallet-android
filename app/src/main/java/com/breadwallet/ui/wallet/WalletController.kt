@@ -17,29 +17,29 @@ import android.view.animation.AccelerateInterpolator
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.breadbox.BreadBoxEffect
+import com.breadwallet.breadbox.BreadBoxEffectHandler
+import com.breadwallet.breadbox.BreadBoxEvent
+import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.legacy.presenter.customviews.BaseTextView
+import com.breadwallet.logger.logDebug
+import com.breadwallet.mobius.CompositeEffectHandler
+import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.presenter.customviews.BaseTextView
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.global.effect.CryptoWalletEffectHandler
-import com.breadwallet.ui.global.effect.NavigationEffect
-import com.breadwallet.ui.global.effect.NavigationEffectHandler
-import com.breadwallet.ui.global.effect.RouterNavigationEffectHandler
-import com.breadwallet.ui.global.effect.WalletEffect
-import com.breadwallet.ui.global.event.WalletEvent
-import com.breadwallet.ui.util.CompositeEffectHandler
-import com.breadwallet.ui.util.WalletDisplayUtils
-import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.ui.util.logDebug
-import com.breadwallet.ui.util.nestedConnectable
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationEffectHandler
+import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
+import com.breadwallet.util.WalletDisplayUtils
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -89,39 +89,39 @@ open class WalletController(
             // Create nested handler, such that WalletScreenEffects are converted
             // into WalletEffects and passed to WalletEffectHandler
             // (events produced are converted into WalletScreenEvents)
-            nestedConnectable({ output: Consumer<WalletEvent> ->
-                CryptoWalletEffectHandler(output, activity!!, currencyCode, direct.instance())
+            nestedConnectable({ output: Consumer<BreadBoxEvent> ->
+                BreadBoxEffectHandler(output, activity!!, currencyCode, direct.instance())
             }, { effect: WalletScreenEffect ->
                 // Map incoming effect
                 when (effect) {
                     is WalletScreenEffect.LoadWalletBalance ->
-                        WalletEffect.LoadWalletBalance(effect.currencyId)
+                        BreadBoxEffect.LoadWalletBalance(effect.currencyId)
                     is WalletScreenEffect.LoadTransactions ->
-                        WalletEffect.LoadTransactions(effect.currencyId)
+                        BreadBoxEffect.LoadTransactions(effect.currencyId)
                     else -> null
                 }
-            }, { event: WalletEvent ->
+            }, { event: BreadBoxEvent ->
                 // Map outgoing event
                 when (event) {
-                    is WalletEvent.OnSyncProgressUpdated ->
+                    is BreadBoxEvent.OnSyncProgressUpdated ->
                         WalletScreenEvent.OnSyncProgressUpdated(
                             event.progress,
                             event.syncThroughMillis,
                             event.isSyncing
                         )
-                    is WalletEvent.OnBalanceUpdated ->
+                    is BreadBoxEvent.OnBalanceUpdated ->
                         WalletScreenEvent.OnBalanceUpdated(event.balance, event.fiatBalance)
-                    is WalletEvent.OnConnectionUpdated ->
+                    is BreadBoxEvent.OnConnectionUpdated ->
                         WalletScreenEvent.OnConnectionUpdated(event.isConnected)
-                    is WalletEvent.OnCurrencyNameUpdated ->
+                    is BreadBoxEvent.OnCurrencyNameUpdated ->
                         WalletScreenEvent.OnCurrencyNameUpdated(event.name)
-                    is WalletEvent.OnTransactionAdded ->
+                    is BreadBoxEvent.OnTransactionAdded ->
                         WalletScreenEvent.OnTransactionAdded(event.walletTransaction)
-                    is WalletEvent.OnTransactionRemoved ->
+                    is BreadBoxEvent.OnTransactionRemoved ->
                         WalletScreenEvent.OnTransactionRemoved(event.walletTransaction)
-                    is WalletEvent.OnTransactionUpdated ->
+                    is BreadBoxEvent.OnTransactionUpdated ->
                         WalletScreenEvent.OnTransactionUpdated(event.walletTransaction)
-                    is WalletEvent.OnTransactionsUpdated ->
+                    is BreadBoxEvent.OnTransactionsUpdated ->
                         WalletScreenEvent.OnTransactionsUpdated(event.walletTransactions)
                 }
             }),
@@ -158,7 +158,14 @@ open class WalletController(
     private var mAdapter: TransactionListAdapter? = null
     private var mPriceDataAdapter = SparkAdapter()
     private val mIntervalButtons: List<BaseTextView>
-        get() = listOf<BaseTextView>(one_day, one_week, one_month, three_months, one_year, three_years)
+        get() = listOf<BaseTextView>(
+            one_day,
+            one_week,
+            one_month,
+            three_months,
+            one_year,
+            three_years
+        )
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)

@@ -6,19 +6,19 @@ import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.model.FeeOption;
 import com.breadwallet.model.PriceChange;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 import com.platform.network.service.CurrencyHistoricalDataClient;
 

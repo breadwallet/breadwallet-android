@@ -4,8 +4,7 @@ package com.breadwallet.tools.sqlite;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
 
 import java.util.List;
 
