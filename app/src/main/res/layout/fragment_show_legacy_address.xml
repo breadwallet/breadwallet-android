@@ -45,7 +45,7 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -53,7 +53,7 @@
             android:textColor="@color/almost_black"
             android:textSize="18sp" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -75,7 +75,7 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_check_mark_grey" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
             android:textColor="@color/light_gray"
             android:textSize="14sp" />
 
-        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+        <com.breadwallet.legacy.presenter.customviews.BRLinearLayoutWithCaret
             android:id="@+id/copied_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -98,7 +98,7 @@
             app:backgroundColor="@color/button_primary_normal"
             app:withStroke="false">
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/copied_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,9 +109,9 @@
                 android:text="@string/Receive.copied"
                 android:textColor="@color/white"
                 android:textSize="@dimen/paragraph" />
-        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
+        </com.breadwallet.legacy.presenter.customviews.BRLinearLayoutWithCaret>
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/share_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

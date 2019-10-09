@@ -33,7 +33,7 @@
             android:orientation="horizontal">
 
 
-            <com.breadwallet.presenter.customviews.BaseTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/webview_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 app:brdFont="@string/Font.CircularPro_Bold" />
 
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

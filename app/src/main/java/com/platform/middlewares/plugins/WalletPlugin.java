@@ -3,23 +3,23 @@ package com.platform.middlewares.plugins;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.legacy.presenter.entities.CryptoRequest;
+import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.model.FeeOption;
-import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -44,7 +44,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.eclipse.jetty.http.HttpMethod.GET;
 import static org.eclipse.jetty.http.HttpMethod.POST;
 
@@ -317,7 +320,7 @@ public class WalletPlugin implements Plugin {
                 BRReportsManager.reportBug(new IllegalArgumentException("_wallet/currencies created an empty json"));
                 return BRHTTPHelper.handleError(SC_INTERNAL_SERVER_ERROR, "Failed to create json", baseRequest, response);
             }
-            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), SC_OK,  BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
+            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), SC_OK, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.startsWith(PATH_BASE + PATH_TRANSACTION)) {
             String reqBody = null;

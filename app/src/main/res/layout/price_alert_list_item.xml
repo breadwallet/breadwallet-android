@@ -8,7 +8,7 @@
     android:padding="16dp">
 
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/alert_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

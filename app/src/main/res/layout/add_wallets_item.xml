@@ -8,7 +8,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/add_wallets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,6 +18,6 @@
         android:text="@string/TokenList.addTitle"
         android:textColor="@color/white"
         android:layout_marginBottom="16dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
 </RelativeLayout>

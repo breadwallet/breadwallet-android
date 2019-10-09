@@ -3,11 +3,11 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.ui.util.WalletDisplayUtils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.util.WalletDisplayUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

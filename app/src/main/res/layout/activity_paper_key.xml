@@ -5,7 +5,7 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
+    tools:context="com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/gradient_layout"
@@ -14,7 +14,7 @@
         android:background="@drawable/paper_key_gradient"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/title" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
         android:layout_marginBottom="32dp"
         android:weightSum="2.0">
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/previous_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
@@ -107,7 +107,7 @@
             app:buttonType="7"
             app:isBreadButton="true" />
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/next_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
@@ -126,7 +126,7 @@
 
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_index_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

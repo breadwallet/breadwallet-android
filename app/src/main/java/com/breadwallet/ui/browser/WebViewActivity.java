@@ -36,13 +36,13 @@ import android.widget.Toolbar;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.legacy.presenter.activities.util.BRActivity;
+import com.breadwallet.legacy.presenter.customviews.BaseTextView;
+import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
 
 import org.eclipse.jetty.http.HttpMethod;

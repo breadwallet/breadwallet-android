@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.breadwallet.presenter.customviews.BaseTextView
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/currency_item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,5 +16,5 @@
         android:paddingStart="16dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="@dimen/sub_header"
-        app:brdFont="@string/Font.CircularPro_Medium"/>
+        app:brdFont="@string/Font.CircularPro_Medium" />
 </FrameLayout>

@@ -2,7 +2,7 @@ package com.breadwallet.breadbox
 
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.ui.util.logDebug
+import com.breadwallet.logger.logDebug
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

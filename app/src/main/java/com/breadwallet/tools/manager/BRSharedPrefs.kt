@@ -34,17 +34,14 @@ import android.support.annotation.VisibleForTesting
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.core.content.edit
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.model.FeeOption
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
-
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager
-
 import org.json.JSONArray
-
 import java.math.BigDecimal
 import java.util.Currency
 import java.util.Locale

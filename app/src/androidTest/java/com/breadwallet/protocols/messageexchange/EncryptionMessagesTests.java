@@ -5,11 +5,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.crypto.Key;
-import com.breadwallet.presenter.activities.settings.TestActivity;
-import com.breadwallet.protocols.messageexchange.MessageExchangeService;
-import com.breadwallet.protocols.messageexchange.Protos;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
-import com.breadwallet.tools.crypto.CryptoHelper;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 

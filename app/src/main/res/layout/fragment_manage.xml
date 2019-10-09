@@ -1,4 +1,4 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.breadwallet.legacy.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout"
     android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:background="@drawable/menu_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
             android:textColor="@color/light_gray"
             android:textSize="18sp" />
 
-        <com.breadwallet.presenter.customviews.BREdit
+        <com.breadwallet.legacy.presenter.customviews.BREdit
             android:id="@+id/wallet_name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             android:layout_marginTop="16dp"
             android:background="@color/separator_gray" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -70,7 +70,7 @@
             android:textColor="@color/gray"
             android:textSize="16sp" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_creation_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,4 +83,4 @@
 
     </LinearLayout>
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</com.breadwallet.legacy.presenter.customviews.BRRelativeLayout>

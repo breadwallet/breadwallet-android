@@ -3,7 +3,7 @@ package com.breadwallet.ui.managewallets
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.applyDisplayOrder
 import com.breadwallet.breadbox.isErc20
-import com.breadwallet.ui.util.bindConsumerIn
+import com.breadwallet.ext.bindConsumerIn
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -12,8 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import com.breadwallet.crypto.Wallet as CryptoWallet
 
 class ManageWalletsEffectHandler(

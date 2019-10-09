@@ -5,7 +5,7 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
+    tools:context="com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity">
 
     <FrameLayout
         android:id="@+id/gradient_layout"
@@ -13,7 +13,7 @@
         android:layout_height="200dp"
         android:background="@drawable/write_down_gradient">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
     </FrameLayout>
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         android:text="@string/StartPaperPhrase.body"
         android:textSize="18sp" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/button_write_down"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"

@@ -1,6 +1,6 @@
 package com.breadwallet.ui.wallet
 
-import com.breadwallet.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
 
 
 sealed class WalletScreenEffect {

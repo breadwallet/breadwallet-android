@@ -31,21 +31,19 @@ package com.breadwallet.ui.home
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.applyDisplayOrder
-import com.breadwallet.breadbox.findByCurrencyId
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
-import com.breadwallet.crypto.Wallet as CryptoWallet
+import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepositoryImpl
-import com.breadwallet.repository.RatesRepository
 import com.breadwallet.repository.MessagesRepository
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.util.bindConsumerIn
 import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -58,7 +56,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
@@ -67,8 +64,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
-import java.lang.Exception
 import java.math.BigDecimal
+import com.breadwallet.crypto.Wallet as CryptoWallet
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenEffectHandler(

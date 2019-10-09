@@ -35,7 +35,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 
 import com.breadwallet.R
-import com.breadwallet.presenter.customviews.BaseTextView
+import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.tools.util.Utils

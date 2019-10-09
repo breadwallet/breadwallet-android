@@ -24,13 +24,13 @@
  */
 package com.breadwallet.tools.util
 
-import com.breadwallet.ui.util.logDebug
-import com.breadwallet.ui.util.logError
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.TimeoutCancellationException
+import com.breadwallet.logger.logDebug
+import com.breadwallet.logger.logError
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 import java.io.IOException
 
 /** The initial attempt count for network operations. */

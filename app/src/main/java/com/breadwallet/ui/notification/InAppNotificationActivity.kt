@@ -26,17 +26,15 @@ package com.breadwallet.ui.notification
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.util.BRActivity
-import com.breadwallet.ui.util.viewModel
-import kotlinx.android.synthetic.main.activity_in_app_notification.*
-import android.net.Uri
+import com.breadwallet.ext.viewModel
+import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.manager.AppEntryPointHandler
-import com.breadwallet.tools.util.EventUtils
 import com.squareup.picasso.Picasso
-
+import kotlinx.android.synthetic.main.activity_in_app_notification.*
 
 /**
  * Screen used to display an in-app notification.
@@ -92,5 +90,4 @@ class InAppNotificationActivity : BRActivity() {
         super.onBackPressed()
         viewModel.markAsRead(false)
     }
-
 }

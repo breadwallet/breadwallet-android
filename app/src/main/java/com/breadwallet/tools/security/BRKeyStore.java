@@ -44,13 +44,16 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.crypto.Account;
-import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.legacy.presenter.customviews.BRDialogView;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.logger.Logger;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -58,13 +61,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.util.Logger;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.WalletInfoData;
 import com.platform.interfaces.AccountMetaDataProvider;
-
-import static org.kodein.di.TypesKt.TT;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,6 +89,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+
+import static org.kodein.di.TypesKt.TT;
 
 /**
  * This class is responsible for storing sensitive data into the KeyStore.

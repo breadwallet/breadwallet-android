@@ -31,8 +31,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.legacy.presenter.entities.BRPeerEntity;
+import com.breadwallet.legacy.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 

@@ -26,15 +26,14 @@ package com.breadwallet.ui.onboarding
 
 import android.content.Context
 import com.bluelinelabs.conductor.Router
-import com.breadwallet.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.util.logError
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
