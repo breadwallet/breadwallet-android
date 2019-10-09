@@ -131,6 +131,11 @@ class MetaDataManager(
             }
     }
 
+    override fun reorderWallets(currencyIds: List<String>) = flow {
+        putEnabledWallets(currencyIds)
+        emit(Unit)
+    }
+
     override fun getPairingMetadata(pubKey: ByteArray): PairingMetaData? =
         try {
             val key = pairingKey(pubKey)
