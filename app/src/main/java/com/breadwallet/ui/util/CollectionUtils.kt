@@ -24,6 +24,11 @@
  */
 package com.breadwallet.ui.util
 
+import java.util.Collections
+
 /** Returns a new [List] with the new [value] stored at [index]. */
 fun <T> List<T>.replaceAt(index: Int, value: T): List<T> =
-        toMutableList().apply { set(index, value) }
+    toMutableList().apply { set(index, value) }
+
+fun <T> List<T>.swap(fromPosition: Int, toPosition: Int) =
+    Collections.swap(this, fromPosition, toPosition)

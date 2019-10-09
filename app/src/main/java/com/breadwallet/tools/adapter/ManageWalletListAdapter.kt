@@ -22,15 +22,18 @@ import com.breadwallet.tools.animation.ItemTouchHelperViewHolder
 import com.breadwallet.tools.listeners.OnStartDragListener
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.managewallets.Wallet
+import com.breadwallet.ui.util.swap
 import com.squareup.picasso.Picasso
 
 import java.io.File
+import java.util.Collections
 
 class ManageWalletListAdapter(
     private val context: Context,
     private val showOrHideListener: OnWalletShowOrHideListener,
     private val addWalletListener: () -> Unit,
-    private val startDragListener: OnStartDragListener
+    private val startDragListener: OnStartDragListener,
+    private val moveWalletListener: (wallets: List<Wallet>) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     ItemTouchHelperAdapter {
 
@@ -129,20 +132,11 @@ class ManageWalletListAdapter(
     override fun onItemDismiss(position: Int) = Unit
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        // TODO: Handle wallet drag/move
-        /*
+        if (toPosition >= wallets.size) return
+
         notifyItemMoved(fromPosition, toPosition)
-
-        val currentMd = KVStoreManager.INSTANCE.getTokenListMetaData(context)
-
-        // Only move this token to position that is not the last position, which is the "Add Wallet"
-        // button
-        if (toPosition < wallets!!.size) {
-            Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition)
-            Collections.swap(wallets, fromPosition, toPosition)
-            KVStoreManager.INSTANCE.putTokenListMetaData(context, currentMd)
-        }
-        */
+        wallets.swap(fromPosition, toPosition)
+        moveWalletListener(wallets)
     }
 
     private fun bindWalletHolder(walletHolder: ManageWalletViewHolder, position: Int) {
