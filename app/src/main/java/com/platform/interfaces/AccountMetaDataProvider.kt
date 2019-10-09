@@ -57,6 +57,9 @@ interface AccountMetaDataProvider {
     /** Disables the wallet for this Account. */
     fun disableWallet(currencyId: String): Flow<Unit>
 
+    /** Reorders the wallet display order */
+    fun reorderWallets(currencyIds: List<String>): Flow<Unit>
+
     /** Clean up. */
     //fun close()
 

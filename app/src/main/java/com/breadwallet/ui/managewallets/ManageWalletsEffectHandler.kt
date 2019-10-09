@@ -31,6 +31,7 @@ class ManageWalletsEffectHandler(
                 value.currencyId,
                 value.isEnabled
             )
+            is ManageWalletsEffect.ReorderWallets -> reorderWallets(value.wallets)
         }
     }
 
@@ -51,6 +52,10 @@ class ManageWalletsEffectHandler(
             isEnabled -> acctMetaDataProvider.enableWallet(currencyId).launchIn(this)
             else -> acctMetaDataProvider.disableWallet(currencyId).launchIn(this)
         }
+    }
+
+    private fun reorderWallets(wallets: List<String>) {
+        acctMetaDataProvider.reorderWallets(wallets).launchIn(this)
     }
 
     private fun CryptoWallet.asWallet(): Wallet {

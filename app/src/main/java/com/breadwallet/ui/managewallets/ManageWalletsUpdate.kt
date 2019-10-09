@@ -61,4 +61,15 @@ object ManageWalletsUpdate :
             )
         )
     }
+
+    override fun onWalletsReorder(
+        model: ManageWalletsModel,
+        event: ManageWalletsEvent.OnWalletsReorder
+    ): Next<ManageWalletsModel, ManageWalletsEffect> {
+        return dispatch(
+            effects(
+                ManageWalletsEffect.ReorderWallets(event.wallets)
+            )
+        )
+    }
 }

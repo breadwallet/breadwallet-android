@@ -6,6 +6,8 @@ sealed class ManageWalletsEffect {
     data class UpdateWallet(val currencyId: String, val isEnabled: Boolean) :
         ManageWalletsEffect()
 
+    data class ReorderWallets(val wallets: List<String>) : ManageWalletsEffect()
+
     object GoToAddWallet : ManageWalletsEffect()
     object GoBack : ManageWalletsEffect()
 
