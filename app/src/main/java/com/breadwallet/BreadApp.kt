@@ -385,6 +385,7 @@ class BreadApp : Application(), KodeinAware {
 
     override fun onCreate() {
         super.onCreate()
+        installHooks()
         mInstance = this
 
         BRSharedPrefs.provideContext(this)
