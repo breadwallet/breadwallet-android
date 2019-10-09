@@ -61,7 +61,7 @@ import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.util.logDebug
 import com.breadwallet.ui.util.logError
 import com.breadwallet.ui.util.logInfo
-import com.platform.interfaces.WalletsProvider
+import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -93,7 +93,7 @@ import java.util.concurrent.Executors
 internal class CoreBreadBox(
     private val storageFile: File,
     private val isMainnet: Boolean = false,
-    private val walletsProvider: WalletsProvider,
+    private val walletProvider: WalletProvider,
     // TODO: Allow reconfiguring manager mode
     private val walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
 ) : BreadBox,
@@ -133,7 +133,7 @@ internal class CoreBreadBox(
     private val walletTransfersChannelMap = createChannelMap<String, List<Transfer>>()
     private val transferUpdatedChannelMap = createChannelMap<String, Transfer>()
 
-    private val walletTracker = SystemWalletTracker(walletsProvider, system())
+    private val walletTracker = SystemWalletTracker(walletProvider, system())
 
     private fun <K, V> createChannelMap(): MutableMap<K, BroadcastChannel<V>> =
         mutableMapOf<K, BroadcastChannel<V>>().run {

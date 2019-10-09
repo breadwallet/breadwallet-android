@@ -69,7 +69,7 @@ import com.platform.HTTPServer
 import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
-import com.platform.interfaces.WalletsProvider
+import com.platform.interfaces.WalletProvider
 import com.platform.tools.KVStoreManager
 
 import java.io.File
@@ -319,7 +319,7 @@ class BreadApp : Application(), KodeinAware {
 
         val metaDataManager by lazy { MetaDataManager(direct.instance()) }
 
-        bind<WalletsProvider>() with singleton { metaDataManager }
+        bind<WalletProvider>() with singleton { metaDataManager }
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 

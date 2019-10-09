@@ -1,6 +1,7 @@
 package com.breadwallet.ui.managewallets
 
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.applyDisplayOrder
 import com.breadwallet.breadbox.isErc20
 import com.breadwallet.ui.util.bindConsumerIn
 import com.platform.interfaces.AccountMetaDataProvider
@@ -39,6 +40,7 @@ class ManageWalletsEffectHandler(
 
     private fun loadEnabledWallets() {
         breadBox.wallets()
+            .applyDisplayOrder(acctMetaDataProvider.enabledWallets())
             .mapLatest { wallets -> wallets.map { it.asWallet() } }
             .map { ManageWalletsEvent.OnWalletsUpdated(it) }
             .bindConsumerIn(output, this)

@@ -2,7 +2,7 @@ package com.platform.interfaces
 
 import kotlinx.coroutines.flow.Flow
 
-interface WalletsProvider {
+interface WalletProvider {
 
     fun enabledWallets(): Flow<List<String>>
 

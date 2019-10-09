@@ -27,11 +27,15 @@ package com.breadwallet.breadbox
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
+import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.Wallet
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.util.WalletDisplayUtils
 import com.breadwallet.ui.util.logError
 import com.breadwallet.wallet.wallets.WalletManagerHelper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -95,3 +99,19 @@ fun BigDecimal.formatFiatForUi(currencyCode: String): String {
 
     return currencyFormat.format(this)
 }
+
+/** Returns the [Wallet] with the given [currencyId] or null. */
+fun List<Wallet>.findByCurrencyId(currencyId: String) =
+    find { it.walletManager.network.currency.uids.equals(currencyId, true) }
+
+/** Returns the [Network] with the given [currencyId] or null. */
+fun List<Network>.findByCurrencyId(currencyId: String) =
+    find { it.currency.uids.equals(currencyId, true) }
+
+/** Returns [Wallet] [Flow] sorted by [displayOrderCurrencyIds]. */
+fun Flow<List<Wallet>>.applyDisplayOrder(displayOrderCurrencyIds: Flow<List<String>>) =
+    combine(displayOrderCurrencyIds) { systemWallets, currencyIds ->
+        currencyIds.mapNotNull {
+            systemWallets.findByCurrencyId(it)
+        }
+    }
