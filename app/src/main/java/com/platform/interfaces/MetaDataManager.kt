@@ -35,7 +35,7 @@ import java.util.Date
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class MetaDataManager(
     private val storeProvider: KVStoreProvider
-) : WalletsProvider, AccountMetaDataProvider {
+) : WalletProvider, AccountMetaDataProvider {
 
     // TODO: Decompose further
 
@@ -43,18 +43,22 @@ class MetaDataManager(
         private const val KEY_WALLET_INFO = "wallet-info"
         private const val KEY_SEGWIT_META_DATA = "segwit-metadata"
         private const val KEY_TOKEN_LIST_META_DATA = "token-list-metadata"
-        private const val KEY_CURSOR = "lastCursor"
+        private const val KEY_MSG_INBOX = "encrypted-message-inbox-metadata"
         private const val KEY_ASSET_INDEX = "asset-index"
         private const val MY_BREAD = "My Bread"
         private const val CURSOR = "cursor"
         private const val ENABLED_ASSET_IDS = "enabledAssetIds"
+        private const val CLASS_VERSION = "classVersion"
+        private const val CLASS_VERSION_WALLET_INFO = 3
+        private const val CLASS_VERSION_ASSET_IDS = 2
+        private const val CLASS_VERSION_MSG_INBOX = 1
         private const val TX_META_DATA_KEY_PREFIX = "txn2-"
         private const val PAIRING_META_DATA_KEY_PREFIX = "pwd-"
         private const val EXCHANGE_RATE_SCALE = 8
     }
 
     override fun create(accountCreationDate: Date) {
-        WalletInfoData().apply {
+        WalletInfoData(CLASS_VERSION_WALLET_INFO).apply {
             creationDate = accountCreationDate.time.toInt()
             putWalletInfo(this)
         }
@@ -150,7 +154,7 @@ class MetaDataManager(
 
     override fun getLastCursor(): String? =
         try {
-            storeProvider.get(KEY_CURSOR)?.getString(CURSOR)
+            storeProvider.get(KEY_MSG_INBOX)?.getString(CURSOR)
         } catch (ex: JSONException) {
             logError("Error getting last cursor", ex)
             null
@@ -158,7 +162,13 @@ class MetaDataManager(
 
     override fun putLastCursor(lastCursor: String): Boolean =
         storeProvider.put(
-            KEY_CURSOR, JSONObject(mapOf(CURSOR to lastCursor))
+            KEY_MSG_INBOX,
+            JSONObject(
+                mapOf(
+                    CLASS_VERSION to CLASS_VERSION_MSG_INBOX,
+                    CURSOR to lastCursor
+                )
+            )
         )
 
     override fun getTxMetaData(txHash: ByteArray): TxMetaData? =
@@ -253,7 +263,12 @@ class MetaDataManager(
     }
 
     private fun enabledWalletsToJSON(wallets: List<String>) =
-        JSONObject().put(ENABLED_ASSET_IDS, wallets.toJSON())
+        JSONObject(
+            mapOf(
+                CLASS_VERSION to CLASS_VERSION_ASSET_IDS,
+                ENABLED_ASSET_IDS to wallets.toJSON()
+            )
+        )
 
     private fun jsonToEnabledWallets(walletsJSON: JSONObject) =
         walletsJSON
@@ -269,7 +284,11 @@ class MetaDataManager(
     }
 
     // TODO: refactor to avoid wallet manager
-    fun createMetadata(app: Context, wm: BaseWalletManager, tx: CryptoTransaction): TxMetaData {
+    fun createMetadata(
+        app: Context,
+        wm: BaseWalletManager,
+        tx: CryptoTransaction
+    ): TxMetaData {
         return TxMetaData().apply {
             exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app)
             val ent = RatesRepository

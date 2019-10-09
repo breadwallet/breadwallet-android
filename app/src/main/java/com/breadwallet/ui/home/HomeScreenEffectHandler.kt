@@ -30,6 +30,8 @@ package com.breadwallet.ui.home
 
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.applyDisplayOrder
+import com.breadwallet.breadbox.findByCurrencyId
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Wallet as CryptoWallet
@@ -44,6 +46,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.util.bindConsumerIn
+import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import com.squareup.picasso.Callback
@@ -55,6 +58,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
@@ -70,7 +74,8 @@ import java.math.BigDecimal
 class HomeScreenEffectHandler(
     private val output: Consumer<HomeScreenEvent>,
     private val context: Context,
-    private val breadBox: BreadBox
+    private val breadBox: BreadBox,
+    private val walletProvider: WalletProvider
 ) : Connection<HomeScreenEffect>,
     CoroutineScope,
     RatesDataSource.OnDataChanged {
@@ -105,6 +110,7 @@ class HomeScreenEffectHandler(
     private fun loadWallets() {
         // Update wallets list
         breadBox.wallets()
+            .applyDisplayOrder(walletProvider.enabledWallets())
             .mapLatest { wallets -> wallets.map { it.asWallet() } }
             .map { HomeScreenEvent.OnWalletsUpdated(it) }
             .bindConsumerIn(output, this)

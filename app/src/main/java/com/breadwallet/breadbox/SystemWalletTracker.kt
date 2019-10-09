@@ -3,7 +3,7 @@ package com.breadwallet.breadbox
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.ui.util.logDebug
-import com.platform.interfaces.WalletsProvider
+import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -15,18 +15,18 @@ import kotlinx.coroutines.flow.onEach
 // is already handling the stream of enabled wallets from the Wallets Provider, perhaps that'll be
 // too much responsibility for one class, but better here than in CoreBreadBox.
 class SystemWalletTracker(
-    private val walletsProvider: WalletsProvider,
+    private val walletProvider: WalletProvider,
     private val system: Flow<System>
 ) {
 
     fun trackedWallets() =
-        walletsProvider
+        walletProvider
             .enabledWallets()
             .mapLatest { currencyIds ->
                 currencyIds.mapNotNull { currencyId ->
                     system.first()
                         .networks
-                        .find { it.currency.uids.equals(currencyId, true) }
+                        .findByCurrencyId(currencyId)
                         ?.run { currency.code }
                 }
             }
