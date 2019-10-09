@@ -63,17 +63,22 @@ class ManageWalletsController :
             activity!!,
             object : ManageWalletListAdapter.OnWalletShowOrHideListener {
                 override fun onShow(wallet: Wallet) {
-                    logDebug("show: $wallet")
                     output.accept(ManageWalletsEvent.OnShowClicked(wallet.currencyId))
                 }
 
                 override fun onHide(wallet: Wallet) {
-                    logDebug("hide: $wallet")
                     output.accept(ManageWalletsEvent.OnHideClicked(wallet.currencyId))
                 }
             },
             { output.accept(ManageWalletsEvent.OnAddWalletClicked) },
-            this
+            this,
+            { wallets ->
+                output.accept(
+                    ManageWalletsEvent.OnWalletsReorder(
+                        wallets.map { it.currencyId }
+                    )
+                )
+            }
         )
 
         token_list.layoutManager = LinearLayoutManager(activity)

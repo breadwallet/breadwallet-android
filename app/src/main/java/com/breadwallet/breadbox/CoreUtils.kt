@@ -100,6 +100,9 @@ fun BigDecimal.formatFiatForUi(currencyCode: String): String {
     return currencyFormat.format(this)
 }
 
+val Wallet.currencyId: String
+    get() = walletManager.network.currency.uids
+
 /** Returns the [Wallet] with the given [currencyId] or null. */
 fun List<Wallet>.findByCurrencyId(currencyId: String) =
     find { it.walletManager.network.currency.uids.equals(currencyId, true) }
