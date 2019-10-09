@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/currency_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

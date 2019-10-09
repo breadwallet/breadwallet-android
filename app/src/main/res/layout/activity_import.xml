@@ -5,9 +5,9 @@
     android:id="@+id/activity_intro_recover"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
+    tools:context="com.breadwallet.legacy.presenter.activities.intro.RecoverActivity">
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/scan_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/button_height"
@@ -22,7 +22,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/textView12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

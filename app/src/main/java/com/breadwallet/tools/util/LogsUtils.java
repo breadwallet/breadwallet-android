@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRToast;
+import com.breadwallet.legacy.presenter.customviews.BRToast;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import org.apache.commons.io.IOUtils;

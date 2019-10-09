@@ -11,7 +11,7 @@
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.breadwallet.presenter.activities.HomeActivity">
+    tools:context="com.breadwallet.legacy.presenter.activities.HomeActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:layout_marginTop="60dp"
                 android:background="@drawable/brd_logo_gradient" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:textSize="12sp"
                 app:brdFont="@string/Font.CircularPro_Medium" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -157,7 +157,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintStart_toStartOf="@+id/imageView4" />
 
-                    <com.breadwallet.presenter.customviews.BaseTextView
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
                         android:id="@+id/buy_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
                         android:src="@drawable/ic_menu_trade"
                         android:tint="@color/white" />
 
-                    <com.breadwallet.presenter.customviews.BaseTextView
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -217,7 +217,7 @@
                         android:src="@drawable/ic_menu_more"
                         android:tint="@color/white" />
 
-                    <com.breadwallet.presenter.customviews.BaseTextView
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -232,7 +232,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.breadwallet.presenter.customviews.BRNotificationBar
+    <com.breadwallet.legacy.presenter.customviews.BRNotificationBar
         android:id="@+id/notification_bar"
         android:layout_width="match_parent"
         android:layout_height="160dp"

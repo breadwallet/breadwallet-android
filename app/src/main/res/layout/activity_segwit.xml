@@ -5,7 +5,7 @@
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.settings.ShareDataActivity">
+    tools:context="com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -27,7 +27,7 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/toolbar_back_arrow" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/enable_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
@@ -103,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/baseTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
             android:weightSum="2"
             app:layout_constraintTop_toBottomOf="@+id/baseTextView">
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <com.breadwallet.legacy.presenter.customviews.BRButton
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                 app:hasShadow="false"
                 app:isBreadButton="true" />
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <com.breadwallet.legacy.presenter.customviews.BRButton
                 android:id="@+id/continue_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/confirmation_instructions1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"

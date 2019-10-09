@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.legacy.presenter.customviews.BRButton;
 import com.breadwallet.tools.util.CurrencyUtils;
 
 import java.util.ArrayList;

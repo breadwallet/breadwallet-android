@@ -31,8 +31,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BlockEntity;
+import com.breadwallet.legacy.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.legacy.presenter.entities.BlockEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 

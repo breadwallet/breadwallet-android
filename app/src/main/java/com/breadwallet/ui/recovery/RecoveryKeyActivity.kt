@@ -32,7 +32,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 
-import com.breadwallet.presenter.activities.util.BRActivity
+import com.breadwallet.legacy.presenter.activities.util.BRActivity
 
 class RecoveryKeyActivity : BRActivity() {
 

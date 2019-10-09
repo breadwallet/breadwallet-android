@@ -5,7 +5,7 @@
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.ui.pricealert.NewPriceAlertActivity">
+    tools:context=".legacy.pricealert.NewPriceAlertActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -36,7 +36,7 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:background="?attr/save_price_alert_button" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/current_rate_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/separator"
         tools:text="$160.32" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/select_crypto_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_crypto_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_crypto_button" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_to_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator2" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/for_currency_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_to_currency" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/alert_when_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
         app:layout_constraintTop_toTopOf="@+id/select_alert_when"
         app:layout_constraintVertical_bias="0.50" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_alert_when"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_alert_when" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/chart_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/value_input" />
 
-    <com.breadwallet.presenter.customviews.BREdit
+    <com.breadwallet.legacy.presenter.customviews.BREdit
         android:id="@+id/value_input"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
@@ -240,7 +240,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/value_input" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_window_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -254,7 +254,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator5" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/window_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

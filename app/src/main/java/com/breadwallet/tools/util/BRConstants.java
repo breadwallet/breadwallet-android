@@ -1,9 +1,9 @@
 package com.breadwallet.tools.util;
 
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletTokenManager;
 import com.google.common.collect.ImmutableList;
 import com.platform.entities.TokenListMetaData;
 

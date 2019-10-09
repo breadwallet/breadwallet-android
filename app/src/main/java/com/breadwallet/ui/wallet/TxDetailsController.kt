@@ -33,26 +33,24 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import com.breadwallet.BreadApp
-
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.breadbox.isErc20
+import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.TransferState
-import com.breadwallet.presenter.entities.CurrencyEntity
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.ui.BaseController
-import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.breadbox.isErc20
-import com.breadwallet.breadbox.toSanitizedString
-import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.platform.entities.TxMetaData
 import com.platform.interfaces.AccountMetaDataProvider
-import com.platform.tools.KVStoreManager
 import kotlinx.android.synthetic.main.transaction_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,9 +60,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import org.kodein.di.direct
 import org.kodein.di.erased.instance
-
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Date

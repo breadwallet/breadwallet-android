@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
 /**

@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;

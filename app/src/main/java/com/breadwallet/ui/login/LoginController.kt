@@ -37,9 +37,9 @@ import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.presenter.activities.BrdWalletController
-import com.breadwallet.presenter.customviews.PinLayout
-import com.breadwallet.presenter.interfaces.BRAuthCompletion
+import com.breadwallet.legacy.presenter.customviews.PinLayout
+import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.AppEntryPointHandler
@@ -50,9 +50,9 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
-import com.breadwallet.ui.util.isBrd
-import com.breadwallet.ui.util.logError
+import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
+import com.breadwallet.util.isBrd
 import kotlinx.android.synthetic.main.activity_pin.*
 import kotlinx.android.synthetic.main.pin_digits.*
 
