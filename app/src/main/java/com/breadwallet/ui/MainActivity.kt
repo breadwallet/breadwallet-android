@@ -33,11 +33,11 @@ import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
-import com.breadwallet.BreadApp
-
 import com.breadwallet.BuildConfig
-import com.breadwallet.presenter.activities.util.BRActivity
-import com.breadwallet.presenter.entities.CryptoRequest
+import com.breadwallet.app.BreadApp
+import com.breadwallet.legacy.presenter.activities.util.BRActivity
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
@@ -46,7 +46,6 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
-import com.breadwallet.ui.util.logError
 
 /**
  * The main user entrypoint into the app.

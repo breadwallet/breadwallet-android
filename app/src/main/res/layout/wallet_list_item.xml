@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.breadwallet.presenter.customviews.ShimmerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.breadwallet.legacy.presenter.customviews.ShimmerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/shimmerLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,7 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/icon_letter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +51,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +66,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/icon_container" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_trade_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +80,7 @@
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/price_change"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -94,7 +93,7 @@
             app:layout_constraintStart_toEndOf="@+id/divider"
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_balance_fiat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,7 +106,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_balance_currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,7 +133,7 @@
             app:layout_constraintEnd_toEndOf="@+id/wallet_balance_fiat"
             app:layout_constraintTop_toTopOf="@+id/syncing_label" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/syncing_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -169,4 +168,4 @@
 
     </android.support.constraint.ConstraintLayout>
 
-</com.breadwallet.presenter.customviews.ShimmerLayout>
+</com.breadwallet.legacy.presenter.customviews.ShimmerLayout>

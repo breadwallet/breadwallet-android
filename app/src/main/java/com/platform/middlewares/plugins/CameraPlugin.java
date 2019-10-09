@@ -12,10 +12,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.camera.CameraActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.legacy.presenter.activities.camera.CameraActivity;
+import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;

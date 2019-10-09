@@ -11,7 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.legacy.presenter.customviews.BRButton;
 import com.spotify.mobius.functions.Consumer;
 
 /**

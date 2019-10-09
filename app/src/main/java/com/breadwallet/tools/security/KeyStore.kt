@@ -26,9 +26,9 @@ package com.breadwallet.tools.security
 
 import android.app.Activity
 import android.security.keystore.UserNotAuthenticatedException
-import com.breadwallet.BreadApp
+import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Account
-import com.breadwallet.ui.util.logInfo
+import com.breadwallet.logger.logInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel

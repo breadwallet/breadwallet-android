@@ -10,8 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-
-import com.breadwallet.BreadApp;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;

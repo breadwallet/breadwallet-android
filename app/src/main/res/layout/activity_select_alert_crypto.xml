@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/toolbar_back_arrow" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/add_wallets_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <com.breadwallet.presenter.customviews.BREdit
+    <com.breadwallet.legacy.presenter.customviews.BREdit
         android:id="@+id/search_edit"
         android:layout_width="match_parent"
         android:layout_height="60dp"

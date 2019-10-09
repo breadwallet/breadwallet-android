@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.legacy.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.List;

@@ -29,15 +29,14 @@
 package com.platform.tools
 
 import android.content.Context
-
+import com.breadwallet.logger.logDebug
+import com.breadwallet.logger.logError
+import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.util.BRCompressor
-import com.breadwallet.ui.util.logDebug
-import com.breadwallet.ui.util.logError
-import com.breadwallet.ui.util.logWarning
+import com.breadwallet.tools.util.netRetry
 import com.platform.APIClient
 import com.platform.interfaces.KVStoreProvider
-import com.breadwallet.tools.util.netRetry
 import com.platform.kvstore.CompletionObject
 import com.platform.kvstore.RemoteKVStore
 import com.platform.kvstore.ReplicatedKVStore
@@ -50,9 +49,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-
 import org.json.JSONObject
-
 import java.io.IOException
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)

@@ -1,12 +1,12 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                        android:id="@+id/layout"
-                                                        android:layout_width="match_parent"
-                                                        android:layout_height="match_parent"
-                                                        android:background="@android:color/transparent"
-                                                        android:filterTouchesWhenObscured="true"
-                                                        android:orientation="vertical"
-                                                        android:padding="0dp">
+<com.breadwallet.legacy.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical"
+    android:padding="0dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/signal_layout"
@@ -32,10 +32,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/BRText3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,9 +49,9 @@
             app:layout_constraintHorizontal_bias="0.511"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4"/>
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/BRText4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -68,9 +67,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/BRText3"/>
+            app:layout_constraintTop_toBottomOf="@+id/BRText3" />
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/ok"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
@@ -91,8 +90,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/BRText4"
-            app:layout_constraintVertical_bias="1.0"/>
+            app:layout_constraintVertical_bias="1.0" />
 
     </android.support.constraint.ConstraintLayout>
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</com.breadwallet.legacy.presenter.customviews.BRRelativeLayout>

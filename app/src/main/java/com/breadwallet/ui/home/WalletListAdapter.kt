@@ -33,21 +33,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-
 import com.breadwallet.R
-import com.breadwallet.presenter.customviews.BaseTextView
-import com.breadwallet.presenter.customviews.ShimmerLayout
+import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.legacy.presenter.customviews.BaseTextView
+import com.breadwallet.legacy.presenter.customviews.ShimmerLayout
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
-import com.breadwallet.ui.util.WalletDisplayUtils
-import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.ui.util.isBrd
+import com.breadwallet.util.WalletDisplayUtils
+import com.breadwallet.util.isBrd
 import com.squareup.picasso.Picasso
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.wallet_list_item.*
-
 import java.io.File
 import java.math.BigDecimal
 import java.text.NumberFormat

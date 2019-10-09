@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.settings.TestActivity;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;

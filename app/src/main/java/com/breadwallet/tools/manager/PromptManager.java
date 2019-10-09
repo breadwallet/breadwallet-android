@@ -11,21 +11,21 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.presenter.customviews.BREdit;
-import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.presenter.customviews.PinLayout;
+import com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity;
+import com.breadwallet.legacy.presenter.customviews.BRButton;
+import com.breadwallet.legacy.presenter.customviews.BREdit;
+import com.breadwallet.legacy.presenter.customviews.BaseTextView;
+import com.breadwallet.legacy.presenter.customviews.PinLayout;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.MainActivity;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.util.usermetrics.UserMetricsUtil;
 
 import java.util.regex.Pattern;
 

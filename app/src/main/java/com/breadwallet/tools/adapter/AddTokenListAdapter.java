@@ -2,14 +2,7 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
@@ -22,8 +15,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.legacy.presenter.customviews.BaseTextView;
+import com.breadwallet.legacy.presenter.entities.TokenItem;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.squareup.picasso.Picasso;

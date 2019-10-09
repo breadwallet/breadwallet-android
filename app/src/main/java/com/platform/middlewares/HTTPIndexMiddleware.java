@@ -3,7 +3,7 @@ package com.platform.middlewares;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
@@ -69,7 +69,7 @@ public class HTTPIndexMiddleware implements Middleware {
             Assert.assertNotNull(body);
             Assert.assertNotSame(body.length, 0);
             response.setHeader("Content-Length", String.valueOf(body.length));
-            APIClient.BRResponse resp = new APIClient.BRResponse(body, 200,"text/html;charset=utf-8");
+            APIClient.BRResponse resp = new APIClient.BRResponse(body, 200, "text/html;charset=utf-8");
 
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } catch (IOException e) {

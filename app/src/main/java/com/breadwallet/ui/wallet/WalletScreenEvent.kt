@@ -2,7 +2,7 @@ package com.breadwallet.ui.wallet
 
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import java.math.BigDecimal
 
 sealed class WalletScreenEvent {

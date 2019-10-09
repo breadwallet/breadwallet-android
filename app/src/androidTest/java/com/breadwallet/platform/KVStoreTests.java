@@ -6,12 +6,10 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Base64;
 
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.activities.settings.TestActivity;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.platform.entities.TxMetaData;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.kvstore.CompletionObject;
