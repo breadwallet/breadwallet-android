@@ -69,7 +69,12 @@ class HomeController(
 
         CompositeEffectHandler.from(
             Connectable { output ->
-                HomeScreenEffectHandler(output, activity as BRActivity, direct.instance())
+                HomeScreenEffectHandler(
+                    output,
+                    activity as BRActivity,
+                    direct.instance(),
+                    direct.instance()
+                )
             },
             nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
                 when (effect) {
