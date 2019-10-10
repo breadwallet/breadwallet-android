@@ -35,6 +35,7 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
 import com.spotify.mobius.EventSource
+import com.spotify.mobius.First
 import com.spotify.mobius.Init
 import com.spotify.mobius.Mobius
 import com.spotify.mobius.MobiusLoop
@@ -45,6 +46,11 @@ import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.onStart
 import org.kodein.di.Kodein
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.provider
@@ -68,12 +74,25 @@ abstract class BaseMobiusController<M, E, F>(
         }
     }
 
+    private val modelChannel = BroadcastChannel<M>(Channel.BUFFERED)
+
+    /**
+     * A [Flow] that emits [M] when a new model is provided and
+     * emits the current model when the loop is running.
+     */
+    val model: Flow<M> = modelChannel.asFlow()
+        .onStart {
+            if (loopController.isRunning) {
+                emit(loopController.model)
+            }
+        }
+
     /** The default model used to construct [loopController]. */
     abstract val defaultModel: M
     /** The update function used to construct [loopFactory]. */
     abstract val update: Update<M, E, F>
     /** The init function used to construct [loopFactory]. */
-    abstract val init: Init<M, F>
+    open val init: Init<M, F> = Init { First.first(it) }
     /** The effect handler used to construct [loopFactory]. */
     abstract val effectHandler: Connectable<F, E>
 
@@ -120,10 +139,12 @@ abstract class BaseMobiusController<M, E, F>(
             loopController.connect { output ->
                 object : Connection<M>, Disposable by bindView(output) {
                     override fun accept(value: M) {
+                        modelChannel.offer(value)
                         value.render()
                         previousModel = value
                     }
                 }.also {
+                    modelChannel.offer(loopController.model)
                     /* Initial render */
                     previousModel = null
                     loopController.model.render()

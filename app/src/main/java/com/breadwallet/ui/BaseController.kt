@@ -33,6 +33,11 @@ import androidx.core.widget.toast
 import com.bluelinelabs.conductor.Controller
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.android.kodein
@@ -41,9 +46,14 @@ import org.kodein.di.android.kodein
  * A simple controller that automatically inflates the
  * [layoutId] and implements [LayoutContainer].
  */
+@Suppress("TooManyFunctions")
 abstract class BaseController(
     args: Bundle? = null
 ) : Controller(args), KodeinAware, LayoutContainer {
+
+    protected val controllerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    protected val viewAttachScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    protected val viewCreatedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /** Provides the root Application Kodein instance. */
     override val kodein by closestKodein {
@@ -72,7 +82,18 @@ abstract class BaseController(
 
     override fun onDestroyView(view: View) {
         super.onDestroyView(view)
+        viewCreatedScope.coroutineContext.cancelChildren()
         clearFindViewByIdCache()
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        viewAttachScope.coroutineContext.cancelChildren()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        controllerScope.coroutineContext.cancelChildren()
     }
 
     @Suppress("UNCHECKED_CAST")

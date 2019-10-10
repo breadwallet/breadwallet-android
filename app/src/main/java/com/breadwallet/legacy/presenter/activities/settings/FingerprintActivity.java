@@ -71,8 +71,6 @@ public class FingerprintActivity extends BRActivity {
 
         toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 
-        limitExchange.setText(getLimitText());
-
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -100,10 +98,12 @@ public class FingerprintActivity extends BRActivity {
                 AuthManager.getInstance().authPrompt(FingerprintActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
+                        /* TODO: Will something else be replacing spend limit?
                         Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
                         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         startActivity(intent);
                         finish();
+                        */
                     }
 
                     @Override
@@ -130,20 +130,6 @@ public class FingerprintActivity extends BRActivity {
         limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
         limitInfo.setHighlightColor(Color.TRANSPARENT);
 
-    }
-
-    private String getLimitText() {
-        String iso = BRSharedPrefs.getPreferredFiatIso(this);
-        //amount in satoshis
-
-        WalletBitcoinManager wm = WalletBitcoinManager.getInstance(this);
-        BigDecimal cryptoLimit = BRKeyStore.getSpendLimit(this, wm.getCurrencyCode());
-
-        //amount in user preferred ISO (e.g. USD)
-        BigDecimal curAmount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
-        //formatted string for the label
-        return String.format(getString(R.string.TouchIdSettings_spendingLimit),
-                CurrencyUtils.getFormattedAmount(this, wm.getCurrencyCode(), cryptoLimit), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
     }
 
     @Override

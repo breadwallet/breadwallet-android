@@ -74,6 +74,7 @@ class MainActivity : BRActivity() {
 
     private lateinit var router: Router
 
+    @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!(application as BreadApp).isDeviceStateValid) {

@@ -259,10 +259,6 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     //when pin auth success
     public void authSuccess(final Context app) {
         //put the new total limit
-        BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(app);
-        if (walletManager != null) {
-            BRKeyStore.putTotalLimit(app, walletManager.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, walletManager.getCurrencyCode())), walletManager.getCurrencyCode());
-        }
         BRKeyStore.putFailCount(0, app);
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
     }

@@ -45,6 +45,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.managewallets.AddWalletsActivity
 import com.breadwallet.ui.notification.InAppNotificationActivity
+import com.breadwallet.ui.send.SendSheetController
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
@@ -159,6 +160,7 @@ class NavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
+        // TODO: Replace with a controller and remove WalletsMaster usage
         val wm = WalletsMaster.getInstance().getCurrentWallet(activity)
         UiUtils.showSupportFragment(activity as FragmentActivity, effect.articleId, wm)
     }
@@ -209,5 +211,9 @@ class NavigationEffectHandler(
         }
         activity.startActivity(intent)
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down)
+    }
+
+    override fun goToQrScan() {
+        UiUtils.openScanner(activity, SendSheetController.QR_SCAN_RC) // TODO: use controller
     }
 }
