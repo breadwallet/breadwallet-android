@@ -90,7 +90,7 @@ open class WalletController(
             // into WalletEffects and passed to WalletEffectHandler
             // (events produced are converted into WalletScreenEvents)
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, activity!!, currencyCode, direct.instance())
+                BreadBoxEffectHandler(output, currencyCode, direct.instance())
             }, { effect: WalletScreenEffect ->
                 // Map incoming effect
                 when (effect) {
@@ -136,8 +136,6 @@ open class WalletController(
             },
             nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
                 when (effect) {
-                    is WalletScreenEffect.GoToSend ->
-                        NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
                     is WalletScreenEffect.GoToReceive ->
                         NavigationEffect.GoToReceive(effect.currencyId)
                     WalletScreenEffect.GoBack -> NavigationEffect.GoBack
@@ -148,6 +146,8 @@ open class WalletController(
             }),
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
                 when (effect) {
+                    is WalletScreenEffect.GoToSend ->
+                        NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
                     is WalletScreenEffect.GoToTransaction ->
                         NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)
                     else -> null

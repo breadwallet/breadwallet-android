@@ -27,6 +27,7 @@ package com.breadwallet.ui.navigation
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.managewallets.ManageWalletsController
@@ -89,7 +90,13 @@ class RouterNavigationEffectHandler(
 
     override fun goToAddWallet() = Unit
 
-    override fun goToSend(effect: NavigationEffect.GoToSend) = Unit
+    override fun goToSend(effect: NavigationEffect.GoToSend) {
+        val controller = when {
+            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest)
+            else -> SendSheetController(effect.currencyId)
+        }
+        router.pushController(RouterTransaction.with(controller))
+    }
 
     override fun goToReceive(effect: NavigationEffect.GoToReceive) = Unit
 
@@ -142,4 +149,6 @@ class RouterNavigationEffectHandler(
     override fun goToDisabledScreen() = Unit
 
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) = Unit
+
+    override fun goToQrScan() = Unit
 }

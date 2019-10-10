@@ -377,4 +377,55 @@ public class CryptoUriParser {
         return url.trim().replaceAll("\n", "").replaceAll(" ", "%20");
     }
 
+    // TODO: Parse crypto request
+    /*
+    @JvmOverloads
+    fun saveViewModelData(context: Context? = activity, request: CryptoRequest? = null) {
+        var address: String? = null
+        var code: String? = null
+        var amount: String? = null
+        var memo: String? = null
+        if (request == null) {
+            if (comment_edit != null) {
+                memo = comment_edit.text.toString()
+                address = address_edit.text.toString()
+                code = mSelectedCurrencyCode
+            }
+        } else {
+            address = request.address
+            memo = request.message
+            code = request.currencyCode
+            val walletManager = WalletsMaster.getInstance().getCurrentWallet(context)
+            if (request.amount != null && request.amount > BigDecimal.ZERO && !request.currencyCode.equals(
+                    WalletEthManager.ETH_CURRENCY_CODE,
+                    ignoreCase = true
+                )
+            ) {
+                // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
+                amount = walletManager.getCryptoForSmallestCrypto(context, BigDecimal(request.amount.toPlainString()))
+                    .toPlainString()
+            } else if (request.value != null && request.value > BigDecimal.ZERO && request.currencyCode.equals(
+                    WalletEthManager.ETH_CURRENCY_CODE,
+                    ignoreCase = true
+                )
+            ) {
+                // ETH request amount param is named `value` and it is in ether.
+                amount = walletManager.getCryptoForSmallestCrypto(context, BigDecimal(request.value.toPlainString()))
+                    .toPlainString()
+            }
+        }
+        if (!address.isNullOrBlank()) {
+            mViewModel.address = address
+        }
+        if (!memo.isNullOrEmpty()) {
+            mViewModel.memo = memo
+        }
+        if (!code.isNullOrBlank()) {
+            mViewModel.chosenCode = code
+        }
+        if (!amount.isNullOrBlank()) {
+            mViewModel.amount = amount
+        }
+    }
+     */
 }

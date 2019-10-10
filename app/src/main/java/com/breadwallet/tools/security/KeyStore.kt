@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 interface KeyStore {
 
     /** We intentionally expose [DefaultKeyStore] for Activity result handling. */
+    @Deprecated("Inject KeyStore via Kodein.")
     companion object : DefaultKeyStore()
 
     suspend fun putPhrase(phrase: ByteArray)

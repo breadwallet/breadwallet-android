@@ -1,6 +1,7 @@
 package com.breadwallet.legacy.presenter.activities.camera;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -174,12 +175,18 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mCameraGuide.setImageResource(R.drawable.cameraguide);
-                        // TODO show home controller without requesting PIN
-                        Intent intent = new Intent(ScanQRActivity.this, MainActivity.class);
-                        intent.putExtra(MainActivity.EXTRA_DATA, url);
-                        intent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
+                        if (getCallingActivity() != null) {
+                            Intent intent = new Intent();
+                            intent.putExtra(MainActivity.EXTRA_DATA, url);
+                            setResult(Activity.RESULT_OK);
+                        } else {
+                            mCameraGuide.setImageResource(R.drawable.cameraguide);
+                            // TODO show home controller without requesting PIN
+                            Intent intent = new Intent(ScanQRActivity.this, MainActivity.class);
+                            intent.putExtra(MainActivity.EXTRA_DATA, url);
+                            intent.addFlags(FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        }
                         finish();
                     }
                 });

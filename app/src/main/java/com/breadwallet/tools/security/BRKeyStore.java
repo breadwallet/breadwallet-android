@@ -763,38 +763,6 @@ public final class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    @Deprecated
-    public static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
-        return false;
-    }
-
-    @Deprecated
-    public static BigDecimal getSpendLimit(final Context context, String iso) {
-        return BigDecimal.ZERO;
-    }
-
-    public static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(TOTAL_LIMIT_ALIAS);
-        byte[] bytesToStore = totalLimit.toPlainString().getBytes();
-        try {
-            return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static BigDecimal getTotalLimit(final Context context, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(TOTAL_LIMIT_ALIAS);
-        byte[] result = new byte[0];
-        try {
-            result = getData(context, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : BigDecimal.ZERO;
-    }
-
     public static boolean putFailTimeStamp(long spendLimit, Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(FAIL_TIMESTAMP_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
@@ -905,7 +873,7 @@ public final class BRKeyStore {
         return base64 == null ? null : Base64.decode(base64, Base64.DEFAULT);
     }
 
-    private static synchronized void showAuthenticationScreen(Context context, int requestCode, String alias) {
+    private static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         if (!alias.equalsIgnoreCase(PHRASE_ALIAS)) {
@@ -913,18 +881,20 @@ public final class BRKeyStore {
         }
         if (context instanceof Activity) {
             Activity app = (Activity) context;
-            KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
-                    context.getString(R.string.UnlockScreen_touchIdTitle_android),
-                    context.getString(R.string.UnlockScreen_touchIdPrompt_android));
-            if (intent != null) {
-                ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
-                app.startActivityForResult(intent, requestCode);
-            } else {
-                Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
-                BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
-                app.finish();
-            }
+            app.runOnUiThread(() -> {
+                KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
+                        context.getString(R.string.UnlockScreen_touchIdTitle_android),
+                        context.getString(R.string.UnlockScreen_touchIdPrompt_android));
+                if (intent != null) {
+                    ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
+                    app.startActivityForResult(intent, requestCode);
+                } else {
+                    Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
+                    BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
+                    app.finish();
+                }
+            });
         } else {
             BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: context is not activity!"));
             Log.e(TAG, "showAuthenticationScreen: context is not activity!");

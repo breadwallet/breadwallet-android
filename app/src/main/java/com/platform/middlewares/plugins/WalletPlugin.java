@@ -398,8 +398,10 @@ public class WalletPlugin implements Plugin {
             return;
         }
 
-        final BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(app, currency);
+        // TODO: Support transactions here
+        //  final BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(app, currency);
 
+        /*
         // If BTC, set trade fee option and wallet fee rate to 'priority'
         if (currency.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE)) {
             FeeRepository.getInstance(app).putPreferredFeeOptionForCurrency(currency, FeeOption.PRIORITY);
@@ -414,6 +416,7 @@ public class WalletPlugin implements Plugin {
         }
         final CryptoRequest item = new CryptoRequest.Builder().setAddress(addr).setAmount(new BigDecimal(numerator)).build();
         BRExecutor.getInstance().forBackgroundTasks().execute(() -> SendManager.sendTransaction(app, item, wm, (hash, succeed) -> finalizeTx(succeed, hash)));
+         */
     }
 
     private JSONArray getCurrencyData(Context app) {

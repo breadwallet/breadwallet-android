@@ -170,8 +170,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
 
-        WalletsMaster.getInstance().setSpendingLimitIfNotSet(context, this);
-
         estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();

@@ -157,24 +157,6 @@ public class KeyStoreTests {
         assertFilesExist(BRKeyStore.PASS_TIME_ALIAS);
         long freshPassTime = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
         Assert.assertEquals(passTime, freshPassTime);
-
-
-        BigDecimal spendLimitBtc = new BigDecimal(1000);
-        BigDecimal spendLimitEth = new BigDecimal(800);
-        BigDecimal spendLimitBch = new BigDecimal(600);
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBtc, "BTC");
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitEth, "ETH");
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBch, "BCH");
-        BigDecimal freshLimitBtc = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BTC");
-        BigDecimal freshLimitEth = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "ETH");
-        BigDecimal freshLimitBch = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BCH");
-        Assert.assertNotNull(freshLimitBtc);
-        Assert.assertNotNull(freshLimitEth);
-        Assert.assertNotNull(freshLimitBch);
-        Assert.assertTrue(freshLimitBtc.compareTo(spendLimitBtc) == 0);
-        Assert.assertTrue(freshLimitEth.compareTo(spendLimitEth) == 0);
-        Assert.assertTrue(freshLimitBch.compareTo(spendLimitBch) == 0);
-
     }
 
     @Test
@@ -193,9 +175,7 @@ public class KeyStoreTests {
         BRKeyStore.putPinCode("0123", mActivityRule.getActivity());
         BRKeyStore.putFailCount(3, mActivityRule.getActivity());
         BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), new BigDecimal(10000000), "BTC");
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putTotalLimit(mActivityRule.getActivity(), new BigDecimal(1479686841), "BTC");
         BRKeyStore.putEthPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
 
         for (String a : BRKeyStore.ALIAS_OBJECT_MAP.keySet()) {

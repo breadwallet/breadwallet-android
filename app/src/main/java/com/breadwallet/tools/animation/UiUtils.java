@@ -28,7 +28,6 @@ import com.breadwallet.legacy.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.legacy.presenter.fragments.FragmentReceive;
 import com.breadwallet.legacy.presenter.fragments.FragmentRequestAmount;
-import com.breadwallet.legacy.presenter.fragments.FragmentSend;
 import com.breadwallet.legacy.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
 import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
@@ -154,14 +153,18 @@ public class UiUtils {
         bundle.putString(FragmentWebModal.EXTRA_URL, url);
 
         fragmentSupport.setArguments(bundle);
-        fragmentActivity.getSupportFragmentManager().beginTransaction()
+        /*fragmentActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
-                .addToBackStack(FragmentSend.class.getName()).commit();
+                .add(android.R.id.content, fragmentSupport, SendSheetController.class.getName())
+                .addToBackStack(SendSheetController.class.getName()).commit();*/
 
     }
 
     public static void openScanner(Activity app) {
+        openScanner(app, 0);
+    }
+
+    public static void openScanner(Activity app, int requestCode) {
         try {
             if (app == null) {
                 return;
@@ -190,7 +193,11 @@ public class UiUtils {
             } else {
                 // Permission is granted, open camera
                 Intent intent = new Intent(app, ScanQRActivity.class);
-                app.startActivity(intent);
+                if (requestCode == 0) {
+                    app.startActivity(intent);
+                } else {
+                    app.startActivityForResult(intent, requestCode);
+                }
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
             }
         } catch (Exception e) {

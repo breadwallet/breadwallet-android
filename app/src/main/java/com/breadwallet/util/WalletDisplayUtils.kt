@@ -9,7 +9,7 @@ import java.math.BigDecimal
 //  class organization (whether hierarchy or not) is TBD, once we figure out what's needed
 class WalletDisplayUtils {
     companion object {
-        private const val MAX_DECIMAL_PLACES_FOR_UI = 5
+        const val MAX_DECIMAL_PLACES_FOR_UI = 5
         private const val ETHER_WEI = "1000000000000000000"
         private val ONE_ETH = BigDecimal(ETHER_WEI)
         private const val SCALE_ETH = 8
