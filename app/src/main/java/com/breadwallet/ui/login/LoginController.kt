@@ -120,7 +120,7 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                UiUtils.openScanner(activity)
+                UiUtils.openScanner(activity, 0)
             } else {
                 logError("onRequestPermissionsResult: permission isn't granted for: $requestCode")
             }

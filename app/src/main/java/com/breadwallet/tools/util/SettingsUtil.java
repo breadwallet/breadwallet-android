@@ -27,7 +27,6 @@ import com.breadwallet.legacy.presenter.activities.settings.NodesActivity;
 import com.breadwallet.legacy.presenter.activities.settings.SegWitActivity;
 import com.breadwallet.legacy.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity;
-import com.breadwallet.legacy.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.legacy.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.legacy.presenter.customviews.BRToast;
@@ -338,6 +337,7 @@ public final class SettingsUtil {
     public static List<BRSettingsItem> getBitcoinSettings(final Context context) {
         List<BRSettingsItem> items = new ArrayList<>();
         if (AuthManager.isFingerPrintAvailableAndSetup(context)) {
+            // TODO: Is something replacing spend limit or can this be removed?
             items.add(new BRSettingsItem(context.getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -346,9 +346,6 @@ public final class SettingsUtil {
                             currentActivity.getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
-                                    Intent intent = new Intent(currentActivity, SpendLimitActivity.class);
-                                    currentActivity.startActivity(intent);
-                                    currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                                 }
 
                                 @Override

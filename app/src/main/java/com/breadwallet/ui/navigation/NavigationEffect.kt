@@ -31,6 +31,7 @@ package com.breadwallet.ui.navigation
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import io.hypno.switchboard.MobiusHandlerSpec
+import java.math.BigDecimal
 
 @MobiusHandlerSpec
 sealed class NavigationEffect {
@@ -48,11 +49,15 @@ sealed class NavigationEffect {
     object GoBack : NavigationEffect()
     object GoToBrdRewards : NavigationEffect()
     object GoToReview : NavigationEffect()
+    object GoToQrScan : NavigationEffect()
 
     data class GoToDeepLink(val url: String) : NavigationEffect()
     data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
-    data class GoToFaq(val articleId: String) : NavigationEffect()
+    data class GoToFaq(
+        val articleId: String,
+        val currencyCode: String? = null
+    ) : NavigationEffect()
     data class GoToSetPin(
         val onboarding: Boolean = false,
         val buy: Boolean = false

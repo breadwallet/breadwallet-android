@@ -4,8 +4,7 @@ import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
 import java.math.BigDecimal
 
-@Suppress("DataClassPrivateConstructor")
-data class WalletScreenModel private constructor(
+data class WalletScreenModel(
         val currencyCode: String,
         val currencyName: String = "",
         val address: String = "",

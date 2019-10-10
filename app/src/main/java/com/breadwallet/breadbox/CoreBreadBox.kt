@@ -215,21 +215,17 @@ internal class CoreBreadBox(
     override fun system() =
         systemChannel
             .asFlow()
-            .onStart {
-                system?.let { emit(it) }
-            }
+            .fromSystemOnStart { it }
 
     override fun account() =
         accountChannel
             .asFlow()
-            .onStart {
-                system?.account?.let { emit(it) }
-            }
+            .fromSystemOnStart(System::getAccount)
 
     override fun wallets(filterByTracked: Boolean) =
         walletsChannel
             .asFlow()
-            .onStart { system?.wallets?.let { emit(it) } }
+            .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets ->
                 when {
                     filterByTracked -> {
@@ -245,7 +241,7 @@ internal class CoreBreadBox(
     override fun wallet(currencyCode: String) =
         walletsChannel
             .asFlow()
-            .onStart { system?.wallets?.let { emit(it) } }
+            .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets ->
                 wallets.firstOrNull { it.currency.code == currencyCode }
             }
@@ -254,7 +250,7 @@ internal class CoreBreadBox(
     override fun currencyCodes() =
         walletsChannel
             .asFlow()
-            .onStart { system?.wallets?.let { emit(it) } }
+            .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets -> wallets.map { it.currency.code } }
             .distinctUntilChanged()
 
@@ -282,27 +278,26 @@ internal class CoreBreadBox(
     override fun walletTransfers(currencyCode: String) =
         walletTransfersChannelMap.getValue(currencyCode)
             .asFlow()
-            .onStart {
-                system?.wallets
-                    ?.find { it.currency.code == currencyCode }
+            .fromSystemOnStart { system ->
+                system.wallets
+                    .find { it.currency.code == currencyCode }
                     ?.transfers
-                    ?.let { emit(it) }
             }
 
+    @Synchronized
     override fun walletTransfer(currencyCode: String, transferHash: String) =
         transferUpdatedChannelMap.getValue(currencyCode)
             .asFlow()
             .filter { it.hashString() == transferHash }
-            .onStart {
-                system
-                    ?.wallets
-                    ?.find { it.currency.code == currencyCode }
+            .fromSystemOnStart { system ->
+                system.wallets
+                    .find { it.currency.code == currencyCode }
                     ?.transfers
                     ?.singleOrNull { it.hashString() == transferHash }
-                    ?.let { emit(it) }
             }
             .distinctUntilChanged()
 
+    @Synchronized
     override fun walletTransferUpdates(currencyCode: String): Flow<Transfer> =
         transferUpdatedChannelMap.getValue(currencyCode)
             .asFlow()
@@ -475,4 +470,8 @@ internal class CoreBreadBox(
             }
             .launchIn(openScope)
     }
+
+    /** Emit's the result of [extract] when [system] and the result value are not null */
+    private fun <T> Flow<T>.fromSystemOnStart(extract: (System) -> T?) =
+        onStart { emit(system?.run(extract) ?: return@onStart) }
 }

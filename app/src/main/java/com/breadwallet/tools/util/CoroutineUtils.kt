@@ -50,6 +50,7 @@ private const val NET_RETRY_DELAY_MS: Long = 2 * 1000
  *
  * Retry attempts are delayed by [NET_RETRY_DELAY_MS].
  */
+@Suppress("ThrowsCount", "TooGenericExceptionCaught")
 suspend fun <R> netRetry(
     retryAttempts: Int,
     timeoutMs: Long,

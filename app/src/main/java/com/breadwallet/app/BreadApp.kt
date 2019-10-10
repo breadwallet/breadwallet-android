@@ -57,11 +57,13 @@ import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.util.isEth
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
 import com.platform.APIClient
@@ -210,7 +212,7 @@ class BreadApp : Application(), KodeinAware {
                     .getSystemUnsafe()
                     ?.wallets
                     .orEmpty()
-                    .firstOrNull { it.currency.code == "eth" } // TODO: Hardcoded currency code
+                    .firstOrNull { it.currency.code.isEth() }
                     ?.source?.toString() ?: return null
 
                 // Remove the first 2 characters i.e. 0x
@@ -310,6 +312,12 @@ class BreadApp : Application(), KodeinAware {
 
     override val kodein by Kodein.lazy {
         importOnce(androidSupportModule(this@BreadApp))
+
+        bind<KeyStore>() with singleton {
+            // TODO: Remove dependencies of KeyStore.Companion and
+            //  move the constructor here.
+            KeyStore
+        }
 
         bind<KVStoreProvider>() with singleton {
             KVStoreManager(this@BreadApp)
