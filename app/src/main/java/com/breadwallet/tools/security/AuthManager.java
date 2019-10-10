@@ -139,7 +139,8 @@ public class AuthManager {
     }
 
     public static boolean isFingerPrintAvailableAndSetup(Context context) {
-        return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context);
+        return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context)
+                && BRSharedPrefs.getUseFingerprint(context);
     }
 
 }
