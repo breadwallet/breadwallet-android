@@ -95,7 +95,6 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
                 WalletsMaster.getInstance().updateFixedPeer(context, WalletBitcoinManager.this);
             }
         });
-        WalletsMaster.getInstance().setSpendingLimitIfNotSet(context, this);
         updateSettings(context);
     }
 

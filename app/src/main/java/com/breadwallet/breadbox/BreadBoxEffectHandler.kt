@@ -31,11 +31,13 @@ import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.ext.bindConsumerIn
+import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.wallet.WalletTransaction
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,39 +51,22 @@ import java.math.BigDecimal
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class BreadBoxEffectHandler(
     private val output: Consumer<BreadBoxEvent>,
-    private val context: Context,
     private val currencyCode: String,
     private val breadBox: BreadBox
 ) : Connection<BreadBoxEffect>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext =
+        SupervisorJob() + Dispatchers.Default +
+            CoroutineExceptionHandler { _, throwable ->
+                logError("Error in coroutine", throwable)
+            }
 
     init {
-        val walletFlow = breadBox.wallet(currencyCode)
-
-        // Balance
-        walletFlow
-            .map { it.balance }
-            .distinctUntilChanged()
-            .map { BreadBoxEvent.OnBalanceUpdated(it.toBigDecimal(), getBalanceInFiat(it)) }
-            .bindConsumerIn(output, this)
-
         // Currency name
-        walletFlow
+        breadBox.wallet(currencyCode)
             .map { it.currency.name }
             .distinctUntilChanged()
             .map { BreadBoxEvent.OnCurrencyNameUpdated(it) }
-            .bindConsumerIn(output, this)
-
-        // Wallet transfers
-        breadBox.walletTransfers(currencyCode)
-            .mapLatest { transfers ->
-                BreadBoxEvent.OnTransactionsUpdated(
-                    transfers
-                        .map { it.asWalletTransaction() }
-                        .sortedByDescending { it.timeStamp }
-                )
-            }
             .bindConsumerIn(output, this)
 
         // Wallet sync state
@@ -96,7 +81,27 @@ class BreadBoxEffectHandler(
             .bindConsumerIn(output, this)
     }
 
-    override fun accept(value: BreadBoxEffect) {
+    override fun accept(effect: BreadBoxEffect) {
+        when (effect) {
+            is BreadBoxEffect.LoadWalletBalance -> {
+                breadBox.wallet(currencyCode)
+                    .map { it.balance }
+                    .distinctUntilChanged()
+                    .map { BreadBoxEvent.OnBalanceUpdated(it.toBigDecimal(), getBalanceInFiat(it)) }
+                    .bindConsumerIn(output, this)
+            }
+            is BreadBoxEffect.LoadTransactions -> {
+                breadBox.walletTransfers(currencyCode)
+                    .mapLatest { transfers ->
+                        BreadBoxEvent.OnTransactionsUpdated(
+                            transfers
+                                .map { it.asWalletTransaction() }
+                                .sortedByDescending { it.timeStamp }
+                        )
+                    }
+                    .bindConsumerIn(output, this)
+            }
+        }
     }
 
     override fun dispose() {
@@ -120,7 +125,6 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
 
     val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
     val confirmation = confirmation.orNull()
-    val state = state
 
     return WalletTransaction(
         txHash = txHash,
@@ -137,7 +141,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         blockHeight = confirmation?.blockNumber?.toInt() ?: 0, // TODO: Use long to match core
         confirmations = confirmations.orNull()?.toInt() ?: 0,
         confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
-        timeStamp = confirmation?.confirmationTime?.time ?: 0,
+        timeStamp = confirmation?.confirmationTime?.time ?: System.currentTimeMillis(),
         currencyCode = wallet.currency.code,
         // TODO: Either establish this via meta-data (like iOS)
         //  or compare toAddress with token addresses as in pre-Generic Core

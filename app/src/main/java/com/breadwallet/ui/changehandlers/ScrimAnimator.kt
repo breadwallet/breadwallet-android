@@ -22,6 +22,7 @@ private const val DEFAULT_SCRIM_FADE_DURATION = 250L
  * If a target background view does not exist, [primaryAnimator]
  * is returned and no scrim will be modified.
  */
+@Suppress("LongParameterList")
 fun animatorWithScrim(
     primaryAnimator: Animator,
     from: View?,

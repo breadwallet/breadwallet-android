@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 9/23/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 10/1/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,28 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.pin
+package com.breadwallet.legacy.wallet.entities
 
-private const val PIN_LENGTH = 6
+import com.breadwallet.core.ethereum.BREthereumAmount
 
-sealed class InputPinEffect {
-
-    data class SetupPin(
-        val pin: String
-    ) : InputPinEffect() {
-        init {
-            require(pin.length == PIN_LENGTH) {
-                "pin must contain $PIN_LENGTH digits"
-            }
-        }
-
-        override fun toString() = "SetupPin()"
-    }
-
-    object GoToHome : InputPinEffect()
-    object GoToWriteDownKey : InputPinEffect()
-    object GoToFaq : InputPinEffect()
-    object GoToDisabledScreen : InputPinEffect()
-    object ErrorShake : InputPinEffect()
-    object CheckIfPinExists : InputPinEffect()
-}
+data class GenericTransactionMetaData(
+    val targetAddress: String,
+    val amount: String,
+    val amountUnit: BREthereumAmount.Unit,
+    val gasPrice: Long = 0,
+    val gasPriceUnit: BREthereumAmount.Unit,
+    val gasLimit: Long = 0,
+    val data: String
+)

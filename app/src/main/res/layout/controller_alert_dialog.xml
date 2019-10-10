@@ -1,0 +1,124 @@
+<FrameLayout
+    android:id="@+id/layoutBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:background="@drawable/bread_dialog_rounded"
+        android:orientation="vertical"
+        android:clickable="true">
+
+        <RelativeLayout
+            android:id="@+id/dialog_header"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bch_dialog_gradient"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/brd_logo"
+                android:layout_width="38dp"
+                android:layout_height="14dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/brd_logo_white_svg"/>
+
+            <ImageButton
+                android:id="@+id/help_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/faq_question_white"
+                android:visibility="visible"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+        </RelativeLayout>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textAlignment="center"
+            android:textColor="?attr/secondary_text_color"
+            android:textSize="18sp"
+            app:brdFont="@string/Font.CircularPro_Bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_header"/>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/dialog_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:textColor="?attr/secondary_text_color"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_title"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            android:weightSum="2.0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_text">
+
+            <com.breadwallet.legacy.presenter.customviews.BRButton
+                android:id="@+id/neg_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1.0"
+                android:background="@android:color/transparent"
+                app:brdFont="@string/Font.CircularPro_Bold"
+                app:buttonType="4"
+                app:hasShadow="false"
+                app:isBreadButton="true"/>
+
+            <com.breadwallet.legacy.presenter.customviews.BRButton
+                android:id="@+id/pos_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1.0"
+                android:background="@android:color/transparent"
+                android:textColor="@color/white"
+                app:brdFont="@string/Font.CircularPro_Bold"
+                app:buttonType="4"
+                app:hasShadow="false"
+                app:isBreadButton="true"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -337,24 +337,6 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         }
     }
 
-    public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
-        if (app == null) return;
-        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getCurrencyCode());
-        if (limit.compareTo(BigDecimal.ZERO) == 0) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    long start = System.currentTimeMillis();
-                    BaseWalletManager wallet = WalletsMaster.getInstance().getCurrentWallet(app);
-                    BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
-                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getCurrencyCode()));
-                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getCurrencyCode());
-                }
-            });
-
-        }
-    }
-
     @WorkerThread
     public void initLastWallet(Context app) {
         if (app == null) {

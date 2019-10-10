@@ -305,21 +305,14 @@ public class SendManager {
             });
             return;
         }
-        boolean forcePin = false;
 
         if (BuildConfig.DEBUG) {
             Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
             Log.e(TAG, "confirmPay: request.amount: " + request.getAmount());
-            Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode()));
-            Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getCurrencyCode()));
-        }
-
-        if (wm.getTotalSent(ctx).add(request.getAmount()).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getCurrencyCode())) > 0) {
-            forcePin = true;
         }
 
         //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), message, forcePin, false, new BRAuthCompletion() {
+        AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), message, false, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

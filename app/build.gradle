@@ -127,6 +127,12 @@ android {
         variant.outputs.all { output ->
             outputFileName = "${output.baseName}-${brdInternalVersionName}.apk"
         }
+
+        // Add kapt generated sources, required only for IntelliJ IDEA compatibility
+        variant.sourceSets
+                .find { it.name == variant.name }
+                .java
+                .srcDirs += "$buildDir/generated/source/kaptKotlin/${variant.name}/"
     }
 
     compileOptions {

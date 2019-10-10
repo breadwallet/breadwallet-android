@@ -115,6 +115,8 @@ class HomeScreenEffectHandler(
         // Update wallet balances
         breadBox.currencyCodes()
             .flatMapLatest { it.asFlow() }
+            // FIXME: merge concurrency default prevents
+            //  this from working with > 16 Wallets.
             .flatMapMerge { currencyCode ->
                 breadBox.wallet(currencyCode)
                     .distinctUntilChangedBy { it.balance }
@@ -133,6 +135,8 @@ class HomeScreenEffectHandler(
         // Update wallet sync state
         breadBox.currencyCodes()
             .flatMapLatest { it.asFlow() }
+            // FIXME: merge concurrency default prevents
+            //  this from working with > 16 Wallets.
             .flatMapMerge {
                 breadBox.walletSyncState(it)
                     .mapLatest { syncState ->
@@ -195,6 +199,9 @@ class HomeScreenEffectHandler(
     }
 
     override fun onChanged() {
+        // FIXME: If this event comes in shortly after pressing back,
+        //  the app goes into the background and crashes when executing
+        //  in the dead worker for the effect handler
         breadBox.currencyCodes()
             .take(1)
             .flatMapLatest { it.asFlow() }
