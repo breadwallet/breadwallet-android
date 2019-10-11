@@ -43,7 +43,6 @@ import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
-import com.breadwallet.ui.managewallets.AddWalletsActivity
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.send.SendSheetController
 import com.platform.HTTPServer
@@ -109,12 +108,6 @@ class NavigationEffectHandler(
         intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS)
         activity.startActivity(intent)
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300)
-    }
-
-    override fun goToAddWallet() {
-        val intent = Intent(activity, AddWalletsActivity::class.java)
-        activity.startActivity(intent)
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
@@ -189,6 +182,8 @@ class NavigationEffectHandler(
             0
         )
     }
+
+    override fun goToAddWallet() = Unit
 
     override fun goToManageWallets() = Unit
 

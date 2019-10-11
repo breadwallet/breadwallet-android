@@ -144,8 +144,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     public static synchronized void mapTokenIsos(Context context) {
         for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-            if (!mTokenIsos.containsKey(tokenItem.symbol.toLowerCase())) {
-                mTokenIsos.put(tokenItem.symbol.toLowerCase(), tokenItem.address.toLowerCase());
+            if (!mTokenIsos.containsKey(tokenItem.getSymbol().toLowerCase())) {
+                mTokenIsos.put(tokenItem.getSymbol().toLowerCase(), tokenItem.getAddress().toLowerCase());
             }
         }
     }

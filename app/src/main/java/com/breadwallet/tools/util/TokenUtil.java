@@ -30,7 +30,6 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.entities.TokenItem;
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -63,6 +62,7 @@ public final class TokenUtil {
     private static final String FIELD_SALE_ADDRESS = "sale_address";
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
+    private static final String FIELD_CURRENCY_ID = "currency_id";
     private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
     private static final String ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND = "white-square-bg";
     private static final String ICON_FILE_NAME_FORMAT = "%s.png";
@@ -78,6 +78,7 @@ public final class TokenUtil {
 
     /**
      * When the app first starts, fetch our local copy of tokens.json from the resource folder
+     *
      * @param context The Context of the caller
      */
     public static void initialize(Context context) {
@@ -164,13 +165,14 @@ public final class TokenUtil {
                     mTokenItems = parseJsonToTokenList(context, responseBody);
                 }
             }
+        } else {
+            Log.e(TAG, "failed to fetch tokens: " + response.getCode());
         }
     }
 
     // TODO refactor to avoid passing in context.
     private static ArrayList<TokenItem> parseJsonToTokenList(Context context, String jsonString) {
         ArrayList<TokenItem> tokenItems = new ArrayList<>();
-        WalletEthManager ethWalletManager = WalletEthManager.getInstance(context.getApplicationContext());
         // Iterate over the token list and announce each token to Core.
         try {
             JSONArray tokenListArray = new JSONArray(jsonString);
@@ -180,8 +182,6 @@ public final class TokenUtil {
                 String address = "";
                 String name = "";
                 String symbol = "";
-                String contractInitialValue = "";
-                int decimals = 0;
                 boolean isSupported = true;
 
                 if (tokenObject.has(FIELD_CONTRACT_ADDRESS)) {
@@ -196,20 +196,11 @@ public final class TokenUtil {
                     symbol = tokenObject.getString(FIELD_CODE);
                 }
 
-                if (tokenObject.has(FIELD_SCALE)) {
-                    decimals = tokenObject.getInt(FIELD_SCALE);
-                }
-
-                if (tokenObject.has(FIELD_CONTRACT_INITIAL_VALUE)) {
-                    contractInitialValue = tokenObject.getString(FIELD_CONTRACT_INITIAL_VALUE);
-                }
-
                 if (tokenObject.has(FIELD_IS_SUPPORTED)) {
                     isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
                 }
 
                 if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
-                    ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
                     // Keep a local reference to the token list, so that we can make token symbols to their
                     // gradient colors in WalletListAdapter
                     TokenItem item = new TokenItem(address, symbol, name, null, isSupported);
@@ -219,14 +210,16 @@ public final class TokenUtil {
                         item.setStartColor((String) colorsArray.get(START_COLOR_INDEX));
                         item.setEndColor((String) colorsArray.get(END_COLOR_INDEX));
                     }
-                    item.setContractInitialValue(contractInitialValue);
+
+                    if (tokenObject.has(FIELD_CURRENCY_ID)) {
+                        item.setCurrencyId(tokenObject.getString(FIELD_CURRENCY_ID));
+                    }
+
                     tokenItems.add(item);
                 }
             }
-            ethWalletManager.node.announceTokenComplete(0, true);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing token list response from server:", e);
-            ethWalletManager.node.announceTokenComplete(0, false);
         }
         return tokenItems;
     }
@@ -284,7 +277,7 @@ public final class TokenUtil {
 
     public static String getTokenStartColor(String currencyCode) {
         for (TokenItem token : mTokenItems) {
-            if (token.symbol.equalsIgnoreCase(currencyCode)) {
+            if (token.getSymbol().equalsIgnoreCase(currencyCode)) {
                 return token.getStartColor();
             }
         }
@@ -294,7 +287,7 @@ public final class TokenUtil {
 
     public static String getTokenEndColor(String currencyCode) {
         for (TokenItem token : mTokenItems) {
-            if (token.symbol.equalsIgnoreCase(currencyCode)) {
+            if (token.getSymbol().equalsIgnoreCase(currencyCode)) {
                 return token.getEndColor();
             }
         }
@@ -303,9 +296,9 @@ public final class TokenUtil {
     }
 
     public static boolean isTokenSupported(String symbol) {
-        for (TokenItem tokenItem: mTokenItems) {
-            if (tokenItem.symbol.equalsIgnoreCase(symbol)) {
-               return tokenItem.isSupported();
+        for (TokenItem tokenItem : mTokenItems) {
+            if (tokenItem.getSymbol().equalsIgnoreCase(symbol)) {
+                return tokenItem.isSupported();
             }
         }
         return true;
