@@ -27,6 +27,7 @@ package com.breadwallet.ui.navigation
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
@@ -88,7 +89,13 @@ class RouterNavigationEffectHandler(
 
     override fun goToMenu() = Unit
 
-    override fun goToAddWallet() = Unit
+    override fun goToAddWallet() {
+        router.pushController(
+            RouterTransaction.with(AddWalletsController())
+                .popChangeHandler(HorizontalChangeHandler())
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         val controller = when {

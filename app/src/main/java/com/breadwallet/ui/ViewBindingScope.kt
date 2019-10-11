@@ -1,6 +1,8 @@
 package com.breadwallet.ui
 
 import android.view.View
+import android.widget.EditText
+import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 
@@ -11,6 +13,7 @@ class ViewBindingScope<E>(
     private var _onDispose: (() -> Unit)? = null
 
     private val clickBoundViews = mutableSetOf<View>()
+    private val textBoundViews = mutableMapOf<EditText, DefaultTextWatcher>()
 
     /** Send [event] to [output] using [View.setOnClickListener].  */
     fun View.onClick(event: E) {
@@ -33,6 +36,20 @@ class ViewBindingScope<E>(
         }
     }
 
+    /**
+     * Send the event returned by [produceEvent] to [output] using
+     * [EditText.addTextChangedListener].
+     */
+    fun EditText.onTextChanged(
+        produceEvent: (@ParameterName("text") String) -> E
+    ) {
+        textBoundViews[this] = object : DefaultTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                output.accept(produceEvent(text.toString()))
+            }
+        }.also { addTextChangedListener(it) }
+    }
+
     /** Invokes [dispose] when this scope is disposed. */
     fun onDispose(dispose: () -> Unit) {
         _onDispose = dispose
@@ -43,6 +60,11 @@ class ViewBindingScope<E>(
             it.setOnClickListener(null)
             true
         }
+        textBoundViews.forEach {
+            it.key.removeTextChangedListener(it.value)
+            textBoundViews.remove(it.key)
+        }
+
         _onDispose?.invoke()
     }
 }

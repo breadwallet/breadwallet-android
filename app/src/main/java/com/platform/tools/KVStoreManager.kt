@@ -53,7 +53,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "TooGenericExceptionCaught")
 internal class KVStoreManager(
     private val context: Context
 ) : KVStoreProvider {
