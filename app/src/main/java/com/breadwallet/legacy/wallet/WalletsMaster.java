@@ -135,7 +135,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
             currencyCodes.add(tokenInfo.getSymbol());
         }
         for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-            currencyCodes.add(tokenItem.symbol.toUpperCase());
+            currencyCodes.add(tokenItem.getSymbol().toUpperCase());
         }
         return new ArrayList<>(currencyCodes);
     }

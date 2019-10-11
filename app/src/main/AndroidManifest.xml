@@ -277,11 +277,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.managewallets.AddWalletsActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".legacy.presenter.activities.ConfirmationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
