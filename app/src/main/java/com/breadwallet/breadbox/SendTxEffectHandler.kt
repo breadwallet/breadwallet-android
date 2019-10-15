@@ -51,7 +51,7 @@ object SendTx {
  * disposed.
  */
 class SendTxEffectHandler(
-    private val outputProducer: () -> Consumer<SendTx.Result>,
+    private val outputProducer: Consumer<SendTx.Result>,
     private val retainedScope: CoroutineScope,
     private val breadBox: BreadBox,
     private val keyStore: KeyStore
@@ -73,7 +73,7 @@ class SendTxEffectHandler(
                 logError("Failed to send transaction", error)
                 emit(SendTx.Result.Error(error))
             }
-            .onEach { outputProducer().accept(it) }
+            .onEach { outputProducer.accept(it) }
             .launchIn(retainedScope)
     }
 

@@ -18,7 +18,6 @@ import androidx.work.WorkManager;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity;
 import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity;
@@ -241,10 +240,7 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle_android), "", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, WriteDownActivity.class);
-                intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                MainActivity.Companion.openPaperKey(activity);
             }
         }, false, 0));
         items.add(new BRSettingsItem(activity.getString(R.string.Settings_wipe), "", new View.OnClickListener() {

@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 9/23/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/10/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,26 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.pin
+package com.breadwallet.ui.writedownkey
 
-import com.breadwallet.ui.navigation.OnCompleteAction
+import io.hypno.switchboard.MobiusUpdateSpec
 
-data class InputPinModel(
-    val mode: Mode = Mode.NEW,
-    val pin: String = "",
-    val pinConfirmation: String = "",
-    val pinUpdateMode: Boolean = false,
-    val onComplete: OnCompleteAction
-) {
+@MobiusUpdateSpec(
+    baseModel = WriteDownKeyModel::class,
+    baseEffect = WriteDownKeyEffect::class
+)
+sealed class WriteDownKeyEvent {
 
-    companion object {
-        fun createDefault(pinUpdateMode: Boolean, onComplete: OnCompleteAction) =
-            InputPinModel(pinUpdateMode = pinUpdateMode, onComplete = onComplete)
-    }
+    object OnCloseClicked : WriteDownKeyEvent()
+    object OnFaqClicked : WriteDownKeyEvent()
+    object OnWriteDownClicked : WriteDownKeyEvent()
+    object OnGetPhraseFailed : WriteDownKeyEvent()
+    object OnUserAuthenticated : WriteDownKeyEvent()
 
-    enum class Mode {
-        VERIFY,  // Verify the old pin
-        NEW,     // Chose a new pin
-        CONFIRM  // Confirm the new pin
-    }
+    data class OnPhraseRecovered(val phrase: List<String>) : WriteDownKeyEvent()
 }

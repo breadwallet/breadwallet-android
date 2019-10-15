@@ -27,15 +27,19 @@ package com.breadwallet.ui.navigation
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.ui.addwallets.AddWalletsController
-import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.managewallets.ManageWalletsController
 import com.breadwallet.ui.pin.InputPinController
+import com.breadwallet.ui.provekey.PaperKeyProveController
+import com.breadwallet.ui.send.SendSheetController
+import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.TxDetailsController
 import com.breadwallet.ui.wallet.WalletController
+import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.util.isBrd
 import com.spotify.mobius.Connection
 import com.spotify.mobius.android.runners.MainThreadWorkRunner
@@ -119,9 +123,10 @@ class RouterNavigationEffectHandler(
     override fun goToFaq(effect: NavigationEffect.GoToFaq) = Unit
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
-        val transaction = RouterTransaction.with(InputPinController(effect.onboarding, effect.buy))
-            .pushChangeHandler(HorizontalChangeHandler())
-            .popChangeHandler(HorizontalChangeHandler())
+        val transaction =
+            RouterTransaction.with(InputPinController(effect.onComplete, !effect.onboarding))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         if (effect.onboarding) {
             router.setBackstack(listOf(transaction), HorizontalChangeHandler())
         } else {
@@ -155,7 +160,29 @@ class RouterNavigationEffectHandler(
 
     override fun goToDisabledScreen() = Unit
 
-    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) = Unit
-
     override fun goToQrScan() = Unit
+
+    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
+        router.pushController(
+            RouterTransaction.with(
+                WriteDownKeyController(effect.onComplete)
+            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+        )
+    }
+
+    override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) {
+        router.pushController(
+            RouterTransaction.with(
+                ShowPaperKeyController(effect.phrase, effect.onComplete)
+            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+        )
+    }
+
+    override fun goToPaperKeyProve(effect: NavigationEffect.GoToPaperKeyProve) {
+        router.pushController(
+            RouterTransaction.with(
+                PaperKeyProveController(effect.phrase, effect.onComplete)
+            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+        )
+    }
 }

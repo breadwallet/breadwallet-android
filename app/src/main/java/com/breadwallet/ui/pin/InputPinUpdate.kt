@@ -70,7 +70,7 @@ object InputPinUpdate : Update<InputPinModel, InputPinEvent, InputPinEffect>,
         val effect = if (model.pinUpdateMode) {
             InputPinEffect.GoToHome
         } else {
-            InputPinEffect.GoToWriteDownKey
+            InputPinEffect.GoToWriteDownKey(model.onComplete)
         }
         return next(model, setOf(effect))
     }

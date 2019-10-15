@@ -36,6 +36,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
+import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
@@ -48,28 +49,22 @@ class InputPinController(args: Bundle? = null) :
     BaseMobiusController<InputPinModel, InputPinEvent, InputPinEffect>(args) {
 
     companion object {
-        private const val EXTRA_PIN_MODE_UPDATE = "com.breadwallet.EXTRA_PIN_MODE_UPDATE"
-        private const val EXTRA_PIN_BUY_NEXT = "com.breadwallet.EXTRA_PIN_NEXT_SCREEN"
-        private const val EXTRA_PIN_IS_ON_BOARDING = "com.breadwallet.EXTRA_PIN_IS_ON_BOARDING"
+        private const val EXTRA_PIN_MODE_UPDATE = "pin-update"
+        private const val EXTRA_ON_COMPLETE = "on-complete"
     }
 
-    constructor(isOnBoarding: Boolean, buyNext: Boolean) : this(
+    constructor(onComplete: OnCompleteAction, pinUpdate: Boolean = false) : this(
         bundleOf(
-            EXTRA_PIN_IS_ON_BOARDING to isOnBoarding,
-            EXTRA_PIN_BUY_NEXT to buyNext
-        )
-    )
-
-    constructor(pinUpdate: Boolean) : this(
-        bundleOf(
-            EXTRA_PIN_MODE_UPDATE to pinUpdate
+            EXTRA_PIN_MODE_UPDATE to pinUpdate,
+            EXTRA_ON_COMPLETE to onComplete.name
         )
     )
 
     private val isPinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false)
+    private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
     override val layoutId = R.layout.activity_pin_template
-    override val defaultModel = InputPinModel.createDefault(isPinUpdateMode)
+    override val defaultModel = InputPinModel.createDefault(isPinUpdateMode, onComplete)
     override val init = InputPinInit
     override val update = InputPinUpdate
 
@@ -84,7 +79,6 @@ class InputPinController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                InputPinEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey()
                 InputPinEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
                 InputPinEffect.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
                 else -> null
@@ -93,6 +87,7 @@ class InputPinController(args: Bundle? = null) :
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
                 InputPinEffect.GoToHome -> NavigationEffect.GoToHome
+                is InputPinEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
                 else -> null
             }
         })
