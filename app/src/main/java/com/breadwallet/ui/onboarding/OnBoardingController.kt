@@ -42,6 +42,7 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
+import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.platform.HTTPServer
 import com.spotify.mobius.Connectable
@@ -109,7 +110,7 @@ class OnBoardingController(
                     OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
                     OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(
                         onboarding = true,
-                        buy = true
+                        onComplete = OnCompleteAction.GO_TO_BUY
                     )
                     else -> null
                 }

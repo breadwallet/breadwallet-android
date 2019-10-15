@@ -31,7 +31,6 @@ package com.breadwallet.ui.navigation
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import io.hypno.switchboard.MobiusHandlerSpec
-import java.math.BigDecimal
 
 @MobiusHandlerSpec
 sealed class NavigationEffect {
@@ -58,9 +57,10 @@ sealed class NavigationEffect {
         val articleId: String,
         val currencyCode: String? = null
     ) : NavigationEffect()
+
     data class GoToSetPin(
         val onboarding: Boolean = false,
-        val buy: Boolean = false
+        val onComplete: OnCompleteAction = OnCompleteAction.GO_HOME
     ) : NavigationEffect()
 
     data class GoToErrorDialog(
@@ -77,5 +77,19 @@ sealed class NavigationEffect {
     object GoToManageWallets : NavigationEffect()
     object GoToDisabledScreen : NavigationEffect()
 
-    data class GoToWriteDownKey(val nextScreen: String = "") : NavigationEffect()
+    data class GoToWriteDownKey(val onComplete: OnCompleteAction) : NavigationEffect()
+
+    data class GoToPaperKey(
+        val phrase: List<String>,
+        val onComplete: OnCompleteAction
+    ) : NavigationEffect() {
+        override fun toString() = "GoToPaperKey()"
+    }
+
+    data class GoToPaperKeyProve(
+        val phrase: List<String>,
+        val onComplete: OnCompleteAction
+    ) : NavigationEffect() {
+        override fun toString() = "GoToPaperKeyProve()"
+    }
 }

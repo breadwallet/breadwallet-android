@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.pin
 
+import com.breadwallet.ui.navigation.OnCompleteAction
+
 private const val PIN_LENGTH = 6
 
 sealed class InputPinEffect {
@@ -41,9 +43,10 @@ sealed class InputPinEffect {
     }
 
     object GoToHome : InputPinEffect()
-    object GoToWriteDownKey : InputPinEffect()
     object GoToFaq : InputPinEffect()
     object GoToDisabledScreen : InputPinEffect()
     object ErrorShake : InputPinEffect()
     object CheckIfPinExists : InputPinEffect()
+
+    data class GoToWriteDownKey(val onComplete: OnCompleteAction) : InputPinEffect()
 }
