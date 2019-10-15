@@ -166,7 +166,6 @@ public final class SettingsUtil {
                     APIClient.getInstance(activity).sendRequest(request, false);
                 });
             }, false, R.drawable.ic_atm_finder, activity.getString(R.string.Settings_atmMapMenuItemSubtitle)));
-            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         }
         if (BuildConfig.DEBUG) {
             settingsItems.add(new BRSettingsItem(DEVELOPER_OPTIONS_TITLE, "", new View.OnClickListener() {
