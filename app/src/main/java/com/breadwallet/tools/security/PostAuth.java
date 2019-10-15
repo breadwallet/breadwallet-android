@@ -1,8 +1,6 @@
 package com.breadwallet.tools.security;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
@@ -12,8 +10,6 @@ import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
 import com.breadwallet.core.ethereum.BREthereumEWM;
 import com.breadwallet.core.ethereum.BREthereumTransfer;
-import com.breadwallet.legacy.presenter.activities.PaperKeyActivity;
-import com.breadwallet.legacy.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.legacy.presenter.entities.CryptoRequest;
 import com.breadwallet.legacy.wallet.WalletsMaster;
@@ -113,76 +109,6 @@ public class PostAuth {
         }
     }
     */
-
-
-    /**
-     * Start the PaperKeyActivity with an extra action to be done on key confirmed or null for default action
-     *
-     * @param activity    - the activity to use
-     * @param authAsked   - was authentication already approved by user
-     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
-     */
-
-    public void onPhraseCheckAuth(Activity activity, boolean authAsked, String intentExtra) {
-        if (intentExtra != null) {
-            mOnDoneAction = intentExtra;
-        }
-        String cleanPhrase;
-        try {
-            byte[] raw = BRKeyStore.getPhrase(activity, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if (raw == null) {
-                BRReportsManager.reportBug(new NullPointerException("onPhraseCheckAuth: getPhrase = null"), true);
-                return;
-            }
-            cleanPhrase = new String(raw);
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onPhraseCheckAuth: WARNING!!!! LOOP");
-                mAuthLoopBugHappened = true;
-            }
-            return;
-        }
-        Intent intent = new Intent(activity, PaperKeyActivity.class);
-        intent.putExtra(PaperKeyActivity.EXTRA_PAPER_KEY, cleanPhrase);
-        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
-            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
-            mOnDoneAction = null;
-        }
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-    }
-
-    /**
-     * Start the PaperKeyProveActivity with an extra action to be done on key confirmed or null for default action
-     *
-     * @param activity    - the activity to use
-     * @param authAsked   - was authentication already approved by user
-     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
-     */
-    public void onPhraseProveAuth(Activity activity, boolean authAsked, String intentExtra) {
-        if (intentExtra != null) {
-            mOnDoneAction = intentExtra;
-        }
-        String cleanPhrase;
-        try {
-            cleanPhrase = new String(BRKeyStore.getPhrase(activity, BRConstants.PROVE_PHRASE_REQUEST));
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onPhraseProveAuth: WARNING!!!! LOOP");
-                mAuthLoopBugHappened = true;
-            }
-            return;
-        }
-        Intent intent = new Intent(activity, PaperKeyProveActivity.class);
-        intent.putExtra(PaperKeyProveActivity.EXTRA_PAPER_KEY, cleanPhrase);
-        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
-            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
-            mOnDoneAction = null;
-        }
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-    }
-
     public void onBitIDAuth(Context context, boolean authenticated) {
         BRBitId.completeBitID(context, authenticated);
     }

@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 9/23/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/10/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,26 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.pin
+package com.breadwallet.ui.showkey
 
-import com.breadwallet.ui.navigation.OnCompleteAction
+import io.hypno.switchboard.MobiusUpdateSpec
 
-data class InputPinModel(
-    val mode: Mode = Mode.NEW,
-    val pin: String = "",
-    val pinConfirmation: String = "",
-    val pinUpdateMode: Boolean = false,
-    val onComplete: OnCompleteAction
-) {
+@MobiusUpdateSpec(
+    baseModel = ShowPaperKeyModel::class,
+    baseEffect = ShowPaperKeyEffect::class
+)
+sealed class ShowPaperKeyEvent {
 
-    companion object {
-        fun createDefault(pinUpdateMode: Boolean, onComplete: OnCompleteAction) =
-            InputPinModel(pinUpdateMode = pinUpdateMode, onComplete = onComplete)
-    }
+    object OnNextClicked : ShowPaperKeyEvent()
+    object OnPreviousClicked : ShowPaperKeyEvent()
+    object OnCloseClicked : ShowPaperKeyEvent()
 
-    enum class Mode {
-        VERIFY,  // Verify the old pin
-        NEW,     // Chose a new pin
-        CONFIRM  // Confirm the new pin
-    }
+    data class OnPageChanged(val position: Int) : ShowPaperKeyEvent()
 }

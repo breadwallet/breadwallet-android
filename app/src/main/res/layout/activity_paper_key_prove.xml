@@ -74,7 +74,7 @@
 
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
-            android:id="@+id/button_submit"
+            android:id="@+id/submit_btn"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="32dp"
@@ -102,9 +102,9 @@
             android:layout_marginTop="0dp"
             android:src="@drawable/ic_check_mark_blue"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_first"
-            app:layout_constraintLeft_toRightOf="@+id/word_edittext_first"
-            app:layout_constraintTop_toTopOf="@+id/word_edittext_first" />
+            app:layout_constraintBottom_toBottomOf="@+id/first_word"
+            app:layout_constraintLeft_toRightOf="@+id/first_word"
+            app:layout_constraintTop_toTopOf="@+id/first_word" />
 
         <ImageView
             android:id="@+id/check_mark_2"
@@ -115,79 +115,87 @@
             android:layout_marginTop="0dp"
             android:src="@drawable/ic_check_mark_blue"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_second"
-            app:layout_constraintLeft_toRightOf="@+id/word_edittext_second"
-            app:layout_constraintTop_toTopOf="@+id/word_edittext_second" />
+            app:layout_constraintBottom_toBottomOf="@+id/second_word"
+            app:layout_constraintLeft_toRightOf="@+id/second_word"
+            app:layout_constraintTop_toTopOf="@+id/second_word" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
-            android:id="@+id/word_number_first"
+            android:id="@+id/first_word_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="@dimen/bread_margin"
             android:lineSpacingMultiplier="1.3"
             android:textSize="18sp"
+            tools:text="Word #3"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.breadwallet.legacy.presenter.customviews.BREdit
-            android:id="@+id/word_edittext_first"
+            android:id="@+id/first_word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/bread_margin"
-            android:layout_marginStart="@dimen/bread_margin"
-            android:layout_marginTop="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:inputType="textPersonName"
+            android:textColor="@color/gray"
+            android:focusable="true"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_number_first"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/first_word_label"
+            tools:text="guitar" />
 
         <View
             android:id="@+id/line1"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="16dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_edittext_first" />
+            app:layout_constraintTop_toBottomOf="@+id/first_word" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
-            android:id="@+id/word_number_second"
+            android:id="@+id/second_word_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="@dimen/bread_margin"
             android:textSize="18sp"
+            tools:text="Word #1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line1" />
 
         <com.breadwallet.legacy.presenter.customviews.BREdit
-            android:id="@+id/word_edittext_second"
+            android:id="@+id/second_word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/bread_margin"
-            android:layout_marginStart="@dimen/bread_margin"
-            android:layout_marginTop="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:imeOptions="actionSend"
             android:inputType="textPersonName"
+            android:textColor="@color/gray"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_number_second" />
+            app:layout_constraintTop_toBottomOf="@+id/second_word_label"
+            tools:text="piano" />
 
         <View
             android:id="@+id/line2"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="16dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_edittext_second" />
+            app:layout_constraintTop_toBottomOf="@+id/second_word" />
 
     </android.support.constraint.ConstraintLayout>
 

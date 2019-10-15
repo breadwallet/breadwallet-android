@@ -36,7 +36,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
-
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBoxEffect
 import com.breadwallet.breadbox.BreadBoxEffectHandler
@@ -49,8 +48,8 @@ import com.breadwallet.crypto.Currency
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.animation.SlideDetector
+import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
@@ -64,17 +63,13 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange
+import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.ECONOMY
 import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.PRIORITY
 import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.REGULAR
-import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.ECONOMY
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_send_sheet.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -128,23 +123,20 @@ class SendSheetController(args: Bundle? = null) :
             val fiatCode = BRSharedPrefs.getPreferredFiatIso()
             return cryptoRequest?.asSendSheetModel(fiatCode) ?: SendSheetModel.createDefault(currencyCode, fiatCode)
         }
-
-    private val sendCoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val retainedSendConsumer = Consumer<SendTx.Result> { event ->
-        eventConsumer.accept(
-            when (event) {
-                is SendTx.Result.Success -> SendSheetEvent.OnSendComplete
-                is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
-            }
-        )
-    }
-
+    
     override val effectHandler: Connectable<SendSheetEffect, SendSheetEvent> =
         CompositeEffectHandler.from(
             nestedConnectable({
                 SendTxEffectHandler(
-                    { retainedSendConsumer },
-                    sendCoroutineScope,
+                    Consumer { event ->
+                        eventConsumer.accept(
+                            when (event) {
+                                is SendTx.Result.Success -> SendSheetEvent.OnSendComplete
+                                is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
+                            }
+                        )
+                    },
+                    controllerScope,
                     direct.instance(),
                     direct.instance()
                 )
@@ -204,11 +196,6 @@ class SendSheetController(args: Bundle? = null) :
         showKeyboard(false)
 
         signal_layout.layoutTransition = UiUtils.getDefaultTransition()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        sendCoroutineScope.cancel()
     }
 
     override fun onDetach(view: View) {

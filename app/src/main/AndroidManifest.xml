@@ -212,19 +212,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.intro.WriteDownActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.PaperKeyActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".legacy.presenter.activities.settings.SegWitActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.PaperKeyProveActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity

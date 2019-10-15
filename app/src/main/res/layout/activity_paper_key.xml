@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_write_down"
@@ -12,7 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="@drawable/paper_key_gradient"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/title"
@@ -74,20 +77,21 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/phrase_words_pager"
+        android:id="@+id/words_pager"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:layout_below="@+id/gradient_layout"
         android:focusable="false"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/gradient_layout" />
 
     <LinearLayout
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="32dp"
-        android:weightSum="2.0">
+        android:weightSum="2.0"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/previous_button"
@@ -99,7 +103,6 @@
             android:layout_marginBottom="32dp"
             android:layout_weight="1"
             android:elevation="0dp"
-            android:enabled="false"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/WritePaperPhrase.previous"
@@ -127,14 +130,16 @@
     </LinearLayout>
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
-        android:id="@+id/item_index_text"
+        android:id="@+id/item_index"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/phrase_words_pager"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="1 of 12"
-        app:brdFont="@string/Font.CircularPro_Medium" />
+        app:brdFont="@string/Font.CircularPro_Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/words_pager" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

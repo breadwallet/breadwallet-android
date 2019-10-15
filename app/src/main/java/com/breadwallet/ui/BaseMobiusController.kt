@@ -29,6 +29,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
+import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
@@ -109,6 +110,8 @@ abstract class BaseMobiusController<M, E, F>(
         MobiusAndroid.controller(loopFactory, defaultModel)
     }
 
+    private val eventConsumerDelegate = ConsumerDelegate<E>(QueuedConsumer())
+
     /**
      * An entrypoint for adding platform events into a [MobiusLoop].
      *
@@ -117,8 +120,7 @@ abstract class BaseMobiusController<M, E, F>(
      * Events dispatched from [onActivityResult] are one example of
      * of this use-case.
      */
-    var eventConsumer: Consumer<E> = QueuedConsumer()
-        private set
+    val eventConsumer: Consumer<E> = eventConsumerDelegate
 
     /** The currently rendered model. */
     val currentModel: M
@@ -170,10 +172,10 @@ abstract class BaseMobiusController<M, E, F>(
     }
 
     override fun subscribe(newConsumer: Consumer<E>): Disposable {
-        (eventConsumer as? QueuedConsumer)?.dequeueAll(newConsumer)
-        eventConsumer = newConsumer
+        (eventConsumerDelegate.consumer as? QueuedConsumer)?.dequeueAll(newConsumer)
+        eventConsumerDelegate.consumer = newConsumer
         return Disposable {
-            eventConsumer = QueuedConsumer()
+            eventConsumerDelegate.consumer = QueuedConsumer()
         }
     }
 

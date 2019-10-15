@@ -31,8 +31,6 @@ package com.breadwallet.ui.navigation
 import android.content.Intent
 import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.activities.PaperKeyProveActivity
-import com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity
 import com.breadwallet.legacy.presenter.activities.settings.SettingsActivity
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
@@ -191,24 +189,13 @@ class NavigationEffectHandler(
         UiUtils.showWalletDisabled(activity)
     }
 
-    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
-        val intent = Intent(activity, WriteDownActivity::class.java).apply {
-            putExtra(
-                WriteDownActivity.EXTRA_VIEW_REASON,
-                WriteDownActivity.ViewReason.ON_BOARDING.value
-            )
-            if (effect.nextScreen.isNotBlank()) {
-                putExtra(
-                    PaperKeyProveActivity.EXTRA_DONE_ACTION,
-                    effect.nextScreen // TODO PaperKeyActivity.DoneAction.SHOW_BUY_SCREEN.name
-                )
-            }
-        }
-        activity.startActivity(intent)
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down)
-    }
-
     override fun goToQrScan() {
         UiUtils.openScanner(activity, SendSheetController.QR_SCAN_RC) // TODO: use controller
     }
+
+    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) = Unit
+
+    override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) = Unit
+
+    override fun goToPaperKeyProve(effect: NavigationEffect.GoToPaperKeyProve) = Unit
 }
