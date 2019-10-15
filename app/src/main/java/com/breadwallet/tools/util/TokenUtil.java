@@ -201,19 +201,19 @@ public final class TokenUtil {
                 }
 
                 if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
-                    // Keep a local reference to the token list, so that we can make token symbols to their
-                    // gradient colors in WalletListAdapter
-                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported);
-
+                    String startColor = null;
+                    String endColor = null;
+                    String currencyId = null;
                     if (tokenObject.has(FIELD_COLORS)) {
                         JSONArray colorsArray = tokenObject.getJSONArray(FIELD_COLORS);
-                        item.setStartColor((String) colorsArray.get(START_COLOR_INDEX));
-                        item.setEndColor((String) colorsArray.get(END_COLOR_INDEX));
+                        startColor = (String) colorsArray.get(START_COLOR_INDEX);
+                        endColor = (String) colorsArray.get(END_COLOR_INDEX);
                     }
 
                     if (tokenObject.has(FIELD_CURRENCY_ID)) {
-                        item.setCurrencyId(tokenObject.getString(FIELD_CURRENCY_ID));
+                        currencyId = tokenObject.getString(FIELD_CURRENCY_ID);
                     }
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId);
 
                     tokenItems.add(item);
                 }
