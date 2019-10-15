@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 9/23/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 10/11/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,26 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.pin
+package com.breadwallet.mobius
 
-import com.breadwallet.ui.navigation.OnCompleteAction
+import com.spotify.mobius.functions.Consumer
 
-data class InputPinModel(
-    val mode: Mode = Mode.NEW,
-    val pin: String = "",
-    val pinConfirmation: String = "",
-    val pinUpdateMode: Boolean = false,
-    val onComplete: OnCompleteAction
-) {
+class ConsumerDelegate<V>(
+    initial: Consumer<V>? = null
+) : Consumer<V> {
 
-    companion object {
-        fun createDefault(pinUpdateMode: Boolean, onComplete: OnCompleteAction) =
-            InputPinModel(pinUpdateMode = pinUpdateMode, onComplete = onComplete)
-    }
+    var consumer: Consumer<V>? = initial
+        @Synchronized get
+        @Synchronized set
 
-    enum class Mode {
-        VERIFY,  // Verify the old pin
-        NEW,     // Chose a new pin
-        CONFIRM  // Confirm the new pin
+    override fun accept(value: V) {
+        consumer?.accept(value)
     }
 }

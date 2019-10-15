@@ -151,28 +151,6 @@ public abstract class BRActivity extends FragmentActivity {
 
                 }
                 break;
-
-            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true, null);
-                        }
-                    });
-                }
-                break;
-
-            case BRConstants.PROVE_PHRASE_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true, null);
-                        }
-                    });
-                }
-                break;
         }
     }
 

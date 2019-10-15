@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.legacy.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.legacy.presenter.customviews.BRButton;
 import com.breadwallet.legacy.presenter.customviews.BREdit;
@@ -151,10 +150,7 @@ public final class PromptManager {
                 title.setText(context.getString(R.string.Prompts_PaperKey_title));
                 description.setText(context.getString(R.string.Prompts_PaperKey_Body_Android));
                 continueButton.setOnClickListener(view -> {
-                    Intent intent = new Intent(context, WriteDownActivity.class);
-                    intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
-                    context.startActivity(intent);
-                    context.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    MainActivity.Companion.openPaperKey(context);
                     sendPromptClickedEvent(promptItem);
                 });
                 break;

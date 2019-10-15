@@ -15,10 +15,10 @@ import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
-import com.breadwallet.ui.controllers.AlertDialogController
-import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
+import com.breadwallet.ui.controllers.AlertDialogController
+import com.breadwallet.ui.controllers.SignalController
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
