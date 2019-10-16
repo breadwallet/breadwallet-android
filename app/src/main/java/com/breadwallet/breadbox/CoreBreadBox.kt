@@ -36,13 +36,8 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.crypto.events.network.NetworkEvent
-import com.breadwallet.crypto.events.system.SystemCreatedEvent
-import com.breadwallet.crypto.events.system.SystemDiscoveredNetworksEvent
 import com.breadwallet.crypto.events.system.SystemEvent
-import com.breadwallet.crypto.events.system.SystemEventVisitor
 import com.breadwallet.crypto.events.system.SystemListener
-import com.breadwallet.crypto.events.system.SystemManagerAddedEvent
-import com.breadwallet.crypto.events.system.SystemNetworkAddedEvent
 import com.breadwallet.crypto.events.transfer.TranferEvent
 import com.breadwallet.crypto.events.wallet.DefaultWalletEventVisitor
 import com.breadwallet.crypto.events.wallet.WalletEvent
@@ -81,9 +76,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.take
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.Executors
@@ -97,8 +90,7 @@ internal class CoreBreadBox(
     // TODO: Allow reconfiguring manager mode
     private val walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
 ) : BreadBox,
-    SystemListener,
-    SystemEventVisitor<Unit> {
+    SystemListener {
 
     companion object {
         // TODO: Used until auth flow is implemented
@@ -133,7 +125,8 @@ internal class CoreBreadBox(
     private val walletTransfersChannelMap = createChannelMap<String, List<Transfer>>()
     private val transferUpdatedChannelMap = createChannelMap<String, Transfer>()
 
-    private val walletTracker = SystemWalletTracker(walletProvider, system())
+    private val walletTracker =
+        SystemWalletTracker(walletProvider, system(), openScope, isMainnet, walletManagerMode)
 
     private fun <K, V> createChannelMap(): MutableMap<K, BroadcastChannel<V>> =
         mutableMapOf<K, BroadcastChannel<V>>().run {
@@ -229,7 +222,9 @@ internal class CoreBreadBox(
             .mapLatest { wallets ->
                 when {
                     filterByTracked -> {
-                        wallets.filter { it.walletManager.state.isTracked() }
+                        wallets.filterByCurrencyIds(
+                            walletProvider.enabledWallets().first()
+                        )
                     }
                     else -> wallets
                 }
@@ -312,6 +307,8 @@ internal class CoreBreadBox(
         wallet: Wallet,
         event: WalletEvent
     ) {
+        walletTracker.handleWalletEvent(system, manager, wallet, event)
+
         walletsChannel.offer(system.wallets)
 
         fun updateTransfer(transfer: Transfer) {
@@ -348,33 +345,14 @@ internal class CoreBreadBox(
         manager: WalletManager,
         event: WalletManagerEvent
     ) {
+        walletTracker.handleManagerEvent(system, manager, event)
+
         walletsChannel.offer(system.wallets)
 
         event.accept(object : DefaultWalletManagerEventVisitor<Unit>() {
-            override fun visit(event: WalletManagerCreatedEvent) {
-                logDebug("Wallet Manager Created: '${manager.name}'")
+            override fun visit(event: WalletManagerCreatedEvent) = Unit
 
-                walletTracker
-                    .trackedWallets()
-                    .take(1)
-                    .onEach { wallets ->
-                        val connectManager =
-                            wallets.any { it.equals(manager.currency.code, true) }
-                        when {
-                            connectManager -> {
-                                manager.connect(null) //TODO: Support custom node
-                                logDebug("Wallet Manager Connected: '${manager.name}'")
-                            }
-                            else -> logDebug("Wallet Manager Not Tracked: '${manager.name}'")
-                        }
-                    }
-                    .launchIn(openScope)
-            }
-
-            override fun visit(event: WalletManagerDeletedEvent) {
-                logDebug("Wallet Manager Deleted: '${manager.name}'")
-                manager.disconnect()
-            }
+            override fun visit(event: WalletManagerDeletedEvent) = Unit
 
             override fun visit(event: WalletManagerSyncProgressEvent) {
                 val timeStamp = event.timestamp?.get()?.time
@@ -421,12 +399,13 @@ internal class CoreBreadBox(
         })
     }
 
-    override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) =
-        Unit
+    override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) {
+        walletTracker.handleNetworkEvent(system, network, event)
+    }
 
     @Synchronized
     override fun handleSystemEvent(system: System, event: SystemEvent) {
-        event.accept(this)
+        walletTracker.handleSystemEvent(system, event)
     }
 
     override fun handleTransferEvent(
@@ -435,40 +414,8 @@ internal class CoreBreadBox(
         wallet: Wallet,
         transfer: Transfer,
         event: TranferEvent
-    ) = Unit
-
-    override fun visit(event: SystemDiscoveredNetworksEvent) = Unit
-
-    override fun visit(event: SystemCreatedEvent) = Unit
-
-    override fun visit(event: SystemManagerAddedEvent) = Unit
-
-    override fun visit(event: SystemNetworkAddedEvent) {
-        val system = checkNotNull(system)
-        val network = event.network
-
-        logDebug("Network '${network.name}' added.")
-
-        walletTracker
-            .trackedWallets()
-            .take(1)
-            .onEach { wallets ->
-                val enableNetwork = wallets
-                    .any { network.getCurrencyByCode(it.toLowerCase()).isPresent }
-                if (enableNetwork && network.isMainnet == isMainnet) {
-                    logDebug("Creating wallet manager for network '${network.name}'.")
-
-                    val wmMode = when {
-                        system.supportsWalletManagerMode(network, walletManagerMode) ->
-                            walletManagerMode
-                        else -> system.getDefaultWalletManagerMode(network)
-                    }
-
-                    val addressScheme = system.getDefaultAddressScheme(network)
-                    system.createWalletManager(event.network, wmMode, addressScheme, emptySet())
-                }
-            }
-            .launchIn(openScope)
+    ) {
+        walletTracker.handleTransferEvent(system, manager, wallet, transfer, event)
     }
 
     /** Emit's the result of [extract] when [system] and the result value are not null */
