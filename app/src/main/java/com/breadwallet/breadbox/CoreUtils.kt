@@ -39,6 +39,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.crypto.WalletManager
+import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.utility.CompletionHandler
 import kotlinx.coroutines.channels.awaitClose
@@ -168,15 +170,47 @@ fun BigDecimal.formatFiatForUi(currencyCode: String): String {
 }
 
 val Wallet.currencyId: String
-    get() = walletManager.network.currency.uids
+    get() = walletManager.currency.uids
+
+fun List<Wallet>.filterByCurrencyIds(currencyIds: List<String>) =
+    filter { wallet ->
+        currencyIds.any {
+            it.equals(
+                wallet.currencyId,
+                true
+            )
+        }
+    }
 
 /** Returns the [Wallet] with the given [currencyId] or null. */
 fun List<Wallet>.findByCurrencyId(currencyId: String) =
     find { it.walletManager.network.currency.uids.equals(currencyId, true) }
 
-/** Returns the [Network] with the given [currencyId] or null. */
-fun List<Network>.findByCurrencyId(currencyId: String) =
-    find { it.currency.uids.equals(currencyId, true) }
+/** Returns true if the [WalletManager]'s [Network] supports the given [currencyId]. */
+fun WalletManager.networkContainsCurrency(currencyId: String) =
+    network.containsCurrency(currencyId)
+
+/** Returns the [Currency] if the [WalletManager]'s [Network] supports the given [currencyId], null otherwise. */
+fun WalletManager.findCurrency(currencyId: String) =
+    network.findCurrency(currencyId)
+
+/** Returns true if the [Network] supports the given [currencyId]. */
+fun Network.containsCurrency(currencyId: String) =
+    findCurrency(currencyId) != null
+
+/** Returns the [Currency] if the [Network] supports the given [currencyId], null otherwise. */
+fun Network.findCurrency(currencyId: String) =
+    currencies.find { networkCurrency ->
+        networkCurrency.uids.equals(
+            currencyId,
+            true
+        )
+    }
+
+fun WalletManagerState.isTracked() =
+    type == WalletManagerState.Type.CREATED ||
+        type == WalletManagerState.Type.CONNECTED ||
+        type == WalletManagerState.Type.SYNCING
 
 /** Returns [Wallet] [Flow] sorted by [displayOrderCurrencyIds]. */
 fun Flow<List<Wallet>>.applyDisplayOrder(displayOrderCurrencyIds: Flow<List<String>>) =
