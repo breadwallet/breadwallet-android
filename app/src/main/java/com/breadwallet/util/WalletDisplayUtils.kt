@@ -28,7 +28,7 @@ class WalletDisplayUtils {
                     true,
                     MAX_DECIMAL_PLACES_FOR_UI
                 )
-                currencyCode.isEth() -> WalletUiConfiguration(
+                currencyCode.isEthereum() -> WalletUiConfiguration(
                     "#5e6fa5",
                     null,
                     true,
@@ -74,7 +74,7 @@ class WalletDisplayUtils {
                         else -> null
                     }
                 }
-                currencyCode.isEth() -> amountInSmallestUnit.divide(
+                currencyCode.isEthereum() -> amountInSmallestUnit.divide(
                     ONE_ETH,
                     SCALE_ETH,
                     BRConstants.ROUNDING_MODE
