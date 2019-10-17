@@ -48,6 +48,7 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.installHooks
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
+import com.breadwallet.util.CryptoUriParser2
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.crypto.Base32
@@ -63,7 +64,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.util.isEth
+import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
 import com.platform.APIClient
@@ -212,7 +213,7 @@ class BreadApp : Application(), KodeinAware {
                     .getSystemUnsafe()
                     ?.wallets
                     .orEmpty()
-                    .firstOrNull { it.currency.code.isEth() }
+                    .firstOrNull { it.currency.code.isEthereum() }
                     ?.source?.toString() ?: return null
 
                 // Remove the first 2 characters i.e. 0x
@@ -312,6 +313,10 @@ class BreadApp : Application(), KodeinAware {
 
     override val kodein by Kodein.lazy {
         importOnce(androidSupportModule(this@BreadApp))
+
+        bind<CryptoUriParser2>() with singleton {
+            CryptoUriParser2(instance())
+        }
 
         bind<KeyStore>() with singleton {
             // TODO: Remove dependencies of KeyStore.Companion and

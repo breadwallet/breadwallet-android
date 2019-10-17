@@ -34,6 +34,7 @@ import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.managewallets.ManageWalletsController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.provekey.PaperKeyProveController
+import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
@@ -109,7 +110,10 @@ class RouterNavigationEffectHandler(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToReceive(effect: NavigationEffect.GoToReceive) = Unit
+    override fun goToReceive(effect: NavigationEffect.GoToReceive) {
+        val controller = ReceiveController(effect.currencyCode)
+        router.pushController(RouterTransaction.with(controller))
+    }
 
     override fun goToTransaction(effect: NavigationEffect.GoToTransaction) {
         val controller = TxDetailsController(effect.currencyId, effect.txHash)

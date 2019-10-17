@@ -39,7 +39,7 @@ sealed class NavigationEffect {
         val cryptoRequest: CryptoRequest? = null
     ) : NavigationEffect()
 
-    data class GoToReceive(val currencyId: String) : NavigationEffect()
+    data class GoToReceive(val currencyCode: String) : NavigationEffect()
     data class GoToTransaction(
         val currencyId: String,
         val txHash: String
