@@ -26,7 +26,6 @@ import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.activities.DisabledActivity;
 import com.breadwallet.legacy.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
-import com.breadwallet.legacy.presenter.fragments.FragmentReceive;
 import com.breadwallet.legacy.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.legacy.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
@@ -47,7 +46,6 @@ import com.platform.HTTPServer;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static com.breadwallet.legacy.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 
 /**
  * BreadWallet
@@ -243,27 +241,6 @@ public class UiUtils {
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
                 .addToBackStack(FragmentRequestAmount.class.getName()).commit();
-
-    }
-
-    //isReceive tells the Animator that the Receive fragment is requested, not My Address
-    public static void showReceiveFragment(FragmentActivity app, boolean isReceive) {
-        if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
-            return;
-        }
-        FragmentReceive fragmentReceive = (FragmentReceive) app.getSupportFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
-        if (fragmentReceive != null && fragmentReceive.isAdded())
-            return;
-        fragmentReceive = new FragmentReceive();
-        Bundle args = new Bundle();
-        args.putBoolean(EXTRA_RECEIVE, isReceive);
-        fragmentReceive.setArguments(args);
-
-        app.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
-                .addToBackStack(FragmentReceive.class.getName()).commit();
 
     }
 

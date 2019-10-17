@@ -140,7 +140,7 @@ public class QRUtils {
      * @param qrData        Uri used to generate the QR code.
      * @param text          Uri to be include in the message.
      */
-    public static void sendShareIntent(Activity context, String qrData, String text) {
+    public static void sendShareIntent(Activity context, String qrData, String text, String walletName) {
         if (context == null) {
             Log.e(TAG, "sendShareIntent: context is null");
             return;
@@ -154,11 +154,11 @@ public class QRUtils {
             ActivityCompat.requestPermissions(context,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID);
         } else {
-            share(context);
+            share(context, walletName);
         }
     }
 
-    public static void share(Context context) {
+    public static void share(Context context, String walletName) {
         Bitmap qrImage = QRUtils.encodeAsBitmap(mQrDataToShare, BITMAP_SIZE);
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType(SHARE_IMAGE_TYPE);
@@ -175,8 +175,7 @@ public class QRUtils {
             shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
             shareIntent.setType(INTENT_TYPE);
             shareIntent.putExtra(Intent.EXTRA_TEXT, mTextToShare);
-            String emailSubject = context.getString(R.string.Email_address_subject,
-                    WalletsMaster.getInstance().getCurrentWallet(context).getName());
+            String emailSubject = context.getString(R.string.Email_address_subject, walletName);
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.Receive_share)));

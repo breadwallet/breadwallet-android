@@ -95,7 +95,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_receive, container, false));
+        ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.controller_receive, container, false));
         mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
         mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
         mCopiedLayout = rootView.findViewById(R.id.copied_layout);
@@ -197,7 +197,8 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 BaseWalletManager walletManager = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 CryptoRequest cryptoRequest = new CryptoRequest.Builder().setAddress(walletManager.decorateAddress(mReceiveAddress)).setAmount(getAmount()).build();
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, cryptoRequest);
-                QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoUri.toString());
+                // TODO: Support new architecture
+                //  QRUtils.sendShareIntent(getActivity(), cryptoUri.toString(), cryptoUri.toString());
                 showKeyboard(false);
             }
         });

@@ -26,6 +26,7 @@
 
 package com.breadwallet.breadbox
 
+import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
@@ -43,6 +44,9 @@ import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.utility.CompletionHandler
+import com.breadwallet.util.isBitcoin
+import com.breadwallet.util.isBitcoinCash
+import com.breadwallet.util.isEthereum
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -218,4 +222,16 @@ fun Flow<List<Wallet>>.applyDisplayOrder(displayOrderCurrencyIds: Flow<List<Stri
         currencyIds.mapNotNull {
             systemWallets.findByCurrencyId(it)
         }
+    }
+
+/** Returns the url scheme for a payment request with this wallet. */
+val Wallet.urlScheme: String
+    get() = when {
+        currency.code.isEthereum() || currency.isErc20() -> "ethereum"
+        currency.code.isBitcoin() -> "bitcoin"
+        currency.code.isBitcoinCash() -> when {
+            BuildConfig.BITCOIN_TESTNET -> "bchtest"
+            else -> "bitcoincash"
+        }
+        else -> ""
     }
