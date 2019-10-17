@@ -9,6 +9,9 @@ sealed class SendSheetEffect {
     data class GoToFaq(
         val currencyCode: CurrencyCode
     ) : SendSheetEffect()
+    data class GoToReceive(
+        val currencyCode: CurrencyCode
+    ) : SendSheetEffect()
 
     object GoToEthWallet : SendSheetEffect()
     object GoToScan : SendSheetEffect()

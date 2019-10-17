@@ -136,9 +136,7 @@ class NavigationEffectHandler(
         }*/
     }
 
-    override fun goToReceive(effect: NavigationEffect.GoToReceive) {
-        UiUtils.showReceiveFragment(activity, true)
-    }
+    override fun goToReceive(effect: NavigationEffect.GoToReceive) = Unit
 
     override fun goToTransaction(effect: NavigationEffect.GoToTransaction) = Unit
 

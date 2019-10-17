@@ -136,8 +136,6 @@ open class WalletController(
             },
             nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
                 when (effect) {
-                    is WalletScreenEffect.GoToReceive ->
-                        NavigationEffect.GoToReceive(effect.currencyId)
                     WalletScreenEffect.GoBack -> NavigationEffect.GoBack
                     WalletScreenEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
                     WalletScreenEffect.GoToReview -> NavigationEffect.GoToReview
@@ -148,6 +146,8 @@ open class WalletController(
                 when (effect) {
                     is WalletScreenEffect.GoToSend ->
                         NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
+                    is WalletScreenEffect.GoToReceive ->
+                        NavigationEffect.GoToReceive(effect.currencyId)
                     is WalletScreenEffect.GoToTransaction ->
                         NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)
                     else -> null

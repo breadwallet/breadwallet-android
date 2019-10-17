@@ -108,7 +108,7 @@ public abstract class BRActivity extends FragmentActivity {
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Write storage permission has been granted, preview can be displayed.
                     Log.i(TAG, "WRITE permission has now been granted.");
-                    QRUtils.share(this);
+                    // No longer supported, handle this result in the controller: QRUtils.share(this);
                 }
                 break;
         }
