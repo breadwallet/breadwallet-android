@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/10/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/17/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +22,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.provekey
+package com.breadwallet.ui.settings
 
-import com.spotify.mobius.First
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
-
-object PaperKeyProveInit : Init<PaperKeyProveModel, PaperKeyProveEffect> {
-    override fun init(model: PaperKeyProveModel): First<PaperKeyProveModel, PaperKeyProveEffect> {
-        return first(model)
-    }
+enum class SettingsOption {
+    // HOME
+    SCAN_QR,
+    PREFERENCES,
+    SECURITY_SETTINGS,
+    SUPPORT,
+    SUBMIT_REVIEW,
+    REWARDS,
+    ABOUT,
+    ATM_FINDER,
+    DEVELOPER_OPTIONS,
+    // PREFERENCES
+    CURRENCY,
+    BTC_MENU,
+    BCH_MENU,
+    SHARE_ANONYMOUS_DATA,
+    NOTIFICATIONS,
+    // SECURITY SETTINGS
+    FINGERPRINT_AUTH,
+    UPDATE_PIN,
+    PAPER_KEY,
+    WIPE,
+    // DEVELOPER OPTIONS
+    SEND_LOGS,
+    API_SERVER,
+    ONBOARDING_FLOW,
+    WEB_PLAT_DEBUG_URL,
+    WEB_PLAT_BUNDLE,
+    TOKEN_BUNDLE,
+    // BTC
+    FINGERPRINT_SPENDING_LIMIT,
+    REDEEM_PRIVATE_KEY,
+    SYNC_BLOCKCHAIN,
+    BTC_NODES,
+    ENABLE_SEG_WIT,
+    VIEW_LEGACY_ADDRESS
 }
+

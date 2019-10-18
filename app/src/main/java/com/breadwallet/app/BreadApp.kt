@@ -51,6 +51,8 @@ import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
 import com.breadwallet.util.CryptoUriParser2
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
+import com.breadwallet.repository.ExperimentsRepository
+import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRApiManager
@@ -342,6 +344,8 @@ class BreadApp : Application(), KodeinAware {
                 WalletManagerMode.API_ONLY
             )
         }
+
+        bind<ExperimentsRepository>() with singleton { ExperimentsRepositoryImpl }
     }
 
     private var mDelayServerShutdownCode = -1

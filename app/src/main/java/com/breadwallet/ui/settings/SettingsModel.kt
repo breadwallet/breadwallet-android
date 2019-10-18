@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/13/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/17/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.recovery
+package com.breadwallet.ui.settings
 
-import com.spotify.mobius.First
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
-
-object RecoveryKeyInit : Init<RecoveryKeyModel, RecoveryKeyEffect> {
-    override fun init(model: RecoveryKeyModel): First<RecoveryKeyModel, RecoveryKeyEffect> {
-        return first(model)
+data class SettingsModel(
+    val section: SettingsSection,
+    val items: List<SettingsItem> = listOf()
+) {
+    companion object {
+        fun createDefault(section: SettingsSection): SettingsModel = SettingsModel(section)
     }
 }
+
+data class SettingsItem(
+    val title: String,
+    val option: SettingsOption,
+    val iconResId: Int? = null,
+    val addOn: String = "",
+    val subHeader: String = ""
+)

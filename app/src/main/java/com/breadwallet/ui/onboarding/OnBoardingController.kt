@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.onboarding
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -37,14 +36,12 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
-import com.platform.HTTPServer
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -57,15 +54,6 @@ import org.kodein.di.erased.instance
 class OnBoardingController(
     args: Bundle? = null
 ) : BaseMobiusController<OnBoardingModel, OnBoardingEvent, OnBoardingEffect>(args) {
-
-    companion object {
-        @JvmStatic
-        fun showBuyScreen(activity: Activity) {
-            // TODO: Don't hardcode currency code, don't rely on WalletBitcoinManager
-            val url = "${HTTPServer.getPlatformUrl(HTTPServer.URL_BUY)}?currency=BTC"
-            UiUtils.startPlatformBrowser(activity, url)
-        }
-    }
 
     private val activeIndicator by lazy {
         val resId = R.drawable.page_indicator_active
