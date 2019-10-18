@@ -104,7 +104,7 @@ abstract class BaseController(
     @Suppress("UNCHECKED_CAST")
     fun <T> arg(key: String, default: T? = null): T =
         checkNotNull(args[key] ?: default) {
-            "No value for $key and no default provided (or it was null)."
+            "No value for '$key' and no default provided (or it was null)."
         } as T
 
     /** Display a [Toast] message of [resId] with a short duration. */

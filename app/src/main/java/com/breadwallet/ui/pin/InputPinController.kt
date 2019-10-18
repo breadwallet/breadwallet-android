@@ -45,7 +45,7 @@ import kotlinx.android.synthetic.main.activity_pin_template.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class InputPinController(args: Bundle? = null) :
+class InputPinController(args: Bundle) :
     BaseMobiusController<InputPinModel, InputPinEvent, InputPinEffect>(args) {
 
     companion object {

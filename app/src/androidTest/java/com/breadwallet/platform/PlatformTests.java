@@ -59,14 +59,6 @@ public class PlatformTests {
             TestActivity.class);
 
     @Test
-    public void testFeePerKbFetch() {
-        long fee = APIClient.getInstance(mActivityRule.getActivity()).feePerKb();
-        System.out.println("testFeePerKbFetch: fee: " + fee);
-        Assert.assertNotSame(fee, (long) 0);
-
-    }
-
-    @Test
     public void bundleExtractTest() {
 //        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
 //

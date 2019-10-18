@@ -86,7 +86,7 @@ class MainActivity : BRActivity() {
                         val intentUrl = processIntentData(intent)
                         LoginController(intentUrl)
                     } else {
-                        InputPinController()
+                        InputPinController(OnCompleteAction.GO_HOME)
                     }
                 }
                 else -> IntroController()
