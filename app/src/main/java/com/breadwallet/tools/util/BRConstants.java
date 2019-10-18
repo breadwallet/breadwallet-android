@@ -212,7 +212,7 @@ public final class BRConstants {
     public static final String IS_ERROR = "isError";
     public static final String TOPICS = "topics";
     public static final String DATA = "data";
-    public static final String DATE = "date";
+    public static final String DATE = "Date";
     public static final String TRANSACTION_HASH = "transactionHash";
     public static final String CHECKOUT = "checkout";
     public static final String GET = "GET";
@@ -220,7 +220,6 @@ public final class BRConstants {
     public static final String HEADER_WWW_AUTHENTICATE = "www-authenticate";
     public static final String NAME = "name";
     public static final String TOKEN = "token";
-    public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
     public static final String STAGE = "stage";
     public static final String CURRENCY_ERC20 = "erc20";
@@ -228,14 +227,6 @@ public final class BRConstants {
     public static final String CURRENCY = "currency";
     public static final String UTF_8 = "UTF-8";
     public static final String USD = "USD";
-
-    // Number of confirmations required to consider a transaction completed.
-    public static final int CONFIRMED_BLOCKS_NUMBER = 6;
-
-    /**
-     * Commonly used regular expressions.
-     */
-    public static final String SPACE_REGEX = "\\s";
 
     private BRConstants() {
     }

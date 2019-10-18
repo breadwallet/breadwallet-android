@@ -244,7 +244,8 @@ dependencies {
     implementation 'com.google.guava:guava:25.1-android'
     implementation 'com.google.protobuf:protobuf-lite:3.0.0'
     implementation 'com.google.zxing:core:3.3.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.2.1"
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'junit:junit:4.12'

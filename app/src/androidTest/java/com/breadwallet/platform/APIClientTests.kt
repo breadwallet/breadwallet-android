@@ -72,7 +72,7 @@ class APIClientTests {
         TokenHolder.reset()
         BRKeyStore.resetWalletKeyStore(context)
         BRSharedPrefs.clearAllPrefs(context)
-        APIClient.setInstance(null)
+        APIClient(context)
         try {
             server.close()
         } catch (ignored: IOException) {
@@ -113,7 +113,6 @@ class APIClientTests {
         // Note: we override the instance because TokenHolder
         //  may retrieve its own instance of APIClient.
         val apiClient = spy(APIClient(context))
-        APIClient.setInstance(apiClient)
 
         // Simulate single API call with 401 response
         apiClient.sendRequest(Request.Builder()
@@ -154,7 +153,6 @@ class APIClientTests {
         // Note: we override the instance because TokenHolder
         //  may retrieve its own instance of APIClient.
         val apiClient = spy(APIClient(context))
-        APIClient.setInstance(apiClient)
 
         // Simulate single API call with 401 response
         apiClient.sendRequest(Request.Builder()
@@ -213,7 +211,6 @@ class APIClientTests {
         // Note: we override the instance because TokenHolder
         //  may retrieve its own instance of APIClient.
         val apiClient = spy(APIClient(context))
-        APIClient.setInstance(apiClient)
 
         // Simulate single API call with 401 response
         apiClient.sendRequest(Request.Builder()

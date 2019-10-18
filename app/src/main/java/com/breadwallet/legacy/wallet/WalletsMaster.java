@@ -134,9 +134,9 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
             currencyCodes.add(tokenInfo.getSymbol());
         }
-        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-            currencyCodes.add(tokenItem.getSymbol().toUpperCase());
-        }
+        //for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
+        //    currencyCodes.add(tokenItem.symbol.toUpperCase());
+        //}
         return new ArrayList<>(currencyCodes);
     }
 

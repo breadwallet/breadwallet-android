@@ -35,7 +35,9 @@ import android.util.Log;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.crypto.Cipher;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.logger.Logger;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
@@ -57,8 +59,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
-    //private static final boolean ENCRYPTED = true;
-    private static final boolean ENCRYPTED = false; // TODO: revert once migrated to new crypto interface
+    private static final boolean ENCRYPTED = true;
     private static final boolean ENCRYPTED_REPLICATION = true;
     private static final String[] ALL_COLUMNS = {
             PlatformSqliteHelper.KV_VERSION,
@@ -879,16 +880,21 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             return null;
         }
 
-        // TODO: Replace with new crypto APIs (once implemented by CORE)
-        // Encrypter encrypter = Encrypter.createForChaCha20Poly1305(Key key, byte[] nonce12, byte[] ad); // ad can be empty array
-        // encrypter.encrypt(data);
-        BRCoreKey key = new BRCoreKey(mTempAuthKey);
-        byte[] nonce = CryptoHelper.generateRandomNonce();
+        final Key key = Key.createFromPrivateKeyString(mTempAuthKey).orNull();
+
+        if (key == null) {
+            Logger.Companion.error("Failed to create key from bytes.");
+            return null;
+        }
+
+        final byte[] nonce = CryptoHelper.generateRandomNonce();
         if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
             Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
             return null;
         }
-        byte[] encryptedData = key.encryptNative(data, nonce);
+
+        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, new byte[0]);
+        byte[] encryptedData = cipher.encrypt(data).orNull();
         if (Utils.isNullOrEmpty(encryptedData)) {
             Log.e(TAG, "encrypt: encryptNative failed: " + (encryptedData == null ? null : encryptedData.length));
             return null;
@@ -913,12 +919,14 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         if (mTempAuthKey == null)
             cacheKeyIfNeeded(app);
 
-        // TODO: Replace with new crypto APIs (once implemented by CORE)
-        // Encrypter encrypter = Encrypter.createForChaCha20Poly1305(Key key, byte[] nonce12, byte[] ad); // ad can be empty array, get nonce from 0-12 bytes from data (same as below)
-        // encrypter.decrypter(data);
-        BRCoreKey key = new BRCoreKey(mTempAuthKey);
-        //12 bytes is the nonce
-        return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
+        final Key key = Key.createFromPrivateKeyString(mTempAuthKey).orNull();
+        if (key == null) {
+            return null;
+        }
+
+        final byte[] nonce = Arrays.copyOfRange(data, 0, 12);
+        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, new byte[0]);
+        return cipher.decrypt(data).orNull();
     }
 
     private static void cacheKeyIfNeeded(Context context) {
