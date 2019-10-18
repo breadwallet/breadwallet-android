@@ -424,7 +424,6 @@ class APIClient(private var context: Context) {
             $url
         """.trimIndent()
 
-        logError("signed message for $url\n$requestString")
         val signedRequest = signRequest(requestString) ?: return null
         val authValue = "$BREAD $token:$signedRequest"
         return modifiedRequest
