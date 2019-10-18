@@ -65,7 +65,6 @@ import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
@@ -79,9 +78,16 @@ import com.platform.tools.KVStoreManager
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -93,7 +99,6 @@ import org.kodein.di.erased.on
 import org.kodein.di.erased.singleton
 import java.io.File
 import java.io.UnsupportedEncodingException
-import java.util.Arrays
 import java.util.regex.Pattern
 
 @Suppress("TooManyFunctions")
@@ -189,13 +194,21 @@ class BreadApp : Application(), KodeinAware {
          * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
          */
         private fun initializeWalletId() {
-            val walletId = generateWalletId()
-            if (walletId.isNullOrBlank()) {
-                BRSharedPrefs.putWalletRewardId(id = "")
-                val error = IllegalStateException("Generated corrupt walletId: $walletId")
-                BRReportsManager.reportBug(error)
-            } else {
-                BRSharedPrefs.putWalletRewardId(id = walletId)
+            GlobalScope.launch(Dispatchers.Main) {
+                val walletId = getBreadBox()
+                    .wallets(false)
+                    .mapNotNull { wallets ->
+                        wallets.find { it.currency.code.isEthereum() }
+                    }
+                    .take(1)
+                    .map { generateWalletId(it.source.toString()) }
+                    .flowOn(Dispatchers.Default)
+                    .first()
+                if (walletId.isNullOrBlank()) {
+                    val error = IllegalStateException("Generated corrupt walletId: $walletId")
+                    BRReportsManager.reportBug(error)
+                }
+                BRSharedPrefs.putWalletRewardId(id = walletId ?: "")
             }
         }
 
@@ -208,21 +221,13 @@ class BreadApp : Application(), KodeinAware {
         // TODO: This entire operation should be moved into a separate class.
         @Synchronized
         @Suppress("ReturnCount")
-        private fun generateWalletId(): String? {
+        private fun generateWalletId(address: String): String? {
             try {
-                // Retrieve the ETH address since the wallet id is based on this.
-                val address = getBreadBox()
-                    .getSystemUnsafe()
-                    ?.wallets
-                    .orEmpty()
-                    .firstOrNull { it.currency.code.isEthereum() }
-                    ?.source?.toString() ?: return null
-
                 // Remove the first 2 characters i.e. 0x
-                val rawAddress = address.substring(2, address.length)
+                val rawAddress = address.drop(2)
 
                 // Get the address bytes.
-                val addressBytes = rawAddress.toByteArray(charset("UTF-8"))
+                val addressBytes = rawAddress.toByteArray()
 
                 // Run SHA256 on the address bytes.
                 val sha256Address = CryptoHelper.sha256(addressBytes) ?: byteArrayOf()
@@ -232,8 +237,7 @@ class BreadApp : Application(), KodeinAware {
                 }
 
                 // Get the first 10 bytes of the SHA256 hash.
-                val firstTenBytes =
-                    Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED)
+                val firstTenBytes = sha256Address.sliceArray(0 until NUMBER_OF_BYTES_FOR_SHA256_NEEDED)
 
                 // Convert the first 10 bytes to a lower case string.
                 val base32String = Base32.encode(firstTenBytes).toLowerCase()
@@ -318,6 +322,10 @@ class BreadApp : Application(), KodeinAware {
 
         bind<CryptoUriParser2>() with singleton {
             CryptoUriParser2(instance())
+        }
+
+        bind<APIClient>() with singleton {
+            APIClient(this@BreadApp)
         }
 
         bind<KeyStore>() with singleton {
@@ -465,8 +473,8 @@ class BreadApp : Application(), KodeinAware {
 
             HTTPServer.getInstance().startServer(this)
 
-            BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                .execute { TokenUtil.fetchTokensFromServer(mInstance) }
+            /*BRExecutor.getInstance().forLightWeightBackgroundTasks()
+                .execute { TokenUtil.fetchTokensFromServer(mInstance) }*/
             APIClient.getInstance(this).updatePlatform()
 
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
