@@ -7,10 +7,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.legacy.presenter.entities.BRSettingsItem;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.model.FeeOption;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
@@ -19,7 +16,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
@@ -100,8 +96,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
                 getWallet().setFeePerKb(preferredFee.longValue());
             }
         });
-
-        setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
+        // setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
     }
 
@@ -186,10 +181,4 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
     protected void syncStopped(Context context) {
         BRSharedPrefs.putBchPreForkSynced(context, true);
     }
-
-    @Override
-    public List<BRSettingsItem> getSettingsList(Context context) {
-        return SettingsUtil.getBitcoinCashSettings(context);
-    }
-
 }

@@ -31,9 +31,18 @@ package com.breadwallet.ui.navigation
 import android.content.Intent
 import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.activities.settings.SettingsActivity
+import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
+import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
+import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity
+import com.breadwallet.legacy.presenter.activities.settings.ImportActivity
+import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
+import com.breadwallet.legacy.presenter.activities.settings.SegWitActivity
+import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
+import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity
+import com.breadwallet.legacy.presenter.activities.settings.UnlinkActivity
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
+import com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity
 import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
@@ -56,6 +65,7 @@ class NavigationEffectHandler(
     companion object {
         // TODO: Find a better place for these constants
         const val BITCOIN_CURRENCY_CODE = "BTC"
+        const val BITCOIN_CASH_CURRENCY_CODE = "BCH"
     }
 
     private val workRunner = MainThreadWorkRunner.create()
@@ -101,12 +111,7 @@ class NavigationEffectHandler(
         UiUtils.startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE))
     }
 
-    override fun goToMenu() {
-        val intent = Intent(activity, SettingsActivity::class.java)
-        intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS)
-        activity.startActivity(intent)
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300)
-    }
+    override fun goToMenu(effect: NavigationEffect.GoToMenu) = Unit
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         /* TODO: This will be moved to RouterNavigationEffectHandler when send becomes a controller
@@ -196,4 +201,60 @@ class NavigationEffectHandler(
     override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) = Unit
 
     override fun goToPaperKeyProve(effect: NavigationEffect.GoToPaperKeyProve) = Unit
+
+    override fun goToGooglePlay() {
+        AppReviewPromptManager.openGooglePlay(activity)
+    }
+
+    override fun goToAbout() {
+        activity.startActivity(Intent(activity, AboutActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToDisplayCurrency() {
+        activity.startActivity(Intent(activity, DisplayCurrencyActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToNotificationsSettings() {
+        NotificationsSettingsActivity.start(activity)
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToShareData() {
+        activity.startActivity(Intent(activity, ShareDataActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToFingerprintAuth() {
+        activity.startActivity(Intent(activity, FingerprintActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToWipeWallet() {
+        activity.startActivity(Intent(activity, UnlinkActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToOnboarding() = Unit
+
+    override fun goToImportWallet() {
+        activity.startActivity(Intent(activity, ImportActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToSyncBlockchain() {
+        activity.startActivity(Intent(activity, SyncBlockchainActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToBitcoinNodeSelector() {
+        activity.startActivity(Intent(activity, NodesActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    override fun goToEnableSegWit() {
+        activity.startActivity(Intent(activity, SegWitActivity::class.java))
+        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
 }

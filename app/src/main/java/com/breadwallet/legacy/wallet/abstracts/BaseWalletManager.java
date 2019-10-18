@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.legacy.presenter.entities.BRSettingsItem;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.legacy.wallet.configs.WalletUiConfiguration;
@@ -12,7 +11,6 @@ import com.breadwallet.legacy.wallet.wallets.CryptoAddress;
 import com.breadwallet.legacy.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * BreadWallet
@@ -183,14 +181,13 @@ public interface BaseWalletManager {
 
     /**
      * Get the current balance of the wallet.
+     *
      * @return The current balance.
      */
     BigDecimal getBalance();
 
     //get the total amount sent in the smallest crypto unit:  satoshis.
     BigDecimal getTotalSent(Context app);
-
-    List<BRSettingsItem> getSettingsList(Context context);
 
     //wipe all wallet data
     void wipeData(Context app);

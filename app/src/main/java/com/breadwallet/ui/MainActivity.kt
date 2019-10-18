@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
@@ -44,10 +43,8 @@ import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
-import com.breadwallet.ui.writedownkey.WriteDownKeyController
 
 /**
  * The main user entrypoint into the app.
@@ -62,24 +59,6 @@ class MainActivity : BRActivity() {
         const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.MainActivity.EXTRA_CRYPTO_REQUEST"
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
-
-        // TODO Remove after refactoring settings into controllers
-        private const val EXTRA_OPEN_PIN_UPDATE =
-            "com.breadwallet.ui.MainActivity.EXTRA_OPEN_PIN_UPDATE"
-        private const val EXTRA_OPEN_PAPER_KEY =
-            "com.breadwallet.ui.MainActivity.EXTRA_OPEN_PAPER_KEY"
-
-        fun openPinUpdate(context: Context) {
-            context.startActivity(Intent(context, MainActivity::class.java).apply {
-                putExtra(EXTRA_OPEN_PIN_UPDATE, true)
-            })
-        }
-
-        fun openPaperKey(context: Context) {
-            context.startActivity(Intent(context, MainActivity::class.java).apply {
-                putExtra(EXTRA_OPEN_PAPER_KEY, true)
-            })
-        }
     }
 
     private lateinit var router: Router
@@ -146,27 +125,6 @@ class MainActivity : BRActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent ?: return
-
-        // TODO REMOVE
-        when {
-            intent.hasExtra(EXTRA_OPEN_PIN_UPDATE) -> {
-                router.pushController(
-                    RouterTransaction.with(InputPinController(OnCompleteAction.GO_HOME, true))
-                        .popChangeHandler(FadeChangeHandler())
-                        .pushChangeHandler(FadeChangeHandler())
-                )
-                return
-            }
-            intent.hasExtra(EXTRA_OPEN_PAPER_KEY) -> {
-                router.pushController(
-                    RouterTransaction.with(
-                        WriteDownKeyController(OnCompleteAction.GO_HOME)
-                    ).popChangeHandler(FadeChangeHandler()).pushChangeHandler(FadeChangeHandler())
-                )
-                return
-            }
-        }
-
         val request = intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST)
         if (request is CryptoRequest) {
             intent.removeExtra(EXTRA_CRYPTO_REQUEST)

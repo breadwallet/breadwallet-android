@@ -73,7 +73,6 @@ class ShowPaperKeyController(args: Bundle) :
     override val layoutId = R.layout.activity_paper_key
     override val defaultModel = ShowPaperKeyModel.createDefault(phrase, onComplete)
     override val update = ShowPaperKeyUpdate
-    override val init = ShowPaperKeyInit
     override val effectHandler = CompositeEffectHandler.from<ShowPaperKeyEffect, ShowPaperKeyEvent>(
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {

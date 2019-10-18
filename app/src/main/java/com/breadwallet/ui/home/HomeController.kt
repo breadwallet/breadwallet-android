@@ -42,6 +42,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.settings.SettingsSection
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -80,12 +81,12 @@ class HomeController(
                         NavigationEffect.GoToInAppMessage(effect.inAppMessage)
                     HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
                     HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
-                    HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu
                     else -> null
                 }
             }),
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
                 when (effect) {
+                    HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
                     is HomeScreenEffect.GoToWallet ->
                         NavigationEffect.GoToWallet(effect.currencyCode)
                     is HomeScreenEffect.GoToManageWallets ->
