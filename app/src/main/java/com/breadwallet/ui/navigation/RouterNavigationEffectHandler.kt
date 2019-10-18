@@ -32,10 +32,12 @@ import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.managewallets.ManageWalletsController
+import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.provekey.PaperKeyProveController
 import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.send.SendSheetController
+import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.TxDetailsController
@@ -92,7 +94,13 @@ class RouterNavigationEffectHandler(
 
     override fun goToTrade() = Unit
 
-    override fun goToMenu() = Unit
+    override fun goToMenu(effect: NavigationEffect.GoToMenu) {
+        router.pushController(
+            RouterTransaction.with(SettingsController(effect.settingsOption))
+                .popChangeHandler(HorizontalChangeHandler())
+                .pushChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToAddWallet() {
         router.pushController(
@@ -189,4 +197,33 @@ class RouterNavigationEffectHandler(
             ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
         )
     }
+
+    override fun goToGooglePlay() = Unit
+
+    override fun goToAbout() = Unit
+
+    override fun goToDisplayCurrency() = Unit
+
+    override fun goToNotificationsSettings() = Unit
+
+    override fun goToShareData() = Unit
+
+    override fun goToFingerprintAuth() = Unit
+
+    override fun goToWipeWallet() = Unit
+
+    override fun goToOnboarding() {
+        router.pushController(
+            RouterTransaction.with(OnBoardingController())
+                .pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+        )
+    }
+
+    override fun goToImportWallet() = Unit
+
+    override fun goToSyncBlockchain() = Unit
+
+    override fun goToBitcoinNodeSelector() = Unit
+
+    override fun goToEnableSegWit() = Unit
 }

@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/10/19.
+ * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/17/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.showkey
+package com.breadwallet.ui.settings
 
-import com.spotify.mobius.First
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
+import io.hypno.switchboard.MobiusUpdateSpec
 
-object ShowPaperKeyInit : Init<ShowPaperKeyModel, ShowPaperKeyEffect> {
-    override fun init(model: ShowPaperKeyModel): First<ShowPaperKeyModel, ShowPaperKeyEffect> {
-        return first(model)
-    }
+@MobiusUpdateSpec(
+    baseModel = SettingsModel::class,
+    baseEffect = SettingsEffect::class
+)
+sealed class SettingsEvent {
+
+    data class OnOptionClicked(val option: SettingsOption) : SettingsEvent()
+
+    data class OnOptionsLoaded(val options: List<SettingsItem>) : SettingsEvent()
+
+    object OnBackClicked : SettingsEvent()
+    object OnCloseClicked : SettingsEvent()
+
+    data class SetApiServer(val host: String) : SettingsEvent()
+    data class SetPlatformDebugUrl(val url: String) : SettingsEvent()
+    data class SetPlatformBundle(val bundle: String) : SettingsEvent()
+    data class SetTokenBundle(val bundle: String) : SettingsEvent()
 }

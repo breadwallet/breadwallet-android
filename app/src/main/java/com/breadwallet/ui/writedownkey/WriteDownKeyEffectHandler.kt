@@ -33,7 +33,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-@Suppress("TooGenericExceptionCaught")
 class WriteDownKeyEffectHandler(
     private val output: Consumer<WriteDownKeyEvent>,
     private val controllerScope: CoroutineScope,

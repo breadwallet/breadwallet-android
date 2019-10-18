@@ -7,9 +7,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.legacy.presenter.entities.BRSettingsItem;
 import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.model.FeeOption;
 import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -17,7 +15,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
-import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
@@ -99,7 +96,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     public void updateSettings(Context context) {
-        setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
+//        setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
     }
 
     @Override
@@ -154,10 +151,5 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     public void refreshAddress(Context context) {
         BRCoreAddress address = BRSharedPrefs.getIsSegwitEnabled(context) ? getWallet().getReceiveAddress() : getWallet().getLegacyAddress();
         updateCachedAddress(context, address.stringify());
-    }
-
-    @Override
-    public List<BRSettingsItem> getSettingsList(Context context) {
-        return SettingsUtil.getBitcoinSettings(context);
     }
 }

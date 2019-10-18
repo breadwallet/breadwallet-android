@@ -23,7 +23,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.MainActivity;
 import com.breadwallet.util.usermetrics.UserMetricsUtil;
 
 import java.util.regex.Pattern;
@@ -143,22 +142,6 @@ public final class PromptManager {
                     Intent intent = new Intent(context, FingerprintActivity.class);
                     context.startActivity(intent);
                     context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    sendPromptClickedEvent(promptItem);
-                });
-                break;
-            case PAPER_KEY:
-                title.setText(context.getString(R.string.Prompts_PaperKey_title));
-                description.setText(context.getString(R.string.Prompts_PaperKey_Body_Android));
-                continueButton.setOnClickListener(view -> {
-                    MainActivity.Companion.openPaperKey(context);
-                    sendPromptClickedEvent(promptItem);
-                });
-                break;
-            case UPGRADE_PIN:
-                title.setText(context.getString(R.string.Prompts_UpgradePin_title));
-                description.setText(context.getString(R.string.Prompts_UpgradePin_body));
-                continueButton.setOnClickListener(view -> {
-                    MainActivity.Companion.openPinUpdate(context);
                     sendPromptClickedEvent(promptItem);
                 });
                 break;
