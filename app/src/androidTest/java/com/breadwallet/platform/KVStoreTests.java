@@ -5,10 +5,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Base64;
 
-import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
-import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.platform.entities.TxMetaData;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -622,13 +621,13 @@ public class KVStoreTests {
     public void testPairingMetaData() {
         String base58 = "ptwP6ngmYKCYVtFnaLmyKV6HfTUAW39jBFb5yV2eLKLD";
 
-        byte[] rawPubKey = Base58.decode(base58);
+        byte[] rawPubKey = CryptoHelper.INSTANCE.base58Decode(base58);
 
         String base64Test = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
         byte[] newPubKey = Base64.decode(base64Test, Base64.NO_WRAP);
         Assert.assertArrayEquals(rawPubKey, newPubKey);
 
-        PairingMetaData putMD = new PairingMetaData("some id", BRCoreKey.encodeHex(rawPubKey), "pwb", "some.url");
+        PairingMetaData putMD = new PairingMetaData("some id", CryptoHelper.INSTANCE.hexEncode(rawPubKey), "pwb", "some.url");
         KVStoreManager.INSTANCE.putPairingMetadata(mActivityRule.getActivity(), putMD);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(1, items.size());

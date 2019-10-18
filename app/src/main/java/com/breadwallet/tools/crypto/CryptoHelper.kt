@@ -73,8 +73,12 @@ object CryptoHelper {
         return compact.sign(data, key).or(byteArrayOf())
     }
 
-    fun base58(data: ByteArray): String {
+    fun base58Encode(data: ByteArray): String {
         return base58.encode(data).or("")
+    }
+
+    fun base58Decode(data: String): ByteArray {
+        return base58.decode(data).or(byteArrayOf())
     }
 
     @JvmStatic
