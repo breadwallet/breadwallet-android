@@ -27,13 +27,16 @@ package com.breadwallet.ui.receive
 import android.app.Activity
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.toSanitizedString
+import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.manager.BRClipboardManager
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.util.CryptoUriParser2
 import com.breadwallet.util.CurrencyCode
+import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -68,7 +71,18 @@ class ReceiveEffectHandler(
 
     init {
         breadBox.wallet(currencyCode)
-            .map { it.source }
+            .map { wallet ->
+                if (currencyCode.isBitcoin()) {
+                    wallet.getTargetForScheme(
+                        when (BRSharedPrefs.getIsSegwitEnabled()) {
+                            true -> AddressScheme.BTC_SEGWIT
+                            false -> AddressScheme.BTC_LEGACY
+                        }
+                    )
+                } else {
+                    wallet.target
+                }
+            }
             .distinctUntilChanged()
             .map { ReceiveEvent.OnReceiveAddressUpdated(it.toString(), it.toSanitizedString()) }
             .bindConsumerIn(output, this)
