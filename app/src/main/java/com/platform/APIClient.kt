@@ -80,7 +80,6 @@ import com.breadwallet.tools.util.BRConstants.TRUE
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -425,7 +424,6 @@ class APIClient(private var context: Context) {
             $url
         """.trimIndent()
 
-        logError("signed message for $url\n$requestString")
         val signedRequest = signRequest(requestString) ?: return null
         val authValue = "$BREAD $token:$signedRequest"
         return modifiedRequest
