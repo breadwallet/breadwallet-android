@@ -54,7 +54,7 @@ import java.io.IOException
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions", "TooGenericExceptionCaught")
-internal class KVStoreManager(
+class KVStoreManager(
     private val context: Context
 ) : KVStoreProvider {
 
