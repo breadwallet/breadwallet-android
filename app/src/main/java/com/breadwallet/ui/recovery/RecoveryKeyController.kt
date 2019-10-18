@@ -85,7 +85,6 @@ class RecoveryKeyController(
     override val defaultModel = RecoveryKeyModel.createDefault(
         RecoveryKeyModel.Mode.valueOf(mode)
     )
-    override val init = RecoveryKeyInit
     override val update = RecoveryKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
         Connectable { output ->

@@ -69,7 +69,6 @@ class PaperKeyProveController(args: Bundle) :
     override val layoutId = R.layout.activity_paper_key_prove
     override val defaultModel = PaperKeyProveModel.createDefault(phrase, onComplete)
     override val update = PaperKeyProveUpdate
-    override val init = PaperKeyProveInit
     override val effectHandler =
         CompositeEffectHandler.from<PaperKeyProveEffect, PaperKeyProveEvent>(
             Connectable { output: Consumer<PaperKeyProveEvent> ->

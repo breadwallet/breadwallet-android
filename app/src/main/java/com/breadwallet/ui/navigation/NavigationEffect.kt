@@ -30,6 +30,7 @@ package com.breadwallet.ui.navigation
 
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
+import com.breadwallet.ui.settings.SettingsSection
 import io.hypno.switchboard.MobiusHandlerSpec
 
 @MobiusHandlerSpec
@@ -72,7 +73,6 @@ sealed class NavigationEffect {
     object GoToHome : NavigationEffect()
     object GoToBuy : NavigationEffect()
     object GoToTrade : NavigationEffect()
-    object GoToMenu : NavigationEffect()
     object GoToAddWallet : NavigationEffect()
     object GoToManageWallets : NavigationEffect()
     object GoToDisabledScreen : NavigationEffect()
@@ -92,4 +92,19 @@ sealed class NavigationEffect {
     ) : NavigationEffect() {
         override fun toString() = "GoToPaperKeyProve()"
     }
+
+    data class GoToMenu(val settingsOption: SettingsSection) : NavigationEffect()
+
+    object GoToGooglePlay : NavigationEffect()
+    object GoToAbout : NavigationEffect()
+    object GoToDisplayCurrency : NavigationEffect()
+    object GoToNotificationsSettings : NavigationEffect()
+    object GoToShareData : NavigationEffect()
+    object GoToFingerprintAuth : NavigationEffect()
+    object GoToWipeWallet : NavigationEffect()
+    object GoToOnboarding : NavigationEffect()
+    object GoToImportWallet : NavigationEffect()
+    object GoToSyncBlockchain : NavigationEffect()
+    object GoToBitcoinNodeSelector : NavigationEffect()
+    object GoToEnableSegWit : NavigationEffect()
 }
