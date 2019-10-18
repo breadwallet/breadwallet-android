@@ -31,12 +31,9 @@ import android.support.v4.view.ViewPager
  * lines of code when adding [ViewPager.OnPageChangeListener]s.
  */
 open class DefaultOnPageChangeListener : ViewPager.OnPageChangeListener {
-    override fun onPageScrollStateChanged(state: Int) {
-    }
+    override fun onPageScrollStateChanged(state: Int) = Unit
 
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
 
-    override fun onPageSelected(position: Int) {
-    }
+    override fun onPageSelected(position: Int) = Unit
 }
