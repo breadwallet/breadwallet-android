@@ -80,7 +80,6 @@ import com.breadwallet.tools.util.BRConstants.TRUE
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -129,7 +128,7 @@ class APIClient(private var context: Context) {
                     val requestBody = JSONObject().run {
                         val encodedPublicKey = authKey.encodeAsPublic().toString(Charsets.UTF_8)
                         val pubkey = CryptoHelper.hexDecode(encodedPublicKey)
-                        put(PUBKEY, CryptoHelper.base58(pubkey))
+                        put(PUBKEY, CryptoHelper.base58Encode(pubkey))
                         put(DEVICE_ID, BRSharedPrefs.getDeviceId())
                         toString().toRequestBody(CONTENT_TYPE_JSON_CHARSET_UTF8.toMediaType())
                     }
@@ -221,7 +220,7 @@ class APIClient(private var context: Context) {
             logError("Failed to sign request.")
             return null
         }
-        return CryptoHelper.base58(signedBytes)
+        return CryptoHelper.base58Encode(signedBytes)
     }
 
     @VisibleForTesting

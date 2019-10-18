@@ -3,7 +3,6 @@ package com.platform.interfaces
 import android.content.Context
 import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
-import com.breadwallet.core.BRCoreKey
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager
 import com.breadwallet.legacy.wallet.wallets.CryptoTransaction
 import com.breadwallet.logger.logDebug
@@ -151,7 +150,7 @@ class MetaDataManager(
                 false
             }
             else -> {
-                val rawPubKey = BRCoreKey.decodeHex(pairingData.publicKeyHex)
+                val rawPubKey = CryptoHelper.hexDecode(pairingData.publicKeyHex)
                 storeProvider.put(pairingKey(rawPubKey), pairingData.toJSON())
             }
         }
@@ -321,7 +320,7 @@ class MetaDataManager(
         TX_META_DATA_KEY_PREFIX + Utils.bytesToHex(CryptoHelper.sha256(txHash)!!)
 
     private fun pairingKey(pubKey: ByteArray): String =
-        PAIRING_META_DATA_KEY_PREFIX + BRCoreKey.encodeHex(CryptoHelper.sha256(pubKey)!!)
+        PAIRING_META_DATA_KEY_PREFIX + CryptoHelper.hexEncode(CryptoHelper.sha256(pubKey)!!)
 }
 
 /* unused code
