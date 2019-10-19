@@ -63,6 +63,7 @@ import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
@@ -460,8 +461,8 @@ class BreadApp : Application(), KodeinAware {
 
             HTTPServer.getInstance().startServer(this)
 
-            /*BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                .execute { TokenUtil.fetchTokensFromServer(mInstance) }*/
+            BRExecutor.getInstance().forLightWeightBackgroundTasks()
+                .execute { TokenUtil.fetchTokensFromServer(mInstance) }
             APIClient.getInstance(this).updatePlatform()
 
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
