@@ -32,12 +32,10 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.IntentFilter
-import android.graphics.Point
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.WindowManager
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.BreadBoxCloseWorker
@@ -125,10 +123,6 @@ class BreadApp : Application(), KodeinAware {
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var mInstance: BreadApp
-        @JvmField
-        var mDisplayHeightPx: Int = 0
-        @JvmField
-        var mDisplayWidthPx: Int = 0
         private var mBackgroundedTime: Long = 0
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
@@ -418,13 +412,6 @@ class BreadApp : Application(), KodeinAware {
             .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
             .build()
         Fabric.with(fabric)
-
-        val wm = getSystemService(WindowManager::class.java)
-        val display = wm.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        mDisplayWidthPx = size.x
-        mDisplayHeightPx = size.y
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
