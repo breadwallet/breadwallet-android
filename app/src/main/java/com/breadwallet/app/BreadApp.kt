@@ -198,7 +198,7 @@ class BreadApp : Application(), KodeinAware {
                     .map { generateWalletId(it.source.toString()) }
                     .flowOn(Dispatchers.Default)
                     .first()
-                if (walletId.isNullOrBlank()) {
+                if (walletId.isNullOrBlank() || !walletId.matches(WALLET_ID_PATTERN.toRegex())) {
                     val error = IllegalStateException("Generated corrupt walletId: $walletId")
                     BRReportsManager.reportBug(error)
                 }
