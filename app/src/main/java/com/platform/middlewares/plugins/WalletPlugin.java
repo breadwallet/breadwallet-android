@@ -454,10 +454,9 @@ public class WalletPlugin implements Plugin {
                 obj.put(KEY_FIAT_BALANCE, fiatBalance);
                 obj.put(KEY_EXCHANGE, exchange);
                 arr.put(obj);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                Log.d(WalletPlugin.TAG, "Failed to load currency data: " + walletManager.getCurrencyCode(), ex);
             }
-
         }
         return arr;
     }
