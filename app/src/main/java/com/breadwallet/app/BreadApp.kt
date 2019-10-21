@@ -32,12 +32,10 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.IntentFilter
-import android.graphics.Point
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.WindowManager
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.BreadBoxCloseWorker
@@ -65,6 +63,7 @@ import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
@@ -125,10 +124,6 @@ class BreadApp : Application(), KodeinAware {
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var mInstance: BreadApp
-        @JvmField
-        var mDisplayHeightPx: Int = 0
-        @JvmField
-        var mDisplayWidthPx: Int = 0
         private var mBackgroundedTime: Long = 0
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
@@ -204,7 +199,7 @@ class BreadApp : Application(), KodeinAware {
                     .map { generateWalletId(it.source.toString()) }
                     .flowOn(Dispatchers.Default)
                     .first()
-                if (walletId.isNullOrBlank()) {
+                if (walletId.isNullOrBlank() || !walletId.matches(WALLET_ID_PATTERN.toRegex())) {
                     val error = IllegalStateException("Generated corrupt walletId: $walletId")
                     BRReportsManager.reportBug(error)
                 }
@@ -419,13 +414,6 @@ class BreadApp : Application(), KodeinAware {
             .build()
         Fabric.with(fabric)
 
-        val wm = getSystemService(WindowManager::class.java)
-        val display = wm.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        mDisplayWidthPx = size.x
-        mDisplayHeightPx = size.y
-
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
             logDebug(event.name)
@@ -473,8 +461,8 @@ class BreadApp : Application(), KodeinAware {
 
             HTTPServer.getInstance().startServer(this)
 
-            /*BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                .execute { TokenUtil.fetchTokensFromServer(mInstance) }*/
+            BRExecutor.getInstance().forLightWeightBackgroundTasks()
+                .execute { TokenUtil.fetchTokensFromServer(mInstance) }
             APIClient.getInstance(this).updatePlatform()
 
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
