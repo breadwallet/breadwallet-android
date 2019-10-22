@@ -53,4 +53,15 @@ object AddWalletsUpdate :
             )
         )
     }
+
+    override fun onRemoveWalletClicked(
+        model: AddWalletsModel,
+        event: AddWalletsEvent.OnRemoveWalletClicked
+    ): Next<AddWalletsModel, AddWalletsEffect> {
+        return dispatch(
+            effects(
+                AddWalletsEffect.RemoveWallet(event.token)
+            )
+        )
+    }
 }

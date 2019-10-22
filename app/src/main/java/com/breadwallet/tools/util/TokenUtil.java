@@ -52,7 +52,7 @@ public final class TokenUtil {
 
     private static final String TAG = TokenUtil.class.getSimpleName();
 
-    private static final String ENDPOINT_CURRENCIES = "/currencies?type=erc20";
+    private static final String ENDPOINT_CURRENCIES = "/currencies";
     private static final String ENDPOINT_CURRENCIES_SALE_ADDRESS = "/currencies?saleAddress=";
     private static final String FIELD_CODE = "code";
     private static final String FIELD_NAME = "name";

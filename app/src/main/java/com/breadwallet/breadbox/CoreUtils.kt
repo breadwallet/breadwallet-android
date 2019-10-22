@@ -28,6 +28,7 @@ package com.breadwallet.breadbox
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.Address
+import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Network
@@ -39,8 +40,10 @@ import com.breadwallet.util.WalletDisplayUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import com.breadwallet.crypto.NetworkFee
+import com.breadwallet.crypto.System
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.WalletManager
+import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.utility.CompletionHandler
@@ -50,6 +53,8 @@ import com.breadwallet.util.isEthereum
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -69,10 +74,10 @@ fun Address.toSanitizedString(): String =
         .removePrefix("bchtest:")
 
 /** True when this is a native currency for the network. */
-fun Currency.isNative() = type == "native"
+fun Currency.isNative() = type.equals("native", true)
 
 /** True when this is an erc20 token for the Ethereum network. */
-fun Currency.isErc20() = type == "erc20"
+fun Currency.isErc20() = type.equals("erc20", true)
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
@@ -174,7 +179,7 @@ fun BigDecimal.formatFiatForUi(currencyCode: String): String {
 }
 
 val Wallet.currencyId: String
-    get() = walletManager.currency.uids
+    get() = currency.uids
 
 fun List<Wallet>.filterByCurrencyIds(currencyIds: List<String>) =
     filter { wallet ->
@@ -188,7 +193,11 @@ fun List<Wallet>.filterByCurrencyIds(currencyIds: List<String>) =
 
 /** Returns the [Wallet] with the given [currencyId] or null. */
 fun List<Wallet>.findByCurrencyId(currencyId: String) =
-    find { it.walletManager.network.currency.uids.equals(currencyId, true) }
+    find { it.currencyId.equals(currencyId, true) }
+
+/** Returns true if any of the [Wallet]s is for the given [currencyId]. */
+fun List<Wallet>.containsCurrency(currencyId: String) =
+    findByCurrencyId(currencyId) != null
 
 /** Returns true if the [WalletManager]'s [Network] supports the given [currencyId]. */
 fun WalletManager.networkContainsCurrency(currencyId: String) =
@@ -234,4 +243,26 @@ val Wallet.urlScheme: String
             else -> "bitcoincash"
         }
         else -> ""
+    }
+
+/** Creates a [WalletManager] using the appropriate address scheme and [WalletManagerMode]. */
+fun System.createWalletManager(
+    network: Network,
+    managerMode: WalletManagerMode,
+    currencies: Set<Currency>,
+    addressScheme: AddressScheme? = getDefaultAddressScheme(network)
+) {
+    val wmMode = when {
+        supportsWalletManagerMode(network, managerMode) -> managerMode
+        else -> getDefaultWalletManagerMode(network)
+    }
+    createWalletManager(network, wmMode, addressScheme, currencies)
+}
+
+/** Returns a [Flow] providing the [Network] from [System] for a given [currencyId]. */
+fun Flow<System>.findNetwork(currencyId: String): Flow<Network> =
+    transform { system ->
+        emit(system.networks.find {
+            it.containsCurrency(currencyId)
+        } ?: return@transform)
     }
