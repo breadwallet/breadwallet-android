@@ -31,7 +31,6 @@ import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.managewallets.ManageWalletsController
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.provekey.PaperKeyProveController
@@ -161,14 +160,6 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) = Unit
-
-    override fun goToManageWallets() {
-        router.pushController(
-            RouterTransaction.with(ManageWalletsController())
-                .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler())
-        )
-    }
 
     override fun goToDisabledScreen() = Unit
 

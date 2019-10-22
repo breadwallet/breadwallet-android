@@ -64,7 +64,7 @@
         android:maxLines="1"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
-        android:textColor="@color/button_add_wallet_text"
+        android:textColor="?attr/add_wallet_button_text"
         android:textSize="14sp" />
 
 </RelativeLayout>

@@ -89,8 +89,8 @@ class HomeController(
                     HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
                     is HomeScreenEffect.GoToWallet ->
                         NavigationEffect.GoToWallet(effect.currencyCode)
-                    is HomeScreenEffect.GoToManageWallets ->
-                        NavigationEffect.GoToManageWallets
+                    is HomeScreenEffect.GoToAddWallet ->
+                        NavigationEffect.GoToAddWallet
                     else -> null
                 }
             }
@@ -119,7 +119,7 @@ class HomeController(
                             val currencyCode = walletAdapter!!.getItemAt(position)!!.currencyCode
                             output.accept(HomeScreenEvent.OnWalletClicked(currencyCode))
                         } else {
-                            output.accept(HomeScreenEvent.OnManageWalletsClicked)
+                            output.accept(HomeScreenEvent.OnAddWalletsClicked)
                         }
                     }
 

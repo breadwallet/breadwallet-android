@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -21,7 +20,8 @@ import java.io.File
 
 class AddTokenListAdapter(
     private val context: Context,
-    private val addWalletListener: (token: Token) -> Unit
+    private val addWalletListener: (token: Token) -> Unit,
+    private val removeWalletListener: (token: Token) -> Unit
 ) : RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder>() {
 
     var tokens: List<Token> = emptyList()
@@ -57,29 +57,23 @@ class AddTokenListAdapter(
         holder.name.text = token.name
         holder.symbol.text = currencyCode
 
-        val addWalletTypedValue = TypedValue()
-        val removeWalletTypedValue = TypedValue()
-
-        context.theme.apply {
-            resolveAttribute(
-                R.attr.add_wallet_button_background,
-                addWalletTypedValue,
-                true
-            )
-            resolveAttribute(
-                R.attr.remove_wallet_button_background,
-                removeWalletTypedValue,
-                true
-            )
-        }
-
         holder.addRemoveButton.apply {
-            text = context.getString(R.string.TokenList_add)
-            background = context.getDrawable(addWalletTypedValue.resourceId)
-            setTextColor(context.getColor(R.color.button_add_wallet_text))
+            val token = tokens[holder.adapterPosition]
+            text = context.getString(
+                when {
+                    token.enabled -> R.string.TokenList_remove
+                    else -> R.string.TokenList_add
+                }
+            )
+
+            isEnabled = !token.enabled || token.removable
 
             setOnClickListener {
-                addWalletListener(tokens[holder.adapterPosition])
+                if (token.enabled) {
+                    removeWalletListener(token)
+                } else {
+                    addWalletListener(token)
+                }
             }
         }
     }

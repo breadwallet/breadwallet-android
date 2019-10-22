@@ -84,7 +84,7 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
         }
         is HomeScreenEvent.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
         is HomeScreenEvent.OnWalletClicked -> dispatch(effects(HomeScreenEffect.GoToWallet(event.currencyCode)))
-        is HomeScreenEvent.OnManageWalletsClicked -> dispatch(effects(HomeScreenEffect.GoToManageWallets))
+        is HomeScreenEvent.OnAddWalletsClicked -> dispatch(effects(HomeScreenEffect.GoToAddWallet))
         HomeScreenEvent.OnBuyClicked -> dispatch(effects(HomeScreenEffect.GoToBuy))
         HomeScreenEvent.OnTradeClicked -> dispatch(effects(HomeScreenEffect.GoToTrade))
         HomeScreenEvent.OnMenuClicked -> dispatch(effects(HomeScreenEffect.GoToMenu))
