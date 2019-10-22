@@ -11,5 +11,6 @@ sealed class AddWalletsEvent {
     data class OnTokensChanged(val tokens: List<Token>) : AddWalletsEvent()
 
     data class OnAddWalletClicked(val token: Token) : AddWalletsEvent()
+    data class OnRemoveWalletClicked(val token: Token) : AddWalletsEvent()
     object OnBackClicked : AddWalletsEvent()
 }
