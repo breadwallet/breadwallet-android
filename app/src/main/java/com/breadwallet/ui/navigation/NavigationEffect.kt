@@ -74,7 +74,6 @@ sealed class NavigationEffect {
     object GoToBuy : NavigationEffect()
     object GoToTrade : NavigationEffect()
     object GoToAddWallet : NavigationEffect()
-    object GoToManageWallets : NavigationEffect()
     object GoToDisabledScreen : NavigationEffect()
 
     data class GoToWriteDownKey(val onComplete: OnCompleteAction) : NavigationEffect()

@@ -64,7 +64,7 @@ sealed class HomeScreenEvent {
 
     data class OnWalletClicked(val currencyCode: String) : HomeScreenEvent()
 
-    object OnManageWalletsClicked : HomeScreenEvent()
+    object OnAddWalletsClicked : HomeScreenEvent()
 
     object OnBuyClicked : HomeScreenEvent()
     object OnTradeClicked : HomeScreenEvent()

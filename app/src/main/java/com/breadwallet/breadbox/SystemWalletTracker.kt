@@ -68,8 +68,7 @@ class SystemWalletTracker(
     private val scope: CoroutineScope,
     private val isMainnet: Boolean,
     private val walletManagerMode: WalletManagerMode
-) : SystemListener,
-    SystemEventVisitor<Unit> {
+) : SystemListener {
 
     /**
      * On each emission of enabled wallets, connects any [WalletManager]s that are newly needed
@@ -79,45 +78,22 @@ class SystemWalletTracker(
         walletProvider
             .enabledWallets()
             .onEach { wallets ->
-                // Disconnect wallet managers that have no tracked currencies, if connected
-                val systemWallets = system.first().wallets
-                systemWallets.forEach { systemWallet ->
-                    val walletManager = systemWallet.walletManager
-                    val disconnectWalletManager =
-                        walletManager.state.isTracked() &&
-                            wallets.none { walletManager.networkContainsCurrency(it) }
-                    if (disconnectWalletManager) {
-                        logDebug("Disconnecting Wallet Manager: ${systemWallet.currency.code}")
-                        systemWallet.walletManager.disconnect()
-                    }
-                }
-                // Enable wallets not found or otherwise disconnected in system wallets
+                // Disconnect unneeded wallet managers
+                val system = system.first()
+                val systemWallets = system.wallets
+                systemWallets.forEach { disconnectWalletManager(it, wallets) }
+
+                // Enable wallets by creating wallet managers and/or connecting as necessary
                 wallets.forEach { enabledWallet ->
                     val systemWallet =
                         systemWallets.find { it.currencyId.equals(enabledWallet, true) }
+                    val walletManager = systemWallet?.walletManager ?: system
+                        .walletManagers
+                        .find { it.networkContainsCurrency(enabledWallet) }
 
-                    if (systemWallet == null) {
-                        val walletManager = system.first()
-                            .walletManagers
-                            .find {
-                                it.networkContainsCurrency(enabledWallet)
-                            }
-
-                        when (walletManager) {
-                            null -> logError("Wallet Manager for $enabledWallet not found.")
-                            else -> {
-                                if (walletManager.state.isTracked()) {
-                                    logDebug("Connecting Wallet Manager: ${walletManager.network}")
-                                    walletManager.connect(null) //TODO: Support custom node
-                                }
-                                logDebug("Registering wallet for: $enabledWallet")
-                                walletManager.registerWalletFor(
-                                    walletManager.findCurrency(
-                                        enabledWallet
-                                    )
-                                )
-                            }
-                        }
+                    when (walletManager) {
+                        null -> createWalletManager(system, enabledWallet)
+                        else -> connectAndRegister(walletManager, enabledWallet)
                     }
                 }
             }
@@ -130,8 +106,8 @@ class SystemWalletTracker(
         manager: WalletManager,
         event: WalletManagerEvent
     ) {
-        event.accept(object : DefaultWalletManagerEventVisitor<Unit>() {
-            override fun visit(event: WalletManagerCreatedEvent) {
+        when (event) {
+            is WalletManagerCreatedEvent -> {
                 logDebug("Wallet Manager Created: '${manager.name}'")
 
                 walletProvider
@@ -155,18 +131,36 @@ class SystemWalletTracker(
                     }
                     .launchIn(scope)
             }
-
-            override fun visit(event: WalletManagerDeletedEvent) = Unit
-
-            override fun visit(event: WalletManagerSyncProgressEvent) = Unit
-
-            override fun visit(event: WalletManagerChangedEvent) = Unit
-        })
+        }
     }
 
     @Synchronized
-    override fun handleSystemEvent(system: System, event: SystemEvent) {
-        event.accept(this)
+    /**
+     * Creates a [WalletManager] if the newly added [Network] contains a currency that should
+     * be tracked.
+     */
+    override fun handleSystemEvent(systemEvt: System, event: SystemEvent) {
+        when (event) {
+            is SystemNetworkAddedEvent -> {
+                val network = event.network
+
+                logDebug("Network '${network.name}' added.")
+
+                walletProvider
+                    .enabledWallets()
+                    .take(1)
+                    .filter { wallets ->
+                        network.isMainnet == isMainnet && wallets.any { network.containsCurrency(it) }
+                    }
+                    .onEach {
+                        logDebug("Creating wallet manager for network '${network.name}'.")
+                        system
+                            .first()
+                            .createWalletManager(network, walletManagerMode, emptySet())
+                    }
+                    .launchIn(scope)
+            }
+        }
     }
 
     override fun handleWalletEvent(
@@ -190,40 +184,58 @@ class SystemWalletTracker(
         event: NetworkEvent
     ) = Unit
 
-    /**
-     * Creates a [WalletManager] if the newly added [Network] contains a currency that should
-     * be tracked.
-     */
-    override fun visit(event: SystemNetworkAddedEvent) {
-        val network = event.network
-
-        logDebug("Network '${network.name}' added.")
-
-        walletProvider
-            .enabledWallets()
-            .take(1)
-            .filter { wallets ->
-                network.isMainnet == isMainnet && wallets.any { network.containsCurrency(it) }
+    private fun createWalletManager(system: System, currencyId: String) {
+        val network = system
+            .networks
+            .find {
+                it.containsCurrency(currencyId)
             }
-            .onEach {
-                logDebug("Creating wallet manager for network '${network.name}'.")
-
-                val system = system.first()
-                val wmMode = when {
-                    system.supportsWalletManagerMode(network, walletManagerMode) ->
-                        walletManagerMode
-                    else -> system.getDefaultWalletManagerMode(network)
-                }
-
-                val addressScheme = system.getDefaultAddressScheme(network)
-                system.createWalletManager(event.network, wmMode, addressScheme, emptySet())
+        when (network) {
+            null -> logError("Network for $currencyId not found.")
+            else -> {
+                logDebug("Creating wallet manager for $currencyId.")
+                system.createWalletManager(
+                    network,
+                    walletManagerMode,
+                    when (val currency =
+                        network.findCurrency(currencyId)) {
+                        null -> emptySet()
+                        else -> setOf(currency)
+                    }
+                )
             }
-            .launchIn(scope)
+        }
     }
 
-    override fun visit(event: SystemDiscoveredNetworksEvent) = Unit
+    /**
+     * Disconnect [WalletManager] for [systemWallet], if connected and not needed for
+     * another tracked wallet.
+     */
+    private fun disconnectWalletManager(systemWallet: Wallet, enabledWallets: List<String>) {
+        val walletManager = systemWallet.walletManager
+        val disconnectWalletManager =
+            walletManager.state.isTracked() &&
+                enabledWallets.none { walletManager.networkContainsCurrency(it) }
+        if (disconnectWalletManager) {
+            logDebug("Disconnecting Wallet Manager: ${systemWallet.currency.code}")
+            systemWallet.walletManager.disconnect()
+        }
+    }
 
-    override fun visit(event: SystemCreatedEvent) = Unit
-
-    override fun visit(event: SystemManagerAddedEvent) = Unit
+    /**
+     * Connect [WalletManager] for [currencyId], if not already connected, and register for
+     * [currencyId].
+     */
+    private fun connectAndRegister(walletManager: WalletManager, currencyId: String) {
+        if (!walletManager.state.isTracked()) {
+            logDebug("Connecting Wallet Manager: ${walletManager.network}")
+            walletManager.connect(null) //TODO: Support custom node
+        }
+        logDebug("Registering wallet for: $currencyId")
+        walletManager.registerWalletFor(
+            walletManager.findCurrency(
+                currencyId
+            )
+        )
+    }
 }

@@ -76,6 +76,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import okhttp3.OkHttpClient
 import java.io.File
@@ -187,6 +188,13 @@ internal class CoreBreadBox(
 
         walletTracker
             .monitorTrackedWallets()
+            .onEach {
+                // Any update to tracked wallets should re-broadcast wallets
+                // (covers cases that do not result in new Core events)
+                system?.wallets?.let {
+                    walletsChannel.offer(it)
+                }
+            }
             .launchIn(openScope)
 
         logInfo("BreadBox opened successfully")

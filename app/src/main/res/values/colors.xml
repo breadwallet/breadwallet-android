@@ -4,6 +4,7 @@
     <item name="white" type="color">#ffffff</item>
     <item name="white_transparent_25" type="color">#40ffffff</item>
     <item name="white_transparent_10" type="color">#14ffffff</item>
+    <item name="white_transparent" type="color">#00ffffff</item>
 
     <color name="white_60_percent_opaque">#99FFFFFF</color>
     <item name="blue" type="color">#FF33B5E5</item>

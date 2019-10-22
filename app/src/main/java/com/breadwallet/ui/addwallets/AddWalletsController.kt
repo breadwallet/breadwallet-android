@@ -44,9 +44,11 @@ class AddWalletsController :
     private var mAdapter: AddTokenListAdapter? = null
 
     override fun bindView(output: Consumer<AddWalletsEvent>) = output.view {
-        mAdapter = AddTokenListAdapter(activity!!) {
-            output.accept(AddWalletsEvent.OnAddWalletClicked(it))
-        }
+        mAdapter = AddTokenListAdapter(
+            activity!!,
+            { output.accept(AddWalletsEvent.OnAddWalletClicked(it)) },
+            { output.accept(AddWalletsEvent.OnRemoveWalletClicked(it)) }
+        )
 
         token_list.layoutManager = LinearLayoutManager(activity!!)
         token_list.adapter = mAdapter

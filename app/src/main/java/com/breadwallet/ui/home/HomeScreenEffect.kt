@@ -41,7 +41,7 @@ sealed class HomeScreenEffect {
     data class GoToDeepLink(val url: String) : HomeScreenEffect()
     data class GoToInappMessage(val inAppMessage: InAppMessage) : HomeScreenEffect()
     data class GoToWallet(val currencyCode: String) : HomeScreenEffect()
-    object GoToManageWallets : HomeScreenEffect()
+    object GoToAddWallet : HomeScreenEffect()
 
     object GoToBuy : HomeScreenEffect()
     object GoToTrade : HomeScreenEffect()
