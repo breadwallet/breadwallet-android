@@ -26,17 +26,20 @@ package com.breadwallet.tools.util
 
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
+import com.breadwallet.logger.logWarning
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import java.io.IOException
 
-/** The initial attempt count for network operations. */
-private const val NET_INITIAL_ATTEMPT = 1
-/** Delay in ms to wait before retrying a network call. */
-private const val NET_RETRY_DELAY_MS: Long = 2 * 1000
+/** Default timeout in milliseconds to wait for a network request. */
+private const val DEFAULT_TIMEOUT_MS = -1L
+
+/** Default delay in milliseconds to wait before retrying a network request. */
+private const val DEFAULT_RETRY_DELAY_MS = 2_000L
+
+/** Default max delay in milliseconds before retrying a network request. */
+private const val DEFAULT_MAX_DELAY_MS = 15_000L
 
 /**
  * Calls the [block] suspend function and returns its value.
@@ -46,41 +49,35 @@ private const val NET_RETRY_DELAY_MS: Long = 2 * 1000
  *
  * If [block] does not return in less than [timeoutMs]
  * it will be cancelled and a retry attempt will occur if
- * not passed the retry limit.
+ * not passed the retry limit.  The default is -1 meaning
+ * no timeout will be used.
  *
- * Retry attempts are delayed by [NET_RETRY_DELAY_MS].
+ * Retry attempts are delayed by [delayMs] multiplied be the
+ * current attempt index with a max of [maxDelayMs].
  */
 @Suppress("ThrowsCount", "TooGenericExceptionCaught")
 suspend fun <R> netRetry(
     retryAttempts: Int,
-    timeoutMs: Long,
-    block: suspend CoroutineScope.() -> R
+    timeoutMs: Long = DEFAULT_TIMEOUT_MS,
+    delayMs: Long = DEFAULT_RETRY_DELAY_MS,
+    maxDelayMs: Long = DEFAULT_MAX_DELAY_MS,
+    block: suspend () -> R
 ): R {
-    repeat(NET_INITIAL_ATTEMPT + retryAttempts) { retryIndex ->
+    repeat(retryAttempts - 1) { retryIndex ->
         logDebug("Retry attempt $retryIndex")
+
         try {
-            return withTimeout(timeoutMs, block)
+            return when (timeoutMs) {
+                -1L -> block()
+                else -> withTimeout(timeoutMs) { block() }
+            }
         } catch (e: IOException) {
             logError("Network response error.", e)
-            if (retryIndex == retryAttempts) {
-                throw e
-            }
         } catch (e: TimeoutCancellationException) {
-            logError("Network timed out.", e)
-            if (retryIndex == retryAttempts) {
-                // Limit reached, bubble error
-                throw e
-            }
-        } catch (e: CancellationException) {
-            logError("Network request cancelled.", e)
-            return@repeat
-        } catch (e: Exception) {
-            logError("Unhandled exception", e)
-            if (retryIndex == retryAttempts) {
-                throw e
-            }
+            logWarning("Network timed out.", e)
         }
-        delay(NET_RETRY_DELAY_MS * (retryIndex + 1))
+        val nextDelay = delayMs * (retryIndex + 1)
+        delay(nextDelay.coerceAtMost(maxDelayMs))
     }
-    error("Retry limit hit, exception should bubbled.")
+    return block()
 }
