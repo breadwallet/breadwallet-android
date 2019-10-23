@@ -8,7 +8,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         classpath 'io.fabric.tools:gradle:1.28.1'
         classpath 'com.google.gms:google-services:4.2.0' // google-services plugin
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.10"

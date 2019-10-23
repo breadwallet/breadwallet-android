@@ -19,14 +19,13 @@ sealed class SendSheetEffect {
 
     object ShowTransactionComplete : SendSheetEffect()
 
-    object ShowNoAmountError: SendSheetEffect()
-    object ShowClipboardEmpty : SendSheetEffect()
-    data class ShowInvalidClipboardData(
-        val currencyCode: CurrencyCode
-    ) : SendSheetEffect()
-    data class ShowInvalidAddress(
-        val currencyCode: CurrencyCode
-    ) : SendSheetEffect()
+    data class ValidateAddress(
+        val currencyCode: CurrencyCode,
+        val address: String
+    ) : SendSheetEffect() {
+        override fun toString() = "ValidateAddress()"
+    }
+
     data class ShowEthTooLowForTokenFee(
         val currencyCode: CurrencyCode,
         val networkFee: BigDecimal

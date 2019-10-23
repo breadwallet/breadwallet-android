@@ -12,6 +12,8 @@
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
         <item name="add_wallet_button_text">@color/blue_button_text</item>
+        <item name="colorControlNormal">@color/light_gray</item>
+        <item name="colorControlActivated">@color/prompt_action_button</item>
     </style>
 
     <!-- ActionBar styles -->

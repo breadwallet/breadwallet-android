@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
@@ -69,12 +70,9 @@ class SendSheetEffectHandler(
     @Suppress("ComplexMethod")
     override fun accept(effect: SendSheetEffect) {
         when (effect) {
-            SendSheetEffect.ShowClipboardEmpty -> showClipboardEmpty()
-            SendSheetEffect.ShowNoAmountError -> showNoAmountError()
             SendSheetEffect.ShowTransactionComplete -> showTransactionComplete()
+            is SendSheetEffect.ValidateAddress -> validateAddress(effect)
             is SendSheetEffect.ShowEthTooLowForTokenFee -> showBalanceTooLowForFee(effect)
-            is SendSheetEffect.ShowInvalidClipboardData -> showInvalidClipboardData(effect)
-            is SendSheetEffect.ShowInvalidAddress -> showInvalidAddress(effect)
             is SendSheetEffect.EstimateFee -> feeEstimateChannel.offer(effect)
             is SendSheetEffect.LoadExchangeRate -> loadExchangeRate(effect)
             is SendSheetEffect.ParseClipboardData -> parseClipboardData(effect)
@@ -85,15 +83,16 @@ class SendSheetEffectHandler(
         coroutineContext.cancel()
     }
 
-    private fun showNoAmountError() {
-        launch(Dispatchers.Main) {
-            val res = router.activity!!.resources
-            val controller = AlertDialogController(
-                message = res.getString(R.string.Send_noAmount),
-                positiveText = res.getString(R.string.Button_ok)
-            )
-            router.pushController(RouterTransaction.with(controller))
-        }
+    private fun validateAddress(effect: SendSheetEffect.ValidateAddress) {
+        breadBox.wallet(effect.currencyCode)
+            .take(1)
+            .map {
+                SendSheetEvent.OnAddressValidated(
+                    effect.address,
+                    it.addressFor(effect.address) != null
+                )
+            }
+            .bindConsumerIn(output, this)
     }
 
     private fun showBalanceTooLowForFee(effect: SendSheetEffect.ShowEthTooLowForTokenFee) {
@@ -107,42 +106,6 @@ class SendSheetEffectHandler(
                     .format(effect.networkFee.formatCryptoForUi(effect.currencyCode)),
                 positiveText = res.getString(R.string.Button_continueAction),
                 negativeText = res.getString(R.string.Button_cancel)
-            )
-            router.pushController(RouterTransaction.with(controller))
-        }
-    }
-
-    private fun showClipboardEmpty() {
-        launch(Dispatchers.Main) {
-            val res = router.activity!!.resources
-            val controller = AlertDialogController(
-                message = res.getString(R.string.Send_emptyPasteboard),
-                positiveText = res.getString(R.string.AccessibilityLabels_close)
-            )
-            router.pushController(RouterTransaction.with(controller))
-        }
-    }
-
-    private fun showInvalidClipboardData(effect: SendSheetEffect.ShowInvalidClipboardData) {
-        launch(Dispatchers.Main) {
-            val res = router.activity!!.resources
-            val controller = AlertDialogController(
-                message = res.getString(R.string.Send_invalidAddressOnPasteboard)
-                    .format(effect.currencyCode.toUpperCase()),
-                positiveText = res.getString(R.string.AccessibilityLabels_close)
-            )
-            router.pushController(RouterTransaction.with(controller))
-        }
-    }
-
-    private fun showInvalidAddress(effect: SendSheetEffect.ShowInvalidAddress) {
-        launch(Dispatchers.Main) {
-            val res = router.activity!!.resources
-            val controller = AlertDialogController(
-                message = res.getString(R.string.Send_invalidAddressMessage)
-                    .format(effect.currencyCode.toUpperCase()),
-                title = res.getString(R.string.Send_invalidAddressTitle),
-                positiveText = res.getString(R.string.AccessibilityLabels_close)
             )
             router.pushController(RouterTransaction.with(controller))
         }

@@ -1,5 +1,7 @@
 package com.breadwallet.ui.send
 
+import com.breadwallet.ext.isZero
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted
 import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted.InvalidAddress
 import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted.NoAddress
@@ -13,13 +15,12 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
-import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 
 // TODO: Is this specific to a given currency or just the app?
 private const val MAX_DIGITS = 8
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "ComplexMethod")
 object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>,
     SendSheetUpdateSpec {
 
@@ -62,7 +63,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 val newRawAmount = model.rawAmount.dropLast(1)
                 val newModel = model.withNewRawAmount(newRawAmount)
                 when {
-                    newModel.amount == BigDecimal.ZERO ->
+                    newModel.amount.isZero() ->
                         next(
                             newModel.copy(
                                 fiatNetworkFee = BigDecimal.ZERO,
@@ -74,7 +75,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                         newModel, setOf<SendSheetEffect>(
                             SendSheetEffect.EstimateFee(
                                 newModel.currencyCode,
-                                newModel.toAddress,
+                                newModel.targetAddress,
                                 newModel.amount,
                                 newModel.transferSpeed
                             )
@@ -87,7 +88,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
 
     private fun addDigit(
         model: SendSheetModel,
-        event: SendSheetEvent.OnAmountChange.AddDigit
+        event: AddDigit
     ): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.rawAmount == "0" && event.digit == 0 -> noChange()
@@ -98,29 +99,32 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 else getOrNull(1)?.length == MAX_DIGITS
             } -> noChange()
             else -> {
+                val effects = mutableSetOf<SendSheetEffect>()
                 val newRawAmount = when (model.rawAmount) {
                     "0" -> event.digit.toString()
                     else -> model.rawAmount + event.digit
                 }
 
                 val newModel = model.withNewRawAmount(newRawAmount)
-                next(
-                    newModel, setOf<SendSheetEffect>(
+
+                if (!newModel.isTotalCostOverBalance && !newModel.amount.isZero()) {
+                    effects.add(
                         SendSheetEffect.EstimateFee(
                             newModel.currencyCode,
-                            newModel.toAddress,
+                            newModel.targetAddress,
                             newModel.amount,
                             newModel.transferSpeed
                         )
                     )
-                )
+                }
+                next(newModel, effects)
             }
         }
     }
 
     private fun clear(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
         return when {
-            model.rawAmount.isEmpty() && model.amount == BigDecimal.ZERO -> noChange()
+            model.rawAmount.isEmpty() && model.amount.isZero() -> noChange()
             else -> next(
                 model.copy(
                     rawAmount = "",
@@ -128,21 +132,44 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     amount = BigDecimal.ZERO,
                     networkFee = BigDecimal.ZERO,
                     fiatNetworkFee = BigDecimal.ZERO,
-                    transferFeeBasis = null
+                    transferFeeBasis = null,
+                    amountInputError = null
                 )
             )
         }
     }
 
+    @Suppress("ComplexCondition")
     override fun onSendClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+        val isBalanceTooLow = model.isTotalCostOverBalance
+        val isAmountBlank = model.rawAmount.isBlank() || model.amount.isZero()
+        val isTargetBlank = model.targetAddress.isBlank()
+        val isTargetInvalid = !model.isTargetValid
+
+        if (isBalanceTooLow || isAmountBlank || isTargetBlank || isTargetInvalid) {
+            return next(
+                model.copy(
+                    amountInputError = when {
+                        isAmountBlank -> SendSheetModel.InputError.Empty
+                        isBalanceTooLow -> SendSheetModel.InputError.BalanceTooLow
+                        else -> null
+                    },
+                    targetInputError = when {
+                        isTargetBlank -> SendSheetModel.InputError.Empty
+                        isTargetInvalid -> SendSheetModel.InputError.Invalid
+                        else -> null
+                    }
+                )
+            )
+        }
         return when {
-            model.isAmountOverBalance || model.isConfirmingTx -> noChange()
-            model.rawAmount.isBlank() || model.amount == BigDecimal.ZERO ->
-                dispatch(setOf(SendSheetEffect.ShowNoAmountError))
-            model.toAddress.isBlank() ->
-                dispatch(setOf(SendSheetEffect.ShowInvalidAddress(model.currencyCode)))
+            model.isSendingTransaction || model.isConfirmingTx -> noChange()
             else -> next(
-                model.copy(isConfirmingTx = true)
+                model.copy(
+                    isConfirmingTx = true,
+                    amountInputError = null,
+                    targetInputError = null
+                )
             )
         }
     }
@@ -180,17 +207,30 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onToggleCurrencyClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
-        val newModel = model
-            .copy(isAmountCrypto = !model.isAmountCrypto)
-            .withNewRawAmount(model.rawAmount)
+        val isAmountCrypto = !model.isAmountCrypto
+        val newModel = model.copy(
+            isAmountCrypto = isAmountCrypto,
+            transferFeeBasis = null,
+            rawAmount = when {
+                model.amount.isZero() -> model.rawAmount
+                else -> when {
+                    isAmountCrypto -> model.amount.setScale(MAX_DIGITS, BRConstants.ROUNDING_MODE)
+                    else -> model.fiatAmount.setScale(2, BRConstants.ROUNDING_MODE)
+                }.toPlainString()
+                    .dropLastWhile { it == '0' }
+                    .removeSuffix(".")
+            }
+        )
 
         return when {
-            newModel.amount == BigDecimal.ZERO -> next(newModel)
+            newModel.amount.isZero() ||
+                newModel.isTotalCostOverBalance ||
+                newModel.amountInputError != null -> next(newModel)
             else -> next(
                 newModel, setOf(
                     SendSheetEffect.EstimateFee(
                         newModel.currencyCode,
-                        newModel.toAddress,
+                        newModel.targetAddress,
                         newModel.amount,
                         newModel.transferSpeed
                     )
@@ -203,14 +243,24 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         model: SendSheetModel,
         event: SendSheetEvent.OnBalanceUpdated
     ): Next<SendSheetModel, SendSheetEffect> {
+        val isTotalCostOverBalance = model.totalCost > event.balance
         return next(
             model.copy(
                 balance = event.balance,
                 fiatBalance = event.fiatBalance,
-                isAmountOverBalance = when {
-                    model.isAmountCrypto -> model.amount > event.balance
-                    else -> model.amount > event.fiatBalance
-                }
+                isTotalCostOverBalance = isTotalCostOverBalance,
+                amountInputError = if (isTotalCostOverBalance) {
+                    SendSheetModel.InputError.BalanceTooLow
+                } else null,
+                networkFee = if (isTotalCostOverBalance) {
+                    BigDecimal.ZERO
+                } else model.networkFee,
+                fiatNetworkFee = if (isTotalCostOverBalance) {
+                    BigDecimal.ZERO
+                } else model.fiatNetworkFee,
+                transferFeeBasis = if (isTotalCostOverBalance) {
+                    null
+                } else model.transferFeeBasis
             )
         )
     }
@@ -219,13 +269,18 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         model: SendSheetModel,
         event: SendSheetEvent.OnNetworkFeeUpdated
     ): Next<SendSheetModel, SendSheetEffect> {
+        val isTotalCostOverBalance = model.amount + event.networkFee > model.balance
         return when {
-            model.amount == BigDecimal.ZERO -> noChange()
+            model.amount.isZero() -> noChange()
             else -> next(
                 model.copy(
                     networkFee = event.networkFee,
                     fiatNetworkFee = event.networkFee * model.fiatPricePerUnit,
-                    transferFeeBasis = event.transferFeeBasis
+                    transferFeeBasis = event.transferFeeBasis,
+                    isTotalCostOverBalance = isTotalCostOverBalance,
+                    amountInputError = if (isTotalCostOverBalance) {
+                        SendSheetModel.InputError.BalanceTooLow
+                    } else null
                 )
             )
         }
@@ -244,7 +299,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 setOf(
                     SendSheetEffect.EstimateFee(
                         model.currencyCode,
-                        model.toAddress,
+                        model.targetAddress,
                         model.amount,
                         event.transferSpeed
                     )
@@ -253,16 +308,34 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    override fun onToAddressChanged(
+    override fun onTargetAddressChanged(
         model: SendSheetModel,
-        event: SendSheetEvent.OnToAddressChanged
+        event: SendSheetEvent.OnTargetAddressChanged
     ): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isConfirmingTx -> noChange()
+            model.targetAddress == event.toAddress -> noChange()
             else -> next(
                 model.copy(
-                    toAddress = event.toAddress
-                )
+                    targetAddress = event.toAddress,
+                    isTargetValid = false,
+                    targetInputError = null
+                ),
+                mutableSetOf<SendSheetEffect>(
+                    SendSheetEffect.ValidateAddress(
+                        model.currencyCode,
+                        event.toAddress
+                    )
+                ).apply {
+                    if (!model.amount.isZero()) {
+                        SendSheetEffect.EstimateFee(
+                            model.currencyCode,
+                            event.toAddress,
+                            model.amount,
+                            model.transferSpeed
+                        ).run(::add)
+                    }
+                }
             )
         }
     }
@@ -311,15 +384,35 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             model.isConfirmingTx -> noChange()
             else -> when (event) {
                 is ValidAddress ->
-                    next(model.copy(toAddress = event.address))
-                is InvalidAddress -> dispatch(
-                    setOf<SendSheetEffect>(
-                        SendSheetEffect.ShowInvalidClipboardData(model.currencyCode)
+                    next(
+                        model.copy(
+                            targetAddress = event.address,
+                            isTargetValid = false,
+                            targetInputError = null
+                        ),
+                        mutableSetOf<SendSheetEffect>(
+                            SendSheetEffect.ValidateAddress(model.currencyCode, event.address)
+                        ).apply {
+                            if (!model.amount.isZero()) {
+                                SendSheetEffect.EstimateFee(
+                                    model.currencyCode,
+                                    event.address,
+                                    model.amount,
+                                    model.transferSpeed
+                                ).run(::add)
+                            }
+                        }
+                    )
+                is InvalidAddress -> next(
+                    model.copy(
+                        isTargetValid = false,
+                        targetInputError = SendSheetModel.InputError.ClipboardInvalid
                     )
                 )
-                is NoAddress -> dispatch(
-                    setOf<SendSheetEffect>(
-                        SendSheetEffect.ShowClipboardEmpty
+                is NoAddress -> next(
+                    model.copy(
+                        isTargetValid = false,
+                        targetInputError = SendSheetModel.InputError.ClipboardEmpty
                     )
                 )
             }
@@ -382,7 +475,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 setOf(
                     SendSheetEffect.SendTransaction(
                         currencyCode = model.currencyCode,
-                        address = model.toAddress,
+                        address = model.targetAddress,
                         amount = model.amount,
                         transferFeeBasis = checkNotNull(model.transferFeeBasis)
                     )
@@ -424,5 +517,21 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             model.isSendingTransaction || model.isConfirmingTx -> noChange()
             else -> dispatch(setOf(SendSheetEffect.GoToEthWallet))
         }
+    }
+
+    override fun onAddressValidated(
+        model: SendSheetModel,
+        event: SendSheetEvent.OnAddressValidated
+    ): Next<SendSheetModel, SendSheetEffect> {
+        val addressChanged = model.targetAddress != event.address
+        val stateUnchanged = model.isTargetValid == event.isValid
+        if (addressChanged || stateUnchanged) return noChange()
+        return next(
+            model.copy(
+                isTargetValid = event.isValid,
+                targetInputError = if (event.isValid) null
+                else SendSheetModel.InputError.Invalid
+            )
+        )
     }
 }

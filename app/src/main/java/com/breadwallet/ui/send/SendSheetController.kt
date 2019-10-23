@@ -27,13 +27,11 @@ package com.breadwallet.ui.send
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.ConstraintSet
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -52,7 +50,6 @@ import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.MainActivity
@@ -72,6 +69,8 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_send_sheet.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+import java.math.BigDecimal
+import java.util.Locale
 
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
@@ -112,18 +111,18 @@ class SendSheetController(args: Bundle? = null) :
     private val currencyCode = arg<String>(CURRENCY_CODE)
     private val cryptoRequest = argOptional<CryptoRequest>(CRYPTO_REQUEST)
 
-    private var mKeyboardIndex: Int = 0
-    private var mIsAmountLabelShown = true
-
     override val layoutId = R.layout.controller_send_sheet
     override val init = SendSheetInit
     override val update = SendSheetUpdate
     override val defaultModel: SendSheetModel
         get() {
             val fiatCode = BRSharedPrefs.getPreferredFiatIso()
-            return cryptoRequest?.asSendSheetModel(fiatCode) ?: SendSheetModel.createDefault(currencyCode, fiatCode)
+            return cryptoRequest?.asSendSheetModel(fiatCode) ?: SendSheetModel.createDefault(
+                currencyCode,
+                fiatCode
+            )
         }
-    
+
     override val effectHandler: Connectable<SendSheetEffect, SendSheetEvent> =
         CompositeEffectHandler.from(
             nestedConnectable({
@@ -178,7 +177,10 @@ class SendSheetController(args: Bundle? = null) :
                 when (effect) {
                     SendSheetEffect.GoToEthWallet -> NavigationEffect.GoToWallet(Currency.CODE_AS_ETH)
                     SendSheetEffect.CloseSheet -> NavigationEffect.GoBack
-                    is SendSheetEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SEND, effect.currencyCode)
+                    is SendSheetEffect.GoToFaq -> NavigationEffect.GoToFaq(
+                        BRConstants.FAQ_SEND,
+                        effect.currencyCode
+                    )
                     else -> null
                 }
             }
@@ -191,11 +193,9 @@ class SendSheetController(args: Bundle? = null) :
         keyboard.setBRKeyboardColor(R.color.white)
         keyboard.setDeleteImage(R.drawable.ic_delete_black)
 
-        mKeyboardIndex = signal_layout.indexOfChild(keyboard_layout)
-
         showKeyboard(false)
 
-        signal_layout.layoutTransition = UiUtils.getDefaultTransition()
+        layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
     }
 
     override fun onDetach(view: View) {
@@ -206,7 +206,8 @@ class SendSheetController(args: Bundle? = null) :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == QR_SCAN_RC && resultCode == Activity.RESULT_OK) {// TODO const, handle failure?
-            val cryptoRequest = data?.extras?.get(MainActivity.EXTRA_CRYPTO_REQUEST) as? CryptoRequest ?: return
+            val cryptoRequest =
+                data?.extras?.get(MainActivity.EXTRA_CRYPTO_REQUEST) as? CryptoRequest ?: return
             if (cryptoRequest.address.isNullOrBlank()) return
             eventConsumer.accept(SendSheetEvent.OnAddressPasted.ValidAddress(cryptoRequest.address))
         }
@@ -214,24 +215,25 @@ class SendSheetController(args: Bundle? = null) :
 
     @Suppress("ComplexMethod")
     override fun bindView(output: Consumer<SendSheetEvent>) = output.view {
-        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+        layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
 
-        amount_edit.onClick(SendSheetEvent.OnAmountEditClicked)
-        address_edit.onClick(SendSheetEvent.OnAmountEditDismissed)
-        comment_edit.onClick(SendSheetEvent.OnAmountEditDismissed)
+        textInputAddress.onTextChanged(SendSheetEvent::OnTargetAddressChanged)
+        textInputAmount.onClick(SendSheetEvent.OnAmountEditClicked)
+        textInputAddress.onClick(SendSheetEvent.OnAmountEditDismissed)
+        textInputMemo.onClick(SendSheetEvent.OnAmountEditDismissed)
 
-        paste_button.onClick(SendSheetEvent.OnPasteClicked)
-        iso_button.onClick(SendSheetEvent.OnToggleCurrencyClicked)
-        scan.onClick(SendSheetEvent.OnScanClicked)
-        send_button.onClick(SendSheetEvent.OnSendClicked)
+        buttonPaste.onClick(SendSheetEvent.OnPasteClicked)
+        buttonCurrencySelect.onClick(SendSheetEvent.OnToggleCurrencyClicked)
+        buttonScan.onClick(SendSheetEvent.OnScanClicked)
+        buttonSend.onClick(SendSheetEvent.OnSendClicked)
 
-        regular_button.onClick(SendSheetEvent.OnTransferSpeedChanged(REGULAR))
-        economy_button.onClick(SendSheetEvent.OnTransferSpeedChanged(ECONOMY))
-        priority_button.onClick(SendSheetEvent.OnTransferSpeedChanged(PRIORITY))
+        buttonRegular.onClick(SendSheetEvent.OnTransferSpeedChanged(REGULAR))
+        buttonEconomy.onClick(SendSheetEvent.OnTransferSpeedChanged(ECONOMY))
+        buttonPriority.onClick(SendSheetEvent.OnTransferSpeedChanged(PRIORITY))
 
-        faq_button.onClick(SendSheetEvent.OnFaqClicked)
-        background_layout.onClick(SendSheetEvent.OnCloseClicked)
-        close_button.onClick(SendSheetEvent.OnCloseClicked)
+        buttonFaq.onClick(SendSheetEvent.OnFaqClicked)
+        layoutBackground.onClick(SendSheetEvent.OnCloseClicked)
+        buttonClose.onClick(SendSheetEvent.OnCloseClicked)
 
         keyboard.setOnInsertListener { key ->
             output.accept(
@@ -244,7 +246,7 @@ class SendSheetController(args: Bundle? = null) :
             )
         }
 
-        address_edit.setOnEditorActionListener { _, actionId, event ->
+        textInputAddress.setOnEditorActionListener { _, actionId, event ->
             if (event?.keyCode == KeyEvent.KEYCODE_ENTER
                 || actionId == EditorInfo.IME_ACTION_DONE
                 || actionId == EditorInfo.IME_ACTION_NEXT
@@ -261,12 +263,12 @@ class SendSheetController(args: Bundle? = null) :
                 Utils.hideKeyboard(activity)
             }
         }) {
-            apply(comment_edit::setOnFocusChangeListener)
-            apply(address_edit::setOnFocusChangeListener)
+            apply(textInputMemo::setOnFocusChangeListener)
+            apply(textInputAddress::setOnFocusChangeListener)
         }
 
         onDispose {
-            signal_layout.setOnTouchListener(null)
+            layoutSignal.setOnTouchListener(null)
             keyboard.setOnInsertListener(null)
         }
     }
@@ -275,57 +277,56 @@ class SendSheetController(args: Bundle? = null) :
     override fun SendSheetModel.render() {
         val res = checkNotNull(resources)
 
+        ifChanged(SendSheetModel::targetInputError) {
+            inputLayoutAddress.isErrorEnabled = targetInputError != null
+            inputLayoutAddress.error = when (targetInputError) {
+                is SendSheetModel.InputError.Empty ->
+                    res.getString(R.string.Send_noAddress)
+                is SendSheetModel.InputError.Invalid ->
+                    res.getString(R.string.Send_invalidAddressMessage, currencyCode.toUpperCase())
+                is SendSheetModel.InputError.ClipboardInvalid ->
+                    res.getString(
+                        R.string.Send_invalidAddressOnPasteboard,
+                        currencyCode.toUpperCase()
+                    )
+                is SendSheetModel.InputError.ClipboardEmpty ->
+                    res.getString(R.string.Send_emptyPasteboard)
+                else -> null
+            }
+        }
+
+        ifChanged(SendSheetModel::amountInputError) {
+            inputLayoutAmount.isErrorEnabled = amountInputError != null
+            inputLayoutAmount.error = when (amountInputError) {
+                is SendSheetModel.InputError.Empty ->
+                    res.getString(R.string.Send_noAmount)
+                is SendSheetModel.InputError.BalanceTooLow ->
+                    res.getString(R.string.Send_insufficientFunds)
+                else -> null
+            }
+        }
+
         ifChanged(
             SendSheetModel::currencyCode,
             SendSheetModel::fiatCode,
-            SendSheetModel::isAmountCrypto,
-            SendSheetModel::isAmountEditVisible
+            SendSheetModel::isAmountCrypto
         ) {
-            val active = when {
-                isAmountCrypto -> currencyCode
-                else -> fiatCode
-            }.toUpperCase()
-
-            iso_button.text = active
-            iso_text.text = when {
-                !isAmountEditVisible &&
-                    rawAmount.isBlank() &&
-                    balance_text.isInvisible ->
-                    res.getString(R.string.Send_amountLabel)
-                else -> when {
-                    isAmountCrypto -> active
-                    else -> CurrencyUtils.getSymbolByIso(applicationContext, active)
+            val sendTitle = res.getString(R.string.Send_title)
+            val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
+            labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+            buttonCurrencySelect.text = when {
+                isAmountCrypto -> upperCaseCurrencyCode
+                else -> {
+                    val currency = java.util.Currency.getInstance(fiatCode)
+                    "$fiatCode (${currency.symbol})".toUpperCase(Locale.getDefault())
                 }
             }
         }
 
-        @Suppress("MagicNumber")
-        ifChanged(SendSheetModel::isAmountEditVisible) {
-            fee_text.isVisible = isAmountEditVisible
-            if (mIsAmountLabelShown) {
-                // TODO: Don't use a constraint layout for this.
-                ConstraintSet().apply {
-                    clone(amount_layout)
-                    val px4 = Utils.getPixelsFromDps(applicationContext, 4)
-                    connect(balance_text.id, ConstraintSet.TOP, iso_text.id, ConstraintSet.BOTTOM, px4)
-                    connect(fee_text.id, ConstraintSet.TOP, balance_text.id, ConstraintSet.BOTTOM, px4)
-                    connect(fee_text.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4)
-                    connect(iso_text.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4)
-                    connect(iso_text.id, ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1)
-                    applyTo(amount_layout)
-                }
-            }
-        }
-
-        ifChanged(SendSheetModel::isAmountEditVisible) {
-            showKeyboard(isAmountEditVisible)
-            if (isAmountEditVisible) {
-                startEditingAmount()
-            }
-        }
+        ifChanged(SendSheetModel::isAmountEditVisible, ::showKeyboard)
 
         ifChanged(SendSheetModel::rawAmount) {
-            amount_edit.setText(
+            textInputAmount.setText(
                 when {
                     rawAmount.contains('.') -> {
                         val parts = rawAmount.split('.')
@@ -345,9 +346,14 @@ class SendSheetController(args: Bundle? = null) :
         ) {
             // TODO: add nativeCurrencyCode to model, remove eth constant
             val cryptoCurrencyCode = if (isErc20) "ETH" else currencyCode
-            fee_text.text = res.getString(
+            labelNetworkFee.isVisible = networkFee != BigDecimal.ZERO
+            labelNetworkFee.text = res.getString(
                 R.string.Send_fee, when {
-                    isAmountCrypto -> networkFee.formatCryptoForUi(cryptoCurrencyCode, scale = 8) // TODO: scale const
+                    isAmountCrypto ->
+                        networkFee.formatCryptoForUi(
+                            cryptoCurrencyCode,
+                            scale = 8
+                        ) // TODO: scale const
                     else -> fiatNetworkFee.formatFiatForUi(fiatCode)
                 }
             )
@@ -358,7 +364,7 @@ class SendSheetController(args: Bundle? = null) :
             SendSheetModel::fiatBalance,
             SendSheetModel::isAmountCrypto
         ) {
-            balance_text.text = res.getString(
+            labelBalance.text = res.getString(
                 R.string.Send_balance,
                 when {
                     isAmountCrypto -> balance.formatCryptoForUi(currencyCode)
@@ -367,35 +373,15 @@ class SendSheetController(args: Bundle? = null) :
             )
         }
 
-        ifChanged(SendSheetModel::toAddress) {
-            if (address_edit.text.toString() != toAddress) {
-                address_edit.setText(toAddress, TextView.BufferType.EDITABLE)
+        ifChanged(SendSheetModel::targetAddress) {
+            if (textInputAddress.text.toString() != targetAddress) {
+                textInputAddress.setText(targetAddress, TextView.BufferType.EDITABLE)
             }
         }
 
         ifChanged(SendSheetModel::memo) {
-            if (address_edit.text.toString() != memo) {
-                address_edit.setText(memo, TextView.BufferType.EDITABLE)
-            }
-        }
-
-        ifChanged(
-            SendSheetModel::isAmountOverBalance,
-            SendSheetModel::isAmountEditVisible
-        ) {
-            val activity = checkNotNull(activity)
-            if (isAmountOverBalance) {
-                balance_text.setTextColor(activity.getColor(R.color.warning_color))
-                fee_text.setTextColor(activity.getColor(R.color.warning_color))
-                amount_edit.setTextColor(activity.getColor(R.color.warning_color))
-                if (isAmountEditVisible)
-                    iso_text.setTextColor(activity.getColor(R.color.warning_color))
-            } else {
-                balance_text.setTextColor(activity.getColor(R.color.light_gray))
-                fee_text.setTextColor(activity.getColor(R.color.light_gray))
-                amount_edit.setTextColor(activity.getColor(R.color.almost_black))
-                if (isAmountEditVisible)
-                    iso_text.setTextColor(activity.getColor(R.color.almost_black))
+            if (textInputAddress.text.toString() != memo) {
+                textInputAddress.setText(memo, TextView.BufferType.EDITABLE)
             }
         }
 
@@ -403,13 +389,13 @@ class SendSheetController(args: Bundle? = null) :
             SendSheetModel::showFeeSelect,
             SendSheetModel::transferSpeed
         ) {
-            fee_buttons_layout.isVisible = showFeeSelect
+            layoutFeeOption.isVisible = showFeeSelect
             setFeeOption(transferSpeed)
         }
 
         ifChanged(SendSheetModel::transferSpeed, ::setFeeOption)
         ifChanged(SendSheetModel::showFeeSelect) {
-            fee_buttons_layout.isVisible = showFeeSelect
+            layoutFeeOption.isVisible = showFeeSelect
         }
 
         ifChanged(SendSheetModel::isConfirmingTx) {
@@ -438,41 +424,10 @@ class SendSheetController(args: Bundle? = null) :
         }
     }
 
-    @Suppress("MagicNumber")
-    private fun startEditingAmount() {
-        if (mIsAmountLabelShown) { //only first time
-            mIsAmountLabelShown = false
-            amount_edit.hint = "0"
-            amount_edit.textSize = resources!!.getDimension(R.dimen.amount_text_size)
-            amount_edit.visibility = View.VISIBLE
-            balance_text.visibility = View.VISIBLE
-            iso_text.setTextColor(activity!!.getColor(R.color.almost_black))
-            iso_text.textSize = resources!!.getDimension(R.dimen.currency_code_text_size_large)
-
-            val set = ConstraintSet()
-            set.clone(amount_layout)
-
-            // Re-space elements due to new UI elements being visible
-            val px4 = Utils.getPixelsFromDps(applicationContext, 4)
-            set.connect(balance_text.id, ConstraintSet.TOP, iso_text.id, ConstraintSet.BOTTOM, px4)
-            set.connect(fee_text.id, ConstraintSet.TOP, balance_text.id, ConstraintSet.BOTTOM, px4)
-            set.connect(fee_text.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4)
-            set.connect(iso_text.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4)
-            set.connect(iso_text.id, ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1)
-            set.applyTo(amount_layout)
-        }
-    }
-
-    private fun showKeyboard(b: Boolean) {
-        if (!b) {
-            signal_layout.removeView(keyboard_layout)
-        } else {
+    private fun showKeyboard(show: Boolean) {
+        groupAmountSection.isVisible = show
+        if (show) {
             Utils.hideKeyboard(activity)
-            if (signal_layout.indexOfChild(keyboard_layout) == -1) {
-                signal_layout.addView(keyboard_layout, mKeyboardIndex)
-            } else {
-                signal_layout.removeView(keyboard_layout)
-            }
         }
     }
 
@@ -497,38 +452,40 @@ class SendSheetController(args: Bundle? = null) :
         // TODO: Redo using a toggle button and a selector
         when (feeOption) {
             REGULAR -> {
-                regular_button.setTextColor(context.getColor(R.color.white))
-                regular_button.background = context.getDrawable(R.drawable.b_blue_square)
-                economy_button.setTextColor(context.getColor(R.color.dark_blue))
-                economy_button.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
-                priority_button.setTextColor(context.getColor(R.color.dark_blue))
-                priority_button.background = context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                fee_description.text = context.getString(R.string.FeeSelector_estimatedDeliver)
+                buttonRegular.setTextColor(context.getColor(R.color.white))
+                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square)
+                buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
+                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
+                buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
+                buttonPriority.background =
+                    context.getDrawable(R.drawable.b_half_right_blue_stroke)
+                labelFeeDescription.text = context.getString(R.string.FeeSelector_estimatedDeliver)
                     .format(context.getString(R.string.FeeSelector_regularTime))
-                warning_text.visibility = View.GONE
+                labelFeeWarning.visibility = View.GONE
             }
             ECONOMY -> {
-                regular_button.setTextColor(context.getColor(R.color.dark_blue))
-                regular_button.background = context.getDrawable(R.drawable.b_blue_square_stroke)
-                economy_button.setTextColor(context.getColor(R.color.white))
-                economy_button.background = context.getDrawable(R.drawable.b_half_left_blue)
-                priority_button.setTextColor(context.getColor(R.color.dark_blue))
-                priority_button.background = context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                fee_description.text = context.getString(R.string.FeeSelector_estimatedDeliver)
+                buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
+                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
+                buttonEconomy.setTextColor(context.getColor(R.color.white))
+                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue)
+                buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
+                buttonPriority.background =
+                    context.getDrawable(R.drawable.b_half_right_blue_stroke)
+                labelFeeDescription.text = context.getString(R.string.FeeSelector_estimatedDeliver)
                     .format(context.getString(R.string.FeeSelector_economyTime))
-                warning_text.visibility = View.VISIBLE
+                labelFeeWarning.visibility = View.VISIBLE
             }
             PRIORITY -> {
-                regular_button.setTextColor(context.getColor(R.color.dark_blue))
-                regular_button.background = context.getDrawable(R.drawable.b_blue_square_stroke)
-                economy_button.setTextColor(context.getColor(R.color.dark_blue))
-                economy_button.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
-                priority_button.setTextColor(context.getColor(R.color.white))
-                priority_button.background = context.getDrawable(R.drawable.b_half_right_blue)
-                fee_description.text =
+                buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
+                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
+                buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
+                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
+                buttonPriority.setTextColor(context.getColor(R.color.white))
+                buttonPriority.background = context.getDrawable(R.drawable.b_half_right_blue)
+                labelFeeDescription.text =
                     context.getString(R.string.FeeSelector_estimatedDeliver)
                         .format(context.getString(R.string.FeeSelector_priorityTime))
-                warning_text.visibility = View.GONE
+                labelFeeWarning.visibility = View.GONE
             }
         }
     }
