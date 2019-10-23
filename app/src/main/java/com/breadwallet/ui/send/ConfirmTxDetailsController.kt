@@ -34,8 +34,6 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -92,7 +90,7 @@ class ConfirmTxDetailsController(
         val res = checkNotNull(resources)
         val fiatAmountString = fiatAmount.formatFiatForUi(fiatCode)
         send_value.text = "%s (%s)".format(amount.formatCryptoForUi(currencyCode), fiatAmountString)
-        to_address.text = toAddress
+        to_address.text = targetAddress
         amount_value.text = fiatAmountString
 
         val processingTime = res.getString(

@@ -1,6 +1,7 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
@@ -12,7 +13,7 @@ private const val REGULAR_FEE_HOURS = 1L
 
 /**
  * [SendSheetModel] models the ability to send an [amount] of [currencyCode]
- * to the supplied [toAddress].
+ * to the supplied [targetAddress].
  *
  * [amount] is a value of [fiatCode] when [isAmountCrypto] is true.
  *
@@ -38,11 +39,13 @@ data class SendSheetModel(
     val isAmountCrypto: Boolean = true,
     /** True if an amount key pad should be displayed. */
     val isAmountEditVisible: Boolean = false,
-    /** True when [amount] is greater than [balance]. */
-    val isAmountOverBalance: Boolean = false,
+    /** True when [totalCost] is greater than [balance]. */
+    val isTotalCostOverBalance: Boolean = false,
 
     /** The user supplied address to send the [amount] of [currencyCode] to. */
-    val toAddress: String = "",
+    val targetAddress: String = "",
+    /** True when [targetAddress] is a valid address. */
+    val isTargetValid: Boolean = false,
     /** The user supplied amount to send as a string. */
     val rawAmount: String = "",
     /** The user supplied amount as [BigDecimal]. */
@@ -71,8 +74,23 @@ data class SendSheetModel(
     val isSendingTransaction: Boolean = false,
 
     /** The currently estimated [TransferFeeBasis], not null when [networkFee] > [BigDecimal.ZERO]. */
-    val transferFeeBasis: TransferFeeBasis? = null
+    val transferFeeBasis: TransferFeeBasis? = null,
+
+    /** An error with the current [targetAddress]. */
+    val targetInputError: InputError? = null,
+
+    /** An error with the current [rawAmount]. */
+    val amountInputError: InputError? = null
 ) {
+    sealed class InputError {
+        object Empty : InputError()
+        object Invalid : InputError()
+        object BalanceTooLow : InputError()
+
+        object ClipboardEmpty : InputError()
+        object ClipboardInvalid : InputError()
+    }
+
     enum class TransferSpeed(val targetTime: Long) {
         ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
         REGULAR(TimeUnit.HOURS.toMillis(REGULAR_FEE_HOURS)),
@@ -109,24 +127,24 @@ data class SendSheetModel(
         }
     }
 
-
-
     /**
      * Updates the tx amount fields to [newRawAmount] keeping the crypto/fiat
      * conversions in-sync depending on [SendSheetModel.isAmountCrypto].
      */
+    @Suppress("ComplexMethod")
     fun withNewRawAmount(newRawAmount: String): SendSheetModel {
-        if (newRawAmount.isBlank() || BigDecimal(newRawAmount) == BigDecimal.ZERO) {
+        if (newRawAmount.isBlank() || BigDecimal(newRawAmount).isZero()) {
             return copy(
                 rawAmount = newRawAmount,
                 amount = BigDecimal.ZERO,
                 fiatAmount = BigDecimal.ZERO,
-                isAmountOverBalance = false
+                isTotalCostOverBalance = false,
+                amountInputError = null
             )
         }
         val newAmount: BigDecimal
         val newFiatAmount: BigDecimal
-        val isAmountOverBalance: Boolean
+        val isTotalCostOverBalance: Boolean
 
         if (isAmountCrypto) {
             newAmount = BigDecimal(newRawAmount)
@@ -135,7 +153,7 @@ data class SendSheetModel(
             } else {
                 fiatAmount
             }
-            isAmountOverBalance = newAmount > balance
+            isTotalCostOverBalance = newAmount + networkFee > balance
         } else {
             newFiatAmount = BigDecimal(newRawAmount)
             val hasRate = fiatPricePerUnit > BigDecimal.ZERO
@@ -145,14 +163,17 @@ data class SendSheetModel(
             } else {
                 amount
             }
-            isAmountOverBalance = newFiatAmount > fiatBalance
+            isTotalCostOverBalance = newFiatAmount + fiatNetworkFee > fiatBalance
         }
 
         return copy(
             rawAmount = newRawAmount,
             amount = newAmount,
             fiatAmount = newFiatAmount,
-            isAmountOverBalance = isAmountOverBalance
+            isTotalCostOverBalance = isTotalCostOverBalance,
+            amountInputError = if (isTotalCostOverBalance) {
+                InputError.BalanceTooLow
+            } else null
         )
     }
 
@@ -166,8 +187,8 @@ data class SendSheetModel(
             "fiatNetworkFee=$fiatNetworkFee, " +
             "isAmountCrypto=$isAmountCrypto, " +
             "isAmountEditVisible=$isAmountEditVisible, " +
-            "isAmountOverBalance=$isAmountOverBalance, " +
-            "toAddress='***', " +
+            "isAmountOverBalance=$isTotalCostOverBalance, " +
+            "targetAddress='***', " +
             "rawAmount='$rawAmount', " +
             "amount=$amount, " +
             "memo='***', " +
@@ -187,5 +208,5 @@ fun CryptoRequest.asSendSheetModel(fiatCode: String) =
         currencyCode = currencyCode,
         fiatCode = fiatCode,
         amount = amount,
-        toAddress = if (hasAddress()) getAddress(false) else ""
+        targetAddress = if (hasAddress()) getAddress(false) else ""
     )
