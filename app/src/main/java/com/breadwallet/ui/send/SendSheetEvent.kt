@@ -17,7 +17,11 @@ sealed class SendSheetEvent {
     data class OnBalanceUpdated(
         val balance: BigDecimal,
         val fiatBalance: BigDecimal
-    ) : SendSheetEvent()
+    ) : SendSheetEvent() {
+        override fun toString(): String {
+            return "OnBalanceUpdated(balance='***', fiatBalance='***')"
+        }
+    }
 
     data class OnNetworkFeeUpdated(
         val networkFee: BigDecimal,
@@ -28,6 +32,13 @@ sealed class SendSheetEvent {
         val transferSpeed: SendSheetModel.TransferSpeed
     ) : SendSheetEvent()
 
+    data class OnAddressValidated(
+        val address: String,
+        val isValid: Boolean
+    ) : SendSheetEvent() {
+        override fun toString() = "OnAddressValidated(isValid=$isValid)"
+    }
+
     sealed class OnAmountChange : SendSheetEvent() {
         object AddDecimal : OnAmountChange()
         object Delete : OnAmountChange()
@@ -35,10 +46,12 @@ sealed class SendSheetEvent {
 
         data class AddDigit(
             val digit: Int
-        ) : OnAmountChange()
+        ) : OnAmountChange() {
+            override fun toString() = "AddDigit(digit=***)"
+        }
     }
 
-    data class OnToAddressChanged(
+    data class OnTargetAddressChanged(
         val toAddress: String
     ) : SendSheetEvent() {
         override fun toString() = "${this::class.java.name}(toAddress='***')"
