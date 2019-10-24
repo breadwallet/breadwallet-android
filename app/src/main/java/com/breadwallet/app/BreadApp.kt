@@ -167,13 +167,13 @@ class BreadApp : Application(), KodeinAware {
 
                 // Initialize the Firebase Messaging Service.
                 BRDFirebaseMessagingService.initialize(mInstance)
-
-                // Initialize TokenUtil to load our tokens.json file from res/raw
-                // TODO: Depends on eth wallet manager: TokenUtil.initialize(mInstance);
             } else {
                 // extract the bundles from the resources to be ready when the wallet is initialized
                 BRExecutor.getInstance().forLightWeightBackgroundTasks()
                     .execute { ServerBundlesHelper.extractBundlesIfNeeded(mInstance) }
+
+                // Initialize TokenUtil to load our tokens.json file from res/raw
+                TokenUtil.initialize(mInstance)
             }
         }
 
@@ -232,7 +232,8 @@ class BreadApp : Application(), KodeinAware {
                 }
 
                 // Get the first 10 bytes of the SHA256 hash.
-                val firstTenBytes = sha256Address.sliceArray(0 until NUMBER_OF_BYTES_FOR_SHA256_NEEDED)
+                val firstTenBytes =
+                    sha256Address.sliceArray(0 until NUMBER_OF_BYTES_FOR_SHA256_NEEDED)
 
                 // Convert the first 10 bytes to a lower case string.
                 val base32String = Base32.encode(firstTenBytes).toLowerCase()

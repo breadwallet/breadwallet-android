@@ -28,6 +28,7 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.entities.TokenItem;
 import com.platform.APIClient;
@@ -70,6 +71,11 @@ public final class TokenUtil {
     private static final int END_COLOR_INDEX = 1;
     private static final String TOKENS_FILENAME = "tokens.json";
 
+    private static final String ETHEREUM = "ethereum";
+    private static final String ETHEREUM_TESTNET = "ropsten";
+    private static final String TESTNET = "testnet";
+    private static final String MAINNET = "mainnet";
+
     // TODO: In DROID-878 fix this so we don't have to store this mTokenItems... (Should be stored in appropriate wallet.)
     private static List<TokenItem> mTokenItems = new ArrayList<>();
 
@@ -100,7 +106,6 @@ public final class TokenUtil {
                 saveTokenListToFile(context, stringBuilder.toString());
 
                 mTokenItems = parseJsonToTokenList(context, stringBuilder.toString());
-
             } catch (IOException e) {
                 Log.e(TAG, "Could not read from resource file at res/raw/tokens.json ", e);
             }
@@ -200,7 +205,7 @@ public final class TokenUtil {
                     isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
                 }
 
-                if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
+                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
                     String startColor = null;
                     String endColor = null;
                     String currencyId = null;
@@ -212,7 +217,12 @@ public final class TokenUtil {
 
                     if (tokenObject.has(FIELD_CURRENCY_ID)) {
                         currencyId = tokenObject.getString(FIELD_CURRENCY_ID);
+
+                        if (BuildConfig.BITCOIN_TESTNET) {
+                            currencyId = currencyId.replace(MAINNET, currencyId.contains(ETHEREUM) ? ETHEREUM_TESTNET : TESTNET);
+                        }
                     }
+
                     TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId);
 
                     tokenItems.add(item);

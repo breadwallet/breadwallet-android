@@ -189,7 +189,9 @@ public class Utils {
 
     public static void hideKeyboard(Context app) {
         if (app != null) {
-            View view = ((Activity) app).getCurrentFocus();
+            Activity activity = (Activity) app;
+            View view = activity.getCurrentFocus() != null ?
+                    activity.getCurrentFocus() : activity.findViewById(android.R.id.content);
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
@@ -197,7 +199,6 @@ public class Utils {
                 }
             }
         }
-
     }
 
     // This method checks if a screen altering app(such as Twightlight) is currently running
