@@ -2,10 +2,12 @@ package com.breadwallet.ui.addwallets
 
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 
 import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
@@ -54,10 +56,20 @@ class AddWalletsController :
         token_list.adapter = mAdapter
 
         search_edit.onTextChanged(AddWalletsEvent::OnSearchQueryChanged)
+        search_edit.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                Utils.hideKeyboard(activity)
+            }
+        }
 
         back_arrow.onClick(AddWalletsEvent.OnBackClicked)
 
         onDispose { }
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        Utils.hideKeyboard(activity)
     }
 
     override fun AddWalletsModel.render() {

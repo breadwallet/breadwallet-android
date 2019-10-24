@@ -925,8 +925,9 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         }
 
         final byte[] nonce = Arrays.copyOfRange(data, 0, 12);
+        final byte[] payload = Arrays.copyOfRange(data, 12, data.length);
         final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, new byte[0]);
-        return cipher.decrypt(data).orNull();
+        return cipher.decrypt(payload).orNull();
     }
 
     private static void cacheKeyIfNeeded(Context context) {
