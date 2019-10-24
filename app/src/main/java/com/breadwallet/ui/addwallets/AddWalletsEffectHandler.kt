@@ -71,6 +71,7 @@ class AddWalletsEffectHandler(
         breadBox.wallets()
             .combine(search) { trackedWallets, query ->
                 TokenUtil.getTokenItems(contextProvider())
+                    .filter { it.isSupported }
                     .applyFilter(query)
                     .map {
                         it.asToken(
