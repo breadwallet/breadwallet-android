@@ -59,10 +59,10 @@ import com.breadwallet.tools.util.Bip39Reader
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
@@ -113,7 +113,7 @@ internal class CoreBreadBox(
 
     private val openScope = CoroutineScope(
         SupervisorJob() +
-            systemExecutor.asCoroutineDispatcher() +
+            Dispatchers.Default +
             CoroutineExceptionHandler { _, throwable ->
                 logError("Error in coroutine", throwable)
             })
