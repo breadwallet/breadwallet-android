@@ -255,9 +255,9 @@ class RecoveryKeyEffectHandler(
         }
     }
 
+    /** Triggers a sync of the enabled wallets metadata. */
     private suspend fun recoverAccountMetaData() {
         metaDataProvider.enabledWallets().first()
-        metaDataProvider.recoverAll().first()
     }
 
     /**

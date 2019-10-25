@@ -48,6 +48,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.IOException
@@ -63,6 +65,7 @@ class KVStoreManager(
     companion object {
         private const val SYNC_KEY_NUM_RETRY = 3
         private const val SYNC_KEY_TIMEOUT_MS = 3000L
+        private val mutex = Mutex()
     }
 
     private val keyChannelMap = mutableMapOf<String, BroadcastChannel<JSONObject>>().run {
@@ -106,7 +109,9 @@ class KVStoreManager(
             // At some point, need to reconsider the interface between these two layers
             netRetry(SYNC_KEY_NUM_RETRY, SYNC_KEY_TIMEOUT_MS) {
                 withContext(Dispatchers.IO) {
-                    getReplicatedKvStore(context).syncKey(key)
+                    mutex.withLock {
+                        getReplicatedKvStore(context).syncKey(key)
+                    }
                 }
                 value = get(key)?.also { keyChannelMap.getValue(key).offer(it) }
             }
@@ -118,7 +123,9 @@ class KVStoreManager(
 
     override suspend fun syncAll(): Boolean =
         withContext(Dispatchers.IO) {
-            getReplicatedKvStore(context).syncAllKeys()
+            mutex.withLock {
+                getReplicatedKvStore(context).syncAllKeys()
+            }
         }.also { syncSuccess ->
             if (syncSuccess) {
                 keyChannelMap.keys.forEach { key ->

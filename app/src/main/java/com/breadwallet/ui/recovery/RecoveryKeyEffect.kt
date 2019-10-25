@@ -31,18 +31,19 @@ sealed class RecoveryKeyEffect {
     object GoToLoginForReset : RecoveryKeyEffect()
     object SetPinForReset : RecoveryKeyEffect()
     object GoToPhraseError : RecoveryKeyEffect()
+    object RecoverMetaData : RecoveryKeyEffect()
 
     object ErrorShake : RecoveryKeyEffect()
 
     data class ValidateWord(
-            val index: Int,
-            val word: String
+        val index: Int,
+        val word: String
     ) : RecoveryKeyEffect() {
         override fun toString() = "ValidateWord()"
     }
 
     data class ValidatePhrase(
-            val phrase: List<String>
+        val phrase: List<String>
     ) : RecoveryKeyEffect() {
         init {
             require(phrase.size == 12) { "phrase must contain 12 words." }
@@ -52,7 +53,7 @@ sealed class RecoveryKeyEffect {
     }
 
     data class Unlink(
-            val phrase: List<String>
+        val phrase: List<String>
     ) : RecoveryKeyEffect() {
         init {
             require(phrase.size == 12) { "phrase must contain 12 words." }
@@ -63,7 +64,7 @@ sealed class RecoveryKeyEffect {
     }
 
     data class ResetPin(
-            val phrase: List<String>
+        val phrase: List<String>
     ) : RecoveryKeyEffect() {
         init {
             require(phrase.size == 12) { "phrase must contain 12 words." }
@@ -74,7 +75,7 @@ sealed class RecoveryKeyEffect {
     }
 
     data class RecoverWallet(
-            val phrase: List<String>
+        val phrase: List<String>
     ) : RecoveryKeyEffect() {
         init {
             require(phrase.size == 12) { "phrase must contain 12 words." }
