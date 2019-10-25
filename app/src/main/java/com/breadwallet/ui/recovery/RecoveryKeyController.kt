@@ -41,6 +41,8 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.effecthandler.metadata.MetaDataEffect
+import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.logger.logError
@@ -125,6 +127,12 @@ class RecoveryKeyController(
                 SpringAnimator.failShakeAnimation(applicationContext, view)
             })
         },
+        nestedConnectable({ MetaDataEffectHandler(direct.instance()) }, { effect ->
+            when (effect) {
+                RecoveryKeyEffect.RecoverMetaData -> MetaDataEffect.RecoverMetaData
+                else -> null
+            }
+        }),
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
                 RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
@@ -192,7 +200,8 @@ class RecoveryKeyController(
             }
             RecoveryKeyModel.Mode.RESET_PIN -> {
                 title.text = resources.getString(R.string.RecoverWallet_header_reset_pin)
-                description.text = resources.getString(R.string.RecoverWallet_subheader_reset_pin)
+                description.text =
+                    resources.getString(R.string.RecoverWallet_subheader_reset_pin)
             }
             RecoveryKeyModel.Mode.RECOVER -> Unit
         }
