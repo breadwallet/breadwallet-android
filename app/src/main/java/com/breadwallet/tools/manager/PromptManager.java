@@ -25,6 +25,9 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController;
+import com.breadwallet.ui.navigation.OnCompleteAction;
+import com.breadwallet.ui.pin.InputPinController;
+import com.breadwallet.ui.writedownkey.WriteDownKeyController;
 import com.breadwallet.util.usermetrics.UserMetricsUtil;
 
 import java.util.regex.Pattern;
@@ -145,6 +148,28 @@ public final class PromptManager {
                     router.pushController(RouterTransaction.with(new FingerprintSettingsController())
                             .popChangeHandler(new HorizontalChangeHandler())
                             .pushChangeHandler(new HorizontalChangeHandler()));
+                    sendPromptClickedEvent(promptItem);
+                });
+                break;
+            case PAPER_KEY:
+                title.setText(context.getString(R.string.Prompts_PaperKey_title));
+                description.setText(context.getString(R.string.Prompts_PaperKey_Body_Android));
+                continueButton.setOnClickListener(view -> {
+                    // todo navigate using NavigationEffect
+                    router.pushController(RouterTransaction.with(new WriteDownKeyController(OnCompleteAction.GO_HOME))
+                            .pushChangeHandler(new HorizontalChangeHandler())
+                            .popChangeHandler(new HorizontalChangeHandler()));
+                    sendPromptClickedEvent(promptItem);
+                });
+                break;
+            case UPGRADE_PIN:
+                title.setText(context.getString(R.string.Prompts_UpgradePin_title));
+                description.setText(context.getString(R.string.Prompts_UpgradePin_body));
+                continueButton.setOnClickListener(view -> {
+                    // todo navigate using NavigationEffect
+                    router.pushController(RouterTransaction.with(new InputPinController(OnCompleteAction.GO_HOME, true))
+                            .pushChangeHandler(new HorizontalChangeHandler())
+                            .popChangeHandler(new HorizontalChangeHandler()));
                     sendPromptClickedEvent(promptItem);
                 });
                 break;
