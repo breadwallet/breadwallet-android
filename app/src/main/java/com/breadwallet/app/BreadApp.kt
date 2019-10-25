@@ -128,6 +128,9 @@ class BreadApp : Application(), KodeinAware {
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
 
+        /** [CoroutineScope] matching the lifetime of the application. */
+        val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
         private val startedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
@@ -520,6 +523,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         getBreadBox().apply { if (isOpen) close() }
+        applicationScope.cancel()
     }
 
     /**
