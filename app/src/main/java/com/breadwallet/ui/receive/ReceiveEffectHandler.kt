@@ -125,7 +125,9 @@ class ReceiveEffectHandler(
     }
 
     private fun copyAddressToClipboard(effect: ReceiveEffect.CopyAddressToClipboard) {
-        BRClipboardManager.putClipboard(activity, effect.address)
+        launch(Dispatchers.Main) {
+            BRClipboardManager.putClipboard(activity, effect.address)
+        }
         EventUtils.pushEvent(EventUtils.EVENT_RECEIVE_COPIED_ADDRESS)
     }
 }
