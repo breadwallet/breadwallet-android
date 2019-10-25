@@ -346,7 +346,7 @@ class BreadApp : Application(), KodeinAware {
         bind<BreadBox>() with singleton {
             CoreBreadBox(
                 getStorageDir(this@BreadApp),
-                false,
+                !BuildConfig.BITCOIN_TESTNET,
                 instance(),
                 WalletManagerMode.API_ONLY
             )
