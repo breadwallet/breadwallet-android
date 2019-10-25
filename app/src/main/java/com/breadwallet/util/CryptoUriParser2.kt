@@ -20,7 +20,9 @@ class CryptoUriParser2(
         val uriBuilder = Uri.Builder()
 
         val system = checkNotNull(breadBox.getSystemUnsafe())
-        val wallet = checkNotNull(system.wallets.find { it.currency.code == currencyCode })
+        val wallet = checkNotNull(system.wallets.find {
+            it.currency.code.equals(currencyCode, true)
+        })
 
         uriBuilder.scheme(wallet.urlScheme)
 
