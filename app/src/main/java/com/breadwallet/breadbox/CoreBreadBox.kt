@@ -178,7 +178,7 @@ internal class CoreBreadBox(
                 walletsChannel.offer(wallets)
                 wallets.forEach {
                     walletTransfersChannelMap
-                        .getValue(it.currency.code)
+                        .getValue(it.currency.code.toLowerCase())
                         .offer(it.transfers)
                 }
             }
@@ -246,7 +246,9 @@ internal class CoreBreadBox(
             .asFlow()
             .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets ->
-                wallets.firstOrNull { it.currency.code == currencyCode }
+                wallets.firstOrNull {
+                    it.currency.code.equals(currencyCode, true)
+                }
             }
             .filterNotNull()
 
@@ -260,7 +262,7 @@ internal class CoreBreadBox(
     override fun walletSyncState(currencyCode: String) =
         walletSyncStateChannel
             .asFlow()
-            .filter { it.currencyCode == currencyCode }
+            .filter { it.currencyCode.equals(currencyCode, true) }
             .onStart {
                 // Dispatch initial sync state
                 val isSyncing = wallet(currencyCode)
@@ -279,22 +281,22 @@ internal class CoreBreadBox(
 
     @Synchronized
     override fun walletTransfers(currencyCode: String) =
-        walletTransfersChannelMap.getValue(currencyCode)
+        walletTransfersChannelMap.getValue(currencyCode.toLowerCase())
             .asFlow()
             .fromSystemOnStart { system ->
                 system.wallets
-                    .find { it.currency.code == currencyCode }
+                    .find { it.currency.code.equals(currencyCode, true) }
                     ?.transfers
             }
 
     @Synchronized
     override fun walletTransfer(currencyCode: String, transferHash: String) =
-        transferUpdatedChannelMap.getValue(currencyCode)
+        transferUpdatedChannelMap.getValue(currencyCode.toLowerCase())
             .asFlow()
             .filter { it.hashString() == transferHash }
             .fromSystemOnStart { system ->
                 system.wallets
-                    .find { it.currency.code == currencyCode }
+                    .find { it.currency.code.equals(currencyCode, true) }
                     ?.transfers
                     ?.singleOrNull { it.hashString() == transferHash }
             }
