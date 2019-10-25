@@ -412,8 +412,14 @@ class SendSheetController(args: Bundle? = null) :
         ifChanged(SendSheetModel::isAuthenticating) {
             val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
             if (isAuthenticating && !isAuthOnTop) {
+                val authenticationMode = if (isFingerprintAuthEnable) {
+                    AuthenticationController.Mode.USER_PREFERRED
+                } else {
+                    AuthenticationController.Mode.PIN_REQUIRED
+                }
                 val controller = AuthenticationController(
-                    title = res.getString(R.string.VerifyPin_title),
+                    mode = authenticationMode,
+                    title = res.getString(R.string.VerifyPin_touchIdMessage),
                     message = res.getString(R.string.VerifyPin_authorize)
                 )
                 controller.targetController = this@SendSheetController

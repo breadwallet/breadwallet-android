@@ -2,7 +2,6 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.bluelinelabs.conductor.Router;
+import com.bluelinelabs.conductor.RouterTransaction;
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.breadwallet.R;
-import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.legacy.presenter.customviews.BRButton;
 import com.breadwallet.legacy.presenter.customviews.BREdit;
 import com.breadwallet.legacy.presenter.customviews.BaseTextView;
@@ -23,6 +24,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController;
 import com.breadwallet.util.usermetrics.UserMetricsUtil;
 
 import java.util.regex.Pattern;
@@ -90,7 +92,7 @@ public final class PromptManager {
             case EMAIL_COLLECTION:
                 return !BRSharedPrefs.getEmailOptIn(context) && !BRSharedPrefs.getEmailOptInDismissed(context);
             case FINGER_PRINT:
-                return !BRSharedPrefs.getUseFingerprint(context) && Utils.isFingerprintAvailable(context)
+                return !BRSharedPrefs.getUnlockWithFingerprint() && Utils.isFingerprintAvailable(context)
                         && !BRSharedPrefs.getPromptDismissed(context, PROMPT_DISMISSED_FINGERPRINT);
             case PAPER_KEY:
                 return !BRSharedPrefs.getPhraseWroteDown(context);
@@ -127,7 +129,7 @@ public final class PromptManager {
         return null;
     }
 
-    public static View promptInfo(final Activity context, final PromptItem promptItem) {
+    public static View promptInfo(final Activity context, final PromptItem promptItem, final Router router) {
         final View baseLayout = context.getLayoutInflater().inflate(R.layout.base_prompt, null);
         BaseTextView title = baseLayout.findViewById(R.id.prompt_title);
         BaseTextView description = baseLayout.findViewById(R.id.prompt_description);
@@ -136,12 +138,13 @@ public final class PromptManager {
         dismissButton.setOnClickListener(view -> hidePrompt(context, baseLayout));
         switch (promptItem) {
             case FINGER_PRINT:
+                // todo navigate using NavigationEffect
                 title.setText(context.getString(R.string.Prompts_TouchId_title_android));
                 description.setText(context.getString(R.string.Prompts_TouchId_body_android));
                 continueButton.setOnClickListener(view -> {
-                    Intent intent = new Intent(context, FingerprintActivity.class);
-                    context.startActivity(intent);
-                    context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    router.pushController(RouterTransaction.with(new FingerprintSettingsController())
+                            .popChangeHandler(new HorizontalChangeHandler())
+                            .pushChangeHandler(new HorizontalChangeHandler()));
                     sendPromptClickedEvent(promptItem);
                 });
                 break;

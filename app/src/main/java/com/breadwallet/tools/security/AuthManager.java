@@ -4,17 +4,13 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.legacy.presenter.customviews.PinLayout;
 import com.breadwallet.legacy.presenter.fragments.FragmentFingerprint;
 import com.breadwallet.legacy.presenter.fragments.PinFragment;
 import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -46,33 +42,12 @@ import java.util.concurrent.TimeUnit;
 public class AuthManager {
     public static final String TAG = AuthManager.class.getName();
     private static AuthManager instance;
-    private static final int MAX_UNLOCK_ATTEMPTS = 3;
 
     public static AuthManager getInstance() {
         if (instance == null) {
             instance = new AuthManager();
         }
         return instance;
-    }
-
-    public boolean isWalletDisabled(Activity app) {
-        long start = System.currentTimeMillis();
-        int failCount = BRKeyStore.getFailCount(app);
-        return failCount >= MAX_UNLOCK_ATTEMPTS && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
-
-    }
-
-    public long disabledUntil(Activity app) {
-        int failCount = BRKeyStore.getFailCount(app);
-        long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double pow = Math.pow(PinLayout.MAX_PIN_DIGITS, failCount - MAX_UNLOCK_ATTEMPTS) * DateUtils.MINUTE_IN_MILLIS;
-        return (long) (failTimestamp + pow);
-    }
-
-    public void setPinCode(Context context, String pass) {
-        BRKeyStore.putFailCount(0, context);
-        BRKeyStore.putPinCode(pass, context);
-        BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
     }
 
     public void authPrompt(Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
@@ -82,7 +57,7 @@ public class AuthManager {
             return;
         }
 
-        boolean useFingerPrint = isFingerPrintAvailableAndSetup(context);
+        boolean useFingerPrint = SecurityUtilKt.isFingerPrintAvailableAndSetup(context);
 
         long passTime = BRKeyStore.getLastPinUsedTime(context);
         long twoDays = TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS);
@@ -129,10 +104,6 @@ public class AuthManager {
                 transaction.commitAllowingStateLoss();
             }
         }
-    }
-
-    public static boolean isFingerPrintAvailableAndSetup(Context context) {
-        return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context);
     }
 
 }
