@@ -26,12 +26,12 @@ package com.breadwallet.ui.wallet
 
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.core.os.bundleOf
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
@@ -46,7 +46,9 @@ import java.io.File
 /**
  * TODO: All of this should be merged into [WalletController].
  */
-class BrdWalletController(args: Bundle? = null) : WalletController(args) {
+class BrdWalletController : WalletController(
+    bundleOf(EXTRA_CURRENCY_CODE to "BRD")
+) {
     private var mAppBarLayoutRoot: AppBarLayout? = null
     private val mCollapseRewardsDelayHandler = Handler()
     private var mCollapseRewardsRunnable: Runnable? = null
