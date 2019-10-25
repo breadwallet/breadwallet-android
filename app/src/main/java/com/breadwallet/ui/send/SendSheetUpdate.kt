@@ -534,4 +534,11 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             )
         )
     }
+    
+    override fun onAuthenticationSettingsUpdated(
+        model: SendSheetModel,
+        event: SendSheetEvent.OnAuthenticationSettingsUpdated
+    ): Next<SendSheetModel, SendSheetEffect> {
+        return next(model.copy(isFingerprintAuthEnable = event.isFingerprintEnable))
+    }
 }

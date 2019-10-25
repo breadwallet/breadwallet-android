@@ -95,4 +95,7 @@ sealed class SendSheetEvent {
     object OnAmountEditDismissed : SendSheetEvent()
 
     object OnToggleCurrencyClicked : SendSheetEvent()
+
+    data class OnAuthenticationSettingsUpdated(internal val isFingerprintEnable: Boolean) :
+        SendSheetEvent()
 }

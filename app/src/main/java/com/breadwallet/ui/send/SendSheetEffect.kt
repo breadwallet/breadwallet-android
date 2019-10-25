@@ -70,4 +70,6 @@ sealed class SendSheetEffect {
     data class ParseClipboardData(
         val currencyCode: CurrencyCode
     ) : SendSheetEffect()
+
+    object LoadAuthenticationSettings : SendSheetEffect()
 }

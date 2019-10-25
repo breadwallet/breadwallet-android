@@ -16,7 +16,7 @@ import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.SecurityUtilKt;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
@@ -77,7 +77,7 @@ public class DisabledActivity extends BRActivity {
     }
 
     private void refresh() {
-        if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
+        if (SecurityUtilKt.isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
             UiUtils.startBreadActivity(DisabledActivity.this, true);
@@ -94,7 +94,7 @@ public class DisabledActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        long disabledUntil = AuthManager.getInstance().disabledUntil(this);
+        long disabledUntil = SecurityUtilKt.disabledUntil(this);
 //        Log.e(TAG, "onResume: disabledUntil: " + disabledUntil + ", diff: " + (disabledUntil - BRSharedPrefs.getSecureTime(this)));
         long disabledTime = disabledUntil - System.currentTimeMillis();
         int seconds = (int) disabledTime / 1000;
@@ -130,7 +130,7 @@ public class DisabledActivity extends BRActivity {
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
-        } else if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
+        } else if (SecurityUtilKt.isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
             UiUtils.startBreadActivity(DisabledActivity.this, true);

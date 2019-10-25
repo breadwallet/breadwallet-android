@@ -33,8 +33,8 @@ import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.AuthManager
 import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.setPinCode
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Bip39Reader
 import com.platform.APIClient
@@ -107,7 +107,7 @@ class RecoveryKeyEffectHandler(
         output.accept(
             when {
                 phrase.toByteArray().contentEquals(storedPhrase) -> {
-                    AuthManager.getInstance().setPinCode(context, "")
+                    setPinCode(context, "")
                     RecoveryKeyEvent.OnPinCleared
                 }
                 else -> RecoveryKeyEvent.OnPhraseInvalid

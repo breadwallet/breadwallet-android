@@ -3,6 +3,7 @@ package com.breadwallet.ui.send
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.ui.send.SendSheetModel.TransferSpeed
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import java.math.BigDecimal
@@ -80,7 +81,10 @@ data class SendSheetModel(
     val targetInputError: InputError? = null,
 
     /** An error with the current [rawAmount]. */
-    val amountInputError: InputError? = null
+    val amountInputError: InputError? = null,
+    
+    /** True when the user can authenticate the transaction with his fingerprint */
+    val isFingerprintAuthEnable: Boolean = false
 ) {
     sealed class InputError {
         object Empty : InputError()

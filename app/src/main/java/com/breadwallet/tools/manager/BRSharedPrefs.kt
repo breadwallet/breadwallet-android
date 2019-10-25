@@ -103,6 +103,8 @@ object BRSharedPrefs {
     private const val PRICE_ALERTS = "priceAlerts"
     private const val PRICE_ALERTS_INTERVAL = "priceAlertsInterval"
     private const val LANGUAGE = "language"
+    private const val UNLOCK_WITH_FINGERPRINT = "unlock-with-fingerprint"
+    private const val CONFIRM_SEND_WITH_FINGERPRINT = "confirm-send-with-fingerprint"
     const val APP_FOREGROUNDED_COUNT = "appForegroundedCount"
     const val APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated"
     const val APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed"
@@ -673,4 +675,19 @@ object BRSharedPrefs {
 
           brdPrefs.edit { putString(LANGUAGE, value) }
       }
+
+    /** Preference to unlock the app using the fingerprint sensor */
+    @JvmStatic
+    var unlockWithFingerprint: Boolean
+        get() = brdPrefs.getBoolean(UNLOCK_WITH_FINGERPRINT, getUseFingerprint())
+        set(value) = brdPrefs.edit {
+            putBoolean(UNLOCK_WITH_FINGERPRINT, value)
+        }
+
+    /** Preference to send money using the fingerprint sensor */
+    var sendMoneyWithFingerprint: Boolean
+        get() = brdPrefs.getBoolean(CONFIRM_SEND_WITH_FINGERPRINT, getUseFingerprint())
+        set(value) = brdPrefs.edit {
+            putBoolean(CONFIRM_SEND_WITH_FINGERPRINT, value)
+        }
 }

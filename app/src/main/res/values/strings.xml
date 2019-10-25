@@ -1206,6 +1206,13 @@
     <string name="PriceAlertNotification.percentChangeDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
 
     <!-- TODO Missing from native.strings -->
+    <string name="FingerprintSettings.title">Fingerprint</string>
+    <string name="FingerprintSettings.description">Use your fingerprint to unlock your BRD app and send transactions.</string>
+    <string name="FingerprintSettings.unlockApp">Use fingerprint to unlock BRD</string>
+    <string name="FingerprintSettings.sendMoney">Use fingerprint to send money</string>
+
+
+    <!-- TODO Missing from native.strings -->
     <!-- Push notifications settings failed to update settings on the back end -->
     <string name="PushNotifications.updateFailed">Failed to update push notifications settings</string>
 

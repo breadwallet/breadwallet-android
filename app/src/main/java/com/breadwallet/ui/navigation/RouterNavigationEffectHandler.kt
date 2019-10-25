@@ -27,7 +27,6 @@ package com.breadwallet.ui.navigation
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.login.LoginController
@@ -37,6 +36,7 @@ import com.breadwallet.ui.provekey.PaperKeyProveController
 import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
 import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.TxDetailsController
@@ -167,25 +167,25 @@ class RouterNavigationEffectHandler(
 
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
         router.pushController(
-            RouterTransaction.with(
-                WriteDownKeyController(effect.onComplete)
-            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+            RouterTransaction.with(WriteDownKeyController(effect.onComplete))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         )
     }
 
     override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) {
         router.pushController(
-            RouterTransaction.with(
-                ShowPaperKeyController(effect.phrase, effect.onComplete)
-            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+            RouterTransaction.with(ShowPaperKeyController(effect.phrase, effect.onComplete))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         )
     }
 
     override fun goToPaperKeyProve(effect: NavigationEffect.GoToPaperKeyProve) {
         router.pushController(
-            RouterTransaction.with(
-                PaperKeyProveController(effect.phrase, effect.onComplete)
-            ).pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+            RouterTransaction.with(PaperKeyProveController(effect.phrase, effect.onComplete))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         )
     }
 
@@ -199,14 +199,21 @@ class RouterNavigationEffectHandler(
 
     override fun goToShareData() = Unit
 
-    override fun goToFingerprintAuth() = Unit
+    override fun goToFingerprintAuth() {
+        router.pushController(
+            RouterTransaction.with(FingerprintSettingsController())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToWipeWallet() = Unit
 
     override fun goToOnboarding() {
         router.pushController(
             RouterTransaction.with(OnBoardingController())
-                .pushChangeHandler(VerticalChangeHandler()).popChangeHandler(VerticalChangeHandler())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         )
     }
 

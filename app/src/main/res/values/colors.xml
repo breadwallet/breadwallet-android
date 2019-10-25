@@ -167,4 +167,6 @@
         <item>#FF548D</item>
     </array>
 
+    <color name="ui_accent">#5B6DEE</color>
+
 </resources>
