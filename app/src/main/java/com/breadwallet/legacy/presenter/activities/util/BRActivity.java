@@ -18,9 +18,9 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.security.SecurityUtilKt;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.ui.MainActivity;
@@ -157,7 +157,7 @@ public abstract class BRActivity extends FragmentActivity {
     private void init() {
         //show wallet locked if it is and we're not in an illegal activity.
         if (!(this instanceof RecoveryKeyActivity)) {
-            if (AuthManager.getInstance().isWalletDisabled(this)) {
+            if (SecurityUtilKt.isWalletDisabled(this)) {
                 showWalletDisabled();
             }
         }

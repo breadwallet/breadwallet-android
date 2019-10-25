@@ -32,7 +32,7 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.AuthManager
+import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.ui.navigation.NavigationEffectHandler
@@ -306,7 +306,7 @@ class SettingsEffectHandler(
                 SettingsOption.BTC_NODES
             )
         ).apply {
-            if (AuthManager.isFingerPrintAvailableAndSetup(context)) {
+            if (isFingerPrintAvailableAndSetup(context)) {
                 val fingerprintOption = SettingsItem(
                     context.getString(R.string.Settings_ViewLegacyAddress),
                     SettingsOption.FINGERPRINT_SPENDING_LIMIT

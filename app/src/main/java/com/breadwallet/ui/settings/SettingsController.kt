@@ -86,7 +86,6 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
-                SettingsEffect.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
                 SettingsEffect.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
                 SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
@@ -102,6 +101,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToPaperKey -> NavigationEffect.GoToWriteDownKey(OnCompleteAction.GO_HOME)
                 SettingsEffect.GoToUpdatePin -> NavigationEffect.GoToSetPin()
                 SettingsEffect.GoToOnboarding -> NavigationEffect.GoToOnboarding
+                SettingsEffect.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
                 else -> null
             }
         })

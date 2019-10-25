@@ -26,7 +26,6 @@ package com.breadwallet.ui.login
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.text.format.DateUtils
@@ -35,28 +34,27 @@ import android.view.animation.AccelerateInterpolator
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.PinLayout
-import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion
-import com.breadwallet.logger.logError
+import com.breadwallet.mobius.CompositeEffectHandler
+import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
-import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.manager.AppEntryPointHandler
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.AuthManager
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.BaseController
-import com.breadwallet.ui.home.HomeController
-import com.breadwallet.ui.wallet.BrdWalletController
-import com.breadwallet.ui.wallet.WalletController
-import com.breadwallet.util.isBrd
+import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationEffectHandler
+import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.spotify.mobius.Connectable
+import com.spotify.mobius.disposables.Disposable
+import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_pin.*
 import kotlinx.android.synthetic.main.pin_digits.*
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
-class LoginController(args: Bundle? = null) : BaseController(args) {
+class LoginController(args: Bundle? = null) :
+    BaseMobiusController<LoginModel, LoginEvent, LoginEffect>(args),
+    AuthenticationController.Listener {
 
     companion object {
         private const val EXTRA_URL = "com.breadwallet.ui.login.LoginController.PENDING_URL"
@@ -68,6 +66,69 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
         bundleOf(EXTRA_URL to intentUrl)
     )
 
+    override val defaultModel = LoginModel.createDefault(
+        arg(EXTRA_URL, "")
+    )
+    override val update = LoginUpdate
+    override val init = LoginInit
+    override val effectHandler: Connectable<LoginEffect, LoginEvent> = CompositeEffectHandler.from(
+        Connectable { output ->
+            LoginEffectHandler(
+                output,
+                direct.instance(),
+                shakeKeyboard = {
+                    SpringAnimator.failShakeAnimation(
+                        activity,
+                        pinLayout
+                    )
+                },
+                unlockWalletAnimation = ::unlockWallet,
+                showFingerprintPrompt = ::showFingerprintPrompt
+            )
+        },
+        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
+            when (effect) {
+                LoginEffect.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
+                else -> null
+            }
+        }),
+        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
+            when (effect) {
+                LoginEffect.AuthenticationSuccess -> NavigationEffect.GoToHome
+                else -> null
+            }
+        })
+    )
+
+    override fun bindView(output: Consumer<LoginEvent>): Disposable {
+        val pinListener = object : PinLayout.PinLayoutListener {
+            override fun onPinLocked() {
+                output.accept(LoginEvent.OnPinLocked)
+            }
+
+            override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
+                output.accept(
+                    if (isPinCorrect) {
+                        LoginEvent.OnAuthenticationSuccess
+                    } else {
+                        LoginEvent.OnAuthenticationFailed
+                    }
+                )
+            }
+        }
+        pin_digits.setup(brkeyboard, pinListener)
+        fingerprint_icon.setOnClickListener { output.accept(LoginEvent.OnFingerprintClicked) }
+        return Disposable {
+            pin_digits.cleanUp()
+        }
+    }
+
+    override fun LoginModel.render() {
+        ifChanged(LoginModel::fingerprintEnable) {
+            fingerprint_icon.isVisible = fingerprintEnable
+        }
+    }
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         brkeyboard.setShowDecimal(false)
@@ -78,54 +139,8 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
         brkeyboard.setButtonTextColor(pinDigitButtonColors)
     }
 
-    override fun onAttach(view: View) {
-        super.onAttach(view)
-        val pin = BRKeyStore.getPinCode(activity)
-        check(PinLayout.isPinLengthValid(pin.length)) { "Pin length illegal: " + pin.length }
-
-        val useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(activity)
-            && BRSharedPrefs.getUseFingerprint(activity)
-
-        fingerprint_icon.isVisible = useFingerprint
-        fingerprint_icon.setOnClickListener { showFingerprintPrompt() }
-
-        Handler().postDelayed({
-            if (fingerprint_icon != null && useFingerprint) {
-                showFingerprintPrompt()
-            }
-        }, DateUtils.SECOND_IN_MILLIS / 2)
-
-        pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
-            override fun onPinLocked() {
-                UiUtils.showWalletDisabled(activity)
-            }
-
-            override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
-                if (isPinCorrect) {
-                    unlockWallet()
-                } else {
-                    showFailedToUnlock()
-                }
-            }
-        })
-    }
-
-    override fun handleBack() = router.backstackSize > 1 || activity?.isTaskRoot == false
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                UiUtils.openScanner(activity, 0)
-            } else {
-                logError("onRequestPermissionsResult: permission isn't granted for: $requestCode")
-            }
-        }
-    }
+    override fun handleBack() =
+        router.backstackSize > 1 || activity?.isTaskRoot == false
 
     private fun unlockWallet() {
         fingerprint_icon.visibility = View.INVISIBLE
@@ -133,48 +148,28 @@ class LoginController(args: Bundle? = null) : BaseController(args) {
             .setInterpolator(AccelerateInterpolator())
         brkeyboard.animate().translationY(R.dimen.animation_long.toFloat())
             .setInterpolator(AccelerateInterpolator())
-        unlocked_image.animate().alpha(1f).setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                Handler().postDelayed({
-                    val pendingUrl = args.getString(EXTRA_URL).orEmpty()
-                    val showHomeScreen = BRSharedPrefs.wasAppBackgroundedFromHome(activity)
-                    val currencyCode = BRSharedPrefs.getCurrentWalletCurrencyCode(activity)
-                    val rootController = when {
-                        pendingUrl.isNotBlank() -> {
-                            // TODO: Open deep link as a Controller
-                            AppEntryPointHandler.processDeepLink(activity, pendingUrl)
-                            HomeController()
-                        }
-                        showHomeScreen -> HomeController()
-                        currencyCode.isBrd() -> BrdWalletController()
-                        currencyCode.isNotBlank() -> WalletController(currencyCode)
-                        else -> HomeController()
-                    }
-                    router.replaceTopController(
-                        RouterTransaction.with(rootController)
-                            .popChangeHandler(HorizontalChangeHandler())
-                            .pushChangeHandler(HorizontalChangeHandler())
-                    )
-                }, DateUtils.SECOND_IN_MILLIS / 2)
-            }
-        })
-        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_SUCCESS)
-    }
-
-    private fun showFailedToUnlock() {
-        SpringAnimator.failShakeAnimation(activity, pinLayout)
-        EventUtils.pushEvent(EventUtils.EVENT_LOGIN_FAILED)
+        unlocked_image.animate().alpha(1f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    Handler().postDelayed({
+                        eventConsumer.accept(LoginEvent.OnUnlockAnimationEnd)
+                    }, DateUtils.SECOND_IN_MILLIS / 2)
+                }
+            })
     }
 
     private fun showFingerprintPrompt() {
-        AuthManager.getInstance().authPrompt(activity, "", "", false, true,
-            object : BRAuthCompletion {
-                override fun onComplete() {
-                    unlockWallet()
-                }
+        val controller = AuthenticationController(
+            mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
+            title = resources!!.getString(R.string.UnlockScreen_touchIdTitle_android)
+        )
+        controller.targetController = this@LoginController
+        router.pushController(RouterTransaction.with(controller))
+    }
 
-                override fun onCancel() = Unit
-            })
+    override fun onAuthenticationSuccess() {
+        super.onAuthenticationSuccess()
+        eventConsumer.accept(LoginEvent.OnAuthenticationSuccess)
     }
 }
