@@ -148,7 +148,7 @@ class HomeController(
 
         ifChanged(HomeScreenModel::showPrompt) {
             if (showPrompt) {
-                val promptView = PromptManager.promptInfo(activity, promptId)
+                val promptView = PromptManager.promptInfo(activity, promptId, router)
                 if (list_group_layout.childCount > 0) {
                     list_group_layout.removeAllViews()
                 }

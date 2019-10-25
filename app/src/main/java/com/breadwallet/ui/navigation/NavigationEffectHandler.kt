@@ -33,7 +33,6 @@ import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
 import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
-import com.breadwallet.legacy.presenter.activities.settings.FingerprintActivity
 import com.breadwallet.legacy.presenter.activities.settings.ImportActivity
 import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
 import com.breadwallet.legacy.presenter.activities.settings.SegWitActivity
@@ -224,10 +223,7 @@ class NavigationEffectHandler(
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
-    override fun goToFingerprintAuth() {
-        activity.startActivity(Intent(activity, FingerprintActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToFingerprintAuth() = Unit
 
     override fun goToWipeWallet() {
         activity.startActivity(Intent(activity, UnlinkActivity::class.java))

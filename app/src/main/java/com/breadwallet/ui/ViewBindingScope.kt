@@ -1,7 +1,9 @@
 package com.breadwallet.ui
 
 import android.view.View
+import android.widget.CompoundButton
 import android.widget.EditText
+import android.widget.Switch
 import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -14,6 +16,7 @@ class ViewBindingScope<E>(
 
     private val clickBoundViews = mutableSetOf<View>()
     private val textBoundViews = mutableMapOf<EditText, DefaultTextWatcher>()
+    private val switchBoundViews = mutableMapOf<Switch, CompoundButton.OnCheckedChangeListener>()
 
     /** Send [event] to [output] using [View.setOnClickListener].  */
     fun View.onClick(event: E) {
@@ -34,6 +37,18 @@ class ViewBindingScope<E>(
         setOnClickListener {
             output.accept(produceEvent(it))
         }
+    }
+
+    /**
+     * Send the event returned by [produceEvent] to [output] using
+     * [Switch.setOnCheckedChangeListener]
+     */
+    fun Switch.onCheckChanged(
+        produceEvent: (@ParameterName("isChecked") Boolean) -> E
+    ) {
+        switchBoundViews[this] = CompoundButton.OnCheckedChangeListener { _, isChecked ->
+            output.accept(produceEvent(isChecked))
+        }.also { setOnCheckedChangeListener(it) }
     }
 
     /**
@@ -62,8 +77,12 @@ class ViewBindingScope<E>(
         }
         textBoundViews.forEach {
             it.key.removeTextChangedListener(it.value)
-            textBoundViews.remove(it.key)
         }
+        textBoundViews.clear()
+        switchBoundViews.forEach {
+            it.key.setOnCheckedChangeListener(null)
+        }
+        switchBoundViews.clear()
 
         _onDispose?.invoke()
     }

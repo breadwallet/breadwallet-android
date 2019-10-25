@@ -17,6 +17,8 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
+import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.spotify.mobius.Connection
@@ -34,7 +36,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
@@ -71,6 +72,7 @@ class SendSheetEffectHandler(
     override fun accept(effect: SendSheetEffect) {
         when (effect) {
             SendSheetEffect.ShowTransactionComplete -> showTransactionComplete()
+            SendSheetEffect.LoadAuthenticationSettings -> loadAuthenticationSettings()
             is SendSheetEffect.ValidateAddress -> validateAddress(effect)
             is SendSheetEffect.ShowEthTooLowForTokenFee -> showBalanceTooLowForFee(effect)
             is SendSheetEffect.EstimateFee -> feeEstimateChannel.offer(effect)
@@ -162,7 +164,8 @@ class SendSheetEffectHandler(
         launch {
             while (isActive) {
                 val rates = RatesRepository.getInstance(context)
-                val fiatRate = rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
+                val fiatRate =
+                    rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
 
                 output.accept(SendSheetEvent.OnExchangeRateUpdated(fiatRate))
 
@@ -213,5 +216,11 @@ class SendSheetEffectHandler(
                 }
             }
             .bindConsumerIn(output, this)
+    }
+
+    private fun loadAuthenticationSettings() {
+        val isFingerPrintEnable =
+            isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
+        output.accept(SendSheetEvent.OnAuthenticationSettingsUpdated(isFingerPrintEnable))
     }
 }
