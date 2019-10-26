@@ -34,11 +34,8 @@ import com.breadwallet.legacy.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.legacy.wallet.wallets.CryptoAddress;
 import com.breadwallet.legacy.wallet.wallets.CryptoTransaction;
 import com.breadwallet.legacy.wallet.wallets.WalletManagerHelper;
-import com.breadwallet.model.FeeOption;
-import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -226,15 +223,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 return;
             }
         }
-
-        // Retrieve update fee
-        String currencyCode = getCurrencyCode();
-        BRApiManager.updateFeeForCurrency(app, currencyCode);
-
-        // Set updated fee in wallet
-        FeeOption preferredFeeOption = FeeRepository.getInstance(app).getPreferredFeeOptionByCurrency(currencyCode);
-        BigDecimal preferredFee = FeeRepository.getInstance(app).getFeeByCurrency(currencyCode, preferredFeeOption);
-        getWallet().setFeePerKb(preferredFee.longValue());
     }
 
     @Override

@@ -63,7 +63,6 @@ class APIClientTests {
     @Before
     fun before() {
         server = MockWebServer()
-        BRApiManager.getInstance().stopTimerTask()
     }
 
     @After

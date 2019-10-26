@@ -53,10 +53,10 @@ import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
-import com.breadwallet.tools.manager.BRApiManager
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
+import com.breadwallet.tools.manager.updateRatesForCurrencies
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
@@ -77,13 +77,16 @@ import com.platform.tools.KVStoreManager
 import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -100,6 +103,7 @@ import java.io.File
 import java.io.UnsupportedEncodingException
 import java.util.regex.Pattern
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware {
 
@@ -446,10 +450,11 @@ class BreadApp : Application(), KodeinAware {
      * Even if the wallet is not initialized, we may need tell the user to enable the password.
      */
     private fun handleOnStart() {
+        val breadBox = getBreadBox()
+
         if (isDeviceStateValid && isBRDWalletInitialized) {
             BreadBoxCloseWorker.cancelEnqueuedWork()
 
-            val breadBox = getBreadBox()
             if (!breadBox.isOpen) {
                 val account = BRKeyStore.getAccount(this@BreadApp)
                 if (account == null) {
@@ -473,7 +478,14 @@ class BreadApp : Application(), KodeinAware {
                 .execute { UserMetricsUtil.makeUserMetricsRequest(mInstance) }
             incrementAppForegroundedCounter()
         }
-        BRApiManager.getInstance().startTimer(this)
+
+        // Update rate information when wallets change
+        // and periodically after that
+        breadBox.wallets()
+            .mapLatest { wallets -> wallets.map { it.currency.code } }
+            .distinctUntilChanged()
+            .updateRatesForCurrencies(this)
+            .launchIn(startedScope)
     }
 
     private fun handleOnStop() {
@@ -507,7 +519,6 @@ class BreadApp : Application(), KodeinAware {
                 )
             }
         }
-        BRApiManager.getInstance().stopTimerTask()
         startedScope.cancel()
     }
 
