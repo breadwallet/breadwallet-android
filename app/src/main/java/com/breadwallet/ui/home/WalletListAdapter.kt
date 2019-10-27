@@ -236,7 +236,7 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
             if (isTokenSupported) {
                 // Create gradient if 2 colors exist.
                 (drawable as GradientDrawable).colors =
-                    intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor ?: startColor))
+                    intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor))
                 drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
                 wallet_card.background = drawable
                 setWalletItemColors(R.dimen.token_background_no_alpha)
