@@ -55,6 +55,12 @@ data class RecoveryKeyModel(
     companion object {
         fun createDefault(mode: Mode) =
                 RecoveryKeyModel(mode = mode)
+
+        fun createWithOptionalPhrase(mode: Mode, phrase: String?) =
+            RecoveryKeyModel(
+                mode = mode,
+                phrase = phrase?.split(" ") ?: List(12) { "" }
+            )
     }
 
     init {
