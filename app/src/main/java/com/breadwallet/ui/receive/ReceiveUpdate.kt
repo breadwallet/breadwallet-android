@@ -24,11 +24,17 @@
  */
 package com.breadwallet.ui.receive
 
+import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.AddDecimal
+import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.AddDigit
+import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.Delete
+import com.breadwallet.ui.send.MAX_DIGITS
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
+import java.math.BigDecimal
 
 object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     ReceiveUpdateSpec {
@@ -64,7 +70,7 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
         )
 
     override fun onShareClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
-        dispatch(setOf(ReceiveEffect.ShareRequest(model.receiveAddress, model.walletName)))
+        dispatch(setOf(ReceiveEffect.ShareRequest(model.receiveAddress, model.amount, model.walletName)))
 
     override fun onHideCopyMessage(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
         next(model.copy(isDisplayingCopyMessage = false))
@@ -75,7 +81,121 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     ): Next<ReceiveModel, ReceiveEffect> =
         next(model.copy(walletName = event.walletName))
 
-    override fun onRequestAmountClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> {
-        return noChange()
+    override fun onAmountClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> {
+        return next(
+            model.copy(
+                isAmountEditVisible = !model.isAmountEditVisible
+            )
+        )
+    }
+
+    override fun onAmountChange(
+        model: ReceiveModel,
+        event: ReceiveEvent.OnAmountChange
+    ): Next<ReceiveModel, ReceiveEffect> {
+        return when (event) {
+            AddDecimal -> addDecimal(model)
+            Delete -> delete(model)
+            is AddDigit -> addDigit(model, event)
+        }
+    }
+
+    private fun addDecimal(
+        model: ReceiveModel
+    ): Next<ReceiveModel, ReceiveEffect> {
+        return when {
+            model.rawAmount.contains('.') -> noChange()
+            model.rawAmount.isEmpty() -> next(
+                model.copy(rawAmount = "0.")
+            )
+            else -> next(
+                model.copy(
+                    rawAmount = model.rawAmount + '.'
+                )
+            )
+        }
+    }
+
+    private fun delete(
+        model: ReceiveModel
+    ): Next<ReceiveModel, ReceiveEffect> {
+        return when {
+            model.rawAmount.isEmpty() -> noChange()
+            else -> next(
+                model.withNewRawAmount(model.rawAmount.dropLast(1))
+            )
+        }
+    }
+
+    private fun addDigit(
+        model: ReceiveModel,
+        event: AddDigit
+    ): Next<ReceiveModel, ReceiveEffect> {
+        return when {
+            model.rawAmount == "0" && event.digit == 0 -> noChange()
+            model.rawAmount.split('.').run {
+                // Ensure the length of the main or fraction
+                // if present are less than MAX_DIGITS
+                if (size == 1) first().length == MAX_DIGITS
+                else getOrNull(1)?.length == MAX_DIGITS
+            } -> noChange()
+            else -> {
+                val newRawAmount = when (model.rawAmount) {
+                    "0" -> event.digit.toString()
+                    else -> model.rawAmount + event.digit
+                }
+                next(model.withNewRawAmount(newRawAmount))
+            }
+        }
+    }
+
+    override fun onToggleCurrencyClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> {
+        val isAmountCrypto = !model.isAmountCrypto
+        if (model.rawAmount.isBlank()) {
+            return next(model.copy(isAmountCrypto = isAmountCrypto))
+        }
+        return next(
+            model.copy(
+                isAmountCrypto = isAmountCrypto,
+                rawAmount = when {
+                    isAmountCrypto -> model.amount.toPlainString()
+                    else -> model.fiatAmount
+                        .setScale(2, BRConstants.ROUNDING_MODE)
+                        .toPlainString()
+                }
+            )
+        )
+    }
+
+    override fun onExchangeRateUpdated(
+        model: ReceiveModel,
+        event: ReceiveEvent.OnExchangeRateUpdated
+    ): Next<ReceiveModel, ReceiveEffect> {
+        val pricePerUnit = event.fiatPricePerUnit
+        val newAmount: BigDecimal
+        val newFiatAmount: BigDecimal
+
+        if (model.isAmountCrypto) {
+            newAmount = model.amount
+            newFiatAmount = if (pricePerUnit > BigDecimal.ZERO) {
+                model.amount.setScale(2, BRConstants.ROUNDING_MODE) * pricePerUnit
+            } else {
+                model.fiatAmount
+            }
+        } else {
+            newFiatAmount = model.fiatAmount
+            newAmount = (model.fiatAmount.setScale(
+                model.amount.scale().coerceIn(2..MAX_DIGITS),
+                BRConstants.ROUNDING_MODE
+            ) / pricePerUnit)
+        }
+
+        return next(
+            model.copy(
+                fiatPricePerUnit = pricePerUnit,
+                fiatAmount = newFiatAmount,
+                amount = newAmount
+            )
+        )
     }
 }

@@ -26,7 +26,6 @@ import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.activities.DisabledActivity;
 import com.breadwallet.legacy.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
-import com.breadwallet.legacy.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.legacy.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
 import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
@@ -222,26 +221,6 @@ public class UiUtils {
         itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
         itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         return itemLayoutTransition;
-    }
-
-    public static void showRequestFragment(FragmentActivity app) {
-        if (app == null) {
-            Log.e(TAG, "showRequestFragment: app is null");
-            return;
-        }
-
-        FragmentRequestAmount fragmentRequestAmount = (FragmentRequestAmount) app.getSupportFragmentManager().findFragmentByTag(FragmentRequestAmount.class.getName());
-        if (fragmentRequestAmount != null && fragmentRequestAmount.isAdded())
-            return;
-
-        fragmentRequestAmount = new FragmentRequestAmount();
-        Bundle bundle = new Bundle();
-        fragmentRequestAmount.setArguments(bundle);
-        app.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
-                .addToBackStack(FragmentRequestAmount.class.getName()).commit();
-
     }
 
     public static void showLegacyAddressFragment(final FragmentActivity fragmentActivity) {
