@@ -46,6 +46,8 @@ import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
+import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.ui.recovery.RecoveryKeyModel
 
 /**
  * The main user entrypoint into the app.
@@ -60,6 +62,7 @@ class MainActivity : BRActivity() {
         const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.MainActivity.EXTRA_CRYPTO_REQUEST"
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
+        const val EXTRA_RECOVER_PHRASE = "com.breadwallet.ui.MainActivity.EXTRA_RECOVER_PHRASE"
     }
 
     private lateinit var router: Router
@@ -78,6 +81,16 @@ class MainActivity : BRActivity() {
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
         })
+
+        // Allow launching with a phrase to recover automatically
+        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
+            val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
+            if (phrase.isNotBlank() && phrase.split(" ").size == 12) {
+                val controller = RecoveryKeyController(RecoveryKeyModel.Mode.RECOVER, phrase)
+                router.setRoot(RouterTransaction.with(controller))
+                return
+            }
+        }
 
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
