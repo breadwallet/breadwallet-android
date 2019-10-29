@@ -25,6 +25,7 @@
 package com.breadwallet.ui.receive
 
 import com.breadwallet.util.CurrencyCode
+import java.math.BigDecimal
 
 sealed class ReceiveEffect {
     object ResetCopiedAfterDelay : ReceiveEffect()
@@ -40,6 +41,7 @@ sealed class ReceiveEffect {
 
     data class ShareRequest(
         val address: String,
+        val amount: BigDecimal,
         val walletName: String
     ) : ReceiveEffect()
 }

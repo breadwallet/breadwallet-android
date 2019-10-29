@@ -30,6 +30,7 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.qrcode.QRUtils
@@ -50,12 +51,16 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+
+private const val RATE_UPDATE_MS = 60_000L
 
 class ReceiveEffectHandler(
     private val output: Consumer<ReceiveEvent>,
     private val currencyCode: CurrencyCode,
+    private val fiatCode: String,
     private val breadBox: BreadBox,
     private val cryptoUriParser: CryptoUriParser2,
     private val activity: Activity
@@ -100,6 +105,19 @@ class ReceiveEffectHandler(
                 ReceiveEvent.OnHideCopyMessage
             }
             .bindConsumerIn(output, this)
+
+        launch {
+            while (isActive) {
+                val rates = RatesRepository.getInstance(activity.applicationContext)
+                val fiatRate =
+                    rates.getFiatForCrypto(BigDecimal.ONE, currencyCode, fiatCode)
+
+                output.accept(ReceiveEvent.OnExchangeRateUpdated(fiatRate))
+
+                // TODO: Display out of date, invalid (0) rate, etc.
+                delay(RATE_UPDATE_MS)
+            }
+        }
     }
 
     override fun accept(effect: ReceiveEffect) {
@@ -111,7 +129,7 @@ class ReceiveEffectHandler(
                 launch(Dispatchers.Main) {
                     val cryptoRequest = CryptoRequest.Builder()
                         .setAddress(effect.address)
-                        .setAmount(BigDecimal.ZERO)
+                        .setAmount(effect.amount)
                         .build()
                     val cryptoUri = cryptoUriParser.createUrl(currencyCode, cryptoRequest)
                     QRUtils.sendShareIntent(activity, cryptoUri.toString(), effect.address, effect.walletName)

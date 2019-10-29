@@ -28,6 +28,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -36,6 +37,7 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
@@ -51,6 +53,7 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_receive.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+import java.util.Currency
 
 class ReceiveController(
     args: Bundle
@@ -81,7 +84,11 @@ class ReceiveController(
 
     override val layoutId = R.layout.controller_receive
 
-    override val defaultModel = ReceiveModel.createDefault(currencyCode)
+    override val defaultModel =
+        ReceiveModel.createDefault(
+            currencyCode = currencyCode,
+            fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso()
+        )
 
     override val init = Init<ReceiveModel, ReceiveEffect> { model ->
         if (model.isDisplayingCopyMessage) {
@@ -97,6 +104,7 @@ class ReceiveController(
                 ReceiveEffectHandler(
                     consumer,
                     currencyCode,
+                    defaultModel.fiatCurrencyCode,
                     direct.instance(),
                     direct.instance(),
                     activity!!
@@ -130,41 +138,83 @@ class ReceiveController(
     }
 
     override fun bindView(output: Consumer<ReceiveEvent>) = output.view {
-        share_button.onClick(ReceiveEvent.OnShareClicked)
-        request_button.onClick(ReceiveEvent.OnRequestAmountClicked)
-
-        address_text.onClick(ReceiveEvent.OnCopyAddressClicked)
-        qr_image.onClick(ReceiveEvent.OnCopyAddressClicked)
-
-        background_layout.onClick(ReceiveEvent.OnCloseClicked)
-        close_button.onClick(ReceiveEvent.OnCloseClicked)
-
         faq_button.onClick(ReceiveEvent.OnFaqClicked)
+        share_button.onClick(ReceiveEvent.OnShareClicked)
+        close_button.onClick(ReceiveEvent.OnCloseClicked)
+        qr_image.onClick(ReceiveEvent.OnCopyAddressClicked)
+        textInputAmount.onClick(ReceiveEvent.OnAmountClicked)
+        background_layout.onClick(ReceiveEvent.OnCloseClicked)
+        address_text.onClick(ReceiveEvent.OnCopyAddressClicked)
+        iso_button.onClick(ReceiveEvent.OnToggleCurrencyClicked)
+
+        keyboard.setOnInsertListener { key ->
+            output.accept(
+                when {
+                    key.isEmpty() -> ReceiveEvent.OnAmountChange.Delete
+                    key[0] == '.' -> ReceiveEvent.OnAmountChange.AddDecimal
+                    Character.isDigit(key[0]) -> ReceiveEvent.OnAmountChange.AddDigit(key.toInt())
+                    else -> return@setOnInsertListener
+                }
+            )
+        }
+
+        onDispose {
+            signal_layout.setOnTouchListener(null)
+            keyboard.setOnInsertListener(null)
+        }
     }
 
     override fun ReceiveModel.render() {
-        ifChanged(ReceiveModel::sanitizedAddress, address_text::setText)
+        val res = checkNotNull(resources)
 
-        ifChanged(ReceiveModel::receiveAddress) {
-            val request = CryptoRequest.Builder().setAddress(receiveAddress).build()
-            val uri = cryptoUriParser.createUrl(currencyCode, request)
-            if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                error("failed to generate qr image for address")
+        ifChanged(ReceiveModel::sanitizedAddress, address_text::setText)
+        ifChanged(ReceiveModel::rawAmount, textInputAmount::setText)
+
+        ifChanged(
+            ReceiveModel::isAmountCrypto,
+            ReceiveModel::currencyCode,
+            ReceiveModel::fiatCurrencyCode
+        ) {
+            iso_button.text = when {
+                isAmountCrypto -> currencyCode.toUpperCase()
+                else -> "%s (%s)".format(
+                    fiatCurrencyCode.toUpperCase(),
+                    Currency.getInstance(fiatCurrencyCode).symbol
+                )
+            }
+        }
+
+        ifChanged(ReceiveModel::currencyCode) {
+            title.text = "%s %s".format(
+                res.getString(R.string.Receive_title),
+                currencyCode.toUpperCase()
+            )
+        }
+
+        ifChanged(
+            ReceiveModel::receiveAddress,
+            ReceiveModel::amount
+        ) {
+            if (receiveAddress.isNotBlank()) {
+                val request = CryptoRequest.Builder()
+                    .setAddress(receiveAddress)
+                    .setAmount(amount)
+                    .build()
+                val uri = cryptoUriParser.createUrl(currencyCode, request)
+                if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
+                    error("failed to generate qr image for address")
+                }
+            } else {
+                qr_image.setImageDrawable(null)
             }
         }
 
         ifChanged(ReceiveModel::isRequestAmountSupported) {
-            signal_layout.apply {
-                if (isRequestAmountSupported) {
-                    if (indexOfChild(request_button) == -1) {
-                        addView(separator, indexOfChild(share_button))
-                        addView(request_button, indexOfChild(request_button))
-                    }
-                } else {
-                    removeView(separator)
-                    removeView(request_button)
-                }
-            }
+            amount_layout.isVisible = isRequestAmountSupported
+        }
+
+        ifChanged(ReceiveModel::isAmountEditVisible) {
+            keyboard_layout.isVisible = isAmountEditVisible
         }
 
         ifChanged(ReceiveModel::isDisplayingCopyMessage) {

@@ -18,7 +18,7 @@ import com.spotify.mobius.Update
 import java.math.BigDecimal
 
 // TODO: Is this specific to a given currency or just the app?
-private const val MAX_DIGITS = 8
+const val MAX_DIGITS = 8
 
 @Suppress("TooManyFunctions", "ComplexMethod")
 object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>,
@@ -444,11 +444,33 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         event: SendSheetEvent.OnExchangeRateUpdated
     ): Next<SendSheetModel, SendSheetEffect> {
         val pricePerUnit = event.fiatPricePerUnit
+        val newAmount: BigDecimal
+        val newFiatAmount: BigDecimal
+
+        if (model.isAmountCrypto) {
+            newAmount = model.amount
+            newFiatAmount = if (pricePerUnit > BigDecimal.ZERO) {
+                newAmount.setScale(2, BRConstants.ROUNDING_MODE) * pricePerUnit
+            } else {
+                model.fiatAmount
+            }
+        } else {
+            newFiatAmount = model.fiatAmount
+            newAmount = if (pricePerUnit > BigDecimal.ZERO) {
+                (newFiatAmount.setScale(
+                    model.amount.scale().coerceAtMost(MAX_DIGITS),
+                    BRConstants.ROUNDING_MODE
+                ) / pricePerUnit)
+            } else {
+                model.amount
+            }
+        }
+
         return next(
             model.copy(
                 fiatPricePerUnit = pricePerUnit,
-                fiatAmount = model.amount * pricePerUnit,
-                fiatNetworkFee = model.networkFee * pricePerUnit
+                amount = newAmount,
+                fiatAmount = newFiatAmount
             )
         )
     }
@@ -534,7 +556,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             )
         )
     }
-    
+
     override fun onAuthenticationSettingsUpdated(
         model: SendSheetModel,
         event: SendSheetEvent.OnAuthenticationSettingsUpdated
