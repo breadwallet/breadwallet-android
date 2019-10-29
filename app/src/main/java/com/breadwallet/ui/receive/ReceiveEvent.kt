@@ -25,12 +25,18 @@
 package com.breadwallet.ui.receive
 
 import io.hypno.switchboard.MobiusUpdateSpec
+import java.math.BigDecimal
 
 @MobiusUpdateSpec(
     baseEffect = ReceiveEffect::class,
     baseModel = ReceiveModel::class
 )
 sealed class ReceiveEvent {
+
+    data class OnExchangeRateUpdated(
+        val fiatPricePerUnit: BigDecimal
+    ) : ReceiveEvent()
+
     data class OnWalletNameUpdated(
         val walletName: String
     ) : ReceiveEvent()
@@ -46,5 +52,17 @@ sealed class ReceiveEvent {
     object OnFaqClicked : ReceiveEvent()
     object OnShareClicked : ReceiveEvent()
     object OnCopyAddressClicked : ReceiveEvent()
-    object OnRequestAmountClicked : ReceiveEvent()
+    object OnAmountClicked : ReceiveEvent()
+    object OnToggleCurrencyClicked : ReceiveEvent()
+
+    sealed class OnAmountChange : ReceiveEvent() {
+        object AddDecimal : OnAmountChange()
+        object Delete : OnAmountChange()
+
+        data class AddDigit(
+            val digit: Int
+        ) : OnAmountChange() {
+            override fun toString() = "AddDigit(digit=***)"
+        }
+    }
 }
