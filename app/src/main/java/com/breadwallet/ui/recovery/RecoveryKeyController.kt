@@ -69,10 +69,19 @@ class RecoveryKeyController(
     args: Bundle? = null
 ) : BaseMobiusController<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKeyEffect>(args) {
 
-    constructor(mode: RecoveryKeyModel.Mode) : this(
+    constructor(
+        mode: RecoveryKeyModel.Mode,
+        phrase: String? = null
+    ) : this(
         bundleOf("mode" to mode.name)
-    )
+    ) {
+        launchPhrase = phrase
+        if (launchPhrase != null) {
+            eventConsumer.accept(RecoveryKeyEvent.OnNextClicked)
+        }
+    }
 
+    private var launchPhrase: String? = null
     private val mode = arg("mode", RecoveryKeyModel.Mode.RECOVER.name)
 
     init {
@@ -84,9 +93,11 @@ class RecoveryKeyController(
 
     override val layoutId: Int = R.layout.activity_input_words
 
-    override val defaultModel = RecoveryKeyModel.createDefault(
-        RecoveryKeyModel.Mode.valueOf(mode)
-    )
+    override val defaultModel
+        get() = RecoveryKeyModel.createWithOptionalPhrase(
+            mode = RecoveryKeyModel.Mode.valueOf(mode),
+            phrase = launchPhrase
+        )
     override val update = RecoveryKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
         Connectable { output ->
