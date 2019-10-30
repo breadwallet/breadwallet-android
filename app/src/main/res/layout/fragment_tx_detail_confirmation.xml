@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_trans"
+    android:clickable="true"
     tools:context="com.breadwallet.ui.wallet.WalletActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -84,7 +85,7 @@
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/amount_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="24dp"
@@ -93,6 +94,7 @@
             android:text="@string/Confirmation.amountLabel"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/processing_time_label" />
 
@@ -107,9 +109,9 @@
             android:textAlignment="textEnd"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_label"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/amount_label"
-            app:layout_constraintTop_toTopOf="@+id/amount_label"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             tools:text="874283.33" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
@@ -118,15 +120,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="24dp"
             android:lineSpacingMultiplier="1.3"
             android:textAlignment="textEnd"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintBottom_toBottomOf="@+id/network_fee_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/amount_label"
-            app:layout_constraintTop_toBottomOf="@+id/amount_value"
             tools:text="200.00" />
 
 
@@ -136,20 +137,19 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="24dp"
             android:lineSpacingMultiplier="1.3"
             android:textAlignment="textEnd"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintBottom_toBottomOf="@+id/total_cost_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/amount_label"
-            app:layout_constraintTop_toBottomOf="@+id/network_fee_value"
             tools:text="874483.33" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/network_fee_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="24dp"
@@ -158,12 +158,13 @@
             android:text="@string/Confirmation.feeLabel"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/amount_label" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/total_cost_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="24dp"
@@ -172,6 +173,7 @@
             android:text="@string/Confirmation.totalLabel"
             android:textColor="@color/dark_gray"
             android:textSize="@dimen/paragraph"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/network_fee_label" />
 
