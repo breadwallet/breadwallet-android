@@ -36,8 +36,11 @@ import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.ext.swap
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.legacy.presenter.customviews.ShimmerLayout
+import com.breadwallet.tools.animation.ItemTouchHelperAdapter
+import com.breadwallet.tools.animation.ItemTouchHelperViewHolder
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
@@ -51,14 +54,20 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.ArrayList
 
-class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewHolder>() {
+class WalletListAdapter(
+    private val onWalletClicked: (Wallet) -> Unit,
+    private val onAddWalletClicked: () -> Unit,
+    private val onWalletDisplayOrderUpdated: (List<String>) -> Unit
+) : RecyclerView.Adapter<WalletListAdapter.WalletItemViewHolder>(),
+    ItemTouchHelperAdapter {
 
     companion object {
-        private const val VIEW_TYPE_WALLET = 0
-        private const val VIEW_TYPE_ADD_WALLET = 1
+        const val VIEW_TYPE_WALLET = 0
+        const val VIEW_TYPE_ADD_WALLET = 1
     }
 
     private var walletList: List<Wallet> = ArrayList()
+    private var displayOrderList: MutableList<String> = mutableListOf()
 
     /**
      * Sets the wallets that the adapter is responsible for rendering.
@@ -66,8 +75,13 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
      * @param wallets The wallets to render.
      */
     fun setWallets(wallets: List<Wallet>) {
-        walletList = wallets
+        walletList =
+            displayOrderList.mapNotNull { currencyId -> wallets.find { it.currencyId == currencyId } }
         notifyDataSetChanged()
+    }
+
+    fun setDisplayOrder(displayOrder: List<String>) {
+        displayOrderList = displayOrder.toMutableList()
     }
 
     /**
@@ -81,7 +95,13 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_WALLET ->
-                DecoratedWalletItemViewHolder(inflater.inflate(R.layout.wallet_list_item, parent, false))
+                DecoratedWalletItemViewHolder(
+                    inflater.inflate(
+                        R.layout.wallet_list_item,
+                        parent,
+                        false
+                    )
+                )
             VIEW_TYPE_ADD_WALLET ->
                 WalletItemViewHolder(inflater.inflate(R.layout.add_wallets_item, parent, false))
             else -> throw IllegalArgumentException("Invalid ViewHolder type: $viewType")
@@ -122,9 +142,10 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
      */
     override fun onBindViewHolder(holderView: WalletItemViewHolder, position: Int) {
         if (getItemViewType(position) == VIEW_TYPE_WALLET && holderView is DecoratedWalletItemViewHolder) {
-            holderView.renderWallet(walletList[position])
+            holderView.renderWallet(checkNotNull(getItemAt(position)))
         } else {
             val context = holderView.itemView.context
+            holderView.itemView.setOnClickListener { onAddWalletClicked() }
             val addWalletLabel = holderView.itemView.findViewById<BaseTextView>(R.id.add_wallets)
             addWalletLabel.text = "+ ${context.getString(R.string.TokenList_addTitle)}"
         }
@@ -140,6 +161,20 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
         return walletList.size + 1
     }
 
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        // Prevent moving wallets below the add wallet button
+        if (getItemViewType(toPosition) == VIEW_TYPE_ADD_WALLET) return
+        displayOrderList.swap(fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun onItemDrop(fromPosition: Int, toPosition: Int) {
+        onWalletDisplayOrderUpdated(displayOrderList)
+    }
+
+    // Swipe events are disabled
+    override fun onItemDismiss(position: Int) = Unit
+
     /**
      * Generic [RecyclerView.ViewHolder] for item in the home screen wallet list.
      * Used for the "Add Wallets" item.
@@ -149,17 +184,21 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
     /**
      * [RecyclerView.ViewHolder] for each wallet in the home screen wallet list.
      */
-    class DecoratedWalletItemViewHolder(
+    inner class DecoratedWalletItemViewHolder(
         override val containerView: View
-    ) : WalletItemViewHolder(containerView), LayoutContainer {
+    ) : WalletItemViewHolder(containerView),
+        ItemTouchHelperViewHolder,
+        LayoutContainer {
+
+        override fun onItemSelected() = Unit
+        override fun onItemClear() = Unit
 
         @Suppress("LongMethod", "ComplexMethod")
         fun renderWallet(wallet: Wallet) {
             val context = containerView.context
             val currencyCode = wallet.currencyCode
-            //val currencyUppercase = currencyCode.toUpperCase()
+            containerView.setOnClickListener { onWalletClicked(wallet) }
 
-            // TODO: Remove hardcoded currency code
             if (currencyCode.isBrd() && !BRSharedPrefs.getRewardsAnimationShown(context)) {
                 (containerView as ShimmerLayout).startShimmerAnimation()
             } else {
@@ -213,7 +252,8 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
             }
 
             // Get icon for currency
-            val tokenIconPath = TokenUtil.getTokenIconPath(context, currencyCode.toUpperCase(), false)
+            val tokenIconPath =
+                TokenUtil.getTokenIconPath(context, currencyCode.toUpperCase(), false)
 
             if (!Utils.isNullOrEmpty(tokenIconPath)) {
                 val iconFile = File(tokenIconPath)
@@ -230,7 +270,8 @@ class WalletListAdapter : RecyclerView.Adapter<WalletListAdapter.WalletItemViewH
             val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode)
             val startColor = uiConfiguration.startColor
             val endColor = uiConfiguration.endColor
-            val drawable = context.resources.getDrawable(R.drawable.crypto_card_shape, null).mutate()
+            val drawable =
+                context.resources.getDrawable(R.drawable.crypto_card_shape, null).mutate()
 
             val isTokenSupported = TokenUtil.isTokenSupported(currencyCode)
             if (isTokenSupported) {
