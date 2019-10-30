@@ -49,7 +49,6 @@ sealed class HomeScreenEvent {
     }
 
     data class OnWalletsUpdated(val wallets: List<Wallet>) : HomeScreenEvent()
-    data class OnWalletAdded(val wallet: Wallet) : HomeScreenEvent()
     data class OnWalletBalanceUpdated(
         val currencyCode: String,
         val balance: BigDecimal,
@@ -57,6 +56,8 @@ sealed class HomeScreenEvent {
         val fiatPricePerUnit: BigDecimal,
         val priceChange: PriceChange? = null
     ) : HomeScreenEvent()
+
+    data class OnWalletDisplayOrderUpdated(val displayOrder: List<String>) : HomeScreenEvent()
 
     data class OnBuyBellNeededLoaded(val isBuyBellNeeded: Boolean) : HomeScreenEvent()
 

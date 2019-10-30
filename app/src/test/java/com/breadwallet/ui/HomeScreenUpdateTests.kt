@@ -9,10 +9,11 @@ import com.spotify.mobius.test.UpdateSpec.assertThatNext
 import org.junit.Test
 import java.math.BigDecimal
 
+@Suppress("LongMethod")
 class HomeScreenUpdateTests {
 
-    private val WALLET_BITCOIN = Wallet("Bitcoin", "btc")
-    private val WALLET_ETHEREUM = Wallet("Ethereum", "eth")
+    private val WALLET_BITCOIN = Wallet("bitcoin-mainnet:__native__", "Bitcoin", "btc")
+    private val WALLET_ETHEREUM = Wallet("ethereum-mainnet:__native__", "Ethereum", "eth")
 
     private val spec = UpdateSpec(HomeScreenUpdate)
 
@@ -30,7 +31,10 @@ class HomeScreenUpdateTests {
             )
             .then(
                 assertThatNext(
-                    hasModel(initState.copy(wallets = wallets)),
+                    hasModel(initState.copy(
+                        wallets = wallets,
+                        displayOrder = wallets.values.map { it.currencyId }
+                    )),
                     hasNoEffects()
                 )
             )
@@ -44,11 +48,14 @@ class HomeScreenUpdateTests {
 
         spec.given(initialWalletsAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletAdded(walletToAdd)
+                HomeScreenEvent.OnWalletsUpdated(expectedWallets.values.toList())
             )
             .then(
                 assertThatNext(
-                    hasModel(initialWalletsAddedState.copy(wallets = expectedWallets)),
+                    hasModel(initialWalletsAddedState.copy(
+                        wallets = expectedWallets,
+                        displayOrder = expectedWallets.values.map { it.currencyId }
+                    )),
                     hasNoEffects()
                 )
             )

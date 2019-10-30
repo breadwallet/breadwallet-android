@@ -35,6 +35,7 @@ import java.math.BigDecimal
 @Suppress("DataClassPrivateConstructor")
 data class HomeScreenModel private constructor(
     val wallets: Map<String, Wallet> = emptyMap(),
+    val displayOrder: List<String> = emptyList(),
     val promptId: PromptManager.PromptItem? = null,
     val hasInternet: Boolean = true,
     val isBuyBellNeeded: Boolean = false,
@@ -43,28 +44,29 @@ data class HomeScreenModel private constructor(
 
     companion object {
         fun createDefault() =
-                HomeScreenModel()
+            HomeScreenModel()
     }
 
     val aggregatedFiatBalance: BigDecimal = wallets.values
-            .fold(BigDecimal.ZERO) {
-                acc, next -> acc.add(next.fiatBalance)
-            }
+        .fold(BigDecimal.ZERO) { acc, next ->
+            acc.add(next.fiatBalance)
+        }
 
     val showPrompt: Boolean = promptId != null
 
     override fun toString(): String {
         return "HomeScreenModel(aggregatedFiatBalance=$aggregatedFiatBalance, " +
-                "wallets=(size:${wallets.size}), " +
-                "showPrompt='$showPrompt', " +
-                "promptId=$promptId, " +
-                "hasInternet=$hasInternet, " +
-                "isBuyBellNeeded=$isBuyBellNeeded, " +
-                "showBuyAndSell=$showBuyAndSell)"
+            "wallets=(size:${wallets.size}), " +
+            "showPrompt='$showPrompt', " +
+            "promptId=$promptId, " +
+            "hasInternet=$hasInternet, " +
+            "isBuyBellNeeded=$isBuyBellNeeded, " +
+            "showBuyAndSell=$showBuyAndSell)"
     }
 }
 
 data class Wallet(
+    val currencyId: String,
     val currencyName: String,
     val currencyCode: String,
     val fiatPricePerUnit: BigDecimal = BigDecimal.ZERO,

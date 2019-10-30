@@ -31,6 +31,7 @@ package com.breadwallet.ui.home
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.applyDisplayOrder
+import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
 import com.breadwallet.ext.bindConsumerIn
@@ -44,6 +45,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
+import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -72,7 +74,8 @@ class HomeScreenEffectHandler(
     private val output: Consumer<HomeScreenEvent>,
     private val context: Context,
     private val breadBox: BreadBox,
-    private val walletProvider: WalletProvider
+    private val walletProvider: WalletProvider,
+    private val metadataManager: MetaDataManager
 ) : Connection<HomeScreenEffect>,
     CoroutineScope,
     RatesDataSource.OnDataChanged {
@@ -95,6 +98,9 @@ class HomeScreenEffectHandler(
                 value.eventName,
                 value.attributes
             )
+            is HomeScreenEffect.UpdateWalletOrder -> {
+                metadataManager.reorderWallets(value.orderedCurrencyIds).launchIn(this)
+            }
         }
     }
 
@@ -249,6 +255,7 @@ class HomeScreenEffectHandler(
 
     private fun CryptoWallet.asWallet(): Wallet {
         return Wallet(
+            currencyId = currencyId,
             currencyName = currency.name,
             currencyCode = currency.code,
             fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
