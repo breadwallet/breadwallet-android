@@ -36,6 +36,9 @@ import com.spotify.mobius.Update
 val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect> { model, event ->
 
     when (event) {
+        is HomeScreenEvent.OnWalletDisplayOrderUpdated -> {
+            dispatch(setOf(HomeScreenEffect.UpdateWalletOrder(event.displayOrder)))
+        }
         is HomeScreenEvent.OnWalletSyncProgressUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {
                 null -> noChange<HomeScreenModel, HomeScreenEffect>()
@@ -53,13 +56,9 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
         is HomeScreenEvent.OnBuyBellNeededLoaded -> next(model.copy(isBuyBellNeeded = event.isBuyBellNeeded))
         is HomeScreenEvent.OnWalletsUpdated -> {
             next(model.copy(
-                wallets = event.wallets.associateBy { it.currencyCode }
+                wallets = event.wallets.associateBy { it.currencyCode },
+                displayOrder = event.wallets.map { it.currencyId }
             ))
-        }
-        is HomeScreenEvent.OnWalletAdded -> {
-            val wallets = model.wallets.toMutableMap()
-            wallets[event.wallet.currencyCode] = event.wallet
-            next(model.copy(wallets = wallets))
         }
         is HomeScreenEvent.OnWalletBalanceUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {

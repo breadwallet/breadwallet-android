@@ -343,6 +343,8 @@ class BreadApp : Application(), KodeinAware {
 
         val metaDataManager by lazy { MetaDataManager(direct.instance()) }
 
+        bind<MetaDataManager>() with singleton { metaDataManager }
+
         bind<WalletProvider>() with singleton { metaDataManager }
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
