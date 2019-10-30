@@ -26,6 +26,8 @@ package com.breadwallet.ui.home
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -34,6 +36,7 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback
 import com.breadwallet.tools.listeners.RecyclerItemClickListener
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.PromptManager
@@ -71,6 +74,7 @@ class HomeController(
                     output,
                     activity as BRActivity,
                     direct.instance(),
+                    direct.instance(),
                     direct.instance()
                 )
             },
@@ -103,29 +107,20 @@ class HomeController(
         trade_layout.setOnClickListener { output.accept(HomeScreenEvent.OnTradeClicked) }
         menu_layout.setOnClickListener { output.accept(HomeScreenEvent.OnMenuClicked) }
 
-        walletAdapter = WalletListAdapter()
+        walletAdapter = WalletListAdapter({
+            output.accept(HomeScreenEvent.OnWalletClicked(it.currencyCode))
+        }, {
+            output.accept(HomeScreenEvent.OnAddWalletsClicked)
+        }) { displayOrder ->
+            output.accept(HomeScreenEvent.OnWalletDisplayOrderUpdated(displayOrder))
+        }
+        
         rv_wallet_list.adapter = walletAdapter
         rv_wallet_list.layoutManager = LinearLayoutManager(activity)
-        // TODO: The adapter is responsible for handling click events.
-        //  Move all of this and RecyclerItemClickListener
-        rv_wallet_list.addOnItemTouchListener(
-            RecyclerItemClickListener(activity, rv_wallet_list,
-                object : RecyclerItemClickListener.OnItemClickListener {
-                    override fun onItemClick(view: View, position: Int, x: Float, y: Float) {
-                        if (position >= walletAdapter!!.itemCount || position < 0)
-                            return
 
-                        if (walletAdapter!!.getItemViewType(position) == 0) {
-                            val currencyCode = walletAdapter!!.getItemAt(position)!!.currencyCode
-                            output.accept(HomeScreenEvent.OnWalletClicked(currencyCode))
-                        } else {
-                            output.accept(HomeScreenEvent.OnAddWalletsClicked)
-                        }
-                    }
-
-                    override fun onLongItemClick(view: View, position: Int) = Unit
-                })
-        )
+        ItemTouchHelper(object : SimpleItemTouchHelperCallback(walletAdapter) {
+            override fun isItemViewSwipeEnabled() = false
+        }).attachToRecyclerView(rv_wallet_list)
         return Disposable {}
     }
 
@@ -135,6 +130,10 @@ class HomeController(
     }
 
     override fun HomeScreenModel.render() {
+        ifChanged(HomeScreenModel::displayOrder) {
+            walletAdapter!!.setDisplayOrder(displayOrder)
+        }
+
         ifChanged(HomeScreenModel::wallets) {
             walletAdapter!!.setWallets(wallets.values.toList())
         }
