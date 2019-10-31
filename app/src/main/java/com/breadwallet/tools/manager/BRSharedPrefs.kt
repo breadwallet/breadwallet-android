@@ -342,12 +342,14 @@ object BRSharedPrefs {
     // BTC, mBTC, Bits
     //ignore iso, using same denomination for both for now
     @JvmStatic
+    @Deprecated("No longer supported, remove with old wallet manager implementations")
     fun getCryptoDenomination(context: Context? = null, iso: String): Int =
             brdPrefs.getInt(CURRENCY_UNIT, BRConstants.CURRENT_UNIT_BITCOINS)
 
     // BTC, mBTC, Bits
     //ignore iso, using same denomination for both for now
     @JvmStatic
+    @Deprecated("No longer supported, remove with old wallet manager implementations")
     fun putCryptoDenomination(context: Context? = null, iso: String, unit: Int) =
             brdPrefs.edit { putInt(CURRENCY_UNIT, unit) }
 

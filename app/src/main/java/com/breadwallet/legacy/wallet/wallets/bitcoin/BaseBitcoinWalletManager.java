@@ -102,8 +102,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     protected abstract String getColor();
 
-    protected abstract List<BigDecimal> getFingerprintLimits(Context context);
-
     protected BRCoreWallet createWalletRetry() {
         Context app = BreadApp.getBreadContext();
         if (0 == mCreateWalletAllowedRetries) {

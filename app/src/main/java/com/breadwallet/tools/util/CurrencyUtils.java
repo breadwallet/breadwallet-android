@@ -128,26 +128,6 @@ public class CurrencyUtils {
         return currencyFormat.format(amount);
     }
 
-    /**
-     * Returns a formatted crypto amount
-     *
-     * @param currencyCode the crypto currency code
-     * @param amount the amount to format
-     * @return the formatted string
-     */
-    public static String getFormattedCryptoAmount(String currencyCode, BigDecimal amount) {
-        // This formats currency values as the user expects to read them (default locale)
-        DecimalFormat currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
-        DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-        currencyFormat.setGroupingUsed(true);
-        currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
-        decimalFormatSymbols.setCurrencySymbol("");
-        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-        currencyFormat.setMaximumFractionDigits(WalletDisplayUtils.Companion.getMaxDecimalPlaces(currencyCode));
-        currencyFormat.setMinimumFractionDigits(0);
-        return String.format("%s %s", currencyFormat.format(amount), currencyCode.toUpperCase());
-    }
-
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
         BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);

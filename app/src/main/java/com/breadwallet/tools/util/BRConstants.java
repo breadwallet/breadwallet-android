@@ -83,9 +83,15 @@ public final class BRConstants {
 
     /**
      * Currency units
+     *
+     * TODO: No longer supported, remove with the
+     * deletion of legacy.wallet.wallets.*
      */
+    @Deprecated
     public static final int CURRENT_UNIT_BITS = 0;
+    @Deprecated
     public static final int CURRENT_UNIT_MBITS = 1;
+    @Deprecated
     public static final int CURRENT_UNIT_BITCOINS = 2;
 
     public static final String BITS_SYMBOL = "\u0180";
