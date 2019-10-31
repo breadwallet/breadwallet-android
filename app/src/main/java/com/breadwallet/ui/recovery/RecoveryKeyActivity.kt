@@ -50,17 +50,23 @@ class RecoveryKeyActivity : BRActivity() {
         })
 
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction
-                    .with(RecoveryKeyController(when {
-                        intent.getBooleanExtra(EXTRA_UNLINK, false) ->
-                            RecoveryKeyModel.Mode.UNLINK
-                        intent.getBooleanExtra(EXTRA_RESET_PIN, false) ->
-                            RecoveryKeyModel.Mode.RESET_PIN
-                        else ->
-                            RecoveryKeyModel.Mode.RECOVER
-                    }))
+            router.setRoot(
+                RouterTransaction
+                    .with(
+                        RecoveryKeyController(
+                            when {
+                                intent.getBooleanExtra(EXTRA_UNLINK, false) ->
+                                    RecoveryKeyModel.Mode.WIPE
+                                intent.getBooleanExtra(EXTRA_RESET_PIN, false) ->
+                                    RecoveryKeyModel.Mode.RESET_PIN
+                                else ->
+                                    RecoveryKeyModel.Mode.RECOVER
+                            }
+                        )
+                    )
                     .pushChangeHandler(FadeChangeHandler())
-                    .popChangeHandler(FadeChangeHandler()))
+                    .popChangeHandler(FadeChangeHandler())
+            )
         }
     }
 

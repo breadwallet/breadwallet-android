@@ -75,7 +75,7 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
                         RecoveryKeyEffect.RecoverWallet(model.phrase)
                     RecoveryKeyModel.Mode.RESET_PIN ->
                         RecoveryKeyEffect.ResetPin(model.phrase)
-                    RecoveryKeyModel.Mode.UNLINK ->
+                    RecoveryKeyModel.Mode.WIPE ->
                         RecoveryKeyEffect.Unlink(model.phrase)
                 }
                 next(model.copy(isLoading = true), setOf(nextEffect))
