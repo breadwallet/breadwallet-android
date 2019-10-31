@@ -23,54 +23,5 @@ class WalletDisplayUtils {
                 MAX_DECIMAL_PLACES_FOR_UI
             )
         }
-
-        // TODO: I think this should come from model (originating in wallet effect handler)
-        @Suppress("ComplexMethod")
-        fun getCryptoForSmallestCrypto(
-            currencyCode: CurrencyCode,
-            amountInSmallestUnit: BigDecimal
-        ): BigDecimal? {
-            return when {
-                amountInSmallestUnit == BigDecimal.ZERO -> amountInSmallestUnit
-                currencyCode.isBitcoin() || currencyCode.isBitcoinCash() -> {
-                    return when (BRSharedPrefs.getCryptoDenomination(null, currencyCode)) {
-                        BRConstants.CURRENT_UNIT_BITS -> amountInSmallestUnit.divide(
-                            BigDecimal("100"),
-                            2,
-                            BRConstants.ROUNDING_MODE
-                        )
-                        BRConstants.CURRENT_UNIT_MBITS -> amountInSmallestUnit.divide(
-                            BigDecimal("100000"),
-                            5,
-                            BRConstants.ROUNDING_MODE
-                        )
-                        BRConstants.CURRENT_UNIT_BITCOINS -> amountInSmallestUnit.divide(
-                            BigDecimal("100000000"),
-                            8,
-                            BRConstants.ROUNDING_MODE
-                        )
-                        else -> null
-                    }
-                }
-                currencyCode.isEthereum() -> amountInSmallestUnit.divide(
-                    ONE_ETH,
-                    SCALE_ETH,
-                    BRConstants.ROUNDING_MODE
-                )
-                currencyCode.isBrd() -> amountInSmallestUnit.divide(
-                    BigDecimal.TEN.pow(5),
-                    5,
-                    BRConstants.ROUNDING_MODE
-                )
-                //else -> amountInSmallestUnit.divide(BigDecimal(BigDecimal.TEN.pow(mWalletToken.getToken()
-                // .getDecimals()).toPlainString()), mWalletToken.getToken().getDecimals(), BRConstants.ROUNDING_MODE)
-                else -> null
-            }
-        }
-
-        // TODO: I think this should come from model (originating in wallet effect handler)
-        fun getMaxDecimalPlaces(currencyCode: CurrencyCode): Int {
-            return MAX_DECIMAL_PLACES_FOR_UI
-        }
     }
 }
