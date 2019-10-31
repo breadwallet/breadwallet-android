@@ -246,7 +246,7 @@ class SettingsEffectHandler(
             SettingsOption.PAPER_KEY
         ),
         SettingsItem(
-            context.getString(R.string.Settings_wipe),
+            context.getString(R.string.Settings_wipe_android),
             SettingsOption.WIPE
         )
     )

@@ -1146,8 +1146,6 @@
     <string name="WipeWallet.failedMessage">Failed to wipe wallet.</string>
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Failed</string>
-    <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s Paper Key.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different BRD wallet on this device.</string>
     <!-- Start wipe wallet view warning -->
@@ -1210,7 +1208,16 @@
     <string name="FingerprintSettings.description">Use your fingerprint to unlock your BRD app and send transactions.</string>
     <string name="FingerprintSettings.unlockApp">Use fingerprint to unlock BRD</string>
     <string name="FingerprintSettings.sendMoney">Use fingerprint to send money</string>
+    <!-- Wipe/delete your wallet from the current device. -->
+    <string name="Settings.wipe.android">Wipe wallet from this device</string>
+    <!-- Title displayed to the user on the intro screen when wiping a wallet -->
+    <string name="RecoveryKeyFlow.wipeWallet">Wipe your wallet from this device.</string>
+    <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
+    <string name="RecoveryKeyFlow.wipeWalletSubtext">Start a new wallet by wiping your device from the currently installed wallet.</string>
 
+    <!-- TODO updated -->
+    <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
+    <string name="WipeWallet.instruction">Please enter your recovery key to wipe this wallet from your device.</string>
 
     <!-- TODO Missing from native.strings -->
     <!-- Push notifications settings failed to update settings on the back end -->

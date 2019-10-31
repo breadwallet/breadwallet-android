@@ -37,6 +37,7 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
+import com.breadwallet.ui.settings.wipewallet.WipeWalletController
 import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.TxDetailsController
@@ -207,7 +208,13 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToWipeWallet() = Unit
+    override fun goToWipeWallet() {
+        router.pushController(
+            RouterTransaction.with(WipeWalletController())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToOnboarding() {
         router.pushController(
