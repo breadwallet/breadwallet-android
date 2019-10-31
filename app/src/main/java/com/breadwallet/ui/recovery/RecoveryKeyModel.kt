@@ -26,35 +26,35 @@ package com.breadwallet.ui.recovery
 
 /** Represents a screen that allows users to enter a BIP39 mnemonic. */
 data class RecoveryKeyModel(
-        /**
-         * [Mode] determines the operation to execute on the phrase.
-         * [Mode.RECOVER] will initialize the wallet.
-         * [Mode.UNLINK] will clear all wallet data and reset the app.
-         * [Mode.RESET_PIN] will clear the current pin and set a new one.
-         */
-        val mode: Mode,
-        /**
-         * A 12 item list of words that make up a BIP39 mnemonic.
-         * All 12 items are an empty string by default.
-         */
-        val phrase: List<String> = List(12) { "" },
-        /**
-         * A 12 item list of the validation state of the corresponding word in [phrase].
-         * All 12 items are false by default.
-         */
-        val errors: List<Boolean> = List(12) { false },
-        /** True when user input should be blocked and navigation prevented. */
-        val isLoading: Boolean = false,
-        /** The list index of the currently selected word input or -1 if none is selected. */
-        val focusedWordIndex: Int = 0
+    /**
+     * [Mode] determines the operation to execute on the phrase.
+     * [Mode.RECOVER] will initialize the wallet.
+     * [Mode.WIPE] will clear all wallet data and reset the app.
+     * [Mode.RESET_PIN] will clear the current pin and set a new one.
+     */
+    val mode: Mode,
+    /**
+     * A 12 item list of words that make up a BIP39 mnemonic.
+     * All 12 items are an empty string by default.
+     */
+    val phrase: List<String> = List(12) { "" },
+    /**
+     * A 12 item list of the validation state of the corresponding word in [phrase].
+     * All 12 items are false by default.
+     */
+    val errors: List<Boolean> = List(12) { false },
+    /** True when user input should be blocked and navigation prevented. */
+    val isLoading: Boolean = false,
+    /** The list index of the currently selected word input or -1 if none is selected. */
+    val focusedWordIndex: Int = 0
 ) {
     enum class Mode {
-        RECOVER, UNLINK, RESET_PIN
+        RECOVER, WIPE, RESET_PIN
     }
 
     companion object {
         fun createDefault(mode: Mode) =
-                RecoveryKeyModel(mode = mode)
+            RecoveryKeyModel(mode = mode)
 
         fun createWithOptionalPhrase(mode: Mode, phrase: String?) =
             RecoveryKeyModel(
