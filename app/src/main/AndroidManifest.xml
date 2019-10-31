@@ -166,10 +166,6 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".legacy.presenter.activities.settings.UnlinkActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".legacy.presenter.activities.settings.ImportActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
@@ -236,10 +232,6 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".legacy.presenter.activities.DisabledActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.settings.FingerprintActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity

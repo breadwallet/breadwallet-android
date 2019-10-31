@@ -205,8 +205,8 @@ class RecoveryKeyController(
     override fun bindView(output: Consumer<RecoveryKeyEvent>): Disposable {
         val resources = resources!!
         when (currentModel.mode) {
-            RecoveryKeyModel.Mode.UNLINK -> {
-                title.text = resources.getString(R.string.MenuViewController_recoverButton)
+            RecoveryKeyModel.Mode.WIPE -> {
+                title.text = resources.getString(R.string.RecoveryKeyFlow_enterRecoveryKey)
                 description.text = resources.getString(R.string.WipeWallet_instruction)
             }
             RecoveryKeyModel.Mode.RESET_PIN -> {

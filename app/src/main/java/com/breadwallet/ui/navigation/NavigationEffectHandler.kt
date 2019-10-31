@@ -38,7 +38,6 @@ import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
 import com.breadwallet.legacy.presenter.activities.settings.SegWitActivity
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
 import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity
-import com.breadwallet.legacy.presenter.activities.settings.UnlinkActivity
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity
@@ -225,10 +224,7 @@ class NavigationEffectHandler(
 
     override fun goToFingerprintAuth() = Unit
 
-    override fun goToWipeWallet() {
-        activity.startActivity(Intent(activity, UnlinkActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToWipeWallet() = Unit
 
     override fun goToOnboarding() = Unit
 
