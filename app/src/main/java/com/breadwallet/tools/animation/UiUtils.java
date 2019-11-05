@@ -26,20 +26,17 @@ import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.activities.DisabledActivity;
 import com.breadwallet.legacy.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
-import com.breadwallet.legacy.presenter.fragments.FragmentShowLegacyAddress;
 import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
 import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
 import com.breadwallet.legacy.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.browser.PlatformBrowserActivity;
 import com.breadwallet.ui.wallet.WalletController;
-import com.breadwallet.util.usermetrics.UserMetricsUtil;
 import com.platform.HTTPServer;
 
 import java.util.List;
@@ -223,29 +220,6 @@ public class UiUtils {
         return itemLayoutTransition;
     }
 
-    public static void showLegacyAddressFragment(final FragmentActivity fragmentActivity) {
-        if (fragmentActivity != null) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    UserMetricsUtil.logSegwitEvent(fragmentActivity, UserMetricsUtil.VIEW_LEGACY_ADDRESS);
-                }
-            });
-            FragmentShowLegacyAddress showLegacyAddress = (FragmentShowLegacyAddress) fragmentActivity.getSupportFragmentManager()
-                    .findFragmentByTag(FragmentShowLegacyAddress.class.getName());
-            if (showLegacyAddress == null || !showLegacyAddress.isAdded()) {
-                showLegacyAddress = new FragmentShowLegacyAddress();
-
-                fragmentActivity.getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                        .add(android.R.id.content, showLegacyAddress, FragmentShowLegacyAddress.class.getName())
-                        .addToBackStack(FragmentShowLegacyAddress.class.getName()).commit();
-            }
-        } else {
-            Log.e(TAG, "showLegacyAddressFragment: fragmentActivity is null.");
-        }
-    }
-
     public static boolean isClickAllowed() {
         boolean allow = false;
         if (System.currentTimeMillis() - mLastClickTime > CLICK_PERIOD_ALLOWANCE) {
@@ -325,7 +299,7 @@ public class UiUtils {
     }
 
     private static void startPlatformBrowser(Activity activity, String url, int enterAnimation,
-                                            int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
+                                             int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
         PlatformBrowserActivity.Companion.start(activity, url, returnEnterAnimation, returnExitAnimation);
         if (enterAnimation != 0 && exitAnimation != 0) {
             activity.overridePendingTransition(enterAnimation, exitAnimation);
