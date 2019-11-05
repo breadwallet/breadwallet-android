@@ -32,28 +32,28 @@ import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Network
-import com.breadwallet.crypto.Transfer
-import com.breadwallet.crypto.Wallet
-import com.breadwallet.logger.logError
-import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.util.WalletDisplayUtils
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.System
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.utility.CompletionHandler
+import com.breadwallet.logger.logError
+import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.util.WalletDisplayUtils
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import java.math.BigDecimal
@@ -250,7 +250,7 @@ fun System.createWalletManager(
     network: Network,
     managerMode: WalletManagerMode,
     currencies: Set<Currency>,
-    addressScheme: AddressScheme? = getDefaultAddressScheme(network)
+    addressScheme: AddressScheme? = getAddressScheme(network)
 ) {
     val wmMode = when {
         supportsWalletManagerMode(network, managerMode) -> managerMode
@@ -265,4 +265,21 @@ fun Flow<System>.findNetwork(currencyId: String): Flow<Network> =
         emit(system.networks.find {
             it.containsCurrency(currencyId)
         } ?: return@transform)
+
     }
+
+/** Return the [AddressScheme] to be used by the given network */
+fun System.getAddressScheme(network: Network): AddressScheme {
+    return when {
+        network.currency.code.isBitcoin() -> {
+            if (BRSharedPrefs.getIsSegwitEnabled()) {
+                AddressScheme.BTC_SEGWIT
+            } else {
+                AddressScheme.BTC_LEGACY
+            }
+        }
+        else -> {
+            getDefaultAddressScheme(network)
+        }
+    }
+}

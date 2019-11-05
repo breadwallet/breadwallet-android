@@ -90,6 +90,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.breadwallet.legacy.presenter.customviews.BRButton
+        android:id="@+id/done_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:padding="10dp"
+        android:text="@string/Segwit.HomeButton"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_text_size"
+        app:buttonType="1"
+        android:visibility="gone"
+        app:hasShadow="false"
+        app:isBreadButton="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/confirm_choice_layout"
         android:layout_width="0dp"
@@ -168,7 +188,7 @@
         android:layout_marginBottom="16dp"
         android:background="@color/confirmation_box"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/enable_button"
+        app:layout_constraintBottom_toTopOf="@id/done_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
