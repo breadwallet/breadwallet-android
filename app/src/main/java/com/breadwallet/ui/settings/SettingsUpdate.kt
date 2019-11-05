@@ -95,9 +95,7 @@ object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, Se
                     SettingsOption.REDEEM_PRIVATE_KEY -> SettingsEffect.GoToImportWallet
                     SettingsOption.SYNC_BLOCKCHAIN -> SettingsEffect.GoToSyncBlockchain
                     SettingsOption.ENABLE_SEG_WIT -> SettingsEffect.GoToEnableSegWit
-                    SettingsOption.VIEW_LEGACY_ADDRESS -> {
-                        TODO("Implement legacy controller") //SettingsEffect.ShowLegacyAddress
-                    }
+                    SettingsOption.VIEW_LEGACY_ADDRESS -> SettingsEffect.GoToLegacyAddress
                     SettingsOption.BTC_NODES -> SettingsEffect.GoToNodeSelector
                     SettingsOption.FINGERPRINT_AUTH -> SettingsEffect.GoToFingerprintAuth
                     SettingsOption.PAPER_KEY -> SettingsEffect.GoToPaperKey

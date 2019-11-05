@@ -35,7 +35,6 @@ import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
 import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
 import com.breadwallet.legacy.presenter.activities.settings.ImportActivity
 import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
-import com.breadwallet.legacy.presenter.activities.settings.SegWitActivity
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
 import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
@@ -243,8 +242,7 @@ class NavigationEffectHandler(
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
-    override fun goToEnableSegWit() {
-        activity.startActivity(Intent(activity, SegWitActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToEnableSegWit() = Unit
+
+    override fun goToLegacyAddress() = Unit
 }

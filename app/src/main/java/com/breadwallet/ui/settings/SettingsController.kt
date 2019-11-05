@@ -89,7 +89,6 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
-                SettingsEffect.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
                 else -> null
             }
         }),
@@ -102,6 +101,8 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToOnboarding -> NavigationEffect.GoToOnboarding
                 SettingsEffect.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
                 SettingsEffect.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
+                SettingsEffect.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
+                SettingsEffect.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
                 else -> null
             }
         })
