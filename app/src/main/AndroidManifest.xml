@@ -206,10 +206,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.settings.SegWitActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.recovery.RecoveryKeyActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
