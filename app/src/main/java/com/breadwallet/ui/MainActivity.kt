@@ -36,6 +36,7 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.security.BRKeyStore
@@ -67,20 +68,27 @@ class MainActivity : BRActivity() {
 
     private lateinit var router: Router
 
+    private var launchedWithInvalidState = false
+    private val isDeviceStateValid: Boolean
+        get() = (application as BreadApp).isDeviceStateValid
+
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!(application as BreadApp).isDeviceStateValid) {
-            // Note: Calling isDeviceStateValid will handle user resolution
-            //   making it safe to terminate here.
-            logError("Device state is invalid.")
-            return
-        }
-
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
         })
+
+        if (!isDeviceStateValid) {
+            // In this case, isDeviceStateValid displays a dialog (activity)
+            // for user resolution of the invalid state. We must check this
+            // again in onResume to ensure we display the dialog if the state
+            // is unchanged or recreate the activity.
+            launchedWithInvalidState = true
+            logError("Device state is invalid.")
+            return
+        }
 
         // Allow launching with a phrase to recover automatically
         if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
@@ -116,6 +124,22 @@ class MainActivity : BRActivity() {
 
         if (BuildConfig.DEBUG) {
             Utils.printPhoneSpecs(this)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // If we come back to the activity after launching with
+        // an invalid device state, check the state again.
+        // If the state is valid, recreate the activity otherwise
+        // the resolution dialog will display again.
+        if (launchedWithInvalidState) {
+            if (isDeviceStateValid) {
+                logDebug("Device state is valid, recreating activity.")
+                recreate()
+            } else {
+                logError("Device state is invalid.")
+            }
         }
     }
 
