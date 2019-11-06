@@ -28,21 +28,22 @@
  */
 package com.breadwallet.ui.onboarding
 
-import android.support.v4.app.FragmentActivity
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.asSupportUrl
+import com.breadwallet.ui.web.WebController
 import kotlinx.android.synthetic.main.activity_intro.*
 
 /**
- * Activity shown when there is no wallet, here the user can pick between creating new wallet or recovering one with
- * the paper key.
+ * Activity shown when there is no wallet, here the user can pick
+ * between creating new wallet or recovering one with the paper key.
  */
 class IntroController : BaseController() {
 
@@ -64,8 +65,12 @@ class IntroController : BaseController() {
         }
         faq_button.setOnClickListener {
             if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            val wm = WalletsMaster.getInstance().getCurrentWallet(applicationContext)
-            UiUtils.showSupportFragment(activity as FragmentActivity, BRConstants.FAQ_START_VIEW, wm)
+            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_START_VIEW).asSupportUrl()
+            router.pushController(
+                RouterTransaction.with(
+                    WebController(url)
+                )
+            )
         }
     }
 

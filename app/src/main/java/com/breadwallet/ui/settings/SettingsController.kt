@@ -78,7 +78,6 @@ class SettingsController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                SettingsEffect.GoToSupport -> NavigationEffect.GoToFaq("")
                 SettingsEffect.GoToQrScan -> NavigationEffect.GoToQrScan
                 SettingsEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
                 SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
@@ -94,6 +93,7 @@ class SettingsController(args: Bundle? = null) :
         }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                SettingsEffect.GoToSupport -> NavigationEffect.GoToFaq("")
                 is SettingsEffect.GoToSection -> NavigationEffect.GoToMenu(effect.section)
                 SettingsEffect.GoBack -> NavigationEffect.GoBack
                 SettingsEffect.GoToPaperKey -> NavigationEffect.GoToWriteDownKey(OnCompleteAction.GO_HOME)
