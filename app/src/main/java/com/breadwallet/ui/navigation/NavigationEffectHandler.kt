@@ -29,7 +29,6 @@
 package com.breadwallet.ui.navigation
 
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
 import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
@@ -40,7 +39,6 @@ import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivi
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity
-import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.AppEntryPointHandler
@@ -150,11 +148,7 @@ class NavigationEffectHandler(
         InAppNotificationActivity.start(activity, effect.inAppMessage)
     }
 
-    override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        // TODO: Replace with a controller and remove WalletsMaster usage
-        val wm = WalletsMaster.getInstance().getCurrentWallet(activity)
-        UiUtils.showSupportFragment(activity as FragmentActivity, effect.articleId, wm)
-    }
+    override fun goToFaq(effect: NavigationEffect.GoToFaq) = Unit
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) = Unit
 
