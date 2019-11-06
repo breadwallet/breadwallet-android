@@ -44,6 +44,7 @@ import com.breadwallet.ui.showkey.ShowPaperKeyController
 import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.TxDetailsController
 import com.breadwallet.ui.wallet.WalletController
+import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.util.isBrd
 import com.spotify.mobius.Connection
@@ -134,7 +135,11 @@ class RouterNavigationEffectHandler(
 
     override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) = Unit
 
-    override fun goToFaq(effect: NavigationEffect.GoToFaq) = Unit
+    override fun goToFaq(effect: NavigationEffect.GoToFaq) {
+        router.pushController(
+            RouterTransaction.with(WebController(effect.asSupportUrl()))
+        )
+    }
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
         val transaction =

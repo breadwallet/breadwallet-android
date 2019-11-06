@@ -79,13 +79,13 @@ class InputPinController(args: Bundle) :
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                InputPinEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
                 InputPinEffect.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
                 else -> null
             }
         }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                InputPinEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
                 InputPinEffect.GoToHome -> NavigationEffect.GoToHome
                 is InputPinEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
                 else -> null
