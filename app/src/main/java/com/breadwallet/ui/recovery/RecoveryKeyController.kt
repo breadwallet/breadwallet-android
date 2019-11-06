@@ -55,7 +55,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.Connectable
@@ -144,14 +143,9 @@ class RecoveryKeyController(
                 else -> null
             }
         }),
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
                 RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(true)
                 RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
                 RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()

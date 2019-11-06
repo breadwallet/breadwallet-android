@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
-import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.format.DateUtils
 import android.transition.TransitionManager
@@ -16,6 +15,7 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBoxEffect
 import com.breadwallet.breadbox.BreadBoxEffectHandler
@@ -39,6 +39,7 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
+import com.breadwallet.ui.web.WebController
 import com.breadwallet.util.WalletDisplayUtils
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
@@ -182,11 +183,8 @@ open class WalletController(
         //  (effect for checking if delisted, event for showing fragment etc.)
         // Not sure, if Generic Core has a notion of delisted token and whether it manages this
         more_info_button.setOnClickListener {
-            UiUtils.showSupportFragment(
-                activity as FragmentActivity,
-                BRConstants.FAQ_UNSUPPORTED_TOKEN,
-                null
-            )
+            val controller = WebController(BRConstants.FAQ_UNSUPPORTED_TOKEN)
+            router.pushController(RouterTransaction.with(controller))
         }
     }
 

@@ -78,13 +78,13 @@ class WriteDownKeyController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                WriteDownKeyEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
                 WriteDownKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
                 else -> null
             }
         }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                WriteDownKeyEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
                 WriteDownKeyEffect.GoToHome -> NavigationEffect.GoToHome
                 WriteDownKeyEffect.GoBack -> NavigationEffect.GoBack
                 is WriteDownKeyEffect.GoToPaperKey -> NavigationEffect.GoToPaperKey(
