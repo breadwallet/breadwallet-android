@@ -48,7 +48,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Normalizer
@@ -184,8 +186,11 @@ class RecoveryKeyEffectHandler(
         // Must be set up before wallet creation date can be retrieved
         setupApiKey(apiKey, context)
 
-        launch(Dispatchers.Main) {
+        BreadApp.applicationScope.launch {
             metaDataProvider.recoverAll(true).first()
+        }
+
+        launch(Dispatchers.Main) {
             val creationDate = getWalletCreationDate()
 
             val uids = BRSharedPrefs.getDeviceId()
@@ -285,7 +290,18 @@ class RecoveryKeyEffectHandler(
      */
     private suspend fun getWalletCreationDate() =
         Date(
-            metaDataProvider.walletInfo().first()
+            metaDataProvider.walletInfo()
+                .onStart {
+                    // Poll for wallet-info metadata
+                    // This is a work-around to avoid blocking until recoverAll(migrate)
+                    // recovers *all* metadata
+                    while (true) {
+                        metaDataProvider.getWalletInfoUnsafe()
+                            ?.let { emit(it) }
+                        delay(1000L)
+                    }
+                }
+                .first()
                 .creationDate
                 .toLong()
                 .let(TimeUnit.SECONDS::toMillis)
