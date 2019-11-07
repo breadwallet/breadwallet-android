@@ -5,17 +5,17 @@ import org.json.JSONObject
 
 /** Provides access to a Key-Value Store serving [JSONObject]. */
 interface KVStoreProvider {
-    /** Get value for given [key]. */
+    /** Get value for [key]. */
     fun get(key: String): JSONObject?
 
-    /** Put [value] for given [key] */
+    /** Put [value] for [key]. */
     fun put(key: String, value: JSONObject): Boolean
 
-    /** Syncs the value for given [key] and returns it, null if sync failed. */
+    /** Syncs the value for [key] and returns it, null if sync failed. */
     suspend fun sync(key: String): JSONObject?
 
-    /** Syncs entire data store. */
-    suspend fun syncAll(): Boolean
+    /** Syncs entire data store. If [migrateEncryption] is true, will migrate KV entries encryption. */
+    suspend fun syncAll(migrateEncryption: Boolean): Boolean
 
     /** Returns a [Flow] for a given [key]. */
     fun keyFlow(key: String): Flow<JSONObject>

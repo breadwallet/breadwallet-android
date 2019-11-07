@@ -121,10 +121,10 @@ class KVStoreManager(
         return value
     }
 
-    override suspend fun syncAll(): Boolean =
+    override suspend fun syncAll(migrateEncryption: Boolean): Boolean =
         withContext(Dispatchers.IO) {
             mutex.withLock {
-                getReplicatedKvStore(context).syncAllKeys()
+                getReplicatedKvStore(context).syncAllKeys(migrateEncryption)
             }
         }.also { syncSuccess ->
             if (syncSuccess) {

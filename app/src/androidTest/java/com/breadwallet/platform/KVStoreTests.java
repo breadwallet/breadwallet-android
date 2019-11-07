@@ -182,7 +182,7 @@ public class KVStoreTests {
         Iterator it = remoteKV.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            byte[] val = ReplicatedKVStore.decrypt((byte[]) pair.getValue(), mActivityRule.getActivity());
+            byte[] val = ReplicatedKVStore.decrypt((byte[]) pair.getValue(), mActivityRule.getActivity(), false);
             byte[] valToAssert = localKV.get((String) pair.getKey());
             String valStr = new String(val);
             String valToAssertStr = new String(valToAssert);
@@ -193,7 +193,7 @@ public class KVStoreTests {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             byte[] val = (byte[]) pair.getValue();
-            byte[] valToAssert = ReplicatedKVStore.decrypt(remoteKV.get((String) pair.getKey()), mActivityRule.getActivity());
+            byte[] valToAssert = ReplicatedKVStore.decrypt(remoteKV.get((String) pair.getKey()), mActivityRule.getActivity(), false);
             Assert.assertArrayEquals(val, valToAssert);
         }
 
@@ -417,7 +417,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys();
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
+        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity(), false), "derp".getBytes());
     }
 
     @Test
@@ -471,7 +471,7 @@ public class KVStoreTests {
         success = store.syncAllKeys();
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
-        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity()));
+        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity(), false));
 
     }
 
@@ -523,7 +523,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys();
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
+        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes(), false);
 
     }
 
@@ -578,7 +578,7 @@ public class KVStoreTests {
 
         Assert.assertTrue(encryptedData != null && encryptedData.length > 0);
 
-        byte[] decryptedData = ReplicatedKVStore.decrypt(encryptedData, mActivityRule.getActivity());
+        byte[] decryptedData = ReplicatedKVStore.decrypt(encryptedData, mActivityRule.getActivity(), false);
 
         Assert.assertNotEquals(encryptedData, decryptedData);
 

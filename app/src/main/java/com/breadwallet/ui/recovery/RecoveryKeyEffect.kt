@@ -31,7 +31,6 @@ sealed class RecoveryKeyEffect {
     object GoToLoginForReset : RecoveryKeyEffect()
     object SetPinForReset : RecoveryKeyEffect()
     object GoToPhraseError : RecoveryKeyEffect()
-    object RecoverMetaData : RecoveryKeyEffect()
 
     object ErrorShake : RecoveryKeyEffect()
 
