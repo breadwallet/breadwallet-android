@@ -260,7 +260,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             }
             if (kv != null) {
                 byte[] val = kv.value;
-                kv.value = ENCRYPTED ? decrypt(val, mContext) : val;
+                kv.value = ENCRYPTED ? decrypt(val, mContext, false) : val;
                 if (val != null && Utils.isNullOrEmpty(kv.value)) {
                     //decrypting failed
                     Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
@@ -373,7 +373,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                 KVItem kvItem = cursorToKv(cursor);
                 if (kvItem != null) {
                     byte[] val = kvItem.value;
-                    kvItem.value = ENCRYPTED ? decrypt(val, mContext) : val;
+                    kvItem.value = ENCRYPTED ? decrypt(val, mContext, false) : val;
                     kvs.add(kvItem);
                 }
             }
@@ -446,13 +446,13 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                 final CompletionObject completionObject = mRemoteKvStore.ver(key);
                 Log.e(TAG, String.format("syncKey: completionObject: version: %d, value: %s, err: %s, time: %d",
                         completionObject.version, Arrays.toString(completionObject.value), completionObject.err, completionObject.time));
-                _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
+                _syncKey(key, completionObject.version, completionObject.time, completionObject.err, false);
 
             } else {
 //                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
 //                    @Override
 //                    public void run() {
-                _syncKey(key, remoteVersion, remoteTime, err);
+                _syncKey(key, remoteVersion, remoteTime, err, false);
 //                    }
 //                });
 
@@ -469,7 +469,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
      * the syncKey kernel - this is provided so syncAllKeys can provide get a bunch of key versions at once
      * and fan out the _syncKey operations
      */
-    private boolean _syncKey(String key, long remoteVersion, long remoteTime, CompletionObject.RemoteKVStoreError err) {
+    private boolean _syncKey(String key, long remoteVersion, long remoteTime, CompletionObject.RemoteKVStoreError err, Boolean migrateCipherText) {
         // this is a basic last-write-wins strategy. data loss is possible but in general
         // we will attempt to sync before making any local modifications to the data
         // and concurrency will be so low that we don't really need a fancier solution than this.
@@ -578,7 +578,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                         Log.e(TAG, "_syncKey: key: " + key + " ,from the remote, is empty");
                         return false;
                     }
-                    byte[] decryptedValue = ENCRYPTED_REPLICATION ? decrypt(val, mContext) : val;
+                    byte[] decryptedValue = ENCRYPTED_REPLICATION ? decrypt(val, mContext, migrateCipherText) : val;
                     if (Utils.isNullOrEmpty(decryptedValue)) {
                         Log.e(TAG, "_syncKey: failed to decrypt the value from remote for key: " + key);
                         return false;
@@ -605,7 +605,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     /**
      * Sync all kvs to and from the remote kv store adaptor
      */
-    public boolean syncAllKeys() {
+    public boolean syncAllKeys(Boolean migrateCipherText) {
         // update all kvs locally and on the remote server, replacing missing kvs
         //
         // 1. get a list of all kvs from the server
@@ -640,7 +640,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             Log.i(TAG, String.format("Syncing %d kvs", allKvs.size()));
             int failures = 0;
             for (KVItem k : allKvs) {
-                boolean success = _syncKey(k.key, k.remoteVersion == -1 ? k.version : k.remoteVersion, k.time, k.err);
+                boolean success = _syncKey(k.key, k.remoteVersion == -1 ? k.version : k.remoteVersion, k.time, k.err, migrateCipherText);
                 if (!success) failures++;
             }
             Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
@@ -663,7 +663,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         try {
             CompletionObject completionObject = mRemoteKvStore.ver(key);
             if (completionObject.err == null) {
-                _syncKey(key, completionObject.version, completionObject.time, null);
+                _syncKey(key, completionObject.version, completionObject.time, null, false);
             } else {
                 Log.e(TAG, "syncKey: failed to fetch remote " + key + ": " + completionObject.err.name());
             }
@@ -818,6 +818,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private synchronized CompletionObject _delete(String key, long localVersion) {
         if (localVersion == 0)
             return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+
         long newVer = 0;
         long time = System.currentTimeMillis();
         Cursor cursor = null;
@@ -909,7 +910,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     /**
      * decrypt some data using key
      */
-    public static byte[] decrypt(byte[] data, Context app) {
+    public static byte[] decrypt(byte[] data, Context app, boolean migrateCipherText) {
         if (data == null || data.length <= 12) {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
@@ -925,9 +926,21 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         }
 
         final byte[] nonce = Arrays.copyOfRange(data, 0, 12);
-        final byte[] payload = Arrays.copyOfRange(data, 12, data.length);
-        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, new byte[0]);
-        return cipher.decrypt(payload).orNull();
+        byte[] cipherText = Arrays.copyOfRange(data, 12, data.length);
+        final byte[] ad = new byte[0];
+        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, ad);
+
+        if (migrateCipherText) {
+            byte[] migratedText = com.breadwallet.crypto.System.migrateBRCoreKeyCiphertext(
+                    key,
+                    nonce,
+                    ad,
+                    cipherText
+            ).orNull();
+            if (migratedText != null) cipherText = migratedText;
+        }
+
+        return cipher.decrypt(cipherText).orNull();
     }
 
     private static void cacheKeyIfNeeded(Context context) {

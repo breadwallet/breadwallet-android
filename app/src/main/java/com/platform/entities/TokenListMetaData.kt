@@ -33,8 +33,8 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class TokenListMetaData(
-        enabledCurrenciesList: List<TokenInfo> = listOf(),
-        hiddenCurrenciesList: List<TokenInfo> = listOf()
+    enabledCurrenciesList: List<TokenInfo> = listOf(),
+    hiddenCurrenciesList: List<TokenInfo> = listOf()
 ) {
     var enabledCurrencies = mutableListOf<TokenInfo>()
     var hiddenCurrencies = mutableListOf<TokenInfo>()
@@ -42,8 +42,6 @@ class TokenListMetaData(
     companion object {
         private const val ENABLED_CURRENCIES = "enabledCurrencies"
         private const val HIDDEN_CURRENCIES = "hiddenCurrencies"
-        private const val CLASS_VERSION = "classVersion"
-        private const val CLASS_VERSION_VALUE = 2
     }
 
     init {
@@ -51,67 +49,24 @@ class TokenListMetaData(
         hiddenCurrencies.addAll(hiddenCurrenciesList)
     }
 
-    constructor(json: JSONObject): this() {
+    constructor(json: JSONObject) : this() {
         enabledCurrencies = jsonToMetaData(json.getJSONArray(ENABLED_CURRENCIES))
         hiddenCurrencies = jsonToMetaData(json.getJSONArray(HIDDEN_CURRENCIES))
     }
 
-    @Synchronized
-    fun isCurrencyHidden(symbol: String): Boolean =
-        hiddenCurrencies.any { it.symbol.equals(symbol, ignoreCase = true) }
-
-    @Synchronized
-    fun isCurrencyEnabled(symbol: String): Boolean =
-        enabledCurrencies.any{ it.symbol.equals(symbol, ignoreCase = true) }
-
-    @Synchronized
-    // TODO: Kept as is for now, but is this right? don't need to add to enabled?
-    fun showCurrency(symbol: String) {
-        for (i in hiddenCurrencies.indices) {
-            val info = hiddenCurrencies[i]
-            if (info.symbol.equals(symbol, ignoreCase = true)) {
-                hiddenCurrencies.remove(info)
-            }
-        }
-    }
-
-    fun toJSON(): JSONObject {
-        val tokenListJSON = JSONObject(mapOf(CLASS_VERSION to CLASS_VERSION_VALUE))
-        val enabledArr = JSONArray()
-        val hiddenArr = JSONArray()
-        enabledCurrencies.forEach{ item -> enabledArr.put(item.toString()) }
-        hiddenCurrencies.forEach{ item -> hiddenArr.put(item.toString())}
-
-        tokenListJSON.put(ENABLED_CURRENCIES, enabledArr)
-        tokenListJSON.put(HIDDEN_CURRENCIES, hiddenArr)
-
-        return tokenListJSON
-    }
-
-    @Synchronized
-    // TODO: Kept as is for now, but is this right? don't need to add to hidden?
-    fun disableCurrency(symbol: String) {
-        if (enabledCurrencies.size != 0) {
-            for (i in enabledCurrencies.indices) {
-                val info = enabledCurrencies[i]
-                if (info.symbol.equals(symbol, ignoreCase = true)) {
-                    enabledCurrencies.remove(info)
-                }
-            }
-        }
-    }
-
     @Throws(JSONException::class)
-    private fun jsonToMetaData(json: JSONArray): MutableList<TokenInfo> = MutableList(json.length()) {
-        val tokenStr = json.getString(it)
-        when {
-            tokenStr.contains(":") -> {
-                val parts = tokenStr.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                TokenInfo(parts[0], true, parts[1])
+    private fun jsonToMetaData(json: JSONArray): MutableList<TokenInfo> =
+        MutableList(json.length()) {
+            val tokenStr = json.getString(it)
+            when {
+                tokenStr.contains(":") -> {
+                    val parts =
+                        tokenStr.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    TokenInfo(parts[0], true, parts[1])
+                }
+                else -> TokenInfo(tokenStr, false, null)
             }
-            else -> TokenInfo(tokenStr, false, null)
         }
-    }
 
     data class TokenInfo(var symbol: String, var erc20: Boolean, var contractAddress: String?) {
         override fun toString() = when {

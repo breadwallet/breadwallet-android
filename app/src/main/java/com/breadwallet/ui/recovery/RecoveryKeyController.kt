@@ -137,12 +137,6 @@ class RecoveryKeyController(
                 SpringAnimator.failShakeAnimation(applicationContext, view)
             })
         },
-        nestedConnectable({ MetaDataEffectHandler(direct.instance()) }, { effect ->
-            when (effect) {
-                RecoveryKeyEffect.RecoverMetaData -> MetaDataEffect.RecoverMetaData
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
                 RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
@@ -267,6 +261,7 @@ class RecoveryKeyController(
         }
 
         ifChanged(RecoveryKeyModel::isLoading) {
+            // TODO: Show loading msg
             loading_view.isVisible = it
         }
 

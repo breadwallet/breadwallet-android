@@ -13,8 +13,10 @@ import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.platform.entities.TxMetaData
+import com.platform.entities.TokenListMetaData
 import com.platform.entities.WalletInfoData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -35,11 +37,8 @@ class MetaDataManager(
     private val storeProvider: KVStoreProvider
 ) : WalletProvider, AccountMetaDataProvider {
 
-    // TODO: Decompose further
-
     companion object {
         private const val KEY_WALLET_INFO = "wallet-info"
-        private const val KEY_SEGWIT_META_DATA = "segwit-metadata"
         private const val KEY_TOKEN_LIST_META_DATA = "token-list-metadata"
         private const val KEY_MSG_INBOX = "encrypted-message-inbox-metadata"
         private const val KEY_ASSET_INDEX = "asset-index"
@@ -65,8 +64,14 @@ class MetaDataManager(
         logInfo("MetaDataManager created successfully")
     }
 
-    override fun recoverAll() = flow {
-        emit(storeProvider.syncAll())
+    override fun recoverAll(migrate: Boolean) = flow {
+        val syncResult = storeProvider.syncAll(migrate)
+        if (migrate) {
+            migrateTokenList()
+            // TODO: migrate txn metadata (rewrite keys in reverse byte order to match iOS)
+        }
+        emit(syncResult)
+
     }
 
     override fun walletInfo(): Flow<WalletInfoData> =
@@ -247,6 +252,40 @@ class MetaDataManager(
         storeProvider.put(KEY_WALLET_INFO, old.toJSON())
     }
 
+    private fun migrateTokenList() {
+        if (storeProvider.get(KEY_ASSET_INDEX) != null) {
+            logDebug("Metadata for $KEY_ASSET_INDEX found, no migration needed.")
+            return
+        }
+        logDebug("Migrating $KEY_TOKEN_LIST_META_DATA to $KEY_ASSET_INDEX.")
+        try {
+            val tokenListMetaData = storeProvider.get(KEY_TOKEN_LIST_META_DATA)
+                ?.run(::TokenListMetaData)
+
+            if (tokenListMetaData == null) {
+                logDebug("No value for $KEY_TOKEN_LIST_META_DATA found.")
+                return
+            }
+
+            val currencyCodeToToken =
+                TokenUtil.getTokenItems(BreadApp.getBreadContext())
+                    ?.associateBy { it.symbol.toLowerCase() } ?: emptyMap()
+
+            tokenListMetaData.enabledCurrencies
+                .mapNotNull {
+                    currencyCodeToToken[it.symbol.toLowerCase()]?.currencyId
+                }
+                .apply {
+                    if (isNotEmpty()) {
+                        putEnabledWallets(this)
+                        logDebug("Migration to $KEY_ASSET_INDEX completed.")
+                    }
+                }
+        } catch (ex: JSONException) {
+            logError("$ex")
+        }
+    }
+
     private fun getFinalValue(newVal: String?, oldVal: String?): String? =
         when (newVal) {
             null, oldVal -> null
@@ -322,75 +361,3 @@ class MetaDataManager(
     private fun pairingKey(pubKey: ByteArray): String =
         PAIRING_META_DATA_KEY_PREFIX + CryptoHelper.hexEncode(CryptoHelper.sha256(pubKey)!!)
 }
-
-/* unused code
- public static SegWitMetaData getSegwit(Context context) {
-     JSONObject json;
-     byte[] data = getData(context, KEY_SEGWIT_META_DATA);
-     try {
-         if (data == null) {
-             Log.e(TAG, "getSegwit: data value is null");
-             return null;
-         }
-         json = new JSONObject(new String(data));
-     } catch (JSONException e) {
-         Log.e(TAG, "getSegwit: ", e);
-         return null;
-     }
-
-     int classVersion = 0;
-     int enabledAtBlockHeight = 0;
-
-     try {
-         classVersion = json.getInt(CLASS_VERSION);
-         enabledAtBlockHeight = json.getInt(ENABLED_AT_BLOCK_HEIGHT);
-     } catch (JSONException e) {
-         Log.e(TAG, "getSegwit: ", e);
-     }
-     Log.d(TAG, "getSegwit: " + KEY_SEGWIT_META_DATA);
-     return new SegWitMetaData(classVersion, enabledAtBlockHeight);
- }
-
- public static void putSegwit(Context app, SegWitMetaData segwitData) {
-     JSONObject obj = new JSONObject();
-     byte[] result;
-     try {
-         obj.put(CLASS_VERSION, segwitData.getClassVersion());
-         obj.put(ENABLED_AT_BLOCK_HEIGHT, segwitData.getEnabledAtBlockHeight());
-         result = obj.toString().getBytes();
-
-     } catch (JSONException e) {
-         Log.e(TAG, "putSegwit: ", e);
-         return;
-     }
-
-     if (result.length == 0) {
-         Log.e(TAG, "putSegwit: FAILED: result is empty");
-         return;
-     }
-     CompletionObject completionObject = setData(app, result, KEY_SEGWIT_META_DATA);
-     if (completionObject != null && completionObject.err != null) {
-         Log.e(TAG, "putSegwit: Error setting value for key: " + KEY_SEGWIT_META_DATA + ",
-         err: " + completionObject.err);
-     }
- }
-*/
-/*
-
-    // Expensive, takes ~ 20 milliseconds
-    //@Synchronized
-    /** Retrieves [TokenListMetaData]. */
-    /*
-    fun getTokenListMetaData(context: Context): TokenListMetaData? =
-        try {
-            getJSONData(context, KEY_TOKEN_LIST_META_DATA)
-                ?.run(::TokenListMetaData)
-                ?: TokenListMetaData(DEFAULT_WALLETS)
-        } catch (ex: JSONException) {
-            logError("$ex")
-            null
-        }
-    */
-
-
-*/
