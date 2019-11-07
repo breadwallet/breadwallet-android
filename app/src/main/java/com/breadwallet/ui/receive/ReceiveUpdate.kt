@@ -36,6 +36,7 @@ import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 import java.math.BigDecimal
 
+@Suppress("TooManyFunctions")
 object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     ReceiveUpdateSpec {
     override fun update(
@@ -70,7 +71,15 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
         )
 
     override fun onShareClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
-        dispatch(setOf(ReceiveEffect.ShareRequest(model.receiveAddress, model.amount, model.walletName)))
+        dispatch(
+            setOf(
+                ReceiveEffect.ShareRequest(
+                    model.receiveAddress,
+                    model.amount,
+                    model.walletName
+                )
+            )
+        )
 
     override fun onHideCopyMessage(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
         next(model.copy(isDisplayingCopyMessage = false))
