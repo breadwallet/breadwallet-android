@@ -185,6 +185,7 @@ class RecoveryKeyEffectHandler(
         setupApiKey(apiKey, context)
 
         launch(Dispatchers.Main) {
+            metaDataProvider.recoverAll(true).first()
             val creationDate = getWalletCreationDate()
 
             val uids = BRSharedPrefs.getDeviceId()
@@ -219,7 +220,6 @@ class RecoveryKeyEffectHandler(
                 return@launch
             }
 
-            recoverAccountMetaData()
             updateTokensAndPlatform(context)
 
             output.accept(RecoveryKeyEvent.OnRecoveryComplete)
@@ -253,11 +253,6 @@ class RecoveryKeyEffectHandler(
                 logError("Failed to sync token list or update platform.", e)
             }
         }
-    }
-
-    /** Triggers a sync of the enabled wallets metadata. */
-    private suspend fun recoverAccountMetaData() {
-        metaDataProvider.enabledWallets().first()
     }
 
     /**

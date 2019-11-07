@@ -110,12 +110,7 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
     }
 
     override fun onRecoveryComplete(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(
-            setOf(
-                RecoveryKeyEffect.SetPinForRecovery,
-                RecoveryKeyEffect.RecoverMetaData
-            )
-        )
+        return dispatch(setOf(RecoveryKeyEffect.SetPinForRecovery))
     }
 
     override fun onPhraseSaved(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {

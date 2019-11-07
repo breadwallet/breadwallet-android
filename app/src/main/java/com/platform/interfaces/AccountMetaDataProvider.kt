@@ -39,8 +39,11 @@ interface AccountMetaDataProvider {
     /** Initializes metadata for a newly created [Account]. */
     fun create(accountCreationDate: Date)
 
-    /** Recovers all metadata for a recovered [Account] and returns true if successful. */
-    fun recoverAll(): Flow<Boolean>
+    /**
+     * Recovers all metadata for a recovered [Account] and returns true if successful.
+     * If [migrate] is true, any metadata migrations to the latest schema will be performed.
+     */
+    fun recoverAll(migrate: Boolean = false): Flow<Boolean>
 
     /** Returns a [Flow] of enabled wallet currency ids (addresses), will recover them if necessary. */
     fun enabledWallets(): Flow<List<String>>
