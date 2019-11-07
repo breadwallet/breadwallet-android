@@ -48,6 +48,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -631,6 +632,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             List<String> remoteKeys = getKeysFromKVEntity(remoteKVs);
             List<KVItem> allKvs = new ArrayList<>();
             allKvs.addAll(remoteKVs);
+            Collections.reverse(allKvs);
 
             for (KVItem kv : localKvs) {
                 if (!remoteKeys.contains(kv.key)) // server is missing a key that we have
