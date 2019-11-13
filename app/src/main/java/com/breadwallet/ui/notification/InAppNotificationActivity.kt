@@ -32,7 +32,8 @@ import com.breadwallet.R
 import com.breadwallet.ext.viewModel
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.model.InAppMessage
-import com.breadwallet.tools.manager.AppEntryPointHandler
+import com.breadwallet.tools.util.asLink
+import com.breadwallet.ui.MainActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_in_app_notification.*
 
@@ -42,8 +43,6 @@ import kotlinx.android.synthetic.main.activity_in_app_notification.*
 class InAppNotificationActivity : BRActivity() {
 
     companion object {
-        private val TAG: String = InAppNotificationActivity::class.java.simpleName
-
         private const val EXT_NOTIFICATION = "com.breadwallet.ui.notification.EXT_NOTIFICATION"
 
         fun start(context: Context, notification: InAppMessage) {
@@ -69,8 +68,11 @@ class InAppNotificationActivity : BRActivity() {
             viewModel.markAsRead(true)
             val actionUrl = viewModel.notification.actionButtonUrl
             if (!actionUrl.isNullOrEmpty()) {
-                if (AppEntryPointHandler.isDeepLinkPlatformUrl(actionUrl)) {
-                    AppEntryPointHandler.processPlatformDeepLinkingUrl(this, actionUrl)
+                if (actionUrl.asLink() != null) {
+                    Intent(this, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        .putExtra(MainActivity.EXTRA_DATA, actionUrl)
+                        .run(this::startActivity)
                 } else {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(actionUrl)))
                 }

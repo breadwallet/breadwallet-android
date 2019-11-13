@@ -58,16 +58,15 @@ object LoginUpdate : Update<LoginModel, LoginEvent, LoginEffect>, LoginUpdateSpe
         dispatch(setOf(LoginEffect.GoToDisableScreen))
 
     override fun onUnlockAnimationEnd(model: LoginModel): Next<LoginModel, LoginEffect> {
-        val url = model.extraUrl
-        val effects = when {
-            url.isNotBlank() -> {
-                setOf(LoginEffect.ProcessUrl(url), LoginEffect.GoToHome)
-            }
-            model.showHomeScreen -> setOf(LoginEffect.GoToHome)
-            model.currentCurrencyCode.isNotBlank() -> setOf(LoginEffect.GoToWallet(model.currentCurrencyCode))
-            else -> setOf(LoginEffect.GoToHome)
+        val effect = when {
+            model.extraUrl.isNotBlank() ->
+                LoginEffect.GoToDeepLink(model.extraUrl)
+            model.showHomeScreen -> LoginEffect.GoToHome
+            model.currentCurrencyCode.isNotBlank() ->
+                LoginEffect.GoToWallet(model.currentCurrencyCode)
+            else -> LoginEffect.GoToHome
         }
-        return dispatch(effects)
+        return dispatch(setOf(effect))
     }
 
     override fun onFingerprintEnabled(

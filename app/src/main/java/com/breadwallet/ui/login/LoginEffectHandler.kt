@@ -25,7 +25,6 @@
 package com.breadwallet.ui.login
 
 import android.content.Context
-import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.EventUtils
@@ -54,7 +53,6 @@ class LoginEffectHandler(
             LoginEffect.LoadLoginPreferences -> loadLoginPreferences()
             LoginEffect.AuthenticationSuccess -> launch(Dispatchers.Main) { unlockWalletAnimation() }
             LoginEffect.ShowFingerprintController -> launch(Dispatchers.Main) { showFingerprintPrompt() }
-            is LoginEffect.ProcessUrl -> processUrl(value)
             is LoginEffect.TrackEvent -> trackEvent(value)
         }
     }
@@ -78,13 +76,6 @@ class LoginEffectHandler(
                 BRSharedPrefs.wasAppBackgroundedFromHome(),
                 BRSharedPrefs.getCurrentWalletCurrencyCode()
             )
-        )
-    }
-
-    private fun processUrl(effect: LoginEffect.ProcessUrl) {
-        AppEntryPointHandler.processDeepLink(
-            context,
-            effect.url
         )
     }
 

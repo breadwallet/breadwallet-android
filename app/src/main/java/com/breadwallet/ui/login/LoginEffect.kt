@@ -33,7 +33,7 @@ sealed class LoginEffect {
     object AuthenticationSuccess : LoginEffect()
     object AuthenticationFailed : LoginEffect()
     data class GoToWallet(val currencyCode: String) : LoginEffect()
-    data class ProcessUrl(val url: String) : LoginEffect()
+    data class GoToDeepLink(val url: String) : LoginEffect()
     data class TrackEvent(
         val eventName: String,
         val attributes: Map<String, String>? = null

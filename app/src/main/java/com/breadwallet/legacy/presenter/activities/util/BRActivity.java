@@ -94,9 +94,7 @@ public abstract class BRActivity extends FragmentActivity {
 
                 // Check if the only required permission has been granted.
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Camera permission has been granted, preview can be displayed.
-                    Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                    UiUtils.openScanner(this);
+                    // TODO: Remove this logic
                 } else {
                     Log.i(TAG, "CAMERA permission was NOT granted.");
                     BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));

@@ -29,26 +29,33 @@ import android.os.Bundle
 import android.view.MotionEvent
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
+import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
-import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
-import com.breadwallet.tools.manager.AppEntryPointHandler
+import com.breadwallet.protocols.messageexchange.MessageExchangeService
+import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.tools.util.asLink
+import com.breadwallet.ui.importwallet.ImportWalletController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.ui.recovery.RecoveryKeyModel
+import com.breadwallet.ui.scanner.ScannerController
+import com.breadwallet.ui.send.SendSheetController
 
 /**
  * The main user entrypoint into the app.
@@ -60,7 +67,6 @@ class MainActivity : BRActivity() {
 
     companion object {
         const val EXTRA_DATA = "com.breadwallet.ui.MainActivity.EXTRA_DATA"
-        const val EXTRA_CRYPTO_REQUEST = "com.breadwallet.ui.MainActivity.EXTRA_CRYPTO_REQUEST"
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
         const val EXTRA_RECOVER_PHRASE = "com.breadwallet.ui.MainActivity.EXTRA_RECOVER_PHRASE"
@@ -118,8 +124,6 @@ class MainActivity : BRActivity() {
                     .popChangeHandler(FadeChangeHandler())
                     .pushChangeHandler(FadeChangeHandler())
             )
-        } else {
-            // TODO: open browser for the new intent
         }
 
         if (BuildConfig.DEBUG) {
@@ -163,16 +167,26 @@ class MainActivity : BRActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent ?: return
-        val request = intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST)
-        if (request is CryptoRequest) {
-            intent.removeExtra(EXTRA_CRYPTO_REQUEST)
-            // TODO: Create backstack and handle request when Send
-            //   fragment is converted to a controller.
-        }
 
-        val url = processIntentData(intent)
-        if (!url.isNullOrBlank()) {
-            AppEntryPointHandler.processDeepLink(this, url)
+        val data = processIntentData(intent) ?: ""
+        if (data.isNotBlank()) {
+            val hasNoRoot = !router.hasRootController()
+            val topIsLogin = router.backstack.first().controller() is LoginController
+            val controller = if (hasNoRoot || topIsLogin) {
+                LoginController(data)
+            } else {
+                data.asLink()?.run(this::handleLink)
+            } ?: return
+
+            val transaction = RouterTransaction.with(controller)
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+
+            if (topIsLogin) {
+                router.replaceTopController(transaction)
+            } else {
+                router.pushController(transaction)
+            }
         }
     }
 
@@ -186,10 +200,42 @@ class MainActivity : BRActivity() {
             EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
         }
 
-        var data: String? = intent.getStringExtra(EXTRA_DATA)
-        if (data.isNullOrBlank()) {
-            data = intent.dataString
+        val data = intent.getStringExtra(EXTRA_DATA)
+        return if (data.isNullOrBlank()) {
+            intent.dataString
+        } else data
+    }
+
+    @Suppress("ComplexMethod")
+    private fun handleLink(link: Link): Controller? {
+        return when (link) {
+            is Link.ImportWallet -> ImportWalletController(link.privateKey)
+            is Link.CryptoRequestUrl -> SendSheetController(link)
+            is Link.WalletPairUrl -> {
+                MessageExchangeService.enqueueWork(
+                    applicationContext, MessageExchangeService.createIntent(
+                        applicationContext,
+                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
+                        link.pairingMetaData
+                    )
+                )
+                null
+            }
+            is Link.PlatformUrl -> {
+                UiUtils.startPlatformBrowser(this, link.url)
+                null
+            }
+            is Link.PlatformDebugUrl -> {
+                if (!link.webBundleUrl.isNullOrBlank()) {
+                    ServerBundlesHelper.setWebPlatformDebugURL(this, link.webBundleUrl)
+                } else if (!link.webBundle.isNullOrBlank()) {
+                    ServerBundlesHelper.setDebugBundle(this, ServerBundlesHelper.Type.WEB, link.webBundle)
+                }
+                null
+            }
+            is Link.BreadUrl.ScanQR -> ScannerController()
+            is Link.BreadUrl.Address -> null
+            is Link.BreadUrl.AddressList -> null
         }
-        return data
     }
 }

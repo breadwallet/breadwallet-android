@@ -32,7 +32,6 @@ import android.content.Intent
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
 import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
-import com.breadwallet.legacy.presenter.activities.settings.ImportActivity
 import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
 import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity
@@ -41,12 +40,10 @@ import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.manager.AppEntryPointHandler
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.notification.InAppNotificationActivity
-import com.breadwallet.ui.send.SendSheetController
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
@@ -108,40 +105,18 @@ class NavigationEffectHandler(
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) = Unit
 
-    override fun goToSend(effect: NavigationEffect.GoToSend) {
-        /* TODO: This will be moved to RouterNavigationEffectHandler when send becomes a controller
-        val cryptoRequest = effect.cryptoRequest
-        if (!FragmentSend.isIsSendShown()) {
-            FragmentSend.setIsSendShown(true)
-            Handler().postDelayed({
-                var fragmentSend = activity.supportFragmentManager
-                        .findFragmentByTag(FragmentSend::class.java.name) as? FragmentSend
-                if (fragmentSend == null) {
-                    fragmentSend = FragmentSend()
-                }
-
-                if (cryptoRequest != null) {
-                    val arguments = Bundle()
-                    arguments.putSerializable(WalletController.EXTRA_CRYPTO_REQUEST, cryptoRequest)
-                    fragmentSend.arguments = arguments
-                }
-
-                if (!fragmentSend.isAdded) {
-                    activity.supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                            .add(android.R.id.content, fragmentSend, FragmentSend::class.java.name)
-                            .addToBackStack(FragmentSend::class.java.name).commit()
-                }
-            }, SEND_SHOW_DELAY.toLong())
-        }*/
-    }
+    override fun goToSend(effect: NavigationEffect.GoToSend) = Unit
 
     override fun goToReceive(effect: NavigationEffect.GoToReceive) = Unit
 
     override fun goToTransaction(effect: NavigationEffect.GoToTransaction) = Unit
 
     override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
-        AppEntryPointHandler.processDeepLink(activity, effect.url)
+        val context = activity.applicationContext
+        Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putExtra(MainActivity.EXTRA_DATA, effect.url)
+            .run(context::startActivity)
     }
 
     override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) {
@@ -181,9 +156,7 @@ class NavigationEffectHandler(
         UiUtils.showWalletDisabled(activity)
     }
 
-    override fun goToQrScan() {
-        UiUtils.openScanner(activity, SendSheetController.QR_SCAN_RC) // TODO: use controller
-    }
+    override fun goToQrScan() = Unit
 
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) = Unit
 
@@ -221,10 +194,7 @@ class NavigationEffectHandler(
 
     override fun goToOnboarding() = Unit
 
-    override fun goToImportWallet() {
-        activity.startActivity(Intent(activity, ImportActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToImportWallet() = Unit
 
     override fun goToSyncBlockchain() {
         activity.startActivity(Intent(activity, SyncBlockchainActivity::class.java))
