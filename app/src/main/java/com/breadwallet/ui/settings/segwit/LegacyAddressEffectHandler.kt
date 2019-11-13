@@ -33,7 +33,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.qrcode.QRUtils
-import com.breadwallet.util.CryptoUriParser2
+import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 class LegacyAddressEffectHandler(
     private val output: Consumer<LegacyAddressEvent>,
     private val breadBox: BreadBox,
-    private val cryptoUriParser: CryptoUriParser2,
+    private val cryptoUriParser: CryptoUriParser,
     private val activity: Activity,
     private val showAddressCopiedAnimation: () -> Unit
 ) : Connection<LegacyAddressEffect>, CoroutineScope {

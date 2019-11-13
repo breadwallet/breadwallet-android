@@ -46,7 +46,7 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.installHooks
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
-import com.breadwallet.util.CryptoUriParser2
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.ExperimentsRepository
@@ -323,8 +323,8 @@ class BreadApp : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
         importOnce(androidSupportModule(this@BreadApp))
 
-        bind<CryptoUriParser2>() with singleton {
-            CryptoUriParser2(instance())
+        bind<CryptoUriParser>() with singleton {
+            CryptoUriParser(instance())
         }
 
         bind<APIClient>() with singleton {
@@ -342,8 +342,6 @@ class BreadApp : Application(), KodeinAware {
         }
 
         val metaDataManager by lazy { MetaDataManager(direct.instance()) }
-
-        bind<MetaDataManager>() with singleton { metaDataManager }
 
         bind<WalletProvider>() with singleton { metaDataManager }
 

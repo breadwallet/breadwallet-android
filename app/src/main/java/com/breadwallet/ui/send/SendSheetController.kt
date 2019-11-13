@@ -24,8 +24,6 @@
  */
 package com.breadwallet.ui.send
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -34,6 +32,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBoxEffect
 import com.breadwallet.breadbox.BreadBoxEffectHandler
@@ -50,15 +49,15 @@ import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange
 import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.ECONOMY
 import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.PRIORITY
@@ -72,19 +71,19 @@ import org.kodein.di.erased.instance
 import java.math.BigDecimal
 import java.util.Locale
 
+private const val CURRENCY_CODE = "CURRENCY_CODE"
+private const val CRYPTO_REQUEST = "CRYPTO_REQUEST"
+private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
+
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
 class SendSheetController(args: Bundle? = null) :
     BaseMobiusController<SendSheetModel, SendSheetEvent, SendSheetEffect>(args),
     AuthenticationController.Listener,
-    AlertDialogController.Listener {
+    AlertDialogController.Listener,
+    ScannerController.Listener {
 
     companion object {
-        private const val CURRENCY_CODE = "CURRENCY_CODE"
-        private const val CRYPTO_REQUEST = "CRYPTO_REQUEST"
-
-        const val QR_SCAN_RC = 350
-
         const val DIALOG_NO_ETH_FOR_TOKEN_TRANSFER = "adjust_for_fee"
     }
 
@@ -101,15 +100,22 @@ class SendSheetController(args: Bundle? = null) :
         )
     )
 
+    /** A [SendSheetController] to fulfill the provided [Link.CryptoRequestUrl]. */
+    constructor(link: Link.CryptoRequestUrl) : this(
+        bundleOf(
+            CURRENCY_CODE to link.currencyCode,
+            CRYPTO_REQUEST_LINK to link
+        )
+    )
+
     init {
         overridePushHandler(BottomSheetChangeHandler())
         overridePopHandler(BottomSheetChangeHandler())
-
-        registerForActivityResult(QR_SCAN_RC)
     }
 
     private val currencyCode = arg<String>(CURRENCY_CODE)
     private val cryptoRequest = argOptional<CryptoRequest>(CRYPTO_REQUEST)
+    private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
     override val init = SendSheetInit
@@ -117,10 +123,9 @@ class SendSheetController(args: Bundle? = null) :
     override val defaultModel: SendSheetModel
         get() {
             val fiatCode = BRSharedPrefs.getPreferredFiatIso()
-            return cryptoRequest?.asSendSheetModel(fiatCode) ?: SendSheetModel.createDefault(
-                currencyCode,
-                fiatCode
-            )
+            return cryptoRequest?.asSendSheetModel(fiatCode)
+                ?: cryptoRequestLink?.asSendSheetModel(fiatCode)
+                ?: SendSheetModel.createDefault(currencyCode, fiatCode)
         }
 
     override val effectHandler: Connectable<SendSheetEffect, SendSheetEvent> =
@@ -128,12 +133,10 @@ class SendSheetController(args: Bundle? = null) :
             nestedConnectable({
                 SendTxEffectHandler(
                     Consumer { event ->
-                        eventConsumer.accept(
-                            when (event) {
-                                is SendTx.Result.Success -> SendSheetEvent.OnSendComplete
-                                is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
-                            }
-                        )
+                        when (event) {
+                            is SendTx.Result.Success -> SendSheetEvent.OnSendComplete
+                            is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
+                        }.run(eventConsumer::accept)
                     },
                     controllerScope,
                     direct.instance(),
@@ -147,7 +150,17 @@ class SendSheetController(args: Bundle? = null) :
                     else -> null
                 }
             }),
-            Connectable { SendSheetEffectHandler(it, activity!!, direct.instance(), router) },
+            Connectable { output ->
+                SendSheetEffectHandler(output, activity!!, direct.instance(), router) {
+                    val controller = ScannerController()
+                    controller.targetController = this
+                    router.pushController(
+                        RouterTransaction.with(controller)
+                            .popChangeHandler(FadeChangeHandler())
+                            .pushChangeHandler(FadeChangeHandler())
+                    )
+                }
+            },
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
                 BreadBoxEffectHandler(output, currencyCode, direct.instance())
             }, { effect: SendSheetEffect ->
@@ -163,14 +176,6 @@ class SendSheetController(args: Bundle? = null) :
                     else -> null
                 } as? SendSheetEvent
             }),
-            nestedConnectable({
-                direct.instance<NavigationEffectHandler>()
-            }) { effect: SendSheetEffect ->
-                when (effect) {
-                    SendSheetEffect.GoToScan -> NavigationEffect.GoToQrScan
-                    else -> null
-                }
-            },
             nestedConnectable({
                 direct.instance<RouterNavigationEffectHandler>()
             }) { effect ->
@@ -201,16 +206,6 @@ class SendSheetController(args: Bundle? = null) :
     override fun onDetach(view: View) {
         super.onDetach(view)
         Utils.hideKeyboard(activity)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == QR_SCAN_RC && resultCode == Activity.RESULT_OK) {// TODO const, handle failure?
-            val cryptoRequest =
-                data?.extras?.get(MainActivity.EXTRA_CRYPTO_REQUEST) as? CryptoRequest ?: return
-            if (cryptoRequest.address.isNullOrBlank()) return
-            eventConsumer.accept(SendSheetEvent.OnAddressPasted.ValidAddress(cryptoRequest.address))
-        }
     }
 
     @Suppress("ComplexMethod")
@@ -434,6 +429,16 @@ class SendSheetController(args: Bundle? = null) :
         groupAmountSection.isVisible = show
         if (show) {
             Utils.hideKeyboard(activity)
+        }
+    }
+
+    override fun onLinkScanned(link: Link) {
+        if (link is Link.CryptoRequestUrl) {
+            SendSheetEvent.OnRequestScanned(
+                currencyCode = link.currencyCode,
+                amount = link.amount,
+                targetAddress = link.address
+            ).run(eventConsumer::accept)
         }
     }
 

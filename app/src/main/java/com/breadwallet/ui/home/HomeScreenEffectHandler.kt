@@ -45,7 +45,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.platform.interfaces.MetaDataManager
+import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -75,7 +75,7 @@ class HomeScreenEffectHandler(
     private val context: Context,
     private val breadBox: BreadBox,
     private val walletProvider: WalletProvider,
-    private val metadataManager: MetaDataManager
+    private val accountMetaDataProvider: AccountMetaDataProvider
 ) : Connection<HomeScreenEffect>,
     CoroutineScope,
     RatesDataSource.OnDataChanged {
@@ -99,7 +99,9 @@ class HomeScreenEffectHandler(
                 value.attributes
             )
             is HomeScreenEffect.UpdateWalletOrder -> {
-                metadataManager.reorderWallets(value.orderedCurrencyIds).launchIn(this)
+                accountMetaDataProvider
+                    .reorderWallets(value.orderedCurrencyIds)
+                    .launchIn(this)
             }
         }
     }

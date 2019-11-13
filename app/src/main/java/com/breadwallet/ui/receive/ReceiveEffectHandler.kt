@@ -35,7 +35,7 @@ import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.util.CryptoUriParser2
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connection
@@ -62,7 +62,7 @@ class ReceiveEffectHandler(
     private val currencyCode: CurrencyCode,
     private val fiatCode: String,
     private val breadBox: BreadBox,
-    private val cryptoUriParser: CryptoUriParser2,
+    private val cryptoUriParser: CryptoUriParser,
     private val activity: Activity
 ) : Connection<ReceiveEffect>, CoroutineScope {
 

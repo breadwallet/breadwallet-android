@@ -1,6 +1,7 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
 import java.math.BigDecimal
 
@@ -9,6 +10,12 @@ import java.math.BigDecimal
     baseEffect = SendSheetEffect::class
 )
 sealed class SendSheetEvent {
+
+    data class OnRequestScanned(
+        val currencyCode: CurrencyCode,
+        val amount: BigDecimal?,
+        val targetAddress: String?
+    ) : SendSheetEvent()
 
     data class OnExchangeRateUpdated(
         val fiatPricePerUnit: BigDecimal
@@ -34,7 +41,8 @@ sealed class SendSheetEvent {
 
     data class OnAddressValidated(
         val address: String,
-        val isValid: Boolean
+        val isValid: Boolean,
+        val clear: Boolean
     ) : SendSheetEvent() {
         override fun toString() = "OnAddressValidated(isValid=$isValid)"
     }

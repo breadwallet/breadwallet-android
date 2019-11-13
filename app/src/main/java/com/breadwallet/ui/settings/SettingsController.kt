@@ -78,14 +78,12 @@ class SettingsController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
             when (effect) {
-                SettingsEffect.GoToQrScan -> NavigationEffect.GoToQrScan
                 SettingsEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
                 SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
                 SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
                 SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
-                SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 else -> null
@@ -93,6 +91,7 @@ class SettingsController(args: Bundle? = null) :
         }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                SettingsEffect.GoToQrScan -> NavigationEffect.GoToQrScan
                 SettingsEffect.GoToSupport -> NavigationEffect.GoToFaq("")
                 is SettingsEffect.GoToSection -> NavigationEffect.GoToMenu(effect.section)
                 SettingsEffect.GoBack -> NavigationEffect.GoBack
@@ -103,6 +102,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
                 SettingsEffect.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
                 SettingsEffect.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
+                SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 else -> null
             }
         })
