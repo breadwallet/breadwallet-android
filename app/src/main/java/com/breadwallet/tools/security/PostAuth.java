@@ -167,7 +167,9 @@ public class PostAuth {
 
     @WorkerThread
     public void onPublishTxAuth(final Context context, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
-        if (completion != null) {
+        /*
+        if (completion != null){
+
             mSendCompletion = completion;
         }
         if (wm != null) mWalletManager = wm;
@@ -263,7 +265,7 @@ public class PostAuth {
         } finally {
             mCryptoRequest = null;
         }
-
+        */
     }
 
     private void continueWithPayment(final Context context, byte[] rawPhrase, CryptoTransaction transaction) {
@@ -291,13 +293,13 @@ public class PostAuth {
     }
 
     public static void stampMetaData(byte[] txHash) {
-        if (mTxMetaData != null) {
+        /*if (mTxMetaData != null) {
             AccountMetaDataProvider metadataProvider =
                     BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
             metadataProvider.putTxMetaData(mTxMetaData, txHash);
         } else {
             Log.e(TAG, "stampMetaData: mTxMetaData is null!");
-        }
+        }*/
     }
 
     public void onPaymentProtocolRequest(final Context context, boolean authAsked, CryptoTransaction transaction) {

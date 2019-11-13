@@ -91,7 +91,7 @@ open class WalletController(
             // into WalletEffects and passed to WalletEffectHandler
             // (events produced are converted into WalletScreenEvents)
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance())
+                BreadBoxEffectHandler(output, currencyCode, direct.instance(), direct.instance())
             }, { effect: WalletScreenEffect ->
                 // Map incoming effect
                 when (effect) {

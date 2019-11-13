@@ -160,12 +160,14 @@ class TxDetailsController(
 
         // TODO: Cleanup when memo is functional
         // Update the memo field on the transaction and save it
-        val txHash = transferHash.toByteArray()
+        val txHash = transferHash
         metaDataProvider.getTxMetaData(txHash)?.let { txMetaData ->
             val memo = memo_input.text.toString()
             if (memo.isNotEmpty()) {
-                txMetaData.comment = memo
-                metaDataProvider.putTxMetaData(txMetaData, txHash)
+                val updatedMetaData = txMetaData.copy(
+                    comment = memo
+                )
+                metaDataProvider.putTxMetaData(updatedMetaData, txHash)
             }
         }
 
@@ -273,7 +275,7 @@ class TxDetailsController(
         val fiatAmountNow = BigDecimal.ZERO// TODO: get Fiat now
 
         val fiatAmountWhenSent: BigDecimal
-        val metaData = metaDataProvider.getTxMetaData(transferHash.toByteArray())
+        val metaData = metaDataProvider.getTxMetaData(transferHash)
         val hasData = metaData?.run {
             exchangeRate == 0.0 || exchangeCurrency.isNullOrBlank()
         } ?: false
@@ -350,7 +352,7 @@ class TxDetailsController(
         }
 
         // Set the memo text if one is available
-        mTxMetaData = metaDataProvider.getTxMetaData(transferHash.toByteArray())
+        mTxMetaData = metaDataProvider.getTxMetaData(transferHash)
         mTxMetaData?.let { txMetaData ->
             memo_input.setText(txMetaData.comment ?: "")
 
