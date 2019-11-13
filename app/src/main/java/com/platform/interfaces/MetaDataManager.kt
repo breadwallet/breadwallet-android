@@ -1,18 +1,12 @@
 package com.platform.interfaces
 
-import android.content.Context
-import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager
-import com.breadwallet.legacy.wallet.wallets.CryptoTransaction
+import com.breadwallet.crypto.Coder
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
-import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.CryptoHelper
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.platform.entities.TxMetaData
@@ -28,7 +22,6 @@ import kotlinx.coroutines.flow.onStart
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.math.BigDecimal
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -80,9 +73,10 @@ class MetaDataManager(
             .onStart {
                 emit(
                     getOrSync(
-                        KEY_WALLET_INFO,
-                        WalletInfoData().toJSON()
-                    ).run(::WalletInfoData)
+                        KEY_WALLET_INFO
+                    )
+                    { WalletInfoData().toJSON() }
+                    !!.run(::WalletInfoData)
                 )
             }
             .distinctUntilChanged()
@@ -105,9 +99,10 @@ class MetaDataManager(
             .onStart {
                 emit(
                     getOrSync(
-                        KEY_ASSET_INDEX,
-                        enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets())
-                    ).run {
+                        KEY_ASSET_INDEX
+                    )
+                    { enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets()) }
+                    !!.run {
                         jsonToEnabledWallets(this)
                     }
                 )
@@ -179,25 +174,37 @@ class MetaDataManager(
             )
         )
 
-    override fun getTxMetaData(txHash: ByteArray): TxMetaData? =
-        storeProvider.get(getTxMetaDataKey(txHash))?.run(::TxMetaData)
+    // TODO: Likely convert into flow
+    override fun getTxMetaData(txHash: String): TxMetaData? {
+        val key = getTxMetaDataKey(txHash)
+        var metaData = storeProvider.get(key)
+        if (metaData == null) {
+            metaData = storeProvider.get(getTxMetaDataKey(txHash, true))
+                ?.apply {
+                    storeProvider.put(key, this)
+                }
+        }
+        return metaData?.run { TxMetaData.fromJsonObject(this) }
+    }
 
-    override fun putTxMetaData(newTxMetaData: TxMetaData, txHash: ByteArray) {
-        var oldTxMetaData = getTxMetaData(txHash)
+    override fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String) {
+        var txMetaData = getTxMetaData(txHash)
 
         var needsUpdate = false
-        if (oldTxMetaData == null) {
+        if (txMetaData == null) {
             needsUpdate = true
-            oldTxMetaData = newTxMetaData
+            txMetaData = newTxMetaData
         } else {
-            val finalComment = getFinalValue(newTxMetaData.comment, oldTxMetaData.comment)
-            if (finalComment != null) {
-                oldTxMetaData.comment = finalComment
+            if (newTxMetaData.comment != txMetaData.comment && newTxMetaData != null) {
+                txMetaData = txMetaData.copy(
+                    comment = txMetaData.comment
+                )
                 needsUpdate = true
             }
-            // If rate wasn't persisted at time of creating the txn, need to update it
-            if (oldTxMetaData.exchangeRate == 0.0 && newTxMetaData.exchangeRate != 0.0) {
-                oldTxMetaData.exchangeRate = newTxMetaData.exchangeRate
+            if (txMetaData.exchangeRate == 0.0 && newTxMetaData.exchangeRate != 0.0) {
+                txMetaData = txMetaData.copy(
+                    exchangeRate = newTxMetaData.exchangeRate
+                )
                 needsUpdate = true
             }
         }
@@ -205,7 +212,7 @@ class MetaDataManager(
         if (needsUpdate) {
             val key = getTxMetaDataKey(txHash)
             logDebug("updating txMetadata for : $key")
-            storeProvider.put(key, oldTxMetaData.toJSON())
+            storeProvider.put(key, txMetaData.toJSON())
         }
     }
 
@@ -286,19 +293,16 @@ class MetaDataManager(
         }
     }
 
-    private fun getFinalValue(newVal: String?, oldVal: String?): String? =
-        when (newVal) {
-            null, oldVal -> null
-            else -> newVal
-        }
-
-    private suspend fun getOrSync(key: String, defaultValue: JSONObject): JSONObject {
+    private suspend fun getOrSync(key: String, defaultProducer: (() -> JSONObject)?): JSONObject? {
         var value = storeProvider.get(key) ?: storeProvider.sync(key)
         return when (value) {
             null -> {
-                logDebug("Sync failed. Putting default value: $key -> $defaultValue")
-                storeProvider.put(key, defaultValue)
-                defaultValue
+                defaultProducer
+                    ?.invoke()
+                    ?.also {
+                        logDebug("Sync returned null. Putting default value: $key -> $it")
+                        storeProvider.put(key, it)
+                    }
             }
             else -> value
         }
@@ -325,6 +329,7 @@ class MetaDataManager(
         return json
     }
 
+    /*
     // TODO: refactor to avoid wallet manager
     fun createMetadata(
         app: Context,
@@ -354,9 +359,20 @@ class MetaDataManager(
             classVersion = 1
         }
     }
+    */
 
-    private fun getTxMetaDataKey(txHash: ByteArray): String =
-        TX_META_DATA_KEY_PREFIX + Utils.bytesToHex(CryptoHelper.sha256(txHash)!!)
+    private fun getTxMetaDataKey(txHash: String, legacy: Boolean = false): String =
+        TX_META_DATA_KEY_PREFIX + if (legacy) {
+            Utils.bytesToHex(CryptoHelper.sha256(txHash.toByteArray())!!)
+        } else {
+            CryptoHelper.hexDecode(txHash)
+                .apply {
+                    reverse()
+                }
+                .run(CryptoHelper::sha256)
+                ?.run(CryptoHelper::hexEncode)
+                ?: ""
+        }
 
     private fun pairingKey(pubKey: ByteArray): String =
         PAIRING_META_DATA_KEY_PREFIX + CryptoHelper.hexEncode(CryptoHelper.sha256(pubKey)!!)
