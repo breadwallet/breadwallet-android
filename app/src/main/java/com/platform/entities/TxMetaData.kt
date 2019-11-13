@@ -28,18 +28,22 @@
  */
 package com.platform.entities
 
+import com.platform.util.getDoubleOrDefault
+import com.platform.util.getIntOrDefault
+import com.platform.util.getStringOrNull
 import org.json.JSONObject
 
+@Suppress("ComplexMethod")
 data class TxMetaData(
-        var deviceId: String? = null,
-        var comment: String? = null,
-        var exchangeCurrency: String? = null,
-        var classVersion: Int = 0,
-        var blockHeight: Int = 0,
-        var exchangeRate: Double = 0.toDouble(),
-        var fee: String? = null,
-        var txSize: Int = 0,
-        var creationTime: Int = 0
+    val deviceId: String? = null,
+    val comment: String? = null,
+    val exchangeCurrency: String? = null,
+    val classVersion: Int = 0,
+    val blockHeight: Int = 0,
+    val exchangeRate: Double = 0.toDouble(),
+    val fee: String? = null,
+    val txSize: Int = 0,
+    val creationTime: Int = 0
 ) {
     companion object {
         private const val CLASS_VERSION = "classVersion"
@@ -51,6 +55,20 @@ data class TxMetaData(
         private const val TX_SIZE = "s"
         private const val CREATION_TIME = "c"
         private const val DEVICE_ID = "dId"
+
+        fun fromJsonObject(json: JSONObject): TxMetaData = json.run {
+            TxMetaData(
+                deviceId = getStringOrNull(DEVICE_ID),
+                comment = getStringOrNull(COMMENT),
+                exchangeCurrency = getStringOrNull(EXCHANGE_CURRENCY),
+                classVersion = getIntOrDefault(CLASS_VERSION),
+                blockHeight = getIntOrDefault(BLOCK_HEIGHT),
+                exchangeRate = getDoubleOrDefault(EXCHANGE_RATE),
+                fee = getStringOrNull(FEE_RATE),
+                txSize = getIntOrDefault(TX_SIZE),
+                creationTime = getIntOrDefault(CREATION_TIME)
+            )
+        }
     }
 
     /**
@@ -70,45 +88,17 @@ data class TxMetaData(
      * }
     </UUID></txHash> */
 
-    constructor(txJSON: JSONObject): this() {
-        if (txJSON.has(CLASS_VERSION)) {
-            classVersion = txJSON.getInt(CLASS_VERSION)
-        }
-        if (txJSON.has(BLOCK_HEIGHT)) {
-            blockHeight = txJSON.getInt(BLOCK_HEIGHT)
-        }
-        if (txJSON.has(EXCHANGE_RATE)) {
-            exchangeRate = txJSON.getDouble(EXCHANGE_RATE)
-        }
-        if (txJSON.has(EXCHANGE_CURRENCY)) {
-            exchangeCurrency = txJSON.getString(EXCHANGE_CURRENCY)
-        }
-        if (txJSON.has(COMMENT)) {
-            comment = txJSON.getString(COMMENT)
-        }
-        if (txJSON.has(FEE_RATE)) {
-            fee = txJSON.getString(FEE_RATE)
-        }
-        if (txJSON.has(TX_SIZE)) {
-            txSize = txJSON.getInt(TX_SIZE)
-        }
-        if (txJSON.has(CREATION_TIME)) {
-            creationTime = txJSON.getInt(CREATION_TIME)
-        }
-        if (txJSON.has(DEVICE_ID)) {
-            deviceId = txJSON.getString(DEVICE_ID)
-        }
-    }
-
-    fun toJSON(): JSONObject = JSONObject(mapOf(
-        CLASS_VERSION to classVersion,
-        BLOCK_HEIGHT to blockHeight,
-        EXCHANGE_RATE to exchangeRate,
-        EXCHANGE_CURRENCY to (exchangeCurrency ?: ""),
-        FEE_RATE to fee,
-        TX_SIZE to txSize,
-        CREATION_TIME to creationTime,
-        DEVICE_ID to (deviceId ?: ""),
-        COMMENT to (comment ?: "")
-    ))
+    fun toJSON(): JSONObject = JSONObject(
+        mapOf(
+            CLASS_VERSION to classVersion,
+            BLOCK_HEIGHT to blockHeight,
+            EXCHANGE_RATE to exchangeRate,
+            EXCHANGE_CURRENCY to (exchangeCurrency ?: ""),
+            FEE_RATE to fee,
+            TX_SIZE to txSize,
+            CREATION_TIME to creationTime,
+            DEVICE_ID to (deviceId ?: ""),
+            COMMENT to (comment ?: "")
+        )
+    )
 }
