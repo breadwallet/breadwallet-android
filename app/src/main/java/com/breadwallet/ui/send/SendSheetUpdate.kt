@@ -72,14 +72,16 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                             )
                         )
                     else -> next(
-                        newModel, setOf<SendSheetEffect>(
-                            SendSheetEffect.EstimateFee(
-                                newModel.currencyCode,
-                                newModel.targetAddress,
-                                newModel.amount,
-                                newModel.transferSpeed
-                            )
-                        )
+                        newModel, mutableSetOf<SendSheetEffect>().apply {
+                            if (!newModel.amount.isZero() && !newModel.isTotalCostOverBalance) {
+                                SendSheetEffect.EstimateFee(
+                                    newModel.currencyCode,
+                                    newModel.targetAddress,
+                                    newModel.amount,
+                                    newModel.transferSpeed
+                                ).run(this::add)
+                            }
+                        }
                     )
                 }
             }
@@ -550,6 +552,11 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         if (addressChanged || stateUnchanged) return noChange()
         return next(
             model.copy(
+                targetAddress = if (event.clear) {
+                    ""
+                } else {
+                    model.targetAddress
+                },
                 isTargetValid = event.isValid,
                 targetInputError = if (event.isValid) null
                 else SendSheetModel.InputError.Invalid
@@ -562,5 +569,47 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         event: SendSheetEvent.OnAuthenticationSettingsUpdated
     ): Next<SendSheetModel, SendSheetEffect> {
         return next(model.copy(isFingerprintAuthEnable = event.isFingerprintEnable))
+    }
+
+    override fun onRequestScanned(
+        model: SendSheetModel,
+        event: SendSheetEvent.OnRequestScanned
+    ): Next<SendSheetModel, SendSheetEffect> {
+        if (!event.currencyCode.equals(model.currencyCode, ignoreCase = true)) {
+            return noChange()
+        }
+        val amount = event.amount ?: model.amount
+        val rawAmount = event.amount?.stripTrailingZeros()?.toPlainString() ?: model.rawAmount
+        return next(
+            model.copy(
+                isAmountCrypto = true,
+                targetAddress = event.targetAddress ?: "",
+                amount = amount,
+                rawAmount = rawAmount,
+                fiatAmount = if (model.fiatPricePerUnit > BigDecimal.ZERO) {
+                    amount.setScale(2, BRConstants.ROUNDING_MODE) * model.fiatPricePerUnit
+                } else {
+                    model.fiatAmount
+                }
+            ),
+            mutableSetOf<SendSheetEffect>().apply {
+                if (event.targetAddress != null) {
+                    SendSheetEffect.ValidateAddress(
+                        currencyCode = model.currencyCode,
+                        address = event.targetAddress,
+                        clearWhenInvalid = true
+                    ).let(this::add)
+
+                    if (!amount.isZero()) {
+                        SendSheetEffect.EstimateFee(
+                            currencyCode = model.currencyCode,
+                            address = event.targetAddress,
+                            amount = amount,
+                            transferSpeed = model.transferSpeed
+                        ).let(this::add)
+                    }
+                }
+            }
+        )
     }
 }

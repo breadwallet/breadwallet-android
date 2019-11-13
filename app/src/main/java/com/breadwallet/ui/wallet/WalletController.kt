@@ -59,7 +59,7 @@ import java.util.Locale
  * TODO: Remaining work: Make review prompt a controller.
  */
 open class WalletController(
-    args: Bundle? = null
+    args: Bundle
 ) : BaseMobiusController<WalletScreenModel, WalletScreenEvent, WalletScreenEffect>(args) {
 
     constructor(currencyCode: String) : this(

@@ -3,6 +3,7 @@ package com.breadwallet.ui.send
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.send.SendSheetModel.TransferSpeed
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
@@ -207,10 +208,23 @@ data class SendSheetModel(
     }
 }
 
+fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
+    // TODO: Handle all request params
+    SendSheetModel(
+        currencyCode = currencyCode,
+        fiatCode = fiatCode,
+        isAmountCrypto = true,
+        amount = amount ?: BigDecimal.ZERO,
+        rawAmount = amount?.stripTrailingZeros()?.toPlainString() ?: "",
+        targetAddress = address ?: ""
+    )
+
 fun CryptoRequest.asSendSheetModel(fiatCode: String) =
     SendSheetModel(
         currencyCode = currencyCode,
         fiatCode = fiatCode,
-        amount = amount,
+        isAmountCrypto = true,
+        amount = amount ?: value ?: BigDecimal.ZERO,
+        rawAmount = (amount ?: value)?.stripTrailingZeros()?.toPlainString() ?: "",
         targetAddress = if (hasAddress()) getAddress(false) else ""
     )

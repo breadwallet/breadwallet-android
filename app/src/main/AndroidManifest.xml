@@ -71,7 +71,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -81,35 +81,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="bitcoin" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
+                <data android:host="*" />
+                <data android:scheme="bitcoin"/>
                 <data android:scheme="bread" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="bitcoincash" />
-
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="bchtest" />
-
+                <data android:scheme="ethereum" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -120,42 +99,20 @@
                     android:pathPrefix="/scanqr"
                     android:scheme="https" />
 
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/x/platform"
                     android:scheme="https" />
-
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/x/link-wallet"
                     android:scheme="https" />
 
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="brd.com"
                     android:pathPrefix="/x/debug"
                     android:scheme="https" />
-
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -165,10 +122,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity
-            android:name=".legacy.presenter.activities.settings.ImportActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".legacy.presenter.activities.settings.NotificationActivity"
             android:launchMode="singleTask"
@@ -207,10 +160,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.recovery.RecoveryKeyActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.camera.ScanQRActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <!-- Use launchMode="standard for WebViewActivity in order to be able to have multiple instances" -->

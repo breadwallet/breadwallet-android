@@ -32,7 +32,7 @@ import androidx.core.view.isVisible
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.util.CryptoUriParser2
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SlideDetector
@@ -80,7 +80,7 @@ class ReceiveController(
     }
 
     private val currencyCode: String = arg(EXTRA_CURRENCY_CODE)
-    private val cryptoUriParser by instance<CryptoUriParser2>()
+    private val cryptoUriParser by instance<CryptoUriParser>()
 
     override val layoutId = R.layout.controller_receive
 

@@ -94,7 +94,8 @@ class LoginController(args: Bundle? = null) :
         }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                LoginEffect.AuthenticationSuccess -> NavigationEffect.GoToHome
+                is LoginEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                LoginEffect.GoToHome -> NavigationEffect.GoToHome
                 else -> null
             }
         })
