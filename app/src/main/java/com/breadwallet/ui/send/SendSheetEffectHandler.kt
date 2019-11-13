@@ -1,8 +1,10 @@
 package com.breadwallet.ui.send
 
+import android.app.Activity
 import android.content.Context
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
@@ -16,11 +18,13 @@ import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
+import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
+import com.breadwallet.ui.scanner.ScannerController
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -49,7 +53,8 @@ class SendSheetEffectHandler(
     private val output: Consumer<SendSheetEvent>,
     private val context: Context,
     private val breadBox: BreadBox,
-    private val router: Router
+    private val router: Router,
+    private val launchScanner: () -> Unit
 ) : Connection<SendSheetEffect>, CoroutineScope {
 
     companion object {
@@ -78,6 +83,7 @@ class SendSheetEffectHandler(
             is SendSheetEffect.EstimateFee -> feeEstimateChannel.offer(effect)
             is SendSheetEffect.LoadExchangeRate -> loadExchangeRate(effect)
             is SendSheetEffect.ParseClipboardData -> parseClipboardData(effect)
+            is SendSheetEffect.GoToScan -> launch(Dispatchers.Main) { launchScanner() }
         }
     }
 
@@ -89,9 +95,11 @@ class SendSheetEffectHandler(
         breadBox.wallet(effect.currencyCode)
             .take(1)
             .map {
+                val isValid = it.addressFor(effect.address) != null
                 SendSheetEvent.OnAddressValidated(
-                    effect.address,
-                    it.addressFor(effect.address) != null
+                    address = effect.address,
+                    isValid = isValid,
+                    clear = effect.clearWhenInvalid && !isValid
                 )
             }
             .bindConsumerIn(output, this)

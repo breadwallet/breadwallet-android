@@ -37,7 +37,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.view
-import com.breadwallet.util.CryptoUriParser2
+import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_legacy_address.*
@@ -47,7 +47,7 @@ import org.kodein.di.erased.instance
 class LegacyAddressController :
     BaseMobiusController<LegacyAddressModel, LegacyAddressEvent, LegacyAddressEffect>() {
 
-    private val cryptoUriParser by instance<CryptoUriParser2>()
+    private val cryptoUriParser by instance<CryptoUriParser>()
     private lateinit var copiedLayout: View
     private val copyHandler = Handler()
 

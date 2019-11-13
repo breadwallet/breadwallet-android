@@ -24,16 +24,25 @@
  */
 package com.breadwallet.ui.navigation
 
+import android.content.Intent
+import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.asLink
+import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.home.HomeController
+import com.breadwallet.ui.importwallet.ImportWalletController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.provekey.PaperKeyProveController
 import com.breadwallet.ui.receive.ReceiveController
+import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
@@ -48,28 +57,35 @@ import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.util.isBrd
 import com.spotify.mobius.Connection
-import com.spotify.mobius.android.runners.MainThreadWorkRunner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
     private val router: Router
 ) : Connection<NavigationEffect>,
-    NavigationEffectHandlerSpec {
+    NavigationEffectHandlerSpec,
+    CoroutineScope {
 
-    private val workRunner = MainThreadWorkRunner.create()
+    override val coroutineContext = Dispatchers.Main + SupervisorJob()
 
     override fun accept(value: NavigationEffect) {
-        // We must run the navigation code on the MainThread.
-        // Being an implementation detail we internalize the
-        // MainThread usage and ignore the EffectRunner thread.
-        workRunner.post {
-            patch(value)
-        }
+        launch { patch(value) }
     }
 
     override fun dispose() {
-        workRunner.dispose()
+        coroutineContext.cancel()
     }
+
+    fun Controller.asTransaction(
+        popChangeHandler: ControllerChangeHandler? = FadeChangeHandler(),
+        pushChangeHandler: ControllerChangeHandler? = FadeChangeHandler()
+    ) = RouterTransaction.with(this)
+        .popChangeHandler(popChangeHandler)
+        .pushChangeHandler(pushChangeHandler)
 
     override fun goToWallet(effect: NavigationEffect.GoToWallet) {
         val walletController = when {
@@ -131,7 +147,50 @@ class RouterNavigationEffectHandler(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) = Unit
+    override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
+        val link = checkNotNull(effect.url.asLink()) {
+            "Invalid deep link provided"
+        }
+        when (link) {
+            is Link.CryptoRequestUrl -> {
+                val sendController = SendSheetController(link).asTransaction()
+                router.pushWithStackIfEmpty(sendController) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        WalletController(link.currencyCode).asTransaction(
+                            popChangeHandler = HorizontalChangeHandler(),
+                            pushChangeHandler = HorizontalChangeHandler()
+                        ),
+                        sendController
+                    )
+                }
+            }
+            is Link.BreadUrl.ScanQR -> {
+                val controller = ScannerController().asTransaction()
+                router.pushWithStackIfEmpty(controller) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.ImportWallet -> {
+                val controller = ImportWalletController().asTransaction()
+                router.pushWithStackIfEmpty(controller) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            else -> {
+                Intent(router.activity, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .putExtra(MainActivity.EXTRA_DATA, effect.url)
+                    .run(router.activity!!::startActivity)
+            }
+        }
+    }
 
     override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) = Unit
 
@@ -171,7 +230,15 @@ class RouterNavigationEffectHandler(
 
     override fun goToDisabledScreen() = Unit
 
-    override fun goToQrScan() = Unit
+    override fun goToQrScan() {
+        val controller = ScannerController()
+        controller.targetController = router.backstack.firstOrNull()?.controller()
+        router.pushController(
+            RouterTransaction.with(controller)
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+        )
+    }
 
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
         router.pushController(
@@ -231,7 +298,9 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToImportWallet() = Unit
+    override fun goToImportWallet() {
+        router.pushController(ImportWalletController().asTransaction())
+    }
 
     override fun goToSyncBlockchain() = Unit
 
@@ -249,5 +318,16 @@ class RouterNavigationEffectHandler(
         router.pushController(
             RouterTransaction.with(LegacyAddressController())
         )
+    }
+
+    private inline fun Router.pushWithStackIfEmpty(
+        topTransaction: RouterTransaction,
+        createStack: () -> List<RouterTransaction>
+    ) {
+        if (backstackSize <= 1) {
+            setBackstack(createStack(), FadeChangeHandler())
+        } else {
+            pushController(topTransaction)
+        }
     }
 }
