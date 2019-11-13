@@ -24,7 +24,6 @@
  */
 package com.breadwallet.breadbox
 
-import android.content.Context
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Transfer
@@ -35,6 +34,8 @@ import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.wallet.WalletTransaction
+import com.platform.entities.TxMetaData
+import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -52,7 +53,8 @@ import java.math.BigDecimal
 class BreadBoxEffectHandler(
     private val output: Consumer<BreadBoxEvent>,
     private val currencyCode: String,
-    private val breadBox: BreadBox
+    private val breadBox: BreadBox,
+    private val acctMetaDataProvider: AccountMetaDataProvider
 ) : Connection<BreadBoxEffect>, CoroutineScope {
 
     override val coroutineContext =
@@ -95,7 +97,13 @@ class BreadBoxEffectHandler(
                     .mapLatest { transfers ->
                         BreadBoxEvent.OnTransactionsUpdated(
                             transfers
-                                .map { it.asWalletTransaction() }
+                                .map {
+                                    it.asWalletTransaction(
+                                        acctMetaDataProvider.getTxMetaData(
+                                            it.hashString()
+                                        )
+                                    )
+                                }
                                 .sortedByDescending { it.timeStamp }
                         )
                     }
@@ -118,10 +126,9 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
     ) ?: BigDecimal.ZERO
 }
 
-fun Transfer.asWalletTransaction(): WalletTransaction {
+fun Transfer.asWalletTransaction(metaData: TxMetaData?): WalletTransaction {
     // TODO: val context = BreadApp.getBreadContext()
     val txHash = hashString()
-    // TODO: KVStoreManager.getTxMetaData(context, txHash.toByteArray())
 
     val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
     val confirmation = confirmation.orNull()
@@ -135,7 +142,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,
         isErrored = state.type == TransferState.Type.FAILED,
-        memo = "", // TODO: metaData?.comment.orEmpty(),
+        memo = metaData?.comment.orEmpty(),
         isValid = state.type != TransferState.Type.FAILED, // TODO: Is this correct?
         fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
         blockHeight = confirmation?.blockNumber?.toInt() ?: 0, // TODO: Use long to match core
