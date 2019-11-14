@@ -85,7 +85,6 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
                 SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
-                SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 else -> null
             }
         }),
@@ -103,6 +102,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
                 SettingsEffect.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
                 SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
+                SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 else -> null
             }
         })

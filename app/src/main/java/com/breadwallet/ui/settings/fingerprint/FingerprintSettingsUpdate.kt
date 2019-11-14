@@ -37,12 +37,14 @@ object FingerprintSettingsUpdate :
         event: FingerprintSettingsEvent
     ): Next<FingerprintSettingsModel, FingerprintSettingsEffect> = patch(model, event)
 
-    override fun onBackClicked(model: FingerprintSettingsModel): Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
+    override fun onBackClicked(model: FingerprintSettingsModel)
+        : Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
         Next.dispatch(
             setOf(FingerprintSettingsEffect.GoBack)
         )
 
-    override fun onFaqClicked(model: FingerprintSettingsModel): Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
+    override fun onFaqClicked(model: FingerprintSettingsModel)
+        : Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
         Next.dispatch(
             setOf(FingerprintSettingsEffect.GoToFaq)
         )
