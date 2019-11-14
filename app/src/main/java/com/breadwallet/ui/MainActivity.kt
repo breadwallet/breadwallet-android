@@ -99,7 +99,7 @@ class MainActivity : BRActivity() {
         // Allow launching with a phrase to recover automatically
         if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
             val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
-            if (phrase.isNotBlank() && phrase.split(" ").size == 12) {
+            if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKeyModel.RECOVERY_KEY_WORDS_COUNT) {
                 val controller = RecoveryKeyController(RecoveryKeyModel.Mode.RECOVER, phrase)
                 router.setRoot(RouterTransaction.with(controller))
                 return

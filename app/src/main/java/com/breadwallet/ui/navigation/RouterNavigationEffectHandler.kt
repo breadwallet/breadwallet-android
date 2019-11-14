@@ -46,6 +46,7 @@ import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
+import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
 import com.breadwallet.ui.settings.segwit.EnableSegWitController
 import com.breadwallet.ui.settings.segwit.LegacyAddressController
 import com.breadwallet.ui.settings.wipewallet.WipeWalletController
@@ -304,7 +305,13 @@ class RouterNavigationEffectHandler(
 
     override fun goToSyncBlockchain() = Unit
 
-    override fun goToBitcoinNodeSelector() = Unit
+    override fun goToBitcoinNodeSelector() {
+        router.pushController(
+            RouterTransaction.with(NodeSelectorController())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToEnableSegWit() {
         router.pushController(

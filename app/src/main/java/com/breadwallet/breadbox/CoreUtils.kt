@@ -33,6 +33,7 @@ import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.NetworkFee
+import com.breadwallet.crypto.NetworkPeer
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
@@ -49,6 +50,7 @@ import com.breadwallet.util.WalletDisplayUtils
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
+import com.google.common.primitives.UnsignedInteger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -60,6 +62,9 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
+
+/** Default port for [NetworkPeer] */
+private const val DEFAULT_PORT = 8333L
 
 /** Returns the [Amount] as a [BigDecimal]. */
 fun Amount.toBigDecimal(): BigDecimal {
@@ -282,4 +287,18 @@ fun System.getAddressScheme(network: Network): AddressScheme {
             getDefaultAddressScheme(network)
         }
     }
+}
+
+/** Return a [NetworkPeer] pointing to the given address */
+fun Network.getPeerOrNull(node: String): NetworkPeer? {
+    val nodeInfo = node.split(":")
+    if (nodeInfo.isEmpty()) return null
+
+    val address = nodeInfo[0]
+    val port = if (nodeInfo.size > 1) {
+        UnsignedInteger.valueOf(nodeInfo[1])
+    } else {
+        UnsignedInteger.valueOf(DEFAULT_PORT)
+    }
+    return createPeer(address, port, null).orNull()
 }
