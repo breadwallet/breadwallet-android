@@ -37,12 +37,12 @@ data class RecoveryKeyModel(
      * A 12 item list of words that make up a BIP39 mnemonic.
      * All 12 items are an empty string by default.
      */
-    val phrase: List<String> = List(12) { "" },
+    val phrase: List<String> = List(RECOVERY_KEY_WORDS_COUNT) { "" },
     /**
      * A 12 item list of the validation state of the corresponding word in [phrase].
      * All 12 items are false by default.
      */
-    val errors: List<Boolean> = List(12) { false },
+    val errors: List<Boolean> = List(RECOVERY_KEY_WORDS_COUNT) { false },
     /** True when user input should be blocked and navigation prevented. */
     val isLoading: Boolean = false,
     /** The list index of the currently selected word input or -1 if none is selected. */
@@ -53,13 +53,15 @@ data class RecoveryKeyModel(
     }
 
     companion object {
+        const val RECOVERY_KEY_WORDS_COUNT = 12
+
         fun createDefault(mode: Mode) =
             RecoveryKeyModel(mode = mode)
 
         fun createWithOptionalPhrase(mode: Mode, phrase: String?) =
             RecoveryKeyModel(
                 mode = mode,
-                phrase = phrase?.split(" ") ?: List(12) { "" }
+                phrase = phrase?.split(" ") ?: List(RECOVERY_KEY_WORDS_COUNT) { "" }
             )
     }
 
@@ -67,10 +69,10 @@ data class RecoveryKeyModel(
         require(focusedWordIndex in -1..11) {
             "focusedWordIndex must be in -1..11"
         }
-        require(phrase.size == 12) {
+        require(phrase.size == RECOVERY_KEY_WORDS_COUNT) {
             "phrase list must contain 12 items"
         }
-        require(errors.size == 12) {
+        require(errors.size == RECOVERY_KEY_WORDS_COUNT) {
             "errors list must contain 12 items"
         }
     }

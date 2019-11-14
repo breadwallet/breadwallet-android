@@ -40,6 +40,7 @@ import com.breadwallet.crypto.events.walletmanager.WalletManagerCreatedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -114,7 +115,13 @@ class SystemWalletTracker(
                         }
                     }
                     .onEach { wallets ->
-                        manager.connect(null) //TODO: Support custom node
+                        val address = BRSharedPrefs
+                            .getTrustNode(iso = manager.currency.code.capitalize())
+                            .orEmpty()
+                        val networkPeer = manager
+                            .network
+                            .getPeerOrNull(address)
+                        manager.connect(networkPeer)
                         logDebug("Wallet Manager Connected: '${manager.name}'")
                         wallets.forEach {
                             logDebug("Registering wallet for: $it")
@@ -221,7 +228,13 @@ class SystemWalletTracker(
     private fun connectAndRegister(walletManager: WalletManager, currencyId: String) {
         if (!walletManager.state.isTracked()) {
             logDebug("Connecting Wallet Manager: ${walletManager.network}")
-            walletManager.connect(null) //TODO: Support custom node
+            val address = BRSharedPrefs
+                .getTrustNode(iso = walletManager.currency.code.capitalize())
+                .orEmpty()
+            val networkPeer = walletManager
+                .network
+                .getPeerOrNull(address)
+            walletManager.connect(networkPeer)
         }
         logDebug("Registering wallet for: $currencyId")
         walletManager.registerWalletFor(

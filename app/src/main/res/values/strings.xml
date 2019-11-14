@@ -1215,6 +1215,11 @@
     <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Start a new wallet by wiping your device from the currently installed wallet.</string>
 
+    <!-- Node selection mode is automatic -->
+    <string name="NodeSelector.automatic">Automatic</string>
+    <!-- Entered invalid node address at the node selection screen -->
+    <string name="NodeSelector.invalid">Invalid Node</string>
+
     <!-- TODO updated -->
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
     <string name="WipeWallet.instruction">Please enter your recovery key to wipe this wallet from your device.</string>
