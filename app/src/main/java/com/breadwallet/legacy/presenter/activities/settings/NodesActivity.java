@@ -3,7 +3,6 @@ package com.breadwallet.legacy.presenter.activities.settings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,6 +37,7 @@ public class NodesActivity extends BRActivity {
     private boolean updatingNode;
 //    private TextView nodeLabel;
 
+    //todo  run this on effecthandler
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
@@ -58,8 +57,8 @@ public class NodesActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nodes);
 
-        ImageButton faq = findViewById(R.id.faq_button);
-        faq.setVisibility(View.GONE);
+//        ImageButton faq = findViewById(R.id.faq_button);
+//        faq.setVisibility(View.GONE);
 
         BRSharedPrefs.putCurrentWalletCurrencyCode(this, "BTC");
 
@@ -67,39 +66,36 @@ public class NodesActivity extends BRActivity {
         trustNode = findViewById(R.id.node_text);
 
         switchButton = findViewById(R.id.button_switch);
-        switchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                final Activity app = NodesActivity.this;
-                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
+        switchButton.setOnClickListener(v -> {
+            if (!UiUtils.isClickAllowed()) return;
+            final Activity app = NodesActivity.this;
+            final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
 
-                if (BRSharedPrefs.getTrustNode(app, wm.getCurrencyCode()).isEmpty()) {
-                    createDialog();
-                } else {
-                    if (!updatingNode) {
-                        updatingNode = true;
-                        BRSharedPrefs.putTrustNode(app, wm.getCurrencyCode(), "");
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
-                                WalletsMaster.getInstance().updateFixedPeer(app, wm);
-                                updatingNode = false;
-                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateButtonText();
-                                    }
-                                });
+            if (BRSharedPrefs.getTrustNode(app, wm.getCurrencyCode()).isEmpty()) {
+                createDialog();
+            } else {
+                if (!updatingNode) {
+                    updatingNode = true;
+                    BRSharedPrefs.putTrustNode(app, wm.getCurrencyCode(), "");
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
+                            WalletsMaster.getInstance().updateFixedPeer(app, wm);
+                            updatingNode = false;
+                            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateButtonText();
+                                }
+                            });
 
-                            }
-                        });
-                    }
-
+                        }
+                    });
                 }
 
             }
+
         });
 
         updateButtonText();
@@ -146,80 +142,65 @@ public class NodesActivity extends BRActivity {
         alertDialog.setView(input);
 
         alertDialog.setNegativeButton(getString(R.string.Button_cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                (dialog, which) -> dialog.cancel());
 
         alertDialog.setPositiveButton(getString(R.string.Button_ok),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                (dialog, which) -> {
 
-                    }
                 });
 
         mDialog = alertDialog.show();
 
         //Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
-        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String str = input.getText().toString();
-                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
-                if (TrustedNode.isValid(str)) {
-                    mDialog.setMessage("");
-                    BRSharedPrefs.putTrustNode(NodesActivity.this, wm.getCurrencyCode(), str);
-                    if (!updatingNode) {
-                        updatingNode = true;
-                        customTitle.setText(getString(R.string.Webview_updating));
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
-                                WalletsMaster.getInstance().updateFixedPeer(NodesActivity.this, wm);
-                                updatingNode = false;
-                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Thread.currentThread().setName("Ui:" + TAG + ":custom node title set");
-                                        customTitle.setText(getString(R.string.RecoverWallet_done));
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mDialog.dismiss();
-                                                updateButtonText();
-                                            }
-                                        }, 500);
-
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                } else {
-                    customTitle.setText("Invalid Node");
-                    customTitle.setTextColor(NodesActivity.this.getColor(R.color.warning_color));
-                    new Handler().postDelayed(new Runnable() {
+        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String str = input.getText().toString();
+            final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
+            if (TrustedNode.isValid(str)) {
+                mDialog.setMessage("");
+                BRSharedPrefs.putTrustNode(NodesActivity.this, wm.getCurrencyCode(), str);
+                if (!updatingNode) {
+                    updatingNode = true;
+                    customTitle.setText(getString(R.string.Webview_updating));
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            customTitle.setText(getString(R.string.NodeSelector_enterTitle));
-                            customTitle.setTextColor(NodesActivity.this.getColor(R.color.almost_black));
+                            Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
+                            WalletsMaster.getInstance().updateFixedPeer(NodesActivity.this, wm);
+                            updatingNode = false;
+                            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Thread.currentThread().setName("Ui:" + TAG + ":custom node title set");
+                                    customTitle.setText(getString(R.string.RecoverWallet_done));
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mDialog.dismiss();
+                                            updateButtonText();
+                                        }
+                                    }, 500);
+
+                                }
+                            });
                         }
-                    }, 1000);
+                    });
                 }
-                updateButtonText();
+
+            } else {
+                customTitle.setText("Invalid Node");
+                customTitle.setTextColor(NodesActivity.this.getColor(R.color.warning_color));
+                new Handler().postDelayed(() -> {
+                    customTitle.setText(getString(R.string.NodeSelector_enterTitle));
+                    customTitle.setTextColor(NodesActivity.this.getColor(R.color.almost_black));
+                }, 1000);
             }
+            updateButtonText();
         });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                input.requestFocus();
-                final InputMethodManager keyboard = (InputMethodManager)
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-                keyboard.showSoftInput(input, 0);
-            }
+        new Handler().postDelayed(() -> {
+            input.requestFocus();
+            final InputMethodManager keyboard = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.showSoftInput(input, 0);
         }, 200);
     }
 

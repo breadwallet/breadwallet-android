@@ -20,8 +20,8 @@ fun isWalletDisabled(activity: Activity): Boolean {
 fun disabledUntil(activity: Activity): Long {
     val failCount = BRKeyStore.getFailCount(activity)
     val failTimestamp = BRKeyStore.getFailTimeStamp(activity)
-    val pow =
-        PinLayout.MAX_PIN_DIGITS.toDouble().pow((failCount - MAX_UNLOCK_ATTEMPTS).toDouble()) * DateUtils.MINUTE_IN_MILLIS
+    val pow = PinLayout.MAX_PIN_DIGITS.toDouble()
+        .pow((failCount - MAX_UNLOCK_ATTEMPTS).toDouble()) * DateUtils.MINUTE_IN_MILLIS
     return (failTimestamp + pow).toLong()
 }
 
