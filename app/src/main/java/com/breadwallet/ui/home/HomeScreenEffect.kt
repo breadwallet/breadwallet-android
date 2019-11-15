@@ -46,6 +46,9 @@ sealed class HomeScreenEffect {
     object GoToBuy : HomeScreenEffect()
     object GoToTrade : HomeScreenEffect()
     object GoToMenu : HomeScreenEffect()
+    object GoToFingerprintSettings : HomeScreenEffect()
+    object GoToWriteDownKey : HomeScreenEffect()
+    object GoToUpgradePin : HomeScreenEffect()
 
     data class RecordPushNotificationOpened(val campaignId: String) : HomeScreenEffect()
 
@@ -57,4 +60,10 @@ sealed class HomeScreenEffect {
         val eventName: String,
         val attributes: Map<String, String>? = null
     ) : HomeScreenEffect()
+
+    data class DismissPrompt(val promptItem: PromptItem) : HomeScreenEffect()
+
+    object StartRescan : HomeScreenEffect()
+
+    data class SaveEmail(val email: String) : HomeScreenEffect()
 }

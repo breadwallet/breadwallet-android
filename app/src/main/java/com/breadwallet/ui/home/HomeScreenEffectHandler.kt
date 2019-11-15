@@ -40,7 +40,6 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.MessagesRepository
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
@@ -89,7 +88,6 @@ class HomeScreenEffectHandler(
     override fun accept(value: HomeScreenEffect) {
         when (value) {
             HomeScreenEffect.LoadWallets -> loadWallets()
-            HomeScreenEffect.LoadPrompt -> loadPrompt()
             HomeScreenEffect.LoadIsBuyBellNeeded -> loadIsBuyBellNeeded()
             HomeScreenEffect.CheckInAppNotification -> checkInAppNotification()
             HomeScreenEffect.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
@@ -157,18 +155,6 @@ class HomeScreenEffectHandler(
                     }
             }
             .bindConsumerIn(output, this)
-    }
-
-    private fun loadPrompt() {
-        // TODO: refactor to its own generic effect handler
-        val promptId = PromptManager.nextPrompt(context)
-        if (promptId != null) {
-            EventUtils.pushEvent(
-                EventUtils.EVENT_PROMPT_PREFIX +
-                    PromptManager.getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED
-            )
-        }
-        output.accept(HomeScreenEvent.OnPromptLoaded(promptId))
     }
 
     private fun loadIsBuyBellNeeded() {
