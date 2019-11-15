@@ -29,14 +29,13 @@
 package com.breadwallet.ui.home
 
 import com.breadwallet.model.PriceChange
-import com.breadwallet.tools.manager.PromptManager
 import java.math.BigDecimal
 
 @Suppress("DataClassPrivateConstructor")
 data class HomeScreenModel private constructor(
     val wallets: Map<String, Wallet> = emptyMap(),
     val displayOrder: List<String> = emptyList(),
-    val promptId: PromptManager.PromptItem? = null,
+    val promptId: PromptItem? = null,
     val hasInternet: Boolean = true,
     val isBuyBellNeeded: Boolean = false,
     val showBuyAndSell: Boolean = false
@@ -80,4 +79,12 @@ data class Wallet(
     val hasSyncTime: Boolean = syncingThroughMillis != 0L
 
     val hasPricePerUnit: Boolean = fiatPricePerUnit != BigDecimal.ZERO
+}
+
+enum class PromptItem {
+    EMAIL_COLLECTION,
+    FINGER_PRINT,
+    PAPER_KEY,
+    UPGRADE_PIN,
+    RECOMMEND_RESCAN
 }
