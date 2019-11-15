@@ -1,9 +1,15 @@
 package com.breadwallet.ui
 
 import com.breadwallet.model.PriceChange
-import com.breadwallet.tools.manager.PromptManager
-import com.breadwallet.ui.home.*
-import com.spotify.mobius.test.NextMatchers.*
+import com.breadwallet.ui.home.HomeScreenEffect
+import com.breadwallet.ui.home.HomeScreenEvent
+import com.breadwallet.ui.home.HomeScreenModel
+import com.breadwallet.ui.home.HomeScreenUpdate
+import com.breadwallet.ui.home.PromptItem
+import com.breadwallet.ui.home.Wallet
+import com.spotify.mobius.test.NextMatchers.hasEffects
+import com.spotify.mobius.test.NextMatchers.hasModel
+import com.spotify.mobius.test.NextMatchers.hasNoEffects
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
 import org.junit.Test
@@ -202,11 +208,11 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnPromptLoaded(promptId = PromptManager.PromptItem.NO_PASSCODE)
+                HomeScreenEvent.OnPromptLoaded(promptId = PromptItem.EMAIL_COLLECTION)
             )
             .then(
                 assertThatNext(
-                    hasModel(initState.copy(promptId = PromptManager.PromptItem.NO_PASSCODE))
+                    hasModel(initState.copy(promptId = PromptItem.EMAIL_COLLECTION))
                 )
             )
     }

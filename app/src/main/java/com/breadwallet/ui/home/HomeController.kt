@@ -26,30 +26,39 @@ package com.breadwallet.ui.home
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
+import com.breadwallet.legacy.presenter.customviews.BRButton
+import com.breadwallet.legacy.presenter.customviews.BREdit
+import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback
-import com.breadwallet.tools.listeners.RecyclerItemClickListener
+import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.manager.PromptManager
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
+import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.SettingsSection
+import com.breadwallet.util.isValidEmail
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -78,6 +87,9 @@ class HomeController(
                     direct.instance()
                 )
             },
+            Connectable { output ->
+                PromptEffectHandler(output, activity!!)
+            },
             nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
                 when (effect) {
                     is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
@@ -91,6 +103,9 @@ class HomeController(
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
                 when (effect) {
                     HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
+                    HomeScreenEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
+                        OnCompleteAction.GO_HOME
+                    )
                     is HomeScreenEffect.GoToWallet ->
                         NavigationEffect.GoToWallet(effect.currencyCode)
                     is HomeScreenEffect.GoToAddWallet ->
@@ -114,7 +129,7 @@ class HomeController(
         }) { displayOrder ->
             output.accept(HomeScreenEvent.OnWalletDisplayOrderUpdated(displayOrder))
         }
-        
+
         rv_wallet_list.adapter = walletAdapter
         rv_wallet_list.layoutManager = LinearLayoutManager(activity)
 
@@ -146,12 +161,12 @@ class HomeController(
         }
 
         ifChanged(HomeScreenModel::showPrompt) {
+            if (prompt_container.childCount > 0) {
+                prompt_container.removeAllViews()
+            }
             if (showPrompt) {
-                val promptView = PromptManager.promptInfo(activity, promptId, router)
-                if (list_group_layout.childCount > 0) {
-                    list_group_layout.removeAllViews()
-                }
-                list_group_layout.addView(promptView, 0)
+                val promptView = getPromptView(promptId!!)
+                prompt_container.addView(promptView, 0)
             }
         }
 
@@ -182,4 +197,89 @@ class HomeController(
         testnet_label.text = buildInfo
         testnet_label.isVisible = BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG
     }
+
+    private fun getPromptView(promptItem: PromptItem): View {
+        val act = checkNotNull(activity)
+
+        val baseLayout = act.layoutInflater.inflate(R.layout.base_prompt, prompt_container, false)
+        val title = baseLayout.findViewById<BaseTextView>(R.id.prompt_title)
+        val description = baseLayout.findViewById<BaseTextView>(R.id.prompt_description)
+        val continueButton = baseLayout.findViewById<Button>(R.id.continue_button)
+        val dismissButton = baseLayout.findViewById<ImageButton>(R.id.dismiss_button)
+        dismissButton.setOnClickListener {
+            eventConsumer.accept(HomeScreenEvent.OnPromptDismissed(promptItem))
+        }
+        when (promptItem) {
+            PromptItem.FINGER_PRINT -> {
+                title.text = act.getString(R.string.Prompts_TouchId_title_android)
+                description.text = act.getString(R.string.Prompts_TouchId_body_android)
+                continueButton.setOnClickListener {
+                    eventConsumer.accept(HomeScreenEvent.OnFingerprintPromptClicked)
+                }
+            }
+            PromptItem.PAPER_KEY -> {
+                title.text = act.getString(R.string.Prompts_PaperKey_title)
+                description.text = act.getString(R.string.Prompts_PaperKey_Body_Android)
+                continueButton.setOnClickListener {
+                    eventConsumer.accept(HomeScreenEvent.OnPaperKeyPromptClicked)
+                }
+            }
+            PromptItem.UPGRADE_PIN -> {
+                title.text = act.getString(R.string.Prompts_UpgradePin_title)
+                description.text = act.getString(R.string.Prompts_UpgradePin_body)
+                continueButton.setOnClickListener {
+                    eventConsumer.accept(HomeScreenEvent.OnUpgradePinPromptClicked)
+                }
+            }
+            PromptItem.RECOMMEND_RESCAN -> {
+                title.text = act.getString(R.string.Prompts_RecommendRescan_title)
+                description.text = act.getString(R.string.Prompts_RecommendRescan_body)
+                continueButton.setOnClickListener {
+                    eventConsumer.accept(HomeScreenEvent.OnRescanPromptClicked)
+                }
+            }
+            PromptItem.EMAIL_COLLECTION -> {
+                return getEmailPrompt()
+            }
+        }
+        return baseLayout
+    }
+
+    private fun getEmailPrompt(): View {
+        val act = checkNotNull(activity)
+        val customLayout = act.layoutInflater.inflate(R.layout.email_prompt, null)
+        val customTitle = customLayout.findViewById<BaseTextView>(R.id.prompt_title)
+        val customDescription =
+            customLayout.findViewById<BaseTextView>(R.id.prompt_description)
+        val footNote = customLayout.findViewById<BaseTextView>(R.id.prompt_footnote)
+        val submitButton = customLayout.findViewById<BRButton>(R.id.submit_button)
+        val closeButton = customLayout.findViewById<ImageView>(R.id.close_button)
+        val emailEditText = customLayout.findViewById<BREdit>(R.id.email_edit)
+        submitButton.setColor(act.getColor(R.color.create_new_wallet_button_dark))
+        customTitle.text = act.getString(R.string.Prompts_Email_title)
+        customDescription.text = act.getString(R.string.Prompts_Email_body)
+        closeButton.setOnClickListener {
+            eventConsumer.accept(HomeScreenEvent.OnPromptDismissed(PromptItem.EMAIL_COLLECTION))
+        }
+        submitButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim { it <= ' ' }
+            if (email.isValidEmail()) {
+                eventConsumer.accept(HomeScreenEvent.OnEmailPromptClicked(email))
+                emailEditText.visibility = View.INVISIBLE
+                submitButton.visibility = View.INVISIBLE
+                footNote.visibility = View.VISIBLE
+                customTitle.text = act.getString(R.string.Prompts_Email_successTitle)
+                customDescription.text = act.getString(R.string.Prompts_Email_successBody)
+                viewAttachScope.launch(Main) {
+                    delay(3_000L)
+                    prompt_container.removeAllViews()
+                }
+            } else {
+                SpringAnimator.failShakeAnimation(act, emailEditText)
+            }
+
+        }
+        return customLayout
+    }
 }
+
