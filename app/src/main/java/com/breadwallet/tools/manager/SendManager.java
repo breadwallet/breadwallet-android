@@ -284,6 +284,11 @@ public class SendManager {
             return;
         }
 
+        if (!(ctx instanceof Activity)) {
+            return;
+        }
+        Activity host = (Activity) ctx;
+
         BigDecimal minOutput = request.isAmountRequested() ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
         //amount can't be less than the min
@@ -292,17 +297,14 @@ public class SendManager {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, wm.getCurrencyCode(), minOutput));
 
-            ((Activity) ctx).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    BRDialog.showCustomDialog(ctx, ctx.getString(R.string.Alerts_sendFailure), bitcoinMinMessage, ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
-                }
-            });
+            host.runOnUiThread(() -> BRDialog.showCustomDialog(
+                    ctx,
+                    ctx.getString(R.string.Alerts_sendFailure),
+                    bitcoinMinMessage,
+                    ctx.getString(R.string.AccessibilityLabels_close),
+                    null,
+                    brDialogView -> brDialogView.dismiss(), null, null, 0
+            ));
             return;
         }
 
