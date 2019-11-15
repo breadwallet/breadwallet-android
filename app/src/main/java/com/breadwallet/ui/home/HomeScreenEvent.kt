@@ -30,7 +30,6 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
-import com.breadwallet.tools.manager.PromptManager
 import java.math.BigDecimal
 
 sealed class HomeScreenEvent {
@@ -74,9 +73,16 @@ sealed class HomeScreenEvent {
     data class OnDeepLinkProvided(val url: String) : HomeScreenEvent()
     data class OnInAppNotificationProvided(val inAppMessage: InAppMessage) : HomeScreenEvent()
 
-    data class OnPromptLoaded(val promptId: PromptManager.PromptItem) : HomeScreenEvent()
+    data class OnPromptLoaded(val promptId: PromptItem?) : HomeScreenEvent()
 
     data class OnPushNotificationOpened(val campaignId: String) : HomeScreenEvent()
 
     data class OnShowBuyAndSell(val showBuyAndSell: Boolean) : HomeScreenEvent()
+
+    data class OnPromptDismissed(val promptId: PromptItem) : HomeScreenEvent()
+    object OnFingerprintPromptClicked : HomeScreenEvent()
+    object OnPaperKeyPromptClicked : HomeScreenEvent()
+    object OnUpgradePinPromptClicked : HomeScreenEvent()
+    object OnRescanPromptClicked : HomeScreenEvent()
+    data class OnEmailPromptClicked(val email: String) : HomeScreenEvent()
 }

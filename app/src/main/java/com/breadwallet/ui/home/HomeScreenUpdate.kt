@@ -30,7 +30,9 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.tools.util.EventUtils
 import com.spotify.mobius.Effects.effects
-import com.spotify.mobius.Next.*
+import com.spotify.mobius.Next.dispatch
+import com.spotify.mobius.Next.next
+import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
 val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect> { model, event ->
@@ -119,6 +121,74 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                         EventUtils.EVENT_HOME_DID_TAP_BUY,
                         clickAttributes
                     )
+                )
+            )
+        }
+        is HomeScreenEvent.OnPromptDismissed -> {
+            val promptName = when (event.promptId) {
+                PromptItem.EMAIL_COLLECTION -> EventUtils.PROMPT_EMAIL
+                PromptItem.FINGER_PRINT -> EventUtils.PROMPT_TOUCH_ID
+                PromptItem.PAPER_KEY -> EventUtils.PROMPT_PAPER_KEY
+                PromptItem.UPGRADE_PIN -> EventUtils.PROMPT_UPGRADE_PIN
+                PromptItem.RECOMMEND_RESCAN -> EventUtils.PROMPT_RECOMMEND_RESCAN
+            }
+            val eventName = promptName + EventUtils.EVENT_PROMPT_SUFFIX_DISMISSED
+            next(
+                model.copy(promptId = null),
+                effects(
+                    HomeScreenEffect.DismissPrompt(event.promptId),
+                    HomeScreenEffect.TrackEvent(eventName)
+                )
+            )
+        }
+        HomeScreenEvent.OnFingerprintPromptClicked -> {
+            val eventName = EventUtils.PROMPT_TOUCH_ID + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
+            next(
+                model.copy(promptId = null),
+                effects(
+                    HomeScreenEffect.DismissPrompt(PromptItem.FINGER_PRINT),
+                    HomeScreenEffect.GoToFingerprintSettings,
+                    HomeScreenEffect.TrackEvent(eventName)
+                )
+            )
+        }
+        HomeScreenEvent.OnPaperKeyPromptClicked -> {
+            val eventName = EventUtils.PROMPT_PAPER_KEY + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
+            next(
+                model.copy(promptId = null),
+                effects(
+                    HomeScreenEffect.GoToWriteDownKey,
+                    HomeScreenEffect.TrackEvent(eventName)
+                )
+            )
+        }
+        HomeScreenEvent.OnUpgradePinPromptClicked -> {
+            val eventName = EventUtils.PROMPT_UPGRADE_PIN + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
+            next(
+                model.copy(promptId = null),
+                effects(
+                    HomeScreenEffect.GoToUpgradePin,
+                    HomeScreenEffect.TrackEvent(eventName)
+                )
+            )
+        }
+        HomeScreenEvent.OnRescanPromptClicked -> {
+            val eventName =
+                EventUtils.PROMPT_RECOMMEND_RESCAN + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
+            next(
+                model.copy(promptId = null),
+                effects(
+                    HomeScreenEffect.StartRescan,
+                    HomeScreenEffect.TrackEvent(eventName)
+                )
+            )
+        }
+        is HomeScreenEvent.OnEmailPromptClicked -> {
+            val eventName = EventUtils.PROMPT_EMAIL + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
+            dispatch(
+                effects(
+                    HomeScreenEffect.SaveEmail(event.email),
+                    HomeScreenEffect.TrackEvent(eventName)
                 )
             )
         }

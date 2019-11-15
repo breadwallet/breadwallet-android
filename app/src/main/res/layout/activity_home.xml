@@ -10,8 +10,7 @@
     android:filterTouchesWhenObscured="true"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context="com.breadwallet.legacy.presenter.activities.HomeActivity">
+    android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -75,7 +74,7 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/list_group_layout"
+            android:id="@+id/prompt_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/home_header"
@@ -97,7 +96,7 @@
             app:layout_constraintBottom_toTopOf="@+id/menu_table"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/list_group_layout">
+            app:layout_constraintTop_toBottomOf="@+id/prompt_container">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_wallet_list"
