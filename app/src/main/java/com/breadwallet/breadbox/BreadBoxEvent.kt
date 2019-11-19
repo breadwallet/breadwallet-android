@@ -28,6 +28,7 @@
  */
 package com.breadwallet.breadbox
 
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.ui.wallet.WalletTransaction
 import java.math.BigDecimal
 
@@ -53,6 +54,11 @@ sealed class BreadBoxEvent {
 
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : BreadBoxEvent()
     data class OnTransactionRemoved(val walletTransaction: WalletTransaction) : BreadBoxEvent()
-    data class OnTransactionUpdated(val walletTransaction: WalletTransaction) : BreadBoxEvent()
+    data class OnTransactionUpdated(
+        val transaction: Transfer,
+        val gasPrice: BigDecimal,
+        val gasLimit: BigDecimal
+    ) : BreadBoxEvent()
+
     data class OnConnectionUpdated(val isConnected: Boolean) : BreadBoxEvent()
 }

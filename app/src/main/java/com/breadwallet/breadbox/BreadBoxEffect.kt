@@ -32,4 +32,5 @@ sealed class BreadBoxEffect {
 
     data class LoadWalletBalance(val currencyId: String) : BreadBoxEffect()
     data class LoadTransactions(val currencyId: String) : BreadBoxEffect()
+    data class LoadTransaction(val transferHash: String) : BreadBoxEffect()
 }

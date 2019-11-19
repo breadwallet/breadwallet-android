@@ -34,6 +34,7 @@ import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.wallet.WalletTransaction
+import com.breadwallet.util.isEthereum
 import com.platform.entities.TxMetaData
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
@@ -109,12 +110,41 @@ class BreadBoxEffectHandler(
                     }
                     .bindConsumerIn(output, this)
             }
+            is BreadBoxEffect.LoadTransaction -> {
+                breadBox.walletTransfer(currencyCode, effect.transferHash)
+                    .mapLatest { transfer ->
+                        var gasPrice = BigDecimal.ZERO
+                        var gasLimit = BigDecimal.ZERO
+                        if (transfer.amount.currency.isEthereum()) {
+                            val feeBasis = transfer.run {
+                                confirmedFeeBasis.orNull() ?: estimatedFeeBasis.get()
+                            }
+
+                            gasPrice = feeBasis.pricePerCostFactor
+                                .convert(gweiUnit())
+                                .get()
+                                .toBigDecimal()
+
+                            gasLimit = feeBasis.costFactor.toBigDecimal()
+                        }
+                        BreadBoxEvent.OnTransactionUpdated(transfer, gasPrice, gasLimit)
+                    }
+                    .bindConsumerIn(output, this)
+            }
         }
     }
 
     override fun dispose() {
         coroutineContext.cancelChildren()
     }
+
+    private fun gweiUnit() =
+        breadBox
+            .getSystemUnsafe()!!
+            .networks
+            .first { it.currency.code.isEthereum() }
+            .run { unitsFor(currency).get() }
+            .first { it.symbol == "gwei" }
 }
 
 private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
@@ -126,6 +156,7 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
     ) ?: BigDecimal.ZERO
 }
 
+// TODO: Move this conversion to Wallet Screen (and trim fields from model as appropriate)
 fun Transfer.asWalletTransaction(metaData: TxMetaData?): WalletTransaction {
     // TODO: val context = BreadApp.getBreadContext()
     val txHash = hashString()

@@ -3,13 +3,19 @@ package com.breadwallet.ui.wallet
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import io.hypno.switchboard.MobiusUpdateSpec
 import java.math.BigDecimal
+
+@MobiusUpdateSpec(
+    baseModel = WalletScreenModel::class,
+    baseEffect = WalletScreenEffect::class
+)
 
 sealed class WalletScreenEvent {
     data class OnSyncProgressUpdated(
-            val progress: Float,
-            val syncThroughMillis: Long,
-            val isSyncing: Boolean
+        val progress: Float,
+        val syncThroughMillis: Long,
+        val isSyncing: Boolean
     ) : WalletScreenEvent() {
         init {
             require(progress in 0.0..1.0) {
@@ -22,16 +28,21 @@ sealed class WalletScreenEvent {
 
     data class OnCurrencyNameUpdated(val name: String) : WalletScreenEvent()
     data class OnBrdRewardsUpdated(val showing: Boolean) : WalletScreenEvent()
-    data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) : WalletScreenEvent()
-    data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange) : WalletScreenEvent()
+    data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) :
+        WalletScreenEvent()
+
+    data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange) :
+        WalletScreenEvent()
+
     data class OnTransactionsUpdated(
         val walletTransactions: List<WalletTransaction>
     ) : WalletScreenEvent() {
-        override fun toString() = "OnTransactionsUpdated(walletTransactions=(size:${walletTransactions.size}))"
+        override fun toString() =
+            "OnTransactionsUpdated(walletTransactions=(size:${walletTransactions.size}))"
     }
+
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : WalletScreenEvent()
     data class OnTransactionRemoved(val walletTransaction: WalletTransaction) : WalletScreenEvent()
-    data class OnTransactionUpdated(val walletTransaction: WalletTransaction) : WalletScreenEvent()
     data class OnConnectionUpdated(val isConnected: Boolean) : WalletScreenEvent()
 
     object OnFilterSentClicked : WalletScreenEvent()
@@ -64,8 +75,10 @@ sealed class WalletScreenEvent {
     data class OnMarketChartDataUpdated(
         val priceDataPoints: List<PriceDataPoint>
     ) : WalletScreenEvent() {
-        override fun toString() = "OnMarketChartDataUpdated(priceDataPoints=(size:${priceDataPoints.size}))"
+        override fun toString() =
+            "OnMarketChartDataUpdated(priceDataPoints=(size:${priceDataPoints.size}))"
     }
+
     data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : WalletScreenEvent()
     object OnChartDataPointReleased : WalletScreenEvent()
 }

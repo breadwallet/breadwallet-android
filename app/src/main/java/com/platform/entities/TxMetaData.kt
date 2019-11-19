@@ -38,7 +38,7 @@ data class TxMetaData(
     val deviceId: String? = null,
     val comment: String? = null,
     val exchangeCurrency: String? = null,
-    val classVersion: Int = 0,
+    val classVersion: Int = 1,
     val blockHeight: Int = 0,
     val exchangeRate: Double = 0.toDouble(),
     val fee: String? = null,
