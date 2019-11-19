@@ -36,6 +36,7 @@ import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.NetworkPeer
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
@@ -83,6 +84,9 @@ fun Currency.isNative() = type.equals("native", true)
 
 /** True when this is an erc20 token for the Ethereum network. */
 fun Currency.isErc20() = type.equals("erc20", true)
+
+/** True when this is Ethereum. */
+fun Currency.isEthereum() = code.isEthereum() && !isErc20()
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
@@ -302,3 +306,6 @@ fun Network.getPeerOrNull(node: String): NetworkPeer? {
     }
     return createPeer(address, port, null).orNull()
 }
+
+/** True when the [Transfer] was received. */
+fun Transfer.isReceived(): Boolean = direction == TransferDirection.RECEIVED
