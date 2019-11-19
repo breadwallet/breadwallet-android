@@ -109,9 +109,6 @@ public class PostAuth {
         }
     }
     */
-    public void onBitIDAuth(Context context, boolean authenticated) {
-        BRBitId.completeBitID(context, authenticated);
-    }
 
     /*
     public boolean onRecoverWalletAuth(final Activity activity, boolean authAsked) {
