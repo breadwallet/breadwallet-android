@@ -86,7 +86,13 @@ fun String.asLink(): Link? {
             uriParser.parseRequest(this)?.asCryptoRequestUrl()
         isPlatformUrl(uri) -> uri.asPlatformUrl()
         isPlatformDebugUrl(uri) -> uri.asPlatformDebugUrl()
-        BRBitId.isBitId(this) -> null // TODO: Support bitid
+        BRBitId.isBitId(this) -> {
+            // The BitID process is handled internally here
+            // and in BRActivity#onActivityResult.  Link
+            // consumers do not need to handle this case.
+            BRBitId.completeBitID(false)
+            null
+        }
         isWalletPairUrl(uri) -> Link.WalletPairUrl(PairingMetaData(this))
         isBreadUrl(uri) -> uri.asBreadUrl()
         isPrivateKey() -> Link.ImportWallet(this)

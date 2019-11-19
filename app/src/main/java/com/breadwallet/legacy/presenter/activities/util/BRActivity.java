@@ -25,6 +25,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
+import com.platform.tools.BRBitId;
 
 /**
  * BreadWallet
@@ -132,7 +133,7 @@ public abstract class BRActivity extends FragmentActivity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onBitIDAuth(BRActivity.this, true);
+                            BRBitId.completeBitID(true);
                         }
                     });
                 }

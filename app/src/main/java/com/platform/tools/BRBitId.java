@@ -7,8 +7,9 @@ import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.crypto.Signer;
 import com.breadwallet.legacy.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -164,26 +165,27 @@ public class BRBitId {
                                     true, false, new BRAuthCompletion() {
                                         @Override
                                         public void onComplete() {
-                                            PostAuth.getInstance().onBitIDAuth(context, true);
+                                            completeBitID(true);
                                         }
 
                                         @Override
                                         public void onCancel() {
-                                            PostAuth.getInstance().onBitIDAuth(context, false);
+                                            completeBitID(false);
                                         }
                                     });
                         }
                     });
 
                 } else {
-                    PostAuth.getInstance().onBitIDAuth(context, true);
+                    completeBitID(true);
                 }
 
             }
         });
     }
 
-    public static void completeBitID(final Context context, boolean authenticated) {
+    public static void completeBitID(boolean authenticated) {
+        final Context context = BreadApp.getBreadContext();
         final byte[] phrase;
         final byte[] seed;
         if (!authenticated) {
@@ -207,7 +209,13 @@ public class BRBitId {
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
-        seed = BRCoreKey.getSeedFromPhrase(phrase);
+        final Key key = Key.createFromPhrase(phrase, Key.getDefaultWordList()).orNull();
+        if (key != null) {
+            seed = key.encodeAsPrivate();
+        } else {
+            Log.e(TAG, "Failed to get key from phrase.");
+            return;
+        }
         if (Utils.isNullOrEmpty(seed)) {
             Log.e(TAG, "completeBitID: seed is null!");
             return;
@@ -242,7 +250,7 @@ public class BRBitId {
     private static void bitIdPlatform(Context context, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, mIndex, biUri);
+        final Key key = Key.createForBIP32BitID(seed, mIndex, biUri, Key.getDefaultWordList()).orNull();
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");
             return;
@@ -251,8 +259,8 @@ public class BRBitId {
             Log.d(TAG, "bitIdPlatform: mStringToSign is null!");
             return;
         }
-        final String sig = BRBitId.signMessage(mStringToSign, new BRCoreKey(key));
-        final String address = new BRCoreKey(key).addressLegacy();
+        final String sig = BRBitId.signMessage(mStringToSign, key);
+        final String address = Utils.bytesToHex(key.encodeAsPublic());
 
         JSONObject postJson = new JSONObject();
         Log.d(TAG, "GLIDERA: address:" + address);
@@ -307,15 +315,15 @@ public class BRBitId {
         String uriWithNonce = BIT_ID_SCHEME + uri.getHost() + uri.getPath() + X_QUERY_PARAM_STRING + nonce;
 
         Log.e(TAG, "LINK: callbackUrl:" + callbackUrl);
-        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, mIndex, mBitUri);
+        final Key key = Key.createForBIP32BitID(seed, mIndex, mBitUri, Key.getDefaultWordList()).orNull();
 
         if (key == null) {
             Log.e(TAG, "completeBitID: key is null!");
             return;
         }
 
-        final String sig = BRBitId.signMessage(uriWithNonce, new BRCoreKey(key));
-        final String address = new BRCoreKey(key).addressLegacy();
+        final String sig = BRBitId.signMessage(uriWithNonce, key);
+        final String address = Utils.bytesToHex(key.encodeAsPublic());
         Log.d(TAG, "LINK: address: " + address);
         JSONObject postJson = new JSONObject();
         try {
@@ -353,8 +361,10 @@ public class BRBitId {
         return nonce;
     }
 
-    private static String signMessage(String message, BRCoreKey key) {
+    private static String signMessage(String message, Key key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
+
+        final Signer compact = Signer.createForAlgorithm(Signer.Algorithm.COMPACT);
 
         MessageDigest digest;
         try {
@@ -365,7 +375,7 @@ public class BRBitId {
         }
         byte[] sha256First = digest.digest(signingData);
         byte[] sha256Second = digest.digest(sha256First);
-        byte[] signature = key.compactSign(sha256Second);
+        byte[] signature = compact.sign(sha256Second, key).orNull();
 
         return Base64.encodeToString(signature, Base64.NO_WRAP);
     }
