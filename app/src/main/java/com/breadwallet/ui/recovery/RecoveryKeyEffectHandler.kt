@@ -68,6 +68,10 @@ class RecoveryKeyEffectHandler(
     val errorShake: () -> Unit
 ) : Connection<RecoveryKeyEffect>, CoroutineScope {
 
+    companion object {
+        private const val POLL_ATTEMPTS_MAX = 15
+    }
+
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     override fun accept(effect: RecoveryKeyEffect) {
@@ -295,7 +299,7 @@ class RecoveryKeyEffectHandler(
                     // Poll for wallet-info metadata
                     // This is a work-around to avoid blocking until recoverAll(migrate)
                     // recovers *all* metadata
-                    while (true) {
+                    for (i in 1..POLL_ATTEMPTS_MAX) {
                         metaDataProvider.getWalletInfoUnsafe()
                             ?.let { emit(it) }
                         delay(1000L)
