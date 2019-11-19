@@ -1,7 +1,6 @@
 package com.platform.interfaces
 
 import com.breadwallet.app.BreadApp
-import com.breadwallet.crypto.Coder
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
@@ -61,7 +60,6 @@ class MetaDataManager(
         val syncResult = storeProvider.syncAll(migrate)
         if (migrate) {
             migrateTokenList()
-            // TODO: migrate txn metadata (rewrite keys in reverse byte order to match iOS)
         }
         emit(syncResult)
 
@@ -174,7 +172,28 @@ class MetaDataManager(
             )
         )
 
-    // TODO: Likely convert into flow
+    override fun txMetaData(transactionHash: String): Flow<TxMetaData> =
+        storeProvider.keyFlow(getTxMetaDataKey(transactionHash))
+            .mapLatest {
+                TxMetaData.fromJsonObject(it)
+            }
+            .onStart {
+                val key = getTxMetaDataKey(transactionHash)
+                var metaData = getOrSync(key)
+                if (metaData == null) {
+                    metaData = getOrSync(getTxMetaDataKey(transactionHash, true))
+                        ?.apply {
+                            storeProvider.put(key, this)
+                        }
+                }
+                metaData?.run {
+                    emit(
+                        TxMetaData.fromJsonObject(this)
+                    )
+                }
+            }
+            .distinctUntilChanged()
+
     override fun getTxMetaData(txHash: String): TxMetaData? {
         val key = getTxMetaDataKey(txHash)
         var metaData = storeProvider.get(key)
@@ -197,7 +216,7 @@ class MetaDataManager(
         } else {
             if (newTxMetaData.comment != txMetaData.comment && newTxMetaData != null) {
                 txMetaData = txMetaData.copy(
-                    comment = txMetaData.comment
+                    comment = newTxMetaData.comment
                 )
                 needsUpdate = true
             }
@@ -211,7 +230,6 @@ class MetaDataManager(
 
         if (needsUpdate) {
             val key = getTxMetaDataKey(txHash)
-            logDebug("updating txMetadata for : $key")
             storeProvider.put(key, txMetaData.toJSON())
         }
     }
@@ -293,7 +311,10 @@ class MetaDataManager(
         }
     }
 
-    private suspend fun getOrSync(key: String, defaultProducer: (() -> JSONObject)?): JSONObject? {
+    private suspend fun getOrSync(
+        key: String,
+        defaultProducer: (() -> JSONObject)? = null
+    ): JSONObject? {
         var value = storeProvider.get(key) ?: storeProvider.sync(key)
         return when (value) {
             null -> {

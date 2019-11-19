@@ -66,6 +66,9 @@ interface AccountMetaDataProvider {
     /** Clean up. */
     //fun close()
 
+    /** Returns a [Flow] of [TxMetaData] associated with [transactionHash], will recover it if necessary. */
+    fun txMetaData(transactionHash: String): Flow<TxMetaData>
+
     /** Returns [TxMetaData] for given transaction hash. */
     fun getTxMetaData(txHash: String): TxMetaData?
 

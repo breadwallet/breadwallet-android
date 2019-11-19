@@ -120,10 +120,9 @@ open class WalletController(
                         WalletScreenEvent.OnTransactionAdded(event.walletTransaction)
                     is BreadBoxEvent.OnTransactionRemoved ->
                         WalletScreenEvent.OnTransactionRemoved(event.walletTransaction)
-                    is BreadBoxEvent.OnTransactionUpdated ->
-                        WalletScreenEvent.OnTransactionUpdated(event.walletTransaction)
                     is BreadBoxEvent.OnTransactionsUpdated ->
                         WalletScreenEvent.OnTransactionsUpdated(event.walletTransactions)
+                    else -> null
                 }
             }),
             Connectable { output ->
