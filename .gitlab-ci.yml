@@ -1,4 +1,4 @@
-image: circleci/android:api-29-ndk
+image: circleci/android:api-29
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
