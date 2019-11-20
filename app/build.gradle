@@ -211,11 +211,12 @@ repositories {
     google()
     maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI' } // TODO: Remove when kodein inclusion is handled
     maven { url 'https://jitpack.io' }
+    maven { url 'https://dl.bintray.com/brcore/core' } // TODO: Remove when core is published to maven central
 }
 
 dependencies {
     implementation project(':CoreLibrary')
-    implementation project(':CoreCrypto')
+    implementation 'com.breadwallet.core:corecrypto-android:0.0.1'
 
     implementation 'commons-io:commons-io:2.4'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
