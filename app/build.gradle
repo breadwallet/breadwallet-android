@@ -215,7 +215,6 @@ repositories {
 }
 
 dependencies {
-    implementation project(':CoreLibrary')
     implementation 'com.breadwallet.core:corecrypto-android:0.0.1'
 
     implementation 'commons-io:commons-io:2.4'

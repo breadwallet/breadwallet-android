@@ -25,6 +25,7 @@ import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 import com.platform.tools.BRBitId;
 
+import kotlin.NotImplementedError;
 import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
@@ -571,8 +572,6 @@ public class WalletPlugin implements Plugin {
     }
 
     private static String getLegacyAddress(Context context, BaseWalletManager walletManager) {
-        return walletManager instanceof WalletBitcoinManager
-                ? ((WalletBitcoinManager) walletManager).getWallet().getLegacyAddress().stringify()
-                : walletManager.getReceiveAddress(context).stringify();
+        throw new NotImplementedError("TODO: Return legacy address");
     }
 }
