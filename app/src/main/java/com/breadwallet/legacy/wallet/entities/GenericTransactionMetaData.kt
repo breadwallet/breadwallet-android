@@ -24,14 +24,13 @@
  */
 package com.breadwallet.legacy.wallet.entities
 
-import com.breadwallet.core.ethereum.BREthereumAmount
 
 data class GenericTransactionMetaData(
     val targetAddress: String,
     val amount: String,
-    val amountUnit: BREthereumAmount.Unit,
+    val amountUnit: Unit,
     val gasPrice: Long = 0,
-    val gasPriceUnit: BREthereumAmount.Unit,
+    val gasPriceUnit: Unit,
     val gasLimit: Long = 0,
     val data: String
 )

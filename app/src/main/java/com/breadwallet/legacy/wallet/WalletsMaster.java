@@ -6,7 +6,6 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.legacy.presenter.entities.TokenItem;
 import com.breadwallet.legacy.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
@@ -251,12 +250,6 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         WalletEthManager walletEthManager = WalletEthManager.getInstance(app.getApplicationContext());
         if (Utils.isNullOrEmpty(iso) || walletEthManager == null) {
             return false;
-        }
-        BREthereumToken[] tokens = walletEthManager.node.getTokens();
-        for (BREthereumToken token : tokens) {
-            if (token.getSymbol().equalsIgnoreCase(iso)) {
-                return true;
-            }
         }
         return false;
     }
