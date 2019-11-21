@@ -36,13 +36,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class MetaDataEffectHandler(
@@ -60,11 +62,12 @@ class MetaDataEffectHandler(
                 logError("Error in coroutine", throwable)
             }
 
-    private val commentUpdateChannel = BroadcastChannel<CommentUpdatePair>(Channel.BUFFERED)
+    private val commentUpdateChannel = Channel<CommentUpdatePair>()
+    private val loadMetaDataChannel = Channel<List<String>>()
 
     init {
         commentUpdateChannel
-            .asFlow()
+            .consumeAsFlow()
             .debounce(COMMENT_UPDATE_DEBOUNCE)
             .onEach {
                 val metaData = metaDataProvider.getTxMetaData(it.transactionHash) ?: TxMetaData()
@@ -76,13 +79,30 @@ class MetaDataEffectHandler(
                 )
             }
             .launchIn(this)
+
+        loadMetaDataChannel
+            .consumeAsFlow()
+            .flatMapLatest { txHashes: List<String> ->
+                txHashes.asFlow()
+                    .flatMapMerge { transactionHash ->
+                        metaDataProvider
+                            .txMetaData(transactionHash)
+                            .map { txMetaData ->
+                                MetaDataPair(transactionHash, txMetaData)
+                            }
+                    }
+            }
+            .map {
+                MetaDataEvent.OnTransactionMetaDataUpdated(it.transactionHash, it.txMetaData)
+            }
+            .bindConsumerIn(output, this)
     }
 
     override fun accept(effect: MetaDataEffect) {
         when (effect) {
             MetaDataEffect.RecoverMetaData -> recoverMetaData()
             is MetaDataEffect.LoadTransactionMetaData ->
-                loadTransactionMetaData(effect.transactionHash)
+                loadTransactionMetaData(effect.transactionHashes)
             is MetaDataEffect.UpdateTransactionComment ->
                 updateTransactionComment(effect.transactionHash, effect.comment)
         }
@@ -98,13 +118,8 @@ class MetaDataEffectHandler(
             .flowOn(Dispatchers.IO)
             .launchIn(BreadApp.applicationScope)
 
-    private fun loadTransactionMetaData(transactionHash: String) {
-        metaDataProvider
-            .txMetaData(transactionHash)
-            .mapLatest {
-                MetaDataEvent.OnTransactionMetaDataUpdated(it)
-            }
-            .bindConsumerIn(output, this)
+    private fun loadTransactionMetaData(transactionHashes: List<String>) {
+        loadMetaDataChannel.offer(transactionHashes)
     }
 
     private fun updateTransactionComment(transactionHash: String, comment: String) {
@@ -120,4 +135,9 @@ class MetaDataEffectHandler(
 data class CommentUpdatePair(
     val transactionHash: String,
     val comment: String
+)
+
+data class MetaDataPair(
+    val transactionHash: String,
+    val txMetaData: TxMetaData
 )

@@ -26,17 +26,11 @@ package com.breadwallet.breadbox
 
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Amount
-import com.breadwallet.crypto.Transfer
-import com.breadwallet.crypto.TransferDirection
-import com.breadwallet.crypto.TransferState
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.ui.wallet.WalletTransaction
 import com.breadwallet.util.isEthereum
-import com.platform.entities.TxMetaData
-import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -54,8 +48,7 @@ import java.math.BigDecimal
 class BreadBoxEffectHandler(
     private val output: Consumer<BreadBoxEvent>,
     private val currencyCode: String,
-    private val breadBox: BreadBox,
-    private val acctMetaDataProvider: AccountMetaDataProvider
+    private val breadBox: BreadBox
 ) : Connection<BreadBoxEffect>, CoroutineScope {
 
     override val coroutineContext =
@@ -97,15 +90,10 @@ class BreadBoxEffectHandler(
                 breadBox.walletTransfers(currencyCode)
                     .mapLatest { transfers ->
                         BreadBoxEvent.OnTransactionsUpdated(
-                            transfers
-                                .map {
-                                    it.asWalletTransaction(
-                                        acctMetaDataProvider.getTxMetaData(
-                                            it.hashString()
-                                        )
-                                    )
-                                }
-                                .sortedByDescending { it.timeStamp }
+                            transfers.sortedByDescending {
+                                it.confirmation.orNull()?.confirmationTime?.time
+                                    ?: System.currentTimeMillis()
+                            }
                         )
                     }
                     .bindConsumerIn(output, this)
@@ -154,35 +142,4 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
         balanceAmt.currency.code,
         BRSharedPrefs.getPreferredFiatIso(context)
     ) ?: BigDecimal.ZERO
-}
-
-// TODO: Move this conversion to Wallet Screen (and trim fields from model as appropriate)
-fun Transfer.asWalletTransaction(metaData: TxMetaData?): WalletTransaction {
-    // TODO: val context = BreadApp.getBreadContext()
-    val txHash = hashString()
-
-    val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
-    val confirmation = confirmation.orNull()
-
-    return WalletTransaction(
-        txHash = txHash,
-        amount = amount.toBigDecimal(),
-        amountInFiat = getBalanceInFiat(amount),
-        fiatWhenSent = 0f, // TODO: Rates info
-        toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
-        fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
-        isReceived = direction == TransferDirection.RECEIVED,
-        isErrored = state.type == TransferState.Type.FAILED,
-        memo = metaData?.comment.orEmpty(),
-        isValid = state.type != TransferState.Type.FAILED, // TODO: Is this correct?
-        fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
-        blockHeight = confirmation?.blockNumber?.toInt() ?: 0, // TODO: Use long to match core
-        confirmations = confirmations.orNull()?.toInt() ?: 0,
-        confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
-        timeStamp = confirmation?.confirmationTime?.time ?: System.currentTimeMillis(),
-        currencyCode = wallet.currency.code,
-        // TODO: Either establish this via meta-data (like iOS)
-        //  or compare toAddress with token addresses as in pre-Generic Core
-        feeForToken = null
-    )
 }
