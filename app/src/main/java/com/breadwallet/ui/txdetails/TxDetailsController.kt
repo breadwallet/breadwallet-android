@@ -108,7 +108,7 @@ class TxDetailsController(
                 TxDetailsEffectHandler(output, activity!!)
             },
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance(), direct.instance())
+                BreadBoxEffectHandler(output, currencyCode, direct.instance())
             }, { effect: TxDetailsEffect ->
                 when (effect) {
                     is TxDetailsEffect.LoadTransaction ->

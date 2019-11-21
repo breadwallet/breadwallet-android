@@ -158,62 +158,55 @@
 
             </android.support.design.widget.AppBarLayout>
 
-            <android.support.v4.widget.NestedScrollView
-                android:id="@+id/plant_detail_scrollview"
+            <LinearLayout
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:clipToPadding="false"
+                android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+                <!--android:layout_below="@id/toolbar_layout"-->
                 <LinearLayout
-                    android:id="@+id/content"
+                    android:id="@+id/list_headers"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/toolbar_layout"
                     android:orientation="vertical">
 
-                    <!--android:layout_below="@id/toolbar_layout"-->
-                    <LinearLayout
-                        android:id="@+id/list_headers"
+                    <include
+                        android:id="@+id/delisted_token_layout"
+                        layout="@layout/view_delisted_token"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/toolbar_layout"
-                        android:orientation="vertical">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:visibility="gone" />
 
-                        <include
-                            android:id="@+id/delisted_token_layout"
-                            layout="@layout/view_delisted_token"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:visibility="gone" />
-
-                        <include
-                            layout="@layout/wallet_sync_progress_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                    <android.support.design.widget.CoordinatorLayout
-                        android:id="@+id/transaction_list_coordinator_layout"
+                    <include
+                        layout="@layout/wallet_sync_progress_view"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_above="@+id/bottom_toolbar_layout1"
-                        android:layout_below="@id/list_headers">
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/tx_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:clipToPadding="false"
-                            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-                    </android.support.design.widget.CoordinatorLayout>
-
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+
+                <android.support.design.widget.CoordinatorLayout
+                    android:id="@+id/transaction_list_coordinator_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/bottom_toolbar_layout1"
+                    android:layout_below="@id/list_headers">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/tx_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+                </android.support.design.widget.CoordinatorLayout>
+
+
+            </LinearLayout>
 
         </android.support.design.widget.CoordinatorLayout>
 
