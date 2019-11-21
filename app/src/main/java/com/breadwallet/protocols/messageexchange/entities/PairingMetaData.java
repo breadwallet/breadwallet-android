@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.util.Base64;
 
-import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.util.Utils;
 
 import org.json.JSONException;
@@ -98,7 +97,7 @@ public class PairingMetaData implements Parcelable {
         mId = json.getString(IDENTIFIER);
         mService = json.getString(SERVICE);
         mReturnUrl = json.getString(RETURN_URL);
-        mPublicKeyHex = BRCoreKey.encodeHex(Base64.decode(json.getString(REMOTE_PUBKEY), Base64.NO_WRAP));
+        mPublicKeyHex = Utils.bytesToHex(Base64.decode(json.getString(REMOTE_PUBKEY), Base64.NO_WRAP));
     }
 
     public String getId() {
@@ -147,7 +146,7 @@ public class PairingMetaData implements Parcelable {
     }
 
     public JSONObject toJSON() throws JSONException {
-        byte[] rawPubKey = BRCoreKey.decodeHex(mPublicKeyHex);
+        byte[] rawPubKey = Utils.hexToBytes(mPublicKeyHex);
         String base64PubKey = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
 
         JSONObject pairingJSON = new JSONObject();

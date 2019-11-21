@@ -1,5 +1,1 @@
-include ':app', ':CoreLibrary', ':Crypto', ':CoreCrypto', ':CoreNative'
-project(':CoreLibrary').projectDir = new File('core/Java/Core')
-project(':Crypto').projectDir = new File('core/Java/Crypto')
-project(':CoreCrypto').projectDir = new File('core/Java/CoreCrypto')
-project(':CoreNative').projectDir = new File('core/Java/CoreNative')
+include ':app'

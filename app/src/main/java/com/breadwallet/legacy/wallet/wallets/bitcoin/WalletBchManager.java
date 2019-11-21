@@ -4,9 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
-import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.model.FeeOption;
 import com.breadwallet.repository.FeeRepository;
@@ -15,7 +12,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.EventUtils;
 import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
@@ -65,35 +61,19 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
                 Log.e(TAG, "getInstance: rawPubKey is null");
                 return null;
             }
-            BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-            long time = BRKeyStore.getWalletCreationTime(context);
-            if (!BRSharedPrefs.getBchPreForkSynced(context) && time == 0)
-                time = BuildConfig.BITCOIN_TESTNET ? TESTNET_FORK_TIME : MAINNET_FORK_TIME;
-            mInstance = new WalletBchManager(context, pubKey, BuildConfig.BITCOIN_TESTNET ?
-                    BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
         }
         return mInstance;
     }
 
-    private WalletBchManager(final Context context, BRCoreMasterPubKey masterPubKey,
-                             BRCoreChainParams chainParams,
-                             double earliestPeerTime) {
-        super(context, masterPubKey, chainParams, earliestPeerTime);
+    private WalletBchManager(final Context context, double earliestPeerTime) {
+        super(context, earliestPeerTime);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BRSharedPrefs.getStartHeight(context, getCurrencyCode()) == 0)
-                    BRSharedPrefs.putStartHeight(context, getCurrencyCode(), getPeerManager().getLastBlockHeight());
-
                 String currencyCode = getCurrencyCode();
                 FeeOption preferredFeeOption = FeeRepository.getInstance(context).getPreferredFeeOptionByCurrency(currencyCode);
                 BigDecimal preferredFee = FeeRepository.getInstance(context).getFeeByCurrency(currencyCode, preferredFeeOption);
 
-                if (preferredFee.compareTo(BigDecimal.ZERO) == 0) {
-                    preferredFee = new BigDecimal(getWallet().getDefaultFeePerKb());
-                    EventUtils.pushEvent(EventUtils.EVENT_WALLET_DID_USE_DEFAULT_FEE_PER_KB);
-                }
-                getWallet().setFeePerKb(preferredFee.longValue());
             }
         });
         // setSettingsConfig(new WalletSettingsConfiguration(context, getCurrencyCode(), SettingsUtil.getBitcoinCashSettings(context), getFingerprintLimits(context)));
@@ -136,26 +116,17 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     @Override
     public String decorateAddress(String addr) {
-        if (Utils.isNullOrEmpty(addr)) return null;
-        String result = BRCoreAddress.bcashEncodeBitcoin(addr);
-        if (Utils.isNullOrEmpty(result)) return null;
-        if (result.contains(":")) return result.split(":")[1]; //bitcoincash:q24fs34....
-        return result;
+        return null;
 
     }
 
     @Override
     public void refreshAddress(Context context) {
-        BRCoreAddress address = getWallet().getLegacyAddress();
-        updateCachedAddress(context, address.stringify());
     }
 
     @Override
     public String undecorateAddress(String addr) {
-        if (Utils.isNullOrEmpty(addr)) return null;
-        String result = BRCoreAddress.bcashDecodeBitcoin(addr);
-        return Utils.isNullOrEmpty(result) ? null : result;
-
+        return null;
     }
 
     @Override

@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.legacy.presenter.activities.util.BRActivity;
 import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -109,10 +108,6 @@ public class NodesActivity extends BRActivity {
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(wm.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ?
-                getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
-        if (trustNode != null)
-            trustNode.setText(wm.getPeerManager().getCurrentPeerName());
     }
 
     private void createDialog() {

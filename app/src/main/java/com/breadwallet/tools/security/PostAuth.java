@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.core.ethereum.BREthereumEWM;
-import com.breadwallet.core.ethereum.BREthereumTransfer;
 import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.legacy.presenter.entities.CryptoRequest;
 import com.breadwallet.legacy.wallet.WalletsMaster;
@@ -340,46 +338,4 @@ public class PostAuth {
     public interface AuthenticationSuccessListener {
         void onAuthenticatedSuccess();
     }
-
-    /**
-     * Listener for transaction events emitted from WalletEthManager
-     */
-    class TransactionEventListener implements WalletEthManager.OnTransactionEventListener {
-        final private Context mContext;
-        final private WalletEthManager mWalletEthManager;
-        final private CryptoTransaction mTransaction;
-        final private byte[] mRawPhrase;
-        final private Timer mTimeoutTimer;
-
-        /**
-         * Constructor takes various state variables that are necessary when processing transaction events
-         *
-         * @param context          the application context
-         * @param walletEthManager reference to the WalletEthManager
-         * @param transaction      the transaction for which this listener is listening to events
-         * @param rawPhrase        the phrase used in processing transactions
-         * @param timeoutTimer     the timer that signals when a timeout has occurred
-         */
-        TransactionEventListener(Context context, WalletEthManager walletEthManager, CryptoTransaction transaction, byte[] rawPhrase, Timer timeoutTimer) {
-            mContext = context;
-            mWalletEthManager = walletEthManager;
-            mTransaction = transaction;
-            mRawPhrase = rawPhrase;
-            mTimeoutTimer = timeoutTimer;
-        }
-
-        public void onTransactionEvent(BREthereumEWM.TransactionEvent event, BREthereumTransfer transaction, BREthereumEWM.Status status) {
-            // Ensure event is for the transaction this listener is interested in
-            if (transaction != null && mTransaction != null && mTransaction.getEtherTx() != null && transaction.getIdentifier().equals(mTransaction.getEtherTx().getIdentifier())) {
-                switch (event) {
-                    case GAS_ESTIMATE_UPDATED:
-                        Log.d(TAG, "onTransactionEvent: GAS ESTIMATE UPDATED");
-                        mTimeoutTimer.cancel();
-                        mWalletEthManager.removeTransactionEventListener(this);
-                        continueWithPayment(mContext, mRawPhrase, mTransaction);
-                }
-            }
-        }
-    }
-
 }
