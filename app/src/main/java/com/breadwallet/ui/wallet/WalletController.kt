@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
 import android.transition.TransitionManager
 import android.util.TypedValue
@@ -22,6 +23,9 @@ import com.breadwallet.breadbox.BreadBoxEffectHandler
 import com.breadwallet.breadbox.BreadBoxEvent
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.effecthandler.metadata.MetaDataEffect
+import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
+import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.logger.logDebug
 import com.breadwallet.mobius.CompositeEffectHandler
@@ -87,11 +91,8 @@ open class WalletController(
     override val effectHandler: Connectable<WalletScreenEffect, WalletScreenEvent> =
         CompositeEffectHandler.from(
             Connectable { output -> WalletScreenEffectHandler(output) },
-            // Create nested handler, such that WalletScreenEffects are converted
-            // into WalletEffects and passed to WalletEffectHandler
-            // (events produced are converted into WalletScreenEvents)
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance(), direct.instance())
+                BreadBoxEffectHandler(output, currencyCode, direct.instance())
             }, { effect: WalletScreenEffect ->
                 // Map incoming effect
                 when (effect) {
@@ -121,8 +122,25 @@ open class WalletController(
                     is BreadBoxEvent.OnTransactionRemoved ->
                         WalletScreenEvent.OnTransactionRemoved(event.walletTransaction)
                     is BreadBoxEvent.OnTransactionsUpdated ->
-                        WalletScreenEvent.OnTransactionsUpdated(event.walletTransactions)
+                        WalletScreenEvent.OnCryptoTransactionsUpdated(event.transactions)
                     else -> null
+                }
+            }),
+            nestedConnectable({ output: Consumer<MetaDataEvent> ->
+                MetaDataEffectHandler(output, direct.instance())
+            }, { effect: WalletScreenEffect ->
+                when (effect) {
+                    is WalletScreenEffect.LoadTransactionMetaData ->
+                        MetaDataEffect.LoadTransactionMetaData(effect.transactionHashes)
+                    else -> null
+                }
+            }, { event: MetaDataEvent ->
+                when (event) {
+                    is MetaDataEvent.OnTransactionMetaDataUpdated ->
+                        WalletScreenEvent.OnTransactionMetaDataUpdated(
+                            event.transactionHash,
+                            event.txMetaData
+                        ) as WalletScreenEvent
                 }
             }),
             Connectable { output ->
@@ -134,25 +152,29 @@ open class WalletController(
             Connectable { output ->
                 WalletHistoricalPriceIntervalHandler(output, applicationContext!!, currencyCode)
             },
-            nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-                when (effect) {
-                    WalletScreenEffect.GoBack -> NavigationEffect.GoBack
-                    WalletScreenEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
-                    WalletScreenEffect.GoToReview -> NavigationEffect.GoToReview
-                    else -> null
-                }
-            }),
-            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-                when (effect) {
-                    is WalletScreenEffect.GoToSend ->
-                        NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
-                    is WalletScreenEffect.GoToReceive ->
-                        NavigationEffect.GoToReceive(effect.currencyId)
-                    is WalletScreenEffect.GoToTransaction ->
-                        NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)
-                    else -> null
-                }
-            })
+            nestedConnectable(
+                { direct.instance<NavigationEffectHandler>() },
+                { effect: WalletScreenEffect ->
+                    when (effect) {
+                        WalletScreenEffect.GoBack -> NavigationEffect.GoBack
+                        WalletScreenEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
+                        WalletScreenEffect.GoToReview -> NavigationEffect.GoToReview
+                        else -> null
+                    }
+                }),
+            nestedConnectable(
+                { direct.instance<RouterNavigationEffectHandler>() },
+                { effect ->
+                    when (effect) {
+                        is WalletScreenEffect.GoToSend ->
+                            NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
+                        is WalletScreenEffect.GoToReceive ->
+                            NavigationEffect.GoToReceive(effect.currencyId)
+                        is WalletScreenEffect.GoToTransaction ->
+                            NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)
+                        else -> null
+                    }
+                })
         )
 
     private var mAdapter: TransactionListAdapter? = null
@@ -204,11 +226,38 @@ open class WalletController(
         receive_button.setOnClickListener { output.accept(WalletScreenEvent.OnReceiveClicked) }
 
         // Tx List
-        tx_list.layoutManager = LinearLayoutManager(applicationContext)
+        tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
+            override fun onLayoutCompleted(state: RecyclerView.State?) {
+                super.onLayoutCompleted(state)
+                val adapter = checkNotNull(mAdapter)
+                updateVisibleTransactions(adapter, this, output)
+            }
+        }
         mAdapter = TransactionListAdapter(applicationContext!!, null) { (txHash) ->
             output.accept(WalletScreenEvent.OnTransactionClicked(txHash))
         }
         tx_list.adapter = mAdapter
+
+        tx_list.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    when (newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> {
+                            output.accept(WalletScreenEvent.OnVisibleTransactionsChanged(emptyList()))
+                        }
+                        RecyclerView.SCROLL_STATE_IDLE -> {
+                            val adapter = checkNotNull(mAdapter)
+                            val layoutManager =
+                                (checkNotNull(recyclerView.layoutManager) as LinearLayoutManager)
+                            updateVisibleTransactions(adapter, layoutManager, output)
+                        }
+                        else -> return
+                    }
+                }
+            }
+        )
 
         // Search button
         search_icon.setOnClickListener { output.accept(WalletScreenEvent.OnSearchClicked) }
@@ -261,6 +310,25 @@ open class WalletController(
 
         return Disposable {
             search_bar.setEventOutput(null)
+            tx_list.clearOnScrollListeners()
+        }
+    }
+
+    private fun updateVisibleTransactions(
+        adapter: TransactionListAdapter,
+        layoutManager: LinearLayoutManager,
+        output: Consumer<WalletScreenEvent>
+    ) {
+        val firstIndex = layoutManager.findFirstVisibleItemPosition()
+        val lastIndex = layoutManager.findLastVisibleItemPosition()
+        if (firstIndex != RecyclerView.NO_POSITION) {
+            output.accept(
+                WalletScreenEvent.OnVisibleTransactionsChanged(
+                    adapter.items
+                        .slice(firstIndex..lastIndex)
+                        .map { it.txHash }
+                )
+            )
         }
     }
 

@@ -49,7 +49,7 @@ sealed class BreadBoxEvent {
     data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) :
         BreadBoxEvent()
 
-    data class OnTransactionsUpdated(val walletTransactions: List<WalletTransaction>) :
+    data class OnTransactionsUpdated(val transactions: List<Transfer>) :
         BreadBoxEvent()
 
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : BreadBoxEvent()

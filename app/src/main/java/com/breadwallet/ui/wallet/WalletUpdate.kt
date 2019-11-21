@@ -1,5 +1,6 @@
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.ext.replaceAt
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.wallet.WalletScreenEffect.*
 import com.breadwallet.ui.wallet.WalletScreenEvent.*
@@ -264,6 +265,22 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
             )
         )
 
+    override fun onCryptoTransactionsUpdated(
+        model: WalletScreenModel,
+        event: OnCryptoTransactionsUpdated
+    ): Next<WalletScreenModel, WalletScreenEffect> =
+        if (event.transactions.isNotEmpty()) {
+            dispatch(
+                setOf(
+                    ConvertCryptoTransactions(
+                        event.transactions
+                    )
+                )
+            )
+        } else {
+            noChange()
+        }
+
     override fun onTransactionsUpdated(
         model: WalletScreenModel,
         event: OnTransactionsUpdated
@@ -280,6 +297,20 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
                 )
             )
 
+    override fun onTransactionMetaDataUpdated(
+        model: WalletScreenModel,
+        event: OnTransactionMetaDataUpdated
+    ): Next<WalletScreenModel, WalletScreenEffect> {
+        val index = model.transactions.indexOfFirst { it.txHash == event.transactionHash }
+        val transaction = model.transactions[index].copy(
+            memo = event.transactionMetaData.comment ?: ""
+        )
+        val transactions = model.transactions.replaceAt(index, transaction)
+        return next(
+            model.copy(transactions = transactions)
+        )
+    }
+
     override fun onTransactionAdded(
         model: WalletScreenModel,
         event: OnTransactionAdded
@@ -295,6 +326,12 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
                     transactions = listOf(event.walletTransaction) + model.transactions
                 )
             )
+
+    override fun onVisibleTransactionsChanged(
+        model: WalletScreenModel,
+        event: OnVisibleTransactionsChanged
+    ): Next<WalletScreenModel, WalletScreenEffect> =
+        dispatch(effects(LoadTransactionMetaData(event.transactionHashes)))
 
     override fun onTransactionRemoved(
         model: WalletScreenModel,
@@ -432,8 +469,7 @@ private fun List<WalletTransaction>.filtered(
             listOf(
                 it.memo,
                 it.toAddress,
-                it.fromAddress,
-                it.fiatWhenSent.toString()
+                it.fromAddress
             ).any { subject ->
                 subject.toLowerCase()
                     .contains(lowerCaseQuery)

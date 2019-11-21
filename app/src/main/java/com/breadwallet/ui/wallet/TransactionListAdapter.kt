@@ -74,7 +74,6 @@ class TransactionListAdapter(
                     mOnItemClickListener(items[holder.adapterPosition])
                 }
             }
-
             setTexts(holder as TxHolder, position)
         }
     }

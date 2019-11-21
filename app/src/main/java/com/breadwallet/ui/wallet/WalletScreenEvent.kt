@@ -1,8 +1,10 @@
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.platform.entities.TxMetaData
 import io.hypno.switchboard.MobiusUpdateSpec
 import java.math.BigDecimal
 
@@ -39,6 +41,22 @@ sealed class WalletScreenEvent {
     ) : WalletScreenEvent() {
         override fun toString() =
             "OnTransactionsUpdated(walletTransactions=(size:${walletTransactions.size}))"
+    }
+
+    data class OnTransactionMetaDataUpdated(
+        val transactionHash: String,
+        val transactionMetaData: TxMetaData
+    ) : WalletScreenEvent()
+
+    data class OnVisibleTransactionsChanged(
+        val transactionHashes: List<String>
+    ) : WalletScreenEvent()
+
+    data class OnCryptoTransactionsUpdated(
+        val transactions: List<Transfer>
+    ) : WalletScreenEvent() {
+        override fun toString() =
+            "OnCryptoTransactionsUpdated(walletTransactions=(size:${transactions.size}))"
     }
 
     data class OnTransactionAdded(val walletTransaction: WalletTransaction) : WalletScreenEvent()
