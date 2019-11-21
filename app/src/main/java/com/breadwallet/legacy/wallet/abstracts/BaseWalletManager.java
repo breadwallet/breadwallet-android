@@ -3,7 +3,6 @@ package com.breadwallet.legacy.wallet.abstracts;
 import android.content.Context;
 import android.support.annotation.WorkerThread;
 
-import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.legacy.wallet.configs.WalletUiConfiguration;
@@ -48,9 +47,6 @@ public interface BaseWalletManager {
 
     //get the core wallet
     int getForkId();
-
-    //get the currency unit ETHER_WEI...
-    BREthereumAmount.Unit getUnit();
 
     String getAddress(Context context);
 

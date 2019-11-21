@@ -2,15 +2,12 @@ package com.breadwallet.legacy.wallet.wallets.ethereum;
 
 import android.content.Context;
 
-import com.breadwallet.core.ethereum.BREthereumEWM;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.legacy.presenter.entities.BRSettingsItem;
 import com.breadwallet.legacy.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.legacy.wallet.abstracts.OnTxListModified;
 import com.breadwallet.legacy.wallet.abstracts.SyncListener;
 import com.breadwallet.legacy.wallet.wallets.WalletManagerHelper;
-import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -47,11 +44,11 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         return mAddress;
     }
 
-    public abstract BREthereumWallet getWallet();
+    public abstract Object getWallet();
 
     @Override
     public boolean isAddressValid(String address) {
-        return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX) && BREthereumEWM.addressIsValid(address);
+        return false;
     }
 
     @Override
