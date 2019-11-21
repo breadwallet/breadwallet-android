@@ -6,7 +6,8 @@ variables:
 cache:
   key: ${CI_PROJECT_ID}
   paths:
-    - .m2/
+    - ~/.m2/
+    - ~/.gradle/
     - .gradle/
 
 stages:
