@@ -9,7 +9,6 @@ import com.breadwallet.breadbox.isEthereum
 import com.breadwallet.breadbox.isReceived
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
-import java.math.BigDecimal
 import java.util.Date
 
 object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>,

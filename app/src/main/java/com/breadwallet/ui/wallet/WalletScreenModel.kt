@@ -79,20 +79,18 @@ data class WalletTransaction(
     val txHash: String,
     val amount: BigDecimal,
     val amountInFiat: BigDecimal,
-    val fiatWhenSent: Float,
     val toAddress: String,
     val fromAddress: String,
     val isReceived: Boolean,
     val timeStamp: Long,
-    val memo: String,
+    val memo: String = "",
     val isErrored: Boolean,
     val isValid: Boolean,
     val fee: BigDecimal,
-    val blockHeight: Int,
     val confirmations: Int,
     val confirmationsUntilFinal: Int,
     val currencyCode: String,
-    val feeForToken: String? // TODO: token symbol?
+    val feeForToken: String = "" // TODO: token symbol?
 ) {
     val isPending: Boolean = confirmations < confirmationsUntilFinal
 

@@ -27,7 +27,11 @@ package com.breadwallet.effecthandler.metadata
 sealed class MetaDataEffect {
 
     object RecoverMetaData : MetaDataEffect()
-    data class LoadTransactionMetaData(val transactionHash: String) : MetaDataEffect()
+
+    data class LoadTransactionMetaData(val transactionHashes: List<String>) : MetaDataEffect() {
+        constructor(transactionHash: String) : this(listOf(transactionHash))
+    }
+
     data class UpdateTransactionComment(
         val transactionHash: String,
         val comment: String

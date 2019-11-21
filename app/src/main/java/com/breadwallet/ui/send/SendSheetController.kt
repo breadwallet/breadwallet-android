@@ -162,7 +162,7 @@ class SendSheetController(args: Bundle? = null) :
                 }
             },
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance(), direct.instance())
+                BreadBoxEffectHandler(output, currencyCode, direct.instance())
             }, { effect: SendSheetEffect ->
                 when (effect) {
                     SendSheetEffect.LoadBalance ->
