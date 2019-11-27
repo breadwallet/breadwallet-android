@@ -24,6 +24,9 @@
  */
 package com.breadwallet.effecthandler.metadata
 
+import com.breadwallet.crypto.Transfer
+import java.math.BigDecimal
+
 sealed class MetaDataEffect {
 
     object RecoverMetaData : MetaDataEffect()
@@ -31,6 +34,13 @@ sealed class MetaDataEffect {
     data class LoadTransactionMetaData(val transactionHashes: List<String>) : MetaDataEffect() {
         constructor(transactionHash: String) : this(listOf(transactionHash))
     }
+
+    data class AddTransactionMetaData(
+        val transaction: Transfer,
+        val comment: String,
+        val fiatCurrencyCode: String,
+        val fiatPricePerUnit: BigDecimal
+    ) : MetaDataEffect()
 
     data class UpdateTransactionComment(
         val transactionHash: String,
