@@ -309,3 +309,15 @@ fun Network.getPeerOrNull(node: String): NetworkPeer? {
 
 /** True when the [Transfer] was received. */
 fun Transfer.isReceived(): Boolean = direction == TransferDirection.RECEIVED
+
+fun Transfer.getSize(): Double? {
+    val currencyCode = wallet.currency.code
+    return when {
+        currencyCode.isBitcoin() || currencyCode.isBitcoinCash() ->
+            (confirmedFeeBasis.orNull() ?: estimatedFeeBasis.orNull())?.costFactor
+        else -> null
+    }
+}
+
+
+

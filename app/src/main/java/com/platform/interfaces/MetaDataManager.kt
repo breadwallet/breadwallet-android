@@ -206,7 +206,7 @@ class MetaDataManager(
         return metaData?.run { TxMetaData.fromJsonObject(this) }
     }
 
-    override fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String) {
+    override suspend fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String) {
         var txMetaData = getTxMetaData(txHash)
 
         var needsUpdate = false
@@ -349,38 +349,6 @@ class MetaDataManager(
         forEach { json.put(it) }
         return json
     }
-
-    /*
-    // TODO: refactor to avoid wallet manager
-    fun createMetadata(
-        app: Context,
-        wm: BaseWalletManager,
-        tx: CryptoTransaction
-    ): TxMetaData {
-        return TxMetaData().apply {
-            exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app)
-            val ent = RatesRepository
-                .getInstance(app)
-                .getCurrencyByCode(wm.currencyCode, exchangeCurrency)
-            exchangeRate = when (ent == null) {
-                true -> 0.0
-                false -> {
-                    BigDecimal(ent.rate.toDouble())
-                        .setScale(EXCHANGE_RATE_SCALE, BRConstants.ROUNDING_MODE)
-                        .stripTrailingZeros()
-                        .toDouble()
-                }
-            }
-            fee = wm.getTxFee(tx).toPlainString()
-            txSize = tx.txSize!!.toInt()
-            blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.currencyCode)
-            creationTime =
-                (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS).toInt() // seconds
-            deviceId = BRSharedPrefs.getDeviceId(app)
-            classVersion = 1
-        }
-    }
-    */
 
     private fun getTxMetaDataKey(txHash: String, legacy: Boolean = false): String =
         TX_META_DATA_KEY_PREFIX + if (legacy) {

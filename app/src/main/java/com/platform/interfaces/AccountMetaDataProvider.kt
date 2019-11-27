@@ -73,7 +73,7 @@ interface AccountMetaDataProvider {
     fun getTxMetaData(txHash: String): TxMetaData?
 
     /** Persist given [TxMetaData] for transaction hash, but ONLY if the comment or exchange rate has changed. */
-    fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String)
+    suspend fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String)
 
     fun getPairingMetadata(pubKey: ByteArray): PairingMetaData?
 

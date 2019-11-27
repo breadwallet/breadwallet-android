@@ -1,5 +1,6 @@
 package com.breadwallet.ui.send
 
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
@@ -88,7 +89,7 @@ sealed class SendSheetEvent {
 
     object GoToEthWallet : SendSheetEvent()
 
-    object OnSendComplete : SendSheetEvent()
+    data class OnSendComplete(val transfer: Transfer) : SendSheetEvent()
     object OnSendFailed : SendSheetEvent()
 
     object OnSendClicked : SendSheetEvent()

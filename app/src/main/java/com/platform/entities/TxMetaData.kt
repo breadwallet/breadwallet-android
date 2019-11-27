@@ -38,12 +38,12 @@ data class TxMetaData(
     val deviceId: String? = null,
     val comment: String? = null,
     val exchangeCurrency: String? = null,
-    val classVersion: Int = 1,
-    val blockHeight: Int = 0,
     val exchangeRate: Double = 0.toDouble(),
+    val blockHeight: Int = 0,
     val fee: String? = null,
     val txSize: Int = 0,
-    val creationTime: Int = 0
+    val creationTime: Int = 0,
+    val classVersion: Int = 3
 ) {
     companion object {
         private const val CLASS_VERSION = "classVersion"
