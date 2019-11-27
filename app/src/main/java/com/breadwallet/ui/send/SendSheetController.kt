@@ -42,6 +42,9 @@ import com.breadwallet.breadbox.SendTxEffectHandler
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.crypto.Currency
+import com.breadwallet.effecthandler.metadata.MetaDataEffect
+import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
+import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
@@ -134,7 +137,7 @@ class SendSheetController(args: Bundle? = null) :
                 SendTxEffectHandler(
                     Consumer { event ->
                         when (event) {
-                            is SendTx.Result.Success -> SendSheetEvent.OnSendComplete
+                            is SendTx.Result.Success -> SendSheetEvent.OnSendComplete(event.transfer)
                             is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
                         }.run(eventConsumer::accept)
                     },
@@ -176,6 +179,20 @@ class SendSheetController(args: Bundle? = null) :
                     else -> null
                 } as? SendSheetEvent
             }),
+            nestedConnectable({ output: Consumer<MetaDataEvent> ->
+                MetaDataEffectHandler(output, direct.instance())
+            }, { effect ->
+                when (effect) {
+                    is SendSheetEffect.AddTransactionMetaData ->
+                        MetaDataEffect.AddTransactionMetaData(
+                            effect.transaction,
+                            effect.memo,
+                            effect.fiatCurrencyCode,
+                            effect.fiatPricePerUnit
+                        )
+                    else -> null
+                }
+            }, { _: MetaDataEvent -> {} as? SendSheetEvent }),
             nestedConnectable({
                 direct.instance<RouterNavigationEffectHandler>()
             }) { effect ->
@@ -213,6 +230,7 @@ class SendSheetController(args: Bundle? = null) :
         layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
 
         textInputAddress.onTextChanged(SendSheetEvent::OnTargetAddressChanged)
+        textInputMemo.onTextChanged(SendSheetEvent::OnMemoChanged)
         textInputAmount.onClick(SendSheetEvent.OnAmountEditClicked)
         textInputAddress.onClick(SendSheetEvent.OnAmountEditDismissed)
         textInputMemo.onClick(SendSheetEvent.OnAmountEditDismissed)
@@ -375,8 +393,8 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(SendSheetModel::memo) {
-            if (textInputAddress.text.toString() != memo) {
-                textInputAddress.setText(memo, TextView.BufferType.EDITABLE)
+            if (textInputMemo.text.toString() != memo) {
+                textInputMemo.setText(memo, TextView.BufferType.EDITABLE)
             }
         }
 
