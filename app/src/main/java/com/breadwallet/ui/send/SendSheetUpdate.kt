@@ -478,11 +478,27 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onSendComplete(
-        model: SendSheetModel
+        model: SendSheetModel,
+        event: SendSheetEvent.OnSendComplete
     ): Next<SendSheetModel, SendSheetEffect> {
+
         return when {
             model.isSendingTransaction ->
-                dispatch(setOf(SendSheetEffect.ShowTransactionComplete))
+                dispatch(
+                    mutableSetOf<SendSheetEffect>(SendSheetEffect.ShowTransactionComplete).apply {
+                        if (!model.memo.isNullOrBlank()) {
+                            add(
+                                SendSheetEffect.AddTransactionMetaData(
+                                    event.transfer,
+                                    model.memo,
+                                    model.fiatCode,
+                                    model.fiatPricePerUnit
+                                )
+                            )
+                        }
+
+                    }
+                )
             else -> noChange()
         }
     }

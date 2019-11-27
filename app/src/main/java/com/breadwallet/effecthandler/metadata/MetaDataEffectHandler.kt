@@ -24,9 +24,14 @@
  */
 package com.breadwallet.effecthandler.metadata
 
+import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.getSize
+import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.entities.TxMetaData
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
@@ -46,6 +51,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class MetaDataEffectHandler(
     private val output: Consumer<MetaDataEvent>,
@@ -103,6 +110,13 @@ class MetaDataEffectHandler(
             MetaDataEffect.RecoverMetaData -> recoverMetaData()
             is MetaDataEffect.LoadTransactionMetaData ->
                 loadTransactionMetaData(effect.transactionHashes)
+            is MetaDataEffect.AddTransactionMetaData ->
+                addTransactionMetaData(
+                    effect.transaction,
+                    effect.comment,
+                    effect.fiatCurrencyCode,
+                    effect.fiatPricePerUnit
+                )
             is MetaDataEffect.UpdateTransactionComment ->
                 updateTransactionComment(effect.transactionHash, effect.comment)
         }
@@ -120,6 +134,37 @@ class MetaDataEffectHandler(
 
     private fun loadTransactionMetaData(transactionHashes: List<String>) {
         loadMetaDataChannel.offer(transactionHashes)
+    }
+
+    private fun addTransactionMetaData(
+        transaction: Transfer,
+        comment: String,
+        fiatCurrencyCode: String,
+        fiatPricePerUnit: BigDecimal
+    ) {
+        val deviceId = BRSharedPrefs.getDeviceId()
+        val blockHeight = BRSharedPrefs.getLastBlockHeight(
+            transaction.wallet.currency.code
+        ) // TODO: this pref not being updated anymore
+        val size = transaction.getSize()?.toInt() ?: 0
+        val fee = transaction.fee.toBigDecimal().toPlainString()
+        val creationTime =
+            (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS).toInt()
+
+        val metaData = TxMetaData(
+            deviceId,
+            comment,
+            fiatCurrencyCode,
+            fiatPricePerUnit.toDouble(),
+            blockHeight,
+            fee,
+            size,
+            creationTime
+        )
+
+        BreadApp.applicationScope.launch {
+            metaDataProvider.putTxMetaData(metaData, transaction.hash.get().toString())
+        }
     }
 
     private fun updateTransactionComment(transactionHash: String, comment: String) {

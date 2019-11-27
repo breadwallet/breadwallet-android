@@ -1,5 +1,6 @@
 package com.breadwallet.ui.send
 
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.util.CurrencyCode
 import java.math.BigDecimal
@@ -9,6 +10,7 @@ sealed class SendSheetEffect {
     data class GoToFaq(
         val currencyCode: CurrencyCode
     ) : SendSheetEffect()
+
     data class GoToReceive(
         val currencyCode: CurrencyCode
     ) : SendSheetEffect()
@@ -67,6 +69,13 @@ sealed class SendSheetEffect {
                 "transferFeeBasis=$transferFeeBasis)"
         }
     }
+
+    data class AddTransactionMetaData(
+        val transaction: Transfer,
+        val memo: String,
+        val fiatCurrencyCode: String,
+        val fiatPricePerUnit: BigDecimal
+    ) : SendSheetEffect()
 
     data class ParseClipboardData(
         val currencyCode: CurrencyCode
