@@ -121,8 +121,14 @@ class OnBoardingEffectHandler(
 
     private suspend fun generatePhrase(): ByteArray? {
         return withContext(Dispatchers.Default) {
+            val words = Key.getDefaultWordList()
             try {
-                Account.generatePhrase(Key.getDefaultWordList())
+                Account.generatePhrase(words)
+                    .also { phrase ->
+                        check(Account.validatePhrase(phrase, words)) {
+                            "Invalid phrase generated."
+                        }
+                    }
             } catch (e: Exception) {
                 logError("Failed to generate phrase.", e)
                 outputProvider().accept(OnBoardingEvent.SetupError.PhraseCreationFailed)
