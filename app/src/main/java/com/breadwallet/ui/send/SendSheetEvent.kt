@@ -1,6 +1,7 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
@@ -37,7 +38,7 @@ sealed class SendSheetEvent {
     ) : SendSheetEvent()
 
     data class OnTransferSpeedChanged(
-        val transferSpeed: SendSheetModel.TransferSpeed
+        val transferSpeed: TransferSpeed
     ) : SendSheetEvent()
 
     data class OnAddressValidated(

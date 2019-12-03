@@ -39,6 +39,7 @@ import com.breadwallet.breadbox.BreadBoxEffectHandler
 import com.breadwallet.breadbox.BreadBoxEvent
 import com.breadwallet.breadbox.SendTx
 import com.breadwallet.breadbox.SendTxEffectHandler
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.crypto.Currency
@@ -62,9 +63,6 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange
-import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.ECONOMY
-import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.PRIORITY
-import com.breadwallet.ui.send.SendSheetModel.TransferSpeed.REGULAR
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -240,9 +238,9 @@ class SendSheetController(args: Bundle? = null) :
         buttonScan.onClick(SendSheetEvent.OnScanClicked)
         buttonSend.onClick(SendSheetEvent.OnSendClicked)
 
-        buttonRegular.onClick(SendSheetEvent.OnTransferSpeedChanged(REGULAR))
-        buttonEconomy.onClick(SendSheetEvent.OnTransferSpeedChanged(ECONOMY))
-        buttonPriority.onClick(SendSheetEvent.OnTransferSpeedChanged(PRIORITY))
+        buttonRegular.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.REGULAR))
+        buttonEconomy.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.ECONOMY))
+        buttonPriority.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.PRIORITY))
 
         buttonFaq.onClick(SendSheetEvent.OnFaqClicked)
         layoutBackground.onClick(SendSheetEvent.OnCloseClicked)
@@ -476,11 +474,11 @@ class SendSheetController(args: Bundle? = null) :
         }
     }
 
-    private fun setFeeOption(feeOption: SendSheetModel.TransferSpeed) {
+    private fun setFeeOption(feeOption: TransferSpeed) {
         val context = applicationContext!!
         // TODO: Redo using a toggle button and a selector
         when (feeOption) {
-            REGULAR -> {
+            TransferSpeed.REGULAR -> {
                 buttonRegular.setTextColor(context.getColor(R.color.white))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
@@ -492,7 +490,7 @@ class SendSheetController(args: Bundle? = null) :
                     .format(context.getString(R.string.FeeSelector_regularTime))
                 labelFeeWarning.visibility = View.GONE
             }
-            ECONOMY -> {
+            TransferSpeed.ECONOMY -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.white))
@@ -504,7 +502,7 @@ class SendSheetController(args: Bundle? = null) :
                     .format(context.getString(R.string.FeeSelector_economyTime))
                 labelFeeWarning.visibility = View.VISIBLE
             }
-            PRIORITY -> {
+            TransferSpeed.PRIORITY -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))

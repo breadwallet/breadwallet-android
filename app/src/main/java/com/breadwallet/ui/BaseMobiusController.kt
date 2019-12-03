@@ -28,32 +28,47 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.breadwallet.ext.merge
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
+import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.Connection
 import com.spotify.mobius.EventSource
 import com.spotify.mobius.First
 import com.spotify.mobius.Init
-import com.spotify.mobius.Mobius
 import com.spotify.mobius.MobiusLoop
 import com.spotify.mobius.Update
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
 import com.spotify.mobius.disposables.Disposable
+import com.spotify.mobius.flow.DispatcherWorkRunner
+import com.spotify.mobius.flow.FlowMobius
+import com.spotify.mobius.flow.FlowTransformer
+import com.spotify.mobius.flow.flowConnectable
+import com.spotify.mobius.flow.flowTransformer
+import com.spotify.mobius.flow.transform
 import com.spotify.mobius.functions.Consumer
-import com.spotify.mobius.runners.WorkRunners
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import org.kodein.di.Kodein
+import org.kodein.di.direct
 import org.kodein.di.erased.bind
+import org.kodein.di.erased.instance
 import org.kodein.di.erased.provider
 
 @Suppress("TooManyFunctions") // TODO: Extract render DSL or replace with Flows
@@ -75,18 +90,7 @@ abstract class BaseMobiusController<M, E, F>(
         }
     }
 
-    private val modelChannel = BroadcastChannel<M>(Channel.BUFFERED)
-
-    /**
-     * A [Flow] that emits [M] when a new model is provided and
-     * emits the current model when the loop is running.
-     */
-    val model: Flow<M> = modelChannel.asFlow()
-        .onStart {
-            if (loopController.isRunning) {
-                emit(loopController.model)
-            }
-        }
+    protected val uiBindScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     /** The default model used to construct [loopController]. */
     abstract val defaultModel: M
@@ -95,13 +99,28 @@ abstract class BaseMobiusController<M, E, F>(
     /** The init function used to construct [loopFactory]. */
     open val init: Init<M, F> = Init { First.first(it) }
     /** The effect handler used to construct [loopFactory]. */
-    abstract val effectHandler: Connectable<F, E>
+    open val effectHandler: Connectable<F, E>? = null
+
+    // TODO: Make abstract and non-nullable when children only implement flowEffectHandler
+    /** The effect handler used to construct [loopFactory]. */
+    open val flowEffectHandler: FlowTransformer<F, E>? = null
 
     private val loopFactory by lazy {
-        Mobius.loop(update, effectHandler)
+        // TODO: Remove this check when children implement only flowEffectHandler
+        val handler = if (effectHandler == null) {
+            checkNotNull(flowEffectHandler) {
+                "flowEffectHandler must be implemented"
+            }
+        } else {
+            flowTransformer { effects ->
+                effects.transform(checkNotNull(effectHandler))
+            }
+        }
+
+        FlowMobius.loop(update, handler)
             .init(init)
-            .eventRunner { WorkRunners.cachedThreadPool() }
-            .effectRunner { WorkRunners.cachedThreadPool() }
+            .eventRunner { DispatcherWorkRunner(Dispatchers.Default) }
+            .effectRunner { DispatcherWorkRunner(Dispatchers.Default) }
             .logger(AndroidLogger.tag(this::class.java.simpleName))
             .eventSource(this)
     }
@@ -131,28 +150,53 @@ abstract class BaseMobiusController<M, E, F>(
         private set
 
     /** Called when [view] can attach listeners to dispatch events via [output]. */
-    abstract fun bindView(output: Consumer<E>): Disposable
+    open fun bindView(output: Consumer<E>): Disposable = Disposable { }
 
     /** Called when the model is updated or additional rendering is required. */
-    abstract fun M.render()
+    open fun M.render() = Unit
+
+    /**
+     * Called when instances of model [M] can be collected
+     * from [modelFlow].
+     *
+     * The returned [Flow] will be collected while the loop
+     * is running to dispatch each event [E].
+     */
+    open fun bindView(modelFlow: Flow<M>): Flow<E> = emptyFlow()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return super.onCreateView(inflater, container).apply {
-            loopController.connect { output ->
-                object : Connection<M>, Disposable by bindView(output) {
-                    override fun accept(value: M) {
-                        modelChannel.offer(value)
-                        value.render()
-                        previousModel = value
+            // TODO: This code maintains the old render and model diffing support
+            //  once all callers have migrated, it can be replaced with this one line.
+            //  loopController.connect(flowConnectable(transform = ::bindView))
+            loopController.connect(flowConnectable { modelFlow ->
+                val eventChannel = Channel<E>(Channel.BUFFERED)
+                val disposable = bindView(Consumer { event ->
+                    eventChannel.offer(event)
+                })
+
+                val scope = CoroutineScope(Dispatchers.Main)
+                modelFlow
+                    .onStart {
+                        previousModel = null
+                        loopController.model.render()
+                        previousModel = loopController.model
                     }
-                }.also {
-                    modelChannel.offer(loopController.model)
-                    /* Initial render */
-                    previousModel = null
-                    loopController.model.render()
-                    previousModel = loopController.model
+                    .onEach { model ->
+                        model.render()
+                        previousModel = model
+                    }
+                    .launchIn(scope)
+
+                merge(
+                    bindView(modelFlow),
+                    eventChannel.consumeAsFlow()
+                ).onCompletion {
+                    scope.cancel()
+                    disposable.dispose()
                 }
-            }
+            })
         }
     }
 
@@ -178,6 +222,14 @@ abstract class BaseMobiusController<M, E, F>(
             eventConsumerDelegate.consumer = QueuedConsumer()
         }
     }
+
+    fun handleNavEffects(): FlowTransformer<NavEffectHolder, E> =
+        flowTransformer { effects ->
+            effects.map { effect -> effect.navigationEffect }
+                .transform(Connectable {
+                    direct.instance<RouterNavigationEffectHandler>()
+                })
+        }
 
     /**
      * Invokes [block] only when the result of [extract] on

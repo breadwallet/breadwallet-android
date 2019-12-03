@@ -64,7 +64,8 @@ sealed class Link {
     ) : Link()
 
     data class ImportWallet(
-        val privateKey: String
+        val privateKey: String,
+        val passwordProtected: Boolean
     ) : Link() {
         override fun toString() = "ImportWallet()"
     }
@@ -95,16 +96,17 @@ fun String.asLink(): Link? {
         }
         isWalletPairUrl(uri) -> Link.WalletPairUrl(PairingMetaData(this))
         isBreadUrl(uri) -> uri.asBreadUrl()
-        isPrivateKey() -> Link.ImportWallet(this)
-        else -> null
+        else -> toByteArray().let { bytes ->
+            when {
+                Key.isProtectedPrivateKeyString(bytes) ->
+                    Link.ImportWallet(this, true)
+                Key.createFromPrivateKeyString(bytes).isPresent ->
+                    Link.ImportWallet(this, false)
+                else -> null
+            }
+        }
     }
 }
-
-private fun String.isPrivateKey(): Boolean =
-    toByteArray().let { keyBytes ->
-        Key.isProtectedPrivateKeyString(keyBytes)
-            || Key.createFromPrivateKeyString(keyBytes).isPresent
-    }
 
 private val uriParser by lazy {
     BreadApp.getKodeinInstance().instance<CryptoUriParser>()

@@ -33,6 +33,17 @@ import com.breadwallet.model.InAppMessage
 import com.breadwallet.ui.settings.SettingsSection
 import io.hypno.switchboard.MobiusHandlerSpec
 
+/**
+ * [NavEffectHolder] can be applied to a screen specific
+ * navigation effect to support [RouterNavigationEffectHandler]
+ * without needing to map every effect to a [NavigationEffect].
+ *
+ * @see com.breadwallet.ui.BaseMobiusController.handleNavEffects
+ */
+interface NavEffectHolder {
+    val navigationEffect: NavigationEffect
+}
+
 @MobiusHandlerSpec
 sealed class NavigationEffect {
     data class GoToSend(
