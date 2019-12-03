@@ -1,17 +1,13 @@
 package com.breadwallet.ui.send
 
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.util.Link
-import com.breadwallet.ui.send.SendSheetModel.TransferSpeed
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import java.math.BigDecimal
-import java.util.concurrent.TimeUnit
-
-private const val ECONOMY_FEE_HOURS = 10L
-private const val REGULAR_FEE_HOURS = 1L
 
 /**
  * [SendSheetModel] models the ability to send an [amount] of [currencyCode]
@@ -94,12 +90,6 @@ data class SendSheetModel(
 
         object ClipboardEmpty : InputError()
         object ClipboardInvalid : InputError()
-    }
-
-    enum class TransferSpeed(val targetTime: Long) {
-        ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
-        REGULAR(TimeUnit.HOURS.toMillis(REGULAR_FEE_HOURS)),
-        PRIORITY(0L);
     }
 
     /** True when the user can select the [TransferSpeed], currently only BTC. */

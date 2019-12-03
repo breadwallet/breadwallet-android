@@ -47,7 +47,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.tools.util.asLink
-import com.breadwallet.ui.importwallet.ImportWalletController
+import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
@@ -209,7 +209,10 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod")
     private fun handleLink(link: Link): Controller? {
         return when (link) {
-            is Link.ImportWallet -> ImportWalletController(link.privateKey)
+            is Link.ImportWallet -> ImportController(
+                link.privateKey,
+                link.passwordProtected
+            )
             is Link.CryptoRequestUrl -> SendSheetController(link)
             is Link.WalletPairUrl -> {
                 MessageExchangeService.enqueueWork(
