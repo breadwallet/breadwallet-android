@@ -1,14 +1,13 @@
 package com.breadwallet.ui.send
 
-import android.app.Activity
 import android.content.Context
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.estimateFee
+import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
@@ -18,13 +17,11 @@ import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
-import com.breadwallet.ui.scanner.ScannerController
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -45,7 +42,6 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import kotlin.math.absoluteValue
 
 @Suppress("TooManyFunctions")
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -144,18 +140,9 @@ class SendSheetEffectHandler(
                     .map { wallet -> wallet to effect }
             }
             .flatMapLatest { (wallet, effect) ->
-                val targetTime = effect.transferSpeed.targetTime
-                val fees = wallet.walletManager.network.fees
-                val fee = when {
-                    fees.size == 1 -> fees.single()
-                    else -> fees.minBy {
-                        (it.confirmationTimeInMilliseconds.toLong() - targetTime).absoluteValue
-                    } ?: wallet.walletManager.defaultNetworkFee
-                }
-
-                // TODO: Support user selected unit
                 val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
-                wallet.estimateFee(effect.address, amount, fee)
+                val networkFee = wallet.feeForSpeed(effect.transferSpeed)
+                wallet.estimateFee(effect.address, amount, networkFee)
             }
             .map<TransferFeeBasis, SendSheetEvent> { data ->
                 SendSheetEvent.OnNetworkFeeUpdated(data.fee.toBigDecimal(), data)

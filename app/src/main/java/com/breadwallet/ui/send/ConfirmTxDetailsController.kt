@@ -28,15 +28,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import com.breadwallet.R
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 /**
  * Transaction detail to be shown for user verification before requesting authentication.
@@ -74,10 +71,7 @@ class ConfirmTxDetailsController(
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        sendSheetController.model
-            .onEach { it.render() }
-            .flowOn(Dispatchers.Main)
-            .launchIn(viewAttachScope)
+        sendSheetController.currentModel.render()
     }
 
     override fun handleBack(): Boolean {
@@ -97,9 +91,9 @@ class ConfirmTxDetailsController(
             when {
                 isErc20 -> R.string.FeeSelector_ethTime
                 else -> when (transferSpeed) {
-                    SendSheetModel.TransferSpeed.ECONOMY -> R.string.FeeSelector_economyTime
-                    SendSheetModel.TransferSpeed.REGULAR -> R.string.FeeSelector_regularTime
-                    SendSheetModel.TransferSpeed.PRIORITY -> R.string.FeeSelector_priorityTime
+                    TransferSpeed.ECONOMY -> R.string.FeeSelector_economyTime
+                    TransferSpeed.REGULAR -> R.string.FeeSelector_regularTime
+                    TransferSpeed.PRIORITY -> R.string.FeeSelector_priorityTime
                 }
             }
         )

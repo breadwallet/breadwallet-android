@@ -31,6 +31,7 @@ import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
+import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.NetworkPeer
@@ -42,7 +43,9 @@ import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.FeeEstimationError
+import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -63,6 +66,11 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+import kotlin.math.absoluteValue
 
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L
@@ -87,6 +95,10 @@ fun Currency.isErc20() = type.equals("erc20", true)
 
 /** True when this is Ethereum. */
 fun Currency.isEthereum() = code.isEthereum() && !isErc20()
+
+fun Currency.isBitcoin() = code.isBitcoin()
+
+fun Currency.isBitcoinCash() = code.isBitcoinCash()
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
@@ -117,7 +129,10 @@ fun Wallet.estimateFee(
         networkFee,
         object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
             override fun handleData(data: TransferFeeBasis) {
-                if (isActive) offer(data)
+                if (isActive) {
+                    offer(data)
+                    close()
+                }
             }
 
             override fun handleError(error: FeeEstimationError) {
@@ -145,6 +160,55 @@ fun Wallet.sendTransfer(
     walletManager.submit(transfer, phrase)
 
     emit(transfer)
+}
+
+suspend fun WalletManager.createSweeper(
+    wallet: Wallet,
+    key: Key
+): WalletSweeper = suspendCoroutine { continuation ->
+    val handler = object : CompletionHandler<WalletSweeper, WalletSweeperError> {
+        override fun handleData(sweeper: WalletSweeper) {
+            continuation.resume(sweeper)
+        }
+
+        override fun handleError(error: WalletSweeperError) {
+            continuation.resumeWithException(error)
+        }
+    }
+    createSweeper(wallet, key, handler)
+}
+
+suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis =
+    suspendCoroutine { continuation ->
+        val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
+            override fun handleData(feeBasis: TransferFeeBasis) {
+                continuation.resume(feeBasis)
+            }
+
+            override fun handleError(error: FeeEstimationError) {
+                continuation.resumeWithException(error)
+            }
+        }
+        estimate(networkFee, handler)
+    }
+
+private const val ECONOMY_FEE_HOURS = 10L
+private const val REGULAR_FEE_HOURS = 1L
+
+enum class TransferSpeed(val targetTime: Long) {
+    ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
+    REGULAR(TimeUnit.HOURS.toMillis(REGULAR_FEE_HOURS)),
+    PRIORITY(0L);
+}
+
+fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
+    val fees = walletManager.network.fees
+    return when (fees.size) {
+        1 -> fees.single()
+        else -> fees.minBy { fee ->
+            (fee.confirmationTimeInMilliseconds.toLong() - speed.targetTime).absoluteValue
+        } ?: walletManager.defaultNetworkFee
+    }
 }
 
 // TODO: Move somewhere UI related
