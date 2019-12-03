@@ -1,6 +1,7 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.util.CurrencyCode
 import java.math.BigDecimal
@@ -44,7 +45,7 @@ sealed class SendSheetEffect {
         val currencyCode: CurrencyCode,
         val address: String,
         val amount: BigDecimal,
-        val transferSpeed: SendSheetModel.TransferSpeed
+        val transferSpeed: TransferSpeed
     ) : SendSheetEffect() {
         override fun toString(): String {
             return "EstimateFee(" +

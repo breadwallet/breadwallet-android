@@ -36,7 +36,7 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.home.HomeController
-import com.breadwallet.ui.importwallet.ImportWalletController
+import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -68,17 +68,16 @@ import kotlinx.coroutines.launch
 class RouterNavigationEffectHandler(
     private val router: Router
 ) : Connection<NavigationEffect>,
-    NavigationEffectHandlerSpec,
-    CoroutineScope {
+    NavigationEffectHandlerSpec {
 
-    override val coroutineContext = Dispatchers.Main + SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun accept(value: NavigationEffect) {
-        launch { patch(value) }
+        scope.launch { patch(value) }
     }
 
     override fun dispose() {
-        coroutineContext.cancel()
+        scope.cancel()
     }
 
     fun Controller.asTransaction(
@@ -176,7 +175,7 @@ class RouterNavigationEffectHandler(
                 }
             }
             is Link.ImportWallet -> {
-                val controller = ImportWalletController().asTransaction()
+                val controller = ImportController().asTransaction()
                 router.pushWithStackIfEmpty(controller) {
                     listOf(
                         HomeController().asTransaction(),
@@ -233,7 +232,7 @@ class RouterNavigationEffectHandler(
 
     override fun goToQrScan() {
         val controller = ScannerController()
-        controller.targetController = router.backstack.firstOrNull()?.controller()
+        controller.targetController = router.backstack.lastOrNull()?.controller()
         router.pushController(
             RouterTransaction.with(controller)
                 .pushChangeHandler(FadeChangeHandler())
@@ -300,7 +299,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToImportWallet() {
-        router.pushController(ImportWalletController().asTransaction())
+        router.pushController(ImportController().asTransaction())
     }
 
     override fun goToSyncBlockchain() = Unit
