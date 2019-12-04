@@ -21,6 +21,7 @@ debug:
     - ./gradlew --console=plain detekt
     # - ./gradlew -Pci --console=plain :app:lintBrdDebug -PbuildDir=lint
   only:
+    - crypto/prototype
     - develop
     - master
     - /^release.*$/
@@ -40,6 +41,7 @@ release:
     - ./gradlew --console=plain detekt
     # - ./gradlew -Pci --console=plain :app:lintBrdRelease -PbuildDir=lint
   only:
+    - crypto/prototype
     - develop
     - master
     - /^release.*$/
