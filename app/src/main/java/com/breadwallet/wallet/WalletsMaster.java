@@ -94,7 +94,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         ethWallet.addTokenLoadedListener(this);
 
         mWallets.clear();
-        mTokenListMetaData = KVStoreManager.getTokenListMetaData(app);
+        mTokenListMetaData = KVStoreManager.getUpdatedTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             mTokenListMetaData = new TokenListMetaData(BRConstants.DEFAULT_WALLETS, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null

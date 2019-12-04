@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -14,9 +15,11 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.TxMetaData;
@@ -447,8 +450,15 @@ public class KVStoreManager {
         } catch (JSONException e) {
             Log.e(TAG, "getTokenListMetaData: ", e);
         }
-
         return result;
+    }
+
+    //expensive, takes ~ 20 milliseconds
+    public static synchronized TokenListMetaData getUpdatedTokenListMetaData(Context context) {
+        TokenListMetaData tokenListMetaData = getTokenListMetaData(context);
+        if (tokenListMetaData == null) return null;
+        updateTokensSymbol(context, tokenListMetaData);
+        return tokenListMetaData;
     }
 
     private static List<TokenListMetaData.TokenInfo> jsonToMetaData(JSONArray json) throws JSONException {
@@ -732,5 +742,41 @@ public class KVStoreManager {
     private static ReplicatedKVStore getReplicatedKvStore(Context context) {
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(context));
         return ReplicatedKVStore.getInstance(context, remoteKVStore);
+    }
+
+    private static void updateTokensSymbol(Context context, TokenListMetaData userTokens) {
+        boolean updated;
+        List<TokenItem> tokens = TokenUtil.getTokenItems(context);
+        HashMap<String, TokenItem> tokenItemMap = new HashMap<>();
+        for (TokenItem tokenItem : tokens) {
+            tokenItemMap.put(tokenItem.address.toLowerCase(), tokenItem);
+        }
+        updated = updateTokensSymbol(userTokens.enabledCurrencies, tokenItemMap);
+        updated = updated || updateTokensSymbol(userTokens.hiddenCurrencies, tokenItemMap);
+        if (updated) {
+            putTokenListMetaData(context, userTokens);
+        }
+    }
+
+    /**
+     * Update the symbol of tokenItems when they don't match with tokenItemMap and return true if an update was required,
+     * otherwise false.
+     *
+     * @param tokens       List of TokenListMetaData.TokenInfo to be updated.
+     * @param tokenItemMap Map of TokenItem using the contract as the key.
+     * @return true if an update was required, otherwise false.
+     */
+    private static boolean updateTokensSymbol(List<TokenListMetaData.TokenInfo> tokens, Map<String, TokenItem> tokenItemMap) {
+        boolean updated = false;
+        for (TokenListMetaData.TokenInfo tokenInfo : tokens) {
+            if (tokenInfo.contractAddress != null && tokenItemMap.containsKey(tokenInfo.contractAddress.toLowerCase())) {
+                TokenItem tokenItem = tokenItemMap.get(tokenInfo.contractAddress.toLowerCase());
+                if (!tokenItem.symbol.equals(tokenInfo.symbol)) {
+                    tokenInfo.symbol = tokenItem.symbol;
+                    updated = true;
+                }
+            }
+        }
+        return updated;
     }
 }

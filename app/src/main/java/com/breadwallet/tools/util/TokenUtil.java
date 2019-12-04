@@ -45,7 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Request;
 
@@ -72,12 +74,14 @@ public final class TokenUtil {
 
     // TODO: In DROID-878 fix this so we don't have to store this mTokenItems... (Should be stored in appropriate wallet.)
     private static List<TokenItem> mTokenItems = new ArrayList<>();
+    private static Map<String, TokenItem> mTokenMap = new HashMap<>();
 
     private TokenUtil() {
     }
 
     /**
      * When the app first starts, fetch our local copy of tokens.json from the resource folder
+     *
      * @param context The Context of the caller
      */
     public static void initialize(Context context) {
@@ -98,7 +102,7 @@ public final class TokenUtil {
                 // Copy the APK tokens.json to a file on internal storage
                 saveTokenListToFile(context, stringBuilder.toString());
 
-                mTokenItems = parseJsonToTokenList(context, stringBuilder.toString());
+                loadTokens(parseJsonToTokenList(context, stringBuilder.toString()));
 
             } catch (IOException e) {
                 Log.e(TAG, "Could not read from resource file at res/raw/tokens.json ", e);
@@ -141,9 +145,19 @@ public final class TokenUtil {
         return null;
     }
 
+    /**
+     * Return a TokenItem with the given currency code or null if non TokenItem has the currency code.
+     *
+     * @param currencyCode The currency code of the token we are looking.
+     * @return The TokenItem with the given currency code or null.
+     */
+    public static TokenItem getTokenItemByCurrencyCode(String currencyCode) {
+        return mTokenMap.get(currencyCode.toLowerCase());
+    }
+
     public static synchronized List<TokenItem> getTokenItems(Context context) {
         if (mTokenItems == null || mTokenItems.isEmpty()) {
-            mTokenItems = getTokensFromFile(context);
+            loadTokens(getTokensFromFile(context));
         }
         return mTokenItems;
     }
@@ -161,7 +175,7 @@ public final class TokenUtil {
                 // Check if the response from the server is valid JSON before trying to save & parse.
                 if (Utils.isValidJSON(responseBody)) {
                     saveTokenListToFile(context, responseBody);
-                    mTokenItems = parseJsonToTokenList(context, responseBody);
+                    loadTokens(parseJsonToTokenList(context, responseBody));
                 }
             }
         }
@@ -303,11 +317,19 @@ public final class TokenUtil {
     }
 
     public static boolean isTokenSupported(String symbol) {
-        for (TokenItem tokenItem: mTokenItems) {
+        for (TokenItem tokenItem : mTokenItems) {
             if (tokenItem.symbol.equalsIgnoreCase(symbol)) {
-               return tokenItem.isSupported();
+                return tokenItem.isSupported();
             }
         }
         return true;
+    }
+
+    private static void loadTokens(List<TokenItem> tokenItems) {
+        mTokenItems = tokenItems;
+        mTokenMap.clear();
+        for (TokenItem tokenItem : tokenItems) {
+            mTokenMap.put(tokenItem.symbol.toLowerCase(), tokenItem);
+        }
     }
 }
