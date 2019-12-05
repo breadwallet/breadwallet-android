@@ -65,6 +65,8 @@ public final class TokenUtil {
     private static final String FIELD_SALE_ADDRESS = "sale_address";
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
+    private static final String FIELD_ALTERNATE_NAMES = "alternate_names";
+    private static final String FIELD_CRYPTOCOMPARE = "cryptocompare";
     private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
     private static final String ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND = "white-square-bg";
     private static final String ICON_FILE_NAME_FORMAT = "%s.png";
@@ -197,6 +199,7 @@ public final class TokenUtil {
                 String contractInitialValue = "";
                 int decimals = 0;
                 boolean isSupported = true;
+                String cryptocompareAlias = null;
 
                 if (tokenObject.has(FIELD_CONTRACT_ADDRESS)) {
                     address = tokenObject.getString(FIELD_CONTRACT_ADDRESS);
@@ -221,12 +224,18 @@ public final class TokenUtil {
                 if (tokenObject.has(FIELD_IS_SUPPORTED)) {
                     isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
                 }
+                if (tokenObject.has(FIELD_ALTERNATE_NAMES)) {
+                    JSONObject altNameObject = tokenObject.getJSONObject(FIELD_ALTERNATE_NAMES);
+                    if (altNameObject.has(FIELD_CRYPTOCOMPARE)) {
+                        cryptocompareAlias = altNameObject.getString(FIELD_CRYPTOCOMPARE);
+                    }
+                }
 
                 if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
                     ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
                     // Keep a local reference to the token list, so that we can make token symbols to their
                     // gradient colors in WalletListAdapter
-                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported);
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, cryptocompareAlias);
 
                     if (tokenObject.has(FIELD_COLORS)) {
                         JSONArray colorsArray = tokenObject.getJSONArray(FIELD_COLORS);
@@ -323,6 +332,11 @@ public final class TokenUtil {
             }
         }
         return true;
+    }
+
+    public static String getExchangeRateCode(String currencyCode) {
+        return mTokenMap.containsKey(currencyCode.toLowerCase())
+                ? mTokenMap.get(currencyCode.toLowerCase()).getExchangeRateCurrencyCode() : currencyCode;
     }
 
     private static void loadTokens(List<TokenItem> tokenItems) {
