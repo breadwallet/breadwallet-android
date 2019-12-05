@@ -200,7 +200,7 @@ public final class BRApiManager {
     public void updateRatesSync(final Context context) {
         Log.d(TAG, "Fetching rates");
         //Update Crypto Rates
-        List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
+        List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible(context);
         updateCryptoRates(context, codeList);
 
         //Update BTC/Fiat rates
@@ -210,37 +210,21 @@ public final class BRApiManager {
     @WorkerThread
     private void updateData(final Context context) {
         Log.d(TAG, "Fetching rates");
-        final List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                //Update Crypto Rates
-                updateCryptoRates(context, codeList);
-                //Update new tokens rate (e.g. CCC)
-                fetchNewTokensData(context);
-            }
+        final List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible(context);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            //Update Crypto Rates
+            updateCryptoRates(context, codeList);
+            //Update new tokens rate (e.g. CCC)
+            fetchNewTokensData(context);
         });
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                fetchPriceChanges(context, codeList);
-            }
-        });
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                //Update BTC/Fiat rates
-                updateFiatRates(context);
-            }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> fetchPriceChanges(context, codeList));
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            //Update BTC/Fiat rates
+            updateFiatRates(context);
         });
         List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(context));
         for (final BaseWalletManager walletManager : list) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    walletManager.updateFee(context);
-                }
-            });
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> walletManager.updateFee(context));
         }
 
     }
@@ -449,4 +433,5 @@ public final class BRApiManager {
         Map<String, PriceChange> priceChanges = CurrencyHistoricalDataClient.fetch24HrsChange(context, tokenList, toCurrency);
         RatesRepository.getInstance(context).updatePriceChanges(priceChanges);
     }
+
 }

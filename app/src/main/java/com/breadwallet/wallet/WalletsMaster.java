@@ -139,17 +139,6 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
 
     }
 
-    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
-        LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
-        for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
-            currencyCodes.add(tokenInfo.symbol);
-        }
-        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-            currencyCodes.add(tokenItem.symbol.toUpperCase());
-        }
-        return new ArrayList<>(currencyCodes);
-    }
-
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String currencyCode) {
         if (WalletBitcoinManager.BITCOIN_CURRENCY_CODE.equalsIgnoreCase(currencyCode)) {
