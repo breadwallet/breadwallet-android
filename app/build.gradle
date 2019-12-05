@@ -215,7 +215,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.breadwallet.core:corecrypto-android:0.0.1'
+    implementation 'com.breadwallet.core:corecrypto-android:0.0.4'
 
     implementation 'commons-io:commons-io:2.4'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
