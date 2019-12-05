@@ -11,7 +11,7 @@ public class TokenItem {
     private String mEndColor;
     private String mContractInitialValue; // This is the initial value of a token during its ICO
     private boolean mIsSupported;
-
+    private String cryptocompareAlias;
 
     public TokenItem(String address, String symbol, String name, String image, boolean isSupported){
         this.address = address;
@@ -19,6 +19,16 @@ public class TokenItem {
         this.name = name;
         this.image = image;
         this.mIsSupported = isSupported;
+        this.cryptocompareAlias = null;
+    }
+
+    public TokenItem(String address, String symbol, String name, String image, boolean isSupported, String cryptocompareAlias){
+        this.address = address;
+        this.symbol = symbol;
+        this.name = name;
+        this.image = image;
+        this.mIsSupported = isSupported;
+        this.cryptocompareAlias = cryptocompareAlias;
     }
 
     public void setStartColor(String startColor) {
@@ -47,5 +57,13 @@ public class TokenItem {
 
     public boolean isSupported() {
         return mIsSupported;
+    }
+
+    public String getExchangeRateCurrencyCode() {
+        if (cryptocompareAlias == null || cryptocompareAlias.isEmpty()) {
+            return symbol;
+        } else {
+            return cryptocompareAlias.toUpperCase();
+        }
     }
 }

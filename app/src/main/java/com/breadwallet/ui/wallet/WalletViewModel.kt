@@ -128,37 +128,18 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getInterval(interval: Interval) {
         val context = (getApplication() as Application).applicationContext
+        val ratesRepository = RatesRepository.getInstance(context)
         chartInterval.value = interval
         BRExecutor.getInstance()
                 .forLightWeightBackgroundTasks()
                 .execute {
                     val toCurrency: String = BRSharedPrefs.getPreferredFiatIso()
                             ?: Currency.getInstance(Locale.US).currencyCode
-                    val newPriceDataPoints = when (interval) {
-                        Interval.ONE_DAY -> {
-                            CurrencyHistoricalDataClient.getPastDay(context, targetCurrencyCode, toCurrency)
-                        }
-                        Interval.ONE_WEEK -> {
-                            CurrencyHistoricalDataClient.getPastWeek(context, targetCurrencyCode, toCurrency)
-                        }
-                        Interval.ONE_MONTH -> {
-                            CurrencyHistoricalDataClient.getPastMonth(context, targetCurrencyCode, toCurrency)
-                        }
-                        Interval.THREE_MONTHS -> {
-                            CurrencyHistoricalDataClient.getPastThreeMonths(context, targetCurrencyCode, toCurrency)
-                        }
-                        Interval.ONE_YEAR -> {
-                            CurrencyHistoricalDataClient.getPastYear(context, targetCurrencyCode, toCurrency)
-                        }
-                        Interval.THREE_YEARS -> {
-                            CurrencyHistoricalDataClient.getPastThreeYears(context, targetCurrencyCode, toCurrency)
-                        }
-                    }
-                    priceDataPoints.postValue(newPriceDataPoints)
+                    priceDataPoints.postValue(ratesRepository.getHistoricalData(targetCurrencyCode, toCurrency, interval))
                 }
     }
 
-    fun refreshPriceChange() {
+    private fun refreshPriceChange() {
         val context = getApplication<Application>()
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
             val refCurrency = BRSharedPrefs.getPreferredFiatIso()
