@@ -81,6 +81,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -135,7 +136,8 @@ class BreadApp : Application(), KodeinAware {
         /** [CoroutineScope] matching the lifetime of the application. */
         val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-        private val startedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val startedScopeJob = SupervisorJob()
+        private val startedScope = CoroutineScope(startedScopeJob + Dispatchers.Default)
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
         fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
@@ -519,7 +521,7 @@ class BreadApp : Application(), KodeinAware {
                 )
             }
         }
-        startedScope.cancel()
+        startedScopeJob.cancelChildren()
     }
 
     private fun handleOnDestroy() {
