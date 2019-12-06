@@ -3,20 +3,15 @@ package com.breadwallet.tools.manager;
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.WorkerThread;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.model.FeeOption;
 import com.breadwallet.model.PriceChange;
-import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -37,8 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Request;
 
@@ -83,14 +76,18 @@ public final class BRApiManager {
     private static final int FSYMS_CHAR_LIMIT = 300;
     private static final String CONTRACT_INITIAL_VALUE = "contract_initial_value";
 
-    private static BRApiManager mInstance;
+    private static volatile BRApiManager mInstance;
 
     private BRApiManager() {
     }
 
     public static BRApiManager getInstance() {
         if (mInstance == null) {
-            mInstance = new BRApiManager();
+            synchronized (BRApiManager.class) {
+                if (mInstance == null) {
+                    mInstance = new BRApiManager();
+                }
+            }
         }
         return mInstance;
     }
@@ -150,7 +147,7 @@ public final class BRApiManager {
     }
 
     @WorkerThread
-    private synchronized void updateCryptoRates(Context context, List<String> currencyCodeList) {
+    private void updateCryptoRates(Context context, List<String> currencyCodeList) {
         List<String> currencyCodeListChunks = new ArrayList<>();
         StringBuilder chunkStringBuilder = new StringBuilder();
         for (String currencyCode : currencyCodeList) {
@@ -176,7 +173,7 @@ public final class BRApiManager {
      * @param context       The Context
      * @param codeListChunk The comma separated code list.
      */
-    private synchronized void fetchCryptoRates(Context context, String codeListChunk) {
+    private void fetchCryptoRates(Context context, String codeListChunk) {
         String url = TOKEN_RATES_URL_PREFIX + codeListChunk + TOKEN_RATES_URL_SUFFIX;
         String result = urlGET(context, url);
         try {
