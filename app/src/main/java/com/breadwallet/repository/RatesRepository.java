@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RatesRepository {
     private static final String TAG = RatesRepository.class.getName();
     private static final String CACHE_KEY_DELIMITER = ":";
-    private static RatesRepository mInstance;
+    private static volatile RatesRepository mInstance;
 
     private ConcurrentHashMap<String, CurrencyEntity> mCache;
     private ConcurrentHashMap<String, PriceChange> mPriceChanges;
@@ -55,7 +55,11 @@ public class RatesRepository {
 
     synchronized public static RatesRepository getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new RatesRepository(context);
+            synchronized (RatesRepository.class) {
+                if (mInstance == null) {
+                    mInstance = new RatesRepository(context);
+                }
+            }
         }
 
         return mInstance;
