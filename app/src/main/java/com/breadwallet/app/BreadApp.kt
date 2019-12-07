@@ -158,7 +158,6 @@ class BreadApp : Application(), KodeinAware {
             "bitcoincash-testnet:__native__",
             "ethereum-ropsten:__native__",
             "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",
-            "ethereum-mainnet:0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
             "ethereum-mainnet:0x0000000000085d4780B73119b644AE5ecd22b376"
         )
 
@@ -353,8 +352,7 @@ class BreadApp : Application(), KodeinAware {
             CoreBreadBox(
                 getStorageDir(this@BreadApp),
                 !BuildConfig.BITCOIN_TESTNET,
-                instance(),
-                WalletManagerMode.API_ONLY
+                instance()
             )
         }
 

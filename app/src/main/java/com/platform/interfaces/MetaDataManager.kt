@@ -1,6 +1,7 @@
 package com.platform.interfaces
 
 import com.breadwallet.app.BreadApp
+import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
@@ -15,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
@@ -34,25 +36,23 @@ class MetaDataManager(
         private const val KEY_TOKEN_LIST_META_DATA = "token-list-metadata"
         private const val KEY_MSG_INBOX = "encrypted-message-inbox-metadata"
         private const val KEY_ASSET_INDEX = "asset-index"
-        private const val MY_BREAD = "My Bread"
         private const val CURSOR = "cursor"
         private const val ENABLED_ASSET_IDS = "enabledAssetIds"
         private const val CLASS_VERSION = "classVersion"
-        private const val CLASS_VERSION_WALLET_INFO = 3
         private const val CLASS_VERSION_ASSET_IDS = 2
         private const val CLASS_VERSION_MSG_INBOX = 1
         private const val TX_META_DATA_KEY_PREFIX = "txn2-"
         private const val PAIRING_META_DATA_KEY_PREFIX = "pwd-"
-        private const val EXCHANGE_RATE_SCALE = 8
     }
 
     override fun create(accountCreationDate: Date) {
-        WalletInfoData(CLASS_VERSION_WALLET_INFO).apply {
-            creationDate = accountCreationDate.time.toInt()
-            putWalletInfo(this)
-        }
+        storeProvider.put(
+            KEY_WALLET_INFO,
+            WalletInfoData(
+                creationDate = accountCreationDate.time.toInt()
+            ).toJSON()
+        )
         putEnabledWallets(BreadApp.getDefaultEnabledWallets())
-
         logInfo("MetaDataManager created successfully")
     }
 
@@ -62,19 +62,18 @@ class MetaDataManager(
             migrateTokenList()
         }
         emit(syncResult)
-
     }
 
     override fun walletInfo(): Flow<WalletInfoData> =
         storeProvider.keyFlow(KEY_WALLET_INFO)
-            .mapLatest { WalletInfoData(it) }
+            .mapLatest { WalletInfoData.fromJsonObject(it) }
             .onStart {
                 emit(
                     getOrSync(
                         KEY_WALLET_INFO
                     )
                     { WalletInfoData().toJSON() }
-                    !!.run(::WalletInfoData)
+                    !!.run { WalletInfoData.fromJsonObject(this) }
                 )
             }
             .distinctUntilChanged()
@@ -82,8 +81,7 @@ class MetaDataManager(
     override fun getWalletInfoUnsafe(): WalletInfoData? =
         try {
             storeProvider.get(KEY_WALLET_INFO)
-                ?.run(::WalletInfoData)
-                ?.also { logDebug("creationDate: ${it.creationDate}, name: ${it.name}") }
+                ?.run { WalletInfoData.fromJsonObject(this) }
         } catch (ex: JSONException) {
             logError("$ex")
             null
@@ -130,6 +128,25 @@ class MetaDataManager(
     override fun reorderWallets(currencyIds: List<String>) = flow {
         putEnabledWallets(currencyIds)
         emit(Unit)
+    }
+
+    override fun walletModes(): Flow<Map<String, WalletManagerMode>> =
+        walletInfo()
+            .mapLatest { it.connectionModes }
+            .distinctUntilChanged()
+
+    override suspend fun putWalletMode(currencyId: String, mode: WalletManagerMode) {
+        var walletInfo = walletInfo().first()
+        if (walletInfo.connectionModes[currencyId] == mode) return
+        val connectionModes = walletInfo.connectionModes.toMutableMap().apply {
+            put(currencyId, mode)
+        }
+
+        walletInfo = walletInfo.copy(connectionModes = connectionModes)
+        storeProvider.put(
+            KEY_WALLET_INFO,
+            walletInfo.toJSON()
+        )
     }
 
     override fun getPairingMetadata(pubKey: ByteArray): PairingMetaData? =
@@ -251,31 +268,6 @@ class MetaDataManager(
             .also {
                 storeProvider.put(KEY_ASSET_INDEX, it)
             }
-
-    private fun putWalletInfo(newInfo: WalletInfoData) {
-        var old = getWalletInfoUnsafe() ?: WalletInfoData()
-
-        // Add all the params that we want to change
-        if (newInfo.classVersion != 0) {
-            old.classVersion = newInfo.classVersion
-        }
-        if (newInfo.creationDate != 0) {
-            old.creationDate = newInfo.creationDate
-        }
-        if (newInfo.name != null) {
-            old.name = newInfo.name
-        }
-
-        // Sanity check
-        if (old.classVersion == 0) {
-            old.classVersion = 1
-        }
-        if (old.name != null) {
-            old.name = MY_BREAD
-        }
-
-        storeProvider.put(KEY_WALLET_INFO, old.toJSON())
-    }
 
     private fun migrateTokenList() {
         if (storeProvider.get(KEY_ASSET_INDEX) != null) {

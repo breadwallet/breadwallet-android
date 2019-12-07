@@ -54,6 +54,7 @@ sealed class SettingsEffect {
     object ShowPlatformDebugUrlDialog : SettingsEffect()
     object ShowPlatformBundleDialog : SettingsEffect()
     object ShowTokenBundleDialog : SettingsEffect()
+    object GoToFastSync : SettingsEffect()
 
     data class SetApiServer(val host: String) : SettingsEffect()
     data class SetPlatformDebugUrl(val url: String) : SettingsEffect()

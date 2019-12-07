@@ -45,6 +45,7 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
 import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
 import com.breadwallet.ui.settings.segwit.EnableSegWitController
@@ -323,6 +324,14 @@ class RouterNavigationEffectHandler(
     override fun goToLegacyAddress() {
         router.pushController(
             RouterTransaction.with(LegacyAddressController())
+        )
+    }
+
+    override fun goToFastSync() {
+        router.pushController(
+            RouterTransaction.with(FastSyncController())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
         )
     }
 

@@ -32,7 +32,6 @@ import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
-import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.crypto.events.network.NetworkEvent
@@ -87,9 +86,7 @@ import java.util.concurrent.Executors
 internal class CoreBreadBox(
     private val storageFile: File,
     private val isMainnet: Boolean = false,
-    private val walletProvider: WalletProvider,
-    // TODO: Allow reconfiguring manager mode
-    private val walletManagerMode: WalletManagerMode = WalletManagerMode.API_ONLY
+    private val walletProvider: WalletProvider
 ) : BreadBox,
     SystemListener {
 
@@ -127,7 +124,7 @@ internal class CoreBreadBox(
     private val transferUpdatedChannelMap = createChannelMap<String, Transfer>()
 
     private val walletTracker =
-        SystemWalletTracker(walletProvider, system(), openScope, isMainnet, walletManagerMode)
+        SystemWalletTracker(walletProvider, system(), openScope, isMainnet)
 
     private fun <K, V> createChannelMap(): MutableMap<K, BroadcastChannel<V>> =
         mutableMapOf<K, BroadcastChannel<V>>().run {

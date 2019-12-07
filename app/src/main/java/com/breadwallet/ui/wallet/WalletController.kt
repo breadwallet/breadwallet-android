@@ -127,7 +127,7 @@ open class WalletController(
                 }
             }),
             nestedConnectable({ output: Consumer<MetaDataEvent> ->
-                MetaDataEffectHandler(output, direct.instance())
+                MetaDataEffectHandler(output, direct.instance(), direct.instance())
             }, { effect: WalletScreenEffect ->
                 when (effect) {
                     is WalletScreenEffect.LoadTransactionMetaData ->
@@ -141,6 +141,7 @@ open class WalletController(
                             event.transactionHash,
                             event.txMetaData
                         ) as WalletScreenEvent
+                    else -> null
                 }
             }),
             Connectable { output ->
