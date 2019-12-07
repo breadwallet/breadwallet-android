@@ -118,4 +118,5 @@ sealed class NavigationEffect {
     object GoToBitcoinNodeSelector : NavigationEffect()
     object GoToEnableSegWit : NavigationEffect()
     object GoToLegacyAddress : NavigationEffect()
+    object GoToFastSync : NavigationEffect()
 }

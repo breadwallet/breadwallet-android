@@ -1220,6 +1220,16 @@
     <!-- Entered invalid node address at the node selection screen -->
     <string name="NodeSelector.invalid">Invalid Node</string>
 
+    <!-- Fast sync settings  -->
+    <string name="FastSync.title">Fastsync</string>
+    <!-- Fast sync settings subtitle -->
+    <string name="FastSync.subtitle">Fastsync (pilot)</string>
+    <!-- Fast sync description -->
+    <string name="FastSync.description">Make syncing your bitcoin wallet practically instant. Learn more about how it works here.</string>
+    <string name="FastSync.poweredBy">Powered by</string>
+    <string name="FastSync.disableConfirmationDialog">Are you sure you want to turn off Fast Sync?</string>
+    <string name="FastSync.turnOff">Turn Off</string>
+
     <!-- TODO updated -->
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
     <string name="WipeWallet.instruction">Please enter your recovery key to wipe this wallet from your device.</string>

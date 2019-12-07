@@ -1,7 +1,9 @@
 package com.platform.entities
 
+import com.breadwallet.crypto.WalletManagerMode
+import com.platform.util.getIntOrDefault
+import com.platform.util.getStringOrNull
 import org.json.JSONObject
-
 
 /**
  * BreadWallet
@@ -32,43 +34,44 @@ import org.json.JSONObject
  * THE SOFTWARE.
  */
 data class WalletInfoData(
-    var classVersion: Int = 0,
-    var creationDate: Int = 0,
-    var name: String? = null
+    val classVersion: Int = DEFAULT_CLASS_VERSION,
+    val creationDate: Int = DEFAULT_CREATION_DATE,
+    val name: String? = null,
+    val connectionModes: Map<String, WalletManagerMode> = emptyMap()
 ) {
     companion object {
         private const val NAME = "name"
         private const val CLASS_VERSION = "classVersion"
         private const val CREATION_DATE = "creationDate"
-    }
+        private const val CONNECTION_MODES = "connectionModes"
 
-    /**
-     * WalletInfoData:
-     *
-     *
-     * Key: “wallet-info”
-     *
-     *
-     * {
-     * “classVersion”: 2, //used for versioning the schema
-     * “creationDate”: 123475859, //Unix timestamp
-     * “name”: “My Bread”,
-     * “currentCurrency”: “USD”
-     * }
-     */
+        private const val DEFAULT_CLASS_VERSION = 3
+        private const val DEFAULT_CREATION_DATE = 0
 
-    constructor(json: JSONObject): this() {
-        if (json.has(CLASS_VERSION)) {
-            classVersion = json.getInt(CLASS_VERSION)
-        }
-        if (json.has(CREATION_DATE)) {
-            creationDate = json.getInt(CREATION_DATE)
-        }
-        if (json.has(NAME)) {
-            name = json.getString(NAME)
+        fun fromJsonObject(json: JSONObject): WalletInfoData = json.run {
+            val mutableModes = mutableMapOf<String, WalletManagerMode>()
+            if (has(CONNECTION_MODES)) {
+                val modesObj = getJSONObject(CONNECTION_MODES)
+                modesObj.keys().forEach {
+                    mutableModes[it] = WalletManagerMode.fromSerialization(modesObj.getInt(it))
+                }
+            }
+            WalletInfoData(
+                classVersion = getIntOrDefault(CLASS_VERSION, DEFAULT_CLASS_VERSION),
+                creationDate = getIntOrDefault(CREATION_DATE, DEFAULT_CREATION_DATE),
+                name = getStringOrNull(NAME),
+                connectionModes = mutableModes.toMap()
+            )
         }
     }
 
     fun toJSON(): JSONObject =
-        JSONObject(mapOf(CLASS_VERSION to classVersion, CREATION_DATE to creationDate, NAME to name))
+        JSONObject(
+            mapOf(
+                CLASS_VERSION to classVersion,
+                CREATION_DATE to creationDate,
+                NAME to name,
+                CONNECTION_MODES to connectionModes.mapValues { it.value.toSerialization() }
+            )
+        )
 }

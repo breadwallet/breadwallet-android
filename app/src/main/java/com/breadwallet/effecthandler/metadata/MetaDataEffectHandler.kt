@@ -26,9 +26,12 @@ package com.breadwallet.effecthandler.metadata
 
 import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.getDefaultWalletManagerMode
 import com.breadwallet.breadbox.getSize
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -45,6 +48,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
@@ -56,7 +60,8 @@ import java.math.BigDecimal
 
 class MetaDataEffectHandler(
     private val output: Consumer<MetaDataEvent>,
-    private val metaDataProvider: AccountMetaDataProvider
+    private val metaDataProvider: AccountMetaDataProvider,
+    private val breadBox: BreadBox
 ) : Connection<MetaDataEffect>, CoroutineScope {
 
     companion object {
@@ -119,6 +124,8 @@ class MetaDataEffectHandler(
                 )
             is MetaDataEffect.UpdateTransactionComment ->
                 updateTransactionComment(effect.transactionHash, effect.comment)
+            is MetaDataEffect.UpdateWalletMode -> updateWalletMode(effect.currencyId, effect.mode)
+            is MetaDataEffect.LoadWalletModes -> loadWalletModes()
         }
     }
 
@@ -175,6 +182,32 @@ class MetaDataEffectHandler(
             )
         )
     }
+
+    private fun updateWalletMode(currencyId: String, mode: WalletManagerMode) {
+        launch { metaDataProvider.putWalletMode(currencyId, mode) }
+    }
+
+    private fun loadWalletModes() =
+        metaDataProvider
+            .walletModes()
+            .map { modeMap ->
+                modeMap
+                    .toMutableMap()
+                    .mapValues { entry ->
+                        when (entry.value) {
+                            null -> {
+                                breadBox.system().getDefaultWalletManagerMode(
+                                    entry.key
+                                ).first()
+                            }
+                            else -> entry.value
+                        }
+                    }
+            }
+            .map { modeMap ->
+                MetaDataEvent.OnWalletModesUpdated(modeMap)
+            }
+            .bindConsumerIn(output, this)
 }
 
 data class CommentUpdatePair(
