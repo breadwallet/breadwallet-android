@@ -127,7 +127,7 @@ class TxDetailsController(
                 } as? TxDetailsEvent
             }),
             nestedConnectable({ output: Consumer<MetaDataEvent> ->
-                MetaDataEffectHandler(output, direct.instance())
+                MetaDataEffectHandler(output, direct.instance(), direct.instance())
             }, { effect: TxDetailsEffect ->
                 when (effect) {
                     is TxDetailsEffect.LoadTransactionMetaData ->
@@ -143,6 +143,7 @@ class TxDetailsController(
                 when (event) {
                     is MetaDataEvent.OnTransactionMetaDataUpdated ->
                         TxDetailsEvent.OnMetaDataUpdated(event.txMetaData)
+                    else -> null
                 } as? TxDetailsEvent
             }),
             nestedConnectable({

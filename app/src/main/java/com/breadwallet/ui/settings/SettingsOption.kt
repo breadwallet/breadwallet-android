@@ -59,6 +59,7 @@ enum class SettingsOption {
     SYNC_BLOCKCHAIN,
     BTC_NODES,
     ENABLE_SEG_WIT,
-    VIEW_LEGACY_ADDRESS
+    VIEW_LEGACY_ADDRESS,
+    FAST_SYNC
 }
 
