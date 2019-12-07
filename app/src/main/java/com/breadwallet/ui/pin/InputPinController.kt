@@ -50,21 +50,28 @@ class InputPinController(args: Bundle) :
 
     companion object {
         private const val EXTRA_PIN_MODE_UPDATE = "pin-update"
+        private const val EXTRA_SKIP_WRITE_DOWN = "skip-write-down"
         private const val EXTRA_ON_COMPLETE = "on-complete"
     }
 
-    constructor(onComplete: OnCompleteAction, pinUpdate: Boolean = false) : this(
+    constructor(
+        onComplete: OnCompleteAction,
+        pinUpdate: Boolean = false,
+        skipWriteDown: Boolean = false
+    ) : this(
         bundleOf(
             EXTRA_PIN_MODE_UPDATE to pinUpdate,
-            EXTRA_ON_COMPLETE to onComplete.name
+            EXTRA_ON_COMPLETE to onComplete.name,
+            EXTRA_SKIP_WRITE_DOWN to skipWriteDown
         )
     )
 
-    private val isPinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false)
-    private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
-
     override val layoutId = R.layout.activity_pin_template
-    override val defaultModel = InputPinModel.createDefault(isPinUpdateMode, onComplete)
+    override val defaultModel = InputPinModel.createDefault(
+        pinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false),
+        onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE)),
+        skipWriteDownKey = arg(EXTRA_SKIP_WRITE_DOWN, false)
+    )
     override val init = InputPinInit
     override val update = InputPinUpdate
 

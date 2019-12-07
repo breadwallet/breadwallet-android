@@ -31,12 +31,20 @@ data class InputPinModel(
     val pin: String = "",
     val pinConfirmation: String = "",
     val pinUpdateMode: Boolean = false,
+    val skipWriteDownKey: Boolean = false,
     val onComplete: OnCompleteAction
 ) {
 
     companion object {
-        fun createDefault(pinUpdateMode: Boolean, onComplete: OnCompleteAction) =
-            InputPinModel(pinUpdateMode = pinUpdateMode, onComplete = onComplete)
+        fun createDefault(
+            pinUpdateMode: Boolean,
+            onComplete: OnCompleteAction,
+            skipWriteDownKey: Boolean
+        ) = InputPinModel(
+            pinUpdateMode = pinUpdateMode,
+            onComplete = onComplete,
+            skipWriteDownKey = skipWriteDownKey
+        )
     }
 
     enum class Mode {

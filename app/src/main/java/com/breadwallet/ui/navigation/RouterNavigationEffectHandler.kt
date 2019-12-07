@@ -52,8 +52,8 @@ import com.breadwallet.ui.settings.segwit.EnableSegWitController
 import com.breadwallet.ui.settings.segwit.LegacyAddressController
 import com.breadwallet.ui.settings.wipewallet.WipeWalletController
 import com.breadwallet.ui.showkey.ShowPaperKeyController
-import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.txdetails.TxDetailsController
+import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
@@ -202,10 +202,14 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
-        val transaction =
-            RouterTransaction.with(InputPinController(effect.onComplete, !effect.onboarding))
-                .pushChangeHandler(HorizontalChangeHandler())
-                .popChangeHandler(HorizontalChangeHandler())
+        val transaction = RouterTransaction.with(
+            InputPinController(
+                onComplete = effect.onComplete,
+                pinUpdate = !effect.onboarding,
+                skipWriteDown = effect.skipWriteDownKey
+            )
+        ).pushChangeHandler(HorizontalChangeHandler())
+            .popChangeHandler(HorizontalChangeHandler())
         if (effect.onboarding) {
             router.setBackstack(listOf(transaction), HorizontalChangeHandler())
         } else {
