@@ -140,7 +140,10 @@ class RecoveryKeyController(
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
                 RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(true)
+                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(
+                    onboarding = true,
+                    skipWriteDownKey = true
+                )
                 RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
                 RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
                 else -> null

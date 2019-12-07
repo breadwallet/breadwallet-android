@@ -67,7 +67,7 @@ object InputPinUpdate : Update<InputPinModel, InputPinEvent, InputPinEffect>,
         next(model, setOf(InputPinEffect.GoToDisabledScreen))
 
     override fun onPinSaved(model: InputPinModel): Next<InputPinModel, InputPinEffect> {
-        val effect = if (model.pinUpdateMode) {
+        val effect = if (model.pinUpdateMode || model.skipWriteDownKey) {
             InputPinEffect.GoToHome
         } else {
             InputPinEffect.GoToWriteDownKey(model.onComplete)
