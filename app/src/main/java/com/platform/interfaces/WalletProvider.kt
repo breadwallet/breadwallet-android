@@ -1,20 +1,10 @@
 package com.platform.interfaces
 
+import com.breadwallet.crypto.WalletManagerMode
 import kotlinx.coroutines.flow.Flow
 
 interface WalletProvider {
 
     fun enabledWallets(): Flow<List<String>>
-
-    //fun allAvailableWallets(): Flow<List<WalletMetaData>>
-
-    //fun enableWallet(currencyCode: String)
-
-    //fun disableWallet(currencyCode: String)
+    fun walletModes(): Flow<Map<String, WalletManagerMode>>
 }
-
-data class WalletMetaData(
-    val name: String,
-    val currencyCode: String,
-    val isErc20: Boolean
-)

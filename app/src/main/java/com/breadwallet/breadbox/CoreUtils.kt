@@ -47,6 +47,7 @@ import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
+import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
@@ -321,11 +322,12 @@ val Wallet.urlScheme: String
 /** Creates a [WalletManager] using the appropriate address scheme and [WalletManagerMode]. */
 fun System.createWalletManager(
     network: Network,
-    managerMode: WalletManagerMode,
+    managerMode: WalletManagerMode?,
     currencies: Set<Currency>,
     addressScheme: AddressScheme? = getAddressScheme(network)
 ) {
     val wmMode = when {
+        managerMode == null -> getDefaultWalletManagerMode(network)
         supportsWalletManagerMode(network, managerMode) -> managerMode
         else -> getDefaultWalletManagerMode(network)
     }
@@ -382,6 +384,16 @@ fun Transfer.getSize(): Double? {
         else -> null
     }
 }
+
+/** Returns a [Flow] providing the default [WalletManagerMode] from [System] for a given [currencyId]. */
+fun Flow<System>.getDefaultWalletManagerMode(currencyId: String): Flow<WalletManagerMode> =
+    transform { system ->
+        emit(
+            system.networks.find {
+                it.containsCurrency(currencyId)
+            }?.run { system.getDefaultWalletManagerMode(this) } ?: return@transform
+        )
+    }
 
 
 

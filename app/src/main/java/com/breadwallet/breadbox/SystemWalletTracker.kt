@@ -44,6 +44,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -59,18 +60,18 @@ class SystemWalletTracker(
     private val walletProvider: WalletProvider,
     private val system: Flow<System>,
     private val scope: CoroutineScope,
-    private val isMainnet: Boolean,
-    private val walletManagerMode: WalletManagerMode
+    private val isMainnet: Boolean
 ) : SystemListener {
 
     /**
-     * On each emission of enabled wallets, connects any [WalletManager]s that are newly needed
-     * and registers for the new currencies, and disconnects [WalletManager]s no longer needed.
+     * On each emission of enabled wallets or change to a wallet connection mode,
+     * connects any [WalletManager]s that are newly needed and registers for the new currencies,
+     * disconnects [WalletManager]s no longer needed, or restarts [WalletManager]s in new mode.
      */
     fun monitorTrackedWallets() =
         walletProvider
             .enabledWallets()
-            .onEach { wallets ->
+            .combine(walletProvider.walletModes()) { wallets, walletModeMap ->
                 // Disconnect unneeded wallet managers
                 val system = system.first()
                 val systemWallets = system.wallets
@@ -85,8 +86,12 @@ class SystemWalletTracker(
                         .find { it.networkContainsCurrency(enabledWallet) }
 
                     when (walletManager) {
-                        null -> createWalletManager(system, enabledWallet)
-                        else -> connectAndRegister(walletManager, enabledWallet)
+                        null -> createWalletManager(system, enabledWallet, walletModeMap)
+                        else -> connectAndRegister(
+                            walletManager,
+                            enabledWallet,
+                            walletModeMap
+                        )
                     }
                 }
             }
@@ -101,7 +106,7 @@ class SystemWalletTracker(
     ) {
         when (event) {
             is WalletManagerCreatedEvent -> {
-                logDebug("Wallet Manager Created: '${manager.name}'")
+                logDebug("Wallet Manager Created: '${manager.name}' mode ${manager.mode}")
 
                 walletProvider
                     .enabledWallets()
@@ -153,9 +158,14 @@ class SystemWalletTracker(
                     }
                     .onEach {
                         logDebug("Creating wallet manager for network '${network.name}'.")
+                        val modeMap = walletProvider.walletModes().first()
                         system
                             .first()
-                            .createWalletManager(network, walletManagerMode, emptySet())
+                            .createWalletManager(
+                                network,
+                                modeMap[network.currency.uids],
+                                emptySet()
+                            )
                     }
                     .launchIn(scope)
             }
@@ -183,7 +193,11 @@ class SystemWalletTracker(
         event: NetworkEvent
     ) = Unit
 
-    private fun createWalletManager(system: System, currencyId: String) {
+    private fun createWalletManager(
+        system: System,
+        currencyId: String,
+        walletModeMap: Map<String, WalletManagerMode>
+    ) {
         val network = system
             .networks
             .find {
@@ -192,12 +206,12 @@ class SystemWalletTracker(
         when (network) {
             null -> logError("Network for $currencyId not found.")
             else -> {
+                val currency = network.findCurrency(currencyId)
                 logDebug("Creating wallet manager for $currencyId.")
                 system.createWalletManager(
                     network,
-                    walletManagerMode,
-                    when (val currency =
-                        network.findCurrency(currencyId)) {
+                    walletModeMap[network.currency.uids],
+                    when (currency) {
                         null -> emptySet()
                         else -> setOf(currency)
                     }
@@ -225,15 +239,26 @@ class SystemWalletTracker(
      * Connect [WalletManager] for [currencyId], if not already connected, and register for
      * [currencyId].
      */
-    private fun connectAndRegister(walletManager: WalletManager, currencyId: String) {
+    private fun connectAndRegister(
+        walletManager: WalletManager,
+        currencyId: String,
+        walletModeMap: Map<String, WalletManagerMode>
+    ) {
+        val mode = walletModeMap[walletManager.network.currency.uids] ?: walletManager.mode
+        val address = BRSharedPrefs
+            .getTrustNode(iso = walletManager.currency.code.capitalize())
+            .orEmpty()
+        val networkPeer = walletManager
+            .network
+            .getPeerOrNull(address)
         if (!walletManager.state.isTracked()) {
             logDebug("Connecting Wallet Manager: ${walletManager.network}")
-            val address = BRSharedPrefs
-                .getTrustNode(iso = walletManager.currency.code.capitalize())
-                .orEmpty()
-            val networkPeer = walletManager
-                .network
-                .getPeerOrNull(address)
+            walletManager.mode = mode
+            walletManager.connect(networkPeer)
+        } else if (walletManager.mode != mode) {
+            logDebug("Restarting Wallet Manager with new mode: ${walletManager.network} $mode")
+            walletManager.disconnect()
+            walletManager.mode = mode
             walletManager.connect(networkPeer)
         }
         logDebug("Registering wallet for: $currencyId")

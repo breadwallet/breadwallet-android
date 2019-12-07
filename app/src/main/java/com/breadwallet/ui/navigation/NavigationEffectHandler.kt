@@ -209,4 +209,6 @@ class NavigationEffectHandler(
     override fun goToEnableSegWit() = Unit
 
     override fun goToLegacyAddress() = Unit
+
+    override fun goToFastSync() = Unit
 }

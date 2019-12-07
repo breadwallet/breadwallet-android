@@ -287,6 +287,10 @@ class SettingsEffectHandler(
                 "Token Bundle",
                 SettingsOption.TOKEN_BUNDLE,
                 subHeader = ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.TOKEN)
+            ),
+            SettingsItem(
+                "Fastsync",
+                SettingsOption.FAST_SYNC
             )
         )
     }

@@ -178,7 +178,7 @@ class SendSheetController(args: Bundle? = null) :
                 } as? SendSheetEvent
             }),
             nestedConnectable({ output: Consumer<MetaDataEvent> ->
-                MetaDataEffectHandler(output, direct.instance())
+                MetaDataEffectHandler(output, direct.instance(), direct.instance())
             }, { effect ->
                 when (effect) {
                     is SendSheetEffect.AddTransactionMetaData ->

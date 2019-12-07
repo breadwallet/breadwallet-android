@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import com.platform.entities.TxMetaData
 import com.platform.entities.WalletInfoData
 import com.breadwallet.crypto.Account
+import com.breadwallet.crypto.WalletManagerMode
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -62,6 +63,12 @@ interface AccountMetaDataProvider {
 
     /** Reorders the wallet display order */
     fun reorderWallets(currencyIds: List<String>): Flow<Unit>
+
+    /** Persists [mode] for the wallet. */
+    suspend fun putWalletMode(currencyId: String, mode: WalletManagerMode)
+
+    /** Returns a map of currencyId to [WalletManagerMode]. */
+    fun walletModes(): Flow<Map<String, WalletManagerMode>>
 
     /** Clean up. */
     //fun close()

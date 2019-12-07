@@ -25,6 +25,7 @@
 package com.breadwallet.effecthandler.metadata
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.WalletManagerMode
 import java.math.BigDecimal
 
 sealed class MetaDataEffect {
@@ -46,4 +47,11 @@ sealed class MetaDataEffect {
         val transactionHash: String,
         val comment: String
     ) : MetaDataEffect()
+
+    data class UpdateWalletMode(
+        val currencyId: String,
+        val mode: WalletManagerMode
+    ) : MetaDataEffect()
+
+    object LoadWalletModes : MetaDataEffect()
 }
