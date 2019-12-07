@@ -55,6 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -105,9 +106,8 @@ class HomeScreenEffectHandler(
     }
 
     override fun dispose() {
-        coroutineContext.cancelChildren()
-
         RatesDataSource.getInstance(context).removeOnDataChangedListener(this)
+        cancel()
     }
 
     private fun loadWallets() {
@@ -193,9 +193,6 @@ class HomeScreenEffectHandler(
     }
 
     override fun onChanged() {
-        // FIXME: If this event comes in shortly after pressing back,
-        //  the app goes into the background and crashes when executing
-        //  in the dead worker for the effect handler
         breadBox.currencyCodes()
             .take(1)
             .flatMapLatest { it.asFlow() }
