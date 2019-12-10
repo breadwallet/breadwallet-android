@@ -6,7 +6,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -51,7 +51,7 @@ import com.platform.tools.BRBitId;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public abstract class BRActivity extends FragmentActivity {
+public abstract class BRActivity extends AppCompatActivity {
     private static final String TAG = BRActivity.class.getName();
 
     private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds

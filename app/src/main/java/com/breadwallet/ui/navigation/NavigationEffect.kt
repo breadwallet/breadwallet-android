@@ -72,6 +72,7 @@ sealed class NavigationEffect {
 
     data class GoToSetPin(
         val onboarding: Boolean = false,
+        val skipWriteDownKey: Boolean = false,
         val onComplete: OnCompleteAction = OnCompleteAction.GO_HOME
     ) : NavigationEffect()
 

@@ -24,7 +24,10 @@
  */
 package com.breadwallet.ui.settings.segwit
 
-import android.app.Activity
+import android.Manifest
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat.checkSelfPermission
+import com.bluelinelabs.conductor.Controller
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.AddressScheme
@@ -50,7 +53,7 @@ class LegacyAddressEffectHandler(
     private val output: Consumer<LegacyAddressEvent>,
     private val breadBox: BreadBox,
     private val cryptoUriParser: CryptoUriParser,
-    private val activity: Activity,
+    private val controller: Controller,
     private val showAddressCopiedAnimation: () -> Unit
 ) : Connection<LegacyAddressEffect>, CoroutineScope {
 
@@ -76,22 +79,31 @@ class LegacyAddressEffectHandler(
         when (effect) {
             is LegacyAddressEffect.CopyAddressToClipboard -> {
                 launch(Dispatchers.Main) {
-                    BRClipboardManager.putClipboard(activity, effect.address)
+                    BRClipboardManager.putClipboard(controller.applicationContext, effect.address)
                     showAddressCopiedAnimation()
                 }
             }
             is LegacyAddressEffect.ShareAddress -> {
                 launch(Dispatchers.Main) {
-                    val cryptoRequest = CryptoRequest.Builder()
-                        .setAddress(effect.address)
-                        .build()
-                    val cryptoUri = cryptoUriParser.createUrl(BITCOIN_CURRENCY_CODE, cryptoRequest)
-                    QRUtils.sendShareIntent(
-                        activity,
-                        cryptoUri.toString(),
-                        effect.address,
-                        effect.walletName
-                    )
+                    val context = checkNotNull(controller.applicationContext)
+                    val writePerm = checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (writePerm == PackageManager.PERMISSION_GRANTED) {
+                        val cryptoRequest = CryptoRequest.Builder()
+                            .setAddress(effect.address)
+                            .build()
+                        val cryptoUri = cryptoUriParser.createUrl(BITCOIN_CURRENCY_CODE, cryptoRequest)
+                        QRUtils.sendShareIntent(
+                            context,
+                            cryptoUri.toString(),
+                            effect.address,
+                            effect.walletName
+                        )?.run(controller::startActivity)
+                    } else {
+                        controller.requestPermissions(
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            QRUtils.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID
+                        )
+                    }
                 }
             }
         }

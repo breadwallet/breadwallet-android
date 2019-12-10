@@ -24,7 +24,10 @@
  */
 package com.breadwallet.ui.receive
 
-import android.app.Activity
+import android.Manifest
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat.checkSelfPermission
+import com.bluelinelabs.conductor.Controller
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.AddressScheme
@@ -63,7 +66,7 @@ class ReceiveEffectHandler(
     private val fiatCode: String,
     private val breadBox: BreadBox,
     private val cryptoUriParser: CryptoUriParser,
-    private val activity: Activity
+    private val controller: Controller
 ) : Connection<ReceiveEffect>, CoroutineScope {
 
     companion object {
@@ -108,7 +111,7 @@ class ReceiveEffectHandler(
 
         launch {
             while (isActive) {
-                val rates = RatesRepository.getInstance(activity.applicationContext)
+                val rates = RatesRepository.getInstance(controller.applicationContext)
                 val fiatRate =
                     rates.getFiatForCrypto(BigDecimal.ONE, currencyCode, fiatCode)
 
@@ -127,12 +130,26 @@ class ReceiveEffectHandler(
                 copyAddressToClipboard(effect)
             is ReceiveEffect.ShareRequest -> {
                 launch(Dispatchers.Main) {
-                    val cryptoRequest = CryptoRequest.Builder()
-                        .setAddress(effect.address)
-                        .setAmount(effect.amount)
-                        .build()
-                    val cryptoUri = cryptoUriParser.createUrl(currencyCode, cryptoRequest)
-                    QRUtils.sendShareIntent(activity, cryptoUri.toString(), effect.address, effect.walletName)
+                    val context = checkNotNull(controller.applicationContext)
+                    val writePerm = checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (writePerm == PackageManager.PERMISSION_GRANTED) {
+                        val cryptoRequest = CryptoRequest.Builder()
+                            .setAddress(effect.address)
+                            .setAmount(effect.amount)
+                            .build()
+                        val cryptoUri = cryptoUriParser.createUrl(currencyCode, cryptoRequest)
+                        QRUtils.sendShareIntent(
+                            context,
+                            cryptoUri.toString(),
+                            effect.address,
+                            effect.walletName
+                        )?.run(controller::startActivity)
+                    } else {
+                        controller.requestPermissions(
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            QRUtils.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID
+                        )
+                    }
                 }
             }
         }
@@ -144,7 +161,8 @@ class ReceiveEffectHandler(
 
     private fun copyAddressToClipboard(effect: ReceiveEffect.CopyAddressToClipboard) {
         launch(Dispatchers.Main) {
-            BRClipboardManager.putClipboard(activity, effect.address)
+            val context = requireNotNull(controller.applicationContext)
+            BRClipboardManager.putClipboard(context, effect.address)
         }
         EventUtils.pushEvent(EventUtils.EVENT_RECEIVE_COPIED_ADDRESS)
     }
