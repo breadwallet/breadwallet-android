@@ -239,6 +239,7 @@
         android:background="@color/blue"
         android:contentInsetStart="0dp"
         tools:visibility="gone"
+        android:visibility="gone"
         android:contentInsetLeft="0dp"
         app:breadText="@string/Alert.noInternet"
         app:contentInsetLeft="0dp"

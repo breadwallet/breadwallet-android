@@ -107,7 +107,7 @@ class ReceiveController(
                     defaultModel.fiatCurrencyCode,
                     direct.instance(),
                     direct.instance(),
-                    activity!!
+                    this@ReceiveController
                 )
             },
             nestedConnectable({
