@@ -62,7 +62,7 @@ class LegacyAddressController :
                     output,
                     direct.instance(),
                     direct.instance(),
-                    activity!!,
+                    this@LegacyAddressController,
                     ::showAddressCopied
                 )
             },
