@@ -31,10 +31,7 @@ import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import kotlinx.android.synthetic.main.fragment_signal.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,7 +41,7 @@ import kotlinx.coroutines.launch
  * Callers may set themselves as a target using [setTargetController]
  * and implementing [Listener] to be notified when the signal is complete.
  */
-class SignalController(args: Bundle) : BaseController(args), CoroutineScope {
+class SignalController(args: Bundle) : BaseController(args) {
 
     companion object {
         private const val KEY_TITLE = "title"
@@ -80,7 +77,6 @@ class SignalController(args: Bundle) : BaseController(args), CoroutineScope {
         fun onSignalComplete()
     }
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
     override val layoutId: Int = R.layout.fragment_signal
 
     override fun onCreateView(view: View) {
@@ -92,15 +88,10 @@ class SignalController(args: Bundle) : BaseController(args), CoroutineScope {
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        launch(Dispatchers.Main) {
+        viewAttachScope.launch(Dispatchers.Main) {
             delay(CLOSE_DELAY_MS)
             (targetController as? Listener)?.onSignalComplete()
             router.popCurrentController()
         }
-    }
-
-    override fun onDetach(view: View) {
-        super.onDetach(view)
-        coroutineContext.cancelChildren()
     }
 }
