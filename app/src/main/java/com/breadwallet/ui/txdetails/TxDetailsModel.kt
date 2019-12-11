@@ -27,7 +27,8 @@ data class TxDetailsModel(
     val exchangeCurrencyCode: String = "",
     val confirmationDate: Date? = null,
     val confirmedInBlockNumber: String = "",
-    val transactionState: TransactionState? = null
+    val transactionState: TransactionState? = null,
+    val feeToken: String = ""
 ) {
     companion object {
         /** Create a [TxDetailsModel] using only the required values. */
@@ -49,6 +50,9 @@ data class TxDetailsModel(
 
     val fiatAmountWhenSent: BigDecimal
         get() = cryptoTransferredAmount.multiply(exchangeRate)
+
+    val isFeeForToken: Boolean
+        get() = feeToken.isNotBlank()
 }
 
 enum class TransactionState {

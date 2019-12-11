@@ -90,12 +90,12 @@ data class WalletTransaction(
     val confirmations: Int,
     val confirmationsUntilFinal: Int,
     val currencyCode: String,
-    val feeForToken: String = "" // TODO: token symbol?
+    val feeToken: String = ""
 ) {
     val isPending: Boolean = confirmations < confirmationsUntilFinal
 
     val isComplete: Boolean = confirmations >= confirmationsUntilFinal
 
-    val isFeeForToken: Boolean = !feeForToken.isNullOrBlank()
+    val isFeeForToken: Boolean = feeToken.isNotBlank()
 }
 

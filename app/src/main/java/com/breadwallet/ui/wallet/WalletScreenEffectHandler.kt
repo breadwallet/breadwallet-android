@@ -2,6 +2,7 @@ package com.breadwallet.ui.wallet
 
 import android.content.Context
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.feeForToken
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
@@ -198,6 +199,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         confirmations = confirmations.orNull()?.toInt() ?: 0,
         confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
         timeStamp = confirmation?.confirmationTime?.time ?: System.currentTimeMillis(),
-        currencyCode = wallet.currency.code
+        currencyCode = wallet.currency.code,
+        feeToken = feeForToken()
     )
 }
