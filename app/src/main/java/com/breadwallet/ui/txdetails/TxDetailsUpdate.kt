@@ -1,5 +1,6 @@
 package com.breadwallet.ui.txdetails
 
+import com.breadwallet.breadbox.feeForToken
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.dispatch
@@ -44,7 +45,8 @@ object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>
                     .or(""),
                 transactionState = TransactionState.valueOf(state),
                 gasPrice = event.gasPrice,
-                gasLimit = event.gasLimit
+                gasLimit = event.gasLimit,
+                feeToken = feeForToken()
             )
 
             return next(

@@ -212,6 +212,18 @@ class TxDetailsController(
             )
         }
 
+        ifChanged(TxDetailsModel::isFeeForToken) {
+            if (isFeeForToken) { // it's a token transfer ETH tx
+                memo_input.setText(
+                    String.format(
+                        res.getString(R.string.Transaction_tokenTransfer),
+                        feeToken
+                    )
+                )
+                memo_input.isFocusable = false
+            }
+        }
+
         ifChanged(TxDetailsModel::isReceived) {
             showSentViews(!isReceived)
 
@@ -323,7 +335,7 @@ class TxDetailsController(
         }
 
         ifChanged(TxDetailsModel::memo) {
-            if (memo_input.text.isNullOrEmpty()) memo_input.setText(memo)
+            if (memo_input.text.isNullOrEmpty() && !isFeeForToken) memo_input.setText(memo)
         }
 
         ifChanged(
@@ -369,19 +381,6 @@ class TxDetailsController(
                 else -> null
             }
         }
-
-        /*
-            TODO: Token support
-            if (tkn != null) { // it's a token transfer ETH tx
-                memo_input.setText(
-                    String.format(
-                        app.getString(R.string.Transaction_tokenTransfer),
-                        tkn.symbol
-                    )
-                )
-                memo_input.isFocusable = false
-            }
-        */
     }
 
     private fun showSentViews(show: Boolean) {

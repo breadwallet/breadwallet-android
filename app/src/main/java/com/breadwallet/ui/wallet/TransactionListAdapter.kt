@@ -162,7 +162,7 @@ class TransactionListAdapter(
         if (item.isFeeForToken) {
             convertView.transactionDetail.text =
                 mContext.getString(R.string.Transaction_tokenTransfer)
-                    .format(item.feeForToken)
+                    .format(item.feeToken)
         }
 
         //if it's 0 we use the current time.
