@@ -3,7 +3,6 @@ package com.breadwallet.ui.importwallet
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import com.breadwallet.R
-import com.breadwallet.ext.merge
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.flowbind.clicks
@@ -18,6 +17,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 
 class PasswordController(
     args: Bundle? = null
