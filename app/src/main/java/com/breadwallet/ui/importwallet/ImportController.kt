@@ -6,7 +6,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
-import com.breadwallet.ext.merge
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import org.kodein.di.Kodein
 import org.kodein.di.direct
