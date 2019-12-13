@@ -5,7 +5,6 @@ import com.breadwallet.R
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
-import com.breadwallet.ext.merge
 import com.breadwallet.model.SyncMode
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseMobiusController
@@ -26,6 +25,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
