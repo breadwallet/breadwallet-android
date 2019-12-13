@@ -12,8 +12,3 @@ import kotlinx.coroutines.flow.transform
 /** Dispatch each item emitted by this flow to [consumer], launching in [scope]. */
 fun <T> Flow<T>.bindConsumerIn(consumer: Consumer<T>, scope: CoroutineScope) =
     onEach { consumer.accept(it) }.launchIn(scope)
-
-/** Collect each [Flow] in [flows] and emit all values in the returned [Flow]. */
-@Suppress("SpreadOperator")
-fun <T> merge(vararg flows: Flow<T>): Flow<T> =
-    flowOf(*flows).flattenMerge(concurrency = flows.size)
