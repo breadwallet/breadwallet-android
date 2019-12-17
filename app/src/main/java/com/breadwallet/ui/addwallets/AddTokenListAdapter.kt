@@ -10,25 +10,37 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.tools.util.TokenUtil
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 import java.io.File
 
 class AddTokenListAdapter(
     private val context: Context,
-    private val addWalletListener: (token: Token) -> Unit,
-    private val removeWalletListener: (token: Token) -> Unit
+    private val tokensFlow: Flow<List<Token>>,
+    private val sendChannel: SendChannel<AddWalletsEvent>
 ) : RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder>() {
 
-    var tokens: List<Token> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+    private var tokens: List<Token> = emptyList()
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        tokensFlow
+            .onEach { tokens ->
+                this.tokens = tokens
+                notifyDataSetChanged()
+            }
+            .launchIn(CoroutineScope(Dispatchers.Main))
+    }
 
     override fun onBindViewHolder(holder: TokenItemViewHolder, position: Int) {
         val token = tokens[position]
@@ -70,9 +82,9 @@ class AddTokenListAdapter(
 
             setOnClickListener {
                 if (token.enabled) {
-                    removeWalletListener(token)
+                    sendChannel.offer(AddWalletsEvent.OnRemoveWalletClicked(token))
                 } else {
-                    addWalletListener(token)
+                    sendChannel.offer(AddWalletsEvent.OnAddWalletClicked(token))
                 }
             }
         }
@@ -98,11 +110,11 @@ class AddTokenListAdapter(
 
     inner class TokenItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val logo: ImageView = view.findViewById(R.id.token_icon)
-        val symbol: BaseTextView = view.findViewById(R.id.token_symbol)
-        val name: BaseTextView = view.findViewById(R.id.token_name)
+        val symbol: TextView = view.findViewById(R.id.token_symbol)
+        val name: TextView = view.findViewById(R.id.token_name)
         val addRemoveButton: Button = view.findViewById(R.id.add_remove_button)
         val iconParent: View = view.findViewById(R.id.icon_parent)
-        val iconLetter: BaseTextView = view.findViewById(R.id.icon_letter)
+        val iconLetter: TextView = view.findViewById(R.id.icon_letter)
 
         init {
             val typeface = Typeface.createFromAsset(context.assets, "fonts/CircularPro-Book.otf")

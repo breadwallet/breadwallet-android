@@ -32,6 +32,7 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
 import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
@@ -53,6 +54,7 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -66,11 +68,11 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import org.kodein.di.Kodein
-import org.kodein.di.direct
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
 import org.kodein.di.erased.provider
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions") // TODO: Extract render DSL or replace with Flows
 abstract class BaseMobiusController<M, E, F>(
     args: Bundle? = null
@@ -87,6 +89,10 @@ abstract class BaseMobiusController<M, E, F>(
 
         bind<NavigationEffectHandler>() with provider {
             NavigationEffectHandler(activity as BRActivity)
+        }
+
+        bind<NavEffectTransformer>() with provider {
+            NavEffectTransformer(instance())
         }
     }
 
@@ -164,7 +170,6 @@ abstract class BaseMobiusController<M, E, F>(
      */
     open fun bindView(modelFlow: Flow<M>): Flow<E> = emptyFlow()
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return super.onCreateView(inflater, container).apply {
             // TODO: This code maintains the old render and model diffing support
@@ -222,14 +227,6 @@ abstract class BaseMobiusController<M, E, F>(
             eventConsumerDelegate.consumer = QueuedConsumer()
         }
     }
-
-    fun handleNavEffects(): FlowTransformer<NavEffectHolder, E> =
-        flowTransformer { effects ->
-            effects.map { effect -> effect.navigationEffect }
-                .transform(Connectable {
-                    direct.instance<RouterNavigationEffectHandler>()
-                })
-        }
 
     /**
      * Invokes [block] only when the result of [extract] on

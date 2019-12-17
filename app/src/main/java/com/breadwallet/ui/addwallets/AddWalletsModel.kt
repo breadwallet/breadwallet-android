@@ -7,6 +7,12 @@ data class AddWalletsModel(
     companion object {
         fun createDefault() = AddWalletsModel()
     }
+
+    override fun toString(): String {
+        return "AddWalletsModel(" +
+            "tokens=(size:${tokens.size}), " +
+            "searchQuery='$searchQuery')"
+    }
 }
 
 data class Token(

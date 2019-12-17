@@ -11,6 +11,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.flow.subtypeEffectHandler
@@ -39,7 +40,7 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
     override val init = FastSyncInit
     override val update = FastSyncUpdate
     override val flowEffectHandler = subtypeEffectHandler<FastSyncEffect, FastSyncEvent> {
-        addTransformer<FastSyncEffect.GoBack>(handleNavEffects())
+        addTransformer<FastSyncEffect.GoBack>(direct.instance<NavEffectTransformer>())
         addActionSync<FastSyncEffect.ShowDisableFastSyncDialog>(Main, ::showDisableFastSyncDialog)
         addFunctionSync<FastSyncEffect.LoadCurrencyIds>(Default) {
             FastSyncEvent.OnCurrencyIdsUpdated(
