@@ -25,7 +25,8 @@ object AddWalletsUpdate :
         model: AddWalletsModel,
         event: AddWalletsEvent.OnSearchQueryChanged
     ): Next<AddWalletsModel, AddWalletsEffect> {
-        return dispatch(
+        return next(
+            model.copy(searchQuery = event.query),
             effects(
                 AddWalletsEffect.SearchTokens(event.query)
             )

@@ -1,23 +1,25 @@
 package com.breadwallet.ui.addwallets
 
-import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
-import com.breadwallet.ui.view
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
+import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.textChanges
 import kotlinx.android.synthetic.main.activity_add_wallets.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
+@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class AddWalletsController :
     BaseMobiusController<AddWalletsModel, AddWalletsEvent, AddWalletsEffect>() {
 
@@ -26,57 +28,42 @@ class AddWalletsController :
     override val defaultModel = AddWalletsModel.createDefault()
     override val init = AddWalletsInit
     override val update = AddWalletsUpdate
-    override val effectHandler: Connectable<AddWalletsEffect, AddWalletsEvent> =
-        CompositeEffectHandler.from(
-            Connectable { output ->
-                AddWalletsEffectHandler(
-                    output,
-                    direct.instance(),
-                    direct.instance()
-                ) { activity as Context }
-            },
-            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-                when (effect) {
-                    is AddWalletsEffect.GoBack -> NavigationEffect.GoBack
-                    else -> null
-                }
-            })
+    override val flowEffectHandler
+        get() = AddWalletsEffectHandler.createEffectHandler(
+            checkNotNull(applicationContext),
+            direct.instance(),
+            direct.instance(),
+            direct.instance()
         )
 
-    private var mAdapter: AddTokenListAdapter? = null
-
-    override fun bindView(output: Consumer<AddWalletsEvent>) = output.view {
-        mAdapter = AddTokenListAdapter(
-            activity!!,
-            { output.accept(AddWalletsEvent.OnAddWalletClicked(it)) },
-            { output.accept(AddWalletsEvent.OnRemoveWalletClicked(it)) }
-        )
-
-        token_list.layoutManager = LinearLayoutManager(activity!!)
-        token_list.adapter = mAdapter
-
-        search_edit.onTextChanged(AddWalletsEvent::OnSearchQueryChanged)
+    override fun bindView(modelFlow: Flow<AddWalletsModel>): Flow<AddWalletsEvent> {
+        token_list.layoutManager = LinearLayoutManager(checkNotNull(activity))
         search_edit.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 Utils.hideKeyboard(activity)
             }
         }
 
-        back_arrow.onClick(AddWalletsEvent.OnBackClicked)
-
-        onDispose { }
-    }
-
-    override fun onDetach(view: View) {
-        super.onDetach(view)
-        Utils.hideKeyboard(activity)
-    }
-
-    override fun AddWalletsModel.render() {
-        val adapter = checkNotNull(mAdapter)
-
-        ifChanged(AddWalletsModel::tokens) {
-            adapter.tokens = tokens
+        return merge(
+            search_edit.textChanges().map { AddWalletsEvent.OnSearchQueryChanged(it) },
+            back_arrow.clicks().map { AddWalletsEvent.OnBackClicked },
+            bindTokenList(modelFlow)
+        ).onCompletion {
+            Utils.hideKeyboard(activity)
         }
+    }
+
+    private fun bindTokenList(
+        modelFlow: Flow<AddWalletsModel>
+    ) = callbackFlow<AddWalletsEvent> {
+        AddTokenListAdapter(
+            context = checkNotNull(activity),
+            tokensFlow = modelFlow
+                .map { model -> model.tokens }
+                .distinctUntilChanged(),
+            sendChannel = channel
+        ).also(token_list::setAdapter)
+
+        awaitClose { token_list.adapter = null }
     }
 }

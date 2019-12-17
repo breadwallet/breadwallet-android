@@ -56,10 +56,10 @@ interface AccountMetaDataProvider {
     fun getWalletInfoUnsafe(): WalletInfoData?
 
     /** Enables the wallet for this Account. */
-    fun enableWallet(currencyId: String): Flow<Unit>
+    fun enableWallet(currencyId: String)
 
     /** Disables the wallet for this Account. */
-    fun disableWallet(currencyId: String): Flow<Unit>
+    fun disableWallet(currencyId: String)
 
     /** Reorders the wallet display order */
     fun reorderWallets(currencyIds: List<String>): Flow<Unit>
