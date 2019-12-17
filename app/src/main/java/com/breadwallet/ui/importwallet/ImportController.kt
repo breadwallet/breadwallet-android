@@ -11,11 +11,8 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.importwallet.Import.M.LoadingState
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.scanner.ScannerController
-import com.spotify.mobius.flow.subtypeEffectHandler
 import kotlinx.android.synthetic.main.controller_import_wallet.*
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -41,7 +38,8 @@ class ImportController(
 ) : BaseMobiusController<Import.M, Import.E, Import.F>(args),
     ScannerController.Listener,
     AlertDialogController.Listener,
-    PasswordController.Listener {
+    PasswordController.Listener,
+    ImportViewActions {
 
     constructor(
         privateKey: String,
@@ -68,32 +66,13 @@ class ImportController(
         bind<WalletImporter>() with singleton { WalletImporter() }
     }
 
-    override val flowEffectHandler = subtypeEffectHandler<Import.F, Import.E> {
-        addTransformer<Import.F.Nav>(direct.instance<NavEffectTransformer>())
-        addTransformer<Import.F.ValidateKey> { effects ->
-            effects.handleValidateKey(direct.instance())
-        }
-        addTransformer<Import.F.EstimateImport> { effects ->
-            effects.handleEstimateImport(direct.instance(), direct.instance())
-        }
-        addTransformer<Import.F.SubmitImport> { effects ->
-            effects.handleSubmitTransfer(direct.instance())
-        }
-
-        addActionSync<Import.F.ShowNoWalletsEnabled>(Main) {
-            router.popController(this@ImportController)
-        }
-
-        addConsumerSync<Import.F.ShowConfirmImport>(Main, ::showConfirmImport)
-
-        addActionSync<Import.F.ShowNoBalance>(Main, ::showNoBalance)
-        addActionSync<Import.F.ShowKeyInvalid>(Main, ::showKeyInvalid)
-        addActionSync<Import.F.ShowPasswordInvalid>(Main, ::showPasswordInvalid)
-        addActionSync<Import.F.ShowImportFailed>(Main, ::showImportFailed)
-        addActionSync<Import.F.ShowPasswordInput>(Main, ::showPasswordInput)
-        addActionSync<Import.F.ShowBalanceTooLow>(Main, ::showBalanceTooLow)
-        addActionSync<Import.F.ShowImportSuccess>(Main, ::showImportSuccess)
-    }
+    override val flowEffectHandler
+        get() = ImportEffects.createEffectHandler(
+            direct.instance(),
+            direct.instance(),
+            direct.instance(),
+            view = this
+        )
 
     override fun bindView(modelFlow: Flow<Import.M>): Flow<Import.E> {
         modelFlow
@@ -166,7 +145,11 @@ class ImportController(
         }?.run(eventConsumer::accept)
     }
 
-    private fun showKeyInvalid() {
+    override fun showNoWalletsEnabled() {
+        router.popController(this)
+    }
+
+    override fun showKeyInvalid() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             message = res.getString(R.string.Import_Error_notValid),
@@ -175,7 +158,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showPasswordInvalid() {
+    override fun showPasswordInvalid() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             message = res.getString(R.string.Import_wrongPassword),
@@ -184,7 +167,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showNoBalance() {
+    override fun showNoBalance() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             title = res.getString(R.string.Import_title),
@@ -194,7 +177,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showBalanceTooLow() {
+    override fun showBalanceTooLow() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             title = res.getString(R.string.Import_title),
@@ -204,14 +187,14 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showConfirmImport(effect: Import.F.ShowConfirmImport) {
+    override fun showConfirmImport(receiveAmount: String, feeAmount: String) {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             title = res.getString(R.string.Import_title),
             message = res.getString(
                 R.string.Import_confirm,
-                effect.receiveAmount,
-                effect.feeAmount
+                receiveAmount,
+                feeAmount
             ),
             positiveText = res.getString(R.string.Import_importButton),
             dialogId = CONFIRM_IMPORT_DIALOG
@@ -220,7 +203,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showImportSuccess() {
+    override fun showImportSuccess() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             title = res.getString(R.string.Import_success),
@@ -232,7 +215,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showImportFailed() {
+    override fun showImportFailed() {
         val res = checkNotNull(resources)
         val controller = AlertDialogController(
             title = res.getString(R.string.Import_title),
@@ -242,7 +225,7 @@ class ImportController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun showPasswordInput() {
+    override fun showPasswordInput() {
         val controller = PasswordController()
         controller.targetController = this@ImportController
         router.pushController(RouterTransaction.with(controller))
