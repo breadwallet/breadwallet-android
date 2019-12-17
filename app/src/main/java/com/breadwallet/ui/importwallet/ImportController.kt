@@ -11,6 +11,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.importwallet.Import.M.LoadingState
+import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.scanner.ScannerController
 import com.spotify.mobius.flow.subtypeEffectHandler
 import kotlinx.android.synthetic.main.controller_import_wallet.*
@@ -68,7 +69,7 @@ class ImportController(
     }
 
     override val flowEffectHandler = subtypeEffectHandler<Import.F, Import.E> {
-        addTransformer<Import.F.Nav>(handleNavEffects())
+        addTransformer<Import.F.Nav>(direct.instance<NavEffectTransformer>())
         addTransformer<Import.F.ValidateKey> { effects ->
             effects.handleValidateKey(direct.instance())
         }

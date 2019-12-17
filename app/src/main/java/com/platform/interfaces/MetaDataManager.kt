@@ -105,24 +105,20 @@ class MetaDataManager(
             }
             .distinctUntilChanged()
 
-    override fun enableWallet(currencyId: String): Flow<Unit> = flow {
+    override fun enableWallet(currencyId: String) {
         val enabledWallets = getEnabledWallets()?.toMutableList() ?: mutableListOf()
         if (!enabledWallets.contains(currencyId)) {
             putEnabledWallets(
                 enabledWallets.apply { add(currencyId) }
             )
         }
-        emit(Unit)
     }
 
-    override fun disableWallet(currencyId: String): Flow<Unit> = flow {
+    override fun disableWallet(currencyId: String) {
         getEnabledWallets()
             ?.toMutableList()
             ?.filter { !it.equals(currencyId, true) }
-            ?.let {
-                putEnabledWallets(it)
-                emit(Unit)
-            }
+            ?.run(::putEnabledWallets)
     }
 
     override fun reorderWallets(currencyIds: List<String>) = flow {
