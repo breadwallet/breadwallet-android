@@ -28,6 +28,8 @@ import org.kodein.di.erased.instance
 private const val DIALOG_TITLE_PADDING = 16
 private const val DIALOG_TITLE_TEXT_SIZE = 18f
 private const val DIALOG_INPUT_PADDING = 24
+private const val SHOW_KEYBOARD_DELAY = 200L
+private const val RESTORE_DIALOG_TITLE_DELAY = 1_000L
 
 class NodeSelectorController :
     BaseMobiusController<NodeSelectorModel, NodeSelectorEvent, NodeSelectorEffect>() {
@@ -118,14 +120,14 @@ class NodeSelectorController :
                 viewAttachScope.launch(Dispatchers.Main) {
                     customTitle.setText(R.string.NodeSelector_invalid)
                     customTitle.setTextColor(res.getColor(R.color.warning_color))
-                    delay(1_000L)
+                    delay(RESTORE_DIALOG_TITLE_DELAY)
                     customTitle.setText(R.string.NodeSelector_enterTitle)
                     customTitle.setTextColor(res.getColor(R.color.almost_black))
                 }
             }
         }
         viewAttachScope.launch(Dispatchers.Main) {
-            delay(200L)
+            delay(SHOW_KEYBOARD_DELAY)
             input.requestFocus()
             val keyboard =
                 activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

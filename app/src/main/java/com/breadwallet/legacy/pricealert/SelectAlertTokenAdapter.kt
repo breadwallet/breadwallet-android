@@ -36,15 +36,15 @@ import androidx.core.view.isVisible
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
-import com.breadwallet.legacy.presenter.entities.TokenItem
+import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.util.TokenUtil
 import com.squareup.picasso.Picasso
 
 import java.io.File
 
 class SelectAlertTokenAdapter(
-        private val context: Context,
-        private val onSelectListener: (@ParameterName("token") TokenItem) -> Unit
+    private val context: Context,
+    private val onSelectListener: (@ParameterName("token") TokenItem) -> Unit
 ) : RecyclerView.Adapter<SelectAlertTokenAdapter.TokenItemViewHolder>() {
 
     companion object {
