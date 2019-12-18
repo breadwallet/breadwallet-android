@@ -36,6 +36,7 @@ import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.entities.TxMetaData
+import com.platform.entities.TxMetaDataValue
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -82,11 +83,8 @@ class MetaDataEffectHandler(
             .consumeAsFlow()
             .debounce(COMMENT_UPDATE_DEBOUNCE)
             .onEach {
-                val metaData = metaDataProvider.getTxMetaData(it.transactionHash) ?: TxMetaData()
                 metaDataProvider.putTxMetaData(
-                    metaData.copy(
-                        comment = it.comment
-                    ),
+                    TxMetaDataValue(comment = it.comment),
                     it.transactionHash
                 )
             }
@@ -158,7 +156,7 @@ class MetaDataEffectHandler(
         val creationTime =
             (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS).toInt()
 
-        val metaData = TxMetaData(
+        val metaData = TxMetaDataValue(
             deviceId,
             comment,
             fiatCurrencyCode,

@@ -10,6 +10,8 @@ import com.breadwallet.breadbox.isEthereum
 import com.breadwallet.breadbox.isReceived
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
+import com.platform.entities.TxMetaDataEmpty
+import com.platform.entities.TxMetaDataValue
 import java.util.Date
 
 object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>,
@@ -76,13 +78,18 @@ object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>
         model: TxDetailsModel,
         event: TxDetailsEvent.OnMetaDataUpdated
     ): Next<TxDetailsModel, TxDetailsEffect> =
-        next(
-            model.copy(
-                memo = event.metaData.comment ?: "",
-                exchangeCurrencyCode = event.metaData.exchangeCurrency ?: "",
-                exchangeRate = event.metaData.exchangeRate.toBigDecimal()
-            )
-        )
+        when (event.metaData) {
+            is TxMetaDataValue -> {
+                next(
+                    model.copy(
+                        memo = event.metaData.comment ?: "",
+                        exchangeCurrencyCode = event.metaData.exchangeCurrency ?: "",
+                        exchangeRate = event.metaData.exchangeRate.toBigDecimal()
+                    )
+                )
+            }
+            is TxMetaDataEmpty -> next(model.copy(memo = ""))
+        }
 
     override fun onMemoChanged(
         model: TxDetailsModel,

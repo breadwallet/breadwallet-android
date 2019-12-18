@@ -30,6 +30,7 @@ import com.platform.entities.TxMetaData
 import com.platform.entities.WalletInfoData
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.WalletManagerMode
+import com.platform.entities.TxMetaDataValue
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -76,11 +77,8 @@ interface AccountMetaDataProvider {
     /** Returns a [Flow] of [TxMetaData] associated with [transactionHash], will recover it if necessary. */
     fun txMetaData(transactionHash: String): Flow<TxMetaData>
 
-    /** Returns [TxMetaData] for given transaction hash. */
-    fun getTxMetaData(txHash: String): TxMetaData?
-
     /** Persist given [TxMetaData] for transaction hash, but ONLY if the comment or exchange rate has changed. */
-    suspend fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String)
+    suspend fun putTxMetaData(newTxMetaData: TxMetaDataValue, txHash: String)
 
     fun getPairingMetadata(pubKey: ByteArray): PairingMetaData?
 
