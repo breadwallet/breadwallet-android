@@ -6,7 +6,6 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.legacy.presenter.entities.TokenItem;
 import com.breadwallet.legacy.wallet.abstracts.BalanceUpdateListener;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
@@ -15,8 +14,6 @@ import com.breadwallet.legacy.wallet.wallets.ethereum.WalletTokenManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.platform.entities.TokenListMetaData;
@@ -24,7 +21,6 @@ import com.platform.entities.TokenListMetaData;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -126,17 +122,6 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         }
         return mWallets;
 
-    }
-
-    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
-        LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
-        for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
-            currencyCodes.add(tokenInfo.getSymbol());
-        }
-        //for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-        //    currencyCodes.add(tokenItem.symbol.toUpperCase());
-        //}
-        return new ArrayList<>(currencyCodes);
     }
 
     //return the needed wallet for the iso

@@ -30,7 +30,7 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.legacy.presenter.entities.TokenItem;
+import com.breadwallet.model.TokenItem;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -45,7 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Request;
 
@@ -64,6 +66,8 @@ public final class TokenUtil {
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
     private static final String FIELD_CURRENCY_ID = "currency_id";
+    private static final String FIELD_ALTERNATE_NAMES = "alternate_names";
+    private static final String FIELD_CRYPTOCOMPARE = "cryptocompare";
     private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
     private static final String ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND = "white-square-bg";
     private static final String ICON_FILE_NAME_FORMAT = "%s.png";
@@ -78,6 +82,7 @@ public final class TokenUtil {
 
     // TODO: In DROID-878 fix this so we don't have to store this mTokenItems... (Should be stored in appropriate wallet.)
     private static List<TokenItem> mTokenItems = new ArrayList<>();
+    private static Map<String, TokenItem> mTokenMap = new HashMap<>();
 
     private TokenUtil() {
     }
@@ -104,8 +109,7 @@ public final class TokenUtil {
 
                 // Copy the APK tokens.json to a file on internal storage
                 saveTokenListToFile(context, stringBuilder.toString());
-
-                mTokenItems = parseJsonToTokenList(context, stringBuilder.toString());
+                loadTokens(parseJsonToTokenList(context, stringBuilder.toString()));
             } catch (IOException e) {
                 Log.e(TAG, "Could not read from resource file at res/raw/tokens.json ", e);
             }
@@ -149,9 +153,19 @@ public final class TokenUtil {
 
     public static synchronized List<TokenItem> getTokenItems(Context context) {
         if (mTokenItems == null || mTokenItems.isEmpty()) {
-            mTokenItems = getTokensFromFile(context);
+            loadTokens(getTokensFromFile(context));
         }
         return mTokenItems;
+    }
+
+    /**
+     * Return a TokenItem with the given currency code or null if non TokenItem has the currency code.
+     *
+     * @param currencyCode The currency code of the token we are looking.
+     * @return The TokenItem with the given currency code or null.
+     */
+    public static TokenItem getTokenItemByCurrencyCode(String currencyCode) {
+        return mTokenMap.get(currencyCode.toLowerCase());
     }
 
     public static void fetchTokensFromServer(Context context) {
@@ -167,7 +181,7 @@ public final class TokenUtil {
                 // Check if the response from the server is valid JSON before trying to save & parse.
                 if (Utils.isValidJSON(responseBody)) {
                     saveTokenListToFile(context, responseBody);
-                    mTokenItems = parseJsonToTokenList(context, responseBody);
+                    loadTokens(parseJsonToTokenList(context, responseBody));
                 }
             }
         } else {
@@ -188,6 +202,7 @@ public final class TokenUtil {
                 String name = "";
                 String symbol = "";
                 boolean isSupported = true;
+                String cryptocompareAlias = null;
 
                 if (tokenObject.has(FIELD_CONTRACT_ADDRESS)) {
                     address = tokenObject.getString(FIELD_CONTRACT_ADDRESS);
@@ -203,6 +218,13 @@ public final class TokenUtil {
 
                 if (tokenObject.has(FIELD_IS_SUPPORTED)) {
                     isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
+                }
+
+                if (tokenObject.has(FIELD_ALTERNATE_NAMES)) {
+                    JSONObject altNameObject = tokenObject.getJSONObject(FIELD_ALTERNATE_NAMES);
+                    if (altNameObject.has(FIELD_CRYPTOCOMPARE)) {
+                        cryptocompareAlias = altNameObject.getString(FIELD_CRYPTOCOMPARE);
+                    }
                 }
 
                 if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
@@ -223,7 +245,7 @@ public final class TokenUtil {
                         }
                     }
 
-                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId);
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId, cryptocompareAlias);
 
                     tokenItems.add(item);
                 }
@@ -306,11 +328,30 @@ public final class TokenUtil {
     }
 
     public static boolean isTokenSupported(String symbol) {
-        for (TokenItem tokenItem : mTokenItems) {
-            if (tokenItem.getSymbol().equalsIgnoreCase(symbol)) {
-                return tokenItem.isSupported();
-            }
+        if (mTokenMap.containsKey(symbol.toLowerCase())) {
+            return mTokenMap.get(symbol.toLowerCase()).isSupported();
         }
         return true;
     }
+
+    /**
+     * Returns the currency code to be used when fetching the exchange rate for the token with the
+     * given currency code.
+     *
+     * @param currencyCode the currency code
+     * @return
+     */
+    public static String getExchangeRateCode(String currencyCode) {
+        return mTokenMap.containsKey(currencyCode.toLowerCase())
+                ? mTokenMap.get(currencyCode.toLowerCase()).getExchangeRateCurrencyCode() : currencyCode;
+    }
+
+    private static void loadTokens(List<TokenItem> tokenItems) {
+        mTokenItems = tokenItems;
+        mTokenMap.clear();
+        for (TokenItem tokenItem : tokenItems) {
+            mTokenMap.put(tokenItem.getSymbol().toLowerCase(), tokenItem);
+        }
+    }
+
 }
