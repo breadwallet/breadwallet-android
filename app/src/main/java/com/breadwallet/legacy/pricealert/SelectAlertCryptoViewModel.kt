@@ -30,11 +30,11 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.ext.map
 import com.breadwallet.ext.mutableLiveData
 import com.breadwallet.ext.switchMap
-import com.breadwallet.legacy.presenter.entities.TokenItem
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager
 import com.breadwallet.legacy.wallet.wallets.ethereum.WalletTokenManager
+import com.breadwallet.model.TokenItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
