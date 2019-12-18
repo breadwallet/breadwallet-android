@@ -99,5 +99,7 @@ sealed class WalletScreenEvent {
 
     data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : WalletScreenEvent()
     object OnChartDataPointReleased : WalletScreenEvent()
+
+    data class OnIsTokenSupportedUpdated(val isTokenSupported: Boolean) : WalletScreenEvent()
 }
 
