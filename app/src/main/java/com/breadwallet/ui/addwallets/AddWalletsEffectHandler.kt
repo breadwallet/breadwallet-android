@@ -10,9 +10,9 @@ import com.breadwallet.breadbox.findNetwork
 import com.breadwallet.breadbox.isNative
 import com.breadwallet.breadbox.networkContainsCurrency
 import com.breadwallet.crypto.Wallet
-import com.breadwallet.legacy.presenter.entities.TokenItem
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
+import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.platform.interfaces.AccountMetaDataProvider

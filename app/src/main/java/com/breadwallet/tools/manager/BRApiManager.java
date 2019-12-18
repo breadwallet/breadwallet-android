@@ -6,7 +6,6 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.model.PriceChange;
@@ -69,8 +68,6 @@ public final class BRApiManager {
     private static final String NAME = "name";
     private static final String CODE = "code";
     private static final String RATE = "rate";
-    private static final String PRICE_BTC = "price_btc";
-    private static final String SYMBOL = "symbol";
     private static final String TOKEN_RATES_URL_PREFIX = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=";
     private static final String TOKEN_RATES_URL_SUFFIX = "&tsyms=BTC";
     private static final int FSYMS_CHAR_LIMIT = 300;
@@ -126,12 +123,14 @@ public final class BRApiManager {
         }
     }
 
-    /** Synchronously updates RateRepository data. */
+    /**
+     * Synchronously updates RateRepository data.
+     */
     @WorkerThread
     public void updateRatesSync(final Context context) {
         Log.d(TAG, "Fetching rates");
         //Update Crypto Rates
-        List<String> codeList = WalletsMaster.getInstance().getAllCurrencyCodesPossible(context);
+        List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible();
         updateCryptoRates(context, codeList);
 
         //Update BTC/Fiat rates
@@ -240,7 +239,7 @@ public final class BRApiManager {
             List<CurrencyEntity> currencyEntities = new ArrayList<>();
             JSONArray tokenDataArray = new JSONArray(tokenDataJsonString);
             for (int i = 0; i < tokenDataArray.length(); i++) {
-                JSONObject tokenDataJsonObject =  tokenDataArray.getJSONObject(i);
+                JSONObject tokenDataJsonObject = tokenDataArray.getJSONObject(i);
                 if (tokenDataJsonObject.has(CONTRACT_INITIAL_VALUE)) {
                     String priceInEth = tokenDataJsonObject.getString(CONTRACT_INITIAL_VALUE)
                             .replace(WalletEthManager.ETH_CURRENCY_CODE, "").trim();
@@ -276,6 +275,7 @@ public final class BRApiManager {
 
     /**
      * uses https://bitpay.com/rates to fetch the rates as a backup in case our api is down.
+     *
      * @param context
      * @return JSONArray with rates data.
      */

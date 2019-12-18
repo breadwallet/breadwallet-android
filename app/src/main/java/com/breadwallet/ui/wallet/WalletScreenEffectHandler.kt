@@ -16,7 +16,6 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
-import com.platform.network.service.CurrencyHistoricalDataClient
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -135,42 +134,15 @@ class WalletHistoricalPriceIntervalHandler(
     private val currencyCode: String
 ) : Connection<WalletScreenEffect> {
 
-    override fun accept(value: WalletScreenEffect) {
-        when (value) {
+    override fun accept(effect: WalletScreenEffect) {
+        when (effect) {
             is WalletScreenEffect.LoadChartInterval -> {
                 val toCurrency = BRSharedPrefs.getPreferredFiatIso()
-                val dataPoints = when (value.interval) {
-                    Interval.ONE_DAY -> CurrencyHistoricalDataClient.getPastDay(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                    Interval.ONE_WEEK -> CurrencyHistoricalDataClient.getPastWeek(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                    Interval.ONE_MONTH -> CurrencyHistoricalDataClient.getPastMonth(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                    Interval.THREE_MONTHS -> CurrencyHistoricalDataClient.getPastThreeMonths(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                    Interval.ONE_YEAR -> CurrencyHistoricalDataClient.getPastYear(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                    Interval.THREE_YEARS -> CurrencyHistoricalDataClient.getPastThreeYears(
-                        context,
-                        currencyCode,
-                        toCurrency
-                    )
-                }
+                val dataPoints = RatesRepository.getInstance(context).getHistoricalData(
+                    currencyCode,
+                    toCurrency,
+                    effect.interval
+                )
                 output.accept(WalletScreenEvent.OnMarketChartDataUpdated(dataPoints))
             }
         }

@@ -28,8 +28,9 @@ package com.platform.network.service
 import android.content.Context
 import android.util.Log
 import com.breadwallet.model.PriceChange
-import com.breadwallet.tools.util.Utils
 import com.breadwallet.model.PriceDataPoint
+import com.breadwallet.tools.util.Utils
+import com.breadwallet.ui.wallet.Interval
 import com.platform.APIClient
 import okhttp3.Request
 import org.json.JSONException
@@ -89,105 +90,40 @@ object CurrencyHistoricalDataClient {
     }
 
     /**
-     * Retrieve the currency's history for the past 24 hours.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
+     * Fetch the historical exchange rate between two currencies for a given [Interval]
      */
-    @JvmStatic
-    fun getPastDay(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    fun getHistoricalData(
+        context: Context,
+        fromCurrency: String,
+        toCurrency: String,
+        interval: Interval
+    ): List<PriceDataPoint> {
+        val history = historyForInterval(interval)
+        val limit = getLimitForInterval(interval)
+        return fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
-            CurrencyHistoricalDataClient.History.MINUTE,
-            CurrencyHistoricalDataClient.Limit.PAST_DAY
-    )
-
-    /**
-     * Retrieve the currency's history for the past 7 days.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
-     */
-    @JvmStatic
-    fun getPastWeek(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
-            context,
-            fromCurrency,
-            toCurrency,
-            CurrencyHistoricalDataClient.History.HOUR,
-            CurrencyHistoricalDataClient.Limit.PAST_WEEK
-    )
-
-    /**
-     * Retrieve the currency's history for the past month.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
-     */
-    @JvmStatic
-    fun getPastMonth(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
-            context,
-            fromCurrency,
-            toCurrency,
-            CurrencyHistoricalDataClient.History.TODAY,
-            CurrencyHistoricalDataClient.Limit.PAST_MONTH
-    )
-
-    /**
-     * Retrieve the currency's history for the past 3 months.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
-     */
-    @JvmStatic
-    fun getPastThreeMonths(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
-            context,
-            fromCurrency,
-            toCurrency,
-            CurrencyHistoricalDataClient.History.TODAY,
-            CurrencyHistoricalDataClient.Limit.PAST_3_MONTHS
-    )
-
-    /**
-     * Retrieve the currency's history for the past year.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
-     */
-    @JvmStatic
-    fun getPastYear(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
-            context,
-            fromCurrency,
-            toCurrency,
-            CurrencyHistoricalDataClient.History.TODAY,
-            CurrencyHistoricalDataClient.Limit.PAST_YEAR
-    )
-
-    /**
-     * Retrieve the currency's history for the past 3 years.
-     *
-     * @param fromCurrency the currency you are looking up, eg BTC
-     * @param toCurrency the currency you are converting to, eg USD
-     */
-    @JvmStatic
-    fun getPastThreeYears(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
-            context,
-            fromCurrency,
-            toCurrency,
-            CurrencyHistoricalDataClient.History.TODAY,
-            CurrencyHistoricalDataClient.Limit.PAST_3_YEARS
-    )
+            history,
+            limit
+        )
+    }
 
     /**
      * Retrieve the currencies price variation over the las 24 hours.
      */
     @JvmStatic
-    fun fetch24HrsChange(context: Context, currencies: List<String>, toCurrency: String): Map<String, PriceChange> {
-        val requestUrl = String.format(PRICE_VARIATION_URL, currencies.joinToString(","), toCurrency)
+    fun fetch24HrsChange(
+        context: Context,
+        currencies: List<String>,
+        toCurrency: String
+    ): Map<String, PriceChange> {
+        val requestUrl =
+            String.format(PRICE_VARIATION_URL, currencies.joinToString(","), toCurrency)
         val request = Request.Builder()
-                .url(requestUrl)
-                .get()
-                .build()
+            .url(requestUrl)
+            .get()
+            .build()
         val response = APIClient.getInstance(context).sendRequest(request, false)
         return if (response.isSuccessful) {
             Log.d(TAG, response.bodyText)
@@ -199,18 +135,24 @@ object CurrencyHistoricalDataClient {
     }
 
     private fun fetchHistoricalData(
-            context: Context,
-            fromCurrency: String,
-            toCurrency: String,
-            history: History,
-            limit: Limit
+        context: Context,
+        fromCurrency: String,
+        toCurrency: String,
+        history: History,
+        limit: Limit
     ): List<PriceDataPoint> {
-        val requestUrl = String.format(HISTORICAL_DATA_URL, history.value, fromCurrency.toUpperCase(), toCurrency, limit.value)
+        val requestUrl = String.format(
+            HISTORICAL_DATA_URL,
+            history.value,
+            fromCurrency.toUpperCase(),
+            toCurrency,
+            limit.value
+        )
 
         val request = Request.Builder()
-                .url(requestUrl)
-                .get()
-                .build()
+            .url(requestUrl)
+            .get()
+            .build()
         val response = APIClient.getInstance(context).sendRequest(request, false)
         val dataList = mutableListOf<PriceDataPoint>()
 
@@ -223,7 +165,10 @@ object CurrencyHistoricalDataClient {
             val errorMessage = getErrorMessage(body)
 
             if (!Utils.isNullOrEmpty(errorMessage)) {
-                Log.e(TAG, "There was an error requesting historical data for: $requestUrl, message: $errorMessage")
+                Log.e(
+                    TAG,
+                    "There was an error requesting historical data for: $requestUrl, message: $errorMessage"
+                )
                 return emptyList()
             }
 
@@ -267,33 +212,77 @@ object CurrencyHistoricalDataClient {
                 return messageObject.getString(MESSAGE)
             }
         } catch (exception: JSONException) {
-            Log.e(TAG, "There was a problem checking to see if the response has an error", exception)
+            Log.e(
+                TAG,
+                "There was a problem checking to see if the response has an error",
+                exception
+            )
         }
 
         return ""
     }
 
     private fun parsePriceChangeResponse(
-            responseBody: String,
-            currencies: List<String>,
-            toCurrency: String
+        responseBody: String,
+        currencies: List<String>,
+        toCurrency: String
     ): Map<String, PriceChange> =
-            try {
-                val priceChangeMap = mutableMapOf<String, PriceChange>()
-                val jsonRawSection = JSONObject(responseBody).getJSONObject(RAW)
-                currencies.forEach { currencyCode ->
-                    if (jsonRawSection.has(currencyCode)) {
-                        val currencyData = jsonRawSection.getJSONObject(currencyCode).getJSONObject(toCurrency)
-                        val priceChange = PriceChange(
-                                change24Hrs = currencyData.getDouble(PRICE_CHANGE_24_HOURS),
-                                changePercentage24Hrs = currencyData.getDouble(PRICE_PERCENTAGE_CHANGE_24_HOURS))
-                        priceChangeMap[currencyCode] = priceChange
-                    }
+        try {
+            val priceChangeMap = mutableMapOf<String, PriceChange>()
+            val jsonRawSection = JSONObject(responseBody).getJSONObject(RAW)
+            currencies.forEach { currencyCode ->
+                if (jsonRawSection.has(currencyCode)) {
+                    val currencyData =
+                        jsonRawSection.getJSONObject(currencyCode).getJSONObject(toCurrency)
+                    val priceChange = PriceChange(
+                        change24Hrs = currencyData.getDouble(PRICE_CHANGE_24_HOURS),
+                        changePercentage24Hrs = currencyData.getDouble(
+                            PRICE_PERCENTAGE_CHANGE_24_HOURS
+                        )
+                    )
+                    priceChangeMap[currencyCode] = priceChange
                 }
-                priceChangeMap
-            } catch (e: JSONException) {
-                Log.e(TAG, "Failed to parse the price variation", e)
-                emptyMap()
             }
+            priceChangeMap
+        } catch (e: JSONException) {
+            Log.e(TAG, "Failed to parse the price variation", e)
+            emptyMap()
+        }
 
+    private fun getLimitForInterval(interval: Interval): Limit {
+        return when (interval) {
+            Interval.ONE_DAY -> {
+                Limit.PAST_DAY
+            }
+            Interval.ONE_WEEK -> {
+                Limit.PAST_WEEK
+            }
+            Interval.ONE_MONTH -> {
+                Limit.PAST_MONTH
+            }
+            Interval.THREE_MONTHS -> {
+                Limit.PAST_3_MONTHS
+            }
+            Interval.ONE_YEAR -> {
+                Limit.PAST_YEAR
+            }
+            Interval.THREE_YEARS -> {
+                Limit.PAST_3_YEARS
+            }
+        }
+    }
+
+    private fun historyForInterval(interval: Interval): History {
+        return when (interval) {
+            Interval.ONE_DAY -> {
+                History.MINUTE
+            }
+            Interval.ONE_WEEK -> {
+                History.HOUR
+            }
+            else -> {
+                History.TODAY
+            }
+        }
+    }
 }

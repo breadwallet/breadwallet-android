@@ -5,25 +5,22 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.legacy.presenter.entities.TokenItem;
 import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.legacy.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.legacy.wallet.wallets.CryptoAddress;
 import com.breadwallet.legacy.wallet.wallets.CryptoTransaction;
 import com.breadwallet.legacy.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.model.TokenItem;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TokenUtil;
-import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
  * BreadWallet
@@ -62,8 +59,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     private static final String DEFAULT_COLOR_RIGHT = "#f9a43a"; // tokenWallet.getToken().getColorRight();
     public static final String BRD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x7108ca7c4718efa810457f228305c9c71390931a" : "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
     public static final String BRD_CURRENCY_CODE = "BRD";
-    public static final String DAI_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0xfc8862446cd3e4a2e7167e7d97df738407fead07" : "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359";
-    public static final String DAI_CURRENCY_CODE = "DAI";
     public static final String TUSD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x7108ca7c4718efa810457f228305c9c71390931a" : "0x8Dd5fbCE2F6a956c3022bA3663759011Dd51E73E";
     public static final String TUSD_CURRENCY_CODE = "TUSD";
 
@@ -92,7 +87,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             if (mTokenWallets.containsKey(address)) {
                 return mTokenWallets.get(address);
             }
-                BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso + ":" + address));
+            BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso + ":" + address));
         }
         return null;
     }
