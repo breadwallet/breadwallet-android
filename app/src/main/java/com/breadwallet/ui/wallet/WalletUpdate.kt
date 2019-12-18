@@ -4,6 +4,8 @@ import com.breadwallet.ext.replaceAt
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.wallet.WalletScreenEffect.*
 import com.breadwallet.ui.wallet.WalletScreenEvent.*
+import com.platform.entities.TxMetaDataEmpty
+import com.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.*
@@ -12,6 +14,8 @@ import com.spotify.mobius.Update
 @Suppress("TooManyFunctions", "ComplexMethod")
 object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffect>,
     WalletScreenUpdateSpec {
+
+    private const val TX_METADATA_PREFETCH = 10
 
     override fun update(
         model: WalletScreenModel,
@@ -265,6 +269,16 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
             )
         )
 
+    override fun onIsTokenSupportedUpdated(
+        model: WalletScreenModel,
+        event: OnIsTokenSupportedUpdated
+    ): Next<WalletScreenModel, WalletScreenEffect> =
+        next(
+            model.copy(
+                isShowingDelistedBanner = !event.isTokenSupported
+            )
+        )
+
     override fun onCryptoTransactionsUpdated(
         model: WalletScreenModel,
         event: OnCryptoTransactionsUpdated
@@ -285,17 +299,22 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         model: WalletScreenModel,
         event: OnTransactionsUpdated
     ): Next<WalletScreenModel, WalletScreenEffect> =
-        if (model.transactions.isNullOrEmpty() && event.walletTransactions.isNotEmpty())
+        if (model.transactions.isNullOrEmpty() && event.walletTransactions.isNotEmpty()) {
+            val txHashes = event.walletTransactions.take(TX_METADATA_PREFETCH).map { it.txHash }
             next(
                 model.copy(transactions = event.walletTransactions),
-                effects(CheckReviewPrompt(event.walletTransactions))
+                effects(
+                    CheckReviewPrompt(event.walletTransactions),
+                    LoadTransactionMetaData(txHashes)
+                )
             )
-        else
+        } else {
             next(
                 model.copy(
                     transactions = event.walletTransactions
                 )
             )
+        }
 
     override fun onTransactionMetaDataUpdated(
         model: WalletScreenModel,
@@ -303,7 +322,10 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> {
         val index = model.transactions.indexOfFirst { it.txHash == event.transactionHash }
         val transaction = model.transactions[index].copy(
-            memo = event.transactionMetaData.comment ?: ""
+            memo = when (event.transactionMetaData) {
+                is TxMetaDataValue -> event.transactionMetaData.comment ?: ""
+                is TxMetaDataEmpty -> ""
+            }
         )
         val transactions = model.transactions.replaceAt(index, transaction)
         return next(
@@ -471,8 +493,8 @@ private fun List<WalletTransaction>.filtered(
                 it.toAddress,
                 it.fromAddress
             ).any { subject ->
-                subject.toLowerCase()
-                    .contains(lowerCaseQuery)
+                subject?.toLowerCase()
+                    ?.contains(lowerCaseQuery) ?: false
             }
         }
     }

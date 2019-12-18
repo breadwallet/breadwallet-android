@@ -21,6 +21,7 @@ sealed class WalletScreenEffect {
     data class LoadTransactions(val currencyId: String) : WalletScreenEffect()
     data class LoadFiatPricePerUnit(val currencyId: String) : WalletScreenEffect()
     data class LoadTransactionMetaData(val transactionHashes: List<String>) : WalletScreenEffect()
+    data class LoadIsTokenSupported(val currencyCode: String) : WalletScreenEffect()
 
     object LoadCryptoPreferred : WalletScreenEffect()
 
