@@ -11,6 +11,8 @@ import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.platform.entities.TxMetaData
 import com.platform.entities.TokenListMetaData
+import com.platform.entities.TxMetaDataEmpty
+import com.platform.entities.TxMetaDataValue
 import com.platform.entities.WalletInfoData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -188,56 +190,51 @@ class MetaDataManager(
     override fun txMetaData(transactionHash: String): Flow<TxMetaData> =
         storeProvider.keyFlow(getTxMetaDataKey(transactionHash))
             .mapLatest {
-                TxMetaData.fromJsonObject(it)
+                TxMetaDataValue.fromJsonObject(it)
             }
             .onStart {
                 val key = getTxMetaDataKey(transactionHash)
-                var metaData = getOrSync(key)
+                var metaData = storeProvider.get(key)
                 if (metaData == null) {
-                    metaData = getOrSync(getTxMetaDataKey(transactionHash, true))
-                        ?.apply {
-                            storeProvider.put(key, this)
-                        }
-                }
-                metaData?.run {
-                    emit(
-                        TxMetaData.fromJsonObject(this)
+                    // Emit none for now, attempt sync (both new and legacy key)
+                    emit(TxMetaDataEmpty)
+                    metaData = storeProvider.sync(key) ?: getOrSync(
+                        getTxMetaDataKey(
+                            transactionHash,
+                            true
+                        )
                     )
                 }
+                metaData?.run {
+                    storeProvider.put(key, this)
+                    emit(TxMetaDataValue.fromJsonObject(this))
+                }
+
             }
             .distinctUntilChanged()
 
-    override fun getTxMetaData(txHash: String): TxMetaData? {
-        val key = getTxMetaDataKey(txHash)
-        var metaData = storeProvider.get(key)
-        if (metaData == null) {
-            metaData = storeProvider.get(getTxMetaDataKey(txHash, true))
-                ?.apply {
-                    storeProvider.put(key, this)
-                }
-        }
-        return metaData?.run { TxMetaData.fromJsonObject(this) }
-    }
-
-    override suspend fun putTxMetaData(newTxMetaData: TxMetaData, txHash: String) {
-        var txMetaData = getTxMetaData(txHash)
+    override suspend fun putTxMetaData(newTxMetaData: TxMetaDataValue, txHash: String) {
+        var txMetaData = txMetaData(txHash).first()
 
         var needsUpdate = false
-        if (txMetaData == null) {
-            needsUpdate = true
-            txMetaData = newTxMetaData
-        } else {
-            if (newTxMetaData.comment != txMetaData.comment && newTxMetaData != null) {
-                txMetaData = txMetaData.copy(
-                    comment = newTxMetaData.comment
-                )
+        when (txMetaData) {
+            is TxMetaDataEmpty -> {
                 needsUpdate = true
+                txMetaData = newTxMetaData
             }
-            if (txMetaData.exchangeRate == 0.0 && newTxMetaData.exchangeRate != 0.0) {
-                txMetaData = txMetaData.copy(
-                    exchangeRate = newTxMetaData.exchangeRate
-                )
-                needsUpdate = true
+            is TxMetaDataValue -> {
+                if (newTxMetaData.comment != txMetaData.comment) {
+                    txMetaData = txMetaData.copy(
+                        comment = newTxMetaData.comment
+                    )
+                    needsUpdate = true
+                }
+                if (txMetaData.exchangeRate == 0.0 && newTxMetaData.exchangeRate != 0.0) {
+                    txMetaData = txMetaData.copy(
+                        exchangeRate = newTxMetaData.exchangeRate
+                    )
+                    needsUpdate = true
+                }
             }
         }
 

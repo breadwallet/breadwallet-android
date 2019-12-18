@@ -145,24 +145,21 @@ class TransactionListAdapter(
         val receivingVia = mContext.getString(R.string.TransactionDetails_receivingVia)
             .format(item.fromAddress)
 
-        if (item.confirmations > item.confirmationsUntilFinal) {
-            convertView.transactionDetail.text = when {
-                commentString.isNotEmpty() -> commentString
-                received -> receivedVia
-                else -> sentTo
+        val confirmationsComplete = item.confirmations > item.confirmationsUntilFinal
+
+        convertView.transactionDetail.text = when {
+            commentString == null -> ""
+            commentString.isNotEmpty() -> commentString
+            item.isFeeForToken -> mContext.getString(R.string.Transaction_tokenTransfer)
+                .format(item.feeToken)
+            received -> {
+                if (confirmationsComplete) receivedVia
+                else receivingVia
             }
-        } else {
-            convertView.transactionDetail.text = when {
-                commentString.isNotEmpty() -> commentString
-                !received -> sendingTo
-                else -> receivingVia
+            else -> {
+                if (confirmationsComplete) sentTo
+                else sendingTo
             }
-        }
-        // it's a token transfer ETH tx
-        if (item.isFeeForToken) {
-            convertView.transactionDetail.text =
-                mContext.getString(R.string.Transaction_tokenTransfer)
-                    .format(item.feeToken)
         }
 
         //if it's 0 we use the current time.

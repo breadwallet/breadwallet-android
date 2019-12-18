@@ -15,6 +15,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.TokenUtil
 import com.platform.network.service.CurrencyHistoricalDataClient
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
@@ -35,6 +36,19 @@ class WalletScreenEffectHandler(
                 EventUtils.pushEvent(EventUtils.EVENT_AMOUNT_SWAP_CURRENCY) // TODO: Is this needed?
                 BRSharedPrefs.setIsCryptoPreferred(b = value.cryptoPreferred)
             }
+            is WalletScreenEffect.ConvertCryptoTransactions -> {
+                value.transactions.map {
+                    it.asWalletTransaction()
+                }.run {
+                    output.accept(WalletScreenEvent.OnTransactionsUpdated(this))
+                }
+            }
+            is WalletScreenEffect.LoadIsTokenSupported ->
+                output.accept(
+                    WalletScreenEvent.OnIsTokenSupportedUpdated(
+                        TokenUtil.isTokenSupported(value.currencyCode)
+                    )
+                )
         }
     }
 
@@ -55,13 +69,6 @@ class WalletReviewPromptHandler(
                     AppReviewPromptManager.showReview(context, currencyCode, value.transactions)
                 if (showPrompt) {
                     output.accept(WalletScreenEvent.OnShowReviewPrompt)
-                }
-            }
-            is WalletScreenEffect.ConvertCryptoTransactions -> {
-                value.transactions.map {
-                    it.asWalletTransaction()
-                }.run {
-                    output.accept(WalletScreenEvent.OnTransactionsUpdated(this))
                 }
             }
             WalletScreenEffect.RecordReviewPrompt -> EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED)

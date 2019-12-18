@@ -33,8 +33,10 @@ import com.platform.util.getIntOrDefault
 import com.platform.util.getStringOrNull
 import org.json.JSONObject
 
+sealed class TxMetaData
+
 @Suppress("ComplexMethod")
-data class TxMetaData(
+data class TxMetaDataValue(
     val deviceId: String? = null,
     val comment: String? = null,
     val exchangeCurrency: String? = null,
@@ -44,7 +46,7 @@ data class TxMetaData(
     val txSize: Int = 0,
     val creationTime: Int = 0,
     val classVersion: Int = 3
-) {
+) : TxMetaData() {
     companion object {
         private const val CLASS_VERSION = "classVersion"
         private const val BLOCK_HEIGHT = "bh"
@@ -57,7 +59,7 @@ data class TxMetaData(
         private const val DEVICE_ID = "dId"
 
         fun fromJsonObject(json: JSONObject): TxMetaData = json.run {
-            TxMetaData(
+            TxMetaDataValue(
                 deviceId = getStringOrNull(DEVICE_ID),
                 comment = getStringOrNull(COMMENT),
                 exchangeCurrency = getStringOrNull(EXCHANGE_CURRENCY),
@@ -102,3 +104,6 @@ data class TxMetaData(
         )
     )
 }
+
+object TxMetaDataEmpty : TxMetaData()
+

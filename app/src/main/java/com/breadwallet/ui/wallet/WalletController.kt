@@ -35,11 +35,11 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
-import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
@@ -201,21 +201,13 @@ open class WalletController(
 
         updateUi()
 
-        // TODO: Migrate delisted token check and "more info" button to new framework
-        //  (effect for checking if delisted, event for showing fragment etc.)
-        // Not sure, if Generic Core has a notion of delisted token and whether it manages this
         more_info_button.setOnClickListener {
-            val controller = WebController(BRConstants.FAQ_UNSUPPORTED_TOKEN)
-            router.pushController(RouterTransaction.with(controller))
-        }
-    }
-
-    override fun onAttach(view: View) {
-        super.onAttach(view)
-
-        // TODO: Remove?
-        if (!TokenUtil.isTokenSupported(currentModel.currencyCode)) {
-            showDelistedTokenBanner()
+            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_UNSUPPORTED_TOKEN).asSupportUrl()
+            router.pushController(
+                RouterTransaction.with(
+                    WebController(url)
+                )
+            )
         }
     }
 
@@ -525,6 +517,10 @@ open class WalletController(
                 val dateFormat = SimpleDateFormat(format, Locale.getDefault())
                 chart_label.text = dateFormat.format(selectedPriceDataPoint.time)
             }
+        }
+
+        ifChanged(WalletScreenModel::isShowingDelistedBanner) {
+            if (isShowingDelistedBanner) showDelistedTokenBanner()
         }
     }
 
