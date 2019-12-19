@@ -38,10 +38,11 @@ class PasswordController(
         }
     }
 
-    override val flowEffectHandler = subtypeEffectHandler<F, E> {
-        addConsumerSync(Main, ::handleConfirm)
-        addActionSync<F.Cancel>(Main, ::handleCancel)
-    }
+    override val flowEffectHandler
+        get() = subtypeEffectHandler<F, E> {
+            addConsumerSync(Main, ::handleConfirm)
+            addActionSync<F.Cancel>(Main, ::handleCancel)
+        }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
@@ -73,6 +74,7 @@ class PasswordController(
         companion object {
             val DEFAULT = M()
         }
+
         override fun toString() =
             "M(password='***')"
     }
