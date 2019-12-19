@@ -45,6 +45,8 @@ class MetaDataManager(
         private const val CLASS_VERSION_MSG_INBOX = 1
         private const val TX_META_DATA_KEY_PREFIX = "txn2-"
         private const val PAIRING_META_DATA_KEY_PREFIX = "pwd-"
+        private val ORDERED_KEYS =
+            listOf(KEY_WALLET_INFO, KEY_ASSET_INDEX, KEY_TOKEN_LIST_META_DATA)
     }
 
     override fun create(accountCreationDate: Date) {
@@ -59,7 +61,7 @@ class MetaDataManager(
     }
 
     override fun recoverAll(migrate: Boolean) = flow {
-        val syncResult = storeProvider.syncAll(migrate)
+        val syncResult = storeProvider.syncAll(migrate, ORDERED_KEYS)
         if (migrate) {
             migrateTokenList()
         }
