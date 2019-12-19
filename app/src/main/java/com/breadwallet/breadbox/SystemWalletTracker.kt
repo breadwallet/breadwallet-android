@@ -30,12 +30,14 @@ import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.events.network.NetworkEvent
 import com.breadwallet.crypto.events.system.SystemEvent
 import com.breadwallet.crypto.events.system.SystemListener
 import com.breadwallet.crypto.events.system.SystemNetworkAddedEvent
 import com.breadwallet.crypto.events.transfer.TranferEvent
 import com.breadwallet.crypto.events.wallet.WalletEvent
+import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerCreatedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.logger.logDebug
@@ -107,19 +109,13 @@ class SystemWalletTracker(
         when (event) {
             is WalletManagerCreatedEvent -> {
                 logDebug("Wallet Manager Created: '${manager.name}' mode ${manager.mode}")
-
                 walletProvider
                     .enabledWallets()
                     .take(1)
                     .filter { wallets ->
                         wallets.any { manager.networkContainsCurrency(it) }
                     }
-                    .map { wallets ->
-                        wallets.filter {
-                            manager.networkContainsCurrency(it)
-                        }
-                    }
-                    .onEach { wallets ->
+                    .onEach {
                         val address = BRSharedPrefs
                             .getTrustNode(iso = manager.currency.code.capitalize())
                             .orEmpty()
@@ -127,13 +123,33 @@ class SystemWalletTracker(
                             .network
                             .getPeerOrNull(address)
                         manager.connect(networkPeer)
-                        logDebug("Wallet Manager Connected: '${manager.name}'")
-                        wallets.forEach {
-                            logDebug("Registering wallet for: $it")
-                            manager.registerWalletFor(manager.findCurrency(it))
-                        }
                     }
                     .launchIn(scope)
+            }
+            is WalletManagerChangedEvent -> {
+                if (event.oldState.type != WalletManagerState.Type.CONNECTED &&
+                    event.newState.type == WalletManagerState.Type.CONNECTED
+                ) {
+                    logDebug("Wallet Manager Connected: '${manager.name}'")
+                    walletProvider
+                        .enabledWallets()
+                        .take(1)
+                        .filter { wallets ->
+                            wallets.any { manager.networkContainsCurrency(it) }
+                        }
+                        .map { wallets ->
+                            wallets.filter {
+                                manager.networkContainsCurrency(it)
+                            }
+                        }
+                        .onEach { wallets ->
+                            wallets.forEach {
+                                logDebug("Registering wallet for: $it")
+                                manager.registerWalletFor(manager.findCurrency(it))
+                            }
+                        }
+                        .launchIn(scope)
+                }
             }
         }
     }
