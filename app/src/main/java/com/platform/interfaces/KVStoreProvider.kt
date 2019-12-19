@@ -15,7 +15,7 @@ interface KVStoreProvider {
     suspend fun sync(key: String): JSONObject?
 
     /** Syncs entire data store. If [migrateEncryption] is true, will migrate KV entries encryption. */
-    suspend fun syncAll(migrateEncryption: Boolean): Boolean
+    suspend fun syncAll(migrateEncryption: Boolean, syncOrder: List<String> = listOf()): Boolean
 
     /** Returns a [Flow] for a given [key]. */
     fun keyFlow(key: String): Flow<JSONObject>
