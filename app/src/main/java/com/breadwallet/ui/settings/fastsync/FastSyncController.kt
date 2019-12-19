@@ -39,52 +39,56 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
     override val defaultModel = FastSyncModel.createDefault()
     override val init = FastSyncInit
     override val update = FastSyncUpdate
-    override val flowEffectHandler = subtypeEffectHandler<FastSyncEffect, FastSyncEvent> {
-        addTransformer<FastSyncEffect.GoBack>(direct.instance<NavEffectTransformer>())
-        addActionSync<FastSyncEffect.ShowDisableFastSyncDialog>(Main, ::showDisableFastSyncDialog)
-        addFunctionSync<FastSyncEffect.LoadCurrencyIds>(Default) {
-            FastSyncEvent.OnCurrencyIdsUpdated(
-                TokenUtil.getTokenItems(applicationContext)
-                    .filter { it.symbol.isBitcoin() }
-                    .associateBy { it.symbol }
-                    .mapValues { it.value.currencyId ?: "" }
+    override val flowEffectHandler
+        get() = subtypeEffectHandler<FastSyncEffect, FastSyncEvent> {
+            addTransformer<FastSyncEffect.GoBack>(direct.instance<NavEffectTransformer>())
+            addActionSync<FastSyncEffect.ShowDisableFastSyncDialog>(
+                Main,
+                ::showDisableFastSyncDialog
             )
-        }
-        addTransformer<FastSyncEffect.MetaData> { effects ->
-            effects
-                .map { effect ->
-                    when (effect) {
-                        is FastSyncEffect.MetaData.SetSyncMode ->
-                            MetaDataEffect.UpdateWalletMode(
-                                effect.currencyId,
-                                effect.mode.walletManagerMode
-                            )
-                        is FastSyncEffect.MetaData.LoadSyncModes ->
-                            MetaDataEffect.LoadWalletModes
+            addFunctionSync<FastSyncEffect.LoadCurrencyIds>(Default) {
+                FastSyncEvent.OnCurrencyIdsUpdated(
+                    TokenUtil.getTokenItems(applicationContext)
+                        .filter { it.symbol.isBitcoin() }
+                        .associateBy { it.symbol }
+                        .mapValues { it.value.currencyId ?: "" }
+                )
+            }
+            addTransformer<FastSyncEffect.MetaData> { effects ->
+                effects
+                    .map { effect ->
+                        when (effect) {
+                            is FastSyncEffect.MetaData.SetSyncMode ->
+                                MetaDataEffect.UpdateWalletMode(
+                                    effect.currencyId,
+                                    effect.mode.walletManagerMode
+                                )
+                            is FastSyncEffect.MetaData.LoadSyncModes ->
+                                MetaDataEffect.LoadWalletModes
+                        }
                     }
-                }
-                .transform(Connectable<MetaDataEffect, MetaDataEvent> { consumer ->
-                    MetaDataEffectHandler(consumer, direct.instance(), direct.instance())
-                })
-                .mapNotNull { event ->
-                    when (event) {
-                        is MetaDataEvent.OnWalletModesUpdated ->
-                            FastSyncEvent.OnSyncModesUpdated(
-                                event.modeMap.mapValues { entry ->
-                                    SyncMode.fromWalletManagerMode(entry.value)
-                                }
-                            )
-                        else -> null
+                    .transform(Connectable<MetaDataEffect, MetaDataEvent> { consumer ->
+                        MetaDataEffectHandler(consumer, direct.instance(), direct.instance())
+                    })
+                    .mapNotNull { event ->
+                        when (event) {
+                            is MetaDataEvent.OnWalletModesUpdated ->
+                                FastSyncEvent.OnSyncModesUpdated(
+                                    event.modeMap.mapValues { entry ->
+                                        SyncMode.fromWalletManagerMode(entry.value)
+                                    }
+                                )
+                            else -> null
+                        }
                     }
-                }
+            }
         }
-    }
 
     override fun bindView(modelFlow: Flow<FastSyncModel>): Flow<FastSyncEvent> {
         modelFlow
             .mapLatest { it.fastSyncEnable }
             .distinctUntilChanged()
-            .onEach {  isChecked ->
+            .onEach { isChecked ->
                 switch_fast_sync.isChecked = isChecked
             }
             .launchIn(uiBindScope)
