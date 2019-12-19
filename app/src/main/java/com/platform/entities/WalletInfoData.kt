@@ -1,8 +1,10 @@
 package com.platform.entities
 
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.logger.logError
 import com.platform.util.getIntOrDefault
 import com.platform.util.getStringOrNull
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -49,29 +51,46 @@ data class WalletInfoData(
         private const val DEFAULT_CREATION_DATE = 0
 
         fun fromJsonObject(json: JSONObject): WalletInfoData = json.run {
-            val mutableModes = mutableMapOf<String, WalletManagerMode>()
-            if (has(CONNECTION_MODES)) {
-                val modesObj = getJSONObject(CONNECTION_MODES)
-                modesObj.keys().forEach {
-                    mutableModes[it] = WalletManagerMode.fromSerialization(modesObj.getInt(it))
-                }
-            }
             WalletInfoData(
                 classVersion = getIntOrDefault(CLASS_VERSION, DEFAULT_CLASS_VERSION),
                 creationDate = getIntOrDefault(CREATION_DATE, DEFAULT_CREATION_DATE),
                 name = getStringOrNull(NAME),
-                connectionModes = mutableModes.toMap()
+                connectionModes = getConnectionModes(this)
             )
+        }
+
+        private fun getConnectionModes(json: JSONObject): Map<String, WalletManagerMode> {
+            val mutableModes = mutableMapOf<String, WalletManagerMode>()
+            val modes = json.optJSONArray(CONNECTION_MODES) ?: return mutableModes.toMap()
+            try {
+                var currencyId = ""
+                for (i in 0 until modes.length()) {
+                    if (i % 2 == 0) currencyId = modes.getString(i)
+                    else mutableModes[currencyId] =
+                        WalletManagerMode.fromSerialization(modes.getInt(i))
+                }
+            } catch (ex: JSONException) {
+                logError("Malformed $CONNECTION_MODES array: $modes")
+            }
+
+            return mutableModes.toMap()
         }
     }
 
-    fun toJSON(): JSONObject =
-        JSONObject(
+    fun toJSON(): JSONObject {
+        val connectionModesList = mutableListOf<Any>()
+        connectionModes.entries.forEach {
+            connectionModesList.add(it.key)
+            connectionModesList.add(it.value.toSerialization())
+        }
+
+        return JSONObject(
             mapOf(
                 CLASS_VERSION to classVersion,
                 CREATION_DATE to creationDate,
                 NAME to name,
-                CONNECTION_MODES to connectionModes.mapValues { it.value.toSerialization() }
+                CONNECTION_MODES to connectionModesList
             )
         )
+    }
 }
