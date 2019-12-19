@@ -61,10 +61,16 @@ class MetaDataManager(
     }
 
     override fun recoverAll(migrate: Boolean) = flow {
-        val syncResult = storeProvider.syncAll(migrate, ORDERED_KEYS)
+        // Sync essential metadata first, migrate enabled wallets ASAP
+        storeProvider.sync(KEY_WALLET_INFO)
+        storeProvider.sync(KEY_ASSET_INDEX)
         if (migrate) {
+            storeProvider.sync(KEY_TOKEN_LIST_META_DATA)
             migrateTokenList()
         }
+        // Not redundant to prioritize the above in ordered keys
+        // if above was successful, will be a no-op, and if failed, it's a retry
+        val syncResult = storeProvider.syncAll(migrate, ORDERED_KEYS)
         emit(syncResult)
     }
 

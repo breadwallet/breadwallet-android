@@ -81,7 +81,6 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private KVStoreAdaptor mRemoteKvStore;
 
     private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
-//        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         mContext = context;
         this.mRemoteKvStore = remoteKvStore;
         mDbHelper = PlatformSqliteHelper.getInstance(context);
