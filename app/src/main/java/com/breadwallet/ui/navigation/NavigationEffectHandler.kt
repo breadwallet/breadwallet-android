@@ -85,10 +85,7 @@ class NavigationEffectHandler(
         TODO("Go to brd rewards")
     }
 
-    override fun goToReview() {
-        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)
-        AppReviewPromptManager.openGooglePlay(activity)
-    }
+    override fun goToReview() = Unit
 
     override fun goToBuy() {
         val url = String.format(
