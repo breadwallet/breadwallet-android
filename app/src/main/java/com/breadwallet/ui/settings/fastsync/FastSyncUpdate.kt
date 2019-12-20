@@ -62,7 +62,11 @@ object FastSyncUpdate : Update<FastSyncModel, FastSyncEvent, FastSyncEffect>, Fa
     }
 
     override fun onBackClicked(model: FastSyncModel): Next<FastSyncModel, FastSyncEffect> {
-        return dispatch(effects(FastSyncEffect.GoBack))
+        return dispatch(effects(FastSyncEffect.Nav.GoBack))
+    }
+
+    override fun onLearnMoreClicked(model: FastSyncModel): Next<FastSyncModel, FastSyncEffect> {
+        return dispatch(effects(FastSyncEffect.Nav.GoToFaq))
     }
 
     override fun onDisableFastSyncConfirmed(model: FastSyncModel): Next<FastSyncModel, FastSyncEffect> {

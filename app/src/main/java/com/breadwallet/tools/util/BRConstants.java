@@ -125,6 +125,7 @@ public final class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
     public static final String FAQ_UNSUPPORTED_TOKEN = "unsupported-token";
+    public static final String FAQ_FASTSYNC = "fastsync-explained";
 
     /**
      * API Constants

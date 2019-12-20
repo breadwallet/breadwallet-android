@@ -9,6 +9,7 @@ import io.hypno.switchboard.MobiusUpdateSpec
 )
 sealed class FastSyncEvent {
     object OnBackClicked : FastSyncEvent()
+    object OnLearnMoreClicked : FastSyncEvent()
     object OnDisableFastSyncConfirmed : FastSyncEvent()
     object OnDisableFastSyncCanceled : FastSyncEvent()
     data class OnFastSyncChanged(val enable: Boolean) : FastSyncEvent()
