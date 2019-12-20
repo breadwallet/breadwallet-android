@@ -26,6 +26,7 @@ package com.breadwallet.ui.wallet
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -207,18 +208,23 @@ class TransactionListAdapter(
         holder.transactionFailed.visibility = View.VISIBLE
 
         // Align txn description with respect to 'Failed' msg
-        val params = RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.addRule(RelativeLayout.RIGHT_OF, holder.transactionFailed.id)
-        holder.transactionDetail.layoutParams = params
-        holder.transactionDetail.gravity = Gravity.CENTER_VERTICAL
+        holder.transactionDetail.layoutParams =
+            RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                addRule(RelativeLayout.RIGHT_OF, holder.transactionFailed.id)
+                addRule(RelativeLayout.CENTER_VERTICAL)
+                setMargins(Utils.getPixelsFromDps(mContext, DP_16), 0, 0, 0)
+            }
+
 
         if (!received) {
             holder.transactionDetail.text =
                 mContext.getString(R.string.Transaction_sendingTo)
                     .format(tx.toAddress)
+            holder.transactionDetail.ellipsize = TextUtils.TruncateAt.END
+            holder.transactionDetail.maxWidth = Utils.getPixelsFromDps(mContext, DP_120)
         }
     }
 
