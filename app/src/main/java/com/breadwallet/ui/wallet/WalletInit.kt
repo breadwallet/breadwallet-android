@@ -12,7 +12,9 @@ val WalletInit = Init<WalletScreenModel, WalletScreenEffect> { model ->
             WalletScreenEffect.LoadTransactions(model.currencyCode),
             WalletScreenEffect.LoadFiatPricePerUnit(model.currencyCode),
             WalletScreenEffect.LoadCryptoPreferred,
-            WalletScreenEffect.LoadChartInterval(model.priceChartInterval),
+            WalletScreenEffect.LoadCurrencyName(model.currencyCode),
+            WalletScreenEffect.LoadSyncState(model.currencyCode),
+            WalletScreenEffect.LoadChartInterval(model.priceChartInterval, model.currencyCode),
             WalletScreenEffect.TrackEvent(
                 String.format(
                     EventUtils.EVENT_WALLET_APPEARED,

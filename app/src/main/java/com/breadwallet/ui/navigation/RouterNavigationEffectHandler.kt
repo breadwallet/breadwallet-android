@@ -31,6 +31,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
@@ -58,6 +59,7 @@ import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.util.isBrd
+import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +110,10 @@ class RouterNavigationEffectHandler(
 
     override fun goToBrdRewards() = Unit
 
-    override fun goToReview() = Unit
+    override fun goToReview() {
+        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)
+        AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
+    }
 
     override fun goToBuy() = Unit
 

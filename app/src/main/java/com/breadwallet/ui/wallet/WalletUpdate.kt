@@ -120,7 +120,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> =
         dispatch(
             effects(
-                GoBack
+                Nav.GoBack
             )
         )
 
@@ -137,7 +137,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> =
         dispatch(
             effects(
-                GoToSend(model.currencyCode)
+                Nav.GoToSend(model.currencyCode)
             )
         )
 
@@ -146,7 +146,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> =
         dispatch(
             effects(
-                GoToReceive(model.currencyCode)
+                Nav.GoToReceive(model.currencyCode)
             )
         )
 
@@ -154,7 +154,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         model: WalletScreenModel
     ): Next<WalletScreenModel, WalletScreenEffect> =
         if (model.isShowingBrdRewards)
-            dispatch(effects(GoToBrdRewards))
+            dispatch(effects(Nav.GoToBrdRewards))
         else noChange()
 
     override fun onShowReviewPrompt(
@@ -304,7 +304,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
             next(
                 model.copy(transactions = event.walletTransactions),
                 effects(
-                    CheckReviewPrompt(event.walletTransactions),
+                    CheckReviewPrompt(model.currencyCode, event.walletTransactions),
                     LoadTransactionMetaData(txHashes)
                 )
             )
@@ -340,7 +340,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         if (model.transactions.isNullOrEmpty())
             next(
                 model.copy(transactions = listOf(event.walletTransaction) + model.transactions),
-                effects(CheckReviewPrompt(model.transactions + event.walletTransaction))
+                effects(CheckReviewPrompt(model.currencyCode, model.transactions + event.walletTransaction))
             )
         else
             next(
@@ -381,7 +381,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> =
         dispatch(
             effects(
-                GoToSend(model.currencyCode, event.cryptoRequest)
+                Nav.GoToSend(model.currencyCode, event.cryptoRequest)
             )
         )
 
@@ -391,7 +391,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     ): Next<WalletScreenModel, WalletScreenEffect> =
         dispatch(
             effects(
-                GoToTransaction(model.currencyCode, event.txHash)
+                Nav.GoToTransaction(model.currencyCode, event.txHash)
             )
         )
 
@@ -431,7 +431,7 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
                 priceChartInterval = event.interval
             ),
             effects(
-                LoadChartInterval(event.interval),
+                LoadChartInterval(event.interval, model.currencyCode),
                 TrackEvent(
                     String.format(
                         EventUtils.EVENT_WALLET_CHART_AXIS_TOGGLE,
