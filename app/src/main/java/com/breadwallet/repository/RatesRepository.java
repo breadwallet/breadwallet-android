@@ -28,13 +28,22 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.model.PriceChange;
+import com.breadwallet.model.PriceDataPoint;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.sqlite.RatesDataSource;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.wallet.Interval;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.entities.TokenListMetaData;
+import com.platform.network.service.CurrencyHistoricalDataClient;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,16 +78,18 @@ public class RatesRepository {
 
     /**
      * Retrieves the currency rate between two currencies.
+     *
      * @param fromCurrency the 'from' currency
-     * @param toCurrency the 'to' currency
      * @return a currency entity encapsulating the two currencies and the rate between them, returns
      * null if either the currencies are empty or the rate wasn't found
+     * @aram toCurrency the 'to' currency
      */
     public CurrencyEntity getCurrencyByCode(String fromCurrency, String toCurrency) {
         if (Utils.isNullOrEmpty(fromCurrency) || Utils.isNullOrEmpty(toCurrency)) {
             return null;
         }
 
+        fromCurrency = TokenUtil.getExchangeRateCode(fromCurrency);
         String cacheKey = getCacheKey(fromCurrency, toCurrency);
         CurrencyEntity currencyEntity = mCache.get(cacheKey);
 
@@ -94,6 +105,7 @@ public class RatesRepository {
 
     /**
      * Persists the given set of currency entities, which map rates between currencies.
+     *
      * @param currencyEntities the list of currency pairs and their rates to persist
      */
     public void putCurrencyRates(Collection<CurrencyEntity> currencyEntities) {
@@ -110,6 +122,7 @@ public class RatesRepository {
 
     /**
      * Retrieves all rates for a given currency (e.g., BTC -> USD etc.).
+     *
      * @param currencyCode the currency code for which rates are being retrieved
      * @return a list of currency entities, which encapsulate two currencies and the rate between
      * them, returns an empty list if no rates are found for the specified currency
@@ -122,16 +135,16 @@ public class RatesRepository {
      * Get the fiat value for a given amount of crypto. Because we only store the fiat exchange rate for BTC we have to
      * calculate the crypto to fiat rate from crypto to BTC and BTC to fiat rates.
      *
-     * @param cryptoAmount  Amount of crypto we want to calculate.
-     * @param cryptoCode    Code of the crypto we want to calculate.
-     * @param fiatCode      Code of the fiat we want to get the exchange for.
+     * @param cryptoAmount Amount of crypto we want to calculate.
+     * @param cryptoCode   Code of the crypto we want to calculate.
+     * @param fiatCode     Code of the fiat we want to get the exchange for.
      * @return The fiat value of the given crypto.
      */
     public BigDecimal getFiatForCrypto(BigDecimal cryptoAmount, String cryptoCode, String fiatCode) {
         //fiat rate for btc
         CurrencyEntity btcRate = getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, fiatCode);
         //Btc rate for the given crypto
-        CurrencyEntity cryptoBtcRate = getCurrencyByCode( cryptoCode, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        CurrencyEntity cryptoBtcRate = getCurrencyByCode(cryptoCode, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
         if (btcRate == null) {
             Log.e(TAG, "getFiatForBch: No " + fiatCode + " rates for BTC");
             return null;
@@ -147,8 +160,9 @@ public class RatesRepository {
     /**
      * Generates the cache key that is or would be used to store the rate between the two given
      * currencies.
+     *
      * @param fromCurrency the 'from' currency
-     * @param toCurrency the 'to' currency
+     * @param toCurrency   the 'to' currency
      * @return the cache key
      */
     private String getCacheKey(String fromCurrency, String toCurrency) {
@@ -162,6 +176,7 @@ public class RatesRepository {
     /**
      * Parses a cache key to return the 'from' currency. For example, given the cache key for
      * BTC -> BCH, returns BTC.
+     *
      * @param cacheKey the cache key being parsed
      * @return the 'from' currency, as encoded in the given cache key
      */
@@ -171,6 +186,7 @@ public class RatesRepository {
 
     /**
      * Updates the cache with a given set of currency rates.
+     *
      * @param currencyEntities the list of currency pairs and their rates to put in the cache
      */
     private void updateCache(Collection<CurrencyEntity> currencyEntities) {
@@ -196,6 +212,23 @@ public class RatesRepository {
      * @return the price change.
      */
     public PriceChange getPriceChange(String currencyCode) {
-        return mPriceChanges.get(currencyCode);
+        return mPriceChanges.get(TokenUtil.getExchangeRateCode(currencyCode));
+    }
+
+    public List<PriceDataPoint> getHistoricalData(String fromCurrencyCode, String toCurrencyCode, Interval interval) {
+        fromCurrencyCode = TokenUtil.getExchangeRateCode(fromCurrencyCode);
+        return CurrencyHistoricalDataClient.INSTANCE.getHistoricalData(mContext, fromCurrencyCode, toCurrencyCode, interval);
+    }
+
+
+    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
+        LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
+        for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
+            currencyCodes.add(tokenInfo.symbol);
+        }
+        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
+            currencyCodes.add(tokenItem.getExchangeRateCurrencyCode());
+        }
+        return new ArrayList<>(currencyCodes);
     }
 }
