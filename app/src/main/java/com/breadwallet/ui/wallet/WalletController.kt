@@ -18,27 +18,19 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
-import com.breadwallet.breadbox.BreadBoxEffect
-import com.breadwallet.breadbox.BreadBoxEffectHandler
-import com.breadwallet.breadbox.BreadBoxEvent
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
-import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.logger.logDebug
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
@@ -46,13 +38,17 @@ import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.util.WalletDisplayUtils
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.activity_wallet.*
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.view_delisted_token.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.text.NumberFormat
@@ -88,94 +84,14 @@ open class WalletController(
     override val defaultModel = WalletScreenModel.createDefault(currencyCode)
     override val init = WalletInit
     override val update = WalletUpdate
-    override val effectHandler: Connectable<WalletScreenEffect, WalletScreenEvent> =
-        CompositeEffectHandler.from(
-            Connectable { output -> WalletScreenEffectHandler(output) },
-            nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance())
-            }, { effect: WalletScreenEffect ->
-                // Map incoming effect
-                when (effect) {
-                    is WalletScreenEffect.LoadWalletBalance ->
-                        BreadBoxEffect.LoadWalletBalance(effect.currencyId)
-                    is WalletScreenEffect.LoadTransactions ->
-                        BreadBoxEffect.LoadTransactions(effect.currencyId)
-                    else -> null
-                }
-            }, { event: BreadBoxEvent ->
-                // Map outgoing event
-                when (event) {
-                    is BreadBoxEvent.OnSyncProgressUpdated ->
-                        WalletScreenEvent.OnSyncProgressUpdated(
-                            event.progress,
-                            event.syncThroughMillis,
-                            event.isSyncing
-                        )
-                    is BreadBoxEvent.OnBalanceUpdated ->
-                        WalletScreenEvent.OnBalanceUpdated(event.balance, event.fiatBalance)
-                    is BreadBoxEvent.OnConnectionUpdated ->
-                        WalletScreenEvent.OnConnectionUpdated(event.isConnected)
-                    is BreadBoxEvent.OnCurrencyNameUpdated ->
-                        WalletScreenEvent.OnCurrencyNameUpdated(event.name)
-                    is BreadBoxEvent.OnTransactionAdded ->
-                        WalletScreenEvent.OnTransactionAdded(event.walletTransaction)
-                    is BreadBoxEvent.OnTransactionRemoved ->
-                        WalletScreenEvent.OnTransactionRemoved(event.walletTransaction)
-                    is BreadBoxEvent.OnTransactionsUpdated ->
-                        WalletScreenEvent.OnCryptoTransactionsUpdated(event.transactions)
-                    else -> null
-                }
-            }),
-            nestedConnectable({ output: Consumer<MetaDataEvent> ->
+    override val flowEffectHandler
+        get() = WalletScreenEffectHandler.createEffectHandler(
+            checkNotNull(applicationContext),
+            direct.instance(),
+            direct.instance(),
+            Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }, { effect: WalletScreenEffect ->
-                when (effect) {
-                    is WalletScreenEffect.LoadTransactionMetaData ->
-                        MetaDataEffect.LoadTransactionMetaData(effect.transactionHashes)
-                    else -> null
-                }
-            }, { event: MetaDataEvent ->
-                when (event) {
-                    is MetaDataEvent.OnTransactionMetaDataUpdated ->
-                        WalletScreenEvent.OnTransactionMetaDataUpdated(
-                            event.transactionHash,
-                            event.txMetaData
-                        ) as WalletScreenEvent
-                    else -> null
-                }
-            }),
-            Connectable { output ->
-                WalletReviewPromptHandler(output, applicationContext!!, currencyCode)
-            },
-            Connectable { output ->
-                WalletRatesHandler(output, applicationContext!!, currencyCode)
-            },
-            Connectable { output ->
-                WalletHistoricalPriceIntervalHandler(output, applicationContext!!, currencyCode)
-            },
-            nestedConnectable(
-                { direct.instance<NavigationEffectHandler>() },
-                { effect: WalletScreenEffect ->
-                    when (effect) {
-                        WalletScreenEffect.GoBack -> NavigationEffect.GoBack
-                        WalletScreenEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
-                        WalletScreenEffect.GoToReview -> NavigationEffect.GoToReview
-                        else -> null
-                    }
-                }),
-            nestedConnectable(
-                { direct.instance<RouterNavigationEffectHandler>() },
-                { effect ->
-                    when (effect) {
-                        is WalletScreenEffect.GoToSend ->
-                            NavigationEffect.GoToSend(effect.currencyId, effect.cryptoRequest)
-                        is WalletScreenEffect.GoToReceive ->
-                            NavigationEffect.GoToReceive(effect.currencyId)
-                        is WalletScreenEffect.GoToTransaction ->
-                            NavigationEffect.GoToTransaction(effect.currencyId, effect.txHash)
-                        else -> null
-                    }
-                })
+            }
         )
 
     private var mAdapter: TransactionListAdapter? = null
@@ -211,63 +127,40 @@ open class WalletController(
         }
     }
 
-    override fun bindView(output: Consumer<WalletScreenEvent>): Disposable {
+    override fun bindView(modelFlow: Flow<WalletScreenModel>): Flow<WalletScreenEvent> {
         // Tx Action buttons
         send_button.setHasShadow(false)
-        send_button.setOnClickListener { output.accept(WalletScreenEvent.OnSendClicked) }
         receive_button.setHasShadow(false)
-        receive_button.setOnClickListener { output.accept(WalletScreenEvent.OnReceiveClicked) }
 
-        // Tx List
-        tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
-            override fun onLayoutCompleted(state: RecyclerView.State?) {
-                super.onLayoutCompleted(state)
-                val adapter = checkNotNull(mAdapter)
-                updateVisibleTransactions(adapter, this, output)
-            }
+        spark_line.setAdapter(mPriceDataAdapter)
+        spark_line.sparkAnimator = LineSparkAnimator().apply {
+            duration = MARKET_CHART_ANIMATION_DURATION
+            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
         }
-        mAdapter = TransactionListAdapter(applicationContext!!, null) { (txHash) ->
-            output.accept(WalletScreenEvent.OnTransactionClicked(txHash))
-        }
-        tx_list.adapter = mAdapter
 
-        tx_list.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-
-                    when (newState) {
-                        RecyclerView.SCROLL_STATE_DRAGGING -> {
-                            output.accept(WalletScreenEvent.OnVisibleTransactionsChanged(emptyList()))
-                        }
-                        RecyclerView.SCROLL_STATE_IDLE -> {
-                            val adapter = checkNotNull(mAdapter)
-                            val layoutManager =
-                                (checkNotNull(recyclerView.layoutManager) as LinearLayoutManager)
-                            updateVisibleTransactions(adapter, layoutManager, output)
-                        }
-                        else -> return
-                    }
-                }
+        return merge(
+            send_button.clicks().map { WalletScreenEvent.OnSendClicked },
+            receive_button.clicks().map { WalletScreenEvent.OnReceiveClicked },
+            search_icon.clicks().map { WalletScreenEvent.OnSearchClicked },
+            back_icon.clicks().map { WalletScreenEvent.OnBackClicked },
+            bindTxList(),
+            bindIntervalClicks(),
+            bindSparkLineScrubbing(),
+            merge(
+                balance_primary.clicks(),
+                balance_secondary.clicks()
+            ).map { WalletScreenEvent.OnChangeDisplayCurrencyClicked },
+            callbackFlow {
+                search_bar.setEventOutput(channel)
+                awaitClose { search_bar.setEventOutput(null) }
             }
         )
+    }
 
-        // Search button
-        search_icon.setOnClickListener { output.accept(WalletScreenEvent.OnSearchClicked) }
-        search_bar.setEventOutput(output)
-
-        // Display currency buttons
-        val displayCurrencyListener = View.OnClickListener {
-            output.accept(WalletScreenEvent.OnChangeDisplayCurrencyClicked)
-        }
-        balance_primary.setOnClickListener(displayCurrencyListener)
-        balance_secondary.setOnClickListener(displayCurrencyListener)
-
-        // Back button
-        back_icon.setOnClickListener { output.accept(WalletScreenEvent.OnBackClicked) }
-
-        val intervalClickListener = View.OnClickListener { v ->
-            output.accept(
+    @Suppress("ComplexMethod")
+    private fun bindIntervalClicks(): Flow<WalletScreenEvent> =
+        callbackFlow {
+            val intervalClickListener = View.OnClickListener { v ->
                 WalletScreenEvent.OnChartIntervalSelected(
                     when (v.id) {
                         one_day.id -> Interval.ONE_DAY
@@ -278,44 +171,82 @@ open class WalletController(
                         three_years.id -> Interval.THREE_YEARS
                         else -> error("Unknown button pressed")
                     }
-                )
-            )
-        }
-        arrayOf(one_day, one_week, one_month, three_months, one_year, three_years)
-            .forEach { it.setOnClickListener(intervalClickListener) }
-        spark_line.setAdapter(mPriceDataAdapter)
-        spark_line.sparkAnimator = LineSparkAnimator().apply {
-            duration = MARKET_CHART_ANIMATION_DURATION
-            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
-        }
-        spark_line.scrubListener = object : SparkView.OnScrubListener {
-            override fun onScrubbed(value: Any?) {
-                val event = if (value == null) {
-                    WalletScreenEvent.OnChartDataPointReleased
-                } else {
-                    val dataPoint = value as PriceDataPoint
-                    logDebug("dataPoint: $dataPoint")
-                    WalletScreenEvent.OnChartDataPointSelected(dataPoint)
-                }
-                output.accept(event)
+                ).run(::offer)
+            }
+            val inputs = arrayOf(one_day, one_week, one_month, three_months, one_year, three_years)
+            inputs.forEach { it.setOnClickListener(intervalClickListener) }
+            awaitClose {
+                inputs.forEach { it.setOnClickListener(null) }
             }
         }
 
-        return Disposable {
-            search_bar.setEventOutput(null)
-            tx_list.clearOnScrollListeners()
+    private fun bindSparkLineScrubbing(): Flow<WalletScreenEvent> =
+        callbackFlow {
+            spark_line.scrubListener = object : SparkView.OnScrubListener {
+                override fun onScrubbed(value: Any?) {
+                    if (value == null) {
+                        offer(WalletScreenEvent.OnChartDataPointReleased)
+                    } else {
+                        val dataPoint = value as PriceDataPoint
+                        logDebug("dataPoint: $dataPoint")
+                        offer(WalletScreenEvent.OnChartDataPointSelected(dataPoint))
+                    }
+                }
+            }
+            awaitClose {
+                spark_line.scrubListener = null
+            }
         }
-    }
+
+    private fun bindTxList(): Flow<WalletScreenEvent> =
+        callbackFlow {
+            // Tx List
+            tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
+                override fun onLayoutCompleted(state: RecyclerView.State?) {
+                    super.onLayoutCompleted(state)
+                    val adapter = checkNotNull(mAdapter)
+                    updateVisibleTransactions(adapter, this, channel)
+                }
+            }
+            mAdapter = TransactionListAdapter(applicationContext!!, null) { (txHash) ->
+                offer(WalletScreenEvent.OnTransactionClicked(txHash))
+            }
+            tx_list.adapter = mAdapter
+            tx_list.addOnScrollListener(
+                object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+
+                        when (newState) {
+                            RecyclerView.SCROLL_STATE_DRAGGING -> {
+                                offer(WalletScreenEvent.OnVisibleTransactionsChanged(emptyList()))
+                            }
+                            RecyclerView.SCROLL_STATE_IDLE -> {
+                                val adapter = checkNotNull(mAdapter)
+                                val layoutManager =
+                                    (checkNotNull(recyclerView.layoutManager) as LinearLayoutManager)
+                                updateVisibleTransactions(adapter, layoutManager, channel)
+                            }
+                            else -> return
+                        }
+                    }
+                }
+            )
+
+            awaitClose {
+                tx_list.clearOnScrollListeners()
+            }
+        }
 
     private fun updateVisibleTransactions(
         adapter: TransactionListAdapter,
         layoutManager: LinearLayoutManager,
-        output: Consumer<WalletScreenEvent>
+        output: SendChannel<WalletScreenEvent>
     ) {
         val firstIndex = layoutManager.findFirstVisibleItemPosition()
         val lastIndex = layoutManager.findLastVisibleItemPosition()
         if (firstIndex != RecyclerView.NO_POSITION) {
-            output.accept(
+            output.offer(
                 WalletScreenEvent.OnVisibleTransactionsChanged(
                     adapter.items
                         .slice(firstIndex..lastIndex)

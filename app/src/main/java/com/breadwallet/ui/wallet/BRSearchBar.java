@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.customviews.BRButton;
 import com.spotify.mobius.functions.Consumer;
+import kotlinx.coroutines.channels.SendChannel;
 
 /**
  * BreadWallet
@@ -49,8 +50,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private BRButton pendingFilter;
     private BRButton completedFilter;
     private BRButton cancelButton;
-    private Consumer<WalletScreenEvent> output = value -> {
-    };
+    private SendChannel<WalletScreenEvent> output = null;
 
     public BRSearchBar(Context context) {
         super(context);
@@ -99,7 +99,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         });
 
         cancelButton.setOnClickListener(view -> {
-            output.accept(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
+            output.offer(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
         });
 
         searchEdit.addTextChangedListener(new TextWatcher() {
@@ -110,7 +110,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
-                output.accept(new WalletScreenEvent.OnQueryChanged(sequence.toString()));
+                output.offer(new WalletScreenEvent.OnQueryChanged(sequence.toString()));
             }
 
             @Override
@@ -120,16 +120,16 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         });
         searchEdit.setOnKeyListener((view, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                output.accept(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
+                output.offer(WalletScreenEvent.OnSearchDismissClicked.INSTANCE);
                 return true;
             }
             return false;
         });
 
-        sentFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterSentClicked.INSTANCE));
-        receivedFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterReceivedClicked.INSTANCE));
-        pendingFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterPendingClicked.INSTANCE));
-        completedFilter.setOnClickListener(view -> output.accept(WalletScreenEvent.OnFilterCompleteClicked.INSTANCE));
+        sentFilter.setOnClickListener(view -> output.offer(WalletScreenEvent.OnFilterSentClicked.INSTANCE));
+        receivedFilter.setOnClickListener(view -> output.offer(WalletScreenEvent.OnFilterReceivedClicked.INSTANCE));
+        pendingFilter.setOnClickListener(view -> output.offer(WalletScreenEvent.OnFilterPendingClicked.INSTANCE));
+        completedFilter.setOnClickListener(view -> output.offer(WalletScreenEvent.OnFilterCompleteClicked.INSTANCE));
     }
 
     public void onShow(boolean showKeyboard) {
@@ -145,14 +145,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         }
     }
 
-    public void setEventOutput(final Consumer<WalletScreenEvent> output) {
-        if (output == null) {
-            this.output = value -> {
-                // no-op
-            };
-        } else {
-            this.output = output;
-        }
+    public void setEventOutput(final SendChannel<WalletScreenEvent> output) {
+        this.output = output;
     }
 
     private static final int BUTTON_ACTIVE_TYPE = 3;
