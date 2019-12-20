@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -19,6 +20,7 @@ import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -86,7 +88,7 @@ public class AddWalletsActivity extends BRActivity {
         super.onResume();
 
         List<TokenItem> tokenItems = new ArrayList<>();
-        TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
+        TokenListMetaData tokenListMetaData = KVStoreManager.getUpdatedTokenListMetaData(this);
         for (TokenItem tokenItem : TokenUtil.getTokenItems(this)) {
             if (!tokenListMetaData.isCurrencyEnabled(tokenItem.symbol) && TokenUtil.isTokenSupported(tokenItem.symbol)) {
                 tokenItems.add(tokenItem);
@@ -142,6 +144,8 @@ public class AddWalletsActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        // DROID-1498: Update the map of tokens just in case we received an update from the currencies endpoint.
+        WalletTokenManager.mapTokenIsos(BreadApp.getBreadContext());
         WalletsMaster.getInstance().updateWallets(this);
     }
 }

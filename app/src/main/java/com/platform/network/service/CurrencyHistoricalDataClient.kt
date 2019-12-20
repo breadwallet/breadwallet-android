@@ -30,6 +30,8 @@ import android.util.Log
 import com.breadwallet.model.PriceChange
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.model.PriceDataPoint
+import com.breadwallet.repository.RatesRepository
+import com.breadwallet.ui.wallet.Interval
 import com.platform.APIClient
 import okhttp3.Request
 import org.json.JSONException
@@ -88,14 +90,36 @@ object CurrencyHistoricalDataClient {
         PAST_3_YEARS(1095, 5),
     }
 
+    fun getHistoricalData(context: Context, fromCurrency: String, toCurrency: String, interval: Interval): List<PriceDataPoint> {
+        return when (interval) {
+            Interval.ONE_DAY -> {
+                getPastDay(context, fromCurrency, toCurrency)
+            }
+            Interval.ONE_WEEK -> {
+                getPastWeek(context, fromCurrency, toCurrency)
+            }
+            Interval.ONE_MONTH -> {
+                getPastMonth(context, fromCurrency, toCurrency)
+            }
+            Interval.THREE_MONTHS -> {
+                getPastThreeMonths(context, fromCurrency, toCurrency)
+            }
+            Interval.ONE_YEAR -> {
+                getPastYear(context, fromCurrency, toCurrency)
+            }
+            Interval.THREE_YEARS -> {
+                getPastThreeYears(context, fromCurrency, toCurrency)
+            }
+        }
+    }
+
     /**
      * Retrieve the currency's history for the past 24 hours.
      *
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastDay(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastDay(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
@@ -109,8 +133,7 @@ object CurrencyHistoricalDataClient {
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastWeek(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastWeek(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
@@ -124,8 +147,7 @@ object CurrencyHistoricalDataClient {
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastMonth(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastMonth(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
@@ -139,8 +161,7 @@ object CurrencyHistoricalDataClient {
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastThreeMonths(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastThreeMonths(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
@@ -154,8 +175,7 @@ object CurrencyHistoricalDataClient {
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastYear(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastYear(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
@@ -169,8 +189,7 @@ object CurrencyHistoricalDataClient {
      * @param fromCurrency the currency you are looking up, eg BTC
      * @param toCurrency the currency you are converting to, eg USD
      */
-    @JvmStatic
-    fun getPastThreeYears(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
+    private fun getPastThreeYears(context: Context, fromCurrency: String, toCurrency: String) = fetchHistoricalData(
             context,
             fromCurrency,
             toCurrency,
