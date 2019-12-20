@@ -120,7 +120,7 @@ object BRSharedPrefs {
 
     private lateinit var brdPrefs: SharedPreferences
 
-    @JvmStatic
+    @JvmStatic @JvmOverloads
     fun getPreferredFiatIso(context: Context? = null): String? =
             brdPrefs.getString(CURRENT_CURRENCY, try {
                 Currency.getInstance(Locale.getDefault()).currencyCode

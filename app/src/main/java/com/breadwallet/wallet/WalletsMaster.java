@@ -94,7 +94,7 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         ethWallet.addTokenLoadedListener(this);
 
         mWallets.clear();
-        mTokenListMetaData = KVStoreManager.getTokenListMetaData(app);
+        mTokenListMetaData = KVStoreManager.getUpdatedTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             mTokenListMetaData = new TokenListMetaData(BRConstants.DEFAULT_WALLETS, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
@@ -137,17 +137,6 @@ public class WalletsMaster implements WalletEthManager.OnTokenLoadedListener {
         }
         return mWallets;
 
-    }
-
-    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
-        LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
-        for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
-            currencyCodes.add(tokenInfo.symbol);
-        }
-        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
-            currencyCodes.add(tokenItem.symbol.toUpperCase());
-        }
-        return new ArrayList<>(currencyCodes);
     }
 
     //return the needed wallet for the iso
