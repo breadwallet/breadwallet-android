@@ -1,5 +1,9 @@
 package com.breadwallet.ui.settings.fastsync
 
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
@@ -20,7 +24,9 @@ import kotlinx.android.synthetic.main.controller_fast_sync.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -41,7 +47,7 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
     override val update = FastSyncUpdate
     override val flowEffectHandler
         get() = subtypeEffectHandler<FastSyncEffect, FastSyncEvent> {
-            addTransformer<FastSyncEffect.GoBack>(direct.instance<NavEffectTransformer>())
+            addTransformer<FastSyncEffect.Nav>(direct.instance<NavEffectTransformer>())
             addActionSync<FastSyncEffect.ShowDisableFastSyncDialog>(
                 Main,
                 ::showDisableFastSyncDialog
@@ -82,6 +88,7 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
                         }
                     }
             }
+
         }
 
     override fun bindView(modelFlow: Flow<FastSyncModel>): Flow<FastSyncEvent> {
@@ -94,7 +101,8 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
             .launchIn(uiBindScope)
         return merge(
             back_btn.clicks().map { FastSyncEvent.OnBackClicked },
-            switch_fast_sync.checked().map { FastSyncEvent.OnFastSyncChanged(it) }
+            switch_fast_sync.checked().map { FastSyncEvent.OnFastSyncChanged(it) },
+            bindLearnMoreLink()
         )
     }
 
@@ -119,5 +127,27 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
         )
         controller.targetController = this
         router.pushController(RouterTransaction.with(controller))
+    }
+
+    private fun bindLearnMoreLink() = callbackFlow<FastSyncEvent> {
+        val act = checkNotNull(activity)
+        val message: String = act.getString(R.string.FastSync_description)
+        val clickableText = act.getString(R.string.FastSync_learnMoreLink)
+        val linkPos = message.lastIndexOf(clickableText)
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                offer(FastSyncEvent.OnLearnMoreClicked)
+            }
+        }
+        description.text = SpannableString(message).apply {
+            setSpan(
+                clickableSpan,
+                linkPos,
+                linkPos + clickableText.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        description.movementMethod = LinkMovementMethod.getInstance()
+        awaitClose()
     }
 }
