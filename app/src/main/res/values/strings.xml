@@ -1226,6 +1226,8 @@
     <string name="FastSync.subtitle">Fastsync (pilot)</string>
     <!-- Fast sync description -->
     <string name="FastSync.description">Make syncing your bitcoin wallet practically instant. Learn more about how it works here.</string>
+    <!-- Link to the FAQ of Fastsync, must be present in here, it must be present in FastSync.description -->
+    <string name="FastSync.learnMoreLink">here</string>
     <string name="FastSync.poweredBy">Powered by</string>
     <string name="FastSync.disableConfirmationDialog">Are you sure you want to turn off Fast Sync?</string>
     <string name="FastSync.turnOff">Turn Off</string>

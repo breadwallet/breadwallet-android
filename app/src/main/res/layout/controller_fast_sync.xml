@@ -69,15 +69,18 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
-            android:id="@+id/textView5"
+            android:id="@+id/description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="40dp"
+            android:clickable="true"
+            android:focusable="true"
             android:text="@string/FastSync.description"
             android:textAlignment="center"
             android:textColor="@color/text_secondary"
+            android:textColorLink="@color/ui_accent"
             android:textSize="16sp"
             app:brdFont="@string/Font.CircularPro_Bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +101,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintTop_toBottomOf="@+id/description" />
     </android.support.constraint.ConstraintLayout>
 
     <TextView
