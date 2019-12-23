@@ -23,7 +23,9 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.squareup.picasso.Picasso;
 
@@ -195,7 +197,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 decoratedHolderView.mIconLetter.setText(currencyCode.substring(0, 1).toUpperCase());
             }
 
-            WalletUiConfiguration uiConfiguration = WalletsMaster.getInstance().getWalletByIso(mContext, wallet.getCurrencyCode()).getUiConfiguration();
+            BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(mContext, wallet.getCurrencyCode());
+            WalletUiConfiguration uiConfiguration = walletManager != null ? walletManager.getUiConfiguration()
+                    : new WalletUiConfiguration(TokenUtil.getTokenStartColor(currencyCode), TokenUtil.getTokenEndColor(currencyCode), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
             String startColor = uiConfiguration.getStartColor();
             String endColor = uiConfiguration.getEndColor();
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
