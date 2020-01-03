@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class NavEffectTransformer(
-    private val routerNavigationEffectHandler: RouterNavigationEffectHandler
+    private val navHandlerProvider: () -> RouterNavigationEffectHandler
 ) : FlowTransformer<NavEffectHolder, Nothing> {
     override fun invoke(effects: Flow<NavEffectHolder>): Flow<Nothing> =
         effects.map { effect -> effect.navigationEffect }
-            .transform(Connectable { routerNavigationEffectHandler })
+            .transform(Connectable { navHandlerProvider() })
 }
