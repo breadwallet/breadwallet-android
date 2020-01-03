@@ -92,7 +92,7 @@ abstract class BaseMobiusController<M, E, F>(
         }
 
         bind<NavEffectTransformer>() with provider {
-            NavEffectTransformer(instance())
+            NavEffectTransformer(provider())
         }
     }
 
