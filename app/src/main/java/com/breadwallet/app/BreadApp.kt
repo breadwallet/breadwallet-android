@@ -42,7 +42,6 @@ import com.breadwallet.breadbox.BreadBoxCloseWorker
 import com.breadwallet.breadbox.CoreBreadBox
 import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
-import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.installHooks
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
@@ -213,7 +212,7 @@ class BreadApp : Application(), KodeinAware {
                         wallets.find { it.currency.code.isEthereum() }
                     }
                     .take(1)
-                    .map { generateWalletId(it.source.toString()) }
+                    .map { generateWalletId(it.target.toString()) }
                     .flowOn(Dispatchers.Default)
                     .first()
                 if (walletId.isNullOrBlank() || !walletId.matches(WALLET_ID_PATTERN.toRegex())) {

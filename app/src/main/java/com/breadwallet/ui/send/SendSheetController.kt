@@ -42,7 +42,6 @@ import com.breadwallet.breadbox.SendTxEffectHandler
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.crypto.Currency
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
@@ -195,7 +194,7 @@ class SendSheetController(args: Bundle? = null) :
                 direct.instance<RouterNavigationEffectHandler>()
             }) { effect ->
                 when (effect) {
-                    SendSheetEffect.GoToEthWallet -> NavigationEffect.GoToWallet(Currency.CODE_AS_ETH)
+                    SendSheetEffect.GoToEthWallet -> NavigationEffect.GoToWallet("eth")
                     SendSheetEffect.CloseSheet -> NavigationEffect.GoBack
                     is SendSheetEffect.GoToFaq -> NavigationEffect.GoToFaq(
                         BRConstants.FAQ_SEND,
