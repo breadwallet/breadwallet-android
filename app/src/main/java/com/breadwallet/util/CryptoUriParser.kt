@@ -40,7 +40,7 @@ class CryptoUriParser(
         uriBuilder.scheme(wallet.urlScheme)
 
         if (!request.hasAddress()) {
-            request.address = wallet.source.toSanitizedString()
+            request.address = wallet.target.toSanitizedString()
         }
         uriBuilder.appendPath(request.address)
 

@@ -47,7 +47,6 @@ import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
-import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
@@ -61,6 +60,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import java.math.BigDecimal
@@ -107,7 +107,7 @@ fun Transfer.hashString(): String =
 
 /** Returns the [Address] object for [address] from the [Wallet]'s [Network]*/
 fun Wallet.addressFor(address: String): Address? {
-    return walletManager.network.addressFor(address).orNull()
+    return Address.create(address, walletManager.network).orNull()
 }
 
 /**
@@ -346,9 +346,9 @@ fun System.createWalletManager(
     addressScheme: AddressScheme? = getAddressScheme(network)
 ) {
     val wmMode = when {
-        managerMode == null -> getDefaultWalletManagerMode(network)
-        supportsWalletManagerMode(network, managerMode) -> managerMode
-        else -> getDefaultWalletManagerMode(network)
+        managerMode == null -> network.defaultWalletManagerMode
+        network.supportsWalletManagerMode(managerMode) -> managerMode
+        else -> network.defaultWalletManagerMode
     }
     createWalletManager(network, wmMode, addressScheme, currencies)
 }
@@ -372,9 +372,7 @@ fun System.getAddressScheme(network: Network): AddressScheme {
                 AddressScheme.BTC_LEGACY
             }
         }
-        else -> {
-            getDefaultAddressScheme(network)
-        }
+        else -> network.defaultAddressScheme
     }
 }
 
@@ -406,12 +404,10 @@ fun Transfer.getSize(): Double? {
 
 /** Returns a [Flow] providing the default [WalletManagerMode] from [System] for a given [currencyId]. */
 fun Flow<System>.getDefaultWalletManagerMode(currencyId: String): Flow<WalletManagerMode> =
-    transform { system ->
-        emit(
-            system.networks.find {
-                it.containsCurrency(currencyId)
-            }?.run { system.getDefaultWalletManagerMode(this) } ?: return@transform
-        )
+    mapNotNull { system ->
+        system.networks
+            .find { it.containsCurrency(currencyId) }
+            ?.run { defaultWalletManagerMode }
     }
 
 
