@@ -25,6 +25,7 @@
 
 package com.breadwallet.tools.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -307,24 +308,24 @@ public final class TokenUtil {
         return "";
     }
 
-    public static String getTokenStartColor(String currencyCode) {
-        for (TokenItem token : mTokenItems) {
-            if (token.getSymbol().equalsIgnoreCase(currencyCode)) {
-                return token.getStartColor();
-            }
+    @SuppressLint("ResourceType")
+    public static String getTokenStartColor(String currencyCode, Context context) {
+        TokenItem tokenItem = mTokenMap.get(currencyCode.toLowerCase());
+        if (tokenItem != null && !tokenItem.getStartColor().isEmpty()) {
+            return tokenItem.getStartColor();
+        } else {
+            return context.getString(R.color.wallet_delisted_token_background);
         }
-
-        return "";
     }
 
-    public static String getTokenEndColor(String currencyCode) {
-        for (TokenItem token : mTokenItems) {
-            if (token.getSymbol().equalsIgnoreCase(currencyCode)) {
-                return token.getEndColor();
-            }
+    @SuppressLint("ResourceType")
+    public static String getTokenEndColor(String currencyCode, Context context) {
+        TokenItem tokenItem = mTokenMap.get(currencyCode.toLowerCase());
+        if (tokenItem != null && !tokenItem.getEndColor().isEmpty()) {
+            return tokenItem.getEndColor();
+        } else {
+            return context.getString(R.color.wallet_delisted_token_background);
         }
-
-        return "";
     }
 
     public static boolean isTokenSupported(String symbol) {
