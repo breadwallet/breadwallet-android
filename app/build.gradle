@@ -48,6 +48,7 @@ android {
         // Core Library
         missingDimensionStrategy 'network', 'onMainnet'
 
+        buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
     }
     signingConfigs {
         FakeSigningConfig {

@@ -33,6 +33,7 @@ import com.breadwallet.crypto.Signer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+@Suppress("TooManyFunctions")
 object CryptoHelper {
 
     private const val NONCE_SIZE = 12
@@ -57,6 +58,14 @@ object CryptoHelper {
         Signer.createForAlgorithm(Signer.Algorithm.COMPACT)
     }
 
+    private val jose: Signer by lazy {
+        Signer.createForAlgorithm(Signer.Algorithm.BASIC_JOSE)
+    }
+
+    private val basicDer: Signer by lazy {
+        Signer.createForAlgorithm(Signer.Algorithm.BASIC_DER)
+    }
+
     private val hex: Coder by lazy {
         Coder.createForAlgorithm(Coder.Algorithm.HEX)
     }
@@ -71,6 +80,14 @@ object CryptoHelper {
 
     fun signCompact(data: ByteArray, key: Key): ByteArray {
         return compact.sign(data, key).or(byteArrayOf())
+    }
+
+    fun signJose(data: ByteArray, key: Key): ByteArray {
+        return jose.sign(data, key).or(byteArrayOf())
+    }
+
+    fun signBasicDer(data: ByteArray, key: Key): ByteArray {
+        return basicDer.sign(data, key).or(byteArrayOf())
     }
 
     fun base58Encode(data: ByteArray): String {

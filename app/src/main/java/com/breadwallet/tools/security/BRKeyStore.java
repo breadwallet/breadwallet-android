@@ -133,6 +133,8 @@ public final class BRKeyStore {
     private static final String TOKEN_IV = "ivtoken";
     private static final String PASS_TIME_IV = "ivpasstimetoken";
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
+    private static final String BDB_JWT_IV = "ivbdbjwt";
+    private static final String BDB_JWT_EXP_IV = "ivbdbjwt";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String PUB_KEY_ALIAS = "pubKey";
@@ -147,6 +149,8 @@ public final class BRKeyStore {
     public static final String TOKEN_ALIAS = "token";
     public static final String PASS_TIME_ALIAS = "passTime";
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
+    public static final String BDB_JWT_ALIAS = "bdbJwt";
+    public static final String BDB_JWT_EXP_ALIAS = "bdbJwtExp";
 
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
@@ -161,6 +165,8 @@ public final class BRKeyStore {
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
+    private static final String BDB_JWT_FILENAME = "my_bdb_jwt";
+    private static final String BDB_JWT_EXP_FILENAME = "my_bdb_exp_jwt";
     public static final int AUTH_DURATION_SEC = 300;
     private static final int GMC_TAG_LENGTH = 128;
 
@@ -194,6 +200,8 @@ public final class BRKeyStore {
         ALIAS_OBJECT_MAP.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         ALIAS_OBJECT_MAP.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
         ALIAS_OBJECT_MAP.put(ETH_PUBKEY_ALIAS, new AliasObject(ETH_PUBKEY_ALIAS, ETH_PUBKEY_FILENAME, ETH_PUBKEY_IV));
+        ALIAS_OBJECT_MAP.put(BDB_JWT_ALIAS, new AliasObject(BDB_JWT_ALIAS, BDB_JWT_FILENAME, BDB_JWT_IV));
+        ALIAS_OBJECT_MAP.put(BDB_JWT_EXP_ALIAS, new AliasObject(BDB_JWT_EXP_ALIAS, BDB_JWT_EXP_FILENAME, BDB_JWT_EXP_IV));
     }
 
     /**
@@ -653,6 +661,50 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean putBdbJwt(final byte[] jwt, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
+        try {
+            return jwt != null && jwt.length != 0 && setData(context, jwt, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static byte[] getBdbJwt(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
+        try {
+            return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean putBdbJwtExp(final long exp, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_EXP_ALIAS);
+        byte[] expBytes = TypesConverter.long2byteArray(exp);
+        try {
+            return expBytes.length != 0 && setData(context, expBytes, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static long getBdbJwtExp(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_EXP_ALIAS);
+        try {
+            byte[] expBytes = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+            if (expBytes != null && expBytes.length > 0) {
+                return TypesConverter.byteArray2long(expBytes);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public static boolean putWalletCreationTime(int creationTime, Context context) {
