@@ -274,6 +274,9 @@ dependencies {
     implementation 'org.kodein.di:kodein-di-erased-jvm:6.4.0'
     implementation 'org.kodein.di:kodein-di-framework-android-support:6.4.0'
 
+    implementation 'com.squareup.moshi:moshi:1.9.2'
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
+
     androidTestImplementation "org.mockito:mockito-android:2.25.0"
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.2.0"
     androidTestImplementation "android.arch.work:work-testing:1.0.1"

@@ -45,11 +45,11 @@ import com.breadwallet.crypto.CryptoApi
 import com.breadwallet.installHooks
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
-import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
@@ -63,6 +63,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
@@ -365,6 +366,8 @@ class BreadApp : Application(), KodeinAware {
         }
 
         bind<ExperimentsRepository>() with singleton { ExperimentsRepositoryImpl }
+
+        bind<RatesRepository>() with singleton { RatesRepository.getInstance(this@BreadApp) }
     }
 
     private var mDelayServerShutdownCode = -1
