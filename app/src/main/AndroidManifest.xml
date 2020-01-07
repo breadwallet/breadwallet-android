@@ -82,7 +82,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:host="*" />
-                <data android:scheme="bitcoin"/>
+                <data android:scheme="bitcoin" />
                 <data android:scheme="bread" />
                 <data android:scheme="bitcoincash" />
                 <data android:scheme="bchtest" />
@@ -147,10 +147,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.settings.DisplayCurrencyActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".legacy.presenter.activities.settings.AboutActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
@@ -193,10 +189,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".legacy.presenter.activities.settings.TestActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.CurrencySettingsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
