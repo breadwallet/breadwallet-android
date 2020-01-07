@@ -464,7 +464,7 @@ open class WalletController(
 
     private fun updateUi() {
         val resources = checkNotNull(resources)
-        val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode)
+        val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, activity!!)
 
         val startColor = uiConfiguration.startColor
         val endColor = uiConfiguration.endColor
