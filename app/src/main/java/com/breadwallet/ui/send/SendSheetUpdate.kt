@@ -71,18 +71,18 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                                 transferFeeBasis = null
                             )
                         )
-                    else -> next(
-                        newModel, mutableSetOf<SendSheetEffect>().apply {
-                            if (!newModel.amount.isZero() && !newModel.isTotalCostOverBalance) {
-                                SendSheetEffect.EstimateFee(
-                                    newModel.currencyCode,
-                                    newModel.targetAddress,
-                                    newModel.amount,
-                                    newModel.transferSpeed
-                                ).run(this::add)
-                            }
+                    else -> {
+                        val effects = mutableSetOf<SendSheetEffect>()
+                        if (newModel.canEstimateFee) {
+                            SendSheetEffect.EstimateFee(
+                                newModel.currencyCode,
+                                newModel.targetAddress,
+                                newModel.amount,
+                                newModel.transferSpeed
+                            ).run(effects::add)
                         }
-                    )
+                        next(newModel, effects)
+                    }
                 }
             }
         }
@@ -109,7 +109,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
 
                 val newModel = model.withNewRawAmount(newRawAmount)
 
-                if (!newModel.isTotalCostOverBalance && !newModel.amount.isZero()) {
+                if (newModel.canEstimateFee) {
                     effects.add(
                         SendSheetEffect.EstimateFee(
                             newModel.currencyCode,
@@ -166,6 +166,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
         return when {
             model.isSendingTransaction || model.isConfirmingTx -> noChange()
+            model.feeEstimateFailed || model.transferFeeBasis == null -> noChange()
             else -> next(
                 model.copy(
                     isConfirmingTx = true,
@@ -179,21 +180,21 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     override fun onScanClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.GoToScan))
+            else -> dispatch(setOf(SendSheetEffect.Nav.GoToScan))
         }
     }
 
     override fun onFaqClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.GoToFaq(model.currencyCode)))
+            else -> dispatch(setOf(SendSheetEffect.Nav.GoToFaq(model.currencyCode)))
         }
     }
 
     override fun onCloseClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.CloseSheet))
+            else -> dispatch(setOf(SendSheetEffect.Nav.CloseSheet))
         }
     }
 
@@ -225,11 +226,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         )
 
         return when {
-            newModel.amount.isZero() ||
-                newModel.isTotalCostOverBalance ||
-                newModel.amountInputError != null -> next(newModel)
-            else -> next(
-                newModel, setOf(
+            newModel.canEstimateFee -> next(
+                newModel,
+                setOf(
                     SendSheetEffect.EstimateFee(
                         newModel.currencyCode,
                         newModel.targetAddress,
@@ -238,6 +237,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     )
                 )
             )
+            else -> next(newModel)
         }
     }
 
@@ -273,12 +273,14 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     ): Next<SendSheetModel, SendSheetEffect> {
         val isTotalCostOverBalance = model.amount + event.networkFee > model.balance
         return when {
+            !model.isTargetValid -> noChange()
             model.amount.isZero() -> noChange()
             else -> next(
                 model.copy(
                     networkFee = event.networkFee,
-                    fiatNetworkFee = event.networkFee * model.fiatPricePerUnit,
+                    fiatNetworkFee = event.networkFee * model.fiatPricePerFeeUnit,
                     transferFeeBasis = event.transferFeeBasis,
+                    feeEstimateFailed = false,
                     isTotalCostOverBalance = isTotalCostOverBalance,
                     amountInputError = if (isTotalCostOverBalance) {
                         SendSheetModel.InputError.BalanceTooLow
@@ -288,13 +290,23 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
+    override fun onNetworkFeeError(
+        model: SendSheetModel
+    ): Next<SendSheetModel, SendSheetEffect> {
+        return next(
+            model.copy(
+                feeEstimateFailed = true
+            )
+        )
+    }
+
     override fun onTransferSpeedChanged(
         model: SendSheetModel,
         event: SendSheetEvent.OnTransferSpeedChanged
     ): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> next(
+            model.canEstimateFee -> next(
                 model.copy(
                     transferSpeed = event.transferSpeed
                 ),
@@ -306,6 +318,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                         event.transferSpeed
                     )
                 )
+            )
+            else -> next(
+                model.copy(transferSpeed = event.transferSpeed)
             )
         }
     }
@@ -323,21 +338,12 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     isTargetValid = false,
                     targetInputError = null
                 ),
-                mutableSetOf<SendSheetEffect>(
+                setOf<SendSheetEffect>(
                     SendSheetEffect.ValidateAddress(
                         model.currencyCode,
                         event.toAddress
                     )
-                ).apply {
-                    if (!model.amount.isZero()) {
-                        SendSheetEffect.EstimateFee(
-                            model.currencyCode,
-                            event.toAddress,
-                            model.amount,
-                            model.transferSpeed
-                        ).run(::add)
-                    }
-                }
+                )
             )
         }
     }
@@ -382,29 +388,30 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         model: SendSheetModel,
         event: OnAddressPasted
     ): Next<SendSheetModel, SendSheetEffect> {
+        val effects = mutableSetOf<SendSheetEffect>()
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
-                is ValidAddress ->
+                is ValidAddress -> {
+                    effects.add(SendSheetEffect.ValidateAddress(model.currencyCode, event.address))
+                    if (model.canEstimateFee) {
+                        SendSheetEffect.EstimateFee(
+                            model.currencyCode,
+                            event.address,
+                            model.amount,
+                            model.transferSpeed
+                        ).run(effects::add)
+                    }
+
                     next(
                         model.copy(
                             targetAddress = event.address,
                             isTargetValid = false,
                             targetInputError = null
                         ),
-                        mutableSetOf<SendSheetEffect>(
-                            SendSheetEffect.ValidateAddress(model.currencyCode, event.address)
-                        ).apply {
-                            if (!model.amount.isZero()) {
-                                SendSheetEffect.EstimateFee(
-                                    model.currencyCode,
-                                    event.address,
-                                    model.amount,
-                                    model.transferSpeed
-                                ).run(::add)
-                            }
-                        }
+                        effects
                     )
+                }
                 is InvalidAddress -> next(
                     model.copy(
                         isTargetValid = false,
@@ -471,6 +478,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         return next(
             model.copy(
                 fiatPricePerUnit = pricePerUnit,
+                fiatPricePerFeeUnit = event.fiatPricePerFeeUnit,
+                feeCurrencyCode = event.feeCurrencyCode,
                 amount = newAmount,
                 fiatAmount = newFiatAmount
             )
@@ -481,24 +490,21 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         model: SendSheetModel,
         event: SendSheetEvent.OnSendComplete
     ): Next<SendSheetModel, SendSheetEffect> {
-
         return when {
-            model.isSendingTransaction ->
-                dispatch(
-                    mutableSetOf<SendSheetEffect>(SendSheetEffect.ShowTransactionComplete).apply {
-                        if (!model.memo.isNullOrBlank()) {
-                            add(
-                                SendSheetEffect.AddTransactionMetaData(
-                                    event.transfer,
-                                    model.memo,
-                                    model.fiatCode,
-                                    model.fiatPricePerUnit
-                                )
-                            )
-                        }
-
-                    }
+            model.isSendingTransaction -> {
+                val effects = mutableSetOf<SendSheetEffect>(
+                    SendSheetEffect.Nav.GoToTransactionComplete
                 )
+                if (!model.memo.isNullOrBlank()) {
+                    SendSheetEffect.AddTransactionMetaData(
+                        event.transfer,
+                        model.memo,
+                        model.fiatCode,
+                        model.fiatPricePerUnit
+                    ).run(effects::add)
+                }
+                dispatch(effects)
+            }
             else -> noChange()
         }
     }
@@ -555,7 +561,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     override fun goToEthWallet(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
         return when {
             model.isSendingTransaction || model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.GoToEthWallet))
+            else -> dispatch(setOf(SendSheetEffect.Nav.GoToEthWallet))
         }
     }
 
@@ -566,18 +572,30 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         val addressChanged = model.targetAddress != event.address
         val stateUnchanged = model.isTargetValid == event.isValid
         if (addressChanged || stateUnchanged) return noChange()
-        return next(
-            model.copy(
-                targetAddress = if (event.clear) {
-                    ""
-                } else {
-                    model.targetAddress
-                },
-                isTargetValid = event.isValid,
-                targetInputError = if (event.isValid) null
-                else SendSheetModel.InputError.Invalid
-            )
+        val newModel = model.copy(
+            targetAddress = if (event.clear) {
+                ""
+            } else {
+                model.targetAddress
+            },
+            isTargetValid = event.isValid,
+            targetInputError = if (event.isValid) null
+            else SendSheetModel.InputError.Invalid
         )
+        return when {
+            newModel.canEstimateFee ->
+                next(
+                    newModel, setOf<SendSheetEffect>(
+                        SendSheetEffect.EstimateFee(
+                            currencyCode = newModel.currencyCode,
+                            address = newModel.targetAddress,
+                            amount = newModel.amount,
+                            transferSpeed = newModel.transferSpeed
+                        )
+                    )
+                )
+            else -> next(newModel)
+        }
     }
 
     override fun onAuthenticationSettingsUpdated(
@@ -594,8 +612,18 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         if (!event.currencyCode.equals(model.currencyCode, ignoreCase = true)) {
             return noChange()
         }
+        val effects = mutableSetOf<SendSheetEffect>()
         val amount = event.amount ?: model.amount
         val rawAmount = event.amount?.stripTrailingZeros()?.toPlainString() ?: model.rawAmount
+
+        if (event.targetAddress != null) {
+            SendSheetEffect.ValidateAddress(
+                currencyCode = model.currencyCode,
+                address = event.targetAddress,
+                clearWhenInvalid = true
+            ).run(effects::add)
+        }
+
         return next(
             model.copy(
                 isAmountCrypto = true,
@@ -608,24 +636,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     model.fiatAmount
                 }
             ),
-            mutableSetOf<SendSheetEffect>().apply {
-                if (event.targetAddress != null) {
-                    SendSheetEffect.ValidateAddress(
-                        currencyCode = model.currencyCode,
-                        address = event.targetAddress,
-                        clearWhenInvalid = true
-                    ).let(this::add)
-
-                    if (!amount.isZero()) {
-                        SendSheetEffect.EstimateFee(
-                            currencyCode = model.currencyCode,
-                            address = event.targetAddress,
-                            amount = amount,
-                            transferSpeed = model.transferSpeed
-                        ).let(this::add)
-                    }
-                }
-            }
+            effects
         )
     }
 }

@@ -1,26 +1,50 @@
 package com.breadwallet.ui.send
 
-import com.breadwallet.crypto.Transfer
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
 import java.math.BigDecimal
 
 sealed class SendSheetEffect {
 
-    data class GoToFaq(
-        val currencyCode: CurrencyCode
-    ) : SendSheetEffect()
+    sealed class Nav : SendSheetEffect(), NavEffectHolder {
+        data class GoToFaq(
+            val currencyCode: CurrencyCode
+        ) : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoToFaq(currencyCode)
+        }
 
-    data class GoToReceive(
-        val currencyCode: CurrencyCode
-    ) : SendSheetEffect()
+        data class GoToReceive(
+            val currencyCode: CurrencyCode
+        ) : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoToReceive(currencyCode)
+        }
 
-    object GoToEthWallet : SendSheetEffect()
-    object GoToScan : SendSheetEffect()
-    object CloseSheet : SendSheetEffect()
+        object GoToEthWallet : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoToWallet("eth")
+        }
 
-    object ShowTransactionComplete : SendSheetEffect()
+        object GoToScan : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoToQrScan
+        }
+
+        object CloseSheet : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoBack
+        }
+
+        object GoToTransactionComplete : Nav() {
+            override val navigationEffect =
+                NavigationEffect.GoToTransactionComplete
+        }
+    }
 
     data class ValidateAddress(
         val currencyCode: CurrencyCode,
@@ -35,7 +59,10 @@ sealed class SendSheetEffect {
         val networkFee: BigDecimal
     ) : SendSheetEffect()
 
-    object LoadBalance : SendSheetEffect()
+    data class LoadBalance(
+        val currencyCode: CurrencyCode
+    ) : SendSheetEffect()
+
     data class LoadExchangeRate(
         val currencyCode: CurrencyCode,
         val fiatCode: String

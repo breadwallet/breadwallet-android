@@ -119,8 +119,9 @@
                 android:ellipsize="middle"
                 android:ems="10"
                 android:hint="@string/Send.toLabel"
-                android:inputType="textPersonName"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:inputType="textNoSuggestions"
+                android:imeOptions="flagNoPersonalizedLearning" />
         </android.support.design.widget.TextInputLayout>
 
         <com.breadwallet.legacy.presenter.customviews.BRButton

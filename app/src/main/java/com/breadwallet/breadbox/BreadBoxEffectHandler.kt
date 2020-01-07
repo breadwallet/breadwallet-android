@@ -30,7 +30,6 @@ import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.util.isEthereum
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler

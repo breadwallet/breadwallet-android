@@ -31,11 +31,13 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.breadwallet.R
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
@@ -348,6 +350,19 @@ class RouterNavigationEffectHandler(
             RouterTransaction.with(FastSyncController())
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
+
+    override fun goToTransactionComplete() {
+        val res = checkNotNull(router.activity).resources
+        router.replaceTopController(
+            RouterTransaction.with(
+                SignalController(
+                    title = res.getString(R.string.Alerts_sendSuccess),
+                    description = res.getString(R.string.Alerts_sendSuccessSubheader),
+                    iconResId = R.drawable.ic_check_mark_white
+                )
+            )
         )
     }
 

@@ -160,16 +160,12 @@ object WalletScreenEffectHandler {
         effects
             .flatMapLatest { effect ->
                 breadBox.walletTransfers(effect.currencyId)
-                    .mapLatest { wallets ->
-                        wallets.sortedByDescending {
-                            it.confirmation.orNull()
-                                ?.confirmationTime
-                                ?.time ?: System.currentTimeMillis()
-                        }
-                    }
             }
             .mapLatest { wallets ->
-                WalletScreenEvent.OnTransactionsUpdated(wallets.map { it.asWalletTransaction() })
+                WalletScreenEvent.OnTransactionsUpdated(
+                    wallets.map { it.asWalletTransaction() }
+                        .sortedByDescending(WalletTransaction::timeStamp)
+                )
             }
     }
 

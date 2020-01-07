@@ -28,26 +28,19 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
-import com.breadwallet.breadbox.BreadBoxEffect
-import com.breadwallet.breadbox.BreadBoxEffectHandler
-import com.breadwallet.breadbox.BreadBoxEvent
-import com.breadwallet.breadbox.SendTx
-import com.breadwallet.breadbox.SendTxEffectHandler
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
-import com.breadwallet.effecthandler.metadata.MetaDataEvent
+import com.breadwallet.legacy.presenter.customviews.BRKeyboard
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -58,17 +51,23 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange
-import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_send_sheet.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.Locale
 
 private const val CURRENCY_CODE = "CURRENCY_CODE"
@@ -128,80 +127,17 @@ class SendSheetController(args: Bundle? = null) :
                 ?: SendSheetModel.createDefault(currencyCode, fiatCode)
         }
 
-    override val effectHandler: Connectable<SendSheetEffect, SendSheetEvent> =
-        CompositeEffectHandler.from(
-            nestedConnectable({
-                SendTxEffectHandler(
-                    Consumer { event ->
-                        when (event) {
-                            is SendTx.Result.Success -> SendSheetEvent.OnSendComplete(event.transfer)
-                            is SendTx.Result.Error -> SendSheetEvent.OnSendFailed
-                        }.run(eventConsumer::accept)
-                    },
-                    controllerScope,
-                    direct.instance(),
-                    direct.instance()
-                )
-            }, { effect: SendSheetEffect ->
-                when (effect) {
-                    is SendSheetEffect.SendTransaction -> effect.run {
-                        SendTx.Effect(currencyCode, address, amount, transferFeeBasis)
-                    }
-                    else -> null
-                }
-            }),
-            Connectable { output ->
-                SendSheetEffectHandler(output, activity!!, direct.instance(), router) {
-                    val controller = ScannerController()
-                    controller.targetController = this
-                    router.pushController(
-                        RouterTransaction.with(controller)
-                            .popChangeHandler(FadeChangeHandler())
-                            .pushChangeHandler(FadeChangeHandler())
-                    )
-                }
-            },
-            nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance())
-            }, { effect: SendSheetEffect ->
-                when (effect) {
-                    SendSheetEffect.LoadBalance ->
-                        BreadBoxEffect.LoadWalletBalance(currencyCode)
-                    else -> null
-                }
-            }, { event: BreadBoxEvent ->
-                when (event) {
-                    is BreadBoxEvent.OnBalanceUpdated ->
-                        SendSheetEvent.OnBalanceUpdated(event.balance, event.fiatBalance)
-                    else -> null
-                } as? SendSheetEvent
-            }),
-            nestedConnectable({ output: Consumer<MetaDataEvent> ->
-                MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }, { effect ->
-                when (effect) {
-                    is SendSheetEffect.AddTransactionMetaData ->
-                        MetaDataEffect.AddTransactionMetaData(
-                            effect.transaction,
-                            effect.memo,
-                            effect.fiatCurrencyCode,
-                            effect.fiatPricePerUnit
-                        )
-                    else -> null
-                }
-            }, { _: MetaDataEvent -> {} as? SendSheetEvent }),
-            nestedConnectable({
-                direct.instance<RouterNavigationEffectHandler>()
-            }) { effect ->
-                when (effect) {
-                    SendSheetEffect.GoToEthWallet -> NavigationEffect.GoToWallet("eth")
-                    SendSheetEffect.CloseSheet -> NavigationEffect.GoBack
-                    is SendSheetEffect.GoToFaq -> NavigationEffect.GoToFaq(
-                        BRConstants.FAQ_SEND,
-                        effect.currencyCode
-                    )
-                    else -> null
-                }
+    override val flowEffectHandler
+        get() = SendSheetHandler.create(
+            checkNotNull(applicationContext),
+            router,
+            viewCreatedScope,
+            { eventConsumer },
+            breadBox = direct.instance(),
+            keyStore = direct.instance(),
+            navEffectHandler = direct.instance(),
+            metaDataEffectHandler = Connectable {
+                MetaDataEffectHandler(it, direct.instance(), direct.instance())
             }
         )
 
@@ -222,66 +158,75 @@ class SendSheetController(args: Bundle? = null) :
         Utils.hideKeyboard(activity)
     }
 
-    @Suppress("ComplexMethod")
-    override fun bindView(output: Consumer<SendSheetEvent>) = output.view {
+    override fun bindView(modelFlow: Flow<SendSheetModel>): Flow<SendSheetEvent> {
         layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
 
-        textInputAddress.onTextChanged(SendSheetEvent::OnTargetAddressChanged)
-        textInputMemo.onTextChanged(SendSheetEvent::OnMemoChanged)
-        textInputAmount.onClick(SendSheetEvent.OnAmountEditClicked)
-        textInputAddress.onClick(SendSheetEvent.OnAmountEditDismissed)
-        textInputMemo.onClick(SendSheetEvent.OnAmountEditDismissed)
-
-        buttonPaste.onClick(SendSheetEvent.OnPasteClicked)
-        buttonCurrencySelect.onClick(SendSheetEvent.OnToggleCurrencyClicked)
-        buttonScan.onClick(SendSheetEvent.OnScanClicked)
-        buttonSend.onClick(SendSheetEvent.OnSendClicked)
-
-        buttonRegular.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.REGULAR))
-        buttonEconomy.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.ECONOMY))
-        buttonPriority.onClick(SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.PRIORITY))
-
-        buttonFaq.onClick(SendSheetEvent.OnFaqClicked)
-        layoutBackground.onClick(SendSheetEvent.OnCloseClicked)
-        buttonClose.onClick(SendSheetEvent.OnCloseClicked)
-
-        keyboard.setOnInsertListener { key ->
-            output.accept(
-                when {
-                    key.isEmpty() -> OnAmountChange.Delete
-                    key[0] == '.' -> OnAmountChange.AddDecimal
-                    Character.isDigit(key[0]) -> OnAmountChange.AddDigit(key.toInt())
-                    else -> return@setOnInsertListener
-                }
-            )
-        }
-
-        textInputAddress.setOnEditorActionListener { _, actionId, event ->
-            if (event?.keyCode == KeyEvent.KEYCODE_ENTER
-                || actionId == EditorInfo.IME_ACTION_DONE
-                || actionId == EditorInfo.IME_ACTION_NEXT
-            ) {
-                output.accept(SendSheetEvent.OnAmountEditClicked)
-                true
-            } else false
-        }
-
-        with(View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                output.accept(SendSheetEvent.OnAmountEditDismissed)
-            } else {
-                Utils.hideKeyboard(activity)
-            }
-        }) {
-            apply(textInputMemo::setOnFocusChangeListener)
-            apply(textInputAddress::setOnFocusChangeListener)
-        }
-
-        onDispose {
+        return merge(
+            keyboard.bindInput(),
+            textInputMemo.bindFocusChanged(),
+            textInputMemo.bindActionComplete(SendSheetEvent.OnSendClicked),
+            textInputAddress.bindFocusChanged(),
+            textInputAddress.bindActionComplete(SendSheetEvent.OnAmountEditDismissed),
+            buttonFaq.clicks().map { SendSheetEvent.OnFaqClicked },
+            buttonScan.clicks().map { SendSheetEvent.OnScanClicked },
+            buttonSend.clicks().map { SendSheetEvent.OnSendClicked },
+            buttonClose.clicks().map { SendSheetEvent.OnCloseClicked },
+            buttonPaste.clicks().map { SendSheetEvent.OnPasteClicked },
+            layoutBackground.clicks().map { SendSheetEvent.OnCloseClicked },
+            textInputMemo.clicks().map { SendSheetEvent.OnAmountEditDismissed },
+            textInputAmount.clicks().map { SendSheetEvent.OnAmountEditClicked },
+            textInputMemo.textChanges().map { SendSheetEvent.OnMemoChanged(it) },
+            textInputAddress.clicks().map { SendSheetEvent.OnAmountEditDismissed },
+            buttonCurrencySelect.clicks().map { SendSheetEvent.OnToggleCurrencyClicked },
+            textInputAddress.textChanges().map { SendSheetEvent.OnTargetAddressChanged(it) },
+            buttonRegular.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
+            buttonEconomy.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
+            buttonPriority.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
+        ).onCompletion {
             layoutSignal.setOnTouchListener(null)
-            keyboard.setOnInsertListener(null)
         }
     }
+
+    private fun EditText.bindActionComplete(output: SendSheetEvent) =
+        callbackFlow<SendSheetEvent> {
+            setOnEditorActionListener { _, actionId, event ->
+                if (event?.keyCode == KeyEvent.KEYCODE_ENTER
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || actionId == EditorInfo.IME_ACTION_NEXT
+                ) {
+                    offer(output)
+                    Utils.hideKeyboard(activity)
+                    true
+                } else false
+            }
+            awaitClose { setOnEditorActionListener(null) }
+        }
+
+    private fun EditText.bindFocusChanged() =
+        callbackFlow<SendSheetEvent> {
+            View.OnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    offer(SendSheetEvent.OnAmountEditDismissed)
+                } else {
+                    Utils.hideKeyboard(activity)
+                }
+            }
+
+            awaitClose { onFocusChangeListener = null }
+        }
+
+    private fun BRKeyboard.bindInput() =
+        callbackFlow<SendSheetEvent> {
+            setOnInsertListener { key ->
+                when {
+                    key.isEmpty() -> offer(OnAmountChange.Delete)
+                    key[0] == '.' -> offer(OnAmountChange.AddDecimal)
+                    Character.isDigit(key[0]) -> offer(OnAmountChange.AddDigit(key.toInt()))
+                    else -> return@setOnInsertListener
+                }
+            }
+            awaitClose { setOnInsertListener(null) }
+        }
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun SendSheetModel.render() {
@@ -335,35 +280,31 @@ class SendSheetController(args: Bundle? = null) :
 
         ifChanged(SendSheetModel::isAmountEditVisible, ::showKeyboard)
 
-        ifChanged(SendSheetModel::rawAmount) {
-            textInputAmount.setText(
-                when {
-                    rawAmount.contains('.') -> {
-                        val parts = rawAmount.split('.')
-                        val main = parts.first().separatePeriods()
-                        "$main.${parts.getOrNull(1)}"
-                    }
-                    else -> rawAmount.separatePeriods()
-                }
-            )
+        ifChanged(
+            SendSheetModel::rawAmount,
+            SendSheetModel::isAmountCrypto,
+            SendSheetModel::fiatCode
+        ) {
+            val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
+                rawAmount
+            } else {
+                rawAmount.formatFiatForInputUi(fiatCode)
+            }
+            textInputAmount.setText(formattedAmount)
         }
 
         ifChanged(
             SendSheetModel::networkFee,
             SendSheetModel::fiatNetworkFee,
-            SendSheetModel::isErc20,
+            SendSheetModel::feeCurrencyCode,
             SendSheetModel::isAmountCrypto
         ) {
-            // TODO: add nativeCurrencyCode to model, remove eth constant
-            val cryptoCurrencyCode = if (isErc20) "ETH" else currencyCode
             labelNetworkFee.isVisible = networkFee != BigDecimal.ZERO
             labelNetworkFee.text = res.getString(
-                R.string.Send_fee, when {
+                R.string.Send_fee,
+                when {
                     isAmountCrypto ->
-                        networkFee.formatCryptoForUi(
-                            cryptoCurrencyCode,
-                            scale = 8
-                        ) // TODO: scale const
+                        networkFee.formatCryptoForUi(feeCurrencyCode, MAX_DIGITS)
                     else -> fiatNetworkFee.formatFiatForUi(fiatCode)
                 }
             )
@@ -517,16 +458,30 @@ class SendSheetController(args: Bundle? = null) :
     }
 }
 
-private const val PERIOD_LENGTH = 3
-private const val PERIOD_SEPARATOR = ","
+private fun String.formatFiatForInputUi(currencyCode: String): String {
+    // Ensure decimal displayed when string has not fraction digits
+    val forceSeparator = contains('.')
+    // Ensure all fraction digits are displayed, even if they are all zero
+    val minFractionDigits = substringAfter('.', "").count()
 
-/**
- * Given a number with at least two periods, returns the
- * same number with each period separated by a comma.
- */
-fun String.separatePeriods(): String {
-    return reversed()
-        .chunked(PERIOD_LENGTH)
-        .joinToString(PERIOD_SEPARATOR)
-        .reversed()
+    val amount = toBigDecimalOrNull()
+
+    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()) as DecimalFormat
+    val decimalFormatSymbols = currencyFormat.decimalFormatSymbols
+    currencyFormat.isGroupingUsed = true
+    currencyFormat.roundingMode = BRConstants.ROUNDING_MODE
+    currencyFormat.isDecimalSeparatorAlwaysShown = forceSeparator
+    try {
+        val currency = java.util.Currency.getInstance(currencyCode)
+        val symbol = currency.symbol
+        decimalFormatSymbols.currencySymbol = symbol
+        currencyFormat.decimalFormatSymbols = decimalFormatSymbols
+        currencyFormat.negativePrefix = "-$symbol"
+        currencyFormat.maximumFractionDigits = MAX_DIGITS
+        currencyFormat.minimumFractionDigits = minFractionDigits
+    } catch (e: IllegalArgumentException) {
+        logError("Illegal Currency code: $currencyCode")
+    }
+
+    return currencyFormat.format(amount)
 }
