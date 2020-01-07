@@ -90,12 +90,6 @@ internal class CoreBreadBox(
 ) : BreadBox,
     SystemListener {
 
-    companion object {
-        // TODO: Used until auth flow is implemented
-        const val BDB_AUTH_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZWI2M2UyOC0wMzQ1LTQ4ZjYtOWQxNy1jZTgwY2JkNjE3Y2IiLCJicmQ6Y3QiOiJjbGkiLCJleHAiOjkyMjMzNzIwMzY4NTQ3NzUsImlhdCI6MTU2Njg2MzY0OX0.FvLLDUSk1p7iFLJfg2kA-vwhDWTDulVjdj8YpFgnlE62OBFCYt4b3KeTND_qAhLynLKbGJ1UDpMMihsxtfvA0A"
-    }
-
     init {
         // Set default words list
         val context = BreadApp.getBreadContext()
@@ -106,7 +100,11 @@ internal class CoreBreadBox(
     private var system: System? = null
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
     // TODO: Use createForTest until auth flow is implemented.
-    private val blockchainDb = BlockchainDb.createForTest(OkHttpClient(), BDB_AUTH_TOKEN)
+    private val blockchainDb by lazy {
+        BlockchainDb(OkHttpClient.Builder()
+            .addInterceptor(BdbAuthInterceptor(BreadApp.getBreadContext(), OkHttpClient()))
+            .build())
+    }
 
     private val openScope = CoroutineScope(
         SupervisorJob() +
