@@ -4,6 +4,7 @@ import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
@@ -55,12 +56,14 @@ data class SendSheetModel(
     val fiatAmount: BigDecimal = BigDecimal.ZERO,
     /** The current fiat exchange rate for [currencyCode] in [fiatCode]. */
     val fiatPricePerUnit: BigDecimal = BigDecimal.ZERO,
+    /** The current fiat exchange rate for [feeCurrencyCode] in [fiatCode]. */
+    val fiatPricePerFeeUnit: BigDecimal = BigDecimal.ZERO,
 
     /** The user selected [TransferSpeed] for this transaction. */
     val transferSpeed: TransferSpeed = TransferSpeed.REGULAR,
 
-    /** True when the [currencyCode] is an ERC-20 token. */
-    val isErc20: Boolean = false,
+    /** The currency code used for paying transaction fee. */
+    val feeCurrencyCode: CurrencyCode = currencyCode,
 
     /** True when the user is confirming the transaction details. */
     val isConfirmingTx: Boolean = false,
@@ -73,6 +76,9 @@ data class SendSheetModel(
 
     /** The currently estimated [TransferFeeBasis], not null when [networkFee] > [BigDecimal.ZERO]. */
     val transferFeeBasis: TransferFeeBasis? = null,
+
+    /** True when the latest fee request has failed. */
+    val feeEstimateFailed: Boolean = false,
 
     /** An error with the current [targetAddress]. */
     val targetInputError: InputError? = null,
@@ -100,6 +106,9 @@ data class SendSheetModel(
 
     /** The total cost of this transaction in [fiatCode]. */
     val fiatTotalCost: BigDecimal = fiatAmount + fiatNetworkFee
+
+    /** True when the necessary inputs to estimate a fee are available. */
+    val canEstimateFee: Boolean = isTargetValid && !isTotalCostOverBalance && !amount.isZero()
 
     companion object {
 
@@ -154,7 +163,8 @@ data class SendSheetModel(
             val hasRate = fiatPricePerUnit > BigDecimal.ZERO
             val hasFiatAmount = newFiatAmount > BigDecimal.ZERO
             newAmount = if (hasRate && hasFiatAmount) {
-                newFiatAmount.setScale(fiatPricePerUnit.scale()) / fiatPricePerUnit
+                newFiatAmount.setScale(fiatPricePerUnit.scale())
+                    .divide(fiatPricePerUnit, BRConstants.ROUNDING_MODE)
             } else {
                 amount
             }
@@ -190,7 +200,7 @@ data class SendSheetModel(
             "fiatAmount=$fiatAmount, " +
             "fiatPricePerUnit=$fiatPricePerUnit, " +
             "targetSpeed=$transferSpeed, " +
-            "isErc20=$isErc20, " +
+            "feeCurrencyCode='$feeCurrencyCode', " +
             "isConfirmingTx=$isConfirmingTx, " +
             "showFeeSelect=$showFeeSelect, " +
             "totalCost=$totalCost, " +

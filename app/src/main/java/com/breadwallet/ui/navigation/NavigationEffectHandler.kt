@@ -203,4 +203,6 @@ class NavigationEffectHandler(
     override fun goToLegacyAddress() = Unit
 
     override fun goToFastSync() = Unit
+
+    override fun goToTransactionComplete() = Unit
 }
