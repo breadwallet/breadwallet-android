@@ -1,8 +1,7 @@
 package com.breadwallet.util
 
+import android.content.Context
 import com.breadwallet.legacy.wallet.configs.WalletUiConfiguration
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.TokenUtil
 import java.math.BigDecimal
 
@@ -15,10 +14,14 @@ class WalletDisplayUtils {
         private val ONE_ETH = BigDecimal(ETHER_WEI)
         private const val SCALE_ETH = 8
 
-        fun getUIConfiguration(currencyCode: CurrencyCode): WalletUiConfiguration {
+        fun getUIConfiguration(
+            currencyCode: CurrencyCode,
+            context: Context
+        ): WalletUiConfiguration {
+            // validate color here or return delisted
             return WalletUiConfiguration(
-                TokenUtil.getTokenStartColor(currencyCode),
-                TokenUtil.getTokenEndColor(currencyCode),
+                TokenUtil.getTokenStartColor(currencyCode, context),
+                TokenUtil.getTokenEndColor(currencyCode, context),
                 false,
                 MAX_DECIMAL_PLACES_FOR_UI
             )
