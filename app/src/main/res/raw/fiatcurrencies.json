@@ -1,802 +1,642 @@
 [
   {
     "code": "USD",
-    "name": "US Dollar",
-    "rate": 10260.08
+    "name": "US Dollar"
   },
   {
     "code": "EUR",
-    "name": "Eurozone Euro",
-    "rate": 9299.4
+    "name": "Eurozone Euro"
   },
   {
     "code": "GBP",
-    "name": "Pound Sterling",
-    "rate": 8324.84
+    "name": "Pound Sterling"
   },
   {
     "code": "JPY",
-    "name": "Japanese Yen",
-    "rate": 1101812.49
+    "name": "Japanese Yen"
   },
   {
     "code": "CAD",
-    "name": "Canadian Dollar",
-    "rate": 13521.71
+    "name": "Canadian Dollar"
   },
   {
     "code": "AUD",
-    "name": "Australian Dollar",
-    "rate": 14967.76
+    "name": "Australian Dollar"
   },
   {
     "code": "CNY",
-    "name": "Chinese Yuan",
-    "rate": 72901.95
+    "name": "Chinese Yuan"
   },
   {
     "code": "CHF",
-    "name": "Swiss Franc",
-    "rate": 10177.74
+    "name": "Swiss Franc"
   },
   {
     "code": "SEK",
-    "name": "Swedish Krona",
-    "rate": 99881.55
+    "name": "Swedish Krona"
   },
   {
     "code": "NZD",
-    "name": "New Zealand Dollar",
-    "rate": 15985.7
+    "name": "New Zealand Dollar"
   },
   {
     "code": "KRW",
-    "name": "South Korean Won",
-    "rate": 12228507.44
+    "name": "South Korean Won"
   },
   {
     "code": "AED",
-    "name": "UAE Dirham",
-    "rate": 37688.15
+    "name": "UAE Dirham"
   },
   {
     "code": "AFN",
-    "name": "Afghan Afghani",
-    "rate": 801347.95
+    "name": "Afghan Afghani"
   },
   {
     "code": "ALL",
-    "name": "Albanian Lek",
-    "rate": 1130455.33
+    "name": "Albanian Lek"
   },
   {
     "code": "AMD",
-    "name": "Armenian Dram",
-    "rate": 4896658.68
+    "name": "Armenian Dram"
   },
   {
     "code": "ANG",
-    "name": "Netherlands Antillean Guilder",
-    "rate": 18114.09
+    "name": "Netherlands Antillean Guilder"
   },
   {
     "code": "AOA",
-    "name": "Angolan Kwanza",
-    "rate": 3751889.71
+    "name": "Angolan Kwanza"
   },
   {
     "code": "ARS",
-    "name": "Argentine Peso",
-    "rate": 574700.26
+    "name": "Argentine Peso"
   },
   {
     "code": "AWG",
-    "name": "Aruban Florin",
-    "rate": 18468.1
+    "name": "Aruban Florin"
   },
   {
     "code": "AZN",
-    "name": "Azerbaijani Manat",
-    "rate": 17467.78
+    "name": "Azerbaijani Manat"
   },
   {
     "code": "BAM",
-    "name": "Bosnia-Herzegovina Convertible Mark",
-    "rate": 18184.33
+    "name": "Bosnia-Herzegovina Convertible Mark"
   },
   {
     "code": "BBD",
-    "name": "Barbadian Dollar",
-    "rate": 20520.15
+    "name": "Barbadian Dollar"
   },
   {
     "code": "BDT",
-    "name": "Bangladeshi Taka",
-    "rate": 869450.25
+    "name": "Bangladeshi Taka"
   },
   {
     "code": "BGN",
-    "name": "Bulgarian Lev",
-    "rate": 18184.45
+    "name": "Bulgarian Lev"
   },
   {
     "code": "BHD",
-    "name": "Bahraini Dinar",
-    "rate": 3867.93
+    "name": "Bahraini Dinar"
   },
   {
     "code": "BIF",
-    "name": "Burundian Franc",
-    "rate": 18937064.72
+    "name": "Burundian Franc"
   },
   {
     "code": "BMD",
-    "name": "Bermudan Dollar",
-    "rate": 10260.08
+    "name": "Bermudan Dollar"
   },
   {
     "code": "BND",
-    "name": "Brunei Dollar",
-    "rate": 13855.67
+    "name": "Brunei Dollar"
   },
   {
     "code": "BOB",
-    "name": "Bolivian Boliviano",
-    "rate": 70918.01
+    "name": "Bolivian Boliviano"
   },
   {
     "code": "BRL",
-    "name": "Brazilian Real",
-    "rate": 42055.03
+    "name": "Brazilian Real"
   },
   {
     "code": "BSD",
-    "name": "Bahamian Dollar",
-    "rate": 10260.08
+    "name": "Bahamian Dollar"
   },
   {
     "code": "BTN",
-    "name": "Bhutanese Ngultrum",
-    "rate": 737929.37
+    "name": "Bhutanese Ngultrum"
   },
   {
     "code": "BWP",
-    "name": "Botswanan Pula",
-    "rate": 111691.12
+    "name": "Botswanan Pula"
   },
   {
     "code": "BYN",
-    "name": "Belarusian Ruble",
-    "rate": 21432.72
+    "name": "Belarusian Ruble"
   },
   {
     "code": "BZD",
-    "name": "Belize Dollar",
-    "rate": 20688.04
+    "name": "Belize Dollar"
   },
   {
     "code": "CDF",
-    "name": "Congolese Franc",
-    "rate": 17036870.43
+    "name": "Congolese Franc"
   },
   {
     "code": "CLF",
-    "name": "Chilean Unit of Account (UF)",
-    "rate": 255.81
+    "name": "Chilean Unit of Account (UF)"
   },
   {
     "code": "CLP",
-    "name": "Chilean Peso",
-    "rate": 7334826.73
+    "name": "Chilean Peso"
   },
   {
     "code": "COP",
-    "name": "Colombian Peso",
-    "rate": 34609039.52
+    "name": "Colombian Peso"
   },
   {
     "code": "CRC",
-    "name": "Costa Rican Colón",
-    "rate": 5931768.57
+    "name": "Costa Rican Colón"
   },
   {
     "code": "CUP",
-    "name": "Cuban Peso",
-    "rate": 264196.99
+    "name": "Cuban Peso"
   },
   {
     "code": "CVE",
-    "name": "Cape Verdean Escudo",
-    "rate": 1023458.11
+    "name": "Cape Verdean Escudo"
   },
   {
     "code": "CZK",
-    "name": "Czech Koruna",
-    "rate": 240518.78
+    "name": "Czech Koruna"
   },
   {
     "code": "DJF",
-    "name": "Djiboutian Franc",
-    "rate": 1826293.78
+    "name": "Djiboutian Franc"
   },
   {
     "code": "DKK",
-    "name": "Danish Krone",
-    "rate": 69365.1
+    "name": "Danish Krone"
   },
   {
     "code": "DOP",
-    "name": "Dominican Peso",
-    "rate": 526085.47
+    "name": "Dominican Peso"
   },
   {
     "code": "DZD",
-    "name": "Algerian Dinar",
-    "rate": 1230798.88
+    "name": "Algerian Dinar"
   },
   {
     "code": "EGP",
-    "name": "Egyptian Pound",
-    "rate": 168880.87
+    "name": "Egyptian Pound"
   },
   {
     "code": "ETB",
-    "name": "Ethiopian Birr",
-    "rate": 301138.4
+    "name": "Ethiopian Birr"
   },
   {
     "code": "FJD",
-    "name": "Fijian Dollar",
-    "rate": 22314.2
+    "name": "Fijian Dollar"
   },
   {
     "code": "FKP",
-    "name": "Falkland Islands Pound",
-    "rate": 8312.67
+    "name": "Falkland Islands Pound"
   },
   {
     "code": "GEL",
-    "name": "Georgian Lari",
-    "rate": 30369.83
+    "name": "Georgian Lari"
   },
   {
     "code": "GHS",
-    "name": "Ghanaian Cedi",
-    "rate": 56115.44
+    "name": "Ghanaian Cedi"
   },
   {
     "code": "GIP",
-    "name": "Gibraltar Pound",
-    "rate": 8312.67
+    "name": "Gibraltar Pound"
   },
   {
     "code": "GMD",
-    "name": "Gambian Dalasi",
-    "rate": 517569.6
+    "name": "Gambian Dalasi"
   },
   {
     "code": "GNF",
-    "name": "Guinean Franc",
-    "rate": 94305127.44
+    "name": "Guinean Franc"
   },
   {
     "code": "GTQ",
-    "name": "Guatemalan Quetzal",
-    "rate": 79028.27
+    "name": "Guatemalan Quetzal"
   },
   {
     "code": "GYD",
-    "name": "Guyanaese Dollar",
-    "rate": 2140615.96
+    "name": "Guyanaese Dollar"
   },
   {
     "code": "HKD",
-    "name": "Hong Kong Dollar",
-    "rate": 80451.42
+    "name": "Hong Kong Dollar"
   },
   {
     "code": "HNL",
-    "name": "Honduran Lempira",
-    "rate": 251937.02
+    "name": "Honduran Lempira"
   },
   {
     "code": "HRK",
-    "name": "Croatian Kuna",
-    "rate": 68759.02
+    "name": "Croatian Kuna"
   },
   {
     "code": "HTG",
-    "name": "Haitian Gourde",
-    "rate": 974824.96
+    "name": "Haitian Gourde"
   },
   {
     "code": "HUF",
-    "name": "Hungarian Forint",
-    "rate": 3083373.43
+    "name": "Hungarian Forint"
   },
   {
     "code": "IDR",
-    "name": "Indonesian Rupiah",
-    "rate": 144126511.85
+    "name": "Indonesian Rupiah"
   },
   {
     "code": "ILS",
-    "name": "Israeli Shekel",
-    "rate": 36313.49
+    "name": "Israeli Shekel"
   },
   {
     "code": "INR",
-    "name": "Indian Rupee",
-    "rate": 737685.74
+    "name": "Indian Rupee"
   },
   {
     "code": "IQD",
-    "name": "Iraqi Dinar",
-    "rate": 12246474.92
+    "name": "Iraqi Dinar"
   },
   {
     "code": "IRR",
-    "name": "Iranian Rial",
-    "rate": 432000558.72
+    "name": "Iranian Rial"
   },
   {
     "code": "ISK",
-    "name": "Icelandic Króna",
-    "rate": 1289537.77
+    "name": "Icelandic Króna"
   },
   {
     "code": "JEP",
-    "name": "Jersey Pound",
-    "rate": 8312.67
+    "name": "Jersey Pound"
   },
   {
     "code": "JMD",
-    "name": "Jamaican Dollar",
-    "rate": 1407356.08
+    "name": "Jamaican Dollar"
   },
   {
     "code": "JOD",
-    "name": "Jordanian Dinar",
-    "rate": 7274.41
+    "name": "Jordanian Dinar"
   },
   {
     "code": "KES",
-    "name": "Kenyan Shilling",
-    "rate": 1063354.42
+    "name": "Kenyan Shilling"
   },
   {
     "code": "KGS",
-    "name": "Kyrgystani Som",
-    "rate": 714818.27
+    "name": "Kyrgystani Som"
   },
   {
     "code": "KHR",
-    "name": "Cambodian Riel",
-    "rate": 42109802.68
+    "name": "Cambodian Riel"
   },
   {
     "code": "KMF",
-    "name": "Comorian Franc",
-    "rate": 4570324.11
+    "name": "Comorian Franc"
   },
   {
     "code": "KPW",
-    "name": "North Korean Won",
-    "rate": 9234069.66
+    "name": "North Korean Won"
   },
   {
     "code": "KWD",
-    "name": "Kuwaiti Dinar",
-    "rate": 3118.04
+    "name": "Kuwaiti Dinar"
   },
   {
     "code": "KYD",
-    "name": "Cayman Islands Dollar",
-    "rate": 8552.67
+    "name": "Cayman Islands Dollar"
   },
   {
     "code": "KZT",
-    "name": "Kazakhstani Tenge",
-    "rate": 3962954.89
+    "name": "Kazakhstani Tenge"
   },
   {
     "code": "LAK",
-    "name": "Laotian Kip",
-    "rate": 90310801.84
+    "name": "Laotian Kip"
   },
   {
     "code": "LBP",
-    "name": "Lebanese Pound",
-    "rate": 15519920.82
+    "name": "Lebanese Pound"
   },
   {
     "code": "LKR",
-    "name": "Sri Lankan Rupee",
-    "rate": 1851485.92
+    "name": "Sri Lankan Rupee"
   },
   {
     "code": "LRD",
-    "name": "Liberian Dollar",
-    "rate": 2144355.86
+    "name": "Liberian Dollar"
   },
   {
     "code": "LSL",
-    "name": "Lesotho Loti",
-    "rate": 150694.47
+    "name": "Lesotho Loti"
   },
   {
     "code": "LYD",
-    "name": "Libyan Dinar",
-    "rate": 14496.58
+    "name": "Libyan Dinar"
   },
   {
     "code": "MAD",
-    "name": "Moroccan Dirham",
-    "rate": 99079.52
+    "name": "Moroccan Dirham"
   },
   {
     "code": "MDL",
-    "name": "Moldovan Leu",
-    "rate": 182322.86
+    "name": "Moldovan Leu"
   },
   {
     "code": "MGA",
-    "name": "Malagasy Ariary",
-    "rate": 38405181.55
+    "name": "Malagasy Ariary"
   },
   {
     "code": "MKD",
-    "name": "Macedonian Denar",
-    "rate": 571576.8
+    "name": "Macedonian Denar"
   },
   {
     "code": "MMK",
-    "name": "Myanma Kyat",
-    "rate": 15661513.17
+    "name": "Myanma Kyat"
   },
   {
     "code": "MNT",
-    "name": "Mongolian Tugrik",
-    "rate": 27347793.41
+    "name": "Mongolian Tugrik"
   },
   {
     "code": "MOP",
-    "name": "Macanese Pataca",
-    "rate": 82897.89
+    "name": "Macanese Pataca"
   },
   {
     "code": "MRU",
-    "name": "Mauritanian Ouguiya",
-    "rate": 380438.54
+    "name": "Mauritanian Ouguiya"
   },
   {
     "code": "MUR",
-    "name": "Mauritian Rupee",
-    "rate": 371173.69
+    "name": "Mauritian Rupee"
   },
   {
     "code": "MVR",
-    "name": "Maldivian Rufiyaa",
-    "rate": 158005.46
+    "name": "Maldivian Rufiyaa"
   },
   {
     "code": "MWK",
-    "name": "Malawian Kwacha",
-    "rate": 7441316.16
+    "name": "Malawian Kwacha"
   },
   {
     "code": "MXN",
-    "name": "Mexican Peso",
-    "rate": 200659.67
+    "name": "Mexican Peso"
   },
   {
     "code": "MYR",
-    "name": "Malaysian Ringgit",
-    "rate": 42789.56
+    "name": "Malaysian Ringgit"
   },
   {
     "code": "MZN",
-    "name": "Mozambican Metical",
-    "rate": 632547.06
+    "name": "Mozambican Metical"
   },
   {
     "code": "NAD",
-    "name": "Namibian Dollar",
-    "rate": 150694.47
+    "name": "Namibian Dollar"
   },
   {
     "code": "NGN",
-    "name": "Nigerian Naira",
-    "rate": 3710249.19
+    "name": "Nigerian Naira"
   },
   {
     "code": "NIO",
-    "name": "Nicaraguan Córdoba",
-    "rate": 344286.38
+    "name": "Nicaraguan Córdoba"
   },
   {
     "code": "NOK",
-    "name": "Norwegian Krone",
-    "rate": 92124.87
+    "name": "Norwegian Krone"
   },
   {
     "code": "NPR",
-    "name": "Nepalese Rupee",
-    "rate": 1180677.88
+    "name": "Nepalese Rupee"
   },
   {
     "code": "OMR",
-    "name": "Omani Rial",
-    "rate": 3950.03
+    "name": "Omani Rial"
   },
   {
     "code": "PAB",
-    "name": "Panamanian Balboa",
-    "rate": 10260.08
+    "name": "Panamanian Balboa"
   },
   {
     "code": "PAX",
-    "name": "Paxos Standard USD",
-    "rate": 10260.08
+    "name": "Paxos Standard USD"
   },
   {
     "code": "PEN",
-    "name": "Peruvian Nuevo Sol",
-    "rate": 34367.61
+    "name": "Peruvian Nuevo Sol"
   },
   {
     "code": "PGK",
-    "name": "Papua New Guinean Kina",
-    "rate": 34931.37
+    "name": "Papua New Guinean Kina"
   },
   {
     "code": "PHP",
-    "name": "Philippine Peso",
-    "rate": 534252.49
+    "name": "Philippine Peso"
   },
   {
     "code": "PKR",
-    "name": "Pakistani Rupee",
-    "rate": 1608754.51
+    "name": "Pakistani Rupee"
   },
   {
     "code": "PLN",
-    "name": "Polish Zloty",
-    "rate": 40288.58
+    "name": "Polish Zloty"
   },
   {
     "code": "PYG",
-    "name": "Paraguayan Guarani",
-    "rate": 64636844.5
+    "name": "Paraguayan Guarani"
   },
   {
     "code": "QAR",
-    "name": "Qatari Rial",
-    "rate": 37356.94
+    "name": "Qatari Rial"
   },
   {
     "code": "RON",
-    "name": "Romanian Leu",
-    "rate": 44014.03
+    "name": "Romanian Leu"
   },
   {
     "code": "RSD",
-    "name": "Serbian Dinar",
-    "rate": 1092776.64
+    "name": "Serbian Dinar"
   },
   {
     "code": "RUB",
-    "name": "Russian Ruble",
-    "rate": 671586.7
+    "name": "Russian Ruble"
   },
   {
     "code": "RWF",
-    "name": "Rwandan Franc",
-    "rate": 9459275.6
+    "name": "Rwandan Franc"
   },
   {
     "code": "SAR",
-    "name": "Saudi Riyal",
-    "rate": 38489.46
+    "name": "Saudi Riyal"
   },
   {
     "code": "SBD",
-    "name": "Solomon Islands Dollar",
-    "rate": 84536.53
+    "name": "Solomon Islands Dollar"
   },
   {
     "code": "SCR",
-    "name": "Seychellois Rupee",
-    "rate": 140551.57
+    "name": "Seychellois Rupee"
   },
   {
     "code": "SDG",
-    "name": "Sudanese Pound",
-    "rate": 463011.22
+    "name": "Sudanese Pound"
   },
   {
     "code": "SGD",
-    "name": "Singapore Dollar",
-    "rate": 14156.14
+    "name": "Singapore Dollar"
   },
   {
     "code": "SHP",
-    "name": "Saint Helena Pound",
-    "rate": 8312.67
+    "name": "Saint Helena Pound"
   },
   {
     "code": "SLL",
-    "name": "Sierra Leonean Leone",
-    "rate": 96321606.09
+    "name": "Sierra Leonean Leone"
   },
   {
     "code": "SOS",
-    "name": "Somali Shilling",
-    "rate": 5937393.74
+    "name": "Somali Shilling"
   },
   {
     "code": "SRD",
-    "name": "Surinamese Dollar",
-    "rate": 76519.66
+    "name": "Surinamese Dollar"
   },
   {
     "code": "STN",
-    "name": "São Tomé and Príncipe Dobra",
-    "rate": 228286.72
+    "name": "São Tomé and Príncipe Dobra"
   },
   {
     "code": "SVC",
-    "name": "Salvadoran Colón",
-    "rate": 89804.55
+    "name": "Salvadoran Colón"
   },
   {
     "code": "SYP",
-    "name": "Syrian Pound",
-    "rate": 5288761.78
+    "name": "Syrian Pound"
   },
   {
     "code": "SZL",
-    "name": "Swazi Lilangeni",
-    "rate": 150648.54
+    "name": "Swazi Lilangeni"
   },
   {
     "code": "THB",
-    "name": "Thai Baht",
-    "rate": 314163.57
+    "name": "Thai Baht"
   },
   {
     "code": "TJS",
-    "name": "Tajikistani Somoni",
-    "rate": 99456.53
+    "name": "Tajikistani Somoni"
   },
   {
     "code": "TMT",
-    "name": "Turkmenistani Manat",
-    "rate": 35910.13
+    "name": "Turkmenistani Manat"
   },
   {
     "code": "TND",
-    "name": "Tunisian Dinar",
-    "rate": 29444.37
+    "name": "Tunisian Dinar"
   },
   {
     "code": "TOP",
-    "name": "Tongan Paʻanga",
-    "rate": 23715.66
+    "name": "Tongan Paʻanga"
   },
   {
     "code": "TRY",
-    "name": "Turkish Lira",
-    "rate": 59193.78
+    "name": "Turkish Lira"
   },
   {
     "code": "TTD",
-    "name": "Trinidad and Tobago Dollar",
-    "rate": 69533.64
+    "name": "Trinidad and Tobago Dollar"
   },
   {
     "code": "TWD",
-    "name": "New Taiwan Dollar",
-    "rate": 320361.43
+    "name": "New Taiwan Dollar"
   },
   {
     "code": "TZS",
-    "name": "Tanzanian Shilling",
-    "rate": 23597152
+    "name": "Tanzanian Shilling"
   },
   {
     "code": "UAH",
-    "name": "Ukrainian Hryvnia",
-    "rate": 256440.37
+    "name": "Ukrainian Hryvnia"
   },
   {
     "code": "UGX",
-    "name": "Ugandan Shilling",
-    "rate": 37645512.17
+    "name": "Ugandan Shilling"
   },
   {
     "code": "UYU",
-    "name": "Uruguayan Peso",
-    "rate": 373944.51
+    "name": "Uruguayan Peso"
   },
   {
     "code": "UZS",
-    "name": "Uzbekistan Som",
-    "rate": 96475880.43
+    "name": "Uzbekistan Som"
   },
   {
     "code": "VEF",
-    "name": "Venezuelan Bolívar Fuerte",
-    "rate": 2549502441.09
+    "name": "Venezuelan Bolívar Fuerte"
   },
   {
     "code": "VES",
-    "name": "Venezuelan Bolívar Soberano",
-    "rate": 209325861.29
+    "name": "Venezuelan Bolívar Soberano"
   },
   {
     "code": "VND",
-    "name": "Vietnamese Dong",
-    "rate": 238116424.27
+    "name": "Vietnamese Dong"
   },
   {
     "code": "VUV",
-    "name": "Vanuatu Vatu",
-    "rate": 1191724.41
+    "name": "Vanuatu Vatu"
   },
   {
     "code": "WST",
-    "name": "Samoan Tala",
-    "rate": 27121.55
+    "name": "Samoan Tala"
   },
   {
     "code": "XAF",
-    "name": "CFA Franc BEAC",
-    "rate": 6099243.09
+    "name": "CFA Franc BEAC"
   },
   {
     "code": "XCD",
-    "name": "East Caribbean Dollar",
-    "rate": 27728.37
+    "name": "East Caribbean Dollar"
   },
   {
     "code": "XOF",
-    "name": "CFA Franc BCEAO",
-    "rate": 6099243.09
+    "name": "CFA Franc BCEAO"
   },
   {
     "code": "XPF",
-    "name": "CFP Franc",
-    "rate": 1109574.72
+    "name": "CFP Franc"
   },
   {
     "code": "YER",
-    "name": "Yemeni Rial",
-    "rate": 2568104.37
+    "name": "Yemeni Rial"
   },
   {
     "code": "ZAR",
-    "name": "South African Rand",
-    "rate": 150697.91
+    "name": "South African Rand"
   },
   {
     "code": "ZMW",
-    "name": "Zambian Kwacha",
-    "rate": 134704.56
+    "name": "Zambian Kwacha"
   },
   {
     "code": "ZWL",
-    "name": "Zimbabwean Dollar",
-    "rate": 3303744.93
+    "name": "Zimbabwean Dollar"
   },
   {
     "code": "XAG",
-    "name": "Silver (troy ounce)",
-    "rate": 571.8
+    "name": "Silver (troy ounce)"
   },
   {
     "code": "XAU",
-    "name": "Gold (troy ounce)",
-    "rate": 6.87
+    "name": "Gold (troy ounce)"
   }
 ]
