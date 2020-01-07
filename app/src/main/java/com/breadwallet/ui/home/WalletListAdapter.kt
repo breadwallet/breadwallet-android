@@ -267,7 +267,7 @@ class WalletListAdapter(
                 icon_letter.text = currencyCode.substring(0, 1).toUpperCase()
             }
 
-            val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode)
+            val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, context)
             val startColor = uiConfiguration.startColor
             val endColor = uiConfiguration.endColor
             val drawable =
