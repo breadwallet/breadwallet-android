@@ -130,9 +130,9 @@ class BreadBoxEffectHandler(
         breadBox
             .getSystemUnsafe()!!
             .networks
-            .first { it.currency.code.isEthereum() }
+            .first { it.currency.isEthereum() }
             .run { unitsFor(currency).get() }
-            .first { it.symbol == "gwei" }
+            .first { it.symbol.contains("gwei", true) }
 }
 
 private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {

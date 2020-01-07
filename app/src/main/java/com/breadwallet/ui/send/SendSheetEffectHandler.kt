@@ -90,8 +90,9 @@ class SendSheetEffectHandler(
     private fun validateAddress(effect: SendSheetEffect.ValidateAddress) {
         breadBox.wallet(effect.currencyCode)
             .take(1)
-            .map {
-                val isValid = it.addressFor(effect.address) != null
+            .map { wallet ->
+                val address = wallet.addressFor(effect.address)
+                val isValid = address != null && !wallet.containsAddress(address)
                 SendSheetEvent.OnAddressValidated(
                     address = effect.address,
                     isValid = isValid,
@@ -202,9 +203,8 @@ class SendSheetEffectHandler(
         breadBox.wallet(effect.currencyCode)
             .take(1)
             .map { wallet ->
-                // TODO: Support receive address validation, requires core interface
                 val address = wallet.addressFor(reqAddress)
-                if (address == null || wallet.source == address) {
+                if (address == null || wallet.containsAddress(address)) {
                     SendSheetEvent.OnAddressPasted.InvalidAddress
                 } else {
                     SendSheetEvent.OnAddressPasted.ValidAddress(reqAddress)
