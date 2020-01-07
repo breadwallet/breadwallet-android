@@ -31,7 +31,6 @@ package com.breadwallet.ui.navigation
 import android.content.Intent
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
-import com.breadwallet.legacy.presenter.activities.settings.DisplayCurrencyActivity
 import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
 import com.breadwallet.legacy.presenter.activities.settings.SyncBlockchainActivity
@@ -41,7 +40,6 @@ import com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.platform.HTTPServer
@@ -170,10 +168,7 @@ class NavigationEffectHandler(
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
-    override fun goToDisplayCurrency() {
-        activity.startActivity(Intent(activity, DisplayCurrencyActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToDisplayCurrency() = Unit
 
     override fun goToNotificationsSettings() {
         NotificationsSettingsActivity.start(activity)

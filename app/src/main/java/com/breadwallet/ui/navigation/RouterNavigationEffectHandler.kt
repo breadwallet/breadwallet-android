@@ -46,6 +46,7 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
 import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
@@ -278,7 +279,13 @@ class RouterNavigationEffectHandler(
 
     override fun goToAbout() = Unit
 
-    override fun goToDisplayCurrency() = Unit
+    override fun goToDisplayCurrency() {
+        router.pushController(
+            RouterTransaction.with(DisplayCurrencyController())
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
 
     override fun goToNotificationsSettings() = Unit
 

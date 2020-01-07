@@ -81,7 +81,6 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
                 SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
                 SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
-                SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
                 SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
@@ -104,6 +103,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync
+                SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 else -> null
             }
         })
