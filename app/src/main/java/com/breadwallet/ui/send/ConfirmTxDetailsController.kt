@@ -87,6 +87,8 @@ class ConfirmTxDetailsController(
         to_address.text = targetAddress
         amount_value.text = fiatAmountString
 
+        val isErc20 = !currencyCode.equals("eth", true) && feeCurrencyCode.equals("eth", true)
+
         val processingTime = res.getString(
             when {
                 isErc20 -> R.string.FeeSelector_ethTime
@@ -99,12 +101,7 @@ class ConfirmTxDetailsController(
         )
         processing_time_label.text = res.getString(R.string.Confirmation_processingTime, processingTime)
 
-        network_fee_label.text = res.getString(
-            when {
-                isErc20 -> R.string.Confirmation_feeLabelETH
-                else -> R.string.Confirmation_feeLabel
-            }
-        )
+        network_fee_label.setText(R.string.Confirmation_feeLabel)
         total_cost_label.isGone = isErc20
         total_cost_value.isGone = isErc20
         total_cost_value.text = fiatTotalCost.formatFiatForUi(fiatCode)

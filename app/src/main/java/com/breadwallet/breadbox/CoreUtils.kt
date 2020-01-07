@@ -59,7 +59,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
@@ -143,24 +142,6 @@ fun Wallet.estimateFee(
     )
 
     awaitClose()
-}
-
-/** Returns a [Flow] which will eventually emit a new [Transfer] or an error. */
-fun Wallet.sendTransfer(
-    phrase: ByteArray,
-    address: String,
-    amount: Amount,
-    transferFeeBasis: TransferFeeBasis
-): Flow<Transfer> = flow {
-    val transfer = createTransfer(
-        checkNotNull(addressFor(address)),
-        amount,
-        transferFeeBasis
-    ).get()
-
-    walletManager.submit(transfer, phrase)
-
-    emit(transfer)
 }
 
 suspend fun WalletManager.createSweeper(

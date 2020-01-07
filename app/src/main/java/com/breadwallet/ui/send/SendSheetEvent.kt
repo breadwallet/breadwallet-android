@@ -20,7 +20,9 @@ sealed class SendSheetEvent {
     ) : SendSheetEvent()
 
     data class OnExchangeRateUpdated(
-        val fiatPricePerUnit: BigDecimal
+        val fiatPricePerUnit: BigDecimal,
+        val fiatPricePerFeeUnit: BigDecimal,
+        val feeCurrencyCode: CurrencyCode
     ) : SendSheetEvent()
 
     data class OnBalanceUpdated(
@@ -31,6 +33,8 @@ sealed class SendSheetEvent {
             return "OnBalanceUpdated(balance='***', fiatBalance='***')"
         }
     }
+
+    object OnNetworkFeeError : SendSheetEvent()
 
     data class OnNetworkFeeUpdated(
         val networkFee: BigDecimal,
