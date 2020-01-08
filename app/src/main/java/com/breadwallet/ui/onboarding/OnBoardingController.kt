@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.onboarding
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.View
@@ -73,8 +72,8 @@ class OnBoardingController(
             direct.instance(),
             direct.instance(),
             { eventConsumer },
-            { router },
-            { activity as Context })
+            { router }
+        )
     }
 
     override val defaultModel = OnBoardingModel.DEFAULT
