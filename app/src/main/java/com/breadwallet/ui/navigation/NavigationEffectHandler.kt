@@ -147,9 +147,7 @@ class NavigationEffectHandler(
 
     override fun goToAddWallet() = Unit
 
-    override fun goToDisabledScreen() {
-        UiUtils.showWalletDisabled(activity)
-    }
+    override fun goToDisabledScreen() = Unit
 
     override fun goToQrScan() = Unit
 

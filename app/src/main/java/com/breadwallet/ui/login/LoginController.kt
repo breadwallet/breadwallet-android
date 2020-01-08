@@ -86,15 +86,10 @@ class LoginController(args: Bundle? = null) :
                 showFingerprintPrompt = ::showFingerprintPrompt
             )
         },
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                LoginEffect.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
                 is LoginEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                LoginEffect.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
                 LoginEffect.GoToHome -> NavigationEffect.GoToHome
                 else -> null
             }
