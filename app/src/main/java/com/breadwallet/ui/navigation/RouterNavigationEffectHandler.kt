@@ -32,6 +32,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
+import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
@@ -241,7 +242,9 @@ class RouterNavigationEffectHandler(
 
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) = Unit
 
-    override fun goToDisabledScreen() = Unit
+    override fun goToDisabledScreen() {
+        UiUtils.showWalletDisabled(checkNotNull(router.activity))
+    }
 
     override fun goToQrScan() {
         val controller = ScannerController()
