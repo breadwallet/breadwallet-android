@@ -134,7 +134,6 @@ object OnBoardingUpdate : Update<OnBoardingModel, OnBoardingEvent, OnBoardingEff
             SetupError.PhraseCreationFailed,
             SetupError.PhraseStoreFailed,
             SetupError.PhraseLoadFailed,
-            SetupError.AccountKeyCreationFailed,
             SetupError.ApiKeyCreationFailed,
             SetupError.StoreWalletFailed,
             SetupError.CryptoSystemBootError ->

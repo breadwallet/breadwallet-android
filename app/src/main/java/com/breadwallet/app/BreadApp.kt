@@ -172,11 +172,9 @@ class BreadApp : Application(), KodeinAware {
 
         /**
          * Initializes the application state.
-         *
-         * @param isApplicationOnCreate True if the caller is [BreadApp.onCreate]; false, otherwise.
          */
         @JvmStatic
-        fun initialize(isApplicationOnCreate: Boolean) {
+        fun initialize() {
             // Things that should be done only if the wallet exists.
             if (isBRDWalletInitialized) {
                 // Initialize the wallet id (also called rewards id).
@@ -201,6 +199,9 @@ class BreadApp : Application(), KodeinAware {
          */
         private val isBRDWalletInitialized: Boolean
             get() = BRKeyStore.getAccount(mInstance) != null
+
+        val isMigrationRequired: Boolean
+            get() = BRKeyStore.getMasterPublicKey(mInstance) != null
 
         /**
          * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
@@ -444,7 +445,7 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        initialize(true)
+        initialize()
 
         registerReceiver(
             InternetManager.getInstance(),
@@ -464,30 +465,7 @@ class BreadApp : Application(), KodeinAware {
         val breadBox = getBreadBox()
 
         if (isDeviceStateValid && isBRDWalletInitialized) {
-            BreadBoxCloseWorker.cancelEnqueuedWork()
-
-            if (!breadBox.isOpen) {
-                val account = BRKeyStore.getAccount(this@BreadApp)
-                if (account == null) {
-                    logError("Wallet is initialized but Account is null")
-                } else {
-                    breadBox.open(account)
-                }
-            }
-
-            getAccountMetaDataProvider()
-                .recoverAll()
-                .launchIn(startedScope)
-
-            HTTPServer.getInstance().startServer(this)
-
-            BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                .execute { TokenUtil.fetchTokensFromServer(mInstance) }
-            APIClient.getInstance(this).updatePlatform()
-
-            BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                .execute { UserMetricsUtil.makeUserMetricsRequest(mInstance) }
-            incrementAppForegroundedCounter()
+            startWithInitializedWallet(breadBox)
         }
 
         // Update rate information when wallets change
@@ -546,6 +524,32 @@ class BreadApp : Application(), KodeinAware {
 
         getBreadBox().apply { if (isOpen) close() }
         applicationScope.cancel()
+    }
+
+    fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
+        BreadBoxCloseWorker.cancelEnqueuedWork()
+
+        if (!breadBox.isOpen) {
+            val account = checkNotNull(BRKeyStore.getAccount(this@BreadApp)) {
+                "Wallet is initialized but Account is null"
+            }
+
+            breadBox.open(account)
+        }
+
+        getAccountMetaDataProvider()
+            .recoverAll(migrate)
+            .launchIn(startedScope)
+
+        HTTPServer.getInstance().startServer(this)
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks()
+            .execute { TokenUtil.fetchTokensFromServer(mInstance) }
+        APIClient.getInstance(this).updatePlatform()
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks()
+            .execute { UserMetricsUtil.makeUserMetricsRequest(mInstance) }
+        incrementAppForegroundedCounter()
     }
 
     /**

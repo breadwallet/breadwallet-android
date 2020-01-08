@@ -67,7 +67,6 @@ import com.platform.interfaces.AccountMetaDataProvider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -77,6 +76,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -567,6 +567,17 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void deleteMasterPublicKey(Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(PUB_KEY_ALIAS);
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            removeAliasAndDatas(keyStore, obj.mAlias, context);
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException e) {
+            e.printStackTrace();
+        }
     }
 
     public static byte[] getMasterPublicKey(final Context context) {

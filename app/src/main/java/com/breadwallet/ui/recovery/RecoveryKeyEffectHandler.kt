@@ -199,20 +199,9 @@ class RecoveryKeyEffectHandler(
 
             val uids = BRSharedPrefs.getDeviceId()
             val account = Account.createFromPhrase(phraseBytes, creationDate, uids)
-            val accountKey = Key.createFromPhrase(phraseBytes, words).run {
-                when {
-                    isPresent -> get()
-                    else -> {
-                        logError("Failed to create key from phrase.")
-                        // TODO: Define generic initialization error with retry
-                        output.accept(RecoveryKeyEvent.OnPhraseInvalid)
-                        return@launch
-                    }
-                }
-            }
 
             try {
-                setupWallet(account, accountKey, creationDate, context)
+                setupWallet(account, creationDate, context)
             } catch (e: Exception) {
                 logError("Error setting up wallet", e)
                 // TODO: Define generic initialization error with retry
@@ -240,15 +229,13 @@ class RecoveryKeyEffectHandler(
         BRKeyStore.putAuthKey(apiKey.encodeAsPrivate(), context)
     }
 
-    /** Stores [account], [accountKey], and [creationDate] in [BRKeyStore]. */
+    /** Stores [account] and [creationDate] in [BRKeyStore]. */
     private fun setupWallet(
         account: Account,
-        accountKey: Key,
         creationDate: Date,
         context: Context
     ) {
         BRKeyStore.putAccount(account, context)
-        BRKeyStore.putMasterPublicKey(accountKey.encodeAsPublic(), context)
         BRKeyStore.putWalletCreationTime(creationDate.time.toInt(), context)
     }
 
