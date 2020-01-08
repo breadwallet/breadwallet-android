@@ -44,7 +44,6 @@ sealed class OnBoardingEvent {
         object PhraseStoreFailed : SetupError()
         object PhraseLoadFailed : SetupError()
 
-        object AccountKeyCreationFailed : SetupError()
         object ApiKeyCreationFailed : SetupError()
 
         object StoreWalletFailed : SetupError()

@@ -50,6 +50,7 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
+import com.breadwallet.ui.migrate.MigrateController
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
@@ -114,6 +115,7 @@ class MainActivity : BRActivity() {
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
             val rootController = when {
+                !BreadApp.hasWallet() && BreadApp.isMigrationRequired -> MigrateController()
                 BreadApp.hasWallet() -> {
                     if (BRKeyStore.getPinCode(this).isNotBlank()) {
                         val intentUrl = processIntentData(intent)
