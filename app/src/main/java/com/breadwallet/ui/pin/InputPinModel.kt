@@ -52,4 +52,13 @@ data class InputPinModel(
         NEW,     // Chose a new pin
         CONFIRM  // Confirm the new pin
     }
+
+    override fun toString(): String {
+        return "InputPinModel(mode=$mode, " +
+            "pin='***', " +
+            "pinConfirmation='***', " +
+            "pinUpdateMode=$pinUpdateMode, " +
+            "skipWriteDownKey=$skipWriteDownKey, " +
+            "onComplete=$onComplete)"
+    }
 }
