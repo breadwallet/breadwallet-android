@@ -84,14 +84,9 @@ class InputPinController(args: Bundle) :
                 { toastLong(R.string.UpdatePin_setPinError) }
             )
         },
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                InputPinEffect.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                InputPinEffect.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
                 InputPinEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
                 InputPinEffect.GoToHome -> NavigationEffect.GoToHome
                 is InputPinEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
