@@ -24,14 +24,12 @@
  */
 package com.breadwallet.ui.onboarding
 
-import android.content.Context
 import com.bluelinelabs.conductor.Router
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.platform.interfaces.AccountMetaDataProvider
@@ -49,8 +47,7 @@ class OnBoardingEffectHandler(
     private val breadBox: BreadBox,
     private val metadataProvider: AccountMetaDataProvider,
     private val outputProvider: () -> Consumer<OnBoardingEvent>,
-    private val routerProvider: () -> Router,
-    private val contextProvider: () -> Context // TODO: Remove context dependency
+    private val routerProvider: () -> Router
 ) : Connection<OnBoardingEffect>, CoroutineScope {
 
     override val coroutineContext = coroutineJob + Dispatchers.Default
@@ -93,15 +90,10 @@ class OnBoardingEffectHandler(
         // Create signing keys
         val words = Key.getDefaultWordList()
 
-        val accountKey = createAccountKey(phrase, words) ?: return
         val apiKey = createApiAuthKey(phrase, words) ?: return
 
         try {
             setupWallet(account, apiKey, creationDate)
-            withContext(Dispatchers.Main) {
-                // TODO: We will remove mpk and use it to trigger migration
-                BRKeyStore.putMasterPublicKey(accountKey.encodeAsPublic(), contextProvider())
-            }
         } catch (e: Exception) {
             logError("Error storing wallet data.", e)
             outputProvider().accept(OnBoardingEvent.SetupError.StoreWalletFailed)
@@ -158,21 +150,6 @@ class OnBoardingEffectHandler(
                 logError("Failed to load phrase.", e)
                 outputProvider().accept(OnBoardingEvent.SetupError.PhraseLoadFailed)
                 null
-            }
-        }
-    }
-
-    private suspend fun createAccountKey(phrase: ByteArray, words: List<String>): Key? {
-        return withContext(Dispatchers.Default) {
-            Key.createFromPhrase(phrase, words).run {
-                when {
-                    isPresent -> get()
-                    else -> {
-                        logError("Failed to create key from phrase.")
-                        outputProvider().accept(OnBoardingEvent.SetupError.AccountKeyCreationFailed)
-                        null
-                    }
-                }
             }
         }
     }
