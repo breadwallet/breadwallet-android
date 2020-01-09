@@ -37,7 +37,6 @@ import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.setPinCode
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Bip39Reader
-import com.platform.APIClient
 import com.platform.entities.WalletInfoData
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
@@ -52,7 +51,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.Normalizer
 import java.util.Date
 import java.util.Locale
@@ -218,7 +216,7 @@ class RecoveryKeyEffectHandler(
                 return@launch
             }
 
-            updateTokensAndPlatform(context)
+            (context.applicationContext as BreadApp).startWithInitializedWallet(breadBox, false)
 
             output.accept(RecoveryKeyEvent.OnRecoveryComplete)
         }
@@ -237,18 +235,6 @@ class RecoveryKeyEffectHandler(
     ) {
         BRKeyStore.putAccount(account, context)
         BRKeyStore.putWalletCreationTime(creationDate.time.toInt(), context)
-    }
-
-    // TODO: These operations should occur elsewhere as a side-effect
-    //   of the crypto system being initialized.
-    private suspend fun updateTokensAndPlatform(context: Context) {
-        withContext(Dispatchers.IO) {
-            try {
-                APIClient.getInstance(context).updatePlatform()
-            } catch (e: Exception) {
-                logError("Failed to sync token list or update platform.", e)
-            }
-        }
     }
 
     /**
