@@ -37,6 +37,8 @@ sealed class SendSheetEvent {
     object OnNetworkFeeError : SendSheetEvent()
 
     data class OnNetworkFeeUpdated(
+        val targetAddress: String,
+        val amount: BigDecimal,
         val networkFee: BigDecimal,
         val transferFeeBasis: TransferFeeBasis
     ) : SendSheetEvent()
@@ -47,8 +49,7 @@ sealed class SendSheetEvent {
 
     data class OnAddressValidated(
         val address: String,
-        val isValid: Boolean,
-        val clear: Boolean
+        val isValid: Boolean
     ) : SendSheetEvent() {
         override fun toString() = "OnAddressValidated(isValid=$isValid)"
     }

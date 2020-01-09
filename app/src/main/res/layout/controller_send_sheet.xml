@@ -111,7 +111,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator0">
 
-            <com.breadwallet.legacy.presenter.customviews.BREdit
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/textInputAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
@@ -196,7 +196,7 @@
             app:layout_constraintTop_toBottomOf="@+id/separator"
             app:layout_constraintVertical_bias="0.0">
 
-            <com.breadwallet.legacy.presenter.customviews.BREdit
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/textInputAmount"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -307,11 +307,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
-                android:weightSum="3.0"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/BRText2">
+                android:weightSum="3.0">
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton
                     android:id="@+id/buttonEconomy"
@@ -406,7 +402,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator3">
 
-            <com.breadwallet.legacy.presenter.customviews.BREdit
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/textInputMemo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
