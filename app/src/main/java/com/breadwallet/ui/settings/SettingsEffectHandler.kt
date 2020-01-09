@@ -289,8 +289,12 @@ class SettingsEffectHandler(
                 subHeader = ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.TOKEN)
             ),
             SettingsItem(
-                "Fastsync",
-                SettingsOption.FAST_SYNC
+                "Fastsync (btc)",
+                SettingsOption.FAST_SYNC_BTC
+            ),
+            SettingsItem(
+                "Fastsync (bch)",
+                SettingsOption.FAST_SYNC_BCH
             )
         )
     }

@@ -1,9 +1,11 @@
 package com.breadwallet.ui.settings.fastsync
 
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
@@ -16,6 +18,7 @@ import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavEffectTransformer
+import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.flow.subtypeEffectHandler
@@ -36,13 +39,22 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+import java.util.Locale
+
+private const val CURRENCY_CODE = "currency_code"
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
-class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, FastSyncEffect>(),
+class FastSyncController(
+    args: Bundle
+) : BaseMobiusController<FastSyncModel, FastSyncEvent, FastSyncEffect>(args),
     AlertDialogController.Listener {
 
+    constructor(currencyCode: CurrencyCode) : this(
+        bundleOf(CURRENCY_CODE to currencyCode)
+    )
+
     override val layoutId = R.layout.controller_fast_sync
-    override val defaultModel = FastSyncModel.createDefault()
+    override val defaultModel = FastSyncModel.createDefault(arg(CURRENCY_CODE))
     override val init = FastSyncInit
     override val update = FastSyncUpdate
     override val flowEffectHandler
@@ -55,8 +67,7 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
             addFunctionSync<FastSyncEffect.LoadCurrencyIds>(Default) {
                 FastSyncEvent.OnCurrencyIdsUpdated(
                     TokenUtil.getTokenItems(applicationContext)
-                        .filter { it.symbol.isBitcoin() }
-                        .associateBy { it.symbol }
+                        .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
                         .mapValues { it.value.currencyId ?: "" }
                 )
             }
@@ -80,9 +91,11 @@ class FastSyncController : BaseMobiusController<FastSyncModel, FastSyncEvent, Fa
                         when (event) {
                             is MetaDataEvent.OnWalletModesUpdated ->
                                 FastSyncEvent.OnSyncModesUpdated(
-                                    event.modeMap.mapValues { entry ->
-                                        SyncMode.fromWalletManagerMode(entry.value)
-                                    }
+                                    event.modeMap
+                                        .filterKeys { currencyId -> currencyId.isNotBlank() }
+                                        .mapValues { entry ->
+                                            SyncMode.fromWalletManagerMode(entry.value)
+                                        }
                                 )
                             else -> null
                         }
