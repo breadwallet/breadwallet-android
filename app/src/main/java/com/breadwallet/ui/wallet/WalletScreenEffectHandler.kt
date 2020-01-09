@@ -14,6 +14,7 @@ import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
+import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
@@ -132,13 +133,13 @@ object WalletScreenEffectHandler {
                     .map { effect })
             }
             .mapLatest { effect ->
-                val exchangeRate = ratesRepository.getFiatForCrypto(
+                val exchangeRate: BigDecimal? = ratesRepository.getFiatForCrypto(
                     BigDecimal.ONE,
                     effect.currencyId,
                     BRSharedPrefs.getPreferredFiatIso(context)
                 )
-                val fiatPricePerUnit = exchangeRate.formatFiatForUi(fiatIso)
-                val priceChange = ratesRepository.getPriceChange(effect.currencyId)
+                val fiatPricePerUnit = exchangeRate?.formatFiatForUi(fiatIso).orEmpty()
+                val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyId)
                 WalletScreenEvent.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange)
             }
     }
