@@ -48,8 +48,7 @@ sealed class SendSheetEffect {
 
     data class ValidateAddress(
         val currencyCode: CurrencyCode,
-        val address: String,
-        val clearWhenInvalid: Boolean = false
+        val address: String
     ) : SendSheetEffect() {
         override fun toString() = "ValidateAddress()"
     }

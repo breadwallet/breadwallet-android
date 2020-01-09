@@ -43,8 +43,6 @@ data class SendSheetModel(
 
     /** The user supplied address to send the [amount] of [currencyCode] to. */
     val targetAddress: String = "",
-    /** True when [targetAddress] is a valid address. */
-    val isTargetValid: Boolean = false,
     /** The user supplied amount to send as a string. */
     val rawAmount: String = "",
     /** The user supplied amount as [BigDecimal]. */
@@ -85,7 +83,7 @@ data class SendSheetModel(
 
     /** An error with the current [rawAmount]. */
     val amountInputError: InputError? = null,
-    
+
     /** True when the user can authenticate the transaction with his fingerprint */
     val isFingerprintAuthEnable: Boolean = false
 ) {
@@ -108,7 +106,11 @@ data class SendSheetModel(
     val fiatTotalCost: BigDecimal = fiatAmount + fiatNetworkFee
 
     /** True when the necessary inputs to estimate a fee are available. */
-    val canEstimateFee: Boolean = isTargetValid && !isTotalCostOverBalance && !amount.isZero()
+    val canEstimateFee: Boolean =
+        targetAddress.isNotBlank() &&
+            targetInputError == null &&
+            !isTotalCostOverBalance &&
+            !amount.isZero()
 
     companion object {
 
