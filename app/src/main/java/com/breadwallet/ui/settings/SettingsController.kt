@@ -69,6 +69,7 @@ class SettingsController(args: Bundle? = null) :
             SettingsEffectHandler(
                 output,
                 direct.instance(),
+                checkNotNull(activity),
                 direct.instance(),
                 ::showApiServerDialog,
                 ::showPlatformDebugUrlDialog,
