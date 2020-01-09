@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings
 
+import android.app.Activity
 import android.content.Context
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
@@ -51,6 +52,7 @@ import kotlinx.coroutines.launch
 class SettingsEffectHandler(
     private val output: Consumer<SettingsEvent>,
     private val context: Context,
+    private val activity: Activity,
     private val experimentsRepository: ExperimentsRepository,
     private val showApiServerDialog: (String) -> Unit,
     private val showPlatformDebugUrlDialog: (String) -> Unit,
@@ -68,11 +70,11 @@ class SettingsEffectHandler(
         when (value) {
             is SettingsEffect.LoadOptions -> loadOptions(value.section)
             SettingsEffect.SendAtmFinderRequest -> sendAtmFinderRequest()
-            SettingsEffect.SendLogs -> LogsUtils.shareLogs(context)
+            SettingsEffect.SendLogs -> launch(Dispatchers.Main) {
+                LogsUtils.shareLogs(activity)
+            }
             SettingsEffect.ShowApiServerDialog -> launch(Dispatchers.Main) {
-                showApiServerDialog(
-                    BreadApp.host
-                )
+                showApiServerDialog(BreadApp.host)
             }
             SettingsEffect.ShowPlatformDebugUrlDialog -> launch(Dispatchers.Main) {
                 showPlatformDebugUrlDialog(
