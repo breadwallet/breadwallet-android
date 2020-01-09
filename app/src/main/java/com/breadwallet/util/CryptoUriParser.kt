@@ -41,7 +41,11 @@ class CryptoUriParser(
 
         if (!request.hasAddress()) {
             request.address = wallet.target.toSanitizedString()
+        } else {
+            val address = checkNotNull(wallet.addressFor(request.address))
+            request.address = address.toSanitizedString()
         }
+
         uriBuilder.appendPath(request.address)
 
         if (request.amount != null && request.amount > BigDecimal.ZERO) {
@@ -70,24 +74,25 @@ class CryptoUriParser(
 
     fun isCryptoUrl(url: String): Boolean {
         val request = parseRequest(url)
+        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
         return if (request != null && request.scheme.isNotBlank()) {
-            val wallet = runBlocking {
-                breadBox.wallets()
-                    .first()
-                    .firstOrNull {
-                        it.urlScheme == request.scheme
-                    }
+            val wallet = wallets.firstOrNull {
+                it.urlScheme == request.scheme
             }
 
             if (wallet != null) {
                 request.isPaymentProtocol || request.hasAddress()
             } else false
-        } else false
+        } else {
+            wallets.any { it.addressFor(url) != null }
+        }
     }
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     fun parseRequest(requestString: String): CryptoRequest? {
         if (requestString.isBlank()) return null
+
+        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
 
         val builder = CryptoRequest.Builder()
 
@@ -100,13 +105,7 @@ class CryptoUriParser(
         builder.address = uri.host ?: ""
 
         if (uri.scheme.isNullOrBlank()) {
-            val wallet = runBlocking {
-                breadBox.wallets()
-                    .first()
-                    .firstOrNull {
-                        it.addressFor(builder.address) != null
-                    }
-            }
+            val wallet = wallets.firstOrNull { it.addressFor(builder.address) != null }
 
             if (wallet != null) {
                 builder.address = wallet.addressFor(builder.address)!!.toSanitizedString()
