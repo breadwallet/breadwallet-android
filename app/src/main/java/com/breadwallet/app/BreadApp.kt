@@ -89,9 +89,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
@@ -554,6 +552,8 @@ class BreadApp : Application(), KodeinAware {
         BRExecutor.getInstance().forLightWeightBackgroundTasks()
             .execute { UserMetricsUtil.makeUserMetricsRequest(mInstance) }
         incrementAppForegroundedCounter()
+
+        initialize()
     }
 
     /**

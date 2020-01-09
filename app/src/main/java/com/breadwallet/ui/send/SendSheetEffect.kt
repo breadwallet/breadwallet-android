@@ -3,6 +3,7 @@ package com.breadwallet.ui.send
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
@@ -15,7 +16,7 @@ sealed class SendSheetEffect {
             val currencyCode: CurrencyCode
         ) : Nav() {
             override val navigationEffect =
-                NavigationEffect.GoToFaq(currencyCode)
+                NavigationEffect.GoToFaq(BRConstants.FAQ_SEND, currencyCode)
         }
 
         data class GoToReceive(
