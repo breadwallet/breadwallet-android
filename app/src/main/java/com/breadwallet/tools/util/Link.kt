@@ -40,7 +40,7 @@ sealed class Link {
      * https://github.com/ethereum/EIPs/blob/master/EIPS/eip-681.md
      */
     data class CryptoRequestUrl(
-        val currencyCode: CurrencyCode = "BTC", // TODO: Const
+        val currencyCode: CurrencyCode,
         val address: String? = null,
         val amount: BigDecimal? = null,
         val label: String? = null,
