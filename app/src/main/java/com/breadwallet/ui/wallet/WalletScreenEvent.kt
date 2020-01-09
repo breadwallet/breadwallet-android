@@ -33,7 +33,7 @@ sealed class WalletScreenEvent {
     data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) :
         WalletScreenEvent()
 
-    data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange) :
+    data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange?) :
         WalletScreenEvent()
 
     data class OnTransactionsUpdated(
