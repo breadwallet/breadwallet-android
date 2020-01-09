@@ -32,6 +32,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
@@ -69,6 +70,8 @@ class OnBoardingController(
     private val _effectHandler by lazy {
         OnBoardingEffectHandler(
             effectJob,
+            applicationContext as BreadApp,
+            direct.instance(),
             direct.instance(),
             direct.instance(),
             { eventConsumer },

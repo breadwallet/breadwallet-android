@@ -63,6 +63,7 @@ import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.util.isBrd
+import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connection
 import kotlinx.coroutines.CoroutineScope
@@ -112,7 +113,10 @@ class RouterNavigationEffectHandler(
         }
     }
 
-    override fun goToBrdRewards() = Unit
+    override fun goToBrdRewards() {
+        val rewardsUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS)
+        router.pushController(RouterTransaction.with(WebController(rewardsUrl)))
+    }
 
     override fun goToReview() {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)

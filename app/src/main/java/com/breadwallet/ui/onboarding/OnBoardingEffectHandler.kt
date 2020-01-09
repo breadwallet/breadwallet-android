@@ -25,6 +25,7 @@
 package com.breadwallet.ui.onboarding
 
 import com.bluelinelabs.conductor.Router
+import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
@@ -44,7 +45,9 @@ import java.util.Date
 
 class OnBoardingEffectHandler(
     coroutineJob: Job,
+    private val breadApp: BreadApp,
     private val breadBox: BreadBox,
+    private val keyStore: KeyStore,
     private val metadataProvider: AccountMetaDataProvider,
     private val outputProvider: () -> Consumer<OnBoardingEvent>,
     private val routerProvider: () -> Router
@@ -104,6 +107,9 @@ class OnBoardingEffectHandler(
 
         try {
             breadBox.open(account)
+
+            breadApp.startWithInitializedWallet(breadBox, false)
+
             outputProvider().accept(OnBoardingEvent.OnWalletCreated)
         } catch (e: IllegalStateException) {
             logError("Error initializing crypto system", e)
@@ -132,7 +138,7 @@ class OnBoardingEffectHandler(
     private suspend fun putPhrase(phrase: ByteArray): Boolean {
         return withContext(Dispatchers.Main) {
             try {
-                KeyStore.putPhrase(phrase)
+                keyStore.putPhrase(phrase)
                 true
             } catch (e: Exception) {
                 logError("Failed to store phrase.", e)
@@ -145,7 +151,7 @@ class OnBoardingEffectHandler(
     private suspend fun loadPhrase(): ByteArray? {
         return withContext(Dispatchers.Main) {
             try {
-                KeyStore.getPhrase()
+                keyStore.getPhrase()
             } catch (e: Exception) {
                 logError("Failed to load phrase.", e)
                 outputProvider().accept(OnBoardingEvent.SetupError.PhraseLoadFailed)
@@ -171,9 +177,9 @@ class OnBoardingEffectHandler(
 
     /** Stores [account], [apiKey], and [creationDate] in [KeyStore]. */
     private suspend fun setupWallet(account: Account, apiKey: Key, creationDate: Date) {
-        KeyStore.putAccount(account)
-        KeyStore.putAuthKey(apiKey.encodeAsPrivate())
-        KeyStore.putWalletCreationTime(creationDate.time)
+        keyStore.putAccount(account)
+        keyStore.putAuthKey(apiKey.encodeAsPrivate())
+        keyStore.putWalletCreationTime(creationDate.time)
     }
 
     private suspend fun createAccountMetaData(creationDate: Date): Boolean {
