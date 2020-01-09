@@ -40,7 +40,9 @@ fun Flow<List<String>>.updateRatesForCurrencies(
     // Prevent System boot from spamming api calls
     .debounce(RATE_UPDATE_DEBOUNCE_MS)
     // Currency APIs expect uppercase currency codes
-    .map { it.map(String::toUpperCase) }
+    .map { currencyCode ->
+        currencyCode.map { TokenUtil.getExchangeRateCode(it).toUpperCase() }
+    }
     // Repeat the latest list every 60 seconds
     .transformLatest { codes ->
         while (true) {

@@ -216,7 +216,7 @@ public class RatesRepository {
      * @return the price change.
      */
     public PriceChange getPriceChange(String currencyCode) {
-        return mPriceChanges.get(TokenUtil.getExchangeRateCode(currencyCode));
+        return mPriceChanges.get(TokenUtil.getExchangeRateCode(currencyCode).toUpperCase());
     }
 
     public List<PriceDataPoint> getHistoricalData(String fromCurrencyCode, String toCurrencyCode, Interval interval) {
