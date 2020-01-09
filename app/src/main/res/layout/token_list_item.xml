@@ -22,7 +22,7 @@
             android:text="T"
             android:textSize="16sp"
             android:visibility="gone"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            android:fontFamily="@font/circular_pro_bold" />
 
         <ImageView
             android:id="@+id/token_icon"
@@ -39,7 +39,8 @@
         android:layout_marginStart="11dp"
         android:layout_marginTop="12dp"
         android:layout_toEndOf="@id/icon_parent"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:fontFamily="@font/circular_pro_book" />
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/token_symbol"
@@ -51,7 +52,7 @@
         android:layout_toEndOf="@id/icon_parent"
         android:textColor="?attr/token_secondary_text_color"
         android:textSize="14sp"
-        app:brdFont="@string/Font.CircularPro_Bold" />
+        android:fontFamily="@font/circular_pro_bold" />
 
     <Button
         android:id="@+id/add_remove_button"
@@ -65,6 +66,7 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:textColor="?attr/add_wallet_button_text"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:fontFamily="@font/circular_pro_book"/>
 
 </RelativeLayout>

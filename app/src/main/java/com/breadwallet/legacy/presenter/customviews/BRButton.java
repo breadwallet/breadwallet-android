@@ -23,7 +23,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -98,8 +97,6 @@ public class BRButton extends Button {
         shadowRect = new Rect(0, 0, 100, 100);
         bRect = new RectF(0, 0, 100, 100);
         TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
-        String customFont = attributes.getString(R.styleable.BRButton_customBFont);
-        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
         int[] attributeArray = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd,

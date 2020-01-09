@@ -23,7 +23,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            android:fontFamily="@font/circular_pro_bold" />
 
         <ImageView
             android:layout_width="wrap_content"
