@@ -6,7 +6,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
+if(file('fabric.properties').exists()){
+    apply plugin: 'io.fabric'
+}
 apply plugin: 'com.google.protobuf'
 
 detekt {
@@ -32,6 +34,7 @@ android {
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
+        fabricEnable = file('fabric.properties').exists()
     }
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
@@ -42,6 +45,7 @@ android {
         versionCode brdVersionCode
         versionName "$brdMarketingVersion.$brdProductVersion.$brdEngineeringVersion"
         buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
+        buildConfigField "boolean", "FABRIC_ENABLE", "$fabricEnable"
 
         multiDexEnabled true
 
@@ -171,6 +175,16 @@ task downloadBundles {
             println("Downloading: ${fileUrl} into ${resFolder}")
             new File("${resFolder}${bundleName.replace("-", "_")}.tar").withOutputStream { out ->
                 new URL(fileUrl).withInputStream { from -> out << from }
+            }
+        }
+    }
+}
+
+tasks.whenTaskAdded {
+    if (it.name.startsWith('assemble') && it.name.endsWith('Release')) {
+        it.doFirst {
+            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
+                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
             }
         }
     }
