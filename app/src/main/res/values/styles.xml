@@ -11,9 +11,11 @@
         <item name="android:actionBarStyle">@style/BreadActionBar</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
         <item name="add_wallet_button_text">@color/blue_button_text</item>
         <item name="colorControlNormal">@color/light_gray</item>
         <item name="colorControlActivated">@color/prompt_action_button</item>
+        <item name="android:fontFamily">@font/circular_pro</item>
     </style>
 
     <!-- ActionBar styles -->
@@ -22,12 +24,16 @@
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/circular_pro_book</item>
     </style>
 
     <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/circular_pro_medium</item>
         <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:fontFamily">@font/circular_pro_medium</item>
     </style>
 
     <style name="AppTheme.Dark" parent="AppTheme">

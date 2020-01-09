@@ -8,8 +8,6 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.manager.FontManager;
-import com.breadwallet.tools.util.Utils;
 
 /**
  * BreadWallet
@@ -59,11 +57,6 @@ public class BaseTextView extends TextView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.BaseTextView);
-        String brdFont = attributes.getString(R.styleable.BaseTextView_brdFont);
-        FontManager.setCustomFont(context, this,
-                Utils.isNullOrEmpty(brdFont) ? context.getString(R.string.Font_CircularPro_Book) : brdFont);
-        attributes.recycle();
         setLineSpacing(0, DEFAULT_LINE_SPACING);
     }
 

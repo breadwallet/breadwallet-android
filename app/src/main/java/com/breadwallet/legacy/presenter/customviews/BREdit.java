@@ -8,8 +8,6 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.manager.FontManager;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,24 +53,14 @@ public class BREdit extends EditText {
 
     public BREdit(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
     }
 
     public BREdit(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
     }
 
     public BREdit(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
-    }
-
-    private void init(Context ctx, AttributeSet attrs) {
-        TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BREdit);
-        String customFont = attributes.getString(R.styleable.BREdit_customEFont);
-        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
-        attributes.recycle();
     }
 
     /**

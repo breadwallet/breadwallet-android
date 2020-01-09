@@ -46,7 +46,7 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:text="@string/PriceAlertList.title"
                 android:textSize="20sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>

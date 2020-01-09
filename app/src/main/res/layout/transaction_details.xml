@@ -71,7 +71,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="2dp"
                     android:textColor="@color/settings_chevron_right"
-                    app:brdFont="@string/Font.CircularPro_Bold"
+                    android:fontFamily="@font/circular_pro_bold"
                     tools:text="X" />
 
                 <View
