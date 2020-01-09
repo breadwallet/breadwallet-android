@@ -79,9 +79,7 @@ class NavigationEffectHandler(
         activity.onBackPressed()
     }
 
-    override fun goToBrdRewards() {
-        TODO("Go to brd rewards")
-    }
+    override fun goToBrdRewards() = Unit
 
     override fun goToReview() = Unit
 
