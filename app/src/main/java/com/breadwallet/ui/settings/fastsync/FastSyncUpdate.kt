@@ -1,7 +1,6 @@
 package com.breadwallet.ui.settings.fastsync
 
 import com.breadwallet.model.SyncMode
-import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -24,7 +23,7 @@ object FastSyncUpdate : Update<FastSyncModel, FastSyncEvent, FastSyncEffect>, Fa
                 model.copy(fastSyncEnable = event.enable),
                 effects(
                     FastSyncEffect.MetaData.SetSyncMode(
-                        model.bitcoinCurrencyId,
+                        model.currencyId,
                         SyncMode.API_ONLY
                     )
                 )
@@ -44,7 +43,9 @@ object FastSyncUpdate : Update<FastSyncModel, FastSyncEvent, FastSyncEffect>, Fa
         val currencyMap = event.currencyMap
         return next(
             model.copy(
-                bitcoinCurrencyId = currencyMap.entries.first { it.key.isBitcoin() }.value
+                currencyId = currencyMap.entries
+                    .single { (currencyCode, _) -> currencyCode.equals(model.currencyCode, true) }
+                    .value
             ),
             effects(FastSyncEffect.MetaData.LoadSyncModes)
         )
@@ -56,7 +57,7 @@ object FastSyncUpdate : Update<FastSyncModel, FastSyncEvent, FastSyncEffect>, Fa
     ): Next<FastSyncModel, FastSyncEffect> {
         return next(
             model.copy(
-                fastSyncEnable = event.modeMap[model.bitcoinCurrencyId] == SyncMode.API_ONLY
+                fastSyncEnable = event.modeMap[model.currencyId] == SyncMode.API_ONLY
             )
         )
     }
@@ -73,7 +74,7 @@ object FastSyncUpdate : Update<FastSyncModel, FastSyncEvent, FastSyncEffect>, Fa
         return dispatch(
             effects(
                 FastSyncEffect.MetaData.SetSyncMode(
-                    model.bitcoinCurrencyId,
+                    model.currencyId,
                     SyncMode.P2P_ONLY
                 )
             )
