@@ -162,13 +162,6 @@ public final class BRConstants {
     public static final String WALLET_LINK_PATH = "link-wallet";
 
 
-    /**
-     * Font constants
-     */
-    public static final String TYPEFACE_PATH_CIRCULARPRO_BOLD = "fonts/CircularPro-Bold.otf";
-    public static final String TYPEFACE_PATH_CIRCULARPRO_BOOK = "fonts/CircularPro-Book.otf";
-
-
     public static final String STRING_RESOURCES_FILENAME = "string";
     public static final String BREAD = "bread";
 

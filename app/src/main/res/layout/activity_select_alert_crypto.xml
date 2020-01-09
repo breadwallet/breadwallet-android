@@ -29,7 +29,7 @@
                 android:text="@string/SelectAlertCrypto.title"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
 
 
         </RelativeLayout>
@@ -51,7 +51,7 @@
         android:textColor="@color/white"
         android:textColorHint="@color/light_gray"
         android:textCursorDrawable="@null"
-        app:brdFont="@string/Font.CircularPro_Medium" />
+        android:fontFamily="@font/circular_pro_medium" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/token_list"

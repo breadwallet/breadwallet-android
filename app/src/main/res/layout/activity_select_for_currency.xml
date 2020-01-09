@@ -33,7 +33,7 @@
                 android:text="@string/SelectForCurrency.title"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

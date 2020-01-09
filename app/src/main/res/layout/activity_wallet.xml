@@ -236,7 +236,7 @@
                 android:text="@string/Button.send"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
-                app:brdFont="@string/Font.CircularPro_Bold"
+                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />
@@ -255,7 +255,7 @@
                 android:text="@string/Button.receive"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
-                app:brdFont="@string/Font.CircularPro_Bold"
+                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />
@@ -275,7 +275,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
                 android:visibility="gone"
-                app:brdFont="@string/Font.CircularPro_Bold"
+                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />

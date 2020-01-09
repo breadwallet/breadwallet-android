@@ -1,10 +1,10 @@
 package com.breadwallet.legacy.presenter.fragments;
 
 import android.app.Fragment;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +24,6 @@ import com.breadwallet.tools.util.Utils;
 import java.util.List;
 
 import static com.breadwallet.tools.util.BRConstants.STRING_RESOURCES_FILENAME;
-import static com.breadwallet.tools.util.BRConstants.TYPEFACE_PATH_CIRCULARPRO_BOLD;
-import static com.breadwallet.tools.util.BRConstants.TYPEFACE_PATH_CIRCULARPRO_BOOK;
 
 
 public class FragmentLinkWallet extends Fragment {
@@ -71,7 +69,7 @@ public class FragmentLinkWallet extends Fragment {
 
             TextView domains = new TextView(getContext());
             domains.setText(domainStringBuilder.toString());
-            domains.setTypeface(Typeface.createFromAsset(getResources().getAssets(), TYPEFACE_PATH_CIRCULARPRO_BOLD));
+            domains.setTypeface(ResourcesCompat.getFont(getContext(), R.font.circular_pro_bold));
 
             RelativeLayout.LayoutParams domainParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             domainParams.addRule(RelativeLayout.CENTER_HORIZONTAL, domains.getId());
@@ -101,7 +99,7 @@ public class FragmentLinkWallet extends Fragment {
             TextView capabilitiesTextView = new TextView(getContext());
             capabilitiesParams.addRule(RelativeLayout.ALIGN_PARENT_START, capabilitiesTextView.getId());
             capabilitiesTextView.setText(capabilityStringBuilder.toString());
-            capabilitiesTextView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), TYPEFACE_PATH_CIRCULARPRO_BOOK));
+            capabilitiesTextView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.circular_pro_book));
             appPermissionsLayout.addView(capabilitiesTextView);
             capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 26), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
             capabilitiesTextView.setLayoutParams(capabilitiesParams);

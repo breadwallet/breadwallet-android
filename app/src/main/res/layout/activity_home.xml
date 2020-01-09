@@ -59,7 +59,8 @@
                 android:text="@string/HomeScreen.totalAssets"
                 android:textColor="@color/text_total_assets_label"
                 android:textSize="12sp"
-                app:brdFont="@string/Font.CircularPro_Medium" />
+                android:textStyle="bold"
+                android:fontFamily="@font/circular_pro_medium" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
@@ -70,7 +71,7 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                app:brdFont="@string/Font.CircularPro_Medium" />
+                android:fontFamily="@font/circular_pro_medium" />
         </RelativeLayout>
 
         <LinearLayout
@@ -166,6 +167,7 @@
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.buy"
                         android:textColor="@color/white"
+                        android:fontFamily="@font/circular_pro_book"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -195,7 +197,8 @@
                         android:layout_gravity="center"
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.trade"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/circular_pro_book" />
                 </LinearLayout>
 
                 <LinearLayout
