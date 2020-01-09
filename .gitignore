@@ -63,3 +63,6 @@ fastlane/
 Release_checklist
 
 /app/.externalNativeBuild/
+
+# Fabric config
+/app/fabric.properties
