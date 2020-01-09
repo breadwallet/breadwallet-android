@@ -36,7 +36,7 @@ debug:
 release:
   stage: build
   script:
-    - ./gradlew assembleRelease
+    - ./gradlew assembleRelease -PIGNORE_FABRIC_KEYS_MISSING
     - ./gradlew --console=plain testBrdReleaseUnitTest
     - ./gradlew --console=plain detekt
     # - ./gradlew -Pci --console=plain :app:lintBrdRelease -PbuildDir=lint

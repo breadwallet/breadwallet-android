@@ -34,3 +34,13 @@ Simplicity is breadwallet's core design principle. A simple backup phrase is all
 2. Open `breadwallet-android` in [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) or [Android Studio](https://developer.android.com/studio)
 3. Click Build > Build Project
 
+## Advanced setup
+
+### Fabric
+
+In case you want to use fabric, create a file called fabric.properties under /app with your keys like this:
+```
+apiSecret=[YOUR_API_SECRET]
+apiKey=[YOUR_API_KEY]
+```
+For signed builds the flag IGNORE_FABRIC_KEYS_MISSING is required if fabric.properties doesn't exist.

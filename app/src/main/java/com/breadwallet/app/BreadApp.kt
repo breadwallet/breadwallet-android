@@ -428,11 +428,13 @@ class BreadApp : Application(), KodeinAware {
 
         BRSharedPrefs.provideContext(this)
 
-        val fabric = Fabric.Builder(this)
-            .kits(Crashlytics.Builder().build())
-            .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
-            .build()
-        Fabric.with(fabric)
+        if (BuildConfig.FABRIC_ENABLE) {
+            val fabric = Fabric.Builder(this)
+                .kits(Crashlytics.Builder().build())
+                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
+                .build()
+            Fabric.with(fabric)
+        }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
