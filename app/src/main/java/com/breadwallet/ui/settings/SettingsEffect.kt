@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.util.CurrencyCode
+
 sealed class SettingsEffect {
     data class LoadOptions(val section: SettingsSection) : SettingsEffect()
     data class GoToSection(val section: SettingsSection) : SettingsEffect()
@@ -54,7 +56,10 @@ sealed class SettingsEffect {
     object ShowPlatformDebugUrlDialog : SettingsEffect()
     object ShowPlatformBundleDialog : SettingsEffect()
     object ShowTokenBundleDialog : SettingsEffect()
-    object GoToFastSync : SettingsEffect()
+
+    data class GoToFastSync(
+        val currencyCode: CurrencyCode
+    ) : SettingsEffect()
 
     data class SetApiServer(val host: String) : SettingsEffect()
     data class SetPlatformDebugUrl(val url: String) : SettingsEffect()

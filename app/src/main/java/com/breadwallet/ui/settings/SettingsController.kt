@@ -102,7 +102,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
                 SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
-                SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync
+                is SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
                 SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 else -> null
             }

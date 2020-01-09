@@ -348,9 +348,9 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToFastSync() {
+    override fun goToFastSync(effect: NavigationEffect.GoToFastSync) {
         router.pushController(
-            RouterTransaction.with(FastSyncController())
+            RouterTransaction.with(FastSyncController(effect.currencyCode))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler())
         )
