@@ -16,7 +16,7 @@
         android:text="Dec 2"
         android:textColor="@color/total_assets_usd_color"
         android:textSize="16sp"
-        app:brdFont="@string/Font.CircularPro_Bold" />
+        android:fontFamily="@font/circular_pro_bold" />
 
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -42,7 +42,7 @@
         android:layout_marginRight="12dp"
         android:text="-$839.30"
         android:textSize="18sp"
-        app:brdFont="@string/Font.CircularPro_Bold" />
+        android:fontFamily="@font/circular_pro_bold" />
 
     <ProgressBar
         android:id="@+id/tx_progress"

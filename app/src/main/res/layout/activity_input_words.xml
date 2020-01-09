@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/bread_margin"
         android:text="@string/RecoverWallet.header"
         android:textSize="@dimen/header"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +41,7 @@
         android:text="@string/RecoverWallet.subheader"
         android:textAlignment="center"
         android:textSize="@dimen/sub_header"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +107,7 @@
                     android:nextFocusForward="@+id/word2"
                     android:textAlignment="center"
                     android:textCursorDrawable="@null"
-                    app:customEFont="CircularPro-Medium.otf" />
+                    android:fontFamily="@font/circular_pro_medium" />
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"

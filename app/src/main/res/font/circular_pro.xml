@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font app:fontStyle="normal" app:fontWeight="400" app:font="@font/circular_pro_book" />
+    <font app:fontStyle="italic" app:fontWeight="400" app:font="@font/circular_pro_book_italic" />
+    <font app:fontStyle="normal" app:fontWeight="500" app:font="@font/circular_pro_medium" />
+    <font app:fontStyle="italic" app:fontWeight="500" app:font="@font/circular_pro_medium_italic" />
+    <font app:fontStyle="normal" app:fontWeight="700" app:font="@font/circular_pro_bold" />
+    <font app:fontStyle="italic" app:fontWeight="700" app:font="@font/circular_pro_bold_italic" />
+    <font app:fontStyle="normal" app:fontWeight="900" app:font="@font/circular_pro_black" />
+    <font app:fontStyle="italic" app:fontWeight="900" app:font="@font/circular_pro_black_italic" />
+</font-family>

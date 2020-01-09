@@ -28,7 +28,7 @@
             android:layout_marginTop="16dp"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/sub_header"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

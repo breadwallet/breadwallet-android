@@ -3,7 +3,6 @@ package com.breadwallet.ui.addwallets
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -115,10 +114,5 @@ class AddTokenListAdapter(
         val addRemoveButton: Button = view.findViewById(R.id.add_remove_button)
         val iconParent: View = view.findViewById(R.id.icon_parent)
         val iconLetter: TextView = view.findViewById(R.id.icon_letter)
-
-        init {
-            val typeface = Typeface.createFromAsset(context.assets, "fonts/CircularPro-Book.otf")
-            addRemoveButton.typeface = typeface
-        }
     }
 }

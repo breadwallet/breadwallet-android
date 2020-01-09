@@ -17,6 +17,7 @@
         android:textColor="@color/logo_gradient_start"
         android:textSize="18sp"
         android:visibility="gone"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -92,7 +93,7 @@
             android:text="@string/UnlockScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customBFont="CircularPro-Medium.otf"
+            android:fontFamily="@font/circular_pro_medium"
             app:isBreadButton="false" />
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
@@ -106,7 +107,7 @@
             android:text="@string/UnlockScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customBFont="CircularPro-Medium.otf" />
+            android:fontFamily="@font/circular_pro_medium" />
     </LinearLayout>
 
     <ImageView

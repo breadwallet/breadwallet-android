@@ -21,7 +21,7 @@
         android:text="@string/Prompts.PaperKey.Body.Android"
         android:textColor="@color/text_secondary"
         android:textSize="16sp"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/prompt_title"
         app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
@@ -35,7 +35,7 @@
         android:text="@string/Prompts.PaperKey.title"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintEnd_toStartOf="@+id/dismiss_button"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
@@ -50,7 +50,7 @@
         android:text="@string/Button.continueAction"
         android:textAllCaps="false"
         android:textColor="@color/prompt_action_button"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
 
