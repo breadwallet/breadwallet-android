@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.transform
@@ -53,6 +54,7 @@ private const val RATE_UPDATE_MS = 60_000L
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object SendSheetHandler {
 
+    @Suppress("LongParameterList")
     fun create(
         context: Context,
         router: Router,
@@ -95,15 +97,26 @@ object SendSheetHandler {
     private fun handleEstimateFee(
         breadBox: BreadBox
     ) = flowTransformer<SendSheetEffect.EstimateFee, SendSheetEvent> { effects ->
-        effects.mapLatest { effect ->
+        effects.mapNotNull { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
+
+            // Skip if address is not valid
+            val address = wallet.addressFor(effect.address) ?: return@mapNotNull null
+            if (wallet.containsAddress(address))
+                return@mapNotNull null
+
             val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
             val networkFee = wallet.feeForSpeed(effect.transferSpeed)
 
             try {
                 val data = wallet.estimateFee(effect.address, amount, networkFee).singleOrNull()
                 checkNotNull(data)
-                SendSheetEvent.OnNetworkFeeUpdated(data.fee.toBigDecimal(), data)
+                SendSheetEvent.OnNetworkFeeUpdated(
+                    effect.address,
+                    effect.amount,
+                    data.fee.toBigDecimal(),
+                    data
+                )
             } catch (e: FeeEstimationError) {
                 logError("Failed get fee estimate", e)
                 SendSheetEvent.OnNetworkFeeError
@@ -164,8 +177,7 @@ object SendSheetHandler {
             val isValid = address != null && !wallet.containsAddress(address)
             SendSheetEvent.OnAddressValidated(
                 address = effect.address,
-                isValid = isValid,
-                clear = effect.clearWhenInvalid && !isValid
+                isValid = isValid
             )
         }
     }
@@ -212,7 +224,9 @@ object SendSheetHandler {
                 val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
                 val feeBasis = effect.transferFeeBasis
 
-                checkNotNull(address) { "Failed to create address." }
+                if (address == null || wallet.containsAddress(address)) {
+                    return@mapLatest SendSheetEvent.OnAddressValidated(effect.address, false)
+                }
 
                 try {
                     val transfer = wallet.createTransfer(address, amount, feeBasis).orNull()
