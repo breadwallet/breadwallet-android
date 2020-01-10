@@ -54,7 +54,6 @@ import kotlinx.coroutines.launch
 import java.text.Normalizer
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class RecoveryKeyEffectHandler(
@@ -234,7 +233,7 @@ class RecoveryKeyEffectHandler(
         context: Context
     ) {
         BRKeyStore.putAccount(account, context)
-        BRKeyStore.putWalletCreationTime(creationDate.time.toInt(), context)
+        BRKeyStore.putWalletCreationTime(creationDate.time, context)
     }
 
     /**
@@ -260,29 +259,22 @@ class RecoveryKeyEffectHandler(
             }?.second
     }
 
-    /**
-     * Returns the [Date] of [WalletInfoData.creationDate].
-     * TODO: Signing requests is not supported, we will always fail
-     *  here because of APIClient usage.
-     */
-    private suspend fun getWalletCreationDate() =
-        Date(
-            metaDataProvider.walletInfo()
-                .onStart {
-                    // Poll for wallet-info metadata
-                    // This is a work-around to avoid blocking until recoverAll(migrate)
-                    // recovers *all* metadata
-                    for (i in 1..POLL_ATTEMPTS_MAX) {
-                        metaDataProvider.getWalletInfoUnsafe()
-                            ?.let { emit(it) }
-                        delay(1000L)
-                    }
+    /** Returns the [Date] of [WalletInfoData.creationDate]. */
+    private suspend fun getWalletCreationDate(): Date =
+        metaDataProvider.walletInfo()
+            .onStart {
+                // Poll for wallet-info metadata
+                // This is a work-around to avoid blocking until recoverAll(migrate)
+                // recovers *all* metadata
+                for (i in 1..POLL_ATTEMPTS_MAX) {
+                    metaDataProvider.getWalletInfoUnsafe()
+                        ?.let { emit(it) }
+                    delay(1000L)
                 }
-                .first()
-                .creationDate
-                .toLong()
-                .let(TimeUnit.SECONDS::toMillis)
-        )
+            }
+            .first()
+            .creationDate
+            .run(::Date)
 
     private fun normalizePhrase(phrase: List<String>) =
         Normalizer.normalize(
