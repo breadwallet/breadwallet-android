@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson on <drew.carlson@breadwallet.com> 9/25/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 9/25/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
