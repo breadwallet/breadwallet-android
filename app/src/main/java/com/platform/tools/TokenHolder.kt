@@ -25,7 +25,7 @@
 package com.platform.tools
 
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import android.util.Log
 
 import com.breadwallet.tools.security.BRKeyStore

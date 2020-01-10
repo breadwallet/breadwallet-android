@@ -2,7 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -26,7 +26,6 @@ import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;

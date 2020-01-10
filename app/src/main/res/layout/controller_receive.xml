@@ -19,7 +19,7 @@
             android:background="@drawable/receive_layout"
             android:orientation="vertical" android:padding="0dp">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -75,7 +75,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/title"/>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
                 android:id="@+id/qr_image"
@@ -151,7 +151,7 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputLayoutAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
                         android:hint="@string/RequestAnAmount.title"
                         android:inputType="numberDecimal"
                         android:textIsSelectable="false"/>
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton
                     android:id="@+id/iso_button"

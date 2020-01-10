@@ -24,10 +24,10 @@
  */
 package com.breadwallet.legacy.pricealert
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.ext.bindCreated
 import com.breadwallet.ext.viewModel

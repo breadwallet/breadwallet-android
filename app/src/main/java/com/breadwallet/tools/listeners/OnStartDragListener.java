@@ -1,6 +1,6 @@
 package com.breadwallet.tools.listeners;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public interface OnStartDragListener {
 

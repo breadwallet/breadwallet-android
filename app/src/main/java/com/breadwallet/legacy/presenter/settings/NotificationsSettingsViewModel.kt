@@ -24,9 +24,9 @@
  */
 package com.breadwallet.legacy.presenter.settings
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.breadwallet.repository.NotificationsState
 import com.breadwallet.repository.PushNotificationsSettingsRepositoryImpl
 import com.breadwallet.tools.mvvm.Resource

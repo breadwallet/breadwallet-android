@@ -28,7 +28,7 @@ import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.graphics.PathMeasure
-import android.support.annotation.IntRange
+import androidx.annotation.IntRange
 import com.breadwallet.ui.wallet.spark.SparkView
 
 /**

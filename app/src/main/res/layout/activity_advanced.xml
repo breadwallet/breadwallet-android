@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.legacy.presenter.activities.settings.AdvancedActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -39,7 +39,7 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <ListView
         android:id="@+id/settings_list"

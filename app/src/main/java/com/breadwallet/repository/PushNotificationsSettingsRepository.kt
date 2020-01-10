@@ -25,7 +25,7 @@
 package com.breadwallet.repository
 
 import android.content.Context
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationManagerCompat
 import com.breadwallet.app.BreadApp
 import com.breadwallet.repository.NotificationsState.APP_DISABLED
 import com.breadwallet.repository.NotificationsState.APP_ENABLED

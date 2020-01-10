@@ -29,8 +29,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.support.annotation.VisibleForTesting
-import android.support.v4.app.NotificationCompat
+import androidx.annotation.VisibleForTesting
+import androidx.core.app.NotificationCompat
 import android.util.Log
 import androidx.work.Constraints
 import androidx.work.Data

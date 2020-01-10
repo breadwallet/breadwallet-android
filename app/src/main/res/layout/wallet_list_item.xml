@@ -7,14 +7,14 @@
     android:layout_marginBottom="8dp">
 
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wallet_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/crypto_card_shape">
 
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/icon_container"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -49,7 +49,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_name"
@@ -147,7 +147,7 @@
             app:layout_constraintEnd_toStartOf="@+id/sync_progress"
             app:layout_constraintTop_toBottomOf="@+id/wallet_balance_fiat" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -166,6 +166,6 @@
             app:layout_constraintStart_toEndOf="@+id/wallet_trade_price"
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.breadwallet.legacy.presenter.customviews.ShimmerLayout>

@@ -6,9 +6,9 @@ import android.animation.AnimatorListenerAdapter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.support.constraint.ConstraintSet
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.transition.TransitionManager
 import android.util.TypedValue

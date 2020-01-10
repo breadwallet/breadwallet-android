@@ -1,7 +1,7 @@
 package com.breadwallet.legacy.wallet.abstracts;
 
 import android.content.Context;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.legacy.wallet.configs.WalletSettingsConfiguration;

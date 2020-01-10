@@ -1,7 +1,7 @@
 package com.breadwallet.repository
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.breadwallet.model.PriceAlert.Companion.percentageChanged
 import com.breadwallet.model.PriceAlert.Companion.percentageDecreasedInDay
 import com.breadwallet.model.PriceAlert.Companion.priceTargetIncrease

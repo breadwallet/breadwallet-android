@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="0dp">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/signal_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,6 +92,6 @@
             app:layout_constraintTop_toBottomOf="@+id/BRText4"
             app:layout_constraintVertical_bias="1.0" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.breadwallet.legacy.presenter.customviews.BRRelativeLayout>

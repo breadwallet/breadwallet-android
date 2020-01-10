@@ -12,7 +12,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -99,7 +99,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/prompt_container">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_wallet_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -122,7 +122,7 @@
 
             <TableRow>
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/buy_layout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -172,7 +172,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/trade_layout"
@@ -232,7 +232,7 @@
 
         </TableLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.breadwallet.legacy.presenter.customviews.BRNotificationBar
         android:id="@+id/notification_bar"
