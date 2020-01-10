@@ -24,8 +24,8 @@
  */
 package com.breadwallet.legacy.pricealert
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.ext.map
 import com.breadwallet.ext.mutableLiveData

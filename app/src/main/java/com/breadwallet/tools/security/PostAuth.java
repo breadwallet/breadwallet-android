@@ -2,33 +2,17 @@ package com.breadwallet.tools.security;
 
 import android.content.Context;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.WorkerThread;
-import android.text.format.DateUtils;
+import androidx.annotation.WorkerThread;
 import android.util.Log;
 
-import com.breadwallet.R;
-import com.breadwallet.app.BreadApp;
-import com.breadwallet.legacy.presenter.customviews.BRDialogView;
 import com.breadwallet.legacy.presenter.entities.CryptoRequest;
 import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.legacy.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.legacy.wallet.wallets.CryptoTransaction;
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.entities.TxMetaData;
-import com.platform.interfaces.AccountMetaDataProvider;
-import com.platform.tools.BRBitId;
-
-import java.math.BigDecimal;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static org.kodein.di.TypesKt.TT;
 

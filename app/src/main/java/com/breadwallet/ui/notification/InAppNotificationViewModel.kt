@@ -24,7 +24,7 @@
  */
 package com.breadwallet.ui.notification
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.breadwallet.app.BreadApp
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.repository.MessagesRepository

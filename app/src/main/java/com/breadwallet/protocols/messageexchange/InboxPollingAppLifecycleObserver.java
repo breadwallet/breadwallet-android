@@ -25,7 +25,7 @@
 
 package com.breadwallet.protocols.messageexchange;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;

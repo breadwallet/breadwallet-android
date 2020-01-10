@@ -27,9 +27,9 @@ package com.breadwallet.ui.wallet
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import androidx.core.os.bundleOf
 
@@ -143,7 +143,7 @@ class BrdWalletController : WalletController(
      */
     private fun lockRewardsViewToCollapsed(
         appBarLayout: AppBarLayout,
-        transactionListRecyclerView: RecyclerView
+        transactionListRecyclerView: androidx.recyclerview.widget.RecyclerView
     ) {
         val params = appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
         var behavior = params.behavior as AppBarLayout.Behavior?

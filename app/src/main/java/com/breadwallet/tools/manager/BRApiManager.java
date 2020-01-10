@@ -2,7 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;

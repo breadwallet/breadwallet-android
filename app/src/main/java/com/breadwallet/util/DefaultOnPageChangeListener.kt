@@ -24,7 +24,7 @@
  */
 package com.breadwallet.util
 
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 
 /**
  * A [ViewPager.OnPageChangeListener] with default implementations to reduce

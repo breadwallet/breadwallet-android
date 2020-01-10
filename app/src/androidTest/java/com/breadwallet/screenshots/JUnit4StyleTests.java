@@ -1,8 +1,8 @@
 package com.breadwallet.screenshots;
 
 import android.os.Build;
-import android.support.test.espresso.IdlingPolicies;
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.espresso.IdlingPolicies;
+import androidx.test.rule.ActivityTestRule;
 
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
@@ -18,9 +18,9 @@ import org.junit.runners.JUnit4;
 
 import java.util.concurrent.TimeUnit;
 
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
