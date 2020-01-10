@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/28/16.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/28/16.
  * Copyright (c) 2016 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
