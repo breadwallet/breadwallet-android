@@ -110,38 +110,24 @@ fun Wallet.addressFor(address: String): Address? {
 }
 
 /**
- * Returns a [Flow] of [TransferFeeBasis] for the transfer
- * of [amount] to to the given [address].
- *
  * By default [com.breadwallet.corecrypto.WalletManager.getDefaultNetworkFee]
  * is used for the [networkFee].
- *
- * Nothing will be emitted if provided an invalid [address].
  */
-fun Wallet.estimateFee(
-    address: String,
+suspend fun Wallet.estimateFee(
+    address: Address,
     amount: Amount,
     networkFee: NetworkFee = walletManager.defaultNetworkFee
-): Flow<TransferFeeBasis> = callbackFlow {
-    estimateFee(
-        addressFor(address) ?: return@callbackFlow,
-        amount,
-        networkFee,
-        object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
-            override fun handleData(data: TransferFeeBasis) {
-                if (isActive) {
-                    offer(data)
-                    close()
-                }
-            }
-
-            override fun handleError(error: FeeEstimationError) {
-                if (isActive) close(error)
-            }
+): TransferFeeBasis = suspendCoroutine { continuation ->
+    val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
+        override fun handleData(data: TransferFeeBasis) {
+            continuation.resume(data)
         }
-    )
 
-    awaitClose()
+        override fun handleError(error: FeeEstimationError) {
+            continuation.resumeWithException(error)
+        }
+    }
+    estimateFee(address, amount, networkFee, handler)
 }
 
 suspend fun WalletManager.createSweeper(

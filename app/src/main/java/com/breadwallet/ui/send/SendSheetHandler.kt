@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
@@ -109,14 +108,9 @@ object SendSheetHandler {
             val networkFee = wallet.feeForSpeed(effect.transferSpeed)
 
             try {
-                val data = wallet.estimateFee(effect.address, amount, networkFee).singleOrNull()
-                checkNotNull(data)
-                SendSheetEvent.OnNetworkFeeUpdated(
-                    effect.address,
-                    effect.amount,
-                    data.fee.toBigDecimal(),
-                    data
-                )
+                val data = wallet.estimateFee(address, amount, networkFee)
+                val fee = data.fee.toBigDecimal()
+                SendSheetEvent.OnNetworkFeeUpdated(effect.address, effect.amount, fee, data)
             } catch (e: FeeEstimationError) {
                 logError("Failed get fee estimate", e)
                 SendSheetEvent.OnNetworkFeeError
