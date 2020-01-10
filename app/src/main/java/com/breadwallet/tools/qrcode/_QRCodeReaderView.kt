@@ -36,13 +36,13 @@ fun QRCodeReaderView.scannedText(
     configureView()
 
     if (handleCamera) {
-        QRCodeReaderView.startCamera()
+        startCamera()
     }
 
     awaitClose {
         setOnQRCodeReadListener(null)
         if (handleCamera) {
-            QRCodeReaderView.stopCamera()
+            stopCamera()
         }
     }
 }.flowOn(Dispatchers.Main)
