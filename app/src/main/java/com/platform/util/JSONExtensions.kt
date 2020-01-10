@@ -13,6 +13,10 @@ fun JSONObject.getIntOrDefault(name: String, default: Int = 0) =
     if (has(name)) getInt(name) else default
 
 /** Returns the value mapped by name or [default] if it doesn't exist. */
+fun JSONObject.getLongOrDefault(name: String, default: Long = 0) =
+    if (has(name)) getLong(name) else default
+
+/** Returns the value mapped by name or [default] if it doesn't exist. */
 fun JSONObject.getDoubleOrDefault(name: String, default: Double = 0.0) =
     if (has(name)) getDouble(name) else default
 

@@ -36,6 +36,11 @@ Simplicity is breadwallet's core design principle. A simple backup phrase is all
 
 ## Advanced setup
 
+### Blockset Client Token
+
+The [Blockset client token](https://blockset.com/docs/v1/tools/authentication) can be set in [gradle.properties](gradle.properties) or by using `-PBDB_CLIENT_TOKEN="<client token>"`.
+A default token is available for testing.
+
 ### Fabric
 
 In case you want to use fabric, create a file called fabric.properties under /app with your keys like this:
