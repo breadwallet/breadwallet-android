@@ -28,8 +28,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.KeyguardManager
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -94,7 +94,7 @@ import kotlinx.coroutines.launch
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.androidSupportModule
+import org.kodein.di.android.x.androidXModule
 import org.kodein.di.direct
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
@@ -332,7 +332,7 @@ class BreadApp : Application(), KodeinAware {
     }
 
     override val kodein by Kodein.lazy {
-        importOnce(androidSupportModule(this@BreadApp))
+        importOnce(androidXModule(this@BreadApp))
 
         bind<CryptoUriParser>() with singleton {
             CryptoUriParser(instance())

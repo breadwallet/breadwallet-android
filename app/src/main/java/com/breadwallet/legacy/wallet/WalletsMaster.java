@@ -2,7 +2,7 @@ package com.breadwallet.legacy.wallet;
 
 import android.content.Context;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.app.BreadApp;

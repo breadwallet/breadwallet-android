@@ -30,7 +30,7 @@ package com.breadwallet.tools.manager
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.core.content.edit

@@ -2,7 +2,7 @@ package com.breadwallet.ui.wallet;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -12,7 +12,6 @@ import android.widget.EditText;
 
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.customviews.BRButton;
-import com.spotify.mobius.functions.Consumer;
 import kotlinx.coroutines.channels.SendChannel;
 
 /**
@@ -39,7 +38,7 @@ import kotlinx.coroutines.channels.SendChannel;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRSearchBar extends android.support.v7.widget.Toolbar {
+public class BRSearchBar extends androidx.appcompat.widget.Toolbar {
     private static final String TAG = BRSearchBar.class.getName();
 
     private static final int SHOW_KEYBOARD_DELAY = 300;

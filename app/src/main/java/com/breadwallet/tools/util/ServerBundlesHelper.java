@@ -27,7 +27,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;

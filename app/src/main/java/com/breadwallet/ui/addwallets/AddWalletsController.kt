@@ -1,6 +1,6 @@
 package com.breadwallet.ui.addwallets
 
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController

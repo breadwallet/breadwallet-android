@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/layoutBackground">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutSignal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/labelTitle" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator0">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
@@ -122,7 +122,7 @@
                 android:singleLine="true"
                 android:inputType="textNoSuggestions"
                 android:imeOptions="flagNoPersonalizedLearning" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/buttonPaste"
@@ -182,7 +182,7 @@
             app:layout_constraintBottom_toTopOf="@+id/inputLayoutAmount"
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutAddress" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -196,7 +196,7 @@
             app:layout_constraintTop_toBottomOf="@+id/separator"
             app:layout_constraintVertical_bias="0.0">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputAmount"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -206,7 +206,7 @@
                 android:focusableInTouchMode="false"
                 android:inputType="numberDecimal"
                 android:textIsSelectable="false" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/labelBalance"
@@ -393,7 +393,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/keyboard" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutMemo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -404,7 +404,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator3">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputMemo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -414,7 +414,7 @@
                 android:maxLength="250"
                 android:textSize="@dimen/sub_header" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <View
             android:id="@+id/separator4"
@@ -446,10 +446,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator4" />
 
-        <android.support.constraint.Group
+        <androidx.constraintlayout.widget.Group
             android:id="@+id/groupAmountSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="keyboard,separator3" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -26,7 +26,7 @@ package com.breadwallet.ui.settings.segwit
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat.checkSelfPermission
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.bluelinelabs.conductor.Controller
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.toSanitizedString

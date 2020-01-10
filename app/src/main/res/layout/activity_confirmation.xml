@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/secondary_background">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -30,6 +30,6 @@
                 android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

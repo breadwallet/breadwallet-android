@@ -25,7 +25,7 @@
 package com.breadwallet.legacy.pricealert
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +39,7 @@ import java.math.RoundingMode
 class PriceAlertAdapter(
         private val context: Context,
         private val onDeleteListener: (@ParameterName("priceAlert") PriceAlert) -> Unit
-) : RecyclerView.Adapter<PriceAlertAdapter.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<PriceAlertAdapter.ViewHolder>() {
 
     var priceAlerts: List<PriceAlert> = emptyList()
         set(value) {
@@ -64,7 +64,7 @@ class PriceAlertAdapter(
         return ViewHolder(view).apply { setIsRecyclable(true) }
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val alertLabel: BaseTextView = view.findViewById(R.id.alert_label)
         val deleteAlert: ImageButton = view.findViewById(R.id.delete_alert_button)
     }

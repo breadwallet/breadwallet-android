@@ -37,7 +37,7 @@ import android.graphics.CornerPathEffect
 import android.database.DataSetObserver
 import android.graphics.Canvas
 import android.os.Handler
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import android.view.ViewConfiguration
 import com.breadwallet.ui.wallet.spark.animation.SparkAnimator
 import com.google.common.collect.ImmutableList

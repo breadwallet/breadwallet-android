@@ -25,7 +25,7 @@ package com.platform.kvstore;
  * THE SOFTWARE.
  */
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

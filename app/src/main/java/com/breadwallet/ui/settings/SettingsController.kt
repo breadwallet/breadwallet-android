@@ -26,7 +26,7 @@ package com.breadwallet.ui.settings
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -114,7 +114,7 @@ class SettingsController(args: Bundle? = null) :
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        settings_list.layoutManager = LinearLayoutManager(activity!!)
+        settings_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity!!)
     }
 
     override fun bindView(output: Consumer<SettingsEvent>) = output.view {
