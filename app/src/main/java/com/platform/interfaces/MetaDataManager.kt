@@ -50,12 +50,11 @@ class MetaDataManager(
     }
 
     override fun create(accountCreationDate: Date) {
-        storeProvider.put(
-            KEY_WALLET_INFO,
-            WalletInfoData(
-                creationDate = accountCreationDate.time.toInt()
-            ).toJSON()
-        )
+        val walletInfoJson = WalletInfoData(
+            creationDate = accountCreationDate.time
+        ).toJSON()
+
+        storeProvider.put(KEY_WALLET_INFO, walletInfoJson)
         putEnabledWallets(BreadApp.getDefaultEnabledWallets())
         logInfo("MetaDataManager created successfully")
     }

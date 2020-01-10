@@ -718,9 +718,9 @@ public final class BRKeyStore {
         return 0;
     }
 
-    public static boolean putWalletCreationTime(int creationTime, Context context) {
+    public static boolean putWalletCreationTime(long creationTime, Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(WALLET_CREATION_TIME_ALIAS);
-        byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
+        byte[] bytesToStore = TypesConverter.long2byteArray(creationTime);
         try {
             return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
         } catch (UserNotAuthenticatedException e) {
@@ -729,7 +729,7 @@ public final class BRKeyStore {
         return false;
     }
 
-    public static int getWalletCreationTime(final Context context) {
+    public static long getWalletCreationTime(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(WALLET_CREATION_TIME_ALIAS);
         byte[] result = null;
         try {
@@ -743,7 +743,7 @@ public final class BRKeyStore {
                     BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
             WalletInfoData info = metadataProvider.getWalletInfoUnsafe();
             if (info != null) {
-                int creationDate = info.getCreationDate();
+                long creationDate = info.getCreationDate();
                 putWalletCreationTime(creationDate, context);
                 return creationDate;
             } else {

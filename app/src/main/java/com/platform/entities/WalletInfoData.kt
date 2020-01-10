@@ -3,6 +3,7 @@ package com.platform.entities
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logError
 import com.platform.util.getIntOrDefault
+import com.platform.util.getLongOrDefault
 import com.platform.util.getStringOrNull
 import org.json.JSONException
 import org.json.JSONObject
@@ -37,7 +38,7 @@ import org.json.JSONObject
  */
 data class WalletInfoData(
     val classVersion: Int = DEFAULT_CLASS_VERSION,
-    val creationDate: Int = DEFAULT_CREATION_DATE,
+    val creationDate: Long = DEFAULT_CREATION_DATE,
     val name: String? = null,
     val connectionModes: Map<String, WalletManagerMode> = emptyMap()
 ) {
@@ -48,12 +49,12 @@ data class WalletInfoData(
         private const val CONNECTION_MODES = "connectionModes"
 
         private const val DEFAULT_CLASS_VERSION = 3
-        private const val DEFAULT_CREATION_DATE = 0
+        private const val DEFAULT_CREATION_DATE = 0L
 
         fun fromJsonObject(json: JSONObject): WalletInfoData = json.run {
             WalletInfoData(
                 classVersion = getIntOrDefault(CLASS_VERSION, DEFAULT_CLASS_VERSION),
-                creationDate = getIntOrDefault(CREATION_DATE, DEFAULT_CREATION_DATE),
+                creationDate = getLongOrDefault(CREATION_DATE, DEFAULT_CREATION_DATE),
                 name = getStringOrNull(NAME),
                 connectionModes = getConnectionModes(this)
             )

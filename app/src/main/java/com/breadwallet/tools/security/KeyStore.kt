@@ -98,7 +98,7 @@ abstract class DefaultKeyStore : KeyStore {
 
     override suspend fun putWalletCreationTime(creationTime: Long) {
         withContext(Dispatchers.IO) {
-            BRKeyStore.putWalletCreationTime(creationTime.toInt(), context)
+            BRKeyStore.putWalletCreationTime(creationTime.toLong(), context)
         }
     }
 
