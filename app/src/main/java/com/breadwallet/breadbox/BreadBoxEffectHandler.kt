@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Ahsan Butt on <ahsan.butt@breadwallet.com> 7/30/19.
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 7/30/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

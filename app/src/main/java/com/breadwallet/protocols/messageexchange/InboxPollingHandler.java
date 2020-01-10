@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  * <p/>
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 4/8/19.
+ * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 4/8/19.
  * Copyright (c) 2019 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
