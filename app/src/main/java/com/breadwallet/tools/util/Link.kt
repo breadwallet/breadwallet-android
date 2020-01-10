@@ -2,6 +2,8 @@ package com.breadwallet.tools.util
 
 import android.net.Uri
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Key
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.entities.GenericTransactionMetaData
@@ -81,8 +83,25 @@ sealed class Link {
 @Suppress("ComplexMethod")
 fun String.asLink(): Link? {
     val uri = Uri.parse(this)
+    val (address, currencyCode) =
+        breadBox.getSystemUnsafe()
+            ?.networks
+            ?.mapNotNull { network ->
+                Address.create(this, network)
+                    .orNull()
+                    ?.let { address ->
+                        address to network.currency.code
+                    }
+            }
+            ?.firstOrNull() ?: null to null
+
     return when {
         isBlank() -> null
+        address != null && currencyCode != null ->
+            Link.CryptoRequestUrl(
+                currencyCode = currencyCode,
+                address = address.toString()
+            )
         uriParser.isCryptoUrl(this) ->
             uriParser.parseRequest(this)?.asCryptoRequestUrl()
         isPlatformUrl(uri) -> uri.asPlatformUrl()
@@ -110,6 +129,10 @@ fun String.asLink(): Link? {
 
 private val uriParser by lazy {
     BreadApp.getKodeinInstance().instance<CryptoUriParser>()
+}
+
+private val breadBox by lazy {
+    BreadApp.getKodeinInstance().instance<BreadBox>()
 }
 
 private fun CryptoRequest.asCryptoRequestUrl() =
