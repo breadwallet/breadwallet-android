@@ -143,7 +143,7 @@ class BrdWalletController : WalletController(
      */
     private fun lockRewardsViewToCollapsed(
         appBarLayout: AppBarLayout,
-        transactionListRecyclerView: androidx.recyclerview.widget.RecyclerView
+        transactionListRecyclerView: RecyclerView
     ) {
         val params = appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
         var behavior = params.behavior as AppBarLayout.Behavior?
