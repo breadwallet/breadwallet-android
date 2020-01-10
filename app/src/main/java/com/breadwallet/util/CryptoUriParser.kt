@@ -107,9 +107,7 @@ class CryptoUriParser(
             if (wallet != null) {
                 request.isPaymentProtocol || request.hasAddress()
             } else false
-        } else {
-            wallets.any { it.addressFor(url) != null }
-        }
+        } else false
     }
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")

@@ -5,7 +5,7 @@
     android:id="@+id/qr_main_layout"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:clickable="false">
+    android:clickable="true">
 
     <com.breadwallet.tools.qrcode.QRCodeReaderView
         android:id="@+id/qrdecoderview"

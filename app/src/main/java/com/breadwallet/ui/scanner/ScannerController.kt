@@ -29,6 +29,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.breadwallet.R
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
@@ -67,7 +68,7 @@ class ScannerController(
         super.onAttach(view)
         val context = checkNotNull(applicationContext)
 
-        val cameraPermission = context.checkSelfPermission(Manifest.permission.CAMERA)
+        val cameraPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
         if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
             startScanner()
         } else {
