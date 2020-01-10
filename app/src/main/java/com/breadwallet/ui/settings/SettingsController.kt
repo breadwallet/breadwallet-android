@@ -114,7 +114,7 @@ class SettingsController(args: Bundle? = null) :
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        settings_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity!!)
+        settings_list.layoutManager = LinearLayoutManager(activity!!)
     }
 
     override fun bindView(output: Consumer<SettingsEvent>) = output.view {

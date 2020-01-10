@@ -72,7 +72,7 @@ class SelectAlertCryptoActivity : BRActivity() {
         setContentView(R.layout.activity_select_alert_crypto)
 
         token_list.adapter = adapter
-        token_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        token_list.layoutManager = LinearLayoutManager(this)
 
         back_arrow.setOnClickListener { onBackPressed() }
         search_edit.addTextChangedListener(object : DefaultTextWatcher() {

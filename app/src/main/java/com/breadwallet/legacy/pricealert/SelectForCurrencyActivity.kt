@@ -71,7 +71,7 @@ class SelectForCurrencyActivity : BRActivity() {
 
         back_arrow.setOnClickListener { onBackPressed() }
 
-        currency_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        currency_list.layoutManager = LinearLayoutManager(this)
         currency_list.adapter = adapter
     }
 
@@ -99,7 +99,7 @@ class SelectForCurrencyActivity : BRActivity() {
 
     private class CurrencyAdapter(
         private val onSelectListener: (CurrencyEntity) -> Unit
-    ) : androidx.recyclerview.widget.RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
+    ) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
 
         var currencies: List<CurrencyEntity> = emptyList()
             set(value) {
@@ -129,7 +129,7 @@ class SelectForCurrencyActivity : BRActivity() {
 
         override fun getItemCount(): Int = currencies.size
 
-        class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val currencyLabel: TextView = view.findViewById(R.id.currency_item_text)
         }
     }

@@ -39,7 +39,7 @@ import java.math.RoundingMode
 class PriceAlertAdapter(
         private val context: Context,
         private val onDeleteListener: (@ParameterName("priceAlert") PriceAlert) -> Unit
-) : androidx.recyclerview.widget.RecyclerView.Adapter<PriceAlertAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PriceAlertAdapter.ViewHolder>() {
 
     var priceAlerts: List<PriceAlert> = emptyList()
         set(value) {
@@ -64,7 +64,7 @@ class PriceAlertAdapter(
         return ViewHolder(view).apply { setIsRecyclable(true) }
     }
 
-    class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val alertLabel: BaseTextView = view.findViewById(R.id.alert_label)
         val deleteAlert: ImageButton = view.findViewById(R.id.delete_alert_button)
     }

@@ -50,7 +50,7 @@ class PriceAlertListActivity : BaseSettingsActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        price_alert_list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        price_alert_list.layoutManager = LinearLayoutManager(this)
         price_alert_list.adapter = adapter
         back_button.setOnClickListener { onBackPressed() }
         add_alert_button.setOnClickListener {
