@@ -29,18 +29,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.toast
 import com.bluelinelabs.conductor.Controller
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import org.kodein.di.android.kodein
 
 /**
  * A simple controller that automatically inflates the
@@ -108,14 +105,14 @@ abstract class BaseController(
         } as T
 
     /** Display a [Toast] message of [resId] with a short duration. */
-    fun toast(resId: Int) = checkNotNull(applicationContext).toast(resId, Toast.LENGTH_SHORT)
+    fun toast(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_SHORT)
 
     /** Display a [Toast] message of [text] with a short duration. */
-    fun toast(text: String) = checkNotNull(applicationContext).toast(text, Toast.LENGTH_SHORT)
+    fun toast(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_SHORT)
 
     /** Display a [Toast] message of [resId] with a long duration. */
-    fun toastLong(resId: Int) = checkNotNull(applicationContext).toast(resId, Toast.LENGTH_LONG)
+    fun toastLong(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_LONG)
 
     /** Display a [Toast] message of [text] with a long duration. */
-    fun toastLong(text: String) = checkNotNull(applicationContext).toast(text, Toast.LENGTH_LONG)
+    fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG)
 }

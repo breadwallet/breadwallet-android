@@ -1,7 +1,7 @@
 package com.breadwallet.legacy.wallet.util;
 
 import android.content.Context;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.util.BRConstants;

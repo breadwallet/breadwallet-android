@@ -26,7 +26,7 @@ package com.breadwallet.ui.home
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View

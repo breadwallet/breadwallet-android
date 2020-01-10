@@ -31,7 +31,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.NetworkOnMainThreadException
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp

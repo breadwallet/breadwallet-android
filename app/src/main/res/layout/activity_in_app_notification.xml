@@ -7,12 +7,12 @@
     android:fillViewport="true"
     android:filterTouchesWhenObscured="true">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
 
             </RelativeLayout>
 
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
 
         <ImageView
@@ -104,5 +104,5 @@
             app:layout_constraintTop_toBottomOf="@+id/notification_title"
             app:layout_constraintWidth_percent="0.75"
             tools:text="Buy 1 bitcoin and win a Christmas party at the Nakatomi Plaza in Los Angeles hosted by Hans Gruber" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

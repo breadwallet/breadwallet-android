@@ -1,7 +1,7 @@
 package com.breadwallet.legacy.presenter.activities.settings;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageButton;
 
