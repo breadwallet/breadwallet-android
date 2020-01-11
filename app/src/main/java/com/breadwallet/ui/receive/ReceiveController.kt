@@ -44,6 +44,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.send.formatFiatForInputUi
 import com.breadwallet.ui.view
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
@@ -168,7 +169,17 @@ class ReceiveController(
         val res = checkNotNull(resources)
 
         ifChanged(ReceiveModel::sanitizedAddress, address_text::setText)
-        ifChanged(ReceiveModel::rawAmount, textInputAmount::setText)
+        ifChanged(
+            ReceiveModel::rawAmount,
+            ReceiveModel::fiatCurrencyCode
+        ) {
+            val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
+                rawAmount
+            } else {
+                rawAmount.formatFiatForInputUi(fiatCurrencyCode)
+            }
+            textInputAmount.setText(formattedAmount)
+        }
 
         ifChanged(
             ReceiveModel::isAmountCrypto,

@@ -458,7 +458,7 @@ class SendSheetController(args: Bundle? = null) :
     }
 }
 
-private fun String.formatFiatForInputUi(currencyCode: String): String {
+fun String.formatFiatForInputUi(currencyCode: String): String {
     // Ensure decimal displayed when string has not fraction digits
     val forceSeparator = contains('.')
     // Ensure all fraction digits are displayed, even if they are all zero
