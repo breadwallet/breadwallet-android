@@ -56,6 +56,7 @@ private const val PASSWORD_PROTECTED = "password_protected"
 private const val CONFIRM_IMPORT_DIALOG = "confirm_import"
 private const val IMPORT_SUCCESS_DIALOG = "import_success"
 
+@Suppress("TooManyFunctions")
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class ImportController(
     args: Bundle? = null

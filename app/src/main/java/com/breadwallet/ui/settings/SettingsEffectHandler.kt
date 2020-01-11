@@ -66,6 +66,7 @@ class SettingsEffectHandler(
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
+    @Suppress("ComplexMethod")
     override fun accept(value: SettingsEffect) {
         when (value) {
             is SettingsEffect.LoadOptions -> loadOptions(value.section)
