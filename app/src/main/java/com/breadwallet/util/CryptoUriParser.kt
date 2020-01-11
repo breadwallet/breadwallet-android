@@ -33,8 +33,6 @@ import com.breadwallet.breadbox.urlScheme
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.EventUtils
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.util.HashMap
 
@@ -46,6 +44,7 @@ private const val MESSAGE = "message"
 private const val REQ = "req"
 /** "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched */
 private const val R_URL = "r"
+private const val TOKEN_ADDRESS = "tokenaddress"
 
 class CryptoUriParser(
     private val breadBox: BreadBox
@@ -62,6 +61,10 @@ class CryptoUriParser(
         })
 
         uriBuilder.scheme(wallet.urlScheme)
+
+        if (wallet.currency.isErc20()) {
+            uriBuilder.appendQueryParameter(TOKEN_ADDRESS, wallet.currency.issuer.orNull())
+        }
 
         if (!request.hasAddress()) {
             request.address = wallet.target.toSanitizedString()
@@ -124,32 +127,25 @@ class CryptoUriParser(
             Uri.parse("$scheme://${schemeSpecificPart.trimStart('/')}")
         }
 
+        builder.scheme = uri.scheme
         builder.address = uri.host ?: ""
 
-        if (uri.scheme.isNullOrBlank()) {
-            val wallet = wallets.firstOrNull { it.addressFor(builder.address) != null }
-
-            if (wallet != null) {
-                builder.address = wallet.addressFor(builder.address)!!.toSanitizedString()
-                builder.currencyCode = wallet.currency.code
-                builder.scheme = when {
-                    // ERC-20 tokens do not use scheme
-                    wallet.currency.isErc20() -> null
-                    else -> wallet.urlScheme
-                }
+        val tokenAddress = uri.getQueryParameter(TOKEN_ADDRESS) ?: ""
+        if (tokenAddress.isNotBlank()) {
+            val tokenWallet = wallets.firstOrNull { it.currency.uids.contains(tokenAddress) }
+            if (tokenWallet == null) {
+                return null
+            } else {
+                builder.currencyCode = tokenWallet.currency.code
             }
         } else {
-            builder.scheme = uri.scheme
-            builder.currencyCode = runBlocking {
-                breadBox.wallets()
-                    .first()
-                    .mapNotNull { wallet ->
-                        if (wallet.urlScheme == uri.scheme) {
-                            wallet.currency.code
-                        } else null
-                    }
-                    .firstOrNull()
-            }
+            builder.currencyCode = wallets
+                .mapNotNull { wallet ->
+                    if (wallet.urlScheme == uri.scheme) {
+                        wallet.currency.code
+                    } else null
+                }
+                .firstOrNull()
         }
 
         if (builder.currencyCode.isNullOrBlank()) {
