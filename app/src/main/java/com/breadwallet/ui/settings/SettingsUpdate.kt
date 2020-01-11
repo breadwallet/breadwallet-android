@@ -70,6 +70,7 @@ object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, Se
     ): Next<SettingsModel, SettingsEffect> =
         dispatch(setOf(SettingsEffect.SetTokenBundle(event.bundle)))
 
+    @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: SettingsModel,
         event: SettingsEvent.OnOptionClicked
