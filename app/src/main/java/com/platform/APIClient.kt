@@ -83,6 +83,8 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
+private const val UNAUTHED_HTTP_STATUS = 401
+
 class APIClient(private var context: Context) {
 
     private var authKey: Key? = null
@@ -302,7 +304,7 @@ class APIClient(private var context: Context) {
                 BRReportsManager.reportBug(AuthenticatorException("Request: ${request.url} response is null"))
                 return BRResponse()
             }
-            if (response.code == 401) {
+            if (response.code == UNAUTHED_HTTP_STATUS) {
                 BRReportsManager.reportBug(AuthenticatorException("Request: ${request.url} returned 401!"))
             }
             if (!response.isSuccessful) {

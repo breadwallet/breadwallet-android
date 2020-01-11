@@ -45,6 +45,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONObject
+import java.io.IOException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -166,7 +167,7 @@ class BdbAuthInterceptor(
 
         val response = try {
             httpClient.newCall(request).execute()
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             return if (attempt == MAX_TOKEN_RETRIES) {
                 logError("Failed to create account token.", e)
                 null

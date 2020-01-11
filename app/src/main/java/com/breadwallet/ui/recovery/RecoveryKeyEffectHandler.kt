@@ -55,6 +55,9 @@ import java.text.Normalizer
 import java.util.Date
 import java.util.Locale
 
+private const val POLL_ATTEMPTS_MAX = 15
+private const val POLL_TIMEOUT_MS = 1000L
+
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class RecoveryKeyEffectHandler(
     private val output: Consumer<RecoveryKeyEvent>,
@@ -64,10 +67,6 @@ class RecoveryKeyEffectHandler(
     val goToErrorDialog: () -> Unit,
     val errorShake: () -> Unit
 ) : Connection<RecoveryKeyEffect>, CoroutineScope {
-
-    companion object {
-        private const val POLL_ATTEMPTS_MAX = 15
-    }
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
@@ -269,7 +268,7 @@ class RecoveryKeyEffectHandler(
                 for (i in 1..POLL_ATTEMPTS_MAX) {
                     metaDataProvider.getWalletInfoUnsafe()
                         ?.let { emit(it) }
-                    delay(1000L)
+                    delay(POLL_TIMEOUT_MS)
                 }
             }
             .first()

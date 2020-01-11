@@ -50,6 +50,7 @@ class CryptoUriParser(
     private val breadBox: BreadBox
 ) {
 
+    @Suppress("ComplexMethod")
     fun createUrl(currencyCode: String, request: CryptoRequest): Uri {
         require(currencyCode.isNotBlank())
 
