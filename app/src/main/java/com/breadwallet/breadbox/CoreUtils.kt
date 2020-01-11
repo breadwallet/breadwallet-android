@@ -55,13 +55,10 @@ import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
 import com.google.common.primitives.UnsignedInteger
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.isActive
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat

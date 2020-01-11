@@ -62,6 +62,8 @@ import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
+private const val EMAIL_SUCCESS_DELAY = 3_000L
+
 class HomeController(
     args: Bundle? = null
 ) : BaseMobiusController<HomeScreenModel, HomeScreenEvent, HomeScreenEffect>(args) {
@@ -271,7 +273,7 @@ class HomeController(
                 customTitle.text = act.getString(R.string.Prompts_Email_successTitle)
                 customDescription.text = act.getString(R.string.Prompts_Email_successBody)
                 viewAttachScope.launch(Main) {
-                    delay(3_000L)
+                    delay(EMAIL_SUCCESS_DELAY)
                     prompt_container.removeAllViews()
                 }
             } else {
