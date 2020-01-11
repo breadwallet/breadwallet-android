@@ -59,9 +59,8 @@ data class ReceiveModel(
     val isAmountCrypto: Boolean = true
 ) {
 
-    /** True if the currency supports requesting an amount (native only). */
-    val isRequestAmountSupported: Boolean =
-        currencyCode.run { isEthereum() || isBitcoinCash() || isBitcoin() }
+    /** True if the currency supports requesting an amount. */
+    val isRequestAmountSupported: Boolean = true
 
     fun withNewRawAmount(newRawAmount: String): ReceiveModel {
         if (newRawAmount.isBlank() || BigDecimal(newRawAmount).isZero()) {
