@@ -1,34 +1,7 @@
-package com.breadwallet.platform;
-
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import android.util.Log;
-
-import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.tools.util.BRCompressor;
-import com.breadwallet.tools.util.Utils;
-import com.platform.APIClient;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.assertNotEquals;
-
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 9/30/16.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 9/30/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -49,6 +22,31 @@ import static org.junit.Assert.assertNotEquals;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.platform;
+
+import androidx.test.rule.ActivityTestRule;
+import android.util.Log;
+
+import androidx.test.runner.AndroidJUnit4;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
+import com.breadwallet.tools.util.BRCompressor;
+import com.breadwallet.tools.util.Utils;
+import com.platform.APIClient;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class PlatformTests {
