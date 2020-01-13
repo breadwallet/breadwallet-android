@@ -1,25 +1,7 @@
-package com.breadwallet.protocols.messageexchange;
-
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.crypto.Key;
-import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/3/17.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/3/17.
  * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +22,24 @@ import org.junit.runner.RunWith;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.protocols.messageexchange;
+
+import androidx.test.rule.ActivityTestRule;
+
+import androidx.test.runner.AndroidJUnit4;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
+import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
+import com.breadwallet.tools.crypto.CryptoHelper;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 @RunWith(AndroidJUnit4.class)
 @Ignore("Signing not yet implemented")
 public class EncryptionMessagesTests {
@@ -56,9 +56,9 @@ public class EncryptionMessagesTests {
     public void encryptDecrypt() {
         Key key = Key.createFromPrivateKeyString(testPrivKey.getBytes()).get();
         MessageExchangeService messageExchangeService = new MessageExchangeService();
-        EncryptedMessage encryptedMessage = messageExchangeService.encrypt(key, key.encodeAsPublic(), BRCoreKey.decodeHex(sampleInputData));
+        EncryptedMessage encryptedMessage = messageExchangeService.encrypt(key, key.encodeAsPublic(), CryptoHelper.hexDecode(sampleInputData));
         byte[] decryptedMessage = messageExchangeService.decrypt(key, key.encodeAsPublic(), encryptedMessage.getEncryptedData(), encryptedMessage.getNonce());
-        Assert.assertEquals(sampleInputData, BRCoreKey.encodeHex(decryptedMessage));
+        Assert.assertEquals(sampleInputData, CryptoHelper.hexEncode(decryptedMessage));
     }
 
     @Test
