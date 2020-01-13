@@ -32,7 +32,6 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
-import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
@@ -267,9 +266,6 @@ public abstract class BaseBitcoinWalletManager implements BaseWalletManager {
 
     @Override
     public void wipeData(Context app) {
-        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, getCurrencyCode());
-        MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, getCurrencyCode());
-        PeerDataSource.getInstance(app).deleteAllPeers(app, getCurrencyCode());
         BRSharedPrefs.clearAllPrefs(app);
     }
 
