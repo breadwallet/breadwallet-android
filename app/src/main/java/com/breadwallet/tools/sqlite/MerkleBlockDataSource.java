@@ -1,5 +1,3 @@
-package com.breadwallet.tools.sqlite;
-
 /**
  * BreadWallet
  * <p/>
@@ -24,16 +22,14 @@ package com.breadwallet.tools.sqlite;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.sqlite;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.legacy.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.legacy.presenter.entities.BlockEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
@@ -65,44 +61,10 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putMerkleBlocks(Context app, String iso, BlockEntity[] blockEntities) {
-        try {
-            database = openDatabase();
-            database.beginTransaction();
-            for (BlockEntity b : blockEntities) {
-                ContentValues values = new ContentValues();
-                values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
-                values.put(BRSQLiteHelper.MB_HEIGHT, b.getBlockHeight());
-                values.put(BRSQLiteHelper.MB_ISO, iso.toUpperCase());
-                database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
-            }
-            database.setTransactionSuccessful();
-        } catch (Exception ex) {
-            BRReportsManager.reportBug(ex);
-            Log.e(TAG, "Error inserting into SQLite", ex);
-            //Error in between database transaction
-        } finally {
-            database.endTransaction();
-            closeDatabase();
-        }
-    }
-
     public void deleteAllBlocks(Context app, String iso) {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_ISO + "=?", new String[]{iso.toUpperCase()});
-        } finally {
-            closeDatabase();
-        }
-    }
-
-    public void deleteMerkleBlock(Context app, String iso, BRMerkleBlockEntity merkleBlock) {
-        try {
-            database = openDatabase();
-            long id = merkleBlock.getId();
-            Log.e(TAG, "MerkleBlock deleted with id: " + id);
-            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
-                    + " = ? AND " + BRSQLiteHelper.MB_ISO + " = ?", new String[]{String.valueOf(id), iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
