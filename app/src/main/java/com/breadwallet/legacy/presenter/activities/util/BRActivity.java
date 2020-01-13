@@ -1,36 +1,7 @@
-package com.breadwallet.legacy.presenter.activities.util;
-
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Point;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
-
-import com.breadwallet.R;
-import com.breadwallet.app.BreadApp;
-import com.breadwallet.legacy.presenter.activities.DisabledActivity;
-import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.qrcode.QRUtils;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.security.SecurityUtilKt;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.ui.MainActivity;
-import com.breadwallet.ui.recovery.RecoveryKeyActivity;
-import com.platform.tools.BRBitId;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 5/23/17.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 5/23/17.
  * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,6 +22,34 @@ import com.platform.tools.BRBitId;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.legacy.presenter.activities.util;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
+import android.view.MotionEvent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import com.breadwallet.R;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.legacy.presenter.activities.DisabledActivity;
+import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.security.SecurityUtilKt;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.ui.MainActivity;
+import com.breadwallet.ui.recovery.RecoveryKeyActivity;
+import com.platform.tools.BRBitId;
+
 public abstract class BRActivity extends AppCompatActivity {
     private static final String TAG = BRActivity.class.getName();
 
@@ -115,6 +114,7 @@ public abstract class BRActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // 123 is the qrCode result
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
