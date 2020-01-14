@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 10/17/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/14/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,46 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.settings
+package com.breadwallet.ui.sync
 
-enum class SettingsOption {
-    // HOME
-    SCAN_QR,
-    PREFERENCES,
-    SECURITY_SETTINGS,
-    SUPPORT,
-    SUBMIT_REVIEW,
-    REWARDS,
-    ABOUT,
-    ATM_FINDER,
-    DEVELOPER_OPTIONS,
-    // PREFERENCES
-    CURRENCY,
-    BTC_MENU,
-    BCH_MENU,
-    SHARE_ANONYMOUS_DATA,
-    NOTIFICATIONS,
-    // SECURITY SETTINGS
-    FINGERPRINT_AUTH,
-    UPDATE_PIN,
-    PAPER_KEY,
-    WIPE,
-    // DEVELOPER OPTIONS
-    SEND_LOGS,
-    API_SERVER,
-    ONBOARDING_FLOW,
-    WEB_PLAT_DEBUG_URL,
-    WEB_PLAT_BUNDLE,
-    TOKEN_BUNDLE,
-    // BTC
-    FINGERPRINT_SPENDING_LIMIT,
-    REDEEM_PRIVATE_KEY,
-    SYNC_BLOCKCHAIN_BTC,
-    SYNC_BLOCKCHAIN_BCH,
-    BTC_NODES,
-    ENABLE_SEG_WIT,
-    VIEW_LEGACY_ADDRESS,
-    FAST_SYNC_BTC,
-    FAST_SYNC_BCH
+import com.breadwallet.ui.sync.SyncBlockchain.E
+import com.breadwallet.ui.sync.SyncBlockchain.F
+import com.breadwallet.ui.sync.SyncBlockchain.M
+import com.spotify.mobius.Next
+import com.spotify.mobius.Next.dispatch
+import com.spotify.mobius.Update
+
+object SyncBlockchainUpdate : Update<M, E, F> {
+    override fun update(model: M, event: E): Next<M, F> =
+        when (event) {
+            E.OnFaqClicked -> dispatch(setOf(F.Nav.GoToSyncFaq(model.currencyCode)))
+            E.OnSyncClicked -> dispatch(setOf(F.ShowSyncConfirmation))
+            E.OnConfirmSyncClicked -> dispatch(setOf(F.SyncBlockchain(model.currencyCode)))
+            E.OnSyncStarted -> dispatch(setOf(F.Nav.GoToHome))
+        }
 }
-

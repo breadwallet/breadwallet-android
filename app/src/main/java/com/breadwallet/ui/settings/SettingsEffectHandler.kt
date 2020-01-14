@@ -310,7 +310,7 @@ class SettingsEffectHandler(
             ),
             SettingsItem(
                 context.getString(R.string.ReScan_header),
-                SettingsOption.SYNC_BLOCKCHAIN
+                SettingsOption.SYNC_BLOCKCHAIN_BTC
             ),
             SettingsItem(
                 context.getString(R.string.NodeSelector_title),
@@ -345,7 +345,7 @@ class SettingsEffectHandler(
         ),
         SettingsItem(
             context.getString(R.string.ReScan_header),
-            SettingsOption.SYNC_BLOCKCHAIN
+            SettingsOption.SYNC_BLOCKCHAIN_BCH
         )
     )
 
