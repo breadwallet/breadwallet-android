@@ -83,7 +83,6 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
                 SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
-                SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain
                 else -> null
             }
         }),
@@ -105,6 +104,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 is SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
                 SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
+                is SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 else -> null
             }
         })
