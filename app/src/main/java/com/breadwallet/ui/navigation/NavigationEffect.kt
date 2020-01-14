@@ -112,10 +112,12 @@ sealed class NavigationEffect {
     object GoToWipeWallet : NavigationEffect()
     object GoToOnboarding : NavigationEffect()
     object GoToImportWallet : NavigationEffect()
-    object GoToSyncBlockchain : NavigationEffect()
     object GoToBitcoinNodeSelector : NavigationEffect()
     object GoToEnableSegWit : NavigationEffect()
     object GoToLegacyAddress : NavigationEffect()
+    data class GoToSyncBlockchain(
+        val currencyCode: String
+    ) : NavigationEffect()
     data class GoToFastSync(
         val currencyCode: String
     ) : NavigationEffect()

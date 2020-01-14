@@ -94,7 +94,8 @@ object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, Se
                     SettingsOption.NOTIFICATIONS -> SettingsEffect.GoToNotificationsSettings
                     SettingsOption.FINGERPRINT_SPENDING_LIMIT -> SettingsEffect.GoToFingerprintSpendingLimit
                     SettingsOption.REDEEM_PRIVATE_KEY -> SettingsEffect.GoToImportWallet
-                    SettingsOption.SYNC_BLOCKCHAIN -> SettingsEffect.GoToSyncBlockchain
+                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> SettingsEffect.GoToSyncBlockchain("btc")
+                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> SettingsEffect.GoToSyncBlockchain("bch")
                     SettingsOption.ENABLE_SEG_WIT -> SettingsEffect.GoToEnableSegWit
                     SettingsOption.VIEW_LEGACY_ADDRESS -> SettingsEffect.GoToLegacyAddress
                     SettingsOption.BTC_NODES -> SettingsEffect.GoToNodeSelector
