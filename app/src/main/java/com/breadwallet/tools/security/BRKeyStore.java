@@ -134,7 +134,7 @@ public final class BRKeyStore {
     private static final String PASS_TIME_IV = "ivpasstimetoken";
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
     private static final String BDB_JWT_IV = "ivbdbjwt";
-    private static final String BDB_JWT_EXP_IV = "ivbdbjwt";
+    private static final String BDB_JWT_EXP_IV = "ivbdbjwtexp";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String PUB_KEY_ALIAS = "pubKey";
@@ -750,7 +750,7 @@ public final class BRKeyStore {
                 return 0;
             }
         } else {
-            return TypesConverter.bytesToInt(result);
+            return TypesConverter.byteArray2long(result);
         }
     }
 
