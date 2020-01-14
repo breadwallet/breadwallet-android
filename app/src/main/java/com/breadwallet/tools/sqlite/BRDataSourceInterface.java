@@ -1,11 +1,7 @@
-package com.breadwallet.tools.sqlite;
-
-import android.database.sqlite.SQLiteDatabase;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 10/24/17.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 10/24/17.
  * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +22,11 @@ import android.database.sqlite.SQLiteDatabase;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.sqlite;
+
+import android.database.sqlite.SQLiteDatabase;
+
+
 public interface BRDataSourceInterface {
 
     SQLiteDatabase openDatabase();

@@ -1,17 +1,39 @@
+/**
+ * BreadWallet
+ * <p/>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 4/29/16.
+ * Copyright (c) 2016 breadwallet LLC
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package com.breadwallet.legacy.wallet;
 
 import android.app.Activity;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 
-import com.breadwallet.core.BRCoreMasterPubKey;
+import androidx.test.runner.AndroidJUnit4;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.legacy.presenter.entities.CryptoRequest;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
 import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.legacy.wallet.util.CryptoUriParser;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
@@ -36,31 +58,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 
-/**
- * BreadWallet
- * <p/>
- * Created by Mihail Gutan on 4/29/16.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 @Ignore("Wallet managers to be removed")
@@ -78,8 +75,8 @@ public class WalletTests {
     @Before
     public void setUp() {
         Log.e(TAG, "setUp: ");
-        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
-        BRKeyStore.putMasterPublicKey(pubKey.serialize(), mActivityRule.getActivity());
+        //BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
+        //BRKeyStore.putMasterPublicKey(pubKey.serialize(), mActivityRule.getActivity());
         mBtcWallet = WalletBitcoinManager.getInstance(mActivityRule.getActivity());
         mBchWallet = WalletBchManager.getInstance(mActivityRule.getActivity());
     }
@@ -88,6 +85,7 @@ public class WalletTests {
     public void tearDown() {
     }
 
+    /*
     @Test
     public void paymentRequestTest() {
         Activity app = mActivityRule.getActivity();
@@ -171,7 +169,7 @@ public class WalletTests {
         obj = CryptoUriParser.parseRequest(app, "ethereum://0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F?value=1");
         assertEquals(obj.getAddress(), "0x8CCF9C4a7674D5784831b5E1237d9eC9Dddf9d7F");
         assertEquals(obj.getAmount(), new BigDecimal("1000000000000000000"));
-    }
+    }*/
 
     @Test
     public void currencyManagerTests() {

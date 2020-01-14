@@ -70,10 +70,12 @@ object CryptoHelper {
         Coder.createForAlgorithm(Coder.Algorithm.HEX)
     }
 
+    @JvmStatic
     fun hexEncode(data: ByteArray): String {
         return hex.encode(data).or("")
     }
 
+    @JvmStatic
     fun hexDecode(data: String): ByteArray {
         return hex.decode(data).or(byteArrayOf())
     }
