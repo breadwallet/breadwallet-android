@@ -1,26 +1,7 @@
-package com.breadwallet.tools.util;
-
-import android.app.Activity;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.tools.security.BRKeyStore;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.List;
-
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/20/16.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/20/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,6 +22,24 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.util;
+
+import android.app.Activity;
+import androidx.test.rule.ActivityTestRule;
+
+import androidx.test.runner.AndroidJUnit4;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
+import com.breadwallet.tools.security.BRKeyStore;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.List;
+
 @RunWith(AndroidJUnit4.class)
 public class Bip39Tests {
     private static final String EN_FIRST_WORD = "abandon";
