@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit
 
 private const val JWT_EXP_DAYS = 7L
 private const val MAX_TOKEN_RETRIES = 3
-private const val JWT_EXP_PADDING_SECONDS = 10L
+private const val JWT_EXP_PADDING_MS = 10_000L
 
 class BdbAuthInterceptor(
     private val context: Context,
@@ -92,8 +92,7 @@ class BdbAuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         if (jwtString == null) createAndSetJwt()
 
-        val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-        if ((jwtExpiration - JWT_EXP_PADDING_SECONDS) < currentSeconds) {
+        if ((jwtExpiration - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
             // Expired, cleanup and create new token
             jwtString = null
             jwtExpiration = 0
