@@ -42,12 +42,11 @@ import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_pin.*
+import kotlinx.android.synthetic.main.controller_login.*
 import kotlinx.android.synthetic.main.pin_digits.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -60,7 +59,7 @@ class LoginController(args: Bundle? = null) :
         private const val EXTRA_URL = "com.breadwallet.ui.login.LoginController.PENDING_URL"
     }
 
-    override val layoutId = R.layout.activity_pin
+    override val layoutId = R.layout.controller_login
 
     constructor(intentUrl: String?) : this(
         bundleOf(EXTRA_URL to intentUrl)

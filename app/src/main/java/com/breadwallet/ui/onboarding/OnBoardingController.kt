@@ -45,8 +45,8 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_on_boarding.*
-import kotlinx.android.synthetic.main.fragment_onboarding.*
+import kotlinx.android.synthetic.main.controller_on_boarding.*
+import kotlinx.android.synthetic.main.controller_onboarding_page.*
 import kotlinx.coroutines.SupervisorJob
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -64,7 +64,7 @@ class OnBoardingController(
         checkNotNull(resources).getDrawable(resId, checkNotNull(activity).theme)
     }
 
-    override val layoutId = R.layout.activity_on_boarding
+    override val layoutId = R.layout.controller_on_boarding
 
     private val effectJob = SupervisorJob()
     private val _effectHandler by lazy {
@@ -171,7 +171,7 @@ class OnBoardingController(
 }
 
 class PageOneController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.fragment_onboarding
+    override val layoutId = R.layout.controller_onboarding_page
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         primary_text.setText(R.string.OnboardingPageTwo_title)
@@ -180,7 +180,7 @@ class PageOneController(args: Bundle? = null) : BaseController(args) {
 }
 
 class PageTwoController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.fragment_onboarding
+    override val layoutId = R.layout.controller_onboarding_page
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val resources = checkNotNull(resources)
@@ -192,7 +192,7 @@ class PageTwoController(args: Bundle? = null) : BaseController(args) {
 }
 
 class PageThreeController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.fragment_onboarding
+    override val layoutId = R.layout.controller_onboarding_page
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)

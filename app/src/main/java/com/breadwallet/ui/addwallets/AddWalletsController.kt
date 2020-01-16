@@ -30,7 +30,7 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
-import kotlinx.android.synthetic.main.activity_add_wallets.*
+import kotlinx.android.synthetic.main.controller_add_wallets.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -47,7 +47,7 @@ import org.kodein.di.erased.instance
 class AddWalletsController :
     BaseMobiusController<AddWalletsModel, AddWalletsEvent, AddWalletsEffect>() {
 
-    override val layoutId: Int = R.layout.activity_add_wallets
+    override val layoutId: Int = R.layout.controller_add_wallets
 
     override val defaultModel = AddWalletsModel.createDefault()
     override val init = AddWalletsInit

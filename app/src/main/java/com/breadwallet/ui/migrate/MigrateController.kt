@@ -49,7 +49,7 @@ class MigrateController(
 
     private val keyStore by instance<KeyStore>()
 
-    override val layoutId: Int = R.layout.activity_pin
+    override val layoutId: Int = R.layout.controller_login
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)

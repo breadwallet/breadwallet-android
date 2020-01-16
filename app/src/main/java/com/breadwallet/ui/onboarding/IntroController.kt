@@ -35,7 +35,7 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.web.WebController
-import kotlinx.android.synthetic.main.activity_intro.*
+import kotlinx.android.synthetic.main.controller_intro.*
 
 /**
  * Activity shown when there is no wallet, here the user can pick
@@ -43,7 +43,7 @@ import kotlinx.android.synthetic.main.activity_intro.*
  */
 class IntroController : BaseController() {
 
-    override val layoutId: Int = R.layout.activity_intro
+    override val layoutId: Int = R.layout.controller_intro
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
