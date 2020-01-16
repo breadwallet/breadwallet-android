@@ -40,16 +40,12 @@ import com.breadwallet.crypto.events.system.SystemEvent
 import com.breadwallet.crypto.events.system.SystemListener
 import com.breadwallet.crypto.events.system.SystemNetworkAddedEvent
 import com.breadwallet.crypto.events.transfer.TranferEvent
-import com.breadwallet.crypto.events.wallet.DefaultWalletEventVisitor
 import com.breadwallet.crypto.events.wallet.WalletEvent
 import com.breadwallet.crypto.events.wallet.WalletTransferAddedEvent
 import com.breadwallet.crypto.events.wallet.WalletTransferChangedEvent
 import com.breadwallet.crypto.events.wallet.WalletTransferDeletedEvent
 import com.breadwallet.crypto.events.wallet.WalletTransferSubmittedEvent
-import com.breadwallet.crypto.events.walletmanager.DefaultWalletManagerEventVisitor
 import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
-import com.breadwallet.crypto.events.walletmanager.WalletManagerCreatedEvent
-import com.breadwallet.crypto.events.walletmanager.WalletManagerDeletedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
 import com.breadwallet.crypto.migration.BlockBlob
@@ -326,6 +322,7 @@ internal class CoreBreadBox(
 
         walletsChannel.offer(system.wallets)
 
+        @Synchronized
         fun updateTransfer(transfer: Transfer) {
             walletTransfersChannelMap
                 .getValue(wallet.currency.code)
@@ -335,23 +332,16 @@ internal class CoreBreadBox(
                 .offer(transfer)
         }
 
-        event.accept(object : DefaultWalletEventVisitor<Unit>() {
-            override fun visit(event: WalletTransferChangedEvent) {
+        when (event) {
+            is WalletTransferSubmittedEvent ->
                 updateTransfer(event.transfer)
-            }
-
-            override fun visit(event: WalletTransferSubmittedEvent) {
+            is WalletTransferDeletedEvent ->
                 updateTransfer(event.transfer)
-            }
-
-            override fun visit(event: WalletTransferDeletedEvent) {
+            is WalletTransferAddedEvent ->
                 updateTransfer(event.transfer)
-            }
-
-            override fun visit(event: WalletTransferAddedEvent) {
+            is WalletTransferChangedEvent ->
                 updateTransfer(event.transfer)
-            }
-        })
+        }
     }
 
     @Synchronized
@@ -364,12 +354,8 @@ internal class CoreBreadBox(
 
         walletsChannel.offer(system.wallets)
 
-        event.accept(object : DefaultWalletManagerEventVisitor<Unit>() {
-            override fun visit(event: WalletManagerCreatedEvent) = Unit
-
-            override fun visit(event: WalletManagerDeletedEvent) = Unit
-
-            override fun visit(event: WalletManagerSyncProgressEvent) {
+        when (event) {
+            is WalletManagerSyncProgressEvent -> {
                 val timeStamp = event.timestamp?.get()?.time
                 logDebug("(${manager.currency.code}) Sync Progress progress=${event.percentComplete} time=$timeStamp")
                 // NOTE: Fulfill percentComplete fractional expectation of consumers
@@ -382,8 +368,7 @@ internal class CoreBreadBox(
                     )
                 )
             }
-
-            override fun visit(event: WalletManagerChangedEvent) {
+            is WalletManagerChangedEvent -> {
                 val fromStateType = event.oldState.type
                 val toStateType = event.newState.type
                 logDebug("(${manager.currency.code}) State Changed from='$fromStateType' to='$toStateType'")
@@ -411,7 +396,7 @@ internal class CoreBreadBox(
                     )
                 }
             }
-        })
+        }
     }
 
     override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) {
@@ -434,6 +419,11 @@ internal class CoreBreadBox(
         event: TranferEvent
     ) {
         walletTracker.handleTransferEvent(system, manager, wallet, transfer, event)
+
+        synchronized(this) {
+            transferUpdatedChannelMap.getValue(transfer.hash.toString()).offer(transfer)
+            walletTransfersChannelMap.getValue(wallet.currency.code).offer(wallet.transfers)
+        }
     }
 
     private fun migrateNetwork(system: System, network: Network, currencyCode: String) {
