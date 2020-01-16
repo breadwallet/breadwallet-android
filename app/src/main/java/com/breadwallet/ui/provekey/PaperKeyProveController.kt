@@ -43,7 +43,7 @@ import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_paper_key_prove.*
+import kotlinx.android.synthetic.main.controller_paper_key_prove.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -66,7 +66,7 @@ class PaperKeyProveController(args: Bundle) :
     private val phrase: List<String> = arg(EXTRA_PHRASE)
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
-    override val layoutId = R.layout.activity_paper_key_prove
+    override val layoutId = R.layout.controller_paper_key_prove
     override val defaultModel = PaperKeyProveModel.createDefault(phrase, onComplete)
     override val update = PaperKeyProveUpdate
     override val effectHandler =

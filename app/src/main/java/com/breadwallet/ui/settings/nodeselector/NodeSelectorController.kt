@@ -42,7 +42,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_nodes.*
+import kotlinx.android.synthetic.main.controller_node_selector.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ private const val RESTORE_DIALOG_TITLE_DELAY = 1_000L
 class NodeSelectorController :
     BaseMobiusController<NodeSelectorModel, NodeSelectorEvent, NodeSelectorEffect>() {
 
-    override val layoutId = R.layout.activity_nodes
+    override val layoutId = R.layout.controller_node_selector
     override val defaultModel = NodeSelectorModel.createDefault()
     override val update = NodeSelectorUpdate
     override val init = NodeSelectorInit

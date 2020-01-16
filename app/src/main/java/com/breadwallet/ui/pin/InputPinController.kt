@@ -35,13 +35,12 @@ import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_pin_template.*
+import kotlinx.android.synthetic.main.controller_pin_input.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -66,7 +65,7 @@ class InputPinController(args: Bundle) :
         )
     )
 
-    override val layoutId = R.layout.activity_pin_template
+    override val layoutId = R.layout.controller_pin_input
     override val defaultModel = InputPinModel.createDefault(
         pinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false),
         onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE)),
