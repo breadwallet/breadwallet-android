@@ -42,7 +42,7 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_write_down.*
+import kotlinx.android.synthetic.main.controller_write_down.*
 import kotlinx.android.synthetic.main.email_prompt.close_button
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -69,7 +69,7 @@ class WriteDownKeyController(args: Bundle? = null) :
 
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
-    override val layoutId: Int = R.layout.activity_write_down
+    override val layoutId: Int = R.layout.controller_write_down
     override val defaultModel = WriteDownKeyModel.createDefault(onComplete)
     override val update = WriteDownKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<WriteDownKeyEffect, WriteDownKeyEvent>(

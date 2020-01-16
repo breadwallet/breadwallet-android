@@ -10,7 +10,7 @@
     android:background="@color/sync_toolbar"
     android:orientation="vertical"
     android:visibility="gone"
-    tools:showIn="@layout/activity_wallet">
+    tools:showIn="@layout/controller_wallet">
 
     <RelativeLayout
         android:id="@+id/progress_layout_margins"

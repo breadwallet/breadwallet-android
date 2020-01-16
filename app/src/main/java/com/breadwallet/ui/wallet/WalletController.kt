@@ -62,7 +62,7 @@ import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.util.WalletDisplayUtils
 import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.activity_wallet.*
+import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.view_delisted_token.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
@@ -103,7 +103,7 @@ open class WalletController(
         private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
     }
 
-    override val layoutId = R.layout.activity_wallet
+    override val layoutId = R.layout.controller_wallet
 
     override val defaultModel = WalletScreenModel.createDefault(currencyCode)
     override val init = WalletInit

@@ -43,7 +43,7 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.controller_settings.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -61,7 +61,7 @@ class SettingsController(args: Bundle? = null) :
     )
 
     private val section: SettingsSection = SettingsSection.valueOf(arg(EXT_SECTION))
-    override val layoutId = R.layout.activity_settings
+    override val layoutId = R.layout.controller_settings
     override val defaultModel = SettingsModel.createDefault(section)
     override val update = SettingsUpdate
     override val effectHandler = CompositeEffectHandler.from<SettingsEffect, SettingsEvent>(

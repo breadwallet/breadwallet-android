@@ -41,8 +41,6 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
-import com.breadwallet.effecthandler.metadata.MetaDataEffect
-import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.logger.logError
@@ -60,7 +58,7 @@ import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_input_words.*
+import kotlinx.android.synthetic.main.controller_recovery_key.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -90,7 +88,7 @@ class RecoveryKeyController(
         registerForActivityResult(BRConstants.SHOW_PHRASE_REQUEST_CODE)
     }
 
-    override val layoutId: Int = R.layout.activity_input_words
+    override val layoutId: Int = R.layout.controller_recovery_key
 
     override val defaultModel
         get() = RecoveryKeyModel.createWithOptionalPhrase(

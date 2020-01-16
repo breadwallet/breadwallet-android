@@ -31,12 +31,12 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import kotlinx.android.synthetic.main.activity_intro_recover.*
+import kotlinx.android.synthetic.main.controller_intro_recover.*
 
 
 class IntroRecoveryController(args: Bundle? = null) : BaseController(args) {
 
-    override val layoutId = R.layout.activity_intro_recover
+    override val layoutId = R.layout.controller_intro_recover
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)

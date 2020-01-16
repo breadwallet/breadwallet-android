@@ -27,7 +27,6 @@ package com.breadwallet.ui.navigation
 import android.content.Intent
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.settings.AboutActivity
-import com.breadwallet.legacy.presenter.activities.settings.NodesActivity
 import com.breadwallet.legacy.presenter.activities.settings.ShareDataActivity
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
@@ -181,10 +180,7 @@ class NavigationEffectHandler(
 
     override fun goToSyncBlockchain(effect: NavigationEffect.GoToSyncBlockchain) = Unit
 
-    override fun goToBitcoinNodeSelector() {
-        activity.startActivity(Intent(activity, NodesActivity::class.java))
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-    }
+    override fun goToBitcoinNodeSelector() = Unit
 
     override fun goToEnableSegWit() = Unit
 

@@ -176,14 +176,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.settings.AdvancedActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.settings.NodesActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".legacy.presenter.activities.camera.CameraActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
