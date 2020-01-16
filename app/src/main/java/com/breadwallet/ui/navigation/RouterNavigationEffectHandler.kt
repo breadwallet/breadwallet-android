@@ -326,7 +326,12 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToImportWallet() {
-        router.pushController(ImportController().asTransaction())
+        router.pushController(
+            ImportController().asTransaction(
+                HorizontalChangeHandler(),
+                HorizontalChangeHandler()
+            )
+        )
     }
 
     override fun goToSyncBlockchain(effect: NavigationEffect.GoToSyncBlockchain) {
