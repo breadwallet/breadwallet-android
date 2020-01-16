@@ -55,7 +55,7 @@ import com.breadwallet.util.isValidEmail
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.controller_home.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ class HomeController(
         private const val NETWORK_MAINNET = "MAINNET"
     }
 
-    override val layoutId = R.layout.activity_home
+    override val layoutId = R.layout.controller_home
     override val defaultModel = HomeScreenModel.createDefault()
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit

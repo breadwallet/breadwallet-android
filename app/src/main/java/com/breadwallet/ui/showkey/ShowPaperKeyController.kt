@@ -46,7 +46,7 @@ import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.util.DefaultOnPageChangeListener
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.activity_paper_key.*
+import kotlinx.android.synthetic.main.controller_paper_key.*
 import kotlinx.android.synthetic.main.fragment_word_item.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -70,7 +70,7 @@ class ShowPaperKeyController(args: Bundle) :
     private val phrase: List<String> = arg(EXTRA_PHRASE)
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
-    override val layoutId = R.layout.activity_paper_key
+    override val layoutId = R.layout.controller_paper_key
     override val defaultModel = ShowPaperKeyModel.createDefault(phrase, onComplete)
     override val update = ShowPaperKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<ShowPaperKeyEffect, ShowPaperKeyEvent>(

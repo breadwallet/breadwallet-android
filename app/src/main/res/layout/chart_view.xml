@@ -8,7 +8,7 @@
                                                    android:animateLayoutChanges="false"
                                                    android:clipChildren="false"
                                                    android:clipToPadding="false"
-                                                   tools:showIn="@layout/activity_wallet">
+                                                   tools:showIn="@layout/controller_wallet">
 
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView

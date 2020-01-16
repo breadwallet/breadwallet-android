@@ -38,7 +38,7 @@ import com.breadwallet.R
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.EventUtils
-import kotlinx.android.synthetic.main.activity_wallet.*
+import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.rewards_announcement_view.*
 
 import java.io.File
