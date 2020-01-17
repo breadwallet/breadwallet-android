@@ -110,7 +110,6 @@ public final class BRConstants {
     public static final String FAQ_SECURITY_CENTER = "security-center";
     public static final String FAQ_PAPER_KEY = "paper-key";
     public static final String FAQ_ENABLE_FINGERPRINT = "enable-fingerprint-authentication";
-    public static final String FAQ_FINGERPRINT_SPENDING_LIMIT = "fingerprint-spending-limit";
     public static final String FAQ_TRANSACTION_DETAILS = "transaction-details";
     public static final String FAQ_RECEIVE = "receive-tx";
     public static final String FAQ_REQUEST_AMOUNT = "request-amount";
