@@ -46,6 +46,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import java.nio.charset.Charset
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -75,7 +76,7 @@ class BdbAuthInterceptor(
     }
 
     @Volatile
-    private var jwtString: String? = BRKeyStore.getBdbJwt(context)?.contentToString()
+    private var jwtString: String? = BRKeyStore.getBdbJwt(context)?.toString(Charset.forName("UTF-8"))
 
     @Volatile
     private var jwtExpiration: Long = BRKeyStore.getBdbJwtExp(context)
@@ -89,24 +90,30 @@ class BdbAuthInterceptor(
         .run(CryptoHelper::hexDecode)
         .base64EncodedString()
 
-    override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
-        if (jwtString == null) createAndSetJwt()
-
-        if ((jwtExpiration - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
-            // Expired, cleanup and create new token
-            jwtString = null
-            jwtExpiration = 0
-            createAndSetJwt()
+    override fun intercept(chain: Interceptor.Chain): Response {
+        if (!chain.request().url.host.endsWith("blockset.com")) {
+            return chain.proceed(chain.request())
         }
 
-        // Fallback to client token if needed, try creating a token later
-        val tokenString = if (jwtString == null) {
-            BuildConfig.BDB_CLIENT_TOKEN
-        } else {
-            jwtString
+        val tokenString = runBlocking {
+            if (jwtString == null) createAndSetJwt()
+
+            if ((jwtExpiration - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
+                // Expired, cleanup and create new token
+                jwtString = null
+                jwtExpiration = 0
+                createAndSetJwt()
+            }
+
+            // Fallback to client token if needed, try creating a token later
+            if (jwtString == null) {
+                BuildConfig.BDB_CLIENT_TOKEN
+            } else {
+                jwtString
+            }
         }
 
-        chain.request()
+        return chain.request()
             .newBuilder()
             .addHeader("Authorization", "Bearer $tokenString")
             .build()
