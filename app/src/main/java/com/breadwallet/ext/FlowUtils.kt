@@ -26,11 +26,17 @@ package com.breadwallet.ext
 
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 /** Dispatch each item emitted by this flow to [consumer], launching in [scope]. */
 fun <T> Flow<T>.bindConsumerIn(consumer: Consumer<T>, scope: CoroutineScope) =
@@ -44,5 +50,28 @@ fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> = flow {
             lastEmissionMs = currentMs
             emit(value)
         }
+    }
+}
+
+fun <T> Flow<T>.throttleLatest(windowDuration: Long): Flow<T> = channelFlow {
+    val isActive = AtomicBoolean(false)
+    val latest = AtomicReference<T>()
+    val emissions = AtomicInteger(0)
+    collect { value ->
+        if (!isActive.get()) {
+            isActive.set(true)
+
+            offer(value)
+            delay(windowDuration)
+
+            if (emissions.get() > 1) {
+                offer(latest.get())
+            }
+
+            isActive.set(false)
+            emissions.set(0)
+        }
+        latest.set(value)
+        emissions.incrementAndGet()
     }
 }
