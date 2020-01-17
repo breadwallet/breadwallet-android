@@ -31,6 +31,7 @@ import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
 import com.breadwallet.ext.bindConsumerIn
+import com.breadwallet.ext.throttleLatest
 import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.MessagesRepository
@@ -64,6 +65,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import java.math.BigDecimal
 import com.breadwallet.crypto.Wallet as CryptoWallet
+
+private const val DATA_THROTTLE_MS = 500L
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenEffectHandler(
@@ -109,6 +112,7 @@ class HomeScreenEffectHandler(
     private fun loadWallets() {
         // Update wallets list
         breadBox.wallets()
+            .throttleLatest(DATA_THROTTLE_MS)
             .applyDisplayOrder(walletProvider.enabledWallets())
             .mapLatest { wallets -> wallets.map { it.asWallet() } }
             .map { HomeScreenEvent.OnWalletsUpdated(it) }
@@ -116,6 +120,7 @@ class HomeScreenEffectHandler(
 
         // Update wallet balances
         breadBox.currencyCodes()
+            .throttleLatest(DATA_THROTTLE_MS)
             .flatMapLatest { it.asFlow() }
             // FIXME: merge concurrency default prevents
             //  this from working with > 16 Wallets.

@@ -51,6 +51,7 @@ import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEven
 import com.breadwallet.crypto.migration.BlockBlob
 import com.breadwallet.crypto.migration.PeerBlob
 import com.breadwallet.crypto.migration.TransactionBlob
+import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
@@ -87,6 +88,9 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
+private const val DEFAULT_THROTTLE_MS = 100L
+private const val AGGRESSIVE_THROTTLE_MS = 300L
+
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions")
 internal class CoreBreadBox(
@@ -107,9 +111,11 @@ internal class CoreBreadBox(
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
     // TODO: Use createForTest until auth flow is implemented.
     private val blockchainDb by lazy {
-        BlockchainDb(OkHttpClient.Builder()
-            .addInterceptor(BdbAuthInterceptor(BreadApp.getBreadContext(), OkHttpClient()))
-            .build())
+        BlockchainDb(
+            OkHttpClient.Builder()
+                .addInterceptor(BdbAuthInterceptor(BreadApp.getBreadContext(), OkHttpClient()))
+                .build()
+        )
     }
 
     private val openScope = CoroutineScope(
@@ -217,16 +223,19 @@ internal class CoreBreadBox(
     override fun system() =
         systemChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .fromSystemOnStart { it }
 
     override fun account() =
         accountChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .fromSystemOnStart(System::getAccount)
 
     override fun wallets(filterByTracked: Boolean) =
         walletsChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets ->
                 when {
@@ -245,6 +254,7 @@ internal class CoreBreadBox(
     override fun wallet(currencyCode: String) =
         walletsChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets ->
                 wallets.firstOrNull {
@@ -256,6 +266,7 @@ internal class CoreBreadBox(
     override fun currencyCodes() =
         walletsChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .fromSystemOnStart(System::getWallets)
             .mapLatest { wallets -> wallets.map { it.currency.code } }
             .distinctUntilChanged()
@@ -263,6 +274,7 @@ internal class CoreBreadBox(
     override fun walletSyncState(currencyCode: String) =
         walletSyncStateChannel
             .asFlow()
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .filter { it.currencyCode.equals(currencyCode, true) }
             .onStart {
                 // Dispatch initial sync state
@@ -284,6 +296,7 @@ internal class CoreBreadBox(
     override fun walletTransfers(currencyCode: String) =
         walletTransfersChannelMap.getValue(currencyCode.toLowerCase())
             .asFlow()
+            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
             .fromSystemOnStart { system ->
                 system.wallets
                     .find { it.currency.code.equals(currencyCode, true) }
@@ -294,6 +307,7 @@ internal class CoreBreadBox(
     override fun walletTransfer(currencyCode: String, transferHash: String) =
         transferUpdatedChannelMap.getValue(currencyCode.toLowerCase())
             .asFlow()
+            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
             .filter { it.hashString() == transferHash }
             .fromSystemOnStart { system ->
                 system.wallets
@@ -307,6 +321,7 @@ internal class CoreBreadBox(
     override fun walletTransferUpdates(currencyCode: String): Flow<Transfer> =
         transferUpdatedChannelMap.getValue(currencyCode)
             .asFlow()
+            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
 
     @Synchronized
     override fun getSystemUnsafe(): System? = system
