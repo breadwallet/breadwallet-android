@@ -40,7 +40,6 @@ sealed class SettingsEffect {
     object GoToDisplayCurrency : SettingsEffect()
     object GoToNotificationsSettings : SettingsEffect()
     object GoToShareData : SettingsEffect()
-    object GoToFingerprintSpendingLimit : SettingsEffect()
     object GoToImportWallet : SettingsEffect()
     data class GoToSyncBlockchain(
         val currencyCode: CurrencyCode
