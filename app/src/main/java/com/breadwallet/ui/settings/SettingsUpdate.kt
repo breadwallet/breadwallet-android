@@ -92,7 +92,6 @@ object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, Se
                     SettingsOption.BCH_MENU -> SettingsEffect.GoToSection(SettingsSection.BCH_SETTINGS)
                     SettingsOption.SHARE_ANONYMOUS_DATA -> SettingsEffect.GoToShareData
                     SettingsOption.NOTIFICATIONS -> SettingsEffect.GoToNotificationsSettings
-                    SettingsOption.FINGERPRINT_SPENDING_LIMIT -> SettingsEffect.GoToFingerprintSpendingLimit
                     SettingsOption.REDEEM_PRIVATE_KEY -> SettingsEffect.GoToImportWallet
                     SettingsOption.SYNC_BLOCKCHAIN_BTC -> SettingsEffect.GoToSyncBlockchain("btc")
                     SettingsOption.SYNC_BLOCKCHAIN_BCH -> SettingsEffect.GoToSyncBlockchain("bch")
