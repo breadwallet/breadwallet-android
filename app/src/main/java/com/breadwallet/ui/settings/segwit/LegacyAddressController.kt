@@ -32,8 +32,10 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.view
@@ -50,6 +52,11 @@ class LegacyAddressController :
     private val cryptoUriParser by instance<CryptoUriParser>()
     private lateinit var copiedLayout: View
     private val copyHandler = Handler()
+
+    init {
+        overridePushHandler(BottomSheetChangeHandler())
+        overridePopHandler(BottomSheetChangeHandler())
+    }
 
     override val layoutId = R.layout.controller_legacy_address
     override val defaultModel = LegacyAddressModel()
@@ -84,10 +91,16 @@ class LegacyAddressController :
     }
 
     override fun bindView(output: Consumer<LegacyAddressEvent>) = output.view {
+        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+        background_layout.setOnClickListener { router.popCurrentController() }
         close_button.onClick(LegacyAddressEvent.OnCloseClicked)
         share_button.onClick(LegacyAddressEvent.OnShareClicked)
         address_text.onClick(LegacyAddressEvent.OnAddressClicked)
-        onDispose { copyHandler.removeCallbacksAndMessages(null) }
+        onDispose {
+            copyHandler.removeCallbacksAndMessages(null)
+            signal_layout.setOnTouchListener(null)
+            background_layout.setOnClickListener(null)
+        }
     }
 
     override fun LegacyAddressModel.render() {
