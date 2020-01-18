@@ -35,7 +35,6 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.buildSignedRequest
@@ -135,17 +134,11 @@ class SettingsEffectHandler(
             SettingsSection.SECURITY -> securitySettings
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(
-                    context,
-                    NavigationEffectHandler.BITCOIN_CURRENCY_CODE
-                )
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "btc")
                 btcOptions
             }
             SettingsSection.BCH_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(
-                    context,
-                    NavigationEffectHandler.BITCOIN_CASH_CURRENCY_CODE
-                )
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "bch")
                 bchOptions
             }
         }
