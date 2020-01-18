@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/17/20.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/14/20.
  * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,30 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.settings.analytics
+package com.breadwallet.tools.util
 
-import android.os.Bundle
-import android.view.View
-import com.breadwallet.R
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.ui.BaseController
 import com.google.firebase.perf.FirebasePerformance
-import kotlinx.android.synthetic.main.activity_share_data.*
+import com.google.firebase.perf.metrics.Trace
 
-class ShareDataController(args: Bundle? = null) : BaseController(args) {
-
-    override val layoutId = R.layout.activity_share_data
-
-    override fun onCreateView(view: View) {
-        super.onCreateView(view)
-        toggleButton.isChecked = BRSharedPrefs.getShareData()
-        toggleButton.setOnCheckedChangeListener { _, isChecked ->
-            BRSharedPrefs.putShareData(isChecked)
-            FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
+@Suppress("NOTHING_TO_INLINE")
+inline fun Any.newTrace(name: String): Trace =
+    FirebasePerformance.getInstance()
+        .newTrace(name)
+        .also { trace ->
+            trace.putAttribute("class_name", this::class.java.simpleName)
         }
 
-        back_button.setOnClickListener {
-            router.popCurrentController()
-        }
+inline fun Trace.trace(crossinline block: (trace: Trace) -> Unit) {
+    try {
+        start()
+        block(this)
+    } finally {
+        stop()
+    }
+}
+
+inline fun <T> Trace.traceResult(crossinline block: (trace: Trace) -> T): T {
+    try {
+        start()
+        return block(this)
+    } finally {
+        stop()
     }
 }
