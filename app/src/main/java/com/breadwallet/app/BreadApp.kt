@@ -67,6 +67,8 @@ import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.AddTrace
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.interfaces.AccountMetaDataProvider
@@ -188,7 +190,9 @@ class BreadApp : Application(), KodeinAware {
                     .execute { ServerBundlesHelper.extractBundlesIfNeeded(mInstance) }
 
                 // Initialize TokenUtil to load our tokens.json file from res/raw
-                TokenUtil.initialize(mInstance)
+                applicationScope.launch(Dispatchers.Default) {
+                    TokenUtil.initialize(mInstance)
+                }
             }
         }
 
@@ -421,12 +425,16 @@ class BreadApp : Application(), KodeinAware {
             return isDeviceStateValid
         }
 
+    @AddTrace(name = "BreadApp_onCreate")
     override fun onCreate() {
         super.onCreate()
         installHooks()
         mInstance = this
 
         BRSharedPrefs.provideContext(this)
+
+        FirebasePerformance.getInstance()
+            .isPerformanceCollectionEnabled = BRSharedPrefs.getShareData()
 
         if (BuildConfig.FABRIC_ENABLE) {
             val fabric = Fabric.Builder(this)
@@ -463,6 +471,7 @@ class BreadApp : Application(), KodeinAware {
      * Each time the app resumes, check to see if the device state is valid.
      * Even if the wallet is not initialized, we may need tell the user to enable the password.
      */
+    @AddTrace(name = "BreadApp_handleOnStart")
     private fun handleOnStart() {
         val breadBox = getBreadBox()
 
@@ -479,6 +488,7 @@ class BreadApp : Application(), KodeinAware {
             .launchIn(startedScope)
     }
 
+    @AddTrace(name = "BreadApp_handleOnStop")
     private fun handleOnStop() {
         if (isBRDWalletInitialized) {
             mBackgroundedTime = System.currentTimeMillis()

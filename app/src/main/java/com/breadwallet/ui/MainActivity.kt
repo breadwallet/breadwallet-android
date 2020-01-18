@@ -58,6 +58,7 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.ui.recovery.RecoveryKeyModel
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
+import com.google.firebase.perf.metrics.AddTrace
 
 /**
  * The main user entrypoint into the app.
@@ -81,6 +82,7 @@ class MainActivity : BRActivity() {
         get() = (application as BreadApp).isDeviceStateValid
 
     @Suppress("ComplexMethod", "LongMethod")
+    @AddTrace(name = "MainActivity_onCreate")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(

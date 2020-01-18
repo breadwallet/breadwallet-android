@@ -61,6 +61,7 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource
 import com.breadwallet.tools.sqlite.PeerDataSource
 import com.breadwallet.tools.util.Bip39Reader
 import com.google.common.primitives.UnsignedInteger
+import com.google.firebase.perf.metrics.AddTrace
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -145,6 +146,7 @@ internal class CoreBreadBox(
         @Synchronized get
         @Synchronized private set
 
+    @AddTrace(name = "CoreBreadBox_open")
     @Synchronized
     override fun open(account: Account) {
         logDebug("Opening CoreBreadBox")
@@ -441,6 +443,7 @@ internal class CoreBreadBox(
         }
     }
 
+    @AddTrace(name = "CoreBreadBox_migrateNetwork")
     private fun migrateNetwork(system: System, network: Network, currencyCode: String) {
         logDebug("Migrating Network: $currencyCode")
 
