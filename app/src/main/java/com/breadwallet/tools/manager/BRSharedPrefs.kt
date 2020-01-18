@@ -390,11 +390,11 @@ object BRSharedPrefs {
         brdPrefs.edit { putBoolean(SHOW_NOTIFICATION, show) }
 
     @JvmStatic
-    fun getShareData(context: Context? = null): Boolean =
+    fun getShareData(): Boolean =
         brdPrefs.getBoolean(SHARE_DATA, true)
 
     @JvmStatic
-    fun putShareData(context: Context? = null, show: Boolean) =
+    fun putShareData(show: Boolean) =
         brdPrefs.edit { putBoolean(SHARE_DATA, show) }
 
     @JvmStatic

@@ -20,7 +20,7 @@ public class TestActivity extends Activity { //extends Activity, not BRActivity!
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        setContentView(R.layout.controller_about);
 
     }
 

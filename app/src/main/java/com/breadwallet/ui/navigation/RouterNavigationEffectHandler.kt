@@ -32,16 +32,22 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
+import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
+import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
+import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
+import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.provekey.PaperKeyProveController
@@ -72,6 +78,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+
+private const val BITCOIN_CURRENCY_CODE = "BTC"
+private const val BITCOIN_CASH_CURRENCY_CODE = "BCH"
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
@@ -124,9 +133,19 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    override fun goToBuy() = Unit
+    override fun goToBuy() {
+        val url = String.format(
+            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+            BITCOIN_CURRENCY_CODE
+        )
+        router.pushController(WebController(url).asTransaction())
+    }
 
-    override fun goToTrade() = Unit
+    override fun goToTrade() {
+        val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
+        router.pushController(WebController(url).asTransaction())
+    }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
         router.pushController(
@@ -207,7 +226,9 @@ class RouterNavigationEffectHandler(
         }
     }
 
-    override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) = Unit
+    override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) {
+        InAppNotificationActivity.start(checkNotNull(router.activity), effect.inAppMessage)
+    }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
         router.pushController(
@@ -245,7 +266,16 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) = Unit
+    override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
+        val res = checkNotNull(router.activity).resources
+        router.pushController(
+            RouterTransaction.with(AlertDialogController(
+                effect.message,
+                effect.title,
+                negativeText = res.getString(R.string.AccessibilityLabels_close)
+            ))
+        )
+    }
 
     override fun goToDisabledScreen() {
         UiUtils.showWalletDisabled(checkNotNull(router.activity))
@@ -285,9 +315,18 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToGooglePlay() = Unit
+    override fun goToGooglePlay() {
+        AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
+    }
 
-    override fun goToAbout() = Unit
+    override fun goToAbout() {
+        router.pushController(
+            AboutController().asTransaction(
+                HorizontalChangeHandler(),
+                HorizontalChangeHandler()
+            )
+        )
+    }
 
     override fun goToDisplayCurrency() {
         router.pushController(
@@ -297,9 +336,23 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToNotificationsSettings() = Unit
+    override fun goToNotificationsSettings() {
+        router.pushController(
+            NotificationSettingsController().asTransaction(
+                HorizontalChangeHandler(),
+                HorizontalChangeHandler()
+            )
+        )
+    }
 
-    override fun goToShareData() = Unit
+    override fun goToShareData() {
+        router.pushController(
+            ShareDataController().asTransaction(
+                HorizontalChangeHandler(),
+                HorizontalChangeHandler()
+            )
+        )
+    }
 
     override fun goToFingerprintAuth() {
         router.pushController(

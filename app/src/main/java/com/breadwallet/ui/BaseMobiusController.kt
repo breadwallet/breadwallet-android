@@ -28,11 +28,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
 import com.breadwallet.ui.navigation.NavEffectTransformer
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.EventSource
@@ -82,10 +80,6 @@ abstract class BaseMobiusController<M, E, F>(
 
         bind<RouterNavigationEffectHandler>() with provider {
             RouterNavigationEffectHandler(router)
-        }
-
-        bind<NavigationEffectHandler>() with provider {
-            NavigationEffectHandler(activity as BRActivity)
         }
 
         bind<NavEffectTransformer>() with provider {
