@@ -43,7 +43,6 @@ import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.util.CurrencyCode
-import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.flow.subtypeEffectHandler
 import com.spotify.mobius.flow.transform

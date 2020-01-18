@@ -27,7 +27,6 @@ package com.breadwallet.effecthandler.metadata
 import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
-import com.breadwallet.breadbox.getDefaultWalletManagerMode
 import com.breadwallet.breadbox.getSize
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Transfer
@@ -49,7 +48,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
@@ -188,20 +186,6 @@ class MetaDataEffectHandler(
     private fun loadWalletModes() =
         metaDataProvider
             .walletModes()
-            .map { modeMap ->
-                modeMap
-                    .toMutableMap()
-                    .mapValues { entry ->
-                        when (entry.value) {
-                            null -> {
-                                breadBox.system().getDefaultWalletManagerMode(
-                                    entry.key
-                                ).first()
-                            }
-                            else -> entry.value
-                        }
-                    }
-            }
             .map { modeMap ->
                 MetaDataEvent.OnWalletModesUpdated(modeMap)
             }
