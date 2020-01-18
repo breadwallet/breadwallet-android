@@ -32,7 +32,7 @@ import com.breadwallet.repository.PushNotificationsSettingsRepositoryImpl
 import com.breadwallet.tools.mvvm.Resource
 import com.breadwallet.tools.threads.executor.BRExecutor
 
-class NotificationsSettingsViewModel : ViewModel() {
+class NotificationSettingsViewModel : ViewModel() {
 
     val notificationsEnable = MutableLiveData<NotificationsState>()
 

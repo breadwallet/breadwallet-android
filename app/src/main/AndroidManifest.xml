@@ -143,18 +143,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.settings.SyncBlockchainActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.settings.AboutActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".legacy.presenter.activities.settings.ShareDataActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.recovery.RecoveryKeyActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
@@ -194,9 +182,6 @@
         <activity
             android:name=".ui.notification.InAppNotificationActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.presenter.settings.NotificationsSettingsActivity"
             android:screenOrientation="portrait" />
 
         <service

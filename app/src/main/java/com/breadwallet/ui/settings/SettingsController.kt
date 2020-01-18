@@ -37,7 +37,6 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.view
@@ -77,17 +76,12 @@ class SettingsController(args: Bundle? = null) :
                 ::showTokenBundleDialog
             )
         },
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
-                SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
-                SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
-                SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
+                SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
+                SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
+                SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
                 SettingsEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
                 SettingsEffect.GoToQrScan -> NavigationEffect.GoToQrScan
                 SettingsEffect.GoToSupport -> NavigationEffect.GoToFaq("")

@@ -31,17 +31,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.ext.bindCreated
 import com.breadwallet.ext.viewModel
-import com.breadwallet.legacy.presenter.activities.settings.BaseSettingsActivity
+import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import kotlinx.android.synthetic.main.activity_price_alert_list.*
 
 /**
  * Displays a list of all [PriceAlert]s and allows the user
  * to delete them.
  */
-class PriceAlertListActivity : BaseSettingsActivity() {
+class PriceAlertListActivity : BRActivity() {
 
-    override fun getLayoutId(): Int = R.layout.activity_price_alert_list
-    override fun getBackButtonId(): Int = R.id.back_button
+    //override fun getLayoutId(): Int = R.layout.activity_price_alert_list
+    //override fun getBackButtonId(): Int = R.id.back_button
 
     private val viewModel: PriceAlertListViewModel by viewModel()
 
