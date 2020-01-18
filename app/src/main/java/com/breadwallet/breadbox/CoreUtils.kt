@@ -310,6 +310,7 @@ fun System.createWalletManager(
     addressScheme: AddressScheme? = getAddressScheme(network)
 ) {
     val wmMode = when {
+        network.currency.isBitcoinCash() -> WalletManagerMode.API_ONLY
         managerMode == null -> network.defaultWalletManagerMode
         network.supportsWalletManagerMode(managerMode) -> managerMode
         else -> network.defaultWalletManagerMode

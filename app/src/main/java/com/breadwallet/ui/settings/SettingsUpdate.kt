@@ -109,7 +109,6 @@ object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, Se
                     SettingsOption.WEB_PLAT_BUNDLE -> SettingsEffect.ShowPlatformBundleDialog
                     SettingsOption.TOKEN_BUNDLE -> SettingsEffect.ShowTokenBundleDialog
                     SettingsOption.FAST_SYNC_BTC -> SettingsEffect.GoToFastSync("btc")
-                    SettingsOption.FAST_SYNC_BCH -> SettingsEffect.GoToFastSync("bch")
                 }
             )
         )
