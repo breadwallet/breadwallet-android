@@ -33,13 +33,11 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
@@ -85,17 +83,12 @@ class OnBoardingController(
     override val effectHandler: Connectable<OnBoardingEffect, OnBoardingEvent> =
         CompositeEffectHandler.from(
             Connectable { _effectHandler },
-            nestedConnectable({ NavigationEffectHandler(activity as BRActivity) }, { effect ->
+            nestedConnectable({ RouterNavigationEffectHandler(router) }, { effect ->
                 when (effect) {
                     is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
                         title = "",
                         message = effect.message
                     )
-                    else -> null
-                }
-            }),
-            nestedConnectable({ RouterNavigationEffectHandler(router) }, { effect ->
-                when (effect) {
                     OnBoardingEffect.Browse,
                     OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
                     OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(

@@ -24,77 +24,70 @@
  */
 package com.breadwallet.legacy.presenter.settings
 
-import android.app.Activity
-import androidx.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
+import android.provider.Settings
 import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
 import android.provider.Settings.EXTRA_APP_PACKAGE
-import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.breadwallet.R
-import com.breadwallet.ext.viewModel
-import com.breadwallet.legacy.presenter.activities.settings.BaseSettingsActivity
+import com.breadwallet.logger.logDebug
 import com.breadwallet.repository.NotificationsState
 import com.breadwallet.tools.mvvm.Status
 import com.breadwallet.tools.util.EventUtils
-import kotlinx.android.synthetic.main.activity_notifications_settings.*
+import com.breadwallet.ui.BaseController
+import kotlinx.android.synthetic.main.controller_notification_settings.*
 
 /**
  * Activity to turn on and off push notifications.
  */
-class NotificationsSettingsActivity : BaseSettingsActivity() {
+class NotificationSettingsController : BaseController() {
 
-    companion object {
-        private val TAG = NotificationsSettingsActivity::class.java.simpleName
+    private val viewModel by lazy { NotificationSettingsViewModel() }
 
-        fun start(caller: Activity) {
-            caller.startActivity(Intent(caller, NotificationsSettingsActivity::class.java))
-            EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS)
-        }
+    override val layoutId = R.layout.controller_notification_settings
+
+    init {
+        EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS)
     }
 
-    private val viewModel by viewModel { NotificationsSettingsViewModel() }
+    override fun onCreateView(view: View) {
+        super.onCreateView(view)
+        back_button.setOnClickListener {
+            router.popCurrentController()
+        }
+        setListeners()
+    }
 
-    override fun getBackButtonId(): Int = R.id.back_button
-
-    override fun getLayoutId(): Int = R.layout.activity_notifications_settings
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        val owner = (activity as AppCompatActivity)
         viewModel.refreshState()
-        viewModel.notificationsEnable.observe(this, Observer { state ->
+        viewModel.notificationsEnable.observe(owner, Observer { state ->
             when (state) {
                 NotificationsState.APP_ENABLED -> {
                     toggle_button.isChecked = true
                     toggle_button.isEnabled = true
                     open_settings_btn.post { open_settings_btn.visibility = View.INVISIBLE }
-                    current_settings_description.text = getString(R.string.PushNotifications_enabledBody)
+                    current_settings_description.setText(R.string.PushNotifications_enabledBody)
                 }
                 NotificationsState.APP_DISABLED -> {
                     toggle_button.isChecked = false
                     toggle_button.isEnabled = true
                     open_settings_btn.post { open_settings_btn.visibility = View.INVISIBLE }
-                    current_settings_description.text = getString(R.string.PushNotifications_disabledBody)
+                    current_settings_description.setText(R.string.PushNotifications_disabledBody)
                 }
                 NotificationsState.SYSTEM_DISABLED -> {
                     toggle_button.isChecked = false
                     toggle_button.isEnabled = false
                     open_settings_btn.post { open_settings_btn.visibility = View.VISIBLE }
-                    current_settings_description.text = getString(R.string.PushNotifications_enableInstructions)
+                    current_settings_description.setText(R.string.PushNotifications_enableInstructions)
                 }
             }
         })
-        setListeners()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refreshState()
     }
 
     private fun setListeners() {
@@ -117,6 +110,7 @@ class NotificationsSettingsActivity : BaseSettingsActivity() {
 
     private fun openAppSettings() {
         EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATIONS_OPEN_OS_SETTING)
+        val packageName = checkNotNull(applicationContext).packageName
         val intent = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                 Intent().apply {
@@ -126,29 +120,31 @@ class NotificationsSettingsActivity : BaseSettingsActivity() {
                 }
             }
             else -> {
-                Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
             }
         }
         startActivity(intent)
     }
 
     private fun updateNotifications(notificationsEnabled: Boolean) {
-        viewModel.togglePushNotifications(notificationsEnabled).observe(this, Observer { resource ->
-            when (resource?.status) {
-                Status.LOADING -> {
-                    progress_layout.visibility = View.VISIBLE
-                    Log.d(TAG, "Updating notification settings")
+        val owner = (activity as AppCompatActivity)
+        viewModel.togglePushNotifications(notificationsEnabled)
+            .observe(owner, Observer { resource ->
+                when (resource?.status) {
+                    Status.LOADING -> {
+                        progress_layout.visibility = View.VISIBLE
+                        logDebug("Updating notification settings")
+                    }
+                    Status.ERROR -> {
+                        progress_layout.visibility = View.GONE
+                        logDebug("Failed to update notifications settings")
+                        toastLong(R.string.PushNotifications_updateFailed)
+                    }
+                    Status.SUCCESS -> {
+                        progress_layout.visibility = View.GONE
+                        logDebug("Settings updated")
+                    }
                 }
-                Status.ERROR -> {
-                    progress_layout.visibility = View.GONE
-                    Log.d(TAG, "Failed to update notifications settings")
-                    Toast.makeText(this, R.string.PushNotifications_updateFailed, Toast.LENGTH_LONG).show()
-                }
-                Status.SUCCESS -> {
-                    progress_layout.visibility = View.GONE
-                    Log.d(TAG, "Settings updated")
-                }
-            }
-        })
+            })
     }
 }

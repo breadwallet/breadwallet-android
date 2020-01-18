@@ -47,7 +47,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.SettingsSection
@@ -92,18 +91,13 @@ class HomeController(
             Connectable { output ->
                 PromptEffectHandler(output, activity!!)
             },
-            nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
+            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
                 when (effect) {
-                    is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
                     is HomeScreenEffect.GoToInappMessage ->
                         NavigationEffect.GoToInAppMessage(effect.inAppMessage)
                     HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
                     HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
-                    else -> null
-                }
-            }),
-            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
-                when (effect) {
+                    is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
                     HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
                     HomeScreenEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
                         OnCompleteAction.GO_HOME

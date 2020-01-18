@@ -36,7 +36,6 @@ import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.util.DefaultTextWatcher
@@ -88,16 +87,11 @@ class PaperKeyProveController(args: Bundle) :
                     }
                 )
             },
-            nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-                when (effect) {
-                    PaperKeyProveEffect.GoToBuy -> NavigationEffect.GoToBuy
-                    else -> null
-                }
-            }),
             nestedConnectable(
                 { direct.instance<RouterNavigationEffectHandler>() },
                 { effect ->
                     when (effect) {
+                        PaperKeyProveEffect.GoToBuy -> NavigationEffect.GoToBuy
                         PaperKeyProveEffect.GoToHome -> NavigationEffect.GoToHome
                         else -> null
                     }

@@ -40,7 +40,6 @@ import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.util.DefaultOnPageChangeListener
@@ -74,14 +73,9 @@ class ShowPaperKeyController(args: Bundle) :
     override val defaultModel = ShowPaperKeyModel.createDefault(phrase, onComplete)
     override val update = ShowPaperKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<ShowPaperKeyEffect, ShowPaperKeyEvent>(
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                ShowPaperKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                ShowPaperKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
                 ShowPaperKeyEffect.GoToHome -> NavigationEffect.GoToHome
                 is ShowPaperKeyEffect.GoToPaperKeyProve -> NavigationEffect.GoToPaperKeyProve(
                     effect.phrase,

@@ -36,7 +36,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationEffectHandler
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
@@ -76,14 +75,9 @@ class WriteDownKeyController(args: Bundle? = null) :
         Connectable { output ->
             WriteDownKeyEffectHandler(eventConsumer, controllerScope, direct.instance())
         },
-        nestedConnectable({ direct.instance<NavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                WriteDownKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
-                else -> null
-            }
-        }),
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                WriteDownKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
                 WriteDownKeyEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
                 WriteDownKeyEffect.GoToHome -> NavigationEffect.GoToHome
                 WriteDownKeyEffect.GoBack -> NavigationEffect.GoBack
