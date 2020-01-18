@@ -6,10 +6,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-if(file('fabric.properties').exists()){
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.google.protobuf'
+if (file('fabric.properties').exists()) {
     apply plugin: 'io.fabric'
 }
-apply plugin: 'com.google.protobuf'
 
 detekt {
     toolVersion = "1.0.1"
@@ -256,6 +257,7 @@ dependencies {
     implementation 'androidx.test:rules:1.2.0'
     implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.4'
     implementation 'com.google.guava:guava:25.1-android'
     implementation 'com.google.protobuf:protobuf-lite:3.0.0'
     implementation 'com.google.zxing:core:3.3.0'
