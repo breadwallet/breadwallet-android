@@ -286,10 +286,6 @@ class SettingsEffectHandler(
             SettingsItem(
                 "Fastsync (btc)",
                 SettingsOption.FAST_SYNC_BTC
-            ),
-            SettingsItem(
-                "Fastsync (bch)",
-                SettingsOption.FAST_SYNC_BCH
             )
         )
     }
