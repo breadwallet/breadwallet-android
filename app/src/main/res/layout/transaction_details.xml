@@ -170,11 +170,10 @@
                     android:layout_marginTop="14dp"
                     android:layout_toEndOf="@id/memo_label"
                     android:background="@android:color/transparent"
-
                     android:gravity="end"
                     android:hint="@string/TransactionDetails.commentsPlaceholder"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:textColor="?attr/secondary_text_color"

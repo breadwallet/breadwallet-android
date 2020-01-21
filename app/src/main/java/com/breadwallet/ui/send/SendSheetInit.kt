@@ -39,8 +39,14 @@ object SendSheetInit : Init<SendSheetModel, SendSheetEffect> {
             ))
         }
 
+        var isPaymentProtocolRequest = false
+        model.cryptoRequestUrl?.let {
+            effects.add(SendSheetEffect.PaymentProtocol.LoadPaymentData(it))
+            isPaymentProtocolRequest = true
+        }
+
         return First.first(
-            model,
+            model.copy(isFetchingPayment = isPaymentProtocolRequest),
             effects + setOf(
                 SendSheetEffect.LoadBalance(model.currencyCode),
                 SendSheetEffect.LoadExchangeRate(model.currencyCode, model.fiatCode),

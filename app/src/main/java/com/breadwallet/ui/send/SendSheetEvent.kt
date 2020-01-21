@@ -26,6 +26,7 @@ package com.breadwallet.ui.send
 
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
@@ -137,4 +138,15 @@ sealed class SendSheetEvent {
 
     data class OnAuthenticationSettingsUpdated(internal val isFingerprintEnable: Boolean) :
         SendSheetEvent()
+
+    sealed class PaymentProtocol : SendSheetEvent() {
+        data class OnPaymentLoaded(
+            val paymentRequest: PaymentProtocolRequest,
+            val cryptoAmount: BigDecimal
+        ) : PaymentProtocol()
+
+        data class OnLoadFailed(val message: String) : PaymentProtocol()
+        object OnPostCompleted : PaymentProtocol()
+        object OnPostFailed : PaymentProtocol()
+    }
 }
