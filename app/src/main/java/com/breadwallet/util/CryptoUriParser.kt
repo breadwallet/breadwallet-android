@@ -74,7 +74,7 @@ class CryptoUriParser(
             request.address = address.toSanitizedString()
         }
 
-        uriBuilder.appendPath(request.address)
+        uriBuilder.path(request.address)
 
         if (request.amount != null && request.amount > BigDecimal.ZERO) {
             val amountParamName = when {

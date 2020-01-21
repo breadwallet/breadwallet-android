@@ -291,7 +291,7 @@ fun Flow<List<Wallet>>.applyDisplayOrder(displayOrderCurrencyIds: Flow<List<Stri
     }
 
 /** Returns the url scheme for a payment request with this wallet. */
-val Wallet.urlScheme: String
+val Wallet.urlScheme: String?
     get() = when {
         currency.code.isEthereum() || currency.isErc20() -> "ethereum"
         currency.code.isBitcoin() -> "bitcoin"
@@ -299,7 +299,7 @@ val Wallet.urlScheme: String
             BuildConfig.BITCOIN_TESTNET -> "bchtest"
             else -> "bitcoincash"
         }
-        else -> ""
+        else -> null
     }
 
 /** Creates a [WalletManager] using the appropriate address scheme and [WalletManagerMode]. */
