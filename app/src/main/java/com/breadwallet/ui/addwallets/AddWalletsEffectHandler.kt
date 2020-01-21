@@ -30,7 +30,6 @@ import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.findByCurrencyId
 import com.breadwallet.breadbox.findCurrency
-import com.breadwallet.breadbox.findNetwork
 import com.breadwallet.breadbox.isNative
 import com.breadwallet.breadbox.networkContainsCurrency
 import com.breadwallet.crypto.Wallet
@@ -96,12 +95,10 @@ object AddWalletsEffectHandler {
         acctMetaDataProvider: AccountMetaDataProvider
     ): suspend (AddWalletsEffect.AddWallet) -> Unit = { addWallet ->
         val currencyId = addWallet.token.currencyId
-        val network = breadBox
-            .system()
-            .findNetwork(currencyId)
-            .first()
+        val system = checkNotNull(breadBox.getSystemUnsafe())
+        val network = system.networks.find { it.containsCurrency(currencyId) }
 
-        when (network.findCurrency(currencyId)?.isNative()) {
+        when (network?.findCurrency(currencyId)?.isNative()) {
             null -> logError("No network or currency found for $currencyId.")
             false -> {
                 val trackedWallets = breadBox.wallets().first()
