@@ -269,11 +269,13 @@ class RouterNavigationEffectHandler(
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
         val res = checkNotNull(router.activity).resources
         router.pushController(
-            RouterTransaction.with(AlertDialogController(
-                effect.message,
-                effect.title,
-                negativeText = res.getString(R.string.AccessibilityLabels_close)
-            ))
+            RouterTransaction.with(
+                AlertDialogController(
+                    effect.message,
+                    effect.title,
+                    negativeText = res.getString(R.string.AccessibilityLabels_close)
+                )
+            )
         )
     }
 
@@ -436,6 +438,11 @@ class RouterNavigationEffectHandler(
                 )
             )
         )
+    }
+
+    override fun goToNativeApiExplorer() {
+        val url = "file:///android_asset/native-api-explorer.html"
+        router.pushController(RouterTransaction.with(WebController(url)))
     }
 
     private inline fun Router.pushWithStackIfEmpty(

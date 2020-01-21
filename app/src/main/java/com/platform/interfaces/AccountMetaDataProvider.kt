@@ -50,6 +50,9 @@ interface AccountMetaDataProvider {
     /** Returns a [Flow] of enabled wallet currency ids (addresses), will recover them if necessary. */
     fun enabledWallets(): Flow<List<String>>
 
+    /** Returns a list of enabled wallet currency ids (addresses) if recovered, or null when not. */
+    fun getEnabledWalletsUnsafe(): List<String>?
+
     /** Returns a [Flow] of [WalletInfoData], will recover it if necessary. */
     fun walletInfo(): Flow<WalletInfoData>
 

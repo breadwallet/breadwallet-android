@@ -1248,4 +1248,6 @@
     <string name="Wallet.one_year">1y</string>
     <string name="Wallet.three_years">3y</string>
 
+    <string name="Platform.transaction_cancelled">Transaction Cancelled</string>
+
 </resources>

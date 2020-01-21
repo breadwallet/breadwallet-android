@@ -58,6 +58,7 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.ui.recovery.RecoveryKeyModel
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
+import com.breadwallet.ui.web.WebController
 import com.google.firebase.perf.metrics.AddTrace
 
 /**
@@ -233,15 +234,16 @@ class MainActivity : BRActivity() {
                 )
                 null
             }
-            is Link.PlatformUrl -> {
-                UiUtils.startPlatformBrowser(this, link.url)
-                null
-            }
+            is Link.PlatformUrl -> WebController(link.url)
             is Link.PlatformDebugUrl -> {
                 if (!link.webBundleUrl.isNullOrBlank()) {
                     ServerBundlesHelper.setWebPlatformDebugURL(this, link.webBundleUrl)
                 } else if (!link.webBundle.isNullOrBlank()) {
-                    ServerBundlesHelper.setDebugBundle(this, ServerBundlesHelper.Type.WEB, link.webBundle)
+                    ServerBundlesHelper.setDebugBundle(
+                        this,
+                        ServerBundlesHelper.Type.WEB,
+                        link.webBundle
+                    )
                 }
                 null
             }

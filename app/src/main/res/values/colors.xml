@@ -66,6 +66,7 @@
     <item name="button_secondary" type="color">#F5F8FA</item>
     <item name="button_secondary_text" type="color">#232426</item>
     <item name="confirmation_box" type="color">#141233</item>
+    <item name="platform_webview_bg" type="color">#141233</item>
 
     //fingerprint
     <color name="warning_color">#f04a5d</color>
