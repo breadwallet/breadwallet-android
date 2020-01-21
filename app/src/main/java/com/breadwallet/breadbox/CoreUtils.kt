@@ -318,15 +318,6 @@ fun System.createWalletManager(
     createWalletManager(network, wmMode, addressScheme, currencies)
 }
 
-/** Returns a [Flow] providing the [Network] from [System] for a given [currencyId]. */
-fun Flow<System>.findNetwork(currencyId: String): Flow<Network> =
-    transform { system ->
-        emit(system.networks.find {
-            it.containsCurrency(currencyId)
-        } ?: return@transform)
-
-    }
-
 /** Return the [AddressScheme] to be used by the given network */
 fun System.getAddressScheme(network: Network): AddressScheme {
     return when {
