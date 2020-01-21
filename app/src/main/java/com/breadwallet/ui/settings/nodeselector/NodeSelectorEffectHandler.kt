@@ -25,8 +25,8 @@
 package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
-import com.breadwallet.breadbox.findNetwork
 import com.breadwallet.breadbox.getPeerOrNull
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
@@ -103,11 +103,10 @@ class NodeSelectorEffectHandler(
             val wallet = breadBox
                 .wallet(BITCOIN_CURRENCY_CODE)
                 .first()
-            val network = breadBox
-                .system()
-                .findNetwork(wallet.currencyId)
-                .first()
-            val networkPeer = network.getPeerOrNull(effect.node)
+            val system = checkNotNull(breadBox.getSystemUnsafe())
+            val network = system.networks.find { it.containsCurrency(wallet.currencyId) }
+
+            val networkPeer = network?.getPeerOrNull(effect.node)
             if (networkPeer != null) {
                 wallet.walletManager.connect(networkPeer)
             } else {
