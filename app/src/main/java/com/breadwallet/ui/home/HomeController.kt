@@ -106,6 +106,7 @@ class HomeController(
                         NavigationEffect.GoToWallet(effect.currencyCode)
                     is HomeScreenEffect.GoToAddWallet ->
                         NavigationEffect.GoToAddWallet
+                    is HomeScreenEffect.GoToFingerprintSettings -> NavigationEffect.GoToFingerprintAuth
                     else -> null
                 }
             }
