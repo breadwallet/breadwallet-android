@@ -83,6 +83,7 @@ sealed class NavigationEffect {
     object GoToTrade : NavigationEffect()
     object GoToAddWallet : NavigationEffect()
     object GoToDisabledScreen : NavigationEffect()
+    object GoToNativeApiExplorer : NavigationEffect()
 
     data class GoToWriteDownKey(val onComplete: OnCompleteAction) : NavigationEffect()
 

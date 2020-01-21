@@ -52,6 +52,7 @@ sealed class SettingsEffect {
     object GoToPaperKey : SettingsEffect()
     object GoToWipeWallet : SettingsEffect()
     object GoToOnboarding : SettingsEffect()
+    object GoToNativeApiExplorer : SettingsEffect()
     object SendLogs : SettingsEffect()
     object ShowApiServerDialog : SettingsEffect()
     object ShowPlatformDebugUrlDialog : SettingsEffect()

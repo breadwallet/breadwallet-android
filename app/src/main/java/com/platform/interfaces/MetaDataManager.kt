@@ -139,7 +139,7 @@ class MetaDataManager(
             .distinctUntilChanged()
 
     override fun enableWallet(currencyId: String) {
-        val enabledWallets = getEnabledWallets()?.toMutableList() ?: mutableListOf()
+        val enabledWallets = getEnabledWalletsUnsafe()?.toMutableList() ?: mutableListOf()
         if (!enabledWallets.contains(currencyId)) {
             putEnabledWallets(
                 enabledWallets.apply { add(currencyId) }
@@ -148,7 +148,7 @@ class MetaDataManager(
     }
 
     override fun disableWallet(currencyId: String) {
-        getEnabledWallets()
+        getEnabledWalletsUnsafe()
             ?.toMutableList()
             ?.filter { !it.equals(currencyId, true) }
             ?.run(::putEnabledWallets)
@@ -275,7 +275,7 @@ class MetaDataManager(
         }
     }
 
-    private fun getEnabledWallets(): List<String>? =
+    override fun getEnabledWalletsUnsafe(): List<String>? =
         try {
             storeProvider.get(KEY_ASSET_INDEX)
                 ?.getJSONArray(ENABLED_ASSET_IDS)

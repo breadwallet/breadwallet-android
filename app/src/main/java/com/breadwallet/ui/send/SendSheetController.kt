@@ -79,6 +79,7 @@ private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
 class SendSheetController(args: Bundle? = null) :
     BaseMobiusController<SendSheetModel, SendSheetEvent, SendSheetEffect>(args),
     AuthenticationController.Listener,
+    ConfirmTxController.Listener,
     AlertDialogController.Listener,
     ScannerController.Listener {
 
@@ -350,9 +351,19 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(SendSheetModel::isConfirmingTx) {
-            val isConfirmOnTop = router.backstack.first().controller() is ConfirmTxDetailsController
+            val isConfirmOnTop = router.backstack.first().controller() is ConfirmTxController
             if (isConfirmingTx && !isConfirmOnTop) {
-                val controller = ConfirmTxDetailsController()
+                val controller = ConfirmTxController(
+                    currencyCode,
+                    fiatCode,
+                    feeCurrencyCode,
+                    targetAddress,
+                    transferSpeed,
+                    amount,
+                    fiatAmount,
+                    fiatTotalCost,
+                    fiatNetworkFee
+                )
                 controller.targetController = this@SendSheetController
                 router.pushController(RouterTransaction.with(controller))
             } else if (!isConfirmingTx && isConfirmOnTop) {
@@ -412,6 +423,16 @@ class SendSheetController(args: Bundle? = null) :
                 eventConsumer.accept(SendSheetEvent.GoToEthWallet)
             }
         }
+    }
+
+    override fun onPositiveClicked(controller: ConfirmTxController) {
+        eventConsumer
+            .accept(SendSheetEvent.ConfirmTx.OnConfirmClicked)
+    }
+
+    override fun onNegativeClicked(controller: ConfirmTxController) {
+        eventConsumer
+            .accept(SendSheetEvent.ConfirmTx.OnCancelClicked)
     }
 
     private fun setFeeOption(feeOption: TransferSpeed) {
