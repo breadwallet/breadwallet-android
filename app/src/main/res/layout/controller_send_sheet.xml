@@ -14,7 +14,23 @@
         android:animateLayoutChanges="true"
         android:padding="0dp">
 
+
+        <include
+            android:id="@+id/loadingView"
+            layout="@layout/loading_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="20dp"
+            android:visibility="invisible"
+            android:background="@color/gray_shadow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
         <View
+            android:id="@+id/view3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/receive_layout"
@@ -410,7 +426,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="@string/Send.descriptionLabel"
-                android:inputType="textPersonName"
+                android:inputType="textMultiLine|textPersonName"
                 android:maxLength="250"
                 android:textSize="@dimen/sub_header" />
 

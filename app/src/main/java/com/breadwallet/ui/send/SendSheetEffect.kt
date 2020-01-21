@@ -25,9 +25,11 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
@@ -134,4 +136,21 @@ sealed class SendSheetEffect {
     ) : SendSheetEffect()
 
     object LoadAuthenticationSettings : SendSheetEffect()
+
+    data class ShowErrorDialog(
+        val message: String
+    ): SendSheetEffect()
+
+    sealed class PaymentProtocol : SendSheetEffect() {
+        data class LoadPaymentData(val cryptoRequestUrl: Link.CryptoRequestUrl) : PaymentProtocol()
+        data class ContinueWitPayment(
+            val paymentProtocolRequest: PaymentProtocolRequest,
+            val transferFeeBasis: TransferFeeBasis
+        ) : PaymentProtocol()
+
+        data class PostPayment(
+            val paymentProtocolRequest: PaymentProtocolRequest,
+            val transfer: Transfer
+        ) : PaymentProtocol()
+    }
 }
