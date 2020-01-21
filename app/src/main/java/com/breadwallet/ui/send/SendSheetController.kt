@@ -85,6 +85,7 @@ class SendSheetController(args: Bundle? = null) :
 
     companion object {
         const val DIALOG_NO_ETH_FOR_TOKEN_TRANSFER = "adjust_for_fee"
+        const val DIALOG_PAYMENT_ERROR = "payment_error"
     }
 
     /** An empty [SendSheetController] for [currencyCode]. */
@@ -136,6 +137,7 @@ class SendSheetController(args: Bundle? = null) :
             { eventConsumer },
             breadBox = direct.instance(),
             keyStore = direct.instance(),
+            apiClient = direct.instance(),
             navEffectHandler = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
@@ -389,6 +391,17 @@ class SendSheetController(args: Bundle? = null) :
             } else if (!isAuthenticating && isAuthOnTop) {
                 router.popCurrentController()
             }
+        }
+
+        ifChanged(SendSheetModel::isBitpayPayment) {
+            textInputAddress.isEnabled = !isBitpayPayment
+            textInputAmount.isEnabled = !isBitpayPayment
+            buttonScan.isVisible = !isBitpayPayment
+            buttonPaste.isVisible = !isBitpayPayment
+        }
+
+        ifChanged(SendSheetModel::isFetchingPayment, SendSheetModel::isSendingTransaction) {
+            loadingView.isVisible = isFetchingPayment || isSendingTransaction
         }
     }
 

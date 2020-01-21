@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.send
 
-import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted
@@ -35,6 +34,7 @@ import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.AddDecimal
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.AddDigit
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.Clear
 import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.Delete
+import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
@@ -45,7 +45,7 @@ import java.math.BigDecimal
 // TODO: Is this specific to a given currency or just the app?
 const val MAX_DIGITS = 8
 
-@Suppress("TooManyFunctions", "ComplexMethod")
+@Suppress("TooManyFunctions", "ComplexMethod", "LargeClass")
 object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>,
     SendSheetUpdateSpec {
 
@@ -523,6 +523,14 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 val effects = mutableSetOf<SendSheetEffect>(
                     SendSheetEffect.Nav.GoToTransactionComplete
                 )
+                if (model.isBitpayPayment) {
+                    effects.add(
+                        SendSheetEffect.PaymentProtocol.PostPayment(
+                            model.paymentProtocolRequest!!,
+                            event.transfer
+                        )
+                    )
+                }
                 if (!model.memo.isNullOrBlank()) {
                     SendSheetEffect.AddTransactionMetaData(
                         event.transfer,
@@ -540,20 +548,29 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     override fun onAuthSuccess(
         model: SendSheetModel
     ): Next<SendSheetModel, SendSheetEffect> {
-        return when {
-            model.isAuthenticating -> next(
-                model.copy(
-                    isAuthenticating = false,
-                    isSendingTransaction = true
-                ),
-                setOf(
+        val effects = setOf(
+            when {
+                model.isBitpayPayment ->
+                    SendSheetEffect.PaymentProtocol.ContinueWitPayment(
+                        model.paymentProtocolRequest!!,
+                        transferFeeBasis = checkNotNull(model.transferFeeBasis)
+                    )
+                else ->
                     SendSheetEffect.SendTransaction(
                         currencyCode = model.currencyCode,
                         address = model.targetAddress,
                         amount = model.amount,
                         transferFeeBasis = checkNotNull(model.transferFeeBasis)
                     )
-                )
+            }
+        )
+        return when {
+            model.isAuthenticating -> next(
+                model.copy(
+                    isAuthenticating = false,
+                    isSendingTransaction = true
+                ),
+                effects
             )
             else -> noChange()
         }
@@ -665,5 +682,51 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             ),
             effects
         )
+    }
+
+    override fun paymentProtocol(
+        model: SendSheetModel,
+        event: SendSheetEvent.PaymentProtocol
+    ): Next<SendSheetModel, SendSheetEffect> {
+        return when (event) {
+            is SendSheetEvent.PaymentProtocol.OnPaymentLoaded -> {
+                val paymentRequest = event.paymentRequest
+                val amount = event.cryptoAmount
+                val newModel = model.copy(
+                    targetAddress = paymentRequest.primaryTarget.get().toString(),
+                    memo = paymentRequest.memo.get(),
+                    amount = amount,
+                    paymentProtocolRequest = paymentRequest,
+                    fiatAmount = if (model.fiatPricePerUnit > BigDecimal.ZERO) {
+                        (amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+                    } else {
+                        model.fiatAmount
+                    },
+                    rawAmount = amount.setScale(
+                        MAX_DIGITS,
+                        BRConstants.ROUNDING_MODE
+                        ).toPlainString().dropLastWhile { it == '0' },
+                    isFetchingPayment = false
+                )
+                next(
+                    newModel,
+                    effects(
+                        SendSheetEffect.EstimateFee(
+                            model.currencyCode,
+                            newModel.targetAddress,
+                            amount,
+                            model.transferSpeed
+                        )
+                    )
+                )
+            }
+            is SendSheetEvent.PaymentProtocol.OnLoadFailed -> {
+                next(
+                    model.copy(isFetchingPayment = false),
+                    effects(SendSheetEffect.ShowErrorDialog(event.message))
+                )
+            }
+            else -> noChange()
+        }
     }
 }
