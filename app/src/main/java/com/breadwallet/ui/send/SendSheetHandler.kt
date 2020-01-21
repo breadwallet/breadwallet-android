@@ -41,15 +41,24 @@ import com.breadwallet.crypto.errors.TransferSubmitError
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.logger.logError
+import com.breadwallet.logger.logWarning
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.navigation.NavEffectTransformer
+import com.breadwallet.util.HEADER_BITPAY_PARTNER
+import com.breadwallet.util.HEADER_BITPAY_PARTNER_KEY
+import com.breadwallet.util.buildPaymentProtocolRequest
+import com.breadwallet.util.getAcceptHeader
+import com.breadwallet.util.getContentTypeHeader
+import com.breadwallet.util.getPaymentRequestHeader
+import com.platform.APIClient
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.flow.flowTransformer
 import com.spotify.mobius.flow.subtypeEffectHandler
@@ -70,6 +79,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigDecimal
 
 private const val RATE_UPDATE_MS = 60_000L
@@ -85,6 +96,7 @@ object SendSheetHandler {
         outputProducer: () -> Consumer<SendSheetEvent>,
         breadBox: BreadBox,
         keyStore: KeyStore,
+        apiClient: APIClient,
         navEffectHandler: NavEffectTransformer,
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<SendSheetEffect, SendSheetEvent> {
@@ -95,12 +107,16 @@ object SendSheetHandler {
         addTransformer<SendSheetEffect.Nav>(navEffectHandler)
         addTransformer(handleSendTransaction(breadBox, keyStore, retainedScope, outputProducer))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
-
+        addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
+        addTransformer(handleContinueWithPayment(keyStore, retainedScope, outputProducer))
+        addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
         addConsumerSync(Dispatchers.Main, showBalanceTooLowForFee(router))
+        addConsumerSync(Dispatchers.Main, showErrorDialog(router))
 
         addFunctionSync<SendSheetEffect.LoadAuthenticationSettings> {
-            val isEnabled = isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
+            val isEnabled =
+                isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
             SendSheetEvent.OnAuthenticationSettingsUpdated(isEnabled)
         }
     }
@@ -299,4 +315,125 @@ object SendSheetHandler {
             balanceAmt.currency.code,
             BRSharedPrefs.getPreferredFiatIso(context)
         ) ?: BigDecimal.ZERO
+
+    private fun handleLoadCryptoRequestData(
+        breadBox: BreadBox,
+        apiClient: APIClient,
+        context: Context
+    ) = flowTransformer<SendSheetEffect.PaymentProtocol.LoadPaymentData, SendSheetEvent.PaymentProtocol> { effects ->
+        effects.map { effect ->
+            val acceptHeader = effect.cryptoRequestUrl.currencyCode.getPaymentRequestHeader()
+            val request: Request =
+                Request.Builder().url(effect.cryptoRequestUrl.rUrlParam.orEmpty()).get()
+                    .addHeader(BRConstants.HEADER_ACCEPT, acceptHeader)
+                    .build()
+            val response = apiClient.sendRequest(request, false)
+
+            if (response.isSuccessful) {
+                val wallet = breadBox.wallet(effect.cryptoRequestUrl.currencyCode).first()
+                val paymentProtocolRequest = buildPaymentProtocolRequest(wallet, response)
+                if (paymentProtocolRequest != null) {
+                    SendSheetEvent.PaymentProtocol.OnPaymentLoaded(
+                        paymentProtocolRequest,
+                        paymentProtocolRequest.totalAmount.get().convert(wallet.unit).get().toBigDecimal()
+                    )
+                } else {
+                    SendSheetEvent.PaymentProtocol.OnLoadFailed(
+                        context.getString(R.string.PaymentProtocol_Errors_badPaymentRequest)
+                    )
+                }
+            } else {
+                SendSheetEvent.PaymentProtocol.OnLoadFailed(context.getString(R.string.Send_remoteRequestError))
+            }
+        }
+    }
+
+    private fun handleContinueWithPayment(
+        keyStore: KeyStore,
+        retainedScope: CoroutineScope,
+        outputProducer: () -> Consumer<SendSheetEvent>
+    ) = flowTransformer<SendSheetEffect.PaymentProtocol.ContinueWitPayment, SendSheetEvent> { effects ->
+        effects
+            .mapLatest { effect ->
+                val paymentRequest = effect.paymentProtocolRequest
+                val transfer = paymentRequest.createTransfer(effect.transferFeeBasis).orNull()
+                checkNotNull(transfer) { "Failed to create transfer." }
+
+                try {
+                    val phrase = checkNotNull(keyStore.getPhrase())
+                    check(
+                        paymentRequest.signTransfer(
+                            transfer,
+                            phrase
+                        )
+                    ) { "Failed to sign transfer" }
+                    paymentRequest.submitTransfer(transfer)
+                    SendSheetEvent.OnSendComplete(transfer)
+                } catch (e: TransferSubmitError) {
+                    logError("Transaction submit failed", e)
+                    SendSheetEvent.OnSendFailed
+                } catch (e: UserNotAuthenticatedException) {
+                    logError("Failed to get phrase.", e)
+                    SendSheetEvent.OnSendFailed
+                }
+            }
+            // outputProducer]must return a valid [Consumer] that
+            // can accept events even if the original loop has been
+            // disposed.
+            .onEach { outputProducer().accept(it) }
+            // This operation is launched in retainedScope which will
+            // not be cancelled when Connection.dispose is called.
+            .launchIn(retainedScope)
+        // This transformer is bound to a different lifecycle
+        emptyFlow()
+    }
+
+    private fun handlePostPayment(
+        apiClient: APIClient
+    ) = flowTransformer<SendSheetEffect.PaymentProtocol.PostPayment, SendSheetEvent.PaymentProtocol> { effects ->
+        effects
+            .mapLatest { effect ->
+                val paymentRequest = effect.paymentProtocolRequest
+                val payment = paymentRequest.createPayment(effect.transfer).orNull()
+                checkNotNull(payment) { "failed to create payment" }
+
+                val encodedPayment = payment.encode().orNull()
+                checkNotNull(encodedPayment) { "failed to encode payment" }
+
+                val request: Request =
+                    Request.Builder().url(paymentRequest.paymentUrl.get()).get()
+                        .addHeader(
+                            BRConstants.HEADER_ACCEPT, paymentRequest.getAcceptHeader()
+                        )
+                        .addHeader(
+                            BRConstants.HEADER_CONTENT_TYPE,
+                            paymentRequest.getContentTypeHeader()
+                        )
+                        .addHeader(
+                            HEADER_BITPAY_PARTNER_KEY, HEADER_BITPAY_PARTNER
+                        )
+                        .post(encodedPayment.toRequestBody())
+                        .build()
+
+                if (apiClient.sendRequest(request, false).isSuccessful) {
+                    SendSheetEvent.PaymentProtocol.OnPostCompleted
+                } else {
+                    logWarning("Failed to post payment to bitpay")
+                    SendSheetEvent.PaymentProtocol.OnPostFailed
+                }
+            }
+    }
+
+    private fun showErrorDialog(
+        router: Router
+    ) = { effect: SendSheetEffect.ShowErrorDialog ->
+        val res = checkNotNull(router.activity).resources
+        val controller = AlertDialogController(
+            dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
+            title = res.getString(R.string.Alert_error),
+            message = effect.message,
+            positiveText = res.getString(R.string.Button_ok)
+        )
+        router.pushController(RouterTransaction.with(controller))
+    }
 }

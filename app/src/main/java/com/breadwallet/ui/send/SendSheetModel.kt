@@ -25,6 +25,7 @@
 package com.breadwallet.ui.send
 
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -109,7 +110,14 @@ data class SendSheetModel(
     val amountInputError: InputError? = null,
 
     /** True when the user can authenticate the transaction with his fingerprint */
-    val isFingerprintAuthEnable: Boolean = false
+    val isFingerprintAuthEnable: Boolean = false,
+
+    /** Url from where we need to fetch the crypto request */
+    val cryptoRequestUrl: Link.CryptoRequestUrl? = null,
+    /** A payment request fetched from bitpay */
+    val paymentProtocolRequest: PaymentProtocolRequest? = null,
+    /** True when a payment request data is being fetched */
+    val isFetchingPayment: Boolean = false
 ) {
     sealed class InputError {
         object Empty : InputError()
@@ -135,6 +143,9 @@ data class SendSheetModel(
             targetInputError == null &&
             !isTotalCostOverBalance &&
             !amount.isZero()
+
+    /** True when we are displaying the information of a payment request */
+    val isBitpayPayment: Boolean = paymentProtocolRequest != null
 
     companion object {
 
@@ -242,7 +253,8 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         isAmountCrypto = true,
         amount = amount ?: BigDecimal.ZERO,
         rawAmount = amount?.stripTrailingZeros()?.toPlainString() ?: "",
-        targetAddress = address ?: ""
+        targetAddress = address ?: "",
+        cryptoRequestUrl = this
     )
 
 fun CryptoRequest.asSendSheetModel(fiatCode: String) =

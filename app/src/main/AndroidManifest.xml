@@ -81,7 +81,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:host="*" />
                 <data android:scheme="bitcoin" />
                 <data android:scheme="bread" />
                 <data android:scheme="bitcoincash" />
