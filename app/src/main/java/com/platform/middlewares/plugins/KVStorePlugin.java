@@ -81,7 +81,7 @@ public class KVStorePlugin implements Plugin {
                         JSONObject test = new JSONObject(new String(kv.value)); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.e(TAG, "handle: the json is not valid: for key: " + key + ", " + target + " " + baseRequest.getMethod());
+                        Log.e(TAG, "handle: the json is not valid: for key: " + key + ", " + target + " " + baseRequest.getMethod() + " " + new String(kv.value));
                         store.delete(getKey(key), kv.version);
                         return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(kv.version, kv.time, response));
                     }

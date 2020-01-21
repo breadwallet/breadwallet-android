@@ -284,6 +284,10 @@ class SettingsEffectHandler(
                 subHeader = ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.TOKEN)
             ),
             SettingsItem(
+                "Native API Explorer",
+                SettingsOption.NATIVE_API_EXPLORER
+            ),
+            SettingsItem(
                 "Fastsync (btc)",
                 SettingsOption.FAST_SYNC_BTC
             )

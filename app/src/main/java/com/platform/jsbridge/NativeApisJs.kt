@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 10/17/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/15/20.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,45 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.settings
+package com.platform.jsbridge
 
-enum class SettingsOption {
-    // HOME
-    SCAN_QR,
-    PREFERENCES,
-    SECURITY_SETTINGS,
-    SUPPORT,
-    SUBMIT_REVIEW,
-    REWARDS,
-    ABOUT,
-    ATM_FINDER,
-    DEVELOPER_OPTIONS,
-    // PREFERENCES
-    CURRENCY,
-    BTC_MENU,
-    BCH_MENU,
-    SHARE_ANONYMOUS_DATA,
-    NOTIFICATIONS,
-    // SECURITY SETTINGS
-    FINGERPRINT_AUTH,
-    UPDATE_PIN,
-    PAPER_KEY,
-    WIPE,
-    // DEVELOPER OPTIONS
-    SEND_LOGS,
-    API_SERVER,
-    ONBOARDING_FLOW,
-    WEB_PLAT_DEBUG_URL,
-    WEB_PLAT_BUNDLE,
-    TOKEN_BUNDLE,
-    NATIVE_API_EXPLORER,
-    // BTC
-    REDEEM_PRIVATE_KEY,
-    SYNC_BLOCKCHAIN_BTC,
-    SYNC_BLOCKCHAIN_BCH,
-    BTC_NODES,
-    ENABLE_SEG_WIT,
-    VIEW_LEGACY_ADDRESS,
-    FAST_SYNC_BTC
+import android.webkit.JavascriptInterface
+
+class NativeApisJs private constructor(
+    @get:JavascriptInterface
+    val apiNamesJson: String
+) {
+    companion object {
+        const val JS_NAME = "NativeApisJs"
+
+        fun from(vararg apiNames: String) =
+            NativeApisJs(
+                apiNames.joinToString(
+                    prefix = "[",
+                    postfix = "]"
+                ) { "\"$it\"" }
+            )
+    }
 }
-
