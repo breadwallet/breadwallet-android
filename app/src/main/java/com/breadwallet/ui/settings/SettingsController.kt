@@ -98,6 +98,7 @@ class SettingsController(args: Bundle? = null) :
                 SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
                 is SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
                 SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
+                SettingsEffect.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
                 is SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 else -> null
             }

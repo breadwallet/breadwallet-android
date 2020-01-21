@@ -125,6 +125,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
+                    //TODO: Migrate to WebController
                     BrdBrowserActivity.Companion.startWithUrl(app, getUri.toString());
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse resp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
@@ -185,6 +186,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
+                    //TODO: Migrate to WebController
                     BrdBrowserActivity.Companion.startJson(app, json);
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse brResp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);

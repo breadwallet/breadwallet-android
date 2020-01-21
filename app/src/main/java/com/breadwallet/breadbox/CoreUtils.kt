@@ -39,6 +39,7 @@ import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.crypto.Unit
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
@@ -365,6 +366,20 @@ fun Flow<System>.getDefaultWalletManagerMode(currencyId: String): Flow<WalletMan
             .find { it.containsCurrency(currencyId) }
             ?.run { defaultWalletManagerMode }
     }
+
+/** Returns the default [Unit] for a given [Wallet] */
+val Wallet.defaultUnit: Unit
+    get() = walletManager
+        .network
+        .defaultUnitFor(currency)
+        .get()
+
+/** Returns the base [Unit] for a given [Wallet] */
+val Wallet.baseUnit: Unit
+    get() = walletManager
+        .network
+        .baseUnitFor(currency)
+        .get()
 
 
 

@@ -31,9 +31,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
 import com.breadwallet.legacy.presenter.activities.DisabledActivity;
@@ -48,7 +50,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.recovery.RecoveryKeyActivity;
-import com.platform.tools.BRBitId;
 
 public abstract class BRActivity extends AppCompatActivity {
     private static final String TAG = BRActivity.class.getName();
@@ -124,16 +125,6 @@ public abstract class BRActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             PostAuth.getInstance().onPublishTxAuth(BRActivity.this, null, true, null);
-                        }
-                    });
-                }
-                break;
-            case BRConstants.REQUEST_PHRASE_BITID:
-                if (resultCode == RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRBitId.completeBitID(true);
                         }
                     });
                 }

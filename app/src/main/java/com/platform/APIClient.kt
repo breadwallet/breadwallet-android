@@ -22,7 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@file:Suppress("ComplexMethod", "NestedBlockDepth", "TooManyFunctions", "ReturnCount", "MaxLineLength")
+@file:Suppress(
+    "ComplexMethod",
+    "NestedBlockDepth",
+    "TooManyFunctions",
+    "ReturnCount",
+    "MaxLineLength"
+)
+
 package com.platform
 
 import android.accounts.AuthenticatorException
@@ -311,7 +318,8 @@ class APIClient(private var context: Context) {
                 logRequestAndResponse(request, response)
             }
             if (response.isRedirect) {
-                val newLocation = request.url.scheme + "://" + request.url.host + response.header("location")
+                val newLocation =
+                    request.url.scheme + "://" + request.url.host + response.header("location")
                 val newUri = Uri.parse(newLocation)
                 if (newUri == null) {
                     logError("redirect uri is null")
@@ -370,7 +378,8 @@ class APIClient(private var context: Context) {
                 try {
                     val body = res.body
                     if (contentType == null) {
-                        contentType = if (body!!.contentType() != null) body.contentType()!!.type else ""
+                        contentType =
+                            if (body!!.contentType() != null) body.contentType()!!.type else ""
                     }
                     bytesBody = body!!.bytes()
                 } catch (ex: IOException) {
@@ -378,7 +387,8 @@ class APIClient(private var context: Context) {
                 } finally {
                     res.close()
                 }
-                brRsp = BRResponse(bytesBody, code, headers, res.request.url.toString(), contentType)
+                brRsp =
+                    BRResponse(bytesBody, code, headers, res.request.url.toString(), contentType)
             }
         } finally {
             if (!brRsp.isSuccessful) {
@@ -498,16 +508,12 @@ class APIClient(private var context: Context) {
     }
 
     class BRResponse constructor(
-        body: ByteArray? = null,
+        var body: ByteArray? = byteArrayOf(),
         var code: Int = 0,
         private val mHeaders: Map<String, String>? = null,
-        url: String? = null,
-        contentType: String? = null
-    ) {
-        var body: ByteArray? = byteArrayOf()
-        var url: String? = ""
+        val url: String? = "",
         var contentType: String? = ""
-
+    ) {
         val headers: Map<String, String>
             get() = mHeaders ?: HashMap()
 
@@ -518,8 +524,6 @@ class APIClient(private var context: Context) {
             get() = code >= HttpStatus.OK_200 && code < HttpStatus.MULTIPLE_CHOICES_300
 
         init {
-            this.body = body
-            this.url = url
             if (contentType.isNullOrBlank()) {
                 if (mHeaders != null && mHeaders.containsKey(BRConstants.HEADER_CONTENT_TYPE)) {
                     this.contentType = mHeaders[BRConstants.HEADER_CONTENT_TYPE]
@@ -530,7 +534,14 @@ class APIClient(private var context: Context) {
             }
         }
 
-        constructor(body: ByteArray, code: Int, contentType: String) : this(body, code, null, null, contentType)
+        constructor(body: ByteArray?, code: Int, contentType: String?) : this(
+            body,
+            code,
+            null,
+            null,
+            contentType
+        )
+
         constructor(contentType: String?, code: Int) : this(null, code, null, null, contentType)
 
         fun print() {
