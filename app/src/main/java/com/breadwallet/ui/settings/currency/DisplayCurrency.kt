@@ -51,15 +51,13 @@ object DisplayCurrency {
     sealed class F {
         object LoadCurrencies : F()
         data class SetDisplayCurrency(val currencyCode: String) : F()
-        sealed class Nav : F(), NavEffectHolder {
-            object GoBack : Nav() {
-                override val navigationEffect = NavigationEffect.GoBack
-            }
-
-            object GoToFaq : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToFaq(BRConstants.FAQ_DISPLAY_CURRENCY)
-            }
+        sealed class Nav(
+            override val navigationEffect: NavigationEffect
+        ) : F(), NavEffectHolder {
+            object GoBack : Nav(NavigationEffect.GoBack)
+            object GoToFaq : Nav(
+                NavigationEffect.GoToFaq(BRConstants.FAQ_DISPLAY_CURRENCY)
+            )
         }
     }
 }

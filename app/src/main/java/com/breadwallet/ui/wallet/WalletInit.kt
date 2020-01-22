@@ -25,27 +25,28 @@
 package com.breadwallet.ui.wallet
 
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.wallet.WalletScreen.F
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-val WalletInit = Init<WalletScreenModel, WalletScreenEffect> { model ->
+val WalletInit = Init<WalletScreen.M, F> { model ->
     first(
         model, effects(
-            WalletScreenEffect.LoadWalletBalance(model.currencyCode),
-            WalletScreenEffect.LoadTransactions(model.currencyCode),
-            WalletScreenEffect.LoadFiatPricePerUnit(model.currencyCode),
-            WalletScreenEffect.LoadCryptoPreferred,
-            WalletScreenEffect.LoadCurrencyName(model.currencyCode),
-            WalletScreenEffect.LoadSyncState(model.currencyCode),
-            WalletScreenEffect.LoadChartInterval(model.priceChartInterval, model.currencyCode),
-            WalletScreenEffect.TrackEvent(
+            F.LoadWalletBalance(model.currencyCode),
+            F.LoadTransactions(model.currencyCode),
+            F.LoadFiatPricePerUnit(model.currencyCode),
+            F.LoadCryptoPreferred,
+            F.LoadCurrencyName(model.currencyCode),
+            F.LoadSyncState(model.currencyCode),
+            F.LoadChartInterval(model.priceChartInterval, model.currencyCode),
+            F.TrackEvent(
                 String.format(
                     EventUtils.EVENT_WALLET_APPEARED,
                     model.currencyCode
                 )
             ),
-            WalletScreenEffect.LoadIsTokenSupported(model.currencyCode)
+            F.LoadIsTokenSupported(model.currencyCode)
         )
     )
 }

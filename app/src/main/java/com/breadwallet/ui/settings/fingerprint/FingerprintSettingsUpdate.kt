@@ -24,35 +24,36 @@
  */
 package com.breadwallet.ui.settings.fingerprint
 
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.E
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.F
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object FingerprintSettingsUpdate :
-    Update<FingerprintSettingsModel, FingerprintSettingsEvent, FingerprintSettingsEffect>,
-    FingerprintSettingsUpdateSpec {
+object FingerprintSettingsUpdate : Update<M, E, F>, FingerprintSettingsUpdateSpec {
 
     override fun update(
-        model: FingerprintSettingsModel,
-        event: FingerprintSettingsEvent
-    ): Next<FingerprintSettingsModel, FingerprintSettingsEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
-    override fun onBackClicked(model: FingerprintSettingsModel)
-        : Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
+    override fun onBackClicked(model: M)
+        : Next<M, F> =
         Next.dispatch(
-            setOf(FingerprintSettingsEffect.GoBack)
+            setOf(F.GoBack)
         )
 
-    override fun onFaqClicked(model: FingerprintSettingsModel)
-        : Next<FingerprintSettingsModel, FingerprintSettingsEffect> =
+    override fun onFaqClicked(model: M)
+        : Next<M, F> =
         Next.dispatch(
-            setOf(FingerprintSettingsEffect.GoToFaq)
+            setOf(F.GoToFaq)
         )
 
     override fun onAppUnlockChanged(
-        model: FingerprintSettingsModel,
-        event: FingerprintSettingsEvent.OnAppUnlockChanged
-    ): Next<FingerprintSettingsModel, FingerprintSettingsEffect> {
+        model: M,
+        event: E.OnAppUnlockChanged
+    ): Next<M, F> {
         val updatedModel = model.copy(
             unlockApp = event.enable,
             sendMoneyEnable = event.enable,
@@ -61,7 +62,7 @@ object FingerprintSettingsUpdate :
         return next(
             updatedModel,
             setOf(
-                FingerprintSettingsEffect.UpdateFingerprintSetting(
+                F.UpdateFingerprintSetting(
                     updatedModel.unlockApp,
                     updatedModel.sendMoney
                 )
@@ -70,13 +71,13 @@ object FingerprintSettingsUpdate :
     }
 
     override fun onSendMoneyChanged(
-        model: FingerprintSettingsModel,
-        event: FingerprintSettingsEvent.OnSendMoneyChanged
-    ): Next<FingerprintSettingsModel, FingerprintSettingsEffect> {
+        model: M,
+        event: E.OnSendMoneyChanged
+    ): Next<M, F> {
         return next(
             model.copy(sendMoney = event.enable),
             setOf(
-                FingerprintSettingsEffect.UpdateFingerprintSetting(
+                F.UpdateFingerprintSetting(
                     model.unlockApp,
                     event.enable
                 )
@@ -85,9 +86,9 @@ object FingerprintSettingsUpdate :
     }
 
     override fun onSettingsLoaded(
-        model: FingerprintSettingsModel,
-        event: FingerprintSettingsEvent.OnSettingsLoaded
-    ): Next<FingerprintSettingsModel, FingerprintSettingsEffect> {
+        model: M,
+        event: E.OnSettingsLoaded
+    ): Next<M, F> {
         return next(
             model.copy(
                 unlockApp = event.unlockApp,

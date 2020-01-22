@@ -25,21 +25,23 @@
 package com.breadwallet.ui.recovery
 
 import com.breadwallet.ext.replaceAt
+import com.breadwallet.ui.recovery.RecoveryKey.E
+import com.breadwallet.ui.recovery.RecoveryKey.F
+import com.breadwallet.ui.recovery.RecoveryKey.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
-object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKeyEffect>,
-    RecoveryKeyUpdateSpec {
+object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
 
-    override fun update(model: RecoveryKeyModel, event: RecoveryKeyEvent) = patch(model, event)
+    override fun update(model: M, event: E) = patch(model, event)
 
     override fun onWordChanged(
-        model: RecoveryKeyModel,
-        event: RecoveryKeyEvent.OnWordChanged
-    ): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        model: M,
+        event: E.OnWordChanged
+    ): Next<M, F> {
         return when {
             model.phrase[event.index] == event.word ||
                 model.isLoading -> noChange()
@@ -53,41 +55,41 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
     }
 
     override fun onWordValidated(
-        model: RecoveryKeyModel,
-        event: RecoveryKeyEvent.OnWordValidated
-    ): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        model: M,
+        event: E.OnWordValidated
+    ): Next<M, F> {
         return when {
             model.errors[event.index] == event.hasError -> noChange()
             else -> next(
                 model.copy(
                     errors = model.errors.replaceAt(event.index, event.hasError)
-                ), setOf(RecoveryKeyEffect.ErrorShake)
+                ), setOf(F.ErrorShake)
             )
         }
     }
 
-    override fun onNextClicked(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+    override fun onNextClicked(model: M): Next<M, F> {
         return when {
             model.phrase.all { it.isNotBlank() } &&
                 model.errors.none { it } -> {
                 val nextEffect = when (model.mode) {
-                    RecoveryKeyModel.Mode.RECOVER ->
-                        RecoveryKeyEffect.RecoverWallet(model.phrase)
-                    RecoveryKeyModel.Mode.RESET_PIN ->
-                        RecoveryKeyEffect.ResetPin(model.phrase)
-                    RecoveryKeyModel.Mode.WIPE ->
-                        RecoveryKeyEffect.Unlink(model.phrase)
+                    RecoveryKey.Mode.RECOVER ->
+                        F.RecoverWallet(model.phrase)
+                    RecoveryKey.Mode.RESET_PIN ->
+                        F.ResetPin(model.phrase)
+                    RecoveryKey.Mode.WIPE ->
+                        F.Unlink(model.phrase)
                 }
                 next(model.copy(isLoading = true), setOf(nextEffect))
             }
-            else -> dispatch(setOf(RecoveryKeyEffect.ErrorShake))
+            else -> dispatch(setOf(F.ErrorShake))
         }
     }
 
     override fun onFocusedWordChanged(
-        model: RecoveryKeyModel,
-        event: RecoveryKeyEvent.OnFocusedWordChanged
-    ): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        model: M,
+        event: E.OnFocusedWordChanged
+    ): Next<M, F> {
         return when {
             model.focusedWordIndex == -1 ->
                 next(model.copy(focusedWordIndex = event.index))
@@ -97,8 +99,8 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
                     next(nextModel)
                 } else {
                     next(
-                        nextModel, setOf<RecoveryKeyEffect>(
-                            RecoveryKeyEffect.ValidateWord(
+                        nextModel, setOf<F>(
+                            F.ValidateWord(
                                 model.focusedWordIndex,
                                 model.phrase[model.focusedWordIndex]
                             )
@@ -109,56 +111,56 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
         }
     }
 
-    override fun onRecoveryComplete(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.SetPinForRecovery))
+    override fun onRecoveryComplete(model: M): Next<M, F> {
+        return dispatch(setOf(F.SetPinForRecovery))
     }
 
-    override fun onPhraseSaved(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.RecoverWallet(model.phrase)))
+    override fun onPhraseSaved(model: M): Next<M, F> {
+        return dispatch(setOf(F.RecoverWallet(model.phrase)))
     }
 
-    override fun onPhraseSaveFailed(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+    override fun onPhraseSaveFailed(model: M): Next<M, F> {
         return next(model.copy(isLoading = false))
     }
 
-    override fun onPhraseInvalid(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+    override fun onPhraseInvalid(model: M): Next<M, F> {
         return next(
             model.copy(isLoading = false), setOf(
-                RecoveryKeyEffect.ErrorShake,
-                RecoveryKeyEffect.GoToPhraseError
+                F.ErrorShake,
+                F.GoToPhraseError
             )
         )
     }
 
-    override fun onPinSet(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.GoToLoginForReset))
+    override fun onPinSet(model: M): Next<M, F> {
+        return dispatch(setOf(F.GoToLoginForReset))
     }
 
-    override fun onPinSetCancelled(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.SetPinForReset))
+    override fun onPinSetCancelled(model: M): Next<M, F> {
+        return dispatch(setOf(F.SetPinForReset))
     }
 
-    override fun onPinCleared(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.SetPinForReset))
+    override fun onPinCleared(model: M): Next<M, F> {
+        return dispatch(setOf(F.SetPinForReset))
     }
 
-    override fun onFaqClicked(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.GoToRecoveryKeyFaq))
+    override fun onFaqClicked(model: M): Next<M, F> {
+        return dispatch(setOf(F.GoToRecoveryKeyFaq))
     }
 
     override fun onTextPasted(
-        model: RecoveryKeyModel,
-        event: RecoveryKeyEvent.OnTextPasted
-    ): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+        model: M,
+        event: E.OnTextPasted
+    ): Next<M, F> {
         return when {
             event.text.isBlank() -> noChange()
             else -> {
                 val phrase = event.text.split("\\s+".toRegex())
                 when (phrase.size) {
-                    0 -> dispatch(setOf<RecoveryKeyEffect>(RecoveryKeyEffect.ErrorShake))
+                    0 -> dispatch(setOf<F>(F.ErrorShake))
                     12 -> next(
                         model.copy(phrase = phrase),
-                        setOf<RecoveryKeyEffect>(RecoveryKeyEffect.ValidatePhrase(phrase))
+                        setOf<F>(F.ValidatePhrase(phrase))
                     )
                     else -> next(model.copy(
                         phrase = List(12) { index ->
@@ -170,15 +172,15 @@ object RecoveryKeyUpdate : Update<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKe
         }
     }
 
-    override fun onShowPhraseGranted(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
-        return dispatch(setOf(RecoveryKeyEffect.Unlink(model.phrase)))
+    override fun onShowPhraseGranted(model: M): Next<M, F> {
+        return dispatch(setOf(F.Unlink(model.phrase)))
     }
 
-    override fun onShowPhraseFailed(model: RecoveryKeyModel): Next<RecoveryKeyModel, RecoveryKeyEffect> {
+    override fun onShowPhraseFailed(model: M): Next<M, F> {
         return next(
             model.copy(isLoading = false), setOf(
-                RecoveryKeyEffect.ErrorShake,
-                RecoveryKeyEffect.GoToPhraseError
+                F.ErrorShake,
+                F.GoToPhraseError
             )
         )
     }

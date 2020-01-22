@@ -25,9 +25,9 @@
 package com.breadwallet.ui
 
 import com.breadwallet.model.PriceChange
-import com.breadwallet.ui.home.HomeScreenEffect
-import com.breadwallet.ui.home.HomeScreenEvent
-import com.breadwallet.ui.home.HomeScreenModel
+import com.breadwallet.ui.home.HomeScreen.M
+import com.breadwallet.ui.home.HomeScreen.E
+import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreenUpdate
 import com.breadwallet.ui.home.PromptItem
 import com.breadwallet.ui.home.Wallet
@@ -50,14 +50,14 @@ class HomeScreenUpdateTests {
     @Test
     fun addAndUpdateWallets() {
 
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         // Add initial list of wallets
         val wallets = mapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy())
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletsUpdated(wallets.values.toList())
+                E.OnWalletsUpdated(wallets.values.toList())
             )
             .then(
                 assertThatNext(
@@ -78,7 +78,7 @@ class HomeScreenUpdateTests {
 
         spec.given(initialWalletsAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletsUpdated(expectedWallets.values.toList())
+                E.OnWalletsUpdated(expectedWallets.values.toList())
             )
             .then(
                 assertThatNext(
@@ -105,7 +105,7 @@ class HomeScreenUpdateTests {
 
         spec.given(ethWalletAddedState)
             .`when`(
-                HomeScreenEvent.OnWalletBalanceUpdated(
+                E.OnWalletBalanceUpdated(
                     updatedWallet.currencyCode,
                     updatedWallet.balance,
                     updatedWallet.fiatBalance,
@@ -124,7 +124,7 @@ class HomeScreenUpdateTests {
     @Test
     fun syncProgressUpdate() {
         val wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy())
-        val initState = HomeScreenModel.createDefault().copy(wallets = wallets)
+        val initState = M.createDefault().copy(wallets = wallets)
 
         val progress = 0.15f
         val expectedWallet = WALLET_BITCOIN.copy(syncProgress = progress, isSyncing = true)
@@ -132,7 +132,7 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletSyncProgressUpdated(
+                E.OnWalletSyncProgressUpdated(
                     currencyCode = WALLET_BITCOIN.currencyCode,
                     progress = progress,
                     syncThroughMillis = 0L,
@@ -149,11 +149,11 @@ class HomeScreenUpdateTests {
 
     @Test
     fun connectivityUpdate() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnConnectionUpdated(isConnected = false)
+                E.OnConnectionUpdated(isConnected = false)
             )
             .then(
                 assertThatNext(
@@ -165,74 +165,74 @@ class HomeScreenUpdateTests {
 
     @Test
     fun walletClick() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
             .copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))
 
-        val expectedEffect = HomeScreenEffect.GoToWallet(WALLET_BITCOIN.currencyCode)
+        val expectedEffect = F.GoToWallet(WALLET_BITCOIN.currencyCode)
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnWalletClicked(currencyCode = WALLET_BITCOIN.currencyCode)
+                E.OnWalletClicked(currencyCode = WALLET_BITCOIN.currencyCode)
             )
             .then(
                 assertThatNext(
-                    hasEffects(expectedEffect as HomeScreenEffect)
+                    hasEffects(expectedEffect as F)
                 )
             )
     }
 
     @Test
     fun buyClick() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnBuyClicked
+                E.OnBuyClicked
             )
             .then(
                 assertThatNext(
-                    hasEffects(HomeScreenEffect.GoToBuy as HomeScreenEffect)
+                    hasEffects(F.GoToBuy as F)
                 )
             )
     }
 
     @Test
     fun tradeClick() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnTradeClicked
+                E.OnTradeClicked
             )
             .then(
                 assertThatNext(
-                    hasEffects(HomeScreenEffect.GoToTrade as HomeScreenEffect)
+                    hasEffects(F.GoToTrade as F)
                 )
             )
     }
 
     @Test
     fun menuClick() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnMenuClicked
+                E.OnMenuClicked
             )
             .then(
                 assertThatNext(
-                    hasEffects(HomeScreenEffect.GoToMenu as HomeScreenEffect)
+                    hasEffects(F.GoToMenu as F)
                 )
             )
     }
 
     @Test
     fun promptLoaded() {
-        val initState = HomeScreenModel.createDefault()
+        val initState = M.createDefault()
 
         spec.given(initState)
             .`when`(
-                HomeScreenEvent.OnPromptLoaded(promptId = PromptItem.EMAIL_COLLECTION)
+                E.OnPromptLoaded(promptId = PromptItem.EMAIL_COLLECTION)
             )
             .then(
                 assertThatNext(

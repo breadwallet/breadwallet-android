@@ -25,21 +25,23 @@
 package com.breadwallet.ui.home
 
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.home.HomeScreen.E
+import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.ui.home.HomeScreen.M
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
-val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect> { model, event ->
-
+val HomeScreenUpdate = Update<M, E, F> { model, event ->
     when (event) {
-        is HomeScreenEvent.OnWalletDisplayOrderUpdated -> {
-            dispatch(setOf(HomeScreenEffect.UpdateWalletOrder(event.displayOrder)))
+        is E.OnWalletDisplayOrderUpdated -> {
+            dispatch(setOf(F.UpdateWalletOrder(event.displayOrder)))
         }
-        is HomeScreenEvent.OnWalletSyncProgressUpdated -> {
+        is E.OnWalletSyncProgressUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {
-                null -> noChange<HomeScreenModel, HomeScreenEffect>()
+                null -> noChange<M, F>()
                 else -> {
                     val wallets = model.wallets.toMutableMap()
                     wallets[event.currencyCode] = wallet.copy(
@@ -51,20 +53,20 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                 }
             }
         }
-        is HomeScreenEvent.OnBuyBellNeededLoaded -> next(model.copy(isBuyBellNeeded = event.isBuyBellNeeded))
-        is HomeScreenEvent.OnWalletsUpdated -> {
+        is E.OnBuyBellNeededLoaded -> next(model.copy(isBuyBellNeeded = event.isBuyBellNeeded))
+        is E.OnWalletsUpdated -> {
             next(model.copy(
                 wallets = event.wallets.associateBy { it.currencyCode },
                 displayOrder = event.wallets.map { it.currencyId }
             ))
         }
-        is HomeScreenEvent.OnWalletBalanceUpdated -> {
+        is E.OnWalletBalanceUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {
-                null -> noChange<HomeScreenModel, HomeScreenEffect>()
+                null -> noChange<M, F>()
                 else -> {
                     when (wallet.balance == event.balance && wallet.fiatBalance == event.fiatBalance
                         && wallet.priceChange == event.priceChange && wallet.fiatPricePerUnit == event.fiatPricePerUnit) {
-                        true -> noChange<HomeScreenModel, HomeScreenEffect>()
+                        true -> noChange<M, F>()
                         else -> {
                             val wallets = model.wallets.toMutableMap()
                             wallets[event.currencyCode] = wallet.copy(
@@ -79,48 +81,48 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
                 }
             }
         }
-        is HomeScreenEvent.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
-        is HomeScreenEvent.OnWalletClicked -> dispatch(effects(HomeScreenEffect.GoToWallet(event.currencyCode)))
-        is HomeScreenEvent.OnAddWalletsClicked -> dispatch(effects(HomeScreenEffect.GoToAddWallet))
-        HomeScreenEvent.OnBuyClicked -> dispatch(effects(HomeScreenEffect.GoToBuy))
-        HomeScreenEvent.OnTradeClicked -> dispatch(effects(HomeScreenEffect.GoToTrade))
-        HomeScreenEvent.OnMenuClicked -> dispatch(effects(HomeScreenEffect.GoToMenu))
-        is HomeScreenEvent.OnPromptLoaded -> next(model.copy(promptId = event.promptId))
-        is HomeScreenEvent.OnDeepLinkProvided -> dispatch(
+        is E.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
+        is E.OnWalletClicked -> dispatch(effects(F.GoToWallet(event.currencyCode)))
+        is E.OnAddWalletsClicked -> dispatch(effects(F.GoToAddWallet))
+        E.OnBuyClicked -> dispatch(effects(F.GoToBuy))
+        E.OnTradeClicked -> dispatch(effects(F.GoToTrade))
+        E.OnMenuClicked -> dispatch(effects(F.GoToMenu))
+        is E.OnPromptLoaded -> next(model.copy(promptId = event.promptId))
+        is E.OnDeepLinkProvided -> dispatch(
             effects(
-                HomeScreenEffect.GoToDeepLink(
+                F.GoToDeepLink(
                     event.url
                 )
             )
         )
-        is HomeScreenEvent.OnInAppNotificationProvided -> dispatch(
+        is E.OnInAppNotificationProvided -> dispatch(
             effects(
-                HomeScreenEffect.GoToInappMessage(
+                F.GoToInappMessage(
                     event.inAppMessage
                 )
             )
         )
-        is HomeScreenEvent.OnPushNotificationOpened -> dispatch(
+        is E.OnPushNotificationOpened -> dispatch(
             effects(
-                HomeScreenEffect.RecordPushNotificationOpened(
+                F.RecordPushNotificationOpened(
                     event.campaignId
                 )
             )
         )
-        is HomeScreenEvent.OnShowBuyAndSell -> {
+        is E.OnShowBuyAndSell -> {
             val clickAttributes =
                 mapOf(EventUtils.EVENT_ATTRIBUTE_BUY_AND_SELL to model.showBuyAndSell.toString())
-            next<HomeScreenModel, HomeScreenEffect>(
+            next<M, F>(
                 model.copy(showBuyAndSell = event.showBuyAndSell),
                 effects(
-                    HomeScreenEffect.TrackEvent(
+                    F.TrackEvent(
                         EventUtils.EVENT_HOME_DID_TAP_BUY,
                         clickAttributes
                     )
                 )
             )
         }
-        is HomeScreenEvent.OnPromptDismissed -> {
+        is E.OnPromptDismissed -> {
             val promptName = when (event.promptId) {
                 PromptItem.EMAIL_COLLECTION -> EventUtils.PROMPT_EMAIL
                 PromptItem.FINGER_PRINT -> EventUtils.PROMPT_TOUCH_ID
@@ -132,59 +134,59 @@ val HomeScreenUpdate = Update<HomeScreenModel, HomeScreenEvent, HomeScreenEffect
             next(
                 model.copy(promptId = null),
                 effects(
-                    HomeScreenEffect.DismissPrompt(event.promptId),
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.DismissPrompt(event.promptId),
+                    F.TrackEvent(eventName)
                 )
             )
         }
-        HomeScreenEvent.OnFingerprintPromptClicked -> {
+        E.OnFingerprintPromptClicked -> {
             val eventName = EventUtils.PROMPT_TOUCH_ID + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             next(
                 model.copy(promptId = null),
                 effects(
-                    HomeScreenEffect.DismissPrompt(PromptItem.FINGER_PRINT),
-                    HomeScreenEffect.GoToFingerprintSettings,
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.DismissPrompt(PromptItem.FINGER_PRINT),
+                    F.GoToFingerprintSettings,
+                    F.TrackEvent(eventName)
                 )
             )
         }
-        HomeScreenEvent.OnPaperKeyPromptClicked -> {
+        E.OnPaperKeyPromptClicked -> {
             val eventName = EventUtils.PROMPT_PAPER_KEY + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             next(
                 model.copy(promptId = null),
                 effects(
-                    HomeScreenEffect.GoToWriteDownKey,
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.GoToWriteDownKey,
+                    F.TrackEvent(eventName)
                 )
             )
         }
-        HomeScreenEvent.OnUpgradePinPromptClicked -> {
+        E.OnUpgradePinPromptClicked -> {
             val eventName = EventUtils.PROMPT_UPGRADE_PIN + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             next(
                 model.copy(promptId = null),
                 effects(
-                    HomeScreenEffect.GoToUpgradePin,
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.GoToUpgradePin,
+                    F.TrackEvent(eventName)
                 )
             )
         }
-        HomeScreenEvent.OnRescanPromptClicked -> {
+        E.OnRescanPromptClicked -> {
             val eventName =
                 EventUtils.PROMPT_RECOMMEND_RESCAN + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             next(
                 model.copy(promptId = null),
                 effects(
-                    HomeScreenEffect.StartRescan,
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.StartRescan,
+                    F.TrackEvent(eventName)
                 )
             )
         }
-        is HomeScreenEvent.OnEmailPromptClicked -> {
+        is E.OnEmailPromptClicked -> {
             val eventName = EventUtils.PROMPT_EMAIL + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             dispatch(
                 effects(
-                    HomeScreenEffect.SaveEmail(event.email),
-                    HomeScreenEffect.TrackEvent(eventName)
+                    F.SaveEmail(event.email),
+                    F.TrackEvent(eventName)
                 )
             )
         }

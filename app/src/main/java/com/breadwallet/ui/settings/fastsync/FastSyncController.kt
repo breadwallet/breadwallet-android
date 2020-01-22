@@ -42,6 +42,9 @@ import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavEffectTransformer
+import com.breadwallet.ui.settings.fastsync.FastSync.E
+import com.breadwallet.ui.settings.fastsync.FastSync.F
+import com.breadwallet.ui.settings.fastsync.FastSync.M
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.flow.subtypeEffectHandler
@@ -69,7 +72,7 @@ private const val CURRENCY_CODE = "currency_code"
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class FastSyncController(
     args: Bundle
-) : BaseMobiusController<FastSyncModel, FastSyncEvent, FastSyncEffect>(args),
+) : BaseMobiusController<M, E, F>(args),
     AlertDialogController.Listener {
 
     constructor(currencyCode: CurrencyCode) : this(
@@ -77,33 +80,33 @@ class FastSyncController(
     )
 
     override val layoutId = R.layout.controller_fast_sync
-    override val defaultModel = FastSyncModel.createDefault(arg(CURRENCY_CODE))
+    override val defaultModel = M.createDefault(arg(CURRENCY_CODE))
     override val init = FastSyncInit
     override val update = FastSyncUpdate
     override val flowEffectHandler
-        get() = subtypeEffectHandler<FastSyncEffect, FastSyncEvent> {
-            addTransformer<FastSyncEffect.Nav>(direct.instance<NavEffectTransformer>())
-            addActionSync<FastSyncEffect.ShowDisableFastSyncDialog>(
+        get() = subtypeEffectHandler<F, E> {
+            addTransformer<F.Nav>(direct.instance<NavEffectTransformer>())
+            addActionSync<F.ShowDisableFastSyncDialog>(
                 Main,
                 ::showDisableFastSyncDialog
             )
-            addFunctionSync<FastSyncEffect.LoadCurrencyIds>(Default) {
-                FastSyncEvent.OnCurrencyIdsUpdated(
+            addFunctionSync<F.LoadCurrencyIds>(Default) {
+                E.OnCurrencyIdsUpdated(
                     TokenUtil.getTokenItems(applicationContext)
                         .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
                         .mapValues { it.value.currencyId ?: "" }
                 )
             }
-            addTransformer<FastSyncEffect.MetaData> { effects ->
+            addTransformer<F.MetaData> { effects ->
                 effects
                     .map { effect ->
                         when (effect) {
-                            is FastSyncEffect.MetaData.SetSyncMode ->
+                            is F.MetaData.SetSyncMode ->
                                 MetaDataEffect.UpdateWalletMode(
                                     effect.currencyId,
                                     effect.mode.walletManagerMode
                                 )
-                            is FastSyncEffect.MetaData.LoadSyncModes ->
+                            is F.MetaData.LoadSyncModes ->
                                 MetaDataEffect.LoadWalletModes
                         }
                     }
@@ -113,7 +116,7 @@ class FastSyncController(
                     .mapNotNull { event ->
                         when (event) {
                             is MetaDataEvent.OnWalletModesUpdated ->
-                                FastSyncEvent.OnSyncModesUpdated(
+                                E.OnSyncModesUpdated(
                                     event.modeMap
                                         .filterKeys { currencyId -> currencyId.isNotBlank() }
                                         .mapValues { entry ->
@@ -127,7 +130,7 @@ class FastSyncController(
 
         }
 
-    override fun bindView(modelFlow: Flow<FastSyncModel>): Flow<FastSyncEvent> {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         modelFlow
             .mapLatest { it.fastSyncEnable }
             .distinctUntilChanged()
@@ -136,22 +139,22 @@ class FastSyncController(
             }
             .launchIn(uiBindScope)
         return merge(
-            back_btn.clicks().map { FastSyncEvent.OnBackClicked },
-            switch_fast_sync.checked().map { FastSyncEvent.OnFastSyncChanged(it) },
+            back_btn.clicks().map { E.OnBackClicked },
+            switch_fast_sync.checked().map { E.OnFastSyncChanged(it) },
             bindLearnMoreLink()
         )
     }
 
     override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
-        eventConsumer.accept(FastSyncEvent.OnDisableFastSyncConfirmed)
+        eventConsumer.accept(E.OnDisableFastSyncConfirmed)
     }
 
     override fun onNegativeClicked(dialogId: String, controller: AlertDialogController) {
-        eventConsumer.accept(FastSyncEvent.OnDisableFastSyncCanceled)
+        eventConsumer.accept(E.OnDisableFastSyncCanceled)
     }
 
     override fun onDismissed(dialogId: String, controller: AlertDialogController) {
-        eventConsumer.accept(FastSyncEvent.OnDisableFastSyncCanceled)
+        eventConsumer.accept(E.OnDisableFastSyncCanceled)
     }
 
     private fun showDisableFastSyncDialog() {
@@ -165,14 +168,14 @@ class FastSyncController(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    private fun bindLearnMoreLink() = callbackFlow<FastSyncEvent> {
+    private fun bindLearnMoreLink() = callbackFlow<E> {
         val act = checkNotNull(activity)
         val message: String = act.getString(R.string.FastSync_description)
         val clickableText = act.getString(R.string.FastSync_learnMoreLink)
         val linkPos = message.lastIndexOf(clickableText)
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
-                offer(FastSyncEvent.OnLearnMoreClicked)
+                offer(E.OnLearnMoreClicked)
             }
         }
         description.text = SpannableString(message).apply {

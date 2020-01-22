@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import android.os.Bundle
 import android.os.Handler
 import android.text.format.DateUtils
 import android.view.View
@@ -38,6 +39,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.settings.segwit.LegacyAddress.E
+import com.breadwallet.ui.settings.segwit.LegacyAddress.F
+import com.breadwallet.ui.settings.segwit.LegacyAddress.M
 import com.breadwallet.ui.view
 import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connectable
@@ -46,8 +50,9 @@ import kotlinx.android.synthetic.main.controller_legacy_address.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class LegacyAddressController :
-    BaseMobiusController<LegacyAddressModel, LegacyAddressEvent, LegacyAddressEffect>() {
+class LegacyAddressController(
+    args: Bundle? = null
+) : BaseMobiusController<M, E, F>(args) {
 
     private val cryptoUriParser by instance<CryptoUriParser>()
     private lateinit var copiedLayout: View
@@ -59,13 +64,13 @@ class LegacyAddressController :
     }
 
     override val layoutId = R.layout.controller_legacy_address
-    override val defaultModel = LegacyAddressModel()
+    override val defaultModel = M()
     override val update = LegacyAddressUpdate
     override val init = LegacyAddressInit
     override val effectHandler =
-        CompositeEffectHandler.from<LegacyAddressEffect, LegacyAddressEvent>(
+        CompositeEffectHandler.from<F, E>(
             Connectable { output ->
-                LegacyAddressEffectHandler(
+                LegacyAddressHandler(
                     output,
                     direct.instance(),
                     direct.instance(),
@@ -77,7 +82,7 @@ class LegacyAddressController :
                 { direct.instance<RouterNavigationEffectHandler>() },
                 { effect ->
                     when (effect) {
-                        LegacyAddressEffect.GoBack -> NavigationEffect.GoBack
+                        F.GoBack -> NavigationEffect.GoBack
                         else -> null
                     }
                 }
@@ -90,12 +95,12 @@ class LegacyAddressController :
         signal_layout.removeView(copiedLayout)
     }
 
-    override fun bindView(output: Consumer<LegacyAddressEvent>) = output.view {
+    override fun bindView(output: Consumer<E>) = output.view {
         signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
         background_layout.setOnClickListener { router.popCurrentController() }
-        close_button.onClick(LegacyAddressEvent.OnCloseClicked)
-        share_button.onClick(LegacyAddressEvent.OnShareClicked)
-        address_text.onClick(LegacyAddressEvent.OnAddressClicked)
+        close_button.onClick(E.OnCloseClicked)
+        share_button.onClick(E.OnShareClicked)
+        address_text.onClick(E.OnAddressClicked)
         onDispose {
             copyHandler.removeCallbacksAndMessages(null)
             signal_layout.setOnTouchListener(null)
@@ -103,9 +108,9 @@ class LegacyAddressController :
         }
     }
 
-    override fun LegacyAddressModel.render() {
-        ifChanged(LegacyAddressModel::sanitizedAddress, address_text::setText)
-        ifChanged(LegacyAddressModel::receiveAddress) {
+    override fun M.render() {
+        ifChanged(M::sanitizedAddress, address_text::setText)
+        ifChanged(M::receiveAddress) {
             val request = CryptoRequest.Builder()
                 .setAddress(receiveAddress)
                 .build()

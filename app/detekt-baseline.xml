@@ -4,28 +4,22 @@
   <Whitelist>
     <ID>ChainWrapping:</ID>
     <ID>CommentSpacing:</ID>
-    <ID>ComplexCondition:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService$BRSharedPrefs.getShowNotification(this) &amp;&amp; remoteMessage != null &amp;&amp; notificationManager != null &amp;&amp; notificationManager is NotificationManager</ID>
-    <ID>ComplexCondition:NotificationsSettingsViewModel.kt$NotificationsSettingsViewModel$(state == NotificationsState.APP_ENABLED &amp;&amp; !enable) || (state == NotificationsState.APP_DISABLED &amp;&amp; enable)</ID>
+    <ID>ComplexCondition:NotificationSettingsViewModel.kt$NotificationSettingsViewModel$(state == NotificationsState.APP_ENABLED &amp;&amp; !enable) || (state == NotificationsState.APP_DISABLED &amp;&amp; enable)</ID>
     <ID>ComplexMethod:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$private fun fetchHistoricalData( context: Context, fromCurrency: String, toCurrency: String, history: History, limit: Limit ): List&lt;PriceDataPoint&gt;</ID>
     <ID>ComplexMethod:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$fun saveAlert()</ID>
     <ID>ComplexMethod:PriceAlertAdapter.kt$PriceAlertAdapter$private fun PriceAlert.asLabelString(): String</ID>
     <ID>ComplexMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
-    <ID>ComplexMethod:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet)</ID>
+    <ID>ComplexMethod:RecoveryKeyHandler.kt$RecoveryKeyHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: F.RecoverWallet)</ID>
     <ID>ComplexMethod:SignedRequestMiddleware.kt$SignedRequestMiddleware$override fun handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Boolean</ID>
-    <ID>ComplexMethod:WalletController.kt$WalletController$override fun bindView(output: Consumer&lt;WalletScreenEvent&gt;): Disposable</ID>
     <ID>ComplexMethod:WalletUpdate.kt$ private fun List&lt;WalletTransaction&gt;.filtered( filterQuery: String, filterSent: Boolean, filterReceived: Boolean, filterComplete: Boolean, filterPending: Boolean )</ID>
-    <ID>EmptyFunctionBlock:CryptoWalletEffectHandler.kt$CryptoWalletEffectHandler${ }</ID>
+    <ID>EmptyClassBlock:WalletController.kt$WalletController$Companion</ID>
     <ID>EmptyFunctionBlock:DefaultTextWatcher.kt$DefaultTextWatcher${ }</ID>
-    <ID>EmptyFunctionBlock:HomeScreenEffectHandler.kt$HomeScreenEffectHandler.&lt;no name provided&gt;${ }</ID>
-    <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler${ }</ID>
-    <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletReviewPromptHandler${ }</ID>
-    <ID>EmptyFunctionBlock:WalletScreenEffectHandler.kt$WalletScreenEffectHandler${ }</ID>
+    <ID>EmptyFunctionBlock:HomeScreenHandler.kt$HomeScreenHandler.&lt;no name provided&gt;${ }</ID>
     <ID>FinalNewline:</ID>
     <ID>LongMethod:NewPriceAlertActivity.kt$NewPriceAlertActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
-    <ID>LongMethod:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet)</ID>
     <ID>MagicNumber:BRSharedPrefs.kt$BRSharedPrefs$15</ID>
-    <ID>MagicNumber:CoreBreadBox.kt$CoreBreadBox.&lt;no name provided&gt;$100</ID>
+    <ID>MagicNumber:CoreBreadBox.kt$CoreBreadBox$100</ID>
     <ID>MagicNumber:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$1000</ID>
     <ID>MagicNumber:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient.Limit.PAST_3_MONTHS$90</ID>
     <ID>MagicNumber:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient.Limit.PAST_3_YEARS$1095</ID>
@@ -43,31 +37,21 @@
     <ID>MagicNumber:PriceAlertRepository.kt$6</ID>
     <ID>MagicNumber:PriceAlertRepository.kt$7</ID>
     <ID>MagicNumber:PriceAlertWorker.kt$PriceAlertWorker$100f</ID>
-    <ID>MagicNumber:RecoveryKeyEffect.kt$RecoveryKeyEffect.RecoverWallet$12</ID>
-    <ID>MagicNumber:RecoveryKeyEffect.kt$RecoveryKeyEffect.ResetPin$12</ID>
-    <ID>MagicNumber:RecoveryKeyEffect.kt$RecoveryKeyEffect.Unlink$12</ID>
-    <ID>MagicNumber:RecoveryKeyEffect.kt$RecoveryKeyEffect.ValidatePhrase$12</ID>
-    <ID>MagicNumber:RecoveryKeyEvent.kt$RecoveryKeyEvent.OnFocusedWordChanged$11</ID>
-    <ID>MagicNumber:RecoveryKeyEvent.kt$RecoveryKeyEvent.OnWordChanged$11</ID>
-    <ID>MagicNumber:RecoveryKeyEvent.kt$RecoveryKeyEvent.OnWordValidated$11</ID>
-    <ID>MagicNumber:RecoveryKeyModel.kt$RecoveryKeyModel$11</ID>
-    <ID>MagicNumber:RecoveryKeyModel.kt$RecoveryKeyModel$12</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.E.OnFocusedWordChanged$11</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.E.OnWordChanged$11</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.E.OnWordValidated$11</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.F.RecoverWallet$12</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.F.ResetPin$12</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.F.Unlink$12</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.F.ValidatePhrase$12</ID>
+    <ID>MagicNumber:RecoveryKey.kt$RecoveryKey.M$11</ID>
     <ID>MagicNumber:RecoveryKeyUpdate.kt$RecoveryKeyUpdate$12</ID>
     <ID>MagicNumber:SignedRequestMiddleware.kt$SignedRequestMiddleware$8000</ID>
-    <ID>MagicNumber:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$5</ID>
-    <ID>MagicNumber:WalletDisplayUtils.kt$WalletDisplayUtils.Companion$8</ID>
+    <ID>MatchingDeclarationName:CoreUtils.kt$com.breadwallet.breadbox.CoreUtils.kt</ID>
     <ID>MaxLineLength:AppReviewPromptManager.kt$AppReviewPromptManager$(System.currentTimeMillis() - it.timeStamp * DateUtils.SECOND_IN_MILLIS) &lt; DateUtils.DAY_IN_MILLIS</ID>
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService$BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, token) }</ID>
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService$val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.PushNotifications_title), NotificationManager.IMPORTANCE_DEFAULT)</ID>
     <ID>MaxLineLength:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService.Companion$BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, firebaseToken) }</ID>
-    <ID>MaxLineLength:CoreBreadBox.kt$CoreBreadBox.Companion$"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZWI2M2UyOC0wMzQ1LTQ4ZjYtOWQxNy1jZTgwY2JkNjE3Y2IiLCJicmQ6Y3QiOiJjbGkiLCJleHAiOjkyMjMzNzIwMzY4NTQ3NzUsImlhdCI6MTU2Njg2MzY0OX0.FvLLDUSk1p7iFLJfg2kA-vwhDWTDulVjdj8YpFgnlE62OBFCYt4b3KeTND_qAhLynLKbGJ1UDpMMihsxtfvA0A"</ID>
-    <ID>MaxLineLength:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$val requestUrl = String.format(HISTORICAL_DATA_URL, history.value, fromCurrency.toUpperCase(), toCurrency, limit.value)</ID>
-    <ID>MaxLineLength:HomeScreenUpdate.kt$is HomeScreenEvent.OnInAppNotificationProvided -&gt; dispatch(effects(HomeScreenEffect.GoToInappMessage(event.inAppMessage)))</ID>
-    <ID>MaxLineLength:HomeScreenUpdate.kt$is HomeScreenEvent.OnPushNotificationOpened -&gt; dispatch(effects(HomeScreenEffect.RecordPushNotificationOpened(event.campaignId)))</ID>
-    <ID>MaxLineLength:HomeScreenUpdate.kt$wallet.priceChange == event.priceChange</ID>
-    <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$HomeScreenEvent.OnWalletBalanceUpdated(updatedWallet.currencyCode, updatedWallet.balance, updatedWallet.fiatBalance, updatedWallet.fiatPricePerUnit, updatedWallet.priceChange!!)</ID>
-    <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$val initState = HomeScreenModel.createDefault().copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))</ID>
-    <ID>MaxLineLength:HomeScreenUpdateTests.kt$HomeScreenUpdateTests$val updatedWallet = walletToAdd.copy(balance = BigDecimal.valueOf(1), fiatBalance = BigDecimal.valueOf(1000), fiatPricePerUnit = BigDecimal.valueOf(1000), priceChange = PriceChange(0.1, 10.0))</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageChangedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageDecreasedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
     <ID>MaxLineLength:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$WINDOW_DAY_WEEK -&gt; percentageIncreasedInDayAndWeek(selectedCrypto, value, toCurrency, Date().time, exchangeRate)</ID>
@@ -78,19 +62,13 @@
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.BOTH, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.DECREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.INCREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
-    <ID>MaxLineLength:RecoveryKeyUpdate.kt$RecoveryKeyUpdate$override</ID>
-    <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$BRReportsManager.reportBug(NullPointerException("No token for contract: ${tokenInfo.contractAddress}"))</ID>
-    <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$TokenItem(null, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, WalletBitcoinManager.NAME, null, true)</ID>
-    <ID>MaxLineLength:SelectAlertCryptoViewModel.kt$SelectAlertCryptoViewModel$TokenItem(null, WalletTokenManager.BRD_CURRENCY_CODE, WalletTokenManager.BRD_CURRENCY_CODE, null, true)</ID>
-    <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler$Interval.THREE_MONTHS -&gt; CurrencyHistoricalDataClient.getPastThreeMonths(context, currencyCode, toCurrency)</ID>
-    <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletHistoricalPriceIntervalHandler$Interval.THREE_YEARS -&gt; CurrencyHistoricalDataClient.getPastThreeYears(context, currencyCode, toCurrency)</ID>
-    <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletRatesHandler$val exchangeRate = it.getFiatForCrypto(BigDecimal.ONE, currencyCode, BRSharedPrefs.getPreferredFiatIso(context))</ID>
-    <ID>MaxLineLength:WalletScreenEffectHandler.kt$WalletRatesHandler$val fiatPricePerUnit = CurrencyUtils.getFormattedAmount(context, BRSharedPrefs.getPreferredFiatIso(context), exchangeRate)</ID>
     <ID>MaximumLineLength:</ID>
     <ID>MultiLineIfElse:</ID>
     <ID>NestedBlockDepth:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$private fun fetchHistoricalData( context: Context, fromCurrency: String, toCurrency: String, history: History, limit: Limit ): List&lt;PriceDataPoint&gt;</ID>
+    <ID>NestedBlockDepth:WebController.kt$WebController$override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?)</ID>
     <ID>NoBlankLineBeforeRbrace:</ID>
     <ID>NoConsecutiveBlankLines:</ID>
+    <ID>NoEmptyClassBody:</ID>
     <ID>NoMultipleSpaces:</ID>
     <ID>NoTrailingSpaces:</ID>
     <ID>NoUnusedImports:</ID>
@@ -100,45 +78,34 @@
     <ID>ReturnCount:ExperimentsClient.kt$ExperimentsClientImpl$override fun getExperiments(context: Context): List&lt;Experiment&gt;</ID>
     <ID>ReturnCount:InAppMessagesClient.kt$InAppMessagesClient$ fun fetchMessages(context: Context, type: InAppMessage.Type? = null): List&lt;InAppMessage&gt;</ID>
     <ID>ReturnCount:NewPriceAlertViewModel.kt$NewPriceAlertViewModel$fun saveAlert()</ID>
-    <ID>ReturnCount:OnBoardingEffectHandler.kt$OnBoardingEffectHandler$private suspend fun createWallet()</ID>
-    <ID>ReturnCount:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: RecoveryKeyEffect.RecoverWallet)</ID>
+    <ID>ReturnCount:OnBoardingHandler.kt$OnBoardingHandler$private suspend fun createWallet()</ID>
+    <ID>ReturnCount:RecoveryKeyHandler.kt$RecoveryKeyHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: F.RecoverWallet)</ID>
     <ID>ReturnCount:ScrubGestureDetector.kt$ScrubGestureDetector$override fun onTouch(v: View, event: MotionEvent): Boolean</ID>
     <ID>ReturnCount:SignedRequestMiddleware.kt$SignedRequestMiddleware$override fun handle( target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse ): Boolean</ID>
     <ID>ReturnCount:SparkView.kt$SparkView.Companion$ internal fun getNearestIndex(points: List&lt;Float&gt;, x: Float): Int</ID>
+    <ID>ReturnCount:WalletJs.kt$WalletJs$private suspend fun estimateFee( wallet: Wallet, address: Address?, amount: Amount ): TransferFeeBasis?</ID>
     <ID>SpacingAroundColon:</ID>
     <ID>SpacingAroundCurly:</ID>
-    <ID>SpacingAroundKeyword:</ID>
     <ID>SpacingAroundParens:</ID>
     <ID>SpreadOperator:Logger.kt$(message, *data)</ID>
     <ID>SpreadOperator:Logger.kt$Logger.Companion$(message, *data)</ID>
     <ID>TooGenericExceptionCaught:BRSharedPrefs.kt$BRSharedPrefs$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:CoreBreadBox.kt$CoreBreadBox$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:OnBoardingEffectHandler.kt$OnBoardingEffectHandler$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:NativePromiseFactory.kt$NativePromiseFactory.NativePromiseJs$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:OnBoardingHandler.kt$OnBoardingHandler$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RecoveryKeyHandler.kt$RecoveryKeyHandler$e: Exception</ID>
     <ID>TooManyFunctions:BRDFirebaseMessagingService.kt$BRDFirebaseMessagingService : FirebaseMessagingService</ID>
     <ID>TooManyFunctions:BRSharedPrefs.kt$BRSharedPrefs</ID>
-    <ID>TooManyFunctions:HomeScreenEffectHandler.kt$HomeScreenEffectHandler : ConnectionCoroutineScopeOnDataChanged</ID>
-    <ID>TooManyFunctions:NavigationEffectHandler.kt$NavigationEffectHandler : ConnectionNavigationEffectHandlerSpec</ID>
+    <ID>TooManyFunctions:HomeScreenHandler.kt$HomeScreenHandler : ConnectionCoroutineScopeOnDataChanged</ID>
     <ID>TooManyFunctions:NewPriceAlertViewModel.kt$NewPriceAlertViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:OnBoardingEffectHandler.kt$OnBoardingEffectHandler : ConnectionCoroutineScope</ID>
+    <ID>TooManyFunctions:OnBoardingHandler.kt$OnBoardingHandler : ConnectionCoroutineScope</ID>
     <ID>TooManyFunctions:PriceAlert.kt$PriceAlert$Companion</ID>
     <ID>TooManyFunctions:PriceAlertRepository.kt$PriceAlertRepositoryImpl : PriceAlertRepository</ID>
-    <ID>TooManyFunctions:RecoveryKeyEffectHandler.kt$RecoveryKeyEffectHandler : ConnectionCoroutineScope</ID>
+    <ID>TooManyFunctions:RecoveryKeyHandler.kt$RecoveryKeyHandler : ConnectionCoroutineScope</ID>
     <ID>TooManyFunctions:RecoveryKeyUpdate.kt$RecoveryKeyUpdate : UpdateRecoveryKeyUpdateSpec</ID>
+    <ID>TooManyFunctions:SendSheetHandler.kt$SendSheetHandler</ID>
     <ID>TooManyFunctions:SparkView.kt$SparkView : ViewScrubListener</ID>
     <ID>VariableNaming:PriceAlertListViewModel.kt$PriceAlertListViewModel$private val TAG: String = PriceAlertListViewModel::class.java.simpleName</ID>
-    <ID>WildcardImport:BaseMobiusController.kt$import com.spotify.mobius.*</ID>
-    <ID>WildcardImport:HomeScreenUpdate.kt$import com.spotify.mobius.Next.*</ID>
-    <ID>WildcardImport:LifecycleExtensions.kt$import android.arch.lifecycle.*</ID>
-    <ID>WildcardImport:NavigationEffectHandler.kt$import com.breadwallet.presenter.activities.*</ID>
-    <ID>WildcardImport:NewPriceAlertViewModel.kt$import com.breadwallet.ui.util.*</ID>
-    <ID>WildcardImport:PriceAlertWorker.kt$import androidx.work.*</ID>
-    <ID>WildcardImport:RecoveryKeyController.kt$import com.breadwallet.ui.util.*</ID>
-    <ID>WildcardImport:RecoveryKeyEffectHandler.kt$import kotlinx.coroutines.*</ID>
-    <ID>WildcardImport:RecoveryKeyUpdate.kt$import com.spotify.mobius.Next.*</ID>
     <ID>WildcardImport:Resource.kt$import com.breadwallet.tools.mvvm.Status.*</ID>
-    <ID>WildcardImport:WalletUpdate.kt$import com.breadwallet.ui.wallet.WalletScreenEffect.*</ID>
-    <ID>WildcardImport:WalletUpdate.kt$import com.breadwallet.ui.wallet.WalletScreenEvent.*</ID>
     <ID>WildcardImport:WalletUpdate.kt$import com.spotify.mobius.Next.*</ID>
   </Whitelist>
 </SmellBaseline>

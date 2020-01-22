@@ -52,6 +52,8 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.navigation.NavEffectTransformer
+import com.breadwallet.ui.send.SendSheet.E
+import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.util.HEADER_BITPAY_PARTNER
 import com.breadwallet.util.HEADER_BITPAY_PARTNER_KEY
 import com.breadwallet.util.buildPaymentProtocolRequest
@@ -93,18 +95,18 @@ object SendSheetHandler {
         context: Context,
         router: Router,
         retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<SendSheetEvent>,
+        outputProducer: () -> Consumer<E>,
         breadBox: BreadBox,
         keyStore: KeyStore,
         apiClient: APIClient,
         navEffectHandler: NavEffectTransformer,
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
-    ) = subtypeEffectHandler<SendSheetEffect, SendSheetEvent> {
+    ) = subtypeEffectHandler<F, E> {
         addTransformer(pollExchangeRate(context, breadBox))
         addTransformer(handleLoadBalance(context, breadBox))
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
-        addTransformer<SendSheetEffect.Nav>(navEffectHandler)
+        addTransformer<F.Nav>(navEffectHandler)
         addTransformer(handleSendTransaction(breadBox, keyStore, retainedScope, outputProducer))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
@@ -114,28 +116,28 @@ object SendSheetHandler {
         addConsumerSync(Dispatchers.Main, showBalanceTooLowForFee(router))
         addConsumerSync(Dispatchers.Main, showErrorDialog(router))
 
-        addFunctionSync<SendSheetEffect.LoadAuthenticationSettings> {
+        addFunctionSync<F.LoadAuthenticationSettings> {
             val isEnabled =
                 isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
-            SendSheetEvent.OnAuthenticationSettingsUpdated(isEnabled)
+            E.OnAuthenticationSettingsUpdated(isEnabled)
         }
     }
 
     private fun handleLoadBalance(
         context: Context,
         breadBox: BreadBox
-    ) = flowTransformer<SendSheetEffect.LoadBalance, SendSheetEvent> { effects ->
+    ) = flowTransformer<F.LoadBalance, E> { effects ->
         effects.map { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val balanceBig = wallet.balance.toBigDecimal()
             val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance)
-            SendSheetEvent.OnBalanceUpdated(balanceBig, fiatBig)
+            E.OnBalanceUpdated(balanceBig, fiatBig)
         }
     }
 
     private fun handleEstimateFee(
         breadBox: BreadBox
-    ) = flowTransformer<SendSheetEffect.EstimateFee, SendSheetEvent> { effects ->
+    ) = flowTransformer<F.EstimateFee, E> { effects ->
         effects.mapNotNull { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
 
@@ -150,20 +152,20 @@ object SendSheetHandler {
             try {
                 val data = wallet.estimateFee(address, amount, networkFee)
                 val fee = data.fee.toBigDecimal()
-                SendSheetEvent.OnNetworkFeeUpdated(effect.address, effect.amount, fee, data)
+                E.OnNetworkFeeUpdated(effect.address, effect.amount, fee, data)
             } catch (e: FeeEstimationError) {
                 logError("Failed get fee estimate", e)
-                SendSheetEvent.OnNetworkFeeError
+                E.OnNetworkFeeError
             } catch (e: IllegalStateException) {
                 logError("Failed get fee estimate", e)
-                SendSheetEvent.OnNetworkFeeError
+                E.OnNetworkFeeError
             }
         }
     }
 
     private fun showBalanceTooLowForFee(
         router: Router
-    ) = { effect: SendSheetEffect.ShowEthTooLowForTokenFee ->
+    ) = { effect: F.ShowEthTooLowForTokenFee ->
         val res = checkNotNull(router.activity).resources
         // TODO: Handle user acceptance
         val controller = AlertDialogController(
@@ -180,7 +182,7 @@ object SendSheetHandler {
     private fun pollExchangeRate(
         context: Context,
         breadBox: BreadBox
-    ) = flowTransformer<SendSheetEffect.LoadExchangeRate, SendSheetEvent> { effects ->
+    ) = flowTransformer<F.LoadExchangeRate, E> { effects ->
         effects.transformLatest { effect ->
             val rates = RatesRepository.getInstance(context)
             val wallet = breadBox.wallet(effect.currencyCode).first()
@@ -194,7 +196,7 @@ object SendSheetHandler {
                     else -> fiatRate
                 }
 
-                emit(SendSheetEvent.OnExchangeRateUpdated(fiatRate, fiatFeeRate, feeCurrencyCode))
+                emit(E.OnExchangeRateUpdated(fiatRate, fiatFeeRate, feeCurrencyCode))
 
                 // TODO: Display out of date, invalid (0) rate, etc.
                 delay(RATE_UPDATE_MS)
@@ -204,12 +206,12 @@ object SendSheetHandler {
 
     private fun validateAddress(
         breadBox: BreadBox
-    ) = flowTransformer<SendSheetEffect.ValidateAddress, SendSheetEvent> { effects ->
+    ) = flowTransformer<F.ValidateAddress, E> { effects ->
         effects.mapLatest { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val address = wallet.addressFor(effect.address)
             val isValid = address != null && !wallet.containsAddress(address)
-            SendSheetEvent.OnAddressValidated(
+            E.OnAddressValidated(
                 address = effect.address,
                 isValid = isValid
             )
@@ -219,7 +221,7 @@ object SendSheetHandler {
     private fun parseClipboard(
         context: Context,
         breadBox: BreadBox
-    ): suspend (SendSheetEffect.ParseClipboardData) -> SendSheetEvent = { effect ->
+    ): suspend (F.ParseClipboardData) -> E = { effect ->
         val text = withContext(Dispatchers.Main) {
             BRClipboardManager.getClipboard(context)
         }
@@ -229,17 +231,17 @@ object SendSheetHandler {
         val reqCurrencyCode = cryptoRequest?.currencyCode
 
         when {
-            text.isNullOrBlank() -> SendSheetEvent.OnAddressPasted.NoAddress
-            reqAddress.isNullOrBlank() -> SendSheetEvent.OnAddressPasted.NoAddress
+            text.isNullOrBlank() -> E.OnAddressPasted.NoAddress
+            reqAddress.isNullOrBlank() -> E.OnAddressPasted.NoAddress
             !reqCurrencyCode.isNullOrBlank() && reqCurrencyCode != effect.currencyCode ->
-                SendSheetEvent.OnAddressPasted.InvalidAddress
+                E.OnAddressPasted.InvalidAddress
             else -> {
                 val wallet = breadBox.wallet(effect.currencyCode).first()
                 val address = wallet.addressFor(reqAddress)
                 if (address == null || wallet.containsAddress(address)) {
-                    SendSheetEvent.OnAddressPasted.InvalidAddress
+                    E.OnAddressPasted.InvalidAddress
                 } else {
-                    SendSheetEvent.OnAddressPasted.ValidAddress(reqAddress)
+                    E.OnAddressPasted.ValidAddress(reqAddress)
                 }
             }
         }
@@ -249,8 +251,8 @@ object SendSheetHandler {
         breadBox: BreadBox,
         keyStore: KeyStore,
         retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<SendSheetEvent>
-    ) = flowTransformer<SendSheetEffect.SendTransaction, SendSheetEvent> { effects ->
+        outputProducer: () -> Consumer<E>
+    ) = flowTransformer<F.SendTransaction, E> { effects ->
         effects
             .mapLatest { effect ->
                 val wallet = breadBox.wallet(effect.currencyCode).first()
@@ -259,7 +261,7 @@ object SendSheetHandler {
                 val feeBasis = effect.transferFeeBasis
 
                 if (address == null || wallet.containsAddress(address)) {
-                    return@mapLatest SendSheetEvent.OnAddressValidated(effect.address, false)
+                    return@mapLatest E.OnAddressValidated(effect.address, false)
                 }
 
                 try {
@@ -269,13 +271,13 @@ object SendSheetHandler {
                     val phrase = checkNotNull(keyStore.getPhrase())
 
                     wallet.walletManager.submit(transfer, phrase)
-                    SendSheetEvent.OnSendComplete(transfer)
+                    E.OnSendComplete(transfer)
                 } catch (e: TransferSubmitError) {
                     logError("Transaction submit failed", e)
-                    SendSheetEvent.OnSendFailed
+                    E.OnSendFailed
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
-                    SendSheetEvent.OnSendFailed
+                    E.OnSendFailed
                 }
             }
             // outputProducer]must return a valid [Consumer] that
@@ -291,7 +293,7 @@ object SendSheetHandler {
 
     private fun handleAddTransactionMetadata(
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
-    ) = flowTransformer<SendSheetEffect.AddTransactionMetaData, SendSheetEvent> { effects ->
+    ) = flowTransformer<F.AddTransactionMetaData, E> { effects ->
         effects
             .map { effect ->
                 MetaDataEffect.AddTransactionMetaData(
@@ -320,7 +322,7 @@ object SendSheetHandler {
         breadBox: BreadBox,
         apiClient: APIClient,
         context: Context
-    ) = flowTransformer<SendSheetEffect.PaymentProtocol.LoadPaymentData, SendSheetEvent.PaymentProtocol> { effects ->
+    ) = flowTransformer<F.PaymentProtocol.LoadPaymentData, E.PaymentProtocol> { effects ->
         effects.map { effect ->
             val acceptHeader = effect.cryptoRequestUrl.currencyCode.getPaymentRequestHeader()
             val request: Request =
@@ -333,17 +335,17 @@ object SendSheetHandler {
                 val wallet = breadBox.wallet(effect.cryptoRequestUrl.currencyCode).first()
                 val paymentProtocolRequest = buildPaymentProtocolRequest(wallet, response)
                 if (paymentProtocolRequest != null) {
-                    SendSheetEvent.PaymentProtocol.OnPaymentLoaded(
+                    E.PaymentProtocol.OnPaymentLoaded(
                         paymentProtocolRequest,
                         paymentProtocolRequest.totalAmount.get().convert(wallet.unit).get().toBigDecimal()
                     )
                 } else {
-                    SendSheetEvent.PaymentProtocol.OnLoadFailed(
+                    E.PaymentProtocol.OnLoadFailed(
                         context.getString(R.string.PaymentProtocol_Errors_badPaymentRequest)
                     )
                 }
             } else {
-                SendSheetEvent.PaymentProtocol.OnLoadFailed(context.getString(R.string.Send_remoteRequestError))
+                E.PaymentProtocol.OnLoadFailed(context.getString(R.string.Send_remoteRequestError))
             }
         }
     }
@@ -351,8 +353,8 @@ object SendSheetHandler {
     private fun handleContinueWithPayment(
         keyStore: KeyStore,
         retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<SendSheetEvent>
-    ) = flowTransformer<SendSheetEffect.PaymentProtocol.ContinueWitPayment, SendSheetEvent> { effects ->
+        outputProducer: () -> Consumer<E>
+    ) = flowTransformer<F.PaymentProtocol.ContinueWitPayment, E> { effects ->
         effects
             .mapLatest { effect ->
                 val paymentRequest = effect.paymentProtocolRequest
@@ -368,13 +370,13 @@ object SendSheetHandler {
                         )
                     ) { "Failed to sign transfer" }
                     paymentRequest.submitTransfer(transfer)
-                    SendSheetEvent.OnSendComplete(transfer)
+                    E.OnSendComplete(transfer)
                 } catch (e: TransferSubmitError) {
                     logError("Transaction submit failed", e)
-                    SendSheetEvent.OnSendFailed
+                    E.OnSendFailed
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
-                    SendSheetEvent.OnSendFailed
+                    E.OnSendFailed
                 }
             }
             // outputProducer]must return a valid [Consumer] that
@@ -390,7 +392,7 @@ object SendSheetHandler {
 
     private fun handlePostPayment(
         apiClient: APIClient
-    ) = flowTransformer<SendSheetEffect.PaymentProtocol.PostPayment, SendSheetEvent.PaymentProtocol> { effects ->
+    ) = flowTransformer<F.PaymentProtocol.PostPayment, E.PaymentProtocol> { effects ->
         effects
             .mapLatest { effect ->
                 val paymentRequest = effect.paymentProtocolRequest
@@ -416,17 +418,17 @@ object SendSheetHandler {
                         .build()
 
                 if (apiClient.sendRequest(request, false).isSuccessful) {
-                    SendSheetEvent.PaymentProtocol.OnPostCompleted
+                    E.PaymentProtocol.OnPostCompleted
                 } else {
                     logWarning("Failed to post payment to bitpay")
-                    SendSheetEvent.PaymentProtocol.OnPostFailed
+                    E.PaymentProtocol.OnPostFailed
                 }
             }
     }
 
     private fun showErrorDialog(
         router: Router
-    ) = { effect: SendSheetEffect.ShowErrorDialog ->
+    ) = { effect: F.ShowErrorDialog ->
         val res = checkNotNull(router.activity).resources
         val controller = AlertDialogController(
             dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,

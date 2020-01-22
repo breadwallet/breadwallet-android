@@ -24,16 +24,18 @@
  */
 package com.breadwallet.ui.pin
 
+import com.breadwallet.ui.pin.InputPin.F
+import com.breadwallet.ui.pin.InputPin.M
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.First
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-object InputPinInit : Init<InputPinModel, InputPinEffect> {
-    override fun init(model: InputPinModel): First<InputPinModel, InputPinEffect> {
+object InputPinInit : Init<M, F> {
+    override fun init(model: M): First<M, F> {
         return first(
-            model, effects<InputPinEffect, InputPinEffect>(
-                InputPinEffect.CheckIfPinExists
+            model, effects<F, F>(
+                F.CheckIfPinExists
             )
         )
     }

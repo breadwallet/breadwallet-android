@@ -30,41 +30,41 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object ShowPaperKeyUpdate : Update<ShowPaperKeyModel, ShowPaperKeyEvent, ShowPaperKeyEffect>,
+object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.F>,
     ShowPaperKeyUpdateSpec {
 
     override fun update(
-        model: ShowPaperKeyModel,
-        event: ShowPaperKeyEvent
-    ): Next<ShowPaperKeyModel, ShowPaperKeyEffect> = patch(model, event)
+        model: ShowPaperKey.M,
+        event: ShowPaperKey.E
+    ): Next<ShowPaperKey.M, ShowPaperKey.F> = patch(model, event)
 
-    override fun onNextClicked(model: ShowPaperKeyModel)
-        : Next<ShowPaperKeyModel, ShowPaperKeyEffect> {
+    override fun onNextClicked(model: ShowPaperKey.M)
+        : Next<ShowPaperKey.M, ShowPaperKey.F> {
         return if (model.currentWord == model.phrase.size - 1) {
-            dispatch(setOf(ShowPaperKeyEffect.GoToPaperKeyProve(model.phrase, model.onComplete)))
+            dispatch(setOf(ShowPaperKey.F.GoToPaperKeyProve(model.phrase, model.onComplete)))
         } else {
             next(model.copy(currentWord = model.currentWord + 1))
         }
     }
 
-    override fun onPreviousClicked(model: ShowPaperKeyModel)
-        : Next<ShowPaperKeyModel, ShowPaperKeyEffect> {
+    override fun onPreviousClicked(model: ShowPaperKey.M)
+        : Next<ShowPaperKey.M, ShowPaperKey.F> {
         check(model.currentWord > 0)
         return next(model.copy(currentWord = model.currentWord - 1))
     }
 
     override fun onPageChanged(
-        model: ShowPaperKeyModel,
-        event: ShowPaperKeyEvent.OnPageChanged
-    ): Next<ShowPaperKeyModel, ShowPaperKeyEffect> {
+        model: ShowPaperKey.M,
+        event: ShowPaperKey.E.OnPageChanged
+    ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         return next(model.copy(currentWord = event.position))
     }
 
-    override fun onCloseClicked(model: ShowPaperKeyModel)
-        : Next<ShowPaperKeyModel, ShowPaperKeyEffect> {
+    override fun onCloseClicked(model: ShowPaperKey.M)
+        : Next<ShowPaperKey.M, ShowPaperKey.F> {
         val effect = when (model.onComplete) {
-            OnCompleteAction.GO_HOME -> ShowPaperKeyEffect.GoToHome
-            OnCompleteAction.GO_TO_BUY -> ShowPaperKeyEffect.GoToBuy
+            OnCompleteAction.GO_HOME -> ShowPaperKey.F.GoToHome
+            OnCompleteAction.GO_TO_BUY -> ShowPaperKey.F.GoToBuy
         }
         return dispatch(setOf(effect))
     }

@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import android.os.Bundle
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
@@ -31,6 +32,9 @@ import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.settings.segwit.EnableSegWit.E
+import com.breadwallet.ui.settings.segwit.EnableSegWit.F
+import com.breadwallet.ui.settings.segwit.EnableSegWit.M
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -38,15 +42,18 @@ import kotlinx.android.synthetic.main.controller_enable_segwit.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class EnableSegWitController :
-    BaseMobiusController<EnableSegWitModel, EnableSegWitEvent, EnableSegWitEffect>() {
+class EnableSegWitController(
+    args: Bundle? = null
+) : BaseMobiusController<M, E, F>(args) {
 
-    override val defaultModel = EnableSegWitModel()
+    override val layoutId = R.layout.controller_enable_segwit
+
+    override val defaultModel = M()
     override val update = EnableSegWitUpdate
     override val effectHandler =
-        CompositeEffectHandler.from<EnableSegWitEffect, EnableSegWitEvent>(
+        CompositeEffectHandler.from<F, E>(
             Connectable { output ->
-                EnableSegWitEffectHandler(
+                EnableSegWitHandler(
                     output,
                     direct.instance(),
                     direct.instance()
@@ -56,28 +63,27 @@ class EnableSegWitController :
                 { direct.instance<RouterNavigationEffectHandler>() },
                 { effect ->
                     when (effect) {
-                        EnableSegWitEffect.GoBack -> NavigationEffect.GoBack
-                        EnableSegWitEffect.GoToHome -> NavigationEffect.GoToHome
+                        F.GoBack -> NavigationEffect.GoBack
+                        F.GoToHome -> NavigationEffect.GoToHome
                         else -> null
                     }
                 })
         )
-    override val layoutId = R.layout.controller_enable_segwit
 
-    override fun bindView(output: Consumer<EnableSegWitEvent>) = output.view {
-        enable_button.onClick(EnableSegWitEvent.OnEnableClick)
-        back_button.onClick(EnableSegWitEvent.OnBackClicked)
-        continue_button.onClick(EnableSegWitEvent.OnContinueClicked)
-        cancel_button.onClick(EnableSegWitEvent.OnCancelClicked)
-        done_button.onClick(EnableSegWitEvent.OnDoneClicked)
+    override fun bindView(output: Consumer<E>) = output.view {
+        enable_button.onClick(E.OnEnableClick)
+        back_button.onClick(E.OnBackClicked)
+        continue_button.onClick(E.OnContinueClicked)
+        cancel_button.onClick(E.OnCancelClicked)
+        done_button.onClick(E.OnDoneClicked)
     }
 
-    override fun EnableSegWitModel.render() {
-        ifChanged(EnableSegWitModel::state) {
-            confirm_choice_layout.isVisible = state == EnableSegWitModel.State.CONFIRMATION
-            enable_button.isVisible = state == EnableSegWitModel.State.ENABLE
-            done_button.isVisible = state == EnableSegWitModel.State.DONE
-            confirmation_layout.isVisible = state == EnableSegWitModel.State.DONE
+    override fun M.render() {
+        ifChanged(M::state) {
+            confirm_choice_layout.isVisible = state == M.State.CONFIRMATION
+            enable_button.isVisible = state == M.State.ENABLE
+            done_button.isVisible = state == M.State.DONE
+            confirmation_layout.isVisible = state == M.State.DONE
         }
     }
 }

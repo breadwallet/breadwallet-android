@@ -24,66 +24,68 @@
  */
 package com.breadwallet.ui.pin
 
+import com.breadwallet.ui.pin.InputPin.E
+import com.breadwallet.ui.pin.InputPin.F
+import com.breadwallet.ui.pin.InputPin.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object InputPinUpdate : Update<InputPinModel, InputPinEvent, InputPinEffect>,
-    InputPinUpdateSpec {
+object InputPinUpdate : Update<M, E, F>, InputPinUpdateSpec {
 
     override fun update(
-        model: InputPinModel,
-        event: InputPinEvent
+        model: M,
+        event: E
     ) = patch(model, event)
 
-    override fun onFaqClicked(model: InputPinModel): Next<InputPinModel, InputPinEffect> =
-        Next.dispatch(setOf(InputPinEffect.GoToFaq))
+    override fun onFaqClicked(model: M): Next<M, F> =
+        Next.dispatch(setOf(F.GoToFaq))
 
     override fun onPinEntered(
-        model: InputPinModel,
-        event: InputPinEvent.OnPinEntered
-    ): Next<InputPinModel, InputPinEffect> {
+        model: M,
+        event: E.OnPinEntered
+    ): Next<M, F> {
         return when (model.mode) {
-            InputPinModel.Mode.VERIFY -> if (event.isPinCorrect) {
-                next(model.copy(pinUpdateMode = true, mode = InputPinModel.Mode.NEW))
+            M.Mode.VERIFY -> if (event.isPinCorrect) {
+                next(model.copy(pinUpdateMode = true, mode = M.Mode.NEW))
             } else {
-                next(model, setOf<InputPinEffect>(InputPinEffect.ErrorShake))
+                next(model, setOf<F>(F.ErrorShake))
             }
-            InputPinModel.Mode.NEW -> {
-                next(model.copy(mode = InputPinModel.Mode.CONFIRM, pin = event.pin))
+            M.Mode.NEW -> {
+                next(model.copy(mode = M.Mode.CONFIRM, pin = event.pin))
             }
-            InputPinModel.Mode.CONFIRM -> if (event.pin == model.pin) {
-                next(model, setOf<InputPinEffect>(InputPinEffect.SetupPin(model.pin)))
+            M.Mode.CONFIRM -> if (event.pin == model.pin) {
+                next(model, setOf<F>(F.SetupPin(model.pin)))
             } else {
                 next(
-                    model.copy(mode = InputPinModel.Mode.NEW, pin = ""),
-                    setOf<InputPinEffect>(InputPinEffect.ErrorShake)
+                    model.copy(mode = M.Mode.NEW, pin = ""),
+                    setOf<F>(F.ErrorShake)
                 )
             }
         }
     }
 
-    override fun onPinLocked(model: InputPinModel): Next<InputPinModel, InputPinEffect> =
-        next(model, setOf(InputPinEffect.GoToDisabledScreen))
+    override fun onPinLocked(model: M): Next<M, F> =
+        next(model, setOf(F.GoToDisabledScreen))
 
-    override fun onPinSaved(model: InputPinModel): Next<InputPinModel, InputPinEffect> {
+    override fun onPinSaved(model: M): Next<M, F> {
         val effect = if (model.pinUpdateMode || model.skipWriteDownKey) {
-            InputPinEffect.GoToHome
+            F.GoToHome
         } else {
-            InputPinEffect.GoToWriteDownKey(model.onComplete)
+            F.GoToWriteDownKey(model.onComplete)
         }
         return next(model, setOf(effect))
     }
 
-    override fun onPinSaveFailed(model: InputPinModel): Next<InputPinModel, InputPinEffect> {
-        return next(model.copy(mode = InputPinModel.Mode.NEW, pin = ""))
+    override fun onPinSaveFailed(model: M): Next<M, F> {
+        return next(model.copy(mode = M.Mode.NEW, pin = ""))
     }
 
     override fun onPinCheck(
-        model: InputPinModel,
-        event: InputPinEvent.OnPinCheck
-    ): Next<InputPinModel, InputPinEffect> {
-        val mode = if (event.hasPin) InputPinModel.Mode.VERIFY else InputPinModel.Mode.NEW
+        model: M,
+        event: E.OnPinCheck
+    ): Next<M, F> {
+        val mode = if (event.hasPin) M.Mode.VERIFY else M.Mode.NEW
         return next(model.copy(mode = mode))
     }
 }

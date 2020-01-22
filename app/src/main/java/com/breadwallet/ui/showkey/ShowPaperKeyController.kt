@@ -42,6 +42,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.showkey.ShowPaperKey.E
+import com.breadwallet.ui.showkey.ShowPaperKey.F
+import com.breadwallet.ui.showkey.ShowPaperKey.M
 import com.breadwallet.util.DefaultOnPageChangeListener
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -50,8 +53,7 @@ import kotlinx.android.synthetic.main.fragment_word_item.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class ShowPaperKeyController(args: Bundle) :
-    BaseMobiusController<ShowPaperKeyModel, ShowPaperKeyEvent, ShowPaperKeyEffect>(args) {
+class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     companion object {
         private const val EXTRA_PHRASE = "phrase"
@@ -70,14 +72,14 @@ class ShowPaperKeyController(args: Bundle) :
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
     override val layoutId = R.layout.controller_paper_key
-    override val defaultModel = ShowPaperKeyModel.createDefault(phrase, onComplete)
+    override val defaultModel = M.createDefault(phrase, onComplete)
     override val update = ShowPaperKeyUpdate
-    override val effectHandler = CompositeEffectHandler.from<ShowPaperKeyEffect, ShowPaperKeyEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                ShowPaperKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
-                ShowPaperKeyEffect.GoToHome -> NavigationEffect.GoToHome
-                is ShowPaperKeyEffect.GoToPaperKeyProve -> NavigationEffect.GoToPaperKeyProve(
+                F.GoToBuy -> NavigationEffect.GoToBuy
+                F.GoToHome -> NavigationEffect.GoToHome
+                is F.GoToPaperKeyProve -> NavigationEffect.GoToPaperKeyProve(
                     effect.phrase,
                     effect.onComplete
                 )
@@ -86,29 +88,29 @@ class ShowPaperKeyController(args: Bundle) :
         })
     )
 
-    override fun bindView(output: Consumer<ShowPaperKeyEvent>): Disposable {
+    override fun bindView(output: Consumer<E>): Disposable {
         next_button.setOnClickListener {
-            output.accept(ShowPaperKeyEvent.OnNextClicked)
+            output.accept(E.OnNextClicked)
         }
         previous_button.setOnClickListener {
-            output.accept(ShowPaperKeyEvent.OnPreviousClicked)
+            output.accept(E.OnPreviousClicked)
         }
         close_button.setOnClickListener {
-            output.accept(ShowPaperKeyEvent.OnCloseClicked)
+            output.accept(E.OnCloseClicked)
         }
         words_pager.addOnPageChangeListener(object : DefaultOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                output.accept(ShowPaperKeyEvent.OnPageChanged(position))
+                output.accept(E.OnPageChanged(position))
             }
         })
         return Disposable { }
     }
 
-    override fun ShowPaperKeyModel.render() {
-        ifChanged(ShowPaperKeyModel::phrase) {
+    override fun M.render() {
+        ifChanged(M::phrase) {
             words_pager.adapter = WordPagerAdapter(this@ShowPaperKeyController, phrase)
         }
-        ifChanged(ShowPaperKeyModel::currentWord) {
+        ifChanged(M::currentWord) {
             words_pager.currentItem = currentWord
             item_index.text = resources?.getString(
                 R.string.WritePaperPhrase_step,

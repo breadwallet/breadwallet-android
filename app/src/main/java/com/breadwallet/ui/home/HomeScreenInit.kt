@@ -24,15 +24,17 @@
  */
 package com.breadwallet.ui.home
 
+import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.ui.home.HomeScreen.M
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-val HomeScreenInit = Init<HomeScreenModel, HomeScreenEffect> { model ->
+val HomeScreenInit = Init<M, F> { model ->
     first(model, effects(
-            HomeScreenEffect.LoadWallets,
-            HomeScreenEffect.LoadIsBuyBellNeeded,
-            HomeScreenEffect.LoadPrompt,
-            HomeScreenEffect.CheckIfShowBuyAndSell
+            F.LoadWallets,
+            F.LoadIsBuyBellNeeded,
+            F.LoadPrompt,
+            F.CheckIfShowBuyAndSell
     ))
 }

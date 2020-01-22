@@ -24,9 +24,11 @@
  */
 package com.breadwallet.ui.settings.currency
 
+import com.breadwallet.ui.settings.currency.DisplayCurrency.F
+import com.breadwallet.ui.settings.currency.DisplayCurrency.M
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-val DisplayCurrencyInit = Init<DisplayCurrency.M, DisplayCurrency.F> { model ->
-    first(model, setOf(DisplayCurrency.F.LoadCurrencies))
+val DisplayCurrencyInit = Init<M, F> { model ->
+    first(model, setOf(F.LoadCurrencies))
 }

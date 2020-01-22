@@ -37,6 +37,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.pin.InputPin.E
+import com.breadwallet.ui.pin.InputPin.F
+import com.breadwallet.ui.pin.InputPin.M
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -44,14 +47,11 @@ import kotlinx.android.synthetic.main.controller_pin_input.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class InputPinController(args: Bundle) :
-    BaseMobiusController<InputPinModel, InputPinEvent, InputPinEffect>(args) {
+private const val EXTRA_PIN_MODE_UPDATE = "pin-update"
+private const val EXTRA_SKIP_WRITE_DOWN = "skip-write-down"
+private const val EXTRA_ON_COMPLETE = "on-complete"
 
-    companion object {
-        private const val EXTRA_PIN_MODE_UPDATE = "pin-update"
-        private const val EXTRA_SKIP_WRITE_DOWN = "skip-write-down"
-        private const val EXTRA_ON_COMPLETE = "on-complete"
-    }
+class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     constructor(
         onComplete: OnCompleteAction,
@@ -66,7 +66,7 @@ class InputPinController(args: Bundle) :
     )
 
     override val layoutId = R.layout.controller_pin_input
-    override val defaultModel = InputPinModel.createDefault(
+    override val defaultModel = M.createDefault(
         pinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false),
         onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE)),
         skipWriteDownKey = arg(EXTRA_SKIP_WRITE_DOWN, false)
@@ -74,9 +74,9 @@ class InputPinController(args: Bundle) :
     override val init = InputPinInit
     override val update = InputPinUpdate
 
-    override val effectHandler = CompositeEffectHandler.from<InputPinEffect, InputPinEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            InputPinEffectHandler(
+            InputPinHandler(
                 output,
                 direct.instance(),
                 { SpringAnimator.failShakeAnimation(applicationContext, pin_digits) },
@@ -85,10 +85,10 @@ class InputPinController(args: Bundle) :
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                InputPinEffect.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
-                InputPinEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
-                InputPinEffect.GoToHome -> NavigationEffect.GoToHome
-                is InputPinEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
+                F.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
+                F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
+                F.GoToHome -> NavigationEffect.GoToHome
+                is F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
                 else -> null
             }
         })
@@ -101,17 +101,17 @@ class InputPinController(args: Bundle) :
         brkeyboard.setShowDecimal(false)
     }
 
-    override fun bindView(output: Consumer<InputPinEvent>): Disposable {
+    override fun bindView(output: Consumer<E>): Disposable {
         faq_button.setOnClickListener {
-            output.accept(InputPinEvent.OnFaqClicked)
+            output.accept(E.OnFaqClicked)
         }
         pin_digits.setup(brkeyboard, object : PinLayoutListener {
             override fun onPinInserted(pin: String, isPinCorrect: Boolean) {
-                output.accept(InputPinEvent.OnPinEntered(pin, isPinCorrect))
+                output.accept(E.OnPinEntered(pin, isPinCorrect))
             }
 
             override fun onPinLocked() {
-                output.accept(InputPinEvent.OnPinLocked)
+                output.accept(E.OnPinLocked)
             }
         })
         return Disposable {
@@ -119,17 +119,17 @@ class InputPinController(args: Bundle) :
         }
     }
 
-    override fun InputPinModel.render() {
-        ifChanged(InputPinModel::mode) {
+    override fun M.render() {
+        ifChanged(M::mode) {
             title.setText(
                 when (mode) {
-                    InputPinModel.Mode.VERIFY -> R.string.UpdatePin_enterCurrent
-                    InputPinModel.Mode.NEW -> if (pinUpdateMode) {
+                    M.Mode.VERIFY -> R.string.UpdatePin_enterCurrent
+                    M.Mode.NEW -> if (pinUpdateMode) {
                         R.string.UpdatePin_enterNew
                     } else {
                         R.string.UpdatePin_createTitle
                     }
-                    InputPinModel.Mode.CONFIRM -> if (pinUpdateMode) {
+                    M.Mode.CONFIRM -> if (pinUpdateMode) {
                         R.string.UpdatePin_reEnterNew
                     } else {
                         R.string.UpdatePin_createTitleConfirm
@@ -137,6 +137,6 @@ class InputPinController(args: Bundle) :
                 }
             )
         }
-        ifChanged(InputPinModel::pinUpdateMode, pin_digits::setIsPinUpdating)
+        ifChanged(M::pinUpdateMode, pin_digits::setIsPinUpdating)
     }
 }

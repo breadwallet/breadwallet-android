@@ -50,7 +50,7 @@ import java.io.File
 class AddTokenListAdapter(
     private val context: Context,
     private val tokensFlow: Flow<List<Token>>,
-    private val sendChannel: SendChannel<AddWalletsEvent>
+    private val sendChannel: SendChannel<AddWallets.E>
 ) : RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder>() {
 
     private var tokens: List<Token> = emptyList()
@@ -105,9 +105,9 @@ class AddTokenListAdapter(
 
             setOnClickListener {
                 if (token.enabled) {
-                    sendChannel.offer(AddWalletsEvent.OnRemoveWalletClicked(token))
+                    sendChannel.offer(AddWallets.E.OnRemoveWalletClicked(token))
                 } else {
-                    sendChannel.offer(AddWalletsEvent.OnAddWalletClicked(token))
+                    sendChannel.offer(AddWallets.E.OnAddWalletClicked(token))
                 }
             }
         }
