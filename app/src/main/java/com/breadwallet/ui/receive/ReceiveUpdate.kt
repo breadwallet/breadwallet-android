@@ -25,9 +25,12 @@
 package com.breadwallet.ui.receive
 
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.AddDecimal
-import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.AddDigit
-import com.breadwallet.ui.receive.ReceiveEvent.OnAmountChange.Delete
+import com.breadwallet.ui.receive.ReceiveScreen.E
+import com.breadwallet.ui.receive.ReceiveScreen.E.OnAmountChange.AddDecimal
+import com.breadwallet.ui.receive.ReceiveScreen.E.OnAmountChange.AddDigit
+import com.breadwallet.ui.receive.ReceiveScreen.E.OnAmountChange.Delete
+import com.breadwallet.ui.receive.ReceiveScreen.F
+import com.breadwallet.ui.receive.ReceiveScreen.M
 import com.breadwallet.ui.send.MAX_DIGITS
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -37,17 +40,16 @@ import com.spotify.mobius.Update
 import java.math.BigDecimal
 
 @Suppress("TooManyFunctions")
-object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
-    ReceiveUpdateSpec {
+object ReceiveUpdate : Update<M, E, F>, ReceiveScreenUpdateSpec {
     override fun update(
-        model: ReceiveModel,
-        event: ReceiveEvent
-    ): Next<ReceiveModel, ReceiveEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
     override fun onReceiveAddressUpdated(
-        model: ReceiveModel,
-        event: ReceiveEvent.OnReceiveAddressUpdated
-    ): Next<ReceiveModel, ReceiveEffect> =
+        model: M,
+        event: E.OnReceiveAddressUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 receiveAddress = event.address,
@@ -55,25 +57,25 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
             )
         )
 
-    override fun onCloseClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
-        dispatch(setOf(ReceiveEffect.CloseSheet))
+    override fun onCloseClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.CloseSheet))
 
-    override fun onFaqClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
-        dispatch(setOf(ReceiveEffect.GoToFaq(model.currencyCode)))
+    override fun onFaqClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToFaq(model.currencyCode)))
 
-    override fun onCopyAddressClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
+    override fun onCopyAddressClicked(model: M): Next<M, F> =
         next(
             model.copy(isDisplayingCopyMessage = true),
             setOf(
-                ReceiveEffect.CopyAddressToClipboard(model.receiveAddress),
-                ReceiveEffect.ResetCopiedAfterDelay
+                F.CopyAddressToClipboard(model.receiveAddress),
+                F.ResetCopiedAfterDelay
             )
         )
 
-    override fun onShareClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
+    override fun onShareClicked(model: M): Next<M, F> =
         dispatch(
             setOf(
-                ReceiveEffect.ShareRequest(
+                F.ShareRequest(
                     model.receiveAddress,
                     model.amount,
                     model.walletName
@@ -81,16 +83,16 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
             )
         )
 
-    override fun onHideCopyMessage(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> =
+    override fun onHideCopyMessage(model: M): Next<M, F> =
         next(model.copy(isDisplayingCopyMessage = false))
 
     override fun onWalletNameUpdated(
-        model: ReceiveModel,
-        event: ReceiveEvent.OnWalletNameUpdated
-    ): Next<ReceiveModel, ReceiveEffect> =
+        model: M,
+        event: E.OnWalletNameUpdated
+    ): Next<M, F> =
         next(model.copy(walletName = event.walletName))
 
-    override fun onAmountClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> {
+    override fun onAmountClicked(model: M): Next<M, F> {
         return next(
             model.copy(
                 isAmountEditVisible = !model.isAmountEditVisible
@@ -99,9 +101,9 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     }
 
     override fun onAmountChange(
-        model: ReceiveModel,
-        event: ReceiveEvent.OnAmountChange
-    ): Next<ReceiveModel, ReceiveEffect> {
+        model: M,
+        event: E.OnAmountChange
+    ): Next<M, F> {
         return when (event) {
             AddDecimal -> addDecimal(model)
             Delete -> delete(model)
@@ -110,8 +112,8 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     }
 
     private fun addDecimal(
-        model: ReceiveModel
-    ): Next<ReceiveModel, ReceiveEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.rawAmount.contains('.') -> noChange()
             model.rawAmount.isEmpty() -> next(
@@ -126,8 +128,8 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     }
 
     private fun delete(
-        model: ReceiveModel
-    ): Next<ReceiveModel, ReceiveEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.rawAmount.isEmpty() -> noChange()
             else -> next(
@@ -137,9 +139,9 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     }
 
     private fun addDigit(
-        model: ReceiveModel,
+        model: M,
         event: AddDigit
-    ): Next<ReceiveModel, ReceiveEffect> {
+    ): Next<M, F> {
         return when {
             model.rawAmount == "0" && event.digit == 0 -> noChange()
             model.rawAmount.split('.').run {
@@ -158,7 +160,7 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
         }
     }
 
-    override fun onToggleCurrencyClicked(model: ReceiveModel): Next<ReceiveModel, ReceiveEffect> {
+    override fun onToggleCurrencyClicked(model: M): Next<M, F> {
         val isAmountCrypto = !model.isAmountCrypto
         if (model.rawAmount.isBlank()) {
             return next(model.copy(isAmountCrypto = isAmountCrypto))
@@ -177,9 +179,9 @@ object ReceiveUpdate : Update<ReceiveModel, ReceiveEvent, ReceiveEffect>,
     }
 
     override fun onExchangeRateUpdated(
-        model: ReceiveModel,
-        event: ReceiveEvent.OnExchangeRateUpdated
-    ): Next<ReceiveModel, ReceiveEffect> {
+        model: M,
+        event: E.OnExchangeRateUpdated
+    ): Next<M, F> {
         val pricePerUnit = event.fiatPricePerUnit
         val newAmount: BigDecimal
         val newFiatAmount: BigDecimal

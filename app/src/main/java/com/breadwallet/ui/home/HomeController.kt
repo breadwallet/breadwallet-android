@@ -46,6 +46,9 @@ import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.home.HomeScreen.E
+import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.ui.home.HomeScreen.M
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
@@ -62,25 +65,21 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 private const val EMAIL_SUCCESS_DELAY = 3_000L
+private const val NETWORK_TESTNET = "TESTNET"
+private const val NETWORK_MAINNET = "MAINNET"
 
 class HomeController(
     args: Bundle? = null
-) : BaseMobiusController<HomeScreenModel, HomeScreenEvent, HomeScreenEffect>(args) {
-
-    companion object {
-        private const val NETWORK_TESTNET = "TESTNET"
-        private const val NETWORK_MAINNET = "MAINNET"
-    }
+) : BaseMobiusController<M, E, F>(args) {
 
     override val layoutId = R.layout.controller_home
-    override val defaultModel = HomeScreenModel.createDefault()
+    override val defaultModel = M.createDefault()
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit
-    override val effectHandler: Connectable<HomeScreenEffect, HomeScreenEvent> =
-
+    override val effectHandler: Connectable<F, E> =
         CompositeEffectHandler.from(
             Connectable { output ->
-                HomeScreenEffectHandler(
+                HomeScreenHandler(
                     output,
                     activity as BRActivity,
                     direct.instance(),
@@ -93,20 +92,20 @@ class HomeController(
             },
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
                 when (effect) {
-                    is HomeScreenEffect.GoToInappMessage ->
+                    is F.GoToInappMessage ->
                         NavigationEffect.GoToInAppMessage(effect.inAppMessage)
-                    HomeScreenEffect.GoToBuy -> NavigationEffect.GoToBuy
-                    HomeScreenEffect.GoToTrade -> NavigationEffect.GoToTrade
-                    is HomeScreenEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
-                    HomeScreenEffect.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
-                    HomeScreenEffect.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
+                    F.GoToBuy -> NavigationEffect.GoToBuy
+                    F.GoToTrade -> NavigationEffect.GoToTrade
+                    is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                    F.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
+                    F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
                         OnCompleteAction.GO_HOME
                     )
-                    is HomeScreenEffect.GoToWallet ->
+                    is F.GoToWallet ->
                         NavigationEffect.GoToWallet(effect.currencyCode)
-                    is HomeScreenEffect.GoToAddWallet ->
+                    is F.GoToAddWallet ->
                         NavigationEffect.GoToAddWallet
-                    is HomeScreenEffect.GoToFingerprintSettings -> NavigationEffect.GoToFingerprintAuth
+                    is F.GoToFingerprintSettings -> NavigationEffect.GoToFingerprintAuth
                     else -> null
                 }
             }
@@ -114,17 +113,17 @@ class HomeController(
 
     private var walletAdapter: WalletListAdapter? = null
 
-    override fun bindView(output: Consumer<HomeScreenEvent>): Disposable {
-        buy_layout.setOnClickListener { output.accept(HomeScreenEvent.OnBuyClicked) }
-        trade_layout.setOnClickListener { output.accept(HomeScreenEvent.OnTradeClicked) }
-        menu_layout.setOnClickListener { output.accept(HomeScreenEvent.OnMenuClicked) }
+    override fun bindView(output: Consumer<E>): Disposable {
+        buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
+        trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
+        menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
         walletAdapter = WalletListAdapter({
-            output.accept(HomeScreenEvent.OnWalletClicked(it.currencyCode))
+            output.accept(E.OnWalletClicked(it.currencyCode))
         }, {
-            output.accept(HomeScreenEvent.OnAddWalletsClicked)
+            output.accept(E.OnAddWalletsClicked)
         }) { displayOrder ->
-            output.accept(HomeScreenEvent.OnWalletDisplayOrderUpdated(displayOrder))
+            output.accept(E.OnWalletDisplayOrderUpdated(displayOrder))
         }
 
         rv_wallet_list.adapter = walletAdapter
@@ -141,23 +140,23 @@ class HomeController(
         setUpBuildInfoLabel()
     }
 
-    override fun HomeScreenModel.render() {
-        ifChanged(HomeScreenModel::displayOrder) {
+    override fun M.render() {
+        ifChanged(M::displayOrder) {
             walletAdapter!!.setDisplayOrder(displayOrder)
         }
 
-        ifChanged(HomeScreenModel::wallets) {
+        ifChanged(M::wallets) {
             walletAdapter!!.setWallets(wallets.values.toList())
         }
 
-        ifChanged(HomeScreenModel::aggregatedFiatBalance) {
+        ifChanged(M::aggregatedFiatBalance) {
             total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
                 BRSharedPrefs.getPreferredFiatIso(activity),
                 aggregatedFiatBalance
             )
         }
 
-        ifChanged(HomeScreenModel::showPrompt) {
+        ifChanged(M::showPrompt) {
             if (prompt_container.childCount > 0) {
                 prompt_container.removeAllViews()
             }
@@ -167,18 +166,18 @@ class HomeController(
             }
         }
 
-        ifChanged(HomeScreenModel::hasInternet) {
+        ifChanged(M::hasInternet) {
             notification_bar.apply {
                 isGone = hasInternet
                 if (hasInternet) bringToFront()
             }
         }
 
-        ifChanged(HomeScreenModel::isBuyBellNeeded) {
+        ifChanged(M::isBuyBellNeeded) {
             buy_bell.isVisible = isBuyBellNeeded
         }
 
-        ifChanged(HomeScreenModel::hasInternet) {
+        ifChanged(M::hasInternet) {
             buy_text_view.setText(
                 when {
                     showBuyAndSell -> R.string.HomeScreen_buyAndSell
@@ -204,35 +203,35 @@ class HomeController(
         val continueButton = baseLayout.findViewById<Button>(R.id.continue_button)
         val dismissButton = baseLayout.findViewById<ImageButton>(R.id.dismiss_button)
         dismissButton.setOnClickListener {
-            eventConsumer.accept(HomeScreenEvent.OnPromptDismissed(promptItem))
+            eventConsumer.accept(E.OnPromptDismissed(promptItem))
         }
         when (promptItem) {
             PromptItem.FINGER_PRINT -> {
                 title.text = act.getString(R.string.Prompts_TouchId_title_android)
                 description.text = act.getString(R.string.Prompts_TouchId_body_android)
                 continueButton.setOnClickListener {
-                    eventConsumer.accept(HomeScreenEvent.OnFingerprintPromptClicked)
+                    eventConsumer.accept(E.OnFingerprintPromptClicked)
                 }
             }
             PromptItem.PAPER_KEY -> {
                 title.text = act.getString(R.string.Prompts_PaperKey_title)
                 description.text = act.getString(R.string.Prompts_PaperKey_Body_Android)
                 continueButton.setOnClickListener {
-                    eventConsumer.accept(HomeScreenEvent.OnPaperKeyPromptClicked)
+                    eventConsumer.accept(E.OnPaperKeyPromptClicked)
                 }
             }
             PromptItem.UPGRADE_PIN -> {
                 title.text = act.getString(R.string.Prompts_UpgradePin_title)
                 description.text = act.getString(R.string.Prompts_UpgradePin_body)
                 continueButton.setOnClickListener {
-                    eventConsumer.accept(HomeScreenEvent.OnUpgradePinPromptClicked)
+                    eventConsumer.accept(E.OnUpgradePinPromptClicked)
                 }
             }
             PromptItem.RECOMMEND_RESCAN -> {
                 title.text = act.getString(R.string.Prompts_RecommendRescan_title)
                 description.text = act.getString(R.string.Prompts_RecommendRescan_body)
                 continueButton.setOnClickListener {
-                    eventConsumer.accept(HomeScreenEvent.OnRescanPromptClicked)
+                    eventConsumer.accept(E.OnRescanPromptClicked)
                 }
             }
             PromptItem.EMAIL_COLLECTION -> {
@@ -256,12 +255,12 @@ class HomeController(
         customTitle.text = act.getString(R.string.Prompts_Email_title)
         customDescription.text = act.getString(R.string.Prompts_Email_body)
         closeButton.setOnClickListener {
-            eventConsumer.accept(HomeScreenEvent.OnPromptDismissed(PromptItem.EMAIL_COLLECTION))
+            eventConsumer.accept(E.OnPromptDismissed(PromptItem.EMAIL_COLLECTION))
         }
         submitButton.setOnClickListener {
             val email = emailEditText.text.toString().trim { it <= ' ' }
             if (email.isValidEmail()) {
-                eventConsumer.accept(HomeScreenEvent.OnEmailPromptClicked(email))
+                eventConsumer.accept(E.OnEmailPromptClicked(email))
                 emailEditText.visibility = View.INVISIBLE
                 submitButton.visibility = View.INVISIBLE
                 footNote.visibility = View.VISIBLE

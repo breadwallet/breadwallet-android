@@ -24,11 +24,13 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.ui.settings.SettingsScreen.F
+import com.breadwallet.ui.settings.SettingsScreen.M
 import com.spotify.mobius.First
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-object SettingsInit : Init<SettingsModel, SettingsEffect> {
-    override fun init(model: SettingsModel): First<SettingsModel, SettingsEffect> =
-        first(model, setOf(SettingsEffect.LoadOptions(model.section)))
+object SettingsInit : Init<M, F> {
+    override fun init(model: M): First<M, F> =
+        first(model, setOf(F.LoadOptions(model.section)))
 }

@@ -31,6 +31,9 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.E
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.F
+import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.M
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -38,37 +41,36 @@ import kotlinx.android.synthetic.main.controller_fingerprint_settings.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class FingerprintSettingsController :
-    BaseMobiusController<FingerprintSettingsModel, FingerprintSettingsEvent, FingerprintSettingsEffect>() {
+class FingerprintSettingsController : BaseMobiusController<M, E, F>() {
 
     override val layoutId = R.layout.controller_fingerprint_settings
-    override val defaultModel = FingerprintSettingsModel()
+    override val defaultModel = M()
     override val update = FingerprintSettingsUpdate
     override val init = FingerprintSettingsInit
     override val effectHandler =
-        CompositeEffectHandler.from<FingerprintSettingsEffect, FingerprintSettingsEvent>(
+        CompositeEffectHandler.from<F, E>(
             Connectable { output ->
-                FingerprintSettingsEffectHandler(output)
+                FingerprintSettingsHandler(output)
             },
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
                 when (effect) {
-                    FingerprintSettingsEffect.GoBack -> NavigationEffect.GoBack
-                    FingerprintSettingsEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_ENABLE_FINGERPRINT)
+                    F.GoBack -> NavigationEffect.GoBack
+                    F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_ENABLE_FINGERPRINT)
                     else -> null
                 }
             })
         )
 
-    override fun bindView(output: Consumer<FingerprintSettingsEvent>) = output.view {
-        switch_unlock_app.onCheckChanged(FingerprintSettingsEvent::OnAppUnlockChanged)
-        switch_send_money.onCheckChanged(FingerprintSettingsEvent::OnSendMoneyChanged)
-        faq_btn.onClick(FingerprintSettingsEvent.OnFaqClicked)
-        back_btn.onClick(FingerprintSettingsEvent.OnBackClicked)
+    override fun bindView(output: Consumer<E>) = output.view {
+        switch_unlock_app.onCheckChanged(E::OnAppUnlockChanged)
+        switch_send_money.onCheckChanged(E::OnSendMoneyChanged)
+        faq_btn.onClick(E.OnFaqClicked)
+        back_btn.onClick(E.OnBackClicked)
     }
 
-    override fun FingerprintSettingsModel.render() {
-        ifChanged(FingerprintSettingsModel::unlockApp, switch_unlock_app::setChecked)
-        ifChanged(FingerprintSettingsModel::sendMoney, switch_send_money::setChecked)
-        ifChanged(FingerprintSettingsModel::sendMoneyEnable, switch_send_money::setEnabled)
+    override fun M.render() {
+        ifChanged(M::unlockApp, switch_unlock_app::setChecked)
+        ifChanged(M::sendMoney, switch_send_money::setChecked)
+        ifChanged(M::sendMoneyEnable, switch_send_money::setEnabled)
     }
 }

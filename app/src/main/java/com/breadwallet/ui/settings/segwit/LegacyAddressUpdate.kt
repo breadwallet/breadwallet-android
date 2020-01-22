@@ -24,32 +24,35 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import com.breadwallet.ui.settings.segwit.LegacyAddress.E
+import com.breadwallet.ui.settings.segwit.LegacyAddress.F
+import com.breadwallet.ui.settings.segwit.LegacyAddress.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object LegacyAddressUpdate : Update<LegacyAddressModel, LegacyAddressEvent, LegacyAddressEffect>,
+object LegacyAddressUpdate : Update<M, E, F>,
     LegacyAddressUpdateSpec {
 
     override fun update(
-        model: LegacyAddressModel,
-        event: LegacyAddressEvent
-    ): Next<LegacyAddressModel, LegacyAddressEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
-    override fun onShareClicked(model: LegacyAddressModel): Next<LegacyAddressModel, LegacyAddressEffect> =
-        dispatch(setOf(LegacyAddressEffect.ShareAddress(model.receiveAddress, model.walletName)))
+    override fun onShareClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.ShareAddress(model.receiveAddress, model.walletName)))
 
-    override fun onAddressClicked(model: LegacyAddressModel): Next<LegacyAddressModel, LegacyAddressEffect> =
-        dispatch(setOf(LegacyAddressEffect.CopyAddressToClipboard(model.sanitizedAddress)))
+    override fun onAddressClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.CopyAddressToClipboard(model.sanitizedAddress)))
 
-    override fun onCloseClicked(model: LegacyAddressModel): Next<LegacyAddressModel, LegacyAddressEffect> =
-        dispatch(setOf(LegacyAddressEffect.GoBack))
+    override fun onCloseClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoBack))
 
     override fun onAddressUpdated(
-        model: LegacyAddressModel,
-        event: LegacyAddressEvent.OnAddressUpdated
-    ): Next<LegacyAddressModel, LegacyAddressEffect> =
+        model: M,
+        event: E.OnAddressUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 receiveAddress = event.receiveAddress,
@@ -58,8 +61,8 @@ object LegacyAddressUpdate : Update<LegacyAddressModel, LegacyAddressEvent, Lega
         )
 
     override fun onWalletNameUpdated(
-        model: LegacyAddressModel,
-        event: LegacyAddressEvent.OnWalletNameUpdated
-    ): Next<LegacyAddressModel, LegacyAddressEffect> =
+        model: M,
+        event: E.OnWalletNameUpdated
+    ): Next<M, F> =
         next(model.copy(walletName = event.name))
 }

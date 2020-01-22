@@ -24,12 +24,14 @@
  */
 package com.breadwallet.ui.login
 
+import com.breadwallet.ui.login.LoginScreen.F
+import com.breadwallet.ui.login.LoginScreen.M
 import com.spotify.mobius.First
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-object LoginInit : Init<LoginModel, LoginEffect> {
-    override fun init(model: LoginModel): First<LoginModel, LoginEffect> {
-        return first(model, setOf(LoginEffect.CheckFingerprintEnable))
+object LoginInit : Init<M, F> {
+    override fun init(model: M): First<M, F> {
+        return first(model, setOf(F.CheckFingerprintEnable))
     }
 }

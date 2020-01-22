@@ -25,30 +25,33 @@
 package com.breadwallet.ui.provekey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.ui.provekey.PaperKeyProve.E
+import com.breadwallet.ui.provekey.PaperKeyProve.F
+import com.breadwallet.ui.provekey.PaperKeyProve.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object PaperKeyProveUpdate : Update<PaperKeyProveModel, PaperKeyProveEvent, PaperKeyProveEffect>,
+object PaperKeyProveUpdate : Update<M, E, F>,
     PaperKeyProveUpdateSpec {
     override fun update(
-        model: PaperKeyProveModel,
-        event: PaperKeyProveEvent
-    ): Next<PaperKeyProveModel, PaperKeyProveEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
-    override fun onSubmitClicked(model: PaperKeyProveModel)
-        : Next<PaperKeyProveModel, PaperKeyProveEffect> {
+    override fun onSubmitClicked(model: M)
+        : Next<M, F> {
         return dispatch(
             setOf(
-                if (model.firstWordState == PaperKeyProveModel.WordState.VALID
-                    && model.secondWordSate == PaperKeyProveModel.WordState.VALID
+                if (model.firstWordState == M.WordState.VALID
+                    && model.secondWordSate == M.WordState.VALID
                 ) {
-                    PaperKeyProveEffect.StoreWroteDownPhrase
+                    F.StoreWroteDownPhrase
                 } else {
-                    PaperKeyProveEffect.ShakeWords(
-                        model.firstWordState != PaperKeyProveModel.WordState.VALID,
-                        model.secondWordSate != PaperKeyProveModel.WordState.VALID
+                    F.ShakeWords(
+                        model.firstWordState != M.WordState.VALID,
+                        model.secondWordSate != M.WordState.VALID
                     )
                 }
             )
@@ -56,41 +59,39 @@ object PaperKeyProveUpdate : Update<PaperKeyProveModel, PaperKeyProveEvent, Pape
     }
 
     override fun onFirstWordChanged(
-        model: PaperKeyProveModel,
-        event: PaperKeyProveEvent.OnFirstWordChanged
-    ): Next<PaperKeyProveModel, PaperKeyProveEffect> {
+        model: M,
+        event: E.OnFirstWordChanged
+    ): Next<M, F> {
         val state = when {
-            event.word.isEmpty() -> PaperKeyProveModel.WordState.EMPTY
-            event.word == model.firstWord -> PaperKeyProveModel.WordState.VALID
-            else -> PaperKeyProveModel.WordState.INVALID
+            event.word.isEmpty() -> M.WordState.EMPTY
+            event.word == model.firstWord -> M.WordState.VALID
+            else -> M.WordState.INVALID
         }
         return next(model.copy(firstWordState = state))
     }
 
     override fun onSecondWordChanged(
-        model: PaperKeyProveModel,
-        event: PaperKeyProveEvent.OnSecondWordChanged
-    ): Next<PaperKeyProveModel, PaperKeyProveEffect> {
+        model: M,
+        event: E.OnSecondWordChanged
+    ): Next<M, F> {
         val state = when {
-            event.word.isEmpty() -> PaperKeyProveModel.WordState.EMPTY
-            event.word == model.secondWord -> PaperKeyProveModel.WordState.VALID
-            else -> PaperKeyProveModel.WordState.INVALID
+            event.word.isEmpty() -> M.WordState.EMPTY
+            event.word == model.secondWord -> M.WordState.VALID
+            else -> M.WordState.INVALID
         }
         return next(model.copy(secondWordSate = state))
     }
 
-    override fun onBreadSignalShown(model: PaperKeyProveModel)
-        : Next<PaperKeyProveModel, PaperKeyProveEffect> =
+    override fun onBreadSignalShown(model: M): Next<M, F> =
         dispatch(
             setOf(
                 when (model.onComplete) {
-                    OnCompleteAction.GO_TO_BUY -> PaperKeyProveEffect.GoToBuy
-                    OnCompleteAction.GO_HOME -> PaperKeyProveEffect.GoToHome
+                    OnCompleteAction.GO_TO_BUY -> F.GoToBuy
+                    OnCompleteAction.GO_HOME -> F.GoToHome
                 }
             )
         )
 
-    override fun onWroteDownKeySaved(model: PaperKeyProveModel)
-        : Next<PaperKeyProveModel, PaperKeyProveEffect> =
+    override fun onWroteDownKeySaved(model: M): Next<M, F> =
         next(model.copy(showBreadSignal = true))
 }

@@ -24,16 +24,19 @@
  */
 package com.breadwallet.ui.send
 
+import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.ui.send.SendSheet.M
 import com.spotify.mobius.First
 import com.spotify.mobius.Init
 
 
-object SendSheetInit : Init<SendSheetModel, SendSheetEffect> {
-    override fun init(model: SendSheetModel): First<SendSheetModel, SendSheetEffect> {
-        val effects = mutableSetOf<SendSheetEffect>()
+object SendSheetInit : Init<M, F> {
+    override fun init(model: M): First<M, F> {
+        val effects = mutableSetOf<F>()
 
         if (model.targetAddress.isNotBlank()) {
-            effects.add(SendSheetEffect.ValidateAddress(
+            effects.add(
+                F.ValidateAddress(
                 model.currencyCode,
                 model.targetAddress
             ))
@@ -41,16 +44,16 @@ object SendSheetInit : Init<SendSheetModel, SendSheetEffect> {
 
         var isPaymentProtocolRequest = false
         model.cryptoRequestUrl?.let {
-            effects.add(SendSheetEffect.PaymentProtocol.LoadPaymentData(it))
+            effects.add(F.PaymentProtocol.LoadPaymentData(it))
             isPaymentProtocolRequest = true
         }
 
         return First.first(
             model.copy(isFetchingPayment = isPaymentProtocolRequest),
             effects + setOf(
-                SendSheetEffect.LoadBalance(model.currencyCode),
-                SendSheetEffect.LoadExchangeRate(model.currencyCode, model.fiatCode),
-                SendSheetEffect.LoadAuthenticationSettings
+                F.LoadBalance(model.currencyCode),
+                F.LoadExchangeRate(model.currencyCode, model.fiatCode),
+                F.LoadAuthenticationSettings
             )
         )
     }

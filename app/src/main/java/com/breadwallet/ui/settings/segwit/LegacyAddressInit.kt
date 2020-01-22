@@ -24,10 +24,12 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import com.breadwallet.ui.settings.segwit.LegacyAddress.F
+import com.breadwallet.ui.settings.segwit.LegacyAddress.M
 import com.spotify.mobius.First
 import com.spotify.mobius.Init
 
-object LegacyAddressInit : Init<LegacyAddressModel, LegacyAddressEffect> {
-    override fun init(model: LegacyAddressModel): First<LegacyAddressModel, LegacyAddressEffect> =
-        First.first(model, setOf(LegacyAddressEffect.LoadAddress))
+object LegacyAddressInit : Init<M, F> {
+    override fun init(model: M): First<M, F> =
+        First.first(model, setOf(F.LoadAddress))
 }

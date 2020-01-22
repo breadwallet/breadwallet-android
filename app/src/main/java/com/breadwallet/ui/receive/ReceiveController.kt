@@ -44,6 +44,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.receive.ReceiveScreen.E
+import com.breadwallet.ui.receive.ReceiveScreen.F
+import com.breadwallet.ui.receive.ReceiveScreen.M
 import com.breadwallet.ui.send.formatFiatForInputUi
 import com.breadwallet.ui.view
 import com.breadwallet.util.CurrencyCode
@@ -56,9 +59,10 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.util.Currency
 
-class ReceiveController(
-    args: Bundle
-) : BaseMobiusController<ReceiveModel, ReceiveEvent, ReceiveEffect>(args) {
+private const val EXTRA_CURRENCY_CODE = "currency_code"
+private const val EXTRA_RECEIVE = "is_receive"
+
+class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     constructor(
         currencyCode: CurrencyCode,
@@ -69,11 +73,6 @@ class ReceiveController(
             EXTRA_RECEIVE to isReceive
         )
     )
-
-    companion object {
-        private const val EXTRA_CURRENCY_CODE = "currency_code"
-        private const val EXTRA_RECEIVE = "is_receive"
-    }
 
     init {
         overridePushHandler(BottomSheetChangeHandler())
@@ -86,23 +85,23 @@ class ReceiveController(
     override val layoutId = R.layout.controller_receive
 
     override val defaultModel =
-        ReceiveModel.createDefault(
+        M.createDefault(
             currencyCode = currencyCode,
             fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso()
         )
 
-    override val init = Init<ReceiveModel, ReceiveEffect> { model ->
+    override val init = Init<M, F> { model ->
         if (model.isDisplayingCopyMessage) {
-            first(model, setOf(ReceiveEffect.ResetCopiedAfterDelay))
+            first(model, setOf(F.ResetCopiedAfterDelay))
         } else {
             first(model)
         }
     }
 
-    override val effectHandler: Connectable<ReceiveEffect, ReceiveEvent> =
+    override val effectHandler: Connectable<F, E> =
         CompositeEffectHandler.from(
             Connectable { consumer ->
-                ReceiveEffectHandler(
+                ReceiveHandler(
                     consumer,
                     currencyCode,
                     defaultModel.fiatCurrencyCode,
@@ -115,8 +114,8 @@ class ReceiveController(
                 direct.instance<RouterNavigationEffectHandler>()
             }) { effect ->
                 when (effect) {
-                    ReceiveEffect.CloseSheet -> NavigationEffect.GoBack
-                    is ReceiveEffect.GoToFaq -> NavigationEffect.GoToFaq(
+                    F.CloseSheet -> NavigationEffect.GoBack
+                    is F.GoToFaq -> NavigationEffect.GoToFaq(
                         BRConstants.FAQ_RECEIVE,
                         effect.currencyCode
                     )
@@ -138,22 +137,22 @@ class ReceiveController(
         keyboard.setBRKeyboardColor(R.color.white)
     }
 
-    override fun bindView(output: Consumer<ReceiveEvent>) = output.view {
-        faq_button.onClick(ReceiveEvent.OnFaqClicked)
-        share_button.onClick(ReceiveEvent.OnShareClicked)
-        close_button.onClick(ReceiveEvent.OnCloseClicked)
-        qr_image.onClick(ReceiveEvent.OnCopyAddressClicked)
-        textInputAmount.onClick(ReceiveEvent.OnAmountClicked)
-        background_layout.onClick(ReceiveEvent.OnCloseClicked)
-        address_text.onClick(ReceiveEvent.OnCopyAddressClicked)
-        iso_button.onClick(ReceiveEvent.OnToggleCurrencyClicked)
+    override fun bindView(output: Consumer<E>) = output.view {
+        faq_button.onClick(E.OnFaqClicked)
+        share_button.onClick(E.OnShareClicked)
+        close_button.onClick(E.OnCloseClicked)
+        qr_image.onClick(E.OnCopyAddressClicked)
+        textInputAmount.onClick(E.OnAmountClicked)
+        background_layout.onClick(E.OnCloseClicked)
+        address_text.onClick(E.OnCopyAddressClicked)
+        iso_button.onClick(E.OnToggleCurrencyClicked)
 
         keyboard.setOnInsertListener { key ->
             output.accept(
                 when {
-                    key.isEmpty() -> ReceiveEvent.OnAmountChange.Delete
-                    key[0] == '.' -> ReceiveEvent.OnAmountChange.AddDecimal
-                    Character.isDigit(key[0]) -> ReceiveEvent.OnAmountChange.AddDigit(key.toInt())
+                    key.isEmpty() -> E.OnAmountChange.Delete
+                    key[0] == '.' -> E.OnAmountChange.AddDecimal
+                    Character.isDigit(key[0]) -> E.OnAmountChange.AddDigit(key.toInt())
                     else -> return@setOnInsertListener
                 }
             )
@@ -166,13 +165,13 @@ class ReceiveController(
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun ReceiveModel.render() {
+    override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(ReceiveModel::sanitizedAddress, address_text::setText)
+        ifChanged(M::sanitizedAddress, address_text::setText)
         ifChanged(
-            ReceiveModel::rawAmount,
-            ReceiveModel::fiatCurrencyCode
+            M::rawAmount,
+            M::fiatCurrencyCode
         ) {
             val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
                 rawAmount
@@ -183,9 +182,9 @@ class ReceiveController(
         }
 
         ifChanged(
-            ReceiveModel::isAmountCrypto,
-            ReceiveModel::currencyCode,
-            ReceiveModel::fiatCurrencyCode
+            M::isAmountCrypto,
+            M::currencyCode,
+            M::fiatCurrencyCode
         ) {
             iso_button.text = when {
                 isAmountCrypto -> currencyCode.toUpperCase()
@@ -196,7 +195,7 @@ class ReceiveController(
             }
         }
 
-        ifChanged(ReceiveModel::currencyCode) {
+        ifChanged(M::currencyCode) {
             title.text = "%s %s".format(
                 res.getString(R.string.Receive_title),
                 currencyCode.toUpperCase()
@@ -204,8 +203,8 @@ class ReceiveController(
         }
 
         ifChanged(
-            ReceiveModel::receiveAddress,
-            ReceiveModel::amount
+            M::receiveAddress,
+            M::amount
         ) {
             if (receiveAddress.isNotBlank()) {
                 val request = CryptoRequest.Builder()
@@ -221,15 +220,15 @@ class ReceiveController(
             }
         }
 
-        ifChanged(ReceiveModel::isRequestAmountSupported) {
+        ifChanged(M::isRequestAmountSupported) {
             amount_layout.isVisible = isRequestAmountSupported
         }
 
-        ifChanged(ReceiveModel::isAmountEditVisible) {
+        ifChanged(M::isAmountEditVisible) {
             keyboard_layout.isVisible = isAmountEditVisible
         }
 
-        ifChanged(ReceiveModel::isDisplayingCopyMessage) {
+        ifChanged(M::isDisplayingCopyMessage) {
             if (isDisplayingCopyMessage) {
                 if (signal_layout.indexOfChild(copied_layout) == -1) {
                     signal_layout.addView(copied_layout, signal_layout.indexOfChild(share_button))
@@ -248,7 +247,7 @@ class ReceiveController(
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == QRUtils.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID) {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                eventConsumer.accept(ReceiveEvent.OnShareClicked)
+                eventConsumer.accept(E.OnShareClicked)
             }
         }
     }

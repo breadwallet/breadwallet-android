@@ -25,47 +25,52 @@
 package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object NodeSelectorUpdate : Update<NodeSelectorModel, NodeSelectorEvent, NodeSelectorEffect>,
-    NodeSelectorUpdateSpec {
+object NodeSelectorUpdate : Update<M, E, F>, NodeSelectorUpdateSpec {
 
     override fun update(
-        model: NodeSelectorModel,
-        event: NodeSelectorEvent
-    ): Next<NodeSelectorModel, NodeSelectorEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
-    override fun onSwitchButtonClicked(model: NodeSelectorModel): Next<NodeSelectorModel, NodeSelectorEffect> {
+    override fun onSwitchButtonClicked(model: M): Next<M, F> {
         return dispatch(
-            if (model.mode == NodeSelectorModel.Mode.AUTOMATIC) {
-                setOf(NodeSelectorEffect.ShowNodeDialog)
+            if (model.mode == NodeSelector.Mode.AUTOMATIC) {
+                setOf(F.ShowNodeDialog)
             } else {
-                setOf(NodeSelectorEffect.SetToAutomatic)
+                setOf(F.SetToAutomatic)
             }
         )
     }
 
     override fun setCustomNode(
-        model: NodeSelectorModel,
-        event: NodeSelectorEvent.SetCustomNode
-    ): Next<NodeSelectorModel, NodeSelectorEffect> =
+        model: M,
+        event: E.SetCustomNode
+    ): Next<M, F> =
         next(
-            model.copy(mode = NodeSelectorModel.Mode.AUTOMATIC, currentNode = event.node),
-            setOf(NodeSelectorEffect.SetCustomNode(event.node))
+            model.copy(
+                mode = NodeSelector.Mode.AUTOMATIC,
+                currentNode = event.node
+            ),
+            setOf(F.SetCustomNode(event.node))
         )
 
     override fun onConnectionStateUpdated(
-        model: NodeSelectorModel,
-        event: NodeSelectorEvent.OnConnectionStateUpdated
-    ): Next<NodeSelectorModel, NodeSelectorEffect> =
+        model: M,
+        event: E.OnConnectionStateUpdated
+    ): Next<M, F> =
         next(model.copy(connected = event.state == WalletManagerState.CONNECTED()))
 
     override fun onConnectionInfoLoaded(
-        model: NodeSelectorModel,
-        event: NodeSelectorEvent.OnConnectionInfoLoaded
-    ): Next<NodeSelectorModel, NodeSelectorEffect> =
+        model: M,
+        event: E.OnConnectionInfoLoaded
+    ): Next<M, F> =
         next(model.copy(mode = event.mode, currentNode = event.node))
 }

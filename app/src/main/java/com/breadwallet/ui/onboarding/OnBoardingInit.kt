@@ -24,11 +24,13 @@
  */
 package com.breadwallet.ui.onboarding
 
+import com.breadwallet.ui.onboarding.OnBoarding.F
+import com.breadwallet.ui.onboarding.OnBoarding.M
 import com.spotify.mobius.First
 import com.spotify.mobius.Init
 
-object OnBoardingInit : Init<OnBoardingModel, OnBoardingEffect> {
-    override fun init(model: OnBoardingModel): First<OnBoardingModel, OnBoardingEffect> {
+object OnBoardingInit : Init<M, F> {
+    override fun init(model: M): First<M, F> {
         return First.first(model)
     }
 }

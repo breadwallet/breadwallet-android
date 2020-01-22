@@ -39,6 +39,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.settings.SettingsScreen.E
+import com.breadwallet.ui.settings.SettingsScreen.F
+import com.breadwallet.ui.settings.SettingsScreen.M
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -46,8 +49,7 @@ import kotlinx.android.synthetic.main.controller_settings.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class SettingsController(args: Bundle? = null) :
-    BaseMobiusController<SettingsModel, SettingsEvent, SettingsEffect>(args) {
+class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(args) {
 
     companion object {
         private const val EXT_SECTION = "section"
@@ -61,11 +63,11 @@ class SettingsController(args: Bundle? = null) :
 
     private val section: SettingsSection = SettingsSection.valueOf(arg(EXT_SECTION))
     override val layoutId = R.layout.controller_settings
-    override val defaultModel = SettingsModel.createDefault(section)
+    override val defaultModel = M.createDefault(section)
     override val update = SettingsUpdate
-    override val effectHandler = CompositeEffectHandler.from<SettingsEffect, SettingsEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            SettingsEffectHandler(
+            SettingsScreenHandler(
                 output,
                 direct.instance(),
                 checkNotNull(activity),
@@ -78,28 +80,28 @@ class SettingsController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                SettingsEffect.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
-                SettingsEffect.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
-                SettingsEffect.GoToShareData -> NavigationEffect.GoToShareData
-                SettingsEffect.GoToAbout -> NavigationEffect.GoToAbout
-                SettingsEffect.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
-                SettingsEffect.GoToQrScan -> NavigationEffect.GoToQrScan
-                SettingsEffect.GoToSupport -> NavigationEffect.GoToFaq("")
-                is SettingsEffect.GoToSection -> NavigationEffect.GoToMenu(effect.section)
-                SettingsEffect.GoBack -> NavigationEffect.GoBack
-                SettingsEffect.GoToPaperKey -> NavigationEffect.GoToWriteDownKey(OnCompleteAction.GO_HOME)
-                SettingsEffect.GoToUpdatePin -> NavigationEffect.GoToSetPin()
-                SettingsEffect.GoToOnboarding -> NavigationEffect.GoToOnboarding
-                SettingsEffect.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
-                SettingsEffect.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
-                SettingsEffect.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
-                SettingsEffect.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
-                SettingsEffect.GoToImportWallet -> NavigationEffect.GoToImportWallet
-                SettingsEffect.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
-                is SettingsEffect.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
-                SettingsEffect.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
-                SettingsEffect.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
-                is SettingsEffect.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
+                F.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
+                F.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
+                F.GoToShareData -> NavigationEffect.GoToShareData
+                F.GoToAbout -> NavigationEffect.GoToAbout
+                F.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
+                F.GoToQrScan -> NavigationEffect.GoToQrScan
+                F.GoToSupport -> NavigationEffect.GoToFaq("")
+                is F.GoToSection -> NavigationEffect.GoToMenu(effect.section)
+                F.GoBack -> NavigationEffect.GoBack
+                F.GoToPaperKey -> NavigationEffect.GoToWriteDownKey(OnCompleteAction.GO_HOME)
+                F.GoToUpdatePin -> NavigationEffect.GoToSetPin()
+                F.GoToOnboarding -> NavigationEffect.GoToOnboarding
+                F.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
+                F.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
+                F.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
+                F.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
+                F.GoToImportWallet -> NavigationEffect.GoToImportWallet
+                F.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
+                is F.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
+                F.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
+                F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
+                is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 else -> null
             }
         })
@@ -112,14 +114,14 @@ class SettingsController(args: Bundle? = null) :
         settings_list.layoutManager = LinearLayoutManager(activity!!)
     }
 
-    override fun bindView(output: Consumer<SettingsEvent>) = output.view {
-        close_button.onClick(SettingsEvent.OnCloseClicked)
-        back_button.onClick(SettingsEvent.OnBackClicked)
+    override fun bindView(output: Consumer<E>) = output.view {
+        close_button.onClick(E.OnCloseClicked)
+        back_button.onClick(E.OnBackClicked)
     }
 
-    override fun SettingsModel.render() {
+    override fun M.render() {
         val act = activity!!
-        ifChanged(SettingsModel::section) {
+        ifChanged(M::section) {
             title.text = when (section) {
                 SettingsSection.HOME -> act.getString(R.string.Settings_title)
                 SettingsSection.PREFERENCES -> act.getString(R.string.Settings_preferences)
@@ -132,9 +134,9 @@ class SettingsController(args: Bundle? = null) :
             close_button.isVisible = isHome
             back_button.isVisible = !isHome
         }
-        ifChanged(SettingsModel::items) {
+        ifChanged(M::items) {
             val adapter = SettingsAdapter(items) { option ->
-                eventConsumer.accept(SettingsEvent.OnOptionClicked(option))
+                eventConsumer.accept(E.OnOptionClicked(option))
             }
             settings_list.adapter = adapter
         }
@@ -144,25 +146,25 @@ class SettingsController(args: Bundle? = null) :
 
     private fun showApiServerDialog(host: String) {
         showInputTextDialog("API Server:", host) { newHost ->
-            eventConsumer.accept(SettingsEvent.SetApiServer(newHost))
+            eventConsumer.accept(E.SetApiServer(newHost))
         }
     }
 
     private fun showPlatformDebugUrlDialog(url: String) {
         showInputTextDialog("Platform debug url:", url) { newUrl ->
-            eventConsumer.accept(SettingsEvent.SetPlatformDebugUrl(newUrl))
+            eventConsumer.accept(E.SetPlatformDebugUrl(newUrl))
         }
     }
 
     private fun showPlatformBundleDialog(platformBundle: String) {
         showInputTextDialog("Platform Bundle:", platformBundle) { newBundle ->
-            eventConsumer.accept(SettingsEvent.SetPlatformBundle(newBundle))
+            eventConsumer.accept(E.SetPlatformBundle(newBundle))
         }
     }
 
     private fun showTokenBundleDialog(tokenBundle: String) {
         showInputTextDialog("Token Bundle:", tokenBundle) { newBundle ->
-            eventConsumer.accept(SettingsEvent.SetTokenBundle(newBundle))
+            eventConsumer.accept(E.SetTokenBundle(newBundle))
         }
     }
 
