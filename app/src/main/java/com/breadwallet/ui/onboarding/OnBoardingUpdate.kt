@@ -25,109 +25,113 @@
 package com.breadwallet.ui.onboarding
 
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.onboarding.OnBoardingEvent.SetupError
+import com.breadwallet.ui.onboarding.OnBoarding.E
+import com.breadwallet.ui.onboarding.OnBoarding.E.SetupError
+import com.breadwallet.ui.onboarding.OnBoarding.F
+import com.breadwallet.ui.onboarding.OnBoarding.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
-object OnBoardingUpdate : Update<OnBoardingModel, OnBoardingEvent, OnBoardingEffect>,
-    OnBoardingUpdateSpec {
+object OnBoardingUpdate : Update<M, E, F>, OnBoardingUpdateSpec {
 
-    override fun update(model: OnBoardingModel, event: OnBoardingEvent) = patch(model, event)
+    override fun update(model: M, event: E) = patch(model, event)
 
-    override fun onSkipClicked(model: OnBoardingModel): Next<OnBoardingModel, OnBoardingEffect> {
+    override fun onSkipClicked(model: M): Next<M, F> {
         return when {
             model.isLoading -> noChange()
             else -> next(
                 model.copy(
                     isLoading = true,
-                    pendingTarget = OnBoardingModel.Target.SKIP
+                    pendingTarget = M.Target.SKIP
                 ),
                 setOf(
-                    OnBoardingEffect.CreateWallet,
-                    OnBoardingEffect.TrackEvent(EventUtils.EVENT_SKIP_BUTTON),
-                    OnBoardingEffect.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
+                    F.CreateWallet,
+                    F.TrackEvent(EventUtils.EVENT_SKIP_BUTTON),
+                    F.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
                 )
             )
         }
     }
 
-    override fun onBackClicked(model: OnBoardingModel): Next<OnBoardingModel, OnBoardingEffect> {
+    override fun onBackClicked(model: M): Next<M, F> {
         return when {
             model.isLoading -> noChange()
             else -> dispatch(
                 setOf(
-                    OnBoardingEffect.Cancel,
-                    OnBoardingEffect.TrackEvent(EventUtils.EVENT_BACK_BUTTON)
+                    F.Cancel,
+                    F.TrackEvent(EventUtils.EVENT_BACK_BUTTON)
                 )
             )
         }
     }
 
-    override fun onBuyClicked(model: OnBoardingModel): Next<OnBoardingModel, OnBoardingEffect> {
+    override fun onBuyClicked(model: M): Next<M, F> {
         return when {
             model.isLoading -> noChange()
             else -> next(
                 model.copy(
                     isLoading = true,
-                    pendingTarget = OnBoardingModel.Target.BUY
+                    pendingTarget = M.Target.BUY
                 ),
                 setOf(
-                    OnBoardingEffect.CreateWallet,
-                    OnBoardingEffect.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BUY_COIN)
+                    F.CreateWallet,
+                    F.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BUY_COIN)
                 )
             )
         }
     }
 
-    override fun onBrowseClicked(model: OnBoardingModel): Next<OnBoardingModel, OnBoardingEffect> {
+    override fun onBrowseClicked(model: M): Next<M, F> {
         return when {
             model.isLoading -> noChange()
             else -> next(
                 model.copy(
                     isLoading = true,
-                    pendingTarget = OnBoardingModel.Target.BROWSE
+                    pendingTarget = M.Target.BROWSE
                 ),
                 setOf(
-                    OnBoardingEffect.CreateWallet,
-                    OnBoardingEffect.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
+                    F.CreateWallet,
+                    F.TrackEvent(EventUtils.EVENT_FINAL_PAGE_BROWSE_FIRST)
                 )
             )
         }
     }
 
     override fun onPageChanged(
-        model: OnBoardingModel,
-        event: OnBoardingEvent.OnPageChanged
-    ): Next<OnBoardingModel, OnBoardingEffect> {
+        model: M,
+        event: E.OnPageChanged
+    ): Next<M, F> {
         return next(
             model.copy(page = event.page),
             setOf(
-                OnBoardingEffect.TrackEvent(when (event.page) {
-                    1 -> EventUtils.EVENT_GLOBE_PAGE_APPEARED
-                    2 -> EventUtils.EVENT_COINS_PAGE_APPEARED
-                    3 -> EventUtils.EVENT_FINAL_PAGE_APPEARED
-                    else -> error("Invalid page, expected 1-3")
-                })
+                F.TrackEvent(
+                    when (event.page) {
+                        1 -> EventUtils.EVENT_GLOBE_PAGE_APPEARED
+                        2 -> EventUtils.EVENT_COINS_PAGE_APPEARED
+                        3 -> EventUtils.EVENT_FINAL_PAGE_APPEARED
+                        else -> error("Invalid page, expected 1-3")
+                    }
+                )
             )
         )
     }
 
-    override fun onWalletCreated(model: OnBoardingModel): Next<OnBoardingModel, OnBoardingEffect> {
+    override fun onWalletCreated(model: M): Next<M, F> {
         return when (model.pendingTarget) {
-            OnBoardingModel.Target.NONE -> noChange()
-            OnBoardingModel.Target.BROWSE -> dispatch(setOf(OnBoardingEffect.Browse))
-            OnBoardingModel.Target.BUY -> dispatch(setOf(OnBoardingEffect.Buy))
-            OnBoardingModel.Target.SKIP -> dispatch(setOf(OnBoardingEffect.Skip))
+            M.Target.NONE -> noChange()
+            M.Target.BROWSE -> dispatch(setOf(F.Browse))
+            M.Target.BUY -> dispatch(setOf(F.Buy))
+            M.Target.SKIP -> dispatch(setOf(F.Skip))
         }
     }
 
     override fun setupError(
-        model: OnBoardingModel,
+        model: M,
         event: SetupError
-    ): Next<OnBoardingModel, OnBoardingEffect> {
+    ): Next<M, F> {
         // TODO: For now, we collapse all errors into a
         //  single message to replicate previous behavior.
         val error = when (event) {
@@ -142,9 +146,9 @@ object OnBoardingUpdate : Update<OnBoardingModel, OnBoardingEvent, OnBoardingEff
         return next(
             model.copy(
                 isLoading = false,
-                pendingTarget = OnBoardingModel.Target.NONE
+                pendingTarget = M.Target.NONE
             ),
-            setOf(OnBoardingEffect.ShowError(error))
+            setOf(F.ShowError(error))
         )
     }
 }

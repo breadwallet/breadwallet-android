@@ -24,33 +24,35 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import com.breadwallet.ui.settings.segwit.EnableSegWit.E
+import com.breadwallet.ui.settings.segwit.EnableSegWit.F
+import com.breadwallet.ui.settings.segwit.EnableSegWit.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object EnableSegWitUpdate : Update<EnableSegWitModel, EnableSegWitEvent, EnableSegWitEffect>,
-    EnableSegWitUpdateSpec {
+object EnableSegWitUpdate : Update<M, E, F>, EnableSegWitUpdateSpec {
     override fun update(
-        model: EnableSegWitModel,
-        event: EnableSegWitEvent
-    ): Next<EnableSegWitModel, EnableSegWitEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
-    override fun onEnableClick(model: EnableSegWitModel): Next<EnableSegWitModel, EnableSegWitEffect> =
-        next(model.copy(state = EnableSegWitModel.State.CONFIRMATION))
+    override fun onEnableClick(model: M): Next<M, F> =
+        next(model.copy(state = M.State.CONFIRMATION))
 
-    override fun onContinueClicked(model: EnableSegWitModel): Next<EnableSegWitModel, EnableSegWitEffect> =
+    override fun onContinueClicked(model: M): Next<M, F> =
         next(
-            model.copy(state = EnableSegWitModel.State.DONE),
-            setOf(EnableSegWitEffect.EnableSegWit)
+            model.copy(state = M.State.DONE),
+            setOf(F.EnableSegWit)
         )
 
-    override fun onCancelClicked(model: EnableSegWitModel): Next<EnableSegWitModel, EnableSegWitEffect> =
-        next(model.copy(state = EnableSegWitModel.State.ENABLE))
+    override fun onCancelClicked(model: M): Next<M, F> =
+        next(model.copy(state = M.State.ENABLE))
 
-    override fun onBackClicked(model: EnableSegWitModel): Next<EnableSegWitModel, EnableSegWitEffect> =
-        dispatch(setOf(EnableSegWitEffect.GoBack))
+    override fun onBackClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoBack))
 
-    override fun onDoneClicked(model: EnableSegWitModel): Next<EnableSegWitModel, EnableSegWitEffect> =
-        dispatch(setOf(EnableSegWitEffect.GoToHome))
+    override fun onDoneClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToHome))
 }

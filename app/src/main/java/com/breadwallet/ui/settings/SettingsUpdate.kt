@@ -24,92 +24,95 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.ui.settings.SettingsScreen.E
+import com.breadwallet.ui.settings.SettingsScreen.F
+import com.breadwallet.ui.settings.SettingsScreen.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object SettingsUpdate : Update<SettingsModel, SettingsEvent, SettingsEffect>, SettingsUpdateSpec {
+object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun update(
-        model: SettingsModel,
-        event: SettingsEvent
-    ): Next<SettingsModel, SettingsEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
     override fun onOptionsLoaded(
-        model: SettingsModel,
-        event: SettingsEvent.OnOptionsLoaded
-    ): Next<SettingsModel, SettingsEffect> = next(model.copy(items = event.options))
+        model: M,
+        event: E.OnOptionsLoaded
+    ): Next<M, F> = next(model.copy(items = event.options))
 
-    override fun onBackClicked(model: SettingsModel): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.GoBack))
+    override fun onBackClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoBack))
 
-    override fun onCloseClicked(model: SettingsModel): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.GoBack))
+    override fun onCloseClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoBack))
 
     override fun setApiServer(
-        model: SettingsModel,
-        event: SettingsEvent.SetApiServer
-    ): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.SetApiServer(event.host)))
+        model: M,
+        event: E.SetApiServer
+    ): Next<M, F> =
+        dispatch(setOf(F.SetApiServer(event.host)))
 
     override fun setPlatformDebugUrl(
-        model: SettingsModel,
-        event: SettingsEvent.SetPlatformDebugUrl
-    ): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.SetPlatformDebugUrl(event.url)))
+        model: M,
+        event: E.SetPlatformDebugUrl
+    ): Next<M, F> =
+        dispatch(setOf(F.SetPlatformDebugUrl(event.url)))
 
     override fun setPlatformBundle(
-        model: SettingsModel,
-        event: SettingsEvent.SetPlatformBundle
-    ): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.SetPlatformBundle(event.bundle)))
+        model: M,
+        event: E.SetPlatformBundle
+    ): Next<M, F> =
+        dispatch(setOf(F.SetPlatformBundle(event.bundle)))
 
     override fun setTokenBundle(
-        model: SettingsModel,
-        event: SettingsEvent.SetTokenBundle
-    ): Next<SettingsModel, SettingsEffect> =
-        dispatch(setOf(SettingsEffect.SetTokenBundle(event.bundle)))
+        model: M,
+        event: E.SetTokenBundle
+    ): Next<M, F> =
+        dispatch(setOf(F.SetTokenBundle(event.bundle)))
 
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
-        model: SettingsModel,
-        event: SettingsEvent.OnOptionClicked
-    ): Next<SettingsModel, SettingsEffect> {
+        model: M,
+        event: E.OnOptionClicked
+    ): Next<M, F> {
         return dispatch(
             setOf(
                 when (event.option) {
-                    SettingsOption.SCAN_QR -> SettingsEffect.GoToQrScan
-                    SettingsOption.PREFERENCES -> SettingsEffect.GoToSection(SettingsSection.PREFERENCES)
-                    SettingsOption.SECURITY_SETTINGS -> SettingsEffect.GoToSection(SettingsSection.SECURITY)
-                    SettingsOption.SUPPORT -> SettingsEffect.GoToSupport
-                    SettingsOption.SUBMIT_REVIEW -> SettingsEffect.GoToGooglePlay
-                    SettingsOption.REWARDS -> SettingsEffect.GoToBrdRewards
-                    SettingsOption.ABOUT -> SettingsEffect.GoToAbout
-                    SettingsOption.ATM_FINDER -> SettingsEffect.SendAtmFinderRequest
-                    SettingsOption.DEVELOPER_OPTIONS -> SettingsEffect.GoToSection(SettingsSection.DEVELOPER_OPTION)
-                    SettingsOption.CURRENCY -> SettingsEffect.GoToDisplayCurrency
-                    SettingsOption.BTC_MENU -> SettingsEffect.GoToSection(SettingsSection.BTC_SETTINGS)
-                    SettingsOption.BCH_MENU -> SettingsEffect.GoToSection(SettingsSection.BCH_SETTINGS)
-                    SettingsOption.SHARE_ANONYMOUS_DATA -> SettingsEffect.GoToShareData
-                    SettingsOption.NOTIFICATIONS -> SettingsEffect.GoToNotificationsSettings
-                    SettingsOption.REDEEM_PRIVATE_KEY -> SettingsEffect.GoToImportWallet
-                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> SettingsEffect.GoToSyncBlockchain("btc")
-                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> SettingsEffect.GoToSyncBlockchain("bch")
-                    SettingsOption.ENABLE_SEG_WIT -> SettingsEffect.GoToEnableSegWit
-                    SettingsOption.VIEW_LEGACY_ADDRESS -> SettingsEffect.GoToLegacyAddress
-                    SettingsOption.BTC_NODES -> SettingsEffect.GoToNodeSelector
-                    SettingsOption.FINGERPRINT_AUTH -> SettingsEffect.GoToFingerprintAuth
-                    SettingsOption.PAPER_KEY -> SettingsEffect.GoToPaperKey
-                    SettingsOption.UPDATE_PIN -> SettingsEffect.GoToUpdatePin
-                    SettingsOption.WIPE -> SettingsEffect.GoToWipeWallet
-                    SettingsOption.ONBOARDING_FLOW -> SettingsEffect.GoToOnboarding
-                    SettingsOption.SEND_LOGS -> SettingsEffect.SendLogs
-                    SettingsOption.API_SERVER -> SettingsEffect.ShowApiServerDialog
-                    SettingsOption.WEB_PLAT_DEBUG_URL -> SettingsEffect.ShowPlatformDebugUrlDialog
-                    SettingsOption.WEB_PLAT_BUNDLE -> SettingsEffect.ShowPlatformBundleDialog
-                    SettingsOption.TOKEN_BUNDLE -> SettingsEffect.ShowTokenBundleDialog
-                    SettingsOption.NATIVE_API_EXPLORER -> SettingsEffect.GoToNativeApiExplorer
-                    SettingsOption.FAST_SYNC_BTC -> SettingsEffect.GoToFastSync("btc")
+                    SettingsOption.SCAN_QR -> F.GoToQrScan
+                    SettingsOption.PREFERENCES -> F.GoToSection(SettingsSection.PREFERENCES)
+                    SettingsOption.SECURITY_SETTINGS -> F.GoToSection(SettingsSection.SECURITY)
+                    SettingsOption.SUPPORT -> F.GoToSupport
+                    SettingsOption.SUBMIT_REVIEW -> F.GoToGooglePlay
+                    SettingsOption.REWARDS -> F.GoToBrdRewards
+                    SettingsOption.ABOUT -> F.GoToAbout
+                    SettingsOption.ATM_FINDER -> F.SendAtmFinderRequest
+                    SettingsOption.DEVELOPER_OPTIONS -> F.GoToSection(SettingsSection.DEVELOPER_OPTION)
+                    SettingsOption.CURRENCY -> F.GoToDisplayCurrency
+                    SettingsOption.BTC_MENU -> F.GoToSection(SettingsSection.BTC_SETTINGS)
+                    SettingsOption.BCH_MENU -> F.GoToSection(SettingsSection.BCH_SETTINGS)
+                    SettingsOption.SHARE_ANONYMOUS_DATA -> F.GoToShareData
+                    SettingsOption.NOTIFICATIONS -> F.GoToNotificationsSettings
+                    SettingsOption.REDEEM_PRIVATE_KEY -> F.GoToImportWallet
+                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> F.GoToSyncBlockchain("btc")
+                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> F.GoToSyncBlockchain("bch")
+                    SettingsOption.ENABLE_SEG_WIT -> F.GoToEnableSegWit
+                    SettingsOption.VIEW_LEGACY_ADDRESS -> F.GoToLegacyAddress
+                    SettingsOption.BTC_NODES -> F.GoToNodeSelector
+                    SettingsOption.FINGERPRINT_AUTH -> F.GoToFingerprintAuth
+                    SettingsOption.PAPER_KEY -> F.GoToPaperKey
+                    SettingsOption.UPDATE_PIN -> F.GoToUpdatePin
+                    SettingsOption.WIPE -> F.GoToWipeWallet
+                    SettingsOption.ONBOARDING_FLOW -> F.GoToOnboarding
+                    SettingsOption.SEND_LOGS -> F.SendLogs
+                    SettingsOption.API_SERVER -> F.ShowApiServerDialog
+                    SettingsOption.WEB_PLAT_DEBUG_URL -> F.ShowPlatformDebugUrlDialog
+                    SettingsOption.WEB_PLAT_BUNDLE -> F.ShowPlatformBundleDialog
+                    SettingsOption.TOKEN_BUNDLE -> F.ShowTokenBundleDialog
+                    SettingsOption.NATIVE_API_EXPLORER -> F.GoToNativeApiExplorer
+                    SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
                 }
             )
         )

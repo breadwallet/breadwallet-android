@@ -28,6 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.addwallets.AddWallets.E
+import com.breadwallet.ui.addwallets.AddWallets.F
+import com.breadwallet.ui.addwallets.AddWallets.M
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
 import kotlinx.android.synthetic.main.controller_add_wallets.*
@@ -44,23 +47,22 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
-class AddWalletsController :
-    BaseMobiusController<AddWalletsModel, AddWalletsEvent, AddWalletsEffect>() {
+class AddWalletsController : BaseMobiusController<M, E, F>() {
 
     override val layoutId: Int = R.layout.controller_add_wallets
 
-    override val defaultModel = AddWalletsModel.createDefault()
+    override val defaultModel = M.createDefault()
     override val init = AddWalletsInit
     override val update = AddWalletsUpdate
     override val flowEffectHandler
-        get() = AddWalletsEffectHandler.createEffectHandler(
+        get() = AddWalletsHandler.create(
             checkNotNull(applicationContext),
             direct.instance(),
             direct.instance(),
             direct.instance()
         )
 
-    override fun bindView(modelFlow: Flow<AddWalletsModel>): Flow<AddWalletsEvent> {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         token_list.layoutManager = LinearLayoutManager(checkNotNull(activity))
         search_edit.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -69,8 +71,8 @@ class AddWalletsController :
         }
 
         return merge(
-            search_edit.textChanges().map { AddWalletsEvent.OnSearchQueryChanged(it) },
-            back_arrow.clicks().map { AddWalletsEvent.OnBackClicked },
+            search_edit.textChanges().map { E.OnSearchQueryChanged(it) },
+            back_arrow.clicks().map { E.OnBackClicked },
             bindTokenList(modelFlow)
         ).onCompletion {
             Utils.hideKeyboard(activity)
@@ -78,8 +80,8 @@ class AddWalletsController :
     }
 
     private fun bindTokenList(
-        modelFlow: Flow<AddWalletsModel>
-    ) = callbackFlow<AddWalletsEvent> {
+        modelFlow: Flow<M>
+    ) = callbackFlow<E> {
         AddTokenListAdapter(
             context = checkNotNull(activity),
             tokensFlow = modelFlow

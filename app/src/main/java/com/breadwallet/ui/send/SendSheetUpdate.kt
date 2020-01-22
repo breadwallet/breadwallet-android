@@ -26,14 +26,17 @@ package com.breadwallet.ui.send
 
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted
-import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted.InvalidAddress
-import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted.NoAddress
-import com.breadwallet.ui.send.SendSheetEvent.OnAddressPasted.ValidAddress
-import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.AddDecimal
-import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.AddDigit
-import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.Clear
-import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange.Delete
+import com.breadwallet.ui.send.SendSheet.E
+import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted
+import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.InvalidAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.NoAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.ValidAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDecimal
+import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDigit
+import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
+import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Delete
+import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.ui.send.SendSheet.M
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -46,15 +49,14 @@ import java.math.BigDecimal
 const val MAX_DIGITS = 8
 
 @Suppress("TooManyFunctions", "ComplexMethod", "LargeClass")
-object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>,
-    SendSheetUpdateSpec {
+object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
 
-    override fun update(model: SendSheetModel, event: SendSheetEvent) = patch(model, event)
+    override fun update(model: M, event: E) = patch(model, event)
 
     override fun onAmountChange(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnAmountChange
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnAmountChange
+    ): Next<M, F> {
         return when (event) {
             AddDecimal -> addDecimal(model)
             Delete -> delete(model)
@@ -64,8 +66,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     private fun addDecimal(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.rawAmount.contains('.') -> noChange()
             model.rawAmount.isEmpty() -> next(
@@ -80,8 +82,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     private fun delete(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.rawAmount.isEmpty() -> noChange()
             else -> {
@@ -97,9 +99,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                             )
                         )
                     else -> {
-                        val effects = mutableSetOf<SendSheetEffect>()
+                        val effects = mutableSetOf<F>()
                         if (newModel.canEstimateFee) {
-                            SendSheetEffect.EstimateFee(
+                            F.EstimateFee(
                                 newModel.currencyCode,
                                 newModel.targetAddress,
                                 newModel.amount,
@@ -114,9 +116,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     private fun addDigit(
-        model: SendSheetModel,
+        model: M,
         event: AddDigit
-    ): Next<SendSheetModel, SendSheetEffect> {
+    ): Next<M, F> {
         return when {
             model.rawAmount == "0" && event.digit == 0 -> noChange()
             model.rawAmount.split('.').run {
@@ -126,7 +128,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 else getOrNull(1)?.length == MAX_DIGITS
             } -> noChange()
             else -> {
-                val effects = mutableSetOf<SendSheetEffect>()
+                val effects = mutableSetOf<F>()
                 val newRawAmount = when (model.rawAmount) {
                     "0" -> event.digit.toString()
                     else -> model.rawAmount + event.digit
@@ -136,7 +138,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
 
                 if (newModel.canEstimateFee) {
                     effects.add(
-                        SendSheetEffect.EstimateFee(
+                        F.EstimateFee(
                             newModel.currencyCode,
                             newModel.targetAddress,
                             newModel.amount,
@@ -149,7 +151,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    private fun clear(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    private fun clear(model: M): Next<M, F> {
         return when {
             model.rawAmount.isEmpty() && model.amount.isZero() -> noChange()
             else -> next(
@@ -167,7 +169,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     @Suppress("ComplexCondition")
-    override fun onSendClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onSendClicked(model: M): Next<M, F> {
         val isBalanceTooLow = model.isTotalCostOverBalance
         val isAmountBlank = model.rawAmount.isBlank() || model.amount.isZero()
         val isTargetBlank = model.targetAddress.isBlank()
@@ -176,12 +178,12 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             return next(
                 model.copy(
                     amountInputError = when {
-                        isAmountBlank -> SendSheetModel.InputError.Empty
-                        isBalanceTooLow -> SendSheetModel.InputError.BalanceTooLow
+                        isAmountBlank -> M.InputError.Empty
+                        isBalanceTooLow -> M.InputError.BalanceTooLow
                         else -> null
                     },
                     targetInputError = when {
-                        isTargetBlank -> SendSheetModel.InputError.Empty
+                        isTargetBlank -> M.InputError.Empty
                         else -> null
                     }
                 )
@@ -200,39 +202,39 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    override fun onScanClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onScanClicked(model: M): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.Nav.GoToScan))
+            else -> dispatch(setOf(F.Nav.GoToScan))
         }
     }
 
-    override fun onFaqClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onFaqClicked(model: M): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.Nav.GoToFaq(model.currencyCode)))
+            else -> dispatch(setOf(F.Nav.GoToFaq(model.currencyCode)))
         }
     }
 
-    override fun onCloseClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onCloseClicked(model: M): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.Nav.CloseSheet))
+            else -> dispatch(setOf(F.Nav.CloseSheet))
         }
     }
 
-    override fun onPasteClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onPasteClicked(model: M): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
             else -> dispatch(
                 setOf(
-                    SendSheetEffect.ParseClipboardData(model.currencyCode)
+                    F.ParseClipboardData(model.currencyCode)
                 )
             )
         }
     }
 
-    override fun onToggleCurrencyClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onToggleCurrencyClicked(model: M): Next<M, F> {
         val isAmountCrypto = !model.isAmountCrypto
         val newModel = model.copy(
             isAmountCrypto = isAmountCrypto,
@@ -252,7 +254,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
             newModel.canEstimateFee -> next(
                 newModel,
                 setOf(
-                    SendSheetEffect.EstimateFee(
+                    F.EstimateFee(
                         newModel.currencyCode,
                         newModel.targetAddress,
                         newModel.amount,
@@ -265,9 +267,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onBalanceUpdated(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnBalanceUpdated
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnBalanceUpdated
+    ): Next<M, F> {
         val isTotalCostOverBalance = model.totalCost > event.balance
         return next(
             model.copy(
@@ -275,7 +277,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 fiatBalance = event.fiatBalance,
                 isTotalCostOverBalance = isTotalCostOverBalance,
                 amountInputError = if (isTotalCostOverBalance) {
-                    SendSheetModel.InputError.BalanceTooLow
+                    M.InputError.BalanceTooLow
                 } else null,
                 networkFee = if (isTotalCostOverBalance) {
                     BigDecimal.ZERO
@@ -291,9 +293,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onNetworkFeeUpdated(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnNetworkFeeUpdated
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnNetworkFeeUpdated
+    ): Next<M, F> {
         val isTotalCostOverBalance = model.amount + event.networkFee > model.balance
         return when {
             model.amount != event.amount -> noChange()
@@ -306,7 +308,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     feeEstimateFailed = false,
                     isTotalCostOverBalance = isTotalCostOverBalance,
                     amountInputError = if (isTotalCostOverBalance) {
-                        SendSheetModel.InputError.BalanceTooLow
+                        M.InputError.BalanceTooLow
                     } else null
                 )
             )
@@ -314,8 +316,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onNetworkFeeError(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         return next(
             model.copy(
                 feeEstimateFailed = true
@@ -324,9 +326,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onTransferSpeedChanged(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnTransferSpeedChanged
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnTransferSpeedChanged
+    ): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
             model.canEstimateFee -> next(
@@ -334,7 +336,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     transferSpeed = event.transferSpeed
                 ),
                 setOf(
-                    SendSheetEffect.EstimateFee(
+                    F.EstimateFee(
                         model.currencyCode,
                         model.targetAddress,
                         model.amount,
@@ -349,14 +351,14 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onTargetAddressChanged(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnTargetAddressChanged
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnTargetAddressChanged
+    ): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
             model.targetAddress == event.toAddress -> noChange()
             else -> {
-                val effects = mutableSetOf<SendSheetEffect>()
+                val effects = mutableSetOf<F>()
                 val newModel = model.copy(
                     targetAddress = event.toAddress,
                     targetInputError = null
@@ -364,7 +366,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
 
                 if (newModel.canEstimateFee) {
                     effects.add(
-                        SendSheetEffect.EstimateFee(
+                        F.EstimateFee(
                             newModel.currencyCode,
                             newModel.targetAddress,
                             newModel.amount,
@@ -379,9 +381,9 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onMemoChanged(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnMemoChanged
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnMemoChanged
+    ): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
             else -> next(
@@ -392,7 +394,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    override fun onAmountEditClicked(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onAmountEditClicked(model: M): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
             else -> next(
@@ -403,7 +405,7 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    override fun onAmountEditDismissed(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun onAmountEditDismissed(model: M): Next<M, F> {
         return when {
             model.isAmountEditVisible -> next(
                 model.copy(
@@ -415,16 +417,16 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onAddressPasted(
-        model: SendSheetModel,
+        model: M,
         event: OnAddressPasted
-    ): Next<SendSheetModel, SendSheetEffect> {
-        val effects = mutableSetOf<SendSheetEffect>()
+    ): Next<M, F> {
+        val effects = mutableSetOf<F>()
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
                 is ValidAddress -> {
                     if (model.canEstimateFee) {
-                        SendSheetEffect.EstimateFee(
+                        F.EstimateFee(
                             model.currencyCode,
                             event.address,
                             model.amount,
@@ -442,12 +444,12 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                 }
                 is InvalidAddress -> next(
                     model.copy(
-                        targetInputError = SendSheetModel.InputError.ClipboardInvalid
+                        targetInputError = M.InputError.ClipboardInvalid
                     )
                 )
                 is NoAddress -> next(
                     model.copy(
-                        targetInputError = SendSheetModel.InputError.ClipboardEmpty
+                        targetInputError = M.InputError.ClipboardEmpty
                     )
                 )
             }
@@ -455,29 +457,29 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun confirmTx(
-        model: SendSheetModel,
-        event: SendSheetEvent.ConfirmTx
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.ConfirmTx
+    ): Next<M, F> {
         return when {
             !model.isConfirmingTx -> noChange()
             else -> when (event) {
-                SendSheetEvent.ConfirmTx.OnConfirmClicked ->
+                E.ConfirmTx.OnConfirmClicked ->
                     next(
                         model.copy(
                             isConfirmingTx = false,
                             isAuthenticating = true
                         )
                     )
-                SendSheetEvent.ConfirmTx.OnCancelClicked ->
+                E.ConfirmTx.OnCancelClicked ->
                     next(model.copy(isConfirmingTx = false))
             }
         }
     }
 
     override fun onExchangeRateUpdated(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnExchangeRateUpdated
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnExchangeRateUpdated
+    ): Next<M, F> {
         val pricePerUnit = event.fiatPricePerUnit
         val newAmount: BigDecimal
         val newFiatAmount: BigDecimal
@@ -515,24 +517,24 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onSendComplete(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnSendComplete
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnSendComplete
+    ): Next<M, F> {
         return when {
             model.isSendingTransaction -> {
-                val effects = mutableSetOf<SendSheetEffect>(
-                    SendSheetEffect.Nav.GoToTransactionComplete
+                val effects = mutableSetOf<F>(
+                    F.Nav.GoToTransactionComplete
                 )
                 if (model.isBitpayPayment) {
                     effects.add(
-                        SendSheetEffect.PaymentProtocol.PostPayment(
+                        F.PaymentProtocol.PostPayment(
                             model.paymentProtocolRequest!!,
                             event.transfer
                         )
                     )
                 }
                 if (!model.memo.isNullOrBlank()) {
-                    SendSheetEffect.AddTransactionMetaData(
+                    F.AddTransactionMetaData(
                         event.transfer,
                         model.memo,
                         model.fiatCode,
@@ -546,17 +548,17 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onAuthSuccess(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         val effects = setOf(
             when {
                 model.isBitpayPayment ->
-                    SendSheetEffect.PaymentProtocol.ContinueWitPayment(
+                    F.PaymentProtocol.ContinueWitPayment(
                         model.paymentProtocolRequest!!,
                         transferFeeBasis = checkNotNull(model.transferFeeBasis)
                     )
                 else ->
-                    SendSheetEffect.SendTransaction(
+                    F.SendTransaction(
                         currencyCode = model.currencyCode,
                         address = model.targetAddress,
                         amount = model.amount,
@@ -577,8 +579,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onAuthCancelled(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.isAuthenticating -> next(
                 model.copy(
@@ -590,8 +592,8 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onSendFailed(
-        model: SendSheetModel
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M
+    ): Next<M, F> {
         return when {
             model.isSendingTransaction ->
                 next(
@@ -603,28 +605,28 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         }
     }
 
-    override fun goToEthWallet(model: SendSheetModel): Next<SendSheetModel, SendSheetEffect> {
+    override fun goToEthWallet(model: M): Next<M, F> {
         return when {
             model.isSendingTransaction || model.isConfirmingTx -> noChange()
-            else -> dispatch(setOf(SendSheetEffect.Nav.GoToEthWallet))
+            else -> dispatch(setOf(F.Nav.GoToEthWallet))
         }
     }
 
     override fun onAddressValidated(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnAddressValidated
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnAddressValidated
+    ): Next<M, F> {
         if (model.targetAddress != event.address) return noChange()
 
-        val effects = mutableSetOf<SendSheetEffect>()
+        val effects = mutableSetOf<F>()
         val newModel = model.copy(
             targetInputError = if (event.isValid) null
-            else SendSheetModel.InputError.Invalid
+            else M.InputError.Invalid
         )
 
         if (newModel.canEstimateFee) {
             effects.add(
-                SendSheetEffect.EstimateFee(
+                F.EstimateFee(
                     currencyCode = newModel.currencyCode,
                     address = newModel.targetAddress,
                     amount = newModel.amount,
@@ -637,16 +639,16 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun onAuthenticationSettingsUpdated(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnAuthenticationSettingsUpdated
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnAuthenticationSettingsUpdated
+    ): Next<M, F> {
         return next(model.copy(isFingerprintAuthEnable = event.isFingerprintEnable))
     }
 
     override fun onRequestScanned(
-        model: SendSheetModel,
-        event: SendSheetEvent.OnRequestScanned
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.OnRequestScanned
+    ): Next<M, F> {
         if (!event.currencyCode.equals(model.currencyCode, ignoreCase = true)) {
             return noChange()
         }
@@ -655,11 +657,11 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
         val amount = event.amount ?: model.amount
         val rawAmount = event.amount?.stripTrailingZeros()?.toPlainString() ?: model.rawAmount
 
-        val effects = mutableSetOf<SendSheetEffect>()
+        val effects = mutableSetOf<F>()
 
         if (!event.targetAddress.isNullOrBlank() && !amount.isZero()) {
             effects.add(
-                SendSheetEffect.EstimateFee(
+                F.EstimateFee(
                     model.currencyCode,
                     targetAddress,
                     amount,
@@ -685,11 +687,11 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
     }
 
     override fun paymentProtocol(
-        model: SendSheetModel,
-        event: SendSheetEvent.PaymentProtocol
-    ): Next<SendSheetModel, SendSheetEffect> {
+        model: M,
+        event: E.PaymentProtocol
+    ): Next<M, F> {
         return when (event) {
-            is SendSheetEvent.PaymentProtocol.OnPaymentLoaded -> {
+            is E.PaymentProtocol.OnPaymentLoaded -> {
                 val paymentRequest = event.paymentRequest
                 val amount = event.cryptoAmount
                 val newModel = model.copy(
@@ -705,13 +707,13 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     rawAmount = amount.setScale(
                         MAX_DIGITS,
                         BRConstants.ROUNDING_MODE
-                        ).toPlainString().dropLastWhile { it == '0' },
+                    ).toPlainString().dropLastWhile { it == '0' },
                     isFetchingPayment = false
                 )
                 next(
                     newModel,
                     effects(
-                        SendSheetEffect.EstimateFee(
+                        F.EstimateFee(
                             model.currencyCode,
                             newModel.targetAddress,
                             amount,
@@ -720,10 +722,10 @@ object SendSheetUpdate : Update<SendSheetModel, SendSheetEvent, SendSheetEffect>
                     )
                 )
             }
-            is SendSheetEvent.PaymentProtocol.OnLoadFailed -> {
+            is E.PaymentProtocol.OnLoadFailed -> {
                 next(
                     model.copy(isFetchingPayment = false),
-                    effects(SendSheetEffect.ShowErrorDialog(event.message))
+                    effects(F.ShowErrorDialog(event.message))
                 )
             }
             else -> noChange()

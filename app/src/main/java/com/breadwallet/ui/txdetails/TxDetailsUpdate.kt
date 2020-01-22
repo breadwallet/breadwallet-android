@@ -25,34 +25,35 @@
 package com.breadwallet.ui.txdetails
 
 import com.breadwallet.breadbox.feeForToken
-import com.spotify.mobius.Next
-import com.spotify.mobius.Next.next
-import com.spotify.mobius.Next.dispatch
-import com.spotify.mobius.Update
 import com.breadwallet.breadbox.isErc20
 import com.breadwallet.breadbox.isEthereum
 import com.breadwallet.breadbox.isReceived
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
+import com.breadwallet.ui.txdetails.TxDetails.E
+import com.breadwallet.ui.txdetails.TxDetails.F
+import com.breadwallet.ui.txdetails.TxDetails.M
 import com.platform.entities.TxMetaDataEmpty
 import com.platform.entities.TxMetaDataValue
+import com.spotify.mobius.Next
+import com.spotify.mobius.Next.dispatch
+import com.spotify.mobius.Next.next
+import com.spotify.mobius.Update
 import java.util.Date
 
-object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>,
-    TxDetailsUpdateSpec {
+object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
 
     override fun update(
-        model: TxDetailsModel,
-        event: TxDetailsEvent
-    ): Next<TxDetailsModel, TxDetailsEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
     override fun onTransactionUpdated(
-        model: TxDetailsModel,
-        event: TxDetailsEvent.OnTransactionUpdated
-    ): Next<TxDetailsModel, TxDetailsEffect> {
-
-        with(event.transaction) {
-            val updatedModel = model.copy(
+        model: M,
+        event: E.OnTransactionUpdated
+    ): Next<M, F> {
+        val updatedModel = with(event.transaction) {
+            model.copy(
                 isEth = amount.currency.isEthereum(),
                 isErc20 = amount.currency.isErc20(),
                 cryptoTransferredAmount = amount.toBigDecimal(),
@@ -74,24 +75,24 @@ object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>
                 gasLimit = event.gasLimit,
                 feeToken = feeForToken()
             )
+        }
 
-            return next(
-                updatedModel,
-                setOf(
-                    TxDetailsEffect.LoadFiatAmountNow(
-                        updatedModel.cryptoTransferredAmount,
-                        updatedModel.currencyCode,
-                        updatedModel.preferredFiatIso
-                    )
+        return next(
+            updatedModel,
+            setOf(
+                F.LoadFiatAmountNow(
+                    updatedModel.cryptoTransferredAmount,
+                    updatedModel.currencyCode,
+                    updatedModel.preferredFiatIso
                 )
             )
-        }
+        )
     }
 
     override fun onFiatAmountNowUpdated(
-        model: TxDetailsModel,
-        event: TxDetailsEvent.OnFiatAmountNowUpdated
-    ): Next<TxDetailsModel, TxDetailsEffect> =
+        model: M,
+        event: E.OnFiatAmountNowUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 fiatAmountNow = event.fiatAmountNow
@@ -99,9 +100,9 @@ object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>
         )
 
     override fun onMetaDataUpdated(
-        model: TxDetailsModel,
-        event: TxDetailsEvent.OnMetaDataUpdated
-    ): Next<TxDetailsModel, TxDetailsEffect> =
+        model: M,
+        event: E.OnMetaDataUpdated
+    ): Next<M, F> =
         when (event.metaData) {
             is TxMetaDataValue -> {
                 next(
@@ -116,24 +117,24 @@ object TxDetailsUpdate : Update<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>
         }
 
     override fun onMemoChanged(
-        model: TxDetailsModel,
-        event: TxDetailsEvent.OnMemoChanged
-    ): Next<TxDetailsModel, TxDetailsEffect> =
+        model: M,
+        event: E.OnMemoChanged
+    ): Next<M, F> =
         dispatch(
             setOf(
-                TxDetailsEffect.UpdateMemo(
+                F.UpdateMemo(
                     model.transactionHash,
                     event.memo
                 )
             )
         )
 
-    override fun onClosedClicked(model: TxDetailsModel): Next<TxDetailsModel, TxDetailsEffect> =
-        dispatch(setOf(TxDetailsEffect.Close))
+    override fun onClosedClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.Close))
 
     override fun onShowHideDetailsClicked(
-        model: TxDetailsModel
-    ): Next<TxDetailsModel, TxDetailsEffect> = next(
+        model: M
+    ): Next<M, F> = next(
         model.copy(
             showDetails = !model.showDetails
         )

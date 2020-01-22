@@ -24,43 +24,43 @@
  */
 package com.breadwallet.ui.addwallets
 
-import com.spotify.mobius.Update
-
+import com.breadwallet.ui.addwallets.AddWallets.E
+import com.breadwallet.ui.addwallets.AddWallets.F
+import com.breadwallet.ui.addwallets.AddWallets.M
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
+import com.spotify.mobius.Update
 
-object AddWalletsUpdate :
-    Update<AddWalletsModel, AddWalletsEvent, AddWalletsEffect>,
-    AddWalletsUpdateSpec {
+object AddWalletsUpdate : Update<M, E, F>, AddWalletsUpdateSpec {
 
-    override fun update(model: AddWalletsModel, event: AddWalletsEvent) = patch(model, event)
+    override fun update(model: M, event: E) = patch(model, event)
 
-    override fun onBackClicked(model: AddWalletsModel): Next<AddWalletsModel, AddWalletsEffect> {
+    override fun onBackClicked(model: M): Next<M, F> {
         return dispatch(
             effects(
-                AddWalletsEffect.GoBack
+                F.GoBack
             )
         )
     }
 
     override fun onSearchQueryChanged(
-        model: AddWalletsModel,
-        event: AddWalletsEvent.OnSearchQueryChanged
-    ): Next<AddWalletsModel, AddWalletsEffect> {
+        model: M,
+        event: E.OnSearchQueryChanged
+    ): Next<M, F> {
         return next(
             model.copy(searchQuery = event.query),
             effects(
-                AddWalletsEffect.SearchTokens(event.query)
+                F.SearchTokens(event.query)
             )
         )
     }
 
     override fun onTokensChanged(
-        model: AddWalletsModel,
-        event: AddWalletsEvent.OnTokensChanged
-    ): Next<AddWalletsModel, AddWalletsEffect> {
+        model: M,
+        event: E.OnTokensChanged
+    ): Next<M, F> {
         return next(
             model.copy(
                 tokens = event.tokens.toMutableList().apply { sortBy { it.currencyCode } }
@@ -69,23 +69,23 @@ object AddWalletsUpdate :
     }
 
     override fun onAddWalletClicked(
-        model: AddWalletsModel,
-        event: AddWalletsEvent.OnAddWalletClicked
-    ): Next<AddWalletsModel, AddWalletsEffect> {
+        model: M,
+        event: E.OnAddWalletClicked
+    ): Next<M, F> {
         return dispatch(
             effects(
-                AddWalletsEffect.AddWallet(event.token)
+                F.AddWallet(event.token)
             )
         )
     }
 
     override fun onRemoveWalletClicked(
-        model: AddWalletsModel,
-        event: AddWalletsEvent.OnRemoveWalletClicked
-    ): Next<AddWalletsModel, AddWalletsEffect> {
+        model: M,
+        event: E.OnRemoveWalletClicked
+    ): Next<M, F> {
         return dispatch(
             effects(
-                AddWalletsEffect.RemoveWallet(event.token)
+                F.RemoveWallet(event.token)
             )
         )
     }

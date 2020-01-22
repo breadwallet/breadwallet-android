@@ -40,6 +40,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.onboarding.OnBoarding.E
+import com.breadwallet.ui.onboarding.OnBoarding.F
+import com.breadwallet.ui.onboarding.OnBoarding.M
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -51,7 +54,7 @@ import org.kodein.di.erased.instance
 
 class OnBoardingController(
     args: Bundle? = null
-) : BaseMobiusController<OnBoardingModel, OnBoardingEvent, OnBoardingEffect>(args) {
+) : BaseMobiusController<M, E, F>(args) {
 
     private val activeIndicator by lazy {
         val resId = R.drawable.page_indicator_active
@@ -66,7 +69,7 @@ class OnBoardingController(
 
     private val effectJob = SupervisorJob()
     private val _effectHandler by lazy {
-        OnBoardingEffectHandler(
+        OnBoardingHandler(
             effectJob,
             applicationContext as BreadApp,
             direct.instance(),
@@ -77,21 +80,21 @@ class OnBoardingController(
         )
     }
 
-    override val defaultModel = OnBoardingModel.DEFAULT
+    override val defaultModel = M.DEFAULT
     override val init = OnBoardingInit
     override val update = OnBoardingUpdate
-    override val effectHandler: Connectable<OnBoardingEffect, OnBoardingEvent> =
+    override val effectHandler: Connectable<F, E> =
         CompositeEffectHandler.from(
             Connectable { _effectHandler },
             nestedConnectable({ RouterNavigationEffectHandler(router) }, { effect ->
                 when (effect) {
-                    is OnBoardingEffect.ShowError -> NavigationEffect.GoToErrorDialog(
+                    is F.ShowError -> NavigationEffect.GoToErrorDialog(
                         title = "",
                         message = effect.message
                     )
-                    OnBoardingEffect.Browse,
-                    OnBoardingEffect.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
-                    OnBoardingEffect.Buy -> NavigationEffect.GoToSetPin(
+                    F.Browse,
+                    F.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
+                    F.Buy -> NavigationEffect.GoToSetPin(
                         onboarding = true,
                         onComplete = OnCompleteAction.GO_TO_BUY
                     )
@@ -100,25 +103,25 @@ class OnBoardingController(
             })
         )
 
-    override fun bindView(output: Consumer<OnBoardingEvent>): Disposable {
+    override fun bindView(output: Consumer<E>): Disposable {
         view_pager.adapter = OnBoardingPageAdapter()
         view_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                output.accept(OnBoardingEvent.OnPageChanged(position + 1))
+                output.accept(E.OnPageChanged(position + 1))
             }
         })
         button_skip.setOnClickListener {
-            output.accept(OnBoardingEvent.OnSkipClicked)
+            output.accept(E.OnSkipClicked)
         }
         button_back.setOnClickListener {
-            output.accept(OnBoardingEvent.OnBackClicked)
+            output.accept(E.OnBackClicked)
         }
 
         return Disposable {}
     }
 
-    override fun OnBoardingModel.render() {
-        ifChanged(OnBoardingModel::page) { page ->
+    override fun M.render() {
+        ifChanged(M::page) { page ->
             listOf(indicator1, indicator2, indicator3)
                 .forEachIndexed { index, indicator ->
                     indicator.background = when (page) {
@@ -128,12 +131,12 @@ class OnBoardingController(
                 }
         }
 
-        ifChanged(OnBoardingModel::isFirstPage) { isFirstPage ->
+        ifChanged(M::isFirstPage) { isFirstPage ->
             button_skip.isVisible = isFirstPage
             button_back.isVisible = isFirstPage
         }
 
-        ifChanged(OnBoardingModel::isLoading) { isLoading ->
+        ifChanged(M::isLoading) { isLoading ->
             loading_view.isVisible = isLoading
             button_skip.isEnabled = !isLoading
         }
@@ -198,10 +201,10 @@ class PageThreeController(args: Bundle? = null) : BaseController(args) {
         secondary_text.isVisible = false
         image_view.isVisible = false
         button_buy.setOnClickListener {
-            onBoardingController.eventConsumer.accept(OnBoardingEvent.OnBuyClicked)
+            onBoardingController.eventConsumer.accept(E.OnBuyClicked)
         }
         button_browse.setOnClickListener {
-            onBoardingController.eventConsumer.accept(OnBoardingEvent.OnBrowseClicked)
+            onBoardingController.eventConsumer.accept(E.OnBrowseClicked)
         }
     }
 }

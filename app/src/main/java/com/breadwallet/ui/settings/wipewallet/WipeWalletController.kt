@@ -29,8 +29,8 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import com.breadwallet.ui.recovery.RecoveryKeyModel
 import kotlinx.android.synthetic.main.controller_wipe_wallet.*
 
 class WipeWalletController : BaseController() {
@@ -41,7 +41,7 @@ class WipeWalletController : BaseController() {
         super.onCreateView(view)
         continue_btn.setOnClickListener {
             router.pushController(
-                RouterTransaction.with(RecoveryKeyController(RecoveryKeyModel.Mode.WIPE))
+                RouterTransaction.with(RecoveryKeyController(RecoveryKey.Mode.WIPE))
                     .pushChangeHandler(HorizontalChangeHandler())
                     .popChangeHandler(HorizontalChangeHandler())
             )

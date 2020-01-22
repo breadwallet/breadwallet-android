@@ -39,6 +39,9 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.util.TrustedNode
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
+import com.breadwallet.ui.settings.nodeselector.NodeSelector.M
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -55,34 +58,33 @@ private const val DIALOG_INPUT_PADDING = 24
 private const val SHOW_KEYBOARD_DELAY = 200L
 private const val RESTORE_DIALOG_TITLE_DELAY = 1_000L
 
-class NodeSelectorController :
-    BaseMobiusController<NodeSelectorModel, NodeSelectorEvent, NodeSelectorEffect>() {
+class NodeSelectorController : BaseMobiusController<M, E, F>() {
 
     override val layoutId = R.layout.controller_node_selector
-    override val defaultModel = NodeSelectorModel.createDefault()
+    override val defaultModel = M.createDefault()
     override val update = NodeSelectorUpdate
     override val init = NodeSelectorInit
 
-    override val effectHandler = CompositeEffectHandler.from<NodeSelectorEffect, NodeSelectorEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            NodeSelectorEffectHandler(output, direct.instance(), ::showNodeDialog)
+            NodeSelectorHandler(output, direct.instance(), ::showNodeDialog)
         })
 
-    override fun bindView(output: Consumer<NodeSelectorEvent>) = output.view {
-        button_switch.onClick(NodeSelectorEvent.OnSwitchButtonClicked)
+    override fun bindView(output: Consumer<E>) = output.view {
+        button_switch.onClick(E.OnSwitchButtonClicked)
     }
 
-    override fun NodeSelectorModel.render() {
+    override fun M.render() {
         val res = checkNotNull(resources)
-        ifChanged(NodeSelectorModel::mode) {
+        ifChanged(M::mode) {
             button_switch.text = when (mode) {
-                NodeSelectorModel.Mode.AUTOMATIC -> res.getString(R.string.NodeSelector_manualButton)
-                NodeSelectorModel.Mode.MANUAL -> res.getString(R.string.NodeSelector_automaticButton)
+                NodeSelector.Mode.AUTOMATIC -> res.getString(R.string.NodeSelector_manualButton)
+                NodeSelector.Mode.MANUAL -> res.getString(R.string.NodeSelector_automaticButton)
                 else -> ""
             }
         }
 
-        ifChanged(NodeSelectorModel::currentNode) {
+        ifChanged(M::currentNode) {
             node_text.text = if (currentNode.isNotBlank()) {
                 currentNode
             } else {
@@ -90,7 +92,7 @@ class NodeSelectorController :
             }
         }
 
-        ifChanged(NodeSelectorModel::connected) {
+        ifChanged(M::connected) {
             node_status.text = if (connected) {
                 res.getString(R.string.NodeSelector_connected)
             } else {
@@ -139,7 +141,7 @@ class NodeSelectorController :
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val node = input.text.toString()
             if (TrustedNode.isValid(node)) {
-                eventConsumer.accept(NodeSelectorEvent.SetCustomNode(node))
+                eventConsumer.accept(E.SetCustomNode(node))
             } else {
                 viewAttachScope.launch(Dispatchers.Main) {
                     customTitle.setText(R.string.NodeSelector_invalid)

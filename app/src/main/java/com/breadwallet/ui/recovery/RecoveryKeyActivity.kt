@@ -56,11 +56,11 @@ class RecoveryKeyActivity : BRActivity() {
                         RecoveryKeyController(
                             when {
                                 intent.getBooleanExtra(EXTRA_UNLINK, false) ->
-                                    RecoveryKeyModel.Mode.WIPE
+                                    RecoveryKey.Mode.WIPE
                                 intent.getBooleanExtra(EXTRA_RESET_PIN, false) ->
-                                    RecoveryKeyModel.Mode.RESET_PIN
+                                    RecoveryKey.Mode.RESET_PIN
                                 else ->
-                                    RecoveryKeyModel.Mode.RECOVER
+                                    RecoveryKey.Mode.RECOVER
                             }
                         )
                     )
