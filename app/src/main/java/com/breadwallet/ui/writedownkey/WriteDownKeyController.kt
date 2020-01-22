@@ -38,6 +38,9 @@ import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.writedownkey.WriteDownKey.E
+import com.breadwallet.ui.writedownkey.WriteDownKey.F
+import com.breadwallet.ui.writedownkey.WriteDownKey.M
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -47,7 +50,7 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 class WriteDownKeyController(args: Bundle? = null) :
-    BaseMobiusController<WriteDownKeyModel, WriteDownKeyEvent, WriteDownKeyEffect>(args),
+    BaseMobiusController<M, E, F>(args),
     AuthenticationController.Listener {
 
     companion object {
@@ -69,19 +72,19 @@ class WriteDownKeyController(args: Bundle? = null) :
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
 
     override val layoutId: Int = R.layout.controller_write_down
-    override val defaultModel = WriteDownKeyModel.createDefault(onComplete)
+    override val defaultModel = WriteDownKey.M.createDefault(onComplete)
     override val update = WriteDownKeyUpdate
-    override val effectHandler = CompositeEffectHandler.from<WriteDownKeyEffect, WriteDownKeyEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            WriteDownKeyEffectHandler(eventConsumer, controllerScope, direct.instance())
+            WriteDownKeyHandler(eventConsumer, controllerScope, direct.instance())
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                WriteDownKeyEffect.GoToBuy -> NavigationEffect.GoToBuy
-                WriteDownKeyEffect.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                WriteDownKeyEffect.GoToHome -> NavigationEffect.GoToHome
-                WriteDownKeyEffect.GoBack -> NavigationEffect.GoBack
-                is WriteDownKeyEffect.GoToPaperKey -> NavigationEffect.GoToPaperKey(
+                F.GoToBuy -> NavigationEffect.GoToBuy
+                F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+                F.GoToHome -> NavigationEffect.GoToHome
+                F.GoBack -> NavigationEffect.GoBack
+                is F.GoToPaperKey -> NavigationEffect.GoToPaperKey(
                     effect.phrase,
                     effect.onComplete
                 )
@@ -90,11 +93,11 @@ class WriteDownKeyController(args: Bundle? = null) :
         })
     )
 
-    override fun WriteDownKeyModel.render() = Unit
+    override fun M.render() = Unit
 
-    override fun bindView(output: Consumer<WriteDownKeyEvent>): Disposable {
-        close_button.setOnClickListener { output.accept(WriteDownKeyEvent.OnCloseClicked) }
-        faq_button.setOnClickListener { output.accept(WriteDownKeyEvent.OnFaqClicked) }
+    override fun bindView(output: Consumer<E>): Disposable {
+        close_button.setOnClickListener { output.accept(E.OnCloseClicked) }
+        faq_button.setOnClickListener { output.accept(E.OnFaqClicked) }
 
         button_write_down.setOnClickListener {
             val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
@@ -113,11 +116,11 @@ class WriteDownKeyController(args: Bundle? = null) :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == BRConstants.SHOW_PHRASE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            eventConsumer.accept(WriteDownKeyEvent.OnUserAuthenticated)
+            eventConsumer.accept(E.OnUserAuthenticated)
         }
     }
 
     override fun onAuthenticationSuccess() {
-        eventConsumer.accept(WriteDownKeyEvent.OnUserAuthenticated)
+        eventConsumer.accept(E.OnUserAuthenticated)
     }
 }

@@ -26,8 +26,9 @@ package com.breadwallet.ui.wallet
 
 import com.breadwallet.ext.replaceAt
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.wallet.WalletScreenEffect.*
-import com.breadwallet.ui.wallet.WalletScreenEvent.*
+import com.breadwallet.ui.wallet.WalletScreen.E
+import com.breadwallet.ui.wallet.WalletScreen.F
+import com.breadwallet.ui.wallet.WalletScreen.M
 import com.platform.entities.TxMetaDataEmpty
 import com.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Effects.effects
@@ -36,19 +37,18 @@ import com.spotify.mobius.Next.*
 import com.spotify.mobius.Update
 
 @Suppress("TooManyFunctions", "ComplexMethod")
-object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenEffect>,
-    WalletScreenUpdateSpec {
+object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
 
     private const val TX_METADATA_PREFETCH = 10
 
     override fun update(
-        model: WalletScreenModel,
-        event: WalletScreenEvent
-    ): Next<WalletScreenModel, WalletScreenEffect> = patch(model, event)
+        model: M,
+        event: E
+    ): Next<M, F> = patch(model, event)
 
     override fun onFilterSentClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 filterSent = !model.filterSent,
@@ -64,8 +64,8 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onFilterReceivedClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 filterReceived = !model.filterReceived,
@@ -81,8 +81,8 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onFilterPendingClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 filterPending = !model.filterPending,
@@ -98,8 +98,8 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onFilterCompleteClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 filterComplete = !model.filterComplete,
@@ -115,8 +115,8 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onSearchClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 isShowingSearch = true,
@@ -125,8 +125,8 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onSearchDismissClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 isShowingSearch = false,
@@ -140,50 +140,50 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onBackClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         dispatch(
             effects(
-                Nav.GoBack
+                F.Nav.GoBack
             )
         )
 
     override fun onChangeDisplayCurrencyClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(isCryptoPreferred = !model.isCryptoPreferred),
-            effects(UpdateCryptoPreferred(!model.isCryptoPreferred))
+            effects(F.UpdateCryptoPreferred(!model.isCryptoPreferred))
         )
 
     override fun onSendClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         dispatch(
             effects(
-                Nav.GoToSend(model.currencyCode)
+                F.Nav.GoToSend(model.currencyCode)
             )
         )
 
     override fun onReceiveClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         dispatch(
             effects(
-                Nav.GoToReceive(model.currencyCode)
+                F.Nav.GoToReceive(model.currencyCode)
             )
         )
 
     override fun onBrdRewardsClicked(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         if (model.isShowingBrdRewards)
-            dispatch(effects(Nav.GoToBrdRewards))
+            dispatch(effects(F.Nav.GoToBrdRewards))
         else noChange()
 
     override fun onShowReviewPrompt(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(
                 showReviewPrompt = true
@@ -191,29 +191,29 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onIsShowingReviewPrompt(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(isShowingReviewPrompt = true),
-            effects(RecordReviewPrompt)
+            effects(F.RecordReviewPrompt)
         )
 
     override fun onReviewPromptAccepted(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         dispatch(
             effects(
-                GoToReview
+                F.GoToReview
             )
         )
 
     override fun onChartDataPointReleased(
-        model: WalletScreenModel
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M
+    ): Next<M, F> =
         next(
             model.copy(selectedPriceDataPoint = null),
             effects(
-                TrackEvent(
+                F.TrackEvent(
                     String.format(
                         EventUtils.EVENT_WALLET_CHART_SCRUBBED,
                         model.currencyCode
@@ -223,9 +223,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onSyncProgressUpdated(
-        model: WalletScreenModel,
-        event: OnSyncProgressUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnSyncProgressUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 isSyncing = event.isSyncing,
@@ -235,9 +235,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onQueryChanged(
-        model: WalletScreenModel,
-        event: OnQueryChanged
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnQueryChanged
+    ): Next<M, F> =
         next(
             model.copy(
                 filterQuery = event.query,
@@ -252,9 +252,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onCurrencyNameUpdated(
-        model: WalletScreenModel,
-        event: OnCurrencyNameUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnCurrencyNameUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 currencyName = event.name
@@ -262,9 +262,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onBrdRewardsUpdated(
-        model: WalletScreenModel,
-        event: OnBrdRewardsUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnBrdRewardsUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 isShowingBrdRewards = event.showing
@@ -272,9 +272,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onBalanceUpdated(
-        model: WalletScreenModel,
-        event: OnBalanceUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnBalanceUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 balance = event.balance,
@@ -283,9 +283,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onFiatPricePerUpdated(
-        model: WalletScreenModel,
-        event: OnFiatPricePerUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnFiatPricePerUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 fiatPricePerUnit = event.pricePerUnit,
@@ -294,9 +294,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onIsTokenSupportedUpdated(
-        model: WalletScreenModel,
-        event: OnIsTokenSupportedUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnIsTokenSupportedUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 isShowingDelistedBanner = !event.isTokenSupported
@@ -304,13 +304,13 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onCryptoTransactionsUpdated(
-        model: WalletScreenModel,
-        event: OnCryptoTransactionsUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnCryptoTransactionsUpdated
+    ): Next<M, F> =
         if (event.transactions.isNotEmpty()) {
             dispatch(
                 setOf(
-                    ConvertCryptoTransactions(
+                    F.ConvertCryptoTransactions(
                         event.transactions
                     )
                 )
@@ -320,16 +320,16 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         }
 
     override fun onTransactionsUpdated(
-        model: WalletScreenModel,
-        event: OnTransactionsUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnTransactionsUpdated
+    ): Next<M, F> =
         if (model.transactions.isNullOrEmpty() && event.walletTransactions.isNotEmpty()) {
             val txHashes = event.walletTransactions.take(TX_METADATA_PREFETCH).map { it.txHash }
             next(
                 model.copy(transactions = event.walletTransactions),
                 effects(
-                    CheckReviewPrompt(model.currencyCode, event.walletTransactions),
-                    LoadTransactionMetaData(txHashes)
+                    F.CheckReviewPrompt(model.currencyCode, event.walletTransactions),
+                    F.LoadTransactionMetaData(txHashes)
                 )
             )
         } else {
@@ -341,9 +341,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         }
 
     override fun onTransactionMetaDataUpdated(
-        model: WalletScreenModel,
-        event: OnTransactionMetaDataUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> {
+        model: M,
+        event: E.OnTransactionMetaDataUpdated
+    ): Next<M, F> {
         val index = model.transactions.indexOfFirst { it.txHash == event.transactionHash }
         val transaction = model.transactions[index].copy(
             memo = when (event.transactionMetaData) {
@@ -358,13 +358,13 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
     }
 
     override fun onTransactionAdded(
-        model: WalletScreenModel,
-        event: OnTransactionAdded
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnTransactionAdded
+    ): Next<M, F> =
         if (model.transactions.isNullOrEmpty())
             next(
                 model.copy(transactions = listOf(event.walletTransaction) + model.transactions),
-                effects(CheckReviewPrompt(model.currencyCode, model.transactions + event.walletTransaction))
+                effects(F.CheckReviewPrompt(model.currencyCode, model.transactions + event.walletTransaction))
             )
         else
             next(
@@ -374,15 +374,15 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
             )
 
     override fun onVisibleTransactionsChanged(
-        model: WalletScreenModel,
-        event: OnVisibleTransactionsChanged
-    ): Next<WalletScreenModel, WalletScreenEffect> =
-        dispatch(effects(LoadTransactionMetaData(event.transactionHashes)))
+        model: M,
+        event: E.OnVisibleTransactionsChanged
+    ): Next<M, F> =
+        dispatch(effects(F.LoadTransactionMetaData(event.transactionHashes)))
 
     override fun onTransactionRemoved(
-        model: WalletScreenModel,
-        event: OnTransactionRemoved
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnTransactionRemoved
+    ): Next<M, F> =
         next(
             model.copy(
                 transactions = model.transactions - event.walletTransaction
@@ -390,9 +390,9 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onConnectionUpdated(
-        model: WalletScreenModel,
-        event: OnConnectionUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnConnectionUpdated
+    ): Next<M, F> =
         next(
             model.copy(
                 hasInternet = event.isConnected
@@ -400,36 +400,36 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onSendRequestGiven(
-        model: WalletScreenModel,
-        event: OnSendRequestGiven
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnSendRequestGiven
+    ): Next<M, F> =
         dispatch(
             effects(
-                Nav.GoToSend(model.currencyCode, event.cryptoRequest)
+                F.Nav.GoToSend(model.currencyCode, event.cryptoRequest)
             )
         )
 
     override fun onTransactionClicked(
-        model: WalletScreenModel,
-        event: OnTransactionClicked
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnTransactionClicked
+    ): Next<M, F> =
         dispatch(
             effects(
-                Nav.GoToTransaction(model.currencyCode, event.txHash)
+                F.Nav.GoToTransaction(model.currencyCode, event.txHash)
             )
         )
 
     override fun onHideReviewPrompt(
-        model: WalletScreenModel,
-        event: OnHideReviewPrompt
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnHideReviewPrompt
+    ): Next<M, F> =
         if (event.isDismissed) {
             next(
                 model.copy(
                     isShowingReviewPrompt = false,
                     showReviewPrompt = false
                 ),
-                effects(RecordReviewPromptDismissed)
+                effects(F.RecordReviewPromptDismissed)
             )
         } else {
             next(
@@ -441,22 +441,22 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         }
 
     override fun onIsCryptoPreferredLoaded(
-        model: WalletScreenModel,
-        event: OnIsCryptoPreferredLoaded
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnIsCryptoPreferredLoaded
+    ): Next<M, F> =
         next(model.copy(isCryptoPreferred = event.isCryptoPreferred))
 
     override fun onChartIntervalSelected(
-        model: WalletScreenModel,
-        event: OnChartIntervalSelected
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnChartIntervalSelected
+    ): Next<M, F> =
         next(
             model.copy(
                 priceChartInterval = event.interval
             ),
             effects(
-                LoadChartInterval(event.interval, model.currencyCode),
-                TrackEvent(
+                F.LoadChartInterval(event.interval, model.currencyCode),
+                F.TrackEvent(
                     String.format(
                         EventUtils.EVENT_WALLET_CHART_AXIS_TOGGLE,
                         model.currencyCode
@@ -466,17 +466,17 @@ object WalletUpdate : Update<WalletScreenModel, WalletScreenEvent, WalletScreenE
         )
 
     override fun onMarketChartDataUpdated(
-        model: WalletScreenModel,
-        event: OnMarketChartDataUpdated
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnMarketChartDataUpdated
+    ): Next<M, F> =
         next(
             model.copy(priceChartDataPoints = event.priceDataPoints)
         )
 
     override fun onChartDataPointSelected(
-        model: WalletScreenModel,
-        event: OnChartDataPointSelected
-    ): Next<WalletScreenModel, WalletScreenEffect> =
+        model: M,
+        event: E.OnChartDataPointSelected
+    ): Next<M, F> =
         next(
             model.copy(selectedPriceDataPoint = event.priceDataPoint)
         )

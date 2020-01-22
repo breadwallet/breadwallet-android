@@ -34,6 +34,9 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.importwallet.Import.E
+import com.breadwallet.ui.importwallet.Import.F
+import com.breadwallet.ui.importwallet.Import.M
 import com.breadwallet.ui.importwallet.Import.M.LoadingState
 import com.breadwallet.ui.scanner.ScannerController
 import kotlinx.android.synthetic.main.controller_import_wallet.*
@@ -60,7 +63,7 @@ private const val IMPORT_SUCCESS_DIALOG = "import_success"
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class ImportController(
     args: Bundle? = null
-) : BaseMobiusController<Import.M, Import.E, Import.F>(args),
+) : BaseMobiusController<M, E, F>(args),
     ScannerController.Listener,
     AlertDialogController.Listener,
     PasswordController.Listener,
@@ -92,14 +95,14 @@ class ImportController(
     }
 
     override val flowEffectHandler
-        get() = ImportEffects.createEffectHandler(
+        get() = ImportHandler.create(
             direct.instance(),
             direct.instance(),
             direct.instance(),
             view = this
         )
 
-    override fun bindView(modelFlow: Flow<Import.M>): Flow<Import.E> {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         modelFlow
             .map { it.loadingState }
             .distinctUntilChanged()
@@ -127,9 +130,9 @@ class ImportController(
             .launchIn(uiBindScope)
 
         return merge(
-            close_button.clicks().map { Import.E.OnCloseClicked },
-            faq_button.clicks().map { Import.E.OnFaqClicked },
-            scan_button.clicks().map { Import.E.OnScanClicked }
+            close_button.clicks().map { E.OnCloseClicked },
+            faq_button.clicks().map { E.OnFaqClicked },
+            scan_button.clicks().map { E.OnScanClicked }
         )
     }
 
@@ -138,34 +141,34 @@ class ImportController(
     }
 
     override fun onPasswordConfirmed(password: String) {
-        Import.E.OnPasswordEntered(password)
+        E.OnPasswordEntered(password)
             .run(eventConsumer::accept)
     }
 
     override fun onPasswordCancelled() {
-        Import.E.OnImportCancel
+        E.OnImportCancel
             .run(eventConsumer::accept)
     }
 
     override fun onLinkScanned(link: Link) {
         if (link is Link.ImportWallet) {
-            Import.E.OnKeyScanned(link.privateKey, link.passwordProtected)
+            E.OnKeyScanned(link.privateKey, link.passwordProtected)
                 .run(eventConsumer::accept)
         }
     }
 
     override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
         when (dialogId) {
-            CONFIRM_IMPORT_DIALOG -> Import.E.OnImportConfirm
-            IMPORT_SUCCESS_DIALOG -> Import.E.OnCloseClicked
+            CONFIRM_IMPORT_DIALOG -> E.OnImportConfirm
+            IMPORT_SUCCESS_DIALOG -> E.OnCloseClicked
             else -> null
         }?.run(eventConsumer::accept)
     }
 
     override fun onDismissed(dialogId: String, controller: AlertDialogController) {
         when (dialogId) {
-            CONFIRM_IMPORT_DIALOG -> Import.E.OnImportCancel
-            IMPORT_SUCCESS_DIALOG -> Import.E.OnCloseClicked
+            CONFIRM_IMPORT_DIALOG -> E.OnImportCancel
+            IMPORT_SUCCESS_DIALOG -> E.OnCloseClicked
             else -> null
         }?.run(eventConsumer::accept)
     }

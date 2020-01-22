@@ -54,6 +54,9 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.recovery.RecoveryKey.E
+import com.breadwallet.ui.recovery.RecoveryKey.F
+import com.breadwallet.ui.recovery.RecoveryKey.M
 import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
@@ -64,25 +67,25 @@ import org.kodein.di.erased.instance
 
 class RecoveryKeyController(
     args: Bundle? = null
-) : BaseMobiusController<RecoveryKeyModel, RecoveryKeyEvent, RecoveryKeyEffect>(args) {
+) : BaseMobiusController<M, E, F>(args) {
 
     constructor(
-        mode: RecoveryKeyModel.Mode,
+        mode: RecoveryKey.Mode,
         phrase: String? = null
     ) : this(
         bundleOf("mode" to mode.name)
     ) {
         launchPhrase = phrase
         if (launchPhrase != null) {
-            eventConsumer.accept(RecoveryKeyEvent.OnNextClicked)
+            eventConsumer.accept(E.OnNextClicked)
         }
     }
 
     private var launchPhrase: String? = null
-    private val mode = arg("mode", RecoveryKeyModel.Mode.RECOVER.name)
+    private val mode = arg("mode", RecoveryKey.Mode.RECOVER.name)
 
     init {
-        // TODO: This request code is used in RecoveryKeyEffectHandler without calling
+        // TODO: This request code is used in RecoveryKey.FHandler without calling
         //  Controller.startActivityForResult so we must register our interest manually.
         registerForActivityResult(BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE)
         registerForActivityResult(BRConstants.SHOW_PHRASE_REQUEST_CODE)
@@ -91,15 +94,15 @@ class RecoveryKeyController(
     override val layoutId: Int = R.layout.controller_recovery_key
 
     override val defaultModel
-        get() = RecoveryKeyModel.createWithOptionalPhrase(
-            mode = RecoveryKeyModel.Mode.valueOf(mode),
+        get() = RecoveryKey.M.createWithOptionalPhrase(
+            mode = RecoveryKey.Mode.valueOf(mode),
             phrase = launchPhrase
         )
     override val update = RecoveryKeyUpdate
-    override val effectHandler = CompositeEffectHandler.from<RecoveryKeyEffect, RecoveryKeyEvent>(
+    override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
             val resources = resources!!
-            RecoveryKeyEffectHandler(output, direct.instance(), direct.instance(), {
+            RecoveryKeyHandler(output, direct.instance(), direct.instance(), {
                 // unlink
                 BRDialog.showCustomDialog(
                     activity!!,
@@ -113,7 +116,7 @@ class RecoveryKeyController(
                             .clearApplicationUserData()
                     },
                     { brDialogView -> brDialogView.dismissWithAnimation() },
-                    { eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed) },
+                    { eventConsumer.accept(E.OnPhraseSaveFailed) },
                     0
                 )
             }, {
@@ -127,7 +130,7 @@ class RecoveryKeyController(
                     BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
                     null,
                     DialogInterface.OnDismissListener {
-                        eventConsumer.accept(RecoveryKeyEvent.OnPhraseSaveFailed)
+                        eventConsumer.accept(E.OnPhraseSaveFailed)
                     },
                     0
                 )
@@ -137,13 +140,13 @@ class RecoveryKeyController(
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                RecoveryKeyEffect.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                RecoveryKeyEffect.SetPinForRecovery -> NavigationEffect.GoToSetPin(
+                F.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+                F.SetPinForRecovery -> NavigationEffect.GoToSetPin(
                     onboarding = true,
                     skipWriteDownKey = true
                 )
-                RecoveryKeyEffect.GoToLoginForReset -> NavigationEffect.GoToLogin
-                RecoveryKeyEffect.SetPinForReset -> NavigationEffect.GoToSetPin()
+                F.GoToLoginForReset -> NavigationEffect.GoToLogin
+                F.SetPinForReset -> NavigationEffect.GoToSetPin()
                 else -> null
             }
         })
@@ -191,40 +194,40 @@ class RecoveryKeyController(
         }
     }
 
-    override fun bindView(output: Consumer<RecoveryKeyEvent>): Disposable {
+    override fun bindView(output: Consumer<E>): Disposable {
         val resources = resources!!
         when (currentModel.mode) {
-            RecoveryKeyModel.Mode.WIPE -> {
+            RecoveryKey.Mode.WIPE -> {
                 title.text = resources.getString(R.string.RecoveryKeyFlow_enterRecoveryKey)
                 description.text = resources.getString(R.string.WipeWallet_instruction)
             }
-            RecoveryKeyModel.Mode.RESET_PIN -> {
+            RecoveryKey.Mode.RESET_PIN -> {
                 title.text = resources.getString(R.string.RecoverWallet_header_reset_pin)
                 description.text =
                     resources.getString(R.string.RecoverWallet_subheader_reset_pin)
             }
-            RecoveryKeyModel.Mode.RECOVER -> Unit
+            RecoveryKey.Mode.RECOVER -> Unit
         }
 
         faq_button.setOnClickListener {
-            output.accept(RecoveryKeyEvent.OnFaqClicked)
+            output.accept(E.OnFaqClicked)
         }
         send_button.setOnClickListener {
-            output.accept(RecoveryKeyEvent.OnNextClicked)
+            output.accept(E.OnNextClicked)
         }
 
         // Bind paste event
         wordInputs.first().addEditTextEventListener { event ->
             if (event == BREdit.EditTextEvent.PASTE) {
                 val clipboardText = BRClipboardManager.getClipboard(activity)
-                output.accept(RecoveryKeyEvent.OnTextPasted(clipboardText))
+                output.accept(E.OnTextPasted(clipboardText))
             }
         }
 
         // Bind keyboard enter event
         wordInputs.last().setOnEditorActionListener { _, actionId, event ->
             if (event?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
-                output.accept(RecoveryKeyEvent.OnNextClicked)
+                output.accept(E.OnNextClicked)
             }
             false
         }
@@ -233,7 +236,7 @@ class RecoveryKeyController(
         wordInputs.forEachIndexed { index, input ->
             input.setOnFocusChangeListener { _, focused ->
                 if (focused)
-                    output.accept(RecoveryKeyEvent.OnFocusedWordChanged(index))
+                    output.accept(E.OnFocusedWordChanged(index))
             }
         }
 
@@ -250,8 +253,8 @@ class RecoveryKeyController(
         }
     }
 
-    override fun RecoveryKeyModel.render() {
-        ifChanged(RecoveryKeyModel::phrase) { phrase ->
+    override fun M.render() {
+        ifChanged(M::phrase) { phrase ->
             wordInputs.zip(phrase)
                 .filter { (input, word) ->
                     input.text.toString() != word
@@ -261,12 +264,12 @@ class RecoveryKeyController(
                 }
         }
 
-        ifChanged(RecoveryKeyModel::isLoading) {
+        ifChanged(M::isLoading) {
             // TODO: Show loading msg
             loading_view.isVisible = it
         }
 
-        ifChanged(RecoveryKeyModel::errors) { errors ->
+        ifChanged(M::errors) { errors ->
             wordInputs.zip(errors)
                 .forEach { (input, error) ->
                     if (error) {
@@ -282,13 +285,13 @@ class RecoveryKeyController(
 
     /** Creates a recovery word input text watcher and attaches it to [input]. */
     private fun createTextWatcher(
-        output: Consumer<RecoveryKeyEvent>,
+        output: Consumer<E>,
         index: Int,
         input: EditText
     ) = object : DefaultTextWatcher() {
         override fun afterTextChanged(s: Editable?) {
             val word = s?.toString() ?: ""
-            output.accept(RecoveryKeyEvent.OnWordChanged(index, word))
+            output.accept(E.OnWordChanged(index, word))
         }
     }.also(input::addTextChangedListener)
 
@@ -310,15 +313,15 @@ class RecoveryKeyController(
 
     override fun handleBack(): Boolean = currentModel.isLoading
 
-    private fun handlePutPhraseResult(resultCode: Int): RecoveryKeyEvent =
+    private fun handlePutPhraseResult(resultCode: Int): E =
         when (resultCode) {
-            Activity.RESULT_OK -> RecoveryKeyEvent.OnPhraseSaved
-            else -> RecoveryKeyEvent.OnPhraseSaveFailed
+            Activity.RESULT_OK -> E.OnPhraseSaved
+            else -> E.OnPhraseSaveFailed
         }
 
-    private fun handleShowPhraseResult(resultCode: Int): RecoveryKeyEvent =
+    private fun handleShowPhraseResult(resultCode: Int): E =
         when (resultCode) {
-            Activity.RESULT_OK -> RecoveryKeyEvent.OnShowPhraseGranted
-            else -> RecoveryKeyEvent.OnShowPhraseFailed
+            Activity.RESULT_OK -> E.OnShowPhraseGranted
+            else -> E.OnShowPhraseFailed
         }
 }

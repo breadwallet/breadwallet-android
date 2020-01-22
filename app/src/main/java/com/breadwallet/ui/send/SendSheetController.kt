@@ -54,7 +54,10 @@ import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.scanner.ScannerController
-import com.breadwallet.ui.send.SendSheetEvent.OnAmountChange
+import com.breadwallet.ui.send.SendSheet.E
+import com.breadwallet.ui.send.SendSheet.E.OnAmountChange
+import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.ui.send.SendSheet.M
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_send_sheet.*
 import kotlinx.coroutines.channels.awaitClose
@@ -77,7 +80,7 @@ private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
 class SendSheetController(args: Bundle? = null) :
-    BaseMobiusController<SendSheetModel, SendSheetEvent, SendSheetEffect>(args),
+    BaseMobiusController<M, E, F>(args),
     AuthenticationController.Listener,
     ConfirmTxController.Listener,
     AlertDialogController.Listener,
@@ -121,12 +124,12 @@ class SendSheetController(args: Bundle? = null) :
     override val layoutId = R.layout.controller_send_sheet
     override val init = SendSheetInit
     override val update = SendSheetUpdate
-    override val defaultModel: SendSheetModel
+    override val defaultModel: M
         get() {
             val fiatCode = BRSharedPrefs.getPreferredFiatIso()
             return cryptoRequest?.asSendSheetModel(fiatCode)
                 ?: cryptoRequestLink?.asSendSheetModel(fiatCode)
-                ?: SendSheetModel.createDefault(currencyCode, fiatCode)
+                ?: M.createDefault(currencyCode, fiatCode)
         }
 
     override val flowEffectHandler
@@ -161,37 +164,37 @@ class SendSheetController(args: Bundle? = null) :
         Utils.hideKeyboard(activity)
     }
 
-    override fun bindView(modelFlow: Flow<SendSheetModel>): Flow<SendSheetEvent> {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
 
         return merge(
             keyboard.bindInput(),
             textInputMemo.bindFocusChanged(),
-            textInputMemo.bindActionComplete(SendSheetEvent.OnSendClicked),
-            textInputMemo.clicks().map { SendSheetEvent.OnAmountEditDismissed },
-            textInputMemo.textChanges().map { SendSheetEvent.OnMemoChanged(it) },
+            textInputMemo.bindActionComplete(E.OnSendClicked),
+            textInputMemo.clicks().map { E.OnAmountEditDismissed },
+            textInputMemo.textChanges().map { E.OnMemoChanged(it) },
             textInputAddress.bindFocusChanged(),
-            textInputAddress.clicks().map { SendSheetEvent.OnAmountEditDismissed },
-            textInputAddress.bindActionComplete(SendSheetEvent.OnAmountEditDismissed),
-            textInputAddress.textChanges().map { SendSheetEvent.OnTargetAddressChanged(it) },
-            buttonFaq.clicks().map { SendSheetEvent.OnFaqClicked },
-            buttonScan.clicks().map { SendSheetEvent.OnScanClicked },
-            buttonSend.clicks().map { SendSheetEvent.OnSendClicked },
-            buttonClose.clicks().map { SendSheetEvent.OnCloseClicked },
-            buttonPaste.clicks().map { SendSheetEvent.OnPasteClicked },
-            layoutBackground.clicks().map { SendSheetEvent.OnCloseClicked },
-            textInputAmount.clicks().map { SendSheetEvent.OnAmountEditClicked },
-            buttonCurrencySelect.clicks().map { SendSheetEvent.OnToggleCurrencyClicked },
-            buttonRegular.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
-            buttonEconomy.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
-            buttonPriority.clicks().map { SendSheetEvent.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
+            textInputAddress.clicks().map { E.OnAmountEditDismissed },
+            textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
+            textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            buttonFaq.clicks().map { E.OnFaqClicked },
+            buttonScan.clicks().map { E.OnScanClicked },
+            buttonSend.clicks().map { E.OnSendClicked },
+            buttonClose.clicks().map { E.OnCloseClicked },
+            buttonPaste.clicks().map { E.OnPasteClicked },
+            layoutBackground.clicks().map { E.OnCloseClicked },
+            textInputAmount.clicks().map { E.OnAmountEditClicked },
+            buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
+            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
+            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
+            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
         ).onCompletion {
             layoutSignal.setOnTouchListener(null)
         }
     }
 
-    private fun EditText.bindActionComplete(output: SendSheetEvent) =
-        callbackFlow<SendSheetEvent> {
+    private fun EditText.bindActionComplete(output: E) =
+        callbackFlow<E> {
             setOnEditorActionListener { _, actionId, event ->
                 if (event?.keyCode == KeyEvent.KEYCODE_ENTER
                     || actionId == EditorInfo.IME_ACTION_DONE
@@ -206,10 +209,10 @@ class SendSheetController(args: Bundle? = null) :
         }
 
     private fun EditText.bindFocusChanged() =
-        callbackFlow<SendSheetEvent> {
+        callbackFlow<E> {
             View.OnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    offer(SendSheetEvent.OnAmountEditDismissed)
+                    offer(E.OnAmountEditDismissed)
                 } else {
                     Utils.hideKeyboard(activity)
                 }
@@ -219,7 +222,7 @@ class SendSheetController(args: Bundle? = null) :
         }
 
     private fun BRKeyboard.bindInput() =
-        callbackFlow<SendSheetEvent> {
+        callbackFlow<E> {
             setOnInsertListener { key ->
                 when {
                     key.isEmpty() -> offer(OnAmountChange.Delete)
@@ -232,42 +235,42 @@ class SendSheetController(args: Bundle? = null) :
         }
 
     @Suppress("ComplexMethod", "LongMethod")
-    override fun SendSheetModel.render() {
+    override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(SendSheetModel::targetInputError) {
+        ifChanged(M::targetInputError) {
             inputLayoutAddress.isErrorEnabled = targetInputError != null
             inputLayoutAddress.error = when (targetInputError) {
-                is SendSheetModel.InputError.Empty ->
+                is M.InputError.Empty ->
                     res.getString(R.string.Send_noAddress)
-                is SendSheetModel.InputError.Invalid ->
+                is M.InputError.Invalid ->
                     res.getString(R.string.Send_invalidAddressMessage, currencyCode.toUpperCase())
-                is SendSheetModel.InputError.ClipboardInvalid ->
+                is M.InputError.ClipboardInvalid ->
                     res.getString(
                         R.string.Send_invalidAddressOnPasteboard,
                         currencyCode.toUpperCase()
                     )
-                is SendSheetModel.InputError.ClipboardEmpty ->
+                is M.InputError.ClipboardEmpty ->
                     res.getString(R.string.Send_emptyPasteboard)
                 else -> null
             }
         }
 
-        ifChanged(SendSheetModel::amountInputError) {
+        ifChanged(M::amountInputError) {
             inputLayoutAmount.isErrorEnabled = amountInputError != null
             inputLayoutAmount.error = when (amountInputError) {
-                is SendSheetModel.InputError.Empty ->
+                is M.InputError.Empty ->
                     res.getString(R.string.Send_noAmount)
-                is SendSheetModel.InputError.BalanceTooLow ->
+                is M.InputError.BalanceTooLow ->
                     res.getString(R.string.Send_insufficientFunds)
                 else -> null
             }
         }
 
         ifChanged(
-            SendSheetModel::currencyCode,
-            SendSheetModel::fiatCode,
-            SendSheetModel::isAmountCrypto
+            M::currencyCode,
+            M::fiatCode,
+            M::isAmountCrypto
         ) {
             val sendTitle = res.getString(R.string.Send_title)
             val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
@@ -281,12 +284,12 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        ifChanged(SendSheetModel::isAmountEditVisible, ::showKeyboard)
+        ifChanged(M::isAmountEditVisible, ::showKeyboard)
 
         ifChanged(
-            SendSheetModel::rawAmount,
-            SendSheetModel::isAmountCrypto,
-            SendSheetModel::fiatCode
+            M::rawAmount,
+            M::isAmountCrypto,
+            M::fiatCode
         ) {
             val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
                 rawAmount
@@ -297,10 +300,10 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(
-            SendSheetModel::networkFee,
-            SendSheetModel::fiatNetworkFee,
-            SendSheetModel::feeCurrencyCode,
-            SendSheetModel::isAmountCrypto
+            M::networkFee,
+            M::fiatNetworkFee,
+            M::feeCurrencyCode,
+            M::isAmountCrypto
         ) {
             labelNetworkFee.isVisible = networkFee != BigDecimal.ZERO
             labelNetworkFee.text = res.getString(
@@ -314,9 +317,9 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(
-            SendSheetModel::balance,
-            SendSheetModel::fiatBalance,
-            SendSheetModel::isAmountCrypto
+            M::balance,
+            M::fiatBalance,
+            M::isAmountCrypto
         ) {
             labelBalance.text = res.getString(
                 R.string.Send_balance,
@@ -327,32 +330,32 @@ class SendSheetController(args: Bundle? = null) :
             )
         }
 
-        ifChanged(SendSheetModel::targetAddress) {
+        ifChanged(M::targetAddress) {
             if (textInputAddress.text.toString() != targetAddress) {
                 textInputAddress.setText(targetAddress, TextView.BufferType.EDITABLE)
             }
         }
 
-        ifChanged(SendSheetModel::memo) {
+        ifChanged(M::memo) {
             if (textInputMemo.text.toString() != memo) {
                 textInputMemo.setText(memo, TextView.BufferType.EDITABLE)
             }
         }
 
         ifChanged(
-            SendSheetModel::showFeeSelect,
-            SendSheetModel::transferSpeed
+            M::showFeeSelect,
+            M::transferSpeed
         ) {
             layoutFeeOption.isVisible = showFeeSelect
             setFeeOption(transferSpeed)
         }
 
-        ifChanged(SendSheetModel::transferSpeed, ::setFeeOption)
-        ifChanged(SendSheetModel::showFeeSelect) {
+        ifChanged(M::transferSpeed, ::setFeeOption)
+        ifChanged(M::showFeeSelect) {
             layoutFeeOption.isVisible = showFeeSelect
         }
 
-        ifChanged(SendSheetModel::isConfirmingTx) {
+        ifChanged(M::isConfirmingTx) {
             val isConfirmOnTop = router.backstack.first().controller() is ConfirmTxController
             if (isConfirmingTx && !isConfirmOnTop) {
                 val controller = ConfirmTxController(
@@ -373,7 +376,7 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        ifChanged(SendSheetModel::isAuthenticating) {
+        ifChanged(M::isAuthenticating) {
             val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
             if (isAuthenticating && !isAuthOnTop) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
@@ -393,14 +396,14 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        ifChanged(SendSheetModel::isBitpayPayment) {
+        ifChanged(M::isBitpayPayment) {
             textInputAddress.isEnabled = !isBitpayPayment
             textInputAmount.isEnabled = !isBitpayPayment
             buttonScan.isVisible = !isBitpayPayment
             buttonPaste.isVisible = !isBitpayPayment
         }
 
-        ifChanged(SendSheetModel::isFetchingPayment, SendSheetModel::isSendingTransaction) {
+        ifChanged(M::isFetchingPayment, M::isSendingTransaction) {
             loadingView.isVisible = isFetchingPayment || isSendingTransaction
         }
     }
@@ -414,7 +417,7 @@ class SendSheetController(args: Bundle? = null) :
 
     override fun onLinkScanned(link: Link) {
         if (link is Link.CryptoRequestUrl) {
-            SendSheetEvent.OnRequestScanned(
+            E.OnRequestScanned(
                 currencyCode = link.currencyCode,
                 amount = link.amount,
                 targetAddress = link.address
@@ -423,29 +426,29 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     override fun onAuthenticationSuccess() {
-        eventConsumer.accept(SendSheetEvent.OnAuthSuccess)
+        eventConsumer.accept(E.OnAuthSuccess)
     }
 
     override fun onAuthenticationCancelled() {
-        eventConsumer.accept(SendSheetEvent.OnAuthCancelled)
+        eventConsumer.accept(E.OnAuthCancelled)
     }
 
     override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
         when (dialogId) {
             DIALOG_NO_ETH_FOR_TOKEN_TRANSFER -> {
-                eventConsumer.accept(SendSheetEvent.GoToEthWallet)
+                eventConsumer.accept(E.GoToEthWallet)
             }
         }
     }
 
     override fun onPositiveClicked(controller: ConfirmTxController) {
         eventConsumer
-            .accept(SendSheetEvent.ConfirmTx.OnConfirmClicked)
+            .accept(E.ConfirmTx.OnConfirmClicked)
     }
 
     override fun onNegativeClicked(controller: ConfirmTxController) {
         eventConsumer
-            .accept(SendSheetEvent.ConfirmTx.OnCancelClicked)
+            .accept(E.ConfirmTx.OnCancelClicked)
     }
 
     private fun setFeeOption(feeOption: TransferSpeed) {

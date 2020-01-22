@@ -25,39 +25,41 @@
 package com.breadwallet.ui.writedownkey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.ui.writedownkey.WriteDownKey.E
+import com.breadwallet.ui.writedownkey.WriteDownKey.F
+import com.breadwallet.ui.writedownkey.WriteDownKey.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
-object WriteDownKeyUpdate : Update<WriteDownKeyModel, WriteDownKeyEvent, WriteDownKeyEffect>,
-    WriteDownKeyUpdateSpec {
+object WriteDownKeyUpdate : Update<M, E, F>, WriteDownKeyUpdateSpec {
 
-    override fun update(model: WriteDownKeyModel, event: WriteDownKeyEvent) = patch(model, event)
+    override fun update(model: M, event: E) = patch(model, event)
 
-    override fun onCloseClicked(model: WriteDownKeyModel): Next<WriteDownKeyModel, WriteDownKeyEffect> {
+    override fun onCloseClicked(model: M): Next<M, F> {
         val effect = when (model.onComplete) {
-            OnCompleteAction.GO_TO_BUY -> WriteDownKeyEffect.GoToBuy
-            OnCompleteAction.GO_HOME -> WriteDownKeyEffect.GoToHome
+            OnCompleteAction.GO_TO_BUY -> F.GoToBuy
+            OnCompleteAction.GO_HOME -> F.GoToHome
         }
         return dispatch(setOf(effect))
     }
 
-    override fun onFaqClicked(model: WriteDownKeyModel): Next<WriteDownKeyModel, WriteDownKeyEffect> =
-        dispatch(setOf(WriteDownKeyEffect.GoToFaq))
+    override fun onFaqClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToFaq))
 
-    override fun onWriteDownClicked(model: WriteDownKeyModel): Next<WriteDownKeyModel, WriteDownKeyEffect> =
-        dispatch(setOf(WriteDownKeyEffect.ShowAuthPrompt))
+    override fun onWriteDownClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.ShowAuthPrompt))
 
-    override fun onGetPhraseFailed(model: WriteDownKeyModel): Next<WriteDownKeyModel, WriteDownKeyEffect> =
+    override fun onGetPhraseFailed(model: M): Next<M, F> =
         noChange()
 
-    override fun onUserAuthenticated(model: WriteDownKeyModel): Next<WriteDownKeyModel, WriteDownKeyEffect> =
-        dispatch(setOf(WriteDownKeyEffect.GetPhrase))
+    override fun onUserAuthenticated(model: M): Next<M, F> =
+        dispatch(setOf(F.GetPhrase))
 
     override fun onPhraseRecovered(
-        model: WriteDownKeyModel,
-        event: WriteDownKeyEvent.OnPhraseRecovered
-    ): Next<WriteDownKeyModel, WriteDownKeyEffect> =
-        dispatch(setOf(WriteDownKeyEffect.GoToPaperKey(event.phrase, model.onComplete)))
+        model: M,
+        event: E.OnPhraseRecovered
+    ): Next<M, F> =
+        dispatch(setOf(F.GoToPaperKey(event.phrase, model.onComplete)))
 }

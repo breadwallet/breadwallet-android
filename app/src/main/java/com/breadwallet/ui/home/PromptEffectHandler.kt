@@ -31,6 +31,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.ui.home.HomeScreen.E
+import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -40,9 +42,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 class PromptEffectHandler(
-    private val output: Consumer<HomeScreenEvent>,
+    private val output: Consumer<E>,
     private val context: Context
-) : Connection<HomeScreenEffect>, CoroutineScope {
+) : Connection<F>, CoroutineScope {
 
     companion object {
         private const val PROMPT_DISMISSED_FINGERPRINT = "fingerprint"
@@ -50,12 +52,12 @@ class PromptEffectHandler(
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
-    override fun accept(effect: HomeScreenEffect) {
+    override fun accept(effect: F) {
         when (effect) {
-            HomeScreenEffect.LoadPrompt -> loadPrompt()
-            HomeScreenEffect.StartRescan -> rescan()
-            is HomeScreenEffect.DismissPrompt -> dismissPrompt(effect)
-            is HomeScreenEffect.SaveEmail -> saveEmail(effect)
+            F.LoadPrompt -> loadPrompt()
+            F.StartRescan -> rescan()
+            is F.DismissPrompt -> dismissPrompt(effect)
+            is F.SaveEmail -> saveEmail(effect)
         }
     }
 
@@ -75,7 +77,7 @@ class PromptEffectHandler(
         if (promptId != null) {
             EventUtils.pushEvent(getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
         }
-        output.accept(HomeScreenEvent.OnPromptLoaded(promptId))
+        output.accept(E.OnPromptLoaded(promptId))
     }
 
     private fun shouldPrompt(promptItem: PromptItem): Boolean {
@@ -95,7 +97,7 @@ class PromptEffectHandler(
         }
     }
 
-    private fun dismissPrompt(effect: HomeScreenEffect.DismissPrompt) {
+    private fun dismissPrompt(effect: F.DismissPrompt) {
         when (effect.promptItem) {
             PromptItem.FINGER_PRINT -> {
                 BRSharedPrefs.putPromptDismissed(
@@ -129,7 +131,7 @@ class PromptEffectHandler(
         // )
     }
 
-    private fun saveEmail(effect: HomeScreenEffect.SaveEmail) {
+    private fun saveEmail(effect: F.SaveEmail) {
         UserMetricsUtil.makeEmailOptInRequest(context, effect.email)
         BRSharedPrefs.putEmailOptIn(context, true)
     }

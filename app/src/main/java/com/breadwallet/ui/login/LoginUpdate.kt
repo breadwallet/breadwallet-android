@@ -25,60 +25,63 @@
 package com.breadwallet.ui.login
 
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.login.LoginScreen.E
+import com.breadwallet.ui.login.LoginScreen.F
+import com.breadwallet.ui.login.LoginScreen.M
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
-object LoginUpdate : Update<LoginModel, LoginEvent, LoginEffect>, LoginUpdateSpec {
+object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
 
-    override fun update(model: LoginModel, event: LoginEvent): Next<LoginModel, LoginEffect> =
+    override fun update(model: M, event: E): Next<M, F> =
         patch(model, event)
 
-    override fun onFingerprintClicked(model: LoginModel): Next<LoginModel, LoginEffect> =
-        dispatch(setOf(LoginEffect.ShowFingerprintController))
+    override fun onFingerprintClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.ShowFingerprintController))
 
-    override fun onAuthenticationSuccess(model: LoginModel): Next<LoginModel, LoginEffect> =
+    override fun onAuthenticationSuccess(model: M): Next<M, F> =
         dispatch(
             setOf(
-                LoginEffect.AuthenticationSuccess,
-                LoginEffect.TrackEvent(EventUtils.EVENT_LOGIN_SUCCESS)
+                F.AuthenticationSuccess,
+                F.TrackEvent(EventUtils.EVENT_LOGIN_SUCCESS)
             )
         )
 
-    override fun onAuthenticationFailed(model: LoginModel): Next<LoginModel, LoginEffect> =
+    override fun onAuthenticationFailed(model: M): Next<M, F> =
         dispatch(
             setOf(
-                LoginEffect.AuthenticationFailed,
-                LoginEffect.TrackEvent(EventUtils.EVENT_LOGIN_FAILED)
+                F.AuthenticationFailed,
+                F.TrackEvent(EventUtils.EVENT_LOGIN_FAILED)
             )
         )
 
-    override fun onPinLocked(model: LoginModel): Next<LoginModel, LoginEffect> =
-        dispatch(setOf(LoginEffect.GoToDisableScreen))
+    override fun onPinLocked(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToDisableScreen))
 
-    override fun onUnlockAnimationEnd(model: LoginModel): Next<LoginModel, LoginEffect> {
+    override fun onUnlockAnimationEnd(model: M): Next<M, F> {
         val effect = when {
             model.extraUrl.isNotBlank() ->
-                LoginEffect.GoToDeepLink(model.extraUrl)
-            model.showHomeScreen -> LoginEffect.GoToHome
+                F.GoToDeepLink(model.extraUrl)
+            model.showHomeScreen -> F.GoToHome
             model.currentCurrencyCode.isNotBlank() ->
-                LoginEffect.GoToWallet(model.currentCurrencyCode)
-            else -> LoginEffect.GoToHome
+                F.GoToWallet(model.currentCurrencyCode)
+            else -> F.GoToHome
         }
         return dispatch(setOf(effect))
     }
 
     override fun onFingerprintEnabled(
-        model: LoginModel,
-        event: LoginEvent.OnFingerprintEnabled
-    ): Next<LoginModel, LoginEffect> =
+        model: M,
+        event: E.OnFingerprintEnabled
+    ): Next<M, F> =
         next(model.copy(fingerprintEnable = event.enabled))
 
     override fun onLoginPreferencesLoaded(
-        model: LoginModel,
-        event: LoginEvent.OnLoginPreferencesLoaded
-    ): Next<LoginModel, LoginEffect> =
+        model: M,
+        event: E.OnLoginPreferencesLoaded
+    ): Next<M, F> =
         next(
             model.copy(
                 showHomeScreen = event.showHomeScreen,

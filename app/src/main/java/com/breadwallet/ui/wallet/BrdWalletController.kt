@@ -46,9 +46,7 @@ import java.io.File
 /**
  * TODO: All of this should be merged into [WalletController].
  */
-class BrdWalletController : WalletController(
-    bundleOf(EXTRA_CURRENCY_CODE to "BRD")
-) {
+class BrdWalletController : WalletController("BRD") {
     private var mAppBarLayoutRoot: AppBarLayout? = null
     private val mCollapseRewardsDelayHandler = Handler()
     private var mCollapseRewardsRunnable: Runnable? = null

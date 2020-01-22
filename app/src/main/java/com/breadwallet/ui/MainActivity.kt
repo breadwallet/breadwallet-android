@@ -40,7 +40,6 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -54,8 +53,8 @@ import com.breadwallet.ui.migrate.MigrateController
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
+import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import com.breadwallet.ui.recovery.RecoveryKeyModel
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.web.WebController
@@ -108,8 +107,8 @@ class MainActivity : BRActivity() {
         // Allow launching with a phrase to recover automatically
         if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
             val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
-            if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKeyModel.RECOVERY_KEY_WORDS_COUNT) {
-                val controller = RecoveryKeyController(RecoveryKeyModel.Mode.RECOVER, phrase)
+            if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
+                val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
                 router.setRoot(RouterTransaction.with(controller))
                 return
             }

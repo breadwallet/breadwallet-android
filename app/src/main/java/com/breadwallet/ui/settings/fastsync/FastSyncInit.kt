@@ -24,13 +24,16 @@
  */
 package com.breadwallet.ui.settings.fastsync
 
+import com.breadwallet.ui.settings.fastsync.FastSync.F
+import com.breadwallet.ui.settings.fastsync.FastSync.M
 import com.spotify.mobius.First
+import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 
-object FastSyncInit : Init<FastSyncModel, FastSyncEffect> {
-    override fun init(model: FastSyncModel): First<FastSyncModel, FastSyncEffect> =
-        First.first(
+object FastSyncInit : Init<M, F> {
+    override fun init(model: M): First<M, F> =
+        first(
             model,
-            setOf(FastSyncEffect.LoadCurrencyIds)
+            setOf(F.LoadCurrencyIds)
         )
 }

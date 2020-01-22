@@ -50,6 +50,9 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.txdetails.TxDetails.E
+import com.breadwallet.ui.txdetails.TxDetails.F
+import com.breadwallet.ui.txdetails.TxDetails.M
 import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
@@ -69,7 +72,7 @@ import java.util.Date
  */
 class TxDetailsController(
     args: Bundle? = null
-) : BaseMobiusController<TxDetailsModel, TxDetailsEvent, TxDetailsEffect>(args) {
+) : BaseMobiusController<M, E, F>(args) {
 
     companion object {
         private const val CURRENCY_CODE = "currencyCode"
@@ -94,45 +97,45 @@ class TxDetailsController(
     override val layoutId = R.layout.transaction_details
     override val init = TxDetailsInit
     override val update = TxDetailsUpdate
-    override val defaultModel: TxDetailsModel
-        get() = TxDetailsModel.createDefault(
+    override val defaultModel: M
+        get() = M.createDefault(
             currencyCode,
             transactionHash,
             BRSharedPrefs.getPreferredFiatIso(),
             BRSharedPrefs.isCryptoPreferred()
         )
 
-    override val effectHandler: Connectable<TxDetailsEffect, TxDetailsEvent> =
+    override val effectHandler: Connectable<F, E> =
         CompositeEffectHandler.from(
-            Connectable { output: Consumer<TxDetailsEvent> ->
-                TxDetailsEffectHandler(output, activity!!)
+            Connectable { output: Consumer<E> ->
+                TxDetailsHandler(output, checkNotNull(activity))
             },
             nestedConnectable({ output: Consumer<BreadBoxEvent> ->
                 BreadBoxEffectHandler(output, currencyCode, direct.instance())
-            }, { effect: TxDetailsEffect ->
+            }, { effect: F ->
                 when (effect) {
-                    is TxDetailsEffect.LoadTransaction ->
+                    is F.LoadTransaction ->
                         BreadBoxEffect.LoadTransaction(transactionHash)
                     else -> null
                 }
             }, { event: BreadBoxEvent ->
                 when (event) {
                     is BreadBoxEvent.OnTransactionUpdated ->
-                        TxDetailsEvent.OnTransactionUpdated(
+                        E.OnTransactionUpdated(
                             event.transaction,
                             event.gasPrice,
                             event.gasLimit
                         )
                     else -> null
-                } as? TxDetailsEvent
+                } as? E
             }),
             nestedConnectable({ output: Consumer<MetaDataEvent> ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }, { effect: TxDetailsEffect ->
+            }, { effect: F ->
                 when (effect) {
-                    is TxDetailsEffect.LoadTransactionMetaData ->
+                    is F.LoadTransactionMetaData ->
                         MetaDataEffect.LoadTransactionMetaData(effect.transactionHash)
-                    is TxDetailsEffect.UpdateMemo ->
+                    is F.UpdateMemo ->
                         MetaDataEffect.UpdateTransactionComment(
                             effect.transactionHash,
                             effect.memo
@@ -142,15 +145,15 @@ class TxDetailsController(
             }, { event: MetaDataEvent ->
                 when (event) {
                     is MetaDataEvent.OnTransactionMetaDataUpdated ->
-                        TxDetailsEvent.OnMetaDataUpdated(event.txMetaData)
+                        E.OnMetaDataUpdated(event.txMetaData)
                     else -> null
-                } as? TxDetailsEvent
+                } as? E
             }),
             nestedConnectable({
                 direct.instance<RouterNavigationEffectHandler>()
             }) { effect ->
                 when (effect) {
-                    TxDetailsEffect.Close -> NavigationEffect.GoBack
+                    F.Close -> NavigationEffect.GoBack
                     else -> null
                 }
             }
@@ -170,10 +173,10 @@ class TxDetailsController(
         }
     }
 
-    override fun bindView(output: Consumer<TxDetailsEvent>) = output.view {
-        close_button.onClick(TxDetailsEvent.OnClosedClicked)
-        show_hide_details.onClick(TxDetailsEvent.OnShowHideDetailsClicked)
-        memo_input.onTextChanged { TxDetailsEvent.OnMemoChanged(it) }
+    override fun bindView(output: Consumer<E>) = output.view {
+        close_button.onClick(E.OnClosedClicked)
+        show_hide_details.onClick(E.OnShowHideDetailsClicked)
+        memo_input.onTextChanged { E.OnMemoChanged(it) }
 
         transaction_id.setOnClickListener {
             transaction_id.text?.toString()?.run(::copyToClipboard)
@@ -199,10 +202,10 @@ class TxDetailsController(
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun TxDetailsModel.render() {
+    override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(TxDetailsModel::showDetails) {
+        ifChanged(M::showDetails) {
             details_container.isVisible = showDetails
             show_hide_details.setText(
                 when {
@@ -212,7 +215,7 @@ class TxDetailsController(
             )
         }
 
-        ifChanged(TxDetailsModel::isFeeForToken) {
+        ifChanged(M::isFeeForToken) {
             if (isFeeForToken) { // it's a token transfer ETH tx
                 memo_input.setText(
                     String.format(
@@ -224,7 +227,7 @@ class TxDetailsController(
             }
         }
 
-        ifChanged(TxDetailsModel::isReceived) {
+        ifChanged(M::isReceived) {
             showSentViews(!isReceived)
 
             tx_action.setText(
@@ -253,9 +256,9 @@ class TxDetailsController(
 
         if (!isReceived) {
             ifChanged(
-                TxDetailsModel::isEth,
-                TxDetailsModel::gasPrice,
-                TxDetailsModel::gasLimit
+                M::isEth,
+                M::gasPrice,
+                M::gasLimit
             ) {
                 showEthViews(isEth)
 
@@ -269,13 +272,13 @@ class TxDetailsController(
                 }
             }
 
-            ifChanged(TxDetailsModel::transactionTotal) {
+            ifChanged(M::transactionTotal) {
                 fee_secondary.text = transactionTotal.formatCryptoForUi(currencyCode)
             }
 
             ifChanged(
-                TxDetailsModel::fee,
-                TxDetailsModel::isErc20
+                M::fee,
+                M::isErc20
             ) {
                 showTotalCost(!isErc20)
 
@@ -292,15 +295,15 @@ class TxDetailsController(
             }
         }
 
-        ifChanged(TxDetailsModel::blockNumber) {
+        ifChanged(M::blockNumber) {
             showConfirmedView(blockNumber != 0)
         }
 
         ifChanged(
-            TxDetailsModel::fiatAmountWhenSent,
-            TxDetailsModel::exchangeCurrencyCode,
-            TxDetailsModel::fiatAmountNow,
-            TxDetailsModel::preferredFiatIso
+            M::fiatAmountWhenSent,
+            M::exchangeCurrencyCode,
+            M::fiatAmountNow,
+            M::preferredFiatIso
         ) {
             val amountNow = fiatAmountNow.formatFiatForUi(preferredFiatIso)
             val showWhenSent = fiatAmountWhenSent.compareTo(BigDecimal.ZERO) != 0
@@ -319,7 +322,7 @@ class TxDetailsController(
             amount_now.visibility = if (!showWhenSent) View.VISIBLE else View.INVISIBLE
         }
 
-        ifChanged(TxDetailsModel::toOrFromAddress) {
+        ifChanged(M::toOrFromAddress) {
             // TODO: Do we need a string res for no hash text?
             tx_to_from_address.text = when {
                 toOrFromAddress.isNotBlank() -> toOrFromAddress
@@ -327,22 +330,22 @@ class TxDetailsController(
             }
         }
 
-        ifChanged(TxDetailsModel::cryptoTransferredAmount) {
+        ifChanged(M::cryptoTransferredAmount) {
             tx_amount.text = cryptoTransferredAmount.formatCryptoForUi(
                 currencyCode,
                 negate = !isReceived
             )
         }
 
-        ifChanged(TxDetailsModel::memo) {
+        ifChanged(M::memo) {
             if (memo_input.text.isNullOrEmpty() && !isFeeForToken) memo_input.setText(memo)
         }
 
         ifChanged(
-            TxDetailsModel::exchangeCurrencyCode,
-            TxDetailsModel::preferredFiatIso,
-            TxDetailsModel::exchangeRate,
-            TxDetailsModel::isReceived
+            M::exchangeCurrencyCode,
+            M::preferredFiatIso,
+            M::exchangeRate,
+            M::isReceived
         ) {
             exchange_rate_label.setText(
                 when {
@@ -358,19 +361,19 @@ class TxDetailsController(
             )
         }
 
-        ifChanged(TxDetailsModel::confirmationDate) {
+        ifChanged(M::confirmationDate) {
             tx_date.text = BRDateUtil.getFullDate((confirmationDate ?: Date()).time)
         }
 
-        ifChanged(TxDetailsModel::transactionHash) {
+        ifChanged(M::transactionHash) {
             transaction_id.text = transactionHash
         }
 
-        ifChanged(TxDetailsModel::confirmedInBlockNumber) {
+        ifChanged(M::confirmedInBlockNumber) {
             confirmed_in_block_number.text = confirmedInBlockNumber
         }
 
-        ifChanged(TxDetailsModel::transactionState) {
+        ifChanged(M::transactionState) {
             when (transactionState) {
                 TransactionState.COMPLETED -> tx_status.setText(R.string.Transaction_complete)
                 TransactionState.FAILED -> {

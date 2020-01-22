@@ -41,6 +41,9 @@ import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.login.LoginScreen.E
+import com.breadwallet.ui.login.LoginScreen.F
+import com.breadwallet.ui.login.LoginScreen.M
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
@@ -51,13 +54,11 @@ import kotlinx.android.synthetic.main.pin_digits.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class LoginController(args: Bundle? = null) :
-    BaseMobiusController<LoginModel, LoginEvent, LoginEffect>(args),
-    AuthenticationController.Listener {
+private const val EXTRA_URL = "PENDING_URL"
 
-    companion object {
-        private const val EXTRA_URL = "com.breadwallet.ui.login.LoginController.PENDING_URL"
-    }
+class LoginController(args: Bundle? = null) :
+    BaseMobiusController<M, E, F>(args),
+    AuthenticationController.Listener {
 
     override val layoutId = R.layout.controller_login
 
@@ -65,14 +66,12 @@ class LoginController(args: Bundle? = null) :
         bundleOf(EXTRA_URL to intentUrl)
     )
 
-    override val defaultModel = LoginModel.createDefault(
-        arg(EXTRA_URL, "")
-    )
+    override val defaultModel = M.createDefault(arg(EXTRA_URL, ""))
     override val update = LoginUpdate
     override val init = LoginInit
-    override val effectHandler: Connectable<LoginEffect, LoginEvent> = CompositeEffectHandler.from(
+    override val effectHandler: Connectable<F, E> = CompositeEffectHandler.from(
         Connectable { output ->
-            LoginEffectHandler(
+            LoginScreenHandler(
                 output,
                 direct.instance(),
                 shakeKeyboard = {
@@ -87,39 +86,39 @@ class LoginController(args: Bundle? = null) :
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
-                is LoginEffect.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
-                LoginEffect.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
-                LoginEffect.GoToHome -> NavigationEffect.GoToHome
+                is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                F.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
+                F.GoToHome -> NavigationEffect.GoToHome
                 else -> null
             }
         })
     )
 
-    override fun bindView(output: Consumer<LoginEvent>): Disposable {
+    override fun bindView(output: Consumer<E>): Disposable {
         val pinListener = object : PinLayout.PinLayoutListener {
             override fun onPinLocked() {
-                output.accept(LoginEvent.OnPinLocked)
+                output.accept(E.OnPinLocked)
             }
 
             override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
                 output.accept(
                     if (isPinCorrect) {
-                        LoginEvent.OnAuthenticationSuccess
+                        E.OnAuthenticationSuccess
                     } else {
-                        LoginEvent.OnAuthenticationFailed
+                        E.OnAuthenticationFailed
                     }
                 )
             }
         }
         pin_digits.setup(brkeyboard, pinListener)
-        fingerprint_icon.setOnClickListener { output.accept(LoginEvent.OnFingerprintClicked) }
+        fingerprint_icon.setOnClickListener { output.accept(E.OnFingerprintClicked) }
         return Disposable {
             pin_digits.cleanUp()
         }
     }
 
-    override fun LoginModel.render() {
-        ifChanged(LoginModel::fingerprintEnable) {
+    override fun M.render() {
+        ifChanged(M::fingerprintEnable) {
             fingerprint_icon.isVisible = fingerprintEnable
         }
     }
@@ -148,7 +147,7 @@ class LoginController(args: Bundle? = null) :
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     Handler().postDelayed({
-                        eventConsumer.accept(LoginEvent.OnUnlockAnimationEnd)
+                        eventConsumer.accept(E.OnUnlockAnimationEnd)
                     }, DateUtils.SECOND_IN_MILLIS / 2)
                 }
             })
@@ -165,6 +164,6 @@ class LoginController(args: Bundle? = null) :
 
     override fun onAuthenticationSuccess() {
         super.onAuthenticationSuccess()
-        eventConsumer.accept(LoginEvent.OnAuthenticationSuccess)
+        eventConsumer.accept(E.OnAuthenticationSuccess)
     }
 }

@@ -51,7 +51,7 @@ class DisplayCurrencyController :
     override val init = DisplayCurrencyInit
     override val update = CurrencyUpdate
     override val flowEffectHandler: FlowTransformer<DisplayCurrency.F, DisplayCurrency.E>?
-        get() = DisplayCurrencyEffects.createEffectHandler(direct.instance())
+        get() = DisplayCurrencyHandler.create(direct.instance())
 
     override fun bindView(modelFlow: Flow<DisplayCurrency.M>): Flow<DisplayCurrency.E> {
         currency_list.layoutManager = LinearLayoutManager(checkNotNull(activity))

@@ -30,16 +30,16 @@ import android.animation.AnimatorListenerAdapter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.transition.TransitionManager
 import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
@@ -56,14 +56,17 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.asSupportUrl
+import com.breadwallet.ui.wallet.WalletScreen.E
+import com.breadwallet.ui.wallet.WalletScreen.F
+import com.breadwallet.ui.wallet.WalletScreen.M
 import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.util.WalletDisplayUtils
 import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.chart_view.*
+import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.view_delisted_token.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
@@ -79,12 +82,18 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val EXTRA_CURRENCY_CODE = "currency_code"
+private const val SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm"
+private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
+private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, YYYY"
+private const val SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f
+private const val MARKET_CHART_ANIMATION_DURATION = 500L
+private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
+
 /**
  * TODO: Remaining work: Make review prompt a controller.
  */
-open class WalletController(
-    args: Bundle
-) : BaseMobiusController<WalletScreenModel, WalletScreenEvent, WalletScreenEffect>(args) {
+open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     constructor(currencyCode: String) : this(
         bundleOf(EXTRA_CURRENCY_CODE to currencyCode)
@@ -93,23 +102,15 @@ open class WalletController(
     private val currencyCode = arg<String>(EXTRA_CURRENCY_CODE)
 
     companion object {
-        const val EXTRA_CURRENCY_CODE =
-            "com.breadwallet.ui.wallet.WalletController.EXTRA_CURRENCY_CODE"
-        private const val SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm"
-        private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
-        private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, YYYY"
-        private const val SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f
-        private const val MARKET_CHART_ANIMATION_DURATION = 500L
-        private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
     }
 
     override val layoutId = R.layout.controller_wallet
 
-    override val defaultModel = WalletScreenModel.createDefault(currencyCode)
+    override val defaultModel = WalletScreen.M.createDefault(currencyCode)
     override val init = WalletInit
     override val update = WalletUpdate
     override val flowEffectHandler
-        get() = WalletScreenEffectHandler.createEffectHandler(
+        get() = WalletScreenHandler.createEffectHandler(
             checkNotNull(applicationContext),
             direct.instance(),
             direct.instance(),
@@ -151,7 +152,7 @@ open class WalletController(
         }
     }
 
-    override fun bindView(modelFlow: Flow<WalletScreenModel>): Flow<WalletScreenEvent> {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         // Tx Action buttons
         send_button.setHasShadow(false)
         receive_button.setHasShadow(false)
@@ -163,17 +164,17 @@ open class WalletController(
         }
 
         return merge(
-            send_button.clicks().map { WalletScreenEvent.OnSendClicked },
-            receive_button.clicks().map { WalletScreenEvent.OnReceiveClicked },
-            search_icon.clicks().map { WalletScreenEvent.OnSearchClicked },
-            back_icon.clicks().map { WalletScreenEvent.OnBackClicked },
+            send_button.clicks().map { E.OnSendClicked },
+            receive_button.clicks().map { E.OnReceiveClicked },
+            search_icon.clicks().map { E.OnSearchClicked },
+            back_icon.clicks().map { E.OnBackClicked },
             bindTxList(),
             bindIntervalClicks(),
             bindSparkLineScrubbing(),
             merge(
                 balance_primary.clicks(),
                 balance_secondary.clicks()
-            ).map { WalletScreenEvent.OnChangeDisplayCurrencyClicked },
+            ).map { E.OnChangeDisplayCurrencyClicked },
             callbackFlow {
                 search_bar.setEventOutput(channel)
                 awaitClose { search_bar.setEventOutput(null) }
@@ -182,10 +183,10 @@ open class WalletController(
     }
 
     @Suppress("ComplexMethod")
-    private fun bindIntervalClicks(): Flow<WalletScreenEvent> =
+    private fun bindIntervalClicks(): Flow<E> =
         callbackFlow {
             val intervalClickListener = View.OnClickListener { v ->
-                WalletScreenEvent.OnChartIntervalSelected(
+                E.OnChartIntervalSelected(
                     when (v.id) {
                         one_day.id -> Interval.ONE_DAY
                         one_week.id -> Interval.ONE_WEEK
@@ -204,16 +205,16 @@ open class WalletController(
             }
         }
 
-    private fun bindSparkLineScrubbing(): Flow<WalletScreenEvent> =
+    private fun bindSparkLineScrubbing(): Flow<E> =
         callbackFlow {
             spark_line.scrubListener = object : SparkView.OnScrubListener {
                 override fun onScrubbed(value: Any?) {
                     if (value == null) {
-                        offer(WalletScreenEvent.OnChartDataPointReleased)
+                        offer(E.OnChartDataPointReleased)
                     } else {
                         val dataPoint = value as PriceDataPoint
                         logDebug("dataPoint: $dataPoint")
-                        offer(WalletScreenEvent.OnChartDataPointSelected(dataPoint))
+                        offer(E.OnChartDataPointSelected(dataPoint))
                     }
                 }
             }
@@ -222,7 +223,7 @@ open class WalletController(
             }
         }
 
-    private fun bindTxList(): Flow<WalletScreenEvent> =
+    private fun bindTxList(): Flow<E> =
         callbackFlow {
             // Tx List
             tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
@@ -233,7 +234,7 @@ open class WalletController(
                 }
             }
             mAdapter = TransactionListAdapter(applicationContext!!, null) { (txHash) ->
-                offer(WalletScreenEvent.OnTransactionClicked(txHash))
+                offer(E.OnTransactionClicked(txHash))
             }
             tx_list.adapter = mAdapter
             tx_list.addOnScrollListener(
@@ -243,7 +244,7 @@ open class WalletController(
 
                         when (newState) {
                             RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                offer(WalletScreenEvent.OnVisibleTransactionsChanged(emptyList()))
+                                offer(E.OnVisibleTransactionsChanged(emptyList()))
                             }
                             RecyclerView.SCROLL_STATE_IDLE -> {
                                 val adapter = checkNotNull(mAdapter)
@@ -265,13 +266,13 @@ open class WalletController(
     private fun updateVisibleTransactions(
         adapter: TransactionListAdapter,
         layoutManager: LinearLayoutManager,
-        output: SendChannel<WalletScreenEvent>
+        output: SendChannel<E>
     ) {
         val firstIndex = layoutManager.findFirstVisibleItemPosition()
         val lastIndex = layoutManager.findLastVisibleItemPosition()
         if (firstIndex != RecyclerView.NO_POSITION) {
             output.offer(
-                WalletScreenEvent.OnVisibleTransactionsChanged(
+                E.OnVisibleTransactionsChanged(
                     adapter.items
                         .slice(firstIndex..lastIndex)
                         .map { it.txHash }
@@ -281,24 +282,24 @@ open class WalletController(
     }
 
     @Suppress("LongMethod", "ComplexMethod")
-    override fun WalletScreenModel.render() {
+    override fun M.render() {
         val adapter = checkNotNull(mAdapter)
         val resources = checkNotNull(resources)
         var adapterHasChanged = false
 
-        ifChanged(WalletScreenModel::currencyName, currency_label::setText)
+        ifChanged(M::currencyName, currency_label::setText)
 
-        ifChanged(WalletScreenModel::balance) {
+        ifChanged(M::balance) {
             balance_secondary.text = it.formatCryptoForUi(currencyCode)
         }
 
-        ifChanged(WalletScreenModel::fiatBalance) {
+        ifChanged(M::fiatBalance) {
             // TODO: Move preferredFiatIso to model
             val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso()
             balance_primary.text = CurrencyUtils.getFormattedFiatAmount(preferredFiatIso, it)
         }
 
-        ifChanged(WalletScreenModel::isCryptoPreferred) {
+        ifChanged(M::isCryptoPreferred) {
             setPriceTags(it, true)
 
             adapter.setIsCryptoPreferred(isCryptoPreferred)
@@ -306,9 +307,9 @@ open class WalletController(
         }
 
         ifChanged(
-            WalletScreenModel::isFilterApplied,
-            WalletScreenModel::filteredTransactions,
-            WalletScreenModel::transactions
+            M::isFilterApplied,
+            M::filteredTransactions,
+            M::transactions
         ) {
             if (isFilterApplied) {
                 adapter.items = filteredTransactions
@@ -325,8 +326,8 @@ open class WalletController(
 
         // Update header area
         ifChanged(
-            WalletScreenModel::hasInternet,
-            WalletScreenModel::isShowingSearch
+            M::hasInternet,
+            M::isShowingSearch
         ) {
             when {
                 hasInternet && isShowingSearch -> {
@@ -354,19 +355,19 @@ open class WalletController(
         }
 
         ifChanged(
-            WalletScreenModel::filterComplete,
-            WalletScreenModel::filterPending,
-            WalletScreenModel::filterReceived,
-            WalletScreenModel::filterSent
+            M::filterComplete,
+            M::filterPending,
+            M::filterReceived,
+            M::filterSent
         ) {
             search_bar.render(this)
         }
 
         // Update sync progress
         ifChanged(
-            WalletScreenModel::syncProgress,
-            WalletScreenModel::isSyncing,
-            WalletScreenModel::hasSyncTime
+            M::syncProgress,
+            M::isSyncing,
+            M::hasSyncTime
         ) {
             if (isSyncing) {
                 progress_layout.isVisible = true
@@ -410,35 +411,35 @@ open class WalletController(
                     getString(R.string.RateAppPrompt_Button_Dismiss_Android),
                     { // positiveButton
                             brDialogView ->
-                        output.accept(WalletScreenEvent.OnReviewPromptAccepted)
+                        output.accept(WalletScreen.E.OnReviewPromptAccepted)
                         // NOTE: This causes us to over-count dismisses, as each positive button
                         // click also calls dismiss handler (known issue)
                         brDialogView.dismiss()
                     },
                     { // negativeButton
                             brDialogView ->
-                        output.accept(WalletScreenEvent.OnHideReviewPrompt(false))
+                        output.accept(WalletScreen.E.OnHideReviewPrompt(false))
                         brDialogView.dismiss() // NOTE: see above comment about over-counting
                     },
                     { // onDismiss
                             brDialogView ->
-                        output.accept(WalletScreenEvent.OnHideReviewPrompt(true))
+                        output.accept(WalletScreen.E.OnHideReviewPrompt(true))
                     },
                     0
                 )
 
-                output.accept(WalletScreenEvent.OnIsShowingReviewPrompt)
+                output.accept(WalletScreen.E.OnIsShowingReviewPrompt)
             } else {
                 // dispatch showReviewPrompt not shown evt (turn both showReviewPrompt and isShowing == false)
             }
         }*/
 
-        ifChanged(WalletScreenModel::priceChartDataPoints) {
+        ifChanged(M::priceChartDataPoints) {
             mPriceDataAdapter.dataSet = it
             mPriceDataAdapter.notifyDataSetChanged()
         }
 
-        ifChanged(WalletScreenModel::priceChartInterval) {
+        ifChanged(M::priceChartInterval) {
             val deselectedColor = resources.getColor(R.color.trans_white)
             val selectedColor = resources.getColor(R.color.white)
             mIntervalButtons.forEachIndexed { index, baseTextView ->
@@ -452,9 +453,9 @@ open class WalletController(
         }
 
         ifChanged(
-            WalletScreenModel::selectedPriceDataPoint,
-            WalletScreenModel::fiatPricePerUnit,
-            WalletScreenModel::priceChartInterval
+            M::selectedPriceDataPoint,
+            M::fiatPricePerUnit,
+            M::priceChartInterval
         ) {
             if (selectedPriceDataPoint == null) {
                 chart_label.text = priceChange?.toString().orEmpty()
@@ -474,7 +475,7 @@ open class WalletController(
             }
         }
 
-        ifChanged(WalletScreenModel::isShowingDelistedBanner) {
+        ifChanged(M::isShowingDelistedBanner) {
             if (isShowingDelistedBanner) showDelistedTokenBanner()
         }
     }
