@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:background="@color/white">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@color/white">
 
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -13,7 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
-        android:text="Dec 2"
+        tools:text="Dec 2"
         android:textColor="@color/total_assets_usd_color"
         android:textSize="16sp"
         android:fontFamily="@font/circular_pro_bold" />
@@ -29,7 +30,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingBottom="4dp"
-        android:text="sent to f94c57..."
+        tools:text="sent to f94c57..."
         android:textColor="@color/settings_chevron_right"
         android:textSize="12sp" />
 
@@ -40,7 +41,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="12dp"
-        android:text="-$839.30"
+        tools:text="-$839.30"
         android:textSize="18sp"
         android:fontFamily="@font/circular_pro_bold" />
 
@@ -67,7 +68,7 @@
         android:layout_height="22dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="12dp"
-        android:text="failed"
+        tools:text="failed"
         android:textSize="11sp"
         android:visibility="invisible"
         android:textStyle="bold"
