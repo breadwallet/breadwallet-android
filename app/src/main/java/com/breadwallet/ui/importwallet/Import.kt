@@ -29,12 +29,13 @@ import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
 object Import {
     data class M(
-        val privateKey: String? = null,
-        val keyPassword: String? = null,
+        @Redacted val privateKey: String? = null,
+        @Redacted val keyPassword: String? = null,
         val keyRequiresPassword: Boolean = false,
         val isKeyValid: Boolean = false,
         val loadingState: LoadingState = LoadingState.IDLE,
@@ -54,14 +55,6 @@ object Import {
             isKeyValid = false,
             loadingState = LoadingState.IDLE
         )
-
-        override fun toString(): String {
-            return "M(privateKey='***', " +
-                "keyPassword='***', " +
-                "isKeyPasswordProtected=$keyRequiresPassword, " +
-                "isKeyValid=$isKeyValid, " +
-                "isLoading=$isLoading)"
-        }
 
         companion object {
             fun createDefault(
@@ -89,26 +82,18 @@ object Import {
         object OnImportCancel : E()
 
         data class OnPasswordEntered(
-            val password: String
-        ) : E() {
-            override fun toString() =
-                "OnPasswordEntered()"
-        }
+            @Redacted val password: String
+        ) : E()
 
         data class RetryImport(
-            val privateKey: String,
-            val password: String?
-        ) : E() {
-            override fun toString() =
-                "RetryImport()"
-        }
+            @Redacted val privateKey: String,
+            @Redacted val password: String?
+        ) : E()
 
         data class OnKeyScanned(
-            val privateKey: String,
+            @Redacted val privateKey: String,
             val isPasswordProtected: Boolean
-        ) : E() {
-            override fun toString() = "OnKeyScanned()"
-        }
+        ) : E()
 
         sealed class Key : E() {
             object NoWallets : Key()
@@ -138,7 +123,7 @@ object Import {
 
         sealed class Transfer : E() {
             data class OnSuccess(
-                val transferHash: String,
+                @Redacted val transferHash: String,
                 val currencyCode: CurrencyCode
             ) : Transfer()
 
@@ -163,54 +148,35 @@ object Import {
         ) : F()
 
         data class ValidateKey(
-            val privateKey: String,
-            val password: String?
-        ) : F() {
-            override fun toString() = "ValidateKey(***)"
-        }
+            @Redacted val privateKey: String,
+            @Redacted val password: String?
+        ) : F()
 
         data class SubmitImport(
-            val privateKey: String,
-            val password: String?,
+            @Redacted val privateKey: String,
+            @Redacted val password: String?,
             val currencyCode: CurrencyCode
-        ) : F() {
-            override fun toString() = "SubmitImport()"
-        }
+        ) : F()
 
-        sealed class Nav : F(), NavEffectHolder {
-            object GoBack : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoBack
-            }
-
-            object GoToFaq : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToFaq(FAQ_IMPORT_WALLET)
-            }
-
-            object GoToScan : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToQrScan
-            }
+        sealed class Nav(
+            override val navigationEffect: NavigationEffect
+        ) : F(), NavEffectHolder {
+            object GoBack : Nav(NavigationEffect.GoBack)
+            object GoToFaq : Nav(NavigationEffect.GoToFaq(FAQ_IMPORT_WALLET))
+            object GoToScan : Nav(NavigationEffect.GoToQrScan)
         }
 
         sealed class EstimateImport : F() {
             abstract val privateKey: String
 
             data class Key(
-                override val privateKey: String
-            ) : EstimateImport() {
-                override fun toString() =
-                    "EstimateImport.Key()"
-            }
+                @Redacted override val privateKey: String
+            ) : EstimateImport()
 
             data class KeyWithPassword(
-                override val privateKey: String,
-                val password: String
-            ) : EstimateImport() {
-                override fun toString() =
-                    "EstimateImport.KeyWithPassword()"
-            }
+                @Redacted override val privateKey: String,
+                @Redacted val password: String
+            ) : EstimateImport()
         }
     }
 }

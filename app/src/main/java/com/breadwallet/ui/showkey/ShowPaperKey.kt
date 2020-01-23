@@ -26,10 +26,11 @@ package com.breadwallet.ui.showkey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object ShowPaperKey {
     data class M(
-        val phrase: List<String>,
+        @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction,
         val currentWord: Int = 0
     ) {
@@ -39,11 +40,6 @@ object ShowPaperKey {
                 onComplete: OnCompleteAction
             ) = M(phrase, onComplete)
         }
-
-        override fun toString() =
-            "ShowPaperKey.M(phrase=${phrase.size}," +
-                " onComplete=$onComplete," +
-                " currentWord=$currentWord)"
     }
 
     @MobiusUpdateSpec(
@@ -65,10 +61,8 @@ object ShowPaperKey {
         object GoToHome : F()
         object GoToBuy : F()
         data class GoToPaperKeyProve(
-            val phrase: List<String>,
+            @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction
-        ) : F() {
-            override fun toString() = "GoToPaperKeyProve"
-        }
+        ) : F()
     }
 }

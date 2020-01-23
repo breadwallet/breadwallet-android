@@ -37,6 +37,7 @@ import com.breadwallet.tools.util.BRConstants.WALLET_PAIR_PATH
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.platform.HTTPServer
+import io.sweers.redacted.annotation.Redacted
 import org.kodein.di.erased.instance
 import java.io.Serializable
 import java.math.BigDecimal
@@ -66,12 +67,12 @@ sealed class Link {
      */
     data class CryptoRequestUrl(
         val currencyCode: CurrencyCode,
-        val address: String? = null,
+        @Redacted val address: String? = null,
         val amount: BigDecimal? = null,
-        val label: String? = null,
-        val message: String? = null,
-        val reqParam: String? = null,
-        val rUrlParam: String? = null,
+        @Redacted val label: String? = null,
+        @Redacted val message: String? = null,
+        @Redacted val reqParam: String? = null,
+        @Redacted val rUrlParam: String? = null,
         val transactionMetaData: GenericTransactionMetaData? = null
     ) : Link(), Serializable
 
@@ -89,11 +90,9 @@ sealed class Link {
     ) : Link()
 
     data class ImportWallet(
-        val privateKey: String,
+        @Redacted val privateKey: String,
         val passwordProtected: Boolean
-    ) : Link() {
-        override fun toString() = "ImportWallet()"
-    }
+    ) : Link()
 
     sealed class BreadUrl : Link() {
         object ScanQR : BreadUrl()
