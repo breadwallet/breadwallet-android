@@ -26,11 +26,12 @@ package com.breadwallet.ui.settings
 
 import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object SettingsScreen {
     data class M(
         val section: SettingsSection,
-        val items: List<SettingsItem> = listOf()
+        @Redacted val items: List<SettingsItem> = listOf()
     ) {
         companion object {
             fun createDefault(section: SettingsSection) = M(section)
@@ -46,7 +47,7 @@ object SettingsScreen {
 
         data class OnOptionClicked(val option: SettingsOption) : E()
 
-        data class OnOptionsLoaded(val options: List<SettingsItem>) : E()
+        data class OnOptionsLoaded(@Redacted val options: List<SettingsItem>) : E()
 
         object OnBackClicked : E()
         object OnCloseClicked : E()

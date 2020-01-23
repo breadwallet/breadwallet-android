@@ -29,6 +29,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.MAX_DIGITS
 import com.breadwallet.util.CurrencyCode
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
 object ReceiveScreen {
@@ -40,9 +41,9 @@ object ReceiveScreen {
         /** The name of the Wallet's currency. */
         val walletName: String = "",
         /** The network compatible address for transactions. */
-        val receiveAddress: String = "",
+        @Redacted val receiveAddress: String = "",
         /** The address without network specific decoration. */
-        val sanitizedAddress: String = "",
+        @Redacted val sanitizedAddress: String = "",
         /** True when the user copies their address and resets after some time.*/
         val isDisplayingCopyMessage: Boolean = false,
         /** The user supplied amount to receive as a string. */
@@ -125,8 +126,8 @@ object ReceiveScreen {
         ) : E()
 
         data class OnReceiveAddressUpdated(
-            val address: String,
-            val sanitizedAddress: String
+            @Redacted val address: String,
+            @Redacted val sanitizedAddress: String
         ) : E()
 
         object OnHideCopyMessage : E()
@@ -143,10 +144,8 @@ object ReceiveScreen {
             object Delete : OnAmountChange()
 
             data class AddDigit(
-                val digit: Int
-            ) : OnAmountChange() {
-                override fun toString() = "AddDigit(digit=***)"
-            }
+                @Redacted val digit: Int
+            ) : OnAmountChange()
         }
     }
 
@@ -159,11 +158,11 @@ object ReceiveScreen {
         ) : F()
 
         data class CopyAddressToClipboard(
-            val address: String
+            @Redacted val address: String
         ) : F()
 
         data class ShareRequest(
-            val address: String,
+            @Redacted val address: String,
             val amount: BigDecimal,
             val walletName: String
         ) : F()

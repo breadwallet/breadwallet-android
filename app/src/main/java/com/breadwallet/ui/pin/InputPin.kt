@@ -26,6 +26,7 @@ package com.breadwallet.ui.pin
 
 import com.breadwallet.ui.navigation.OnCompleteAction
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 private const val PIN_LENGTH = 6
 
@@ -33,8 +34,8 @@ object InputPin {
 
     data class M(
         val mode: Mode = Mode.NEW,
-        val pin: String = "",
-        val pinConfirmation: String = "",
+        @Redacted val pin: String = "",
+        @Redacted val pinConfirmation: String = "",
         val pinUpdateMode: Boolean = false,
         val skipWriteDownKey: Boolean = false,
         val onComplete: OnCompleteAction
@@ -57,15 +58,6 @@ object InputPin {
             NEW,     // Chose a new pin
             CONFIRM  // Confirm the new pin
         }
-
-        override fun toString(): String {
-            return "InputPinModel(mode=$mode, " +
-                "pin='***', " +
-                "pinConfirmation='***', " +
-                "pinUpdateMode=$pinUpdateMode, " +
-                "skipWriteDownKey=$skipWriteDownKey, " +
-                "onComplete=$onComplete)"
-        }
     }
 
     @MobiusUpdateSpec(
@@ -81,32 +73,25 @@ object InputPin {
         object OnPinSaveFailed : E()
 
         data class OnPinEntered(
-            val pin: String,
+            @Redacted val pin: String,
             val isPinCorrect: Boolean
-        ) : E() {
-
-            override fun toString() = "OnPinEntered()"
-        }
+        ) : E()
 
         data class OnPinCheck(
             val hasPin: Boolean
-        ) : E() {
-            override fun toString() = "OnPinCheck()"
-        }
+        ) : E()
     }
 
     sealed class F {
 
         data class SetupPin(
-            val pin: String
+            @Redacted val pin: String
         ) : F() {
             init {
                 require(pin.length == PIN_LENGTH) {
                     "pin must contain $PIN_LENGTH digits"
                 }
             }
-
-            override fun toString() = "SetupPin()"
         }
 
         object GoToHome : F()

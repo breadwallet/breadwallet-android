@@ -32,25 +32,26 @@ import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.platform.entities.TxMetaData
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
 object WalletScreen {
     data class M(
         val currencyCode: String,
         val currencyName: String = "",
-        val address: String = "",
+        @Redacted val address: String = "",
         val fiatPricePerUnit: String = "",
         val balance: BigDecimal = BigDecimal.ZERO,
         val fiatBalance: BigDecimal = BigDecimal.ZERO,
-        val transactions: List<WalletTransaction> = emptyList(),
-        val filteredTransactions: List<WalletTransaction> = emptyList(),
+        @Redacted val transactions: List<WalletTransaction> = emptyList(),
+        @Redacted val filteredTransactions: List<WalletTransaction> = emptyList(),
         val isCryptoPreferred: Boolean = false,
         val isShowingDelistedBanner: Boolean = false,
         val isShowingSearch: Boolean = false,
         val isShowingBrdRewards: Boolean = false,
         val isShowingReviewPrompt: Boolean = false,
         val showReviewPrompt: Boolean = false,
-        val filterQuery: String = "",
+        @Redacted val filterQuery: String = "",
         val filterSent: Boolean = false,
         val filterReceived: Boolean = false,
         val filterPending: Boolean = false,
@@ -77,34 +78,6 @@ object WalletScreen {
             get() = filterQuery.isNotBlank() ||
                 filterSent || filterReceived ||
                 filterPending || filterComplete
-
-        override fun toString(): String {
-            return "WalletScreenModel(currencyCode='$currencyCode', " +
-                "currencyName='$currencyName', " +
-                "address='$address', " +
-                "fiatPricePerUnit=$fiatPricePerUnit, " +
-                "balance=$balance, " +
-                "fiatBalance=$fiatBalance, " +
-                "transactions=(size:${transactions.size}), " +
-                "filteredTransactions=(size:${filteredTransactions.size}), " +
-                "isCryptoPreferred=$isCryptoPreferred, " +
-                "isShowingSearch=$isShowingSearch, " +
-                "isShowingBrdRewards=$isShowingBrdRewards, " +
-                "isShowingReviewPrompt=$isShowingReviewPrompt, " +
-                "showReviewPrompt=$showReviewPrompt, " +
-                "filterQuery='$filterQuery', " +
-                "filterSent=$filterSent, " +
-                "filterReceived=$filterReceived, " +
-                "filterPending=$filterPending, " +
-                "filterComplete=$filterComplete, " +
-                "syncProgress=$syncProgress, " +
-                "syncingThroughMillis=$syncingThroughMillis, " +
-                "isSyncing=$isSyncing, " +
-                "hasInternet=$hasInternet, " +
-                "priceChartInterval=$priceChartInterval, " +
-                "priceChartDataPoints=(size:${priceChartDataPoints.size}), " +
-                "priceChange=$priceChange)"
-        }
     }
 
     @MobiusUpdateSpec(
@@ -125,7 +98,7 @@ object WalletScreen {
             }
         }
 
-        data class OnQueryChanged(val query: String) : E()
+        data class OnQueryChanged(@Redacted val query: String) : E()
 
         data class OnCurrencyNameUpdated(val name: String) : E()
         data class OnBrdRewardsUpdated(val showing: Boolean) : E()
@@ -134,27 +107,21 @@ object WalletScreen {
         data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange?) : E()
 
         data class OnTransactionsUpdated(
-            val walletTransactions: List<WalletTransaction>
-        ) : E() {
-            override fun toString() =
-                "OnTransactionsUpdated(walletTransactions=(size:${walletTransactions.size}))"
-        }
+            @Redacted val walletTransactions: List<WalletTransaction>
+        ) : E()
 
         data class OnTransactionMetaDataUpdated(
-            val transactionHash: String,
+            @Redacted val transactionHash: String,
             val transactionMetaData: TxMetaData
         ) : E()
 
         data class OnVisibleTransactionsChanged(
-            val transactionHashes: List<String>
+            @Redacted val transactionHashes: List<String>
         ) : E()
 
         data class OnCryptoTransactionsUpdated(
-            val transactions: List<Transfer>
-        ) : E() {
-            override fun toString() =
-                "OnCryptoTransactionsUpdated(walletTransactions=(size:${transactions.size}))"
-        }
+            @Redacted val transactions: List<Transfer>
+        ) : E()
 
         data class OnTransactionAdded(val walletTransaction: WalletTransaction) : E()
         data class OnTransactionRemoved(val walletTransaction: WalletTransaction) : E()
@@ -175,7 +142,7 @@ object WalletScreen {
         data class OnSendRequestGiven(val cryptoRequest: CryptoRequest) : E()
         object OnReceiveClicked : E()
 
-        data class OnTransactionClicked(val txHash: String) : E()
+        data class OnTransactionClicked(@Redacted val txHash: String) : E()
 
         object OnBrdRewardsClicked : E()
 
@@ -188,11 +155,8 @@ object WalletScreen {
 
         data class OnChartIntervalSelected(val interval: Interval) : E()
         data class OnMarketChartDataUpdated(
-            val priceDataPoints: List<PriceDataPoint>
-        ) : E() {
-            override fun toString() =
-                "OnMarketChartDataUpdated(priceDataPoints=(size:${priceDataPoints.size}))"
-        }
+            @Redacted val priceDataPoints: List<PriceDataPoint>
+        ) : E()
 
         data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : E()
         object OnChartDataPointReleased : E()
@@ -237,24 +201,19 @@ object WalletScreen {
         data class LoadWalletBalance(val currencyId: String) : F()
         data class LoadTransactions(val currencyId: String) : F()
         data class LoadFiatPricePerUnit(val currencyId: String) : F()
-        data class LoadTransactionMetaData(val transactionHashes: List<String>) : F()
+        data class LoadTransactionMetaData(@Redacted val transactionHashes: List<String>) : F()
         data class LoadIsTokenSupported(val currencyCode: String) : F()
 
         object LoadCryptoPreferred : F()
 
         data class ConvertCryptoTransactions(
-            val transactions: List<Transfer>
-        ) : F() {
-            override fun toString() =
-                "ConvertCryptoTransactions(transactions=(size:${transactions.size}))"
-        }
+            @Redacted val transactions: List<Transfer>
+        ) : F()
 
         data class CheckReviewPrompt(
             val currencyCode: String,
-            val transactions: List<WalletTransaction>
-        ) : F() {
-            override fun toString() = "CheckReviewPrompt(transactions=(size:${transactions.size}))"
-        }
+            @Redacted val transactions: List<WalletTransaction>
+        ) : F()
 
         object RecordReviewPrompt : F()
         object RecordReviewPromptDismissed : F()

@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/21/20.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 1/22/20.
  * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,31 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.wallet
+package com.breadwallet
 
-import io.sweers.redacted.annotation.Redacted
-import java.math.BigDecimal
+import com.breadwallet.ui.pin.InputPin
+import org.junit.Test
+import kotlin.test.assertTrue
 
-data class WalletTransaction(
-    @Redacted val txHash: String,
-    val amount: BigDecimal,
-    val amountInFiat: BigDecimal,
-    @Redacted val toAddress: String,
-    @Redacted val fromAddress: String,
-    val isReceived: Boolean,
-    @Redacted val timeStamp: Long,
-    @Redacted val memo: String? = null,
-    val isErrored: Boolean,
-    val isValid: Boolean,
-    val fee: BigDecimal,
-    val confirmations: Int,
-    val confirmationsUntilFinal: Int,
-    val currencyCode: String,
-    val feeToken: String = ""
-) {
-    val isPending: Boolean = confirmations < confirmationsUntilFinal && !isErrored
+class RedactedTest {
 
-    val isComplete: Boolean = confirmations >= confirmationsUntilFinal && !isErrored
-
-    val isFeeForToken: Boolean = feeToken.isNotBlank()
+    @Test
+    fun testRedaction() {
+        val event = InputPin.E.OnPinEntered(pin = "0000", isPinCorrect = true)
+        assertTrue(event.toString().contains("pin=\"***\""))
+    }
 }
