@@ -36,6 +36,7 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 import com.spotify.mobius.flow.subtypeEffectHandler
+import io.sweers.redacted.annotation.Redacted
 import kotlinx.android.synthetic.main.controller_import_password.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow
@@ -94,22 +95,16 @@ class PasswordController(
         fun onPasswordCancelled()
     }
 
-    data class M(val password: String = "") {
+    data class M(@Redacted val password: String = "") {
         companion object {
             val DEFAULT = M()
         }
-
-        override fun toString() =
-            "M(password='***')"
     }
 
     sealed class E {
         data class OnPasswordChanged(
-            val password: String
-        ) : E() {
-            override fun toString() =
-                "OnPasswordChanged()"
-        }
+            @Redacted val password: String
+        ) : E()
 
         object OnConfirmClicked : E()
         object OnCancelClicked : E()
@@ -117,11 +112,8 @@ class PasswordController(
 
     sealed class F {
         data class Confirm(
-            val password: String
-        ) : F() {
-            override fun toString() =
-                "Confirm()"
-        }
+            @Redacted val password: String
+        ) : F()
 
         object Cancel : F()
     }

@@ -27,21 +27,16 @@ package com.breadwallet.ui.addwallets
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object AddWallets {
 
     data class M(
-        val tokens: List<Token> = emptyList(),
+        @Redacted val tokens: List<Token> = emptyList(),
         val searchQuery: String = ""
     ) {
         companion object {
             fun createDefault() = M()
-        }
-
-        override fun toString(): String {
-            return "AddWalletsModel(" +
-                "tokens=(size:${tokens.size}), " +
-                "searchQuery='$searchQuery')"
         }
     }
 
@@ -51,12 +46,8 @@ object AddWallets {
         baseModel = M::class
     )
     sealed class E {
-        data class OnSearchQueryChanged(val query: String) : E()
-        data class OnTokensChanged(val tokens: List<Token>) : E() {
-            override fun toString(): String {
-                return "OnTokensChanged(tokens=(size:${tokens.size}))"
-            }
-        }
+        data class OnSearchQueryChanged(@Redacted val query: String) : E()
+        data class OnTokensChanged(@Redacted val tokens: List<Token>) : E()
 
         data class OnAddWalletClicked(val token: Token) : E()
         data class OnRemoveWalletClicked(val token: Token) : E()
@@ -64,7 +55,7 @@ object AddWallets {
     }
 
     sealed class F {
-        data class SearchTokens(val query: String) : F()
+        data class SearchTokens(@Redacted val query: String) : F()
         data class AddWallet(val token: Token) : F()
         data class RemoveWallet(val token: Token) : F()
 

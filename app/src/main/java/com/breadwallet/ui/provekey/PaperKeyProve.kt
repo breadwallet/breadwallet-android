@@ -26,12 +26,13 @@ package com.breadwallet.ui.provekey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object PaperKeyProve {
 
     data class M(
         /** Paper key */
-        val phrase: List<String>,
+        @Redacted val phrase: List<String>,
         /** Position of the first word to be verified */
         val firstWordIndex: Int,
         /** Position of the second word to be verified */
@@ -61,10 +62,6 @@ object PaperKeyProve {
 
         val firstWord: String get() = phrase[firstWordIndex]
         val secondWord: String get() = phrase[secondWordIndex]
-        override fun toString() =
-            "PaperKeyProveModel(phrase=${phrase.size}, firstWordIndex=$firstWordIndex, " +
-                "secondWordIndex=$secondWordIndex, onComplete=$onComplete, firstWordState=$firstWordState, " +
-                "secondWordSate=$secondWordSate, showBreadSignal=$showBreadSignal)"
     }
 
     @MobiusUpdateSpec(
@@ -77,8 +74,8 @@ object PaperKeyProve {
         object OnBreadSignalShown : E()
         object OnWroteDownKeySaved : E()
 
-        data class OnFirstWordChanged(val word: String) : E()
-        data class OnSecondWordChanged(val word: String) : E()
+        data class OnFirstWordChanged(@Redacted val word: String) : E()
+        data class OnSecondWordChanged(@Redacted val word: String) : E()
     }
 
     sealed class F {

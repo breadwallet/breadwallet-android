@@ -26,20 +26,17 @@ package com.breadwallet.ui.writedownkey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object WriteDownKey {
 
     data class M(
         val onComplete: OnCompleteAction,
-        val phrase: List<String> = listOf()
+        @Redacted val phrase: List<String> = listOf()
     ) {
         companion object {
             fun createDefault(doneAction: OnCompleteAction) =
                 M(doneAction)
-        }
-
-        override fun toString(): String {
-            return "WriteDownKey.M(onComplete=$onComplete, phrase=${phrase.size})"
         }
     }
 
@@ -56,7 +53,7 @@ object WriteDownKey {
         object OnGetPhraseFailed : E()
         object OnUserAuthenticated : E()
 
-        data class OnPhraseRecovered(val phrase: List<String>) : E()
+        data class OnPhraseRecovered(@Redacted val phrase: List<String>) : E()
     }
 
     sealed class F {
@@ -68,10 +65,8 @@ object WriteDownKey {
         object GetPhrase : F()
 
         data class GoToPaperKey(
-            val phrase: List<String>,
+            @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction
-        ) : F() {
-            override fun toString() = "GoToPaperKey()"
-        }
+        ) : F()
     }
 }

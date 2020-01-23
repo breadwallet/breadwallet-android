@@ -25,6 +25,7 @@
 package com.breadwallet.ui.recovery
 
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object RecoveryKey {
 
@@ -45,7 +46,7 @@ object RecoveryKey {
          * A 12 item list of words that make up a BIP39 mnemonic.
          * All 12 items are an empty string by default.
          */
-        val phrase: List<String> = List(RECOVERY_KEY_WORDS_COUNT) { "" },
+        @Redacted val phrase: List<String> = List(RECOVERY_KEY_WORDS_COUNT) { "" },
         /**
          * A 12 item list of the validation state of the corresponding word in [phrase].
          * All 12 items are false by default.
@@ -81,11 +82,6 @@ object RecoveryKey {
                 "errors list must contain 12 items"
             }
         }
-
-        /** Redact all phrase information, keep synced with model changes. */
-        override fun toString(): String {
-            return "RecoveryKeyModel(mode=${mode.name}, isLoading=$isLoading)"
-        }
     }
 
     @MobiusUpdateSpec(
@@ -94,33 +90,25 @@ object RecoveryKey {
         baseEffect = F::class
     )
     sealed class E {
-        data class OnWordChanged(val index: Int, val word: String) : E() {
+        data class OnWordChanged(val index: Int, @Redacted val word: String) : E() {
             init {
                 require(index in 0..11) { "Word index must be in 0..11" }
             }
-
-            override fun toString() = "OnWordChanged()"
         }
 
         data class OnWordValidated(val index: Int, val hasError: Boolean) : E() {
             init {
                 require(index in 0..11) { "Word index must be in 0..11" }
             }
-
-            override fun toString() = "OnWordValidated()"
         }
 
         data class OnFocusedWordChanged(val index: Int) : E() {
             init {
                 require(index in -1..11) { "Focused word index must be in -1..11" }
             }
-
-            override fun toString() = "OnFocusedWordChanged()"
         }
 
-        data class OnTextPasted(val text: String) : E() {
-            override fun toString() = "OnTextPasted()"
-        }
+        data class OnTextPasted(@Redacted val text: String) : E()
 
         object OnPhraseInvalid : E()
         object OnPhraseSaved : E()
@@ -149,52 +137,42 @@ object RecoveryKey {
 
         data class ValidateWord(
             val index: Int,
-            val word: String
-        ) : F() {
-            override fun toString() = "ValidateWord()"
-        }
+            @Redacted val word: String
+        ) : F()
 
         data class ValidatePhrase(
-            val phrase: List<String>
+            @Redacted val phrase: List<String>
         ) : F() {
             init {
                 require(phrase.size == 12) { "phrase must contain 12 words." }
             }
-
-            override fun toString() = "ValidatePhrase()"
         }
 
         data class Unlink(
-            val phrase: List<String>
+            @Redacted val phrase: List<String>
         ) : F() {
             init {
                 require(phrase.size == 12) { "phrase must contain 12 words." }
                 require(phrase.all { it.isNotBlank() }) { "phrase cannot contain blank words." }
             }
-
-            override fun toString() = "Unlink()"
         }
 
         data class ResetPin(
-            val phrase: List<String>
+            @Redacted val phrase: List<String>
         ) : F() {
             init {
                 require(phrase.size == 12) { "phrase must contain 12 words." }
                 require(phrase.all { it.isNotBlank() }) { "phrase cannot contain blank words." }
             }
-
-            override fun toString() = "ResetPin()"
         }
 
         data class RecoverWallet(
-            val phrase: List<String>
+            @Redacted val phrase: List<String>
         ) : F() {
             init {
                 require(phrase.size == 12) { "phrase must contain 12 words." }
                 require(phrase.all { it.isNotBlank() }) { "phrase cannot contain blank words." }
             }
-
-            override fun toString() = "RecoverWallet()"
         }
     }
 }

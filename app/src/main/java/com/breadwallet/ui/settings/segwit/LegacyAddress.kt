@@ -25,14 +25,15 @@
 package com.breadwallet.ui.settings.segwit
 
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object LegacyAddress {
 
     data class M(
         /** The network compatible address for transactions. */
-        val receiveAddress: String = "",
+        @Redacted val receiveAddress: String = "",
         /** The address without network specific decoration. */
-        val sanitizedAddress: String = "",
+        @Redacted val sanitizedAddress: String = "",
         /** The name of the Wallet's currency. */
         val walletName: String = ""
     )
@@ -48,8 +49,8 @@ object LegacyAddress {
         object OnCloseClicked : E()
 
         data class OnAddressUpdated(
-            val receiveAddress: String,
-            val sanitizedAddress: String
+            @Redacted val receiveAddress: String,
+            @Redacted val sanitizedAddress: String
         ) : E()
 
         data class OnWalletNameUpdated(
@@ -61,8 +62,8 @@ object LegacyAddress {
         object LoadAddress : F()
         object GoBack : F()
 
-        data class CopyAddressToClipboard(val address: String) : F()
+        data class CopyAddressToClipboard(@Redacted val address: String) : F()
 
-        data class ShareAddress(val address: String, val walletName: String) : F()
+        data class ShareAddress(@Redacted val address: String, val walletName: String) : F()
     }
 }
