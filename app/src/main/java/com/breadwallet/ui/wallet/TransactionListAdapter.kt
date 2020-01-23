@@ -49,13 +49,19 @@ import kotlinx.coroutines.cancelChildren
 
 import java.util.ArrayList
 
+private const val DP_120 = 120
+private const val DP_36 = 36
+private const val DP_16 = 16
+private const val PROGRESS_FULL = 100
+private const val PROGRESS_PACE = 20
+private const val TX_TYPE = 0
+
 class TransactionListAdapter(
     private val mContext: Context,
     items: List<WalletTransaction>?,
     private val mOnItemClickListener: (@ParameterName("item") WalletTransaction) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val mTxResourceId = R.layout.tx_item
     var items: List<WalletTransaction> = items ?: ArrayList()
     private var mIsCryptoPreferred = false
 
@@ -65,7 +71,7 @@ class TransactionListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return TxHolder(inflater.inflate(mTxResourceId, parent, false))
+        return TxHolder(inflater.inflate(R.layout.tx_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -196,9 +202,10 @@ class TransactionListAdapter(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    addRule(RelativeLayout.ALIGN_PARENT_LEFT)
-                    addRule(RelativeLayout.CENTER_VERTICAL)
-                    setMargins(Utils.getPixelsFromDps(mContext, DP_16), 0, 0, 0)
+                    addRule(RelativeLayout.ALIGN_LEFT, holder.transactionDate.id)
+                    addRule(RelativeLayout.BELOW, holder.transactionDate.id)
+                    addRule(RelativeLayout.START_OF, holder.transactionAmount.id)
+                    setMargins(0, 0, 0, 0)
                 }
         }
     }
@@ -238,14 +245,5 @@ class TransactionListAdapter(
         val transactionDetail: BaseTextView = view.findViewById(R.id.tx_description)
         val transactionFailed: Button = view.findViewById(R.id.tx_failed_button)
         val transactionProgress: ProgressBar = view.findViewById(R.id.tx_progress)
-    }
-
-    companion object {
-        private const val DP_120 = 120
-        private const val DP_36 = 36
-        private const val DP_16 = 16
-        private const val PROGRESS_FULL = 100
-        private const val PROGRESS_PACE = 20
-        private const val TX_TYPE = 0
     }
 }
