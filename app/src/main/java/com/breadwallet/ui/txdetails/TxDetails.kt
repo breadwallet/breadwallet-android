@@ -28,13 +28,14 @@ import com.breadwallet.crypto.Transfer
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 import java.util.Date
 
 object TxDetails {
     data class M(
         val currencyCode: CurrencyCode,
-        val transactionHash: String,
+        @Redacted val transactionHash: String,
         val isCryptoPreferred: Boolean,
         val preferredFiatIso: String,
         val showDetails: Boolean = false,
@@ -47,12 +48,12 @@ object TxDetails {
         val gasPrice: BigDecimal = BigDecimal.ZERO,
         val gasLimit: BigDecimal = BigDecimal.ZERO,
         val blockNumber: Int = 0,
-        val toOrFromAddress: String = "",
-        val memo: String = "",
+        @Redacted val toOrFromAddress: String = "",
+        @Redacted val memo: String = "",
         val exchangeRate: BigDecimal = BigDecimal.ZERO,
         val exchangeCurrencyCode: String = "",
         val confirmationDate: Date? = null,
-        val confirmedInBlockNumber: String = "",
+        @Redacted val confirmedInBlockNumber: String = "",
         val transactionState: TransactionState? = null,
         val feeToken: String = ""
     ) {
@@ -95,7 +96,7 @@ object TxDetails {
 
         data class OnFiatAmountNowUpdated(val fiatAmountNow: BigDecimal) : E()
         data class OnMetaDataUpdated(val metaData: TxMetaData) : E()
-        data class OnMemoChanged(val memo: String) : E()
+        data class OnMemoChanged(@Redacted val memo: String) : E()
         object OnClosedClicked : E()
         object OnShowHideDetailsClicked : E()
     }
@@ -107,7 +108,7 @@ object TxDetails {
             val transactionHash: String
         ) : F()
 
-        data class LoadTransactionMetaData(val transactionHash: String) : F()
+        data class LoadTransactionMetaData(@Redacted val transactionHash: String) : F()
 
         data class LoadFiatAmountNow(
             val cryptoTransferredAmount: BigDecimal,
@@ -116,8 +117,8 @@ object TxDetails {
         ) : F()
 
         data class UpdateMemo(
-            val transactionHash: String,
-            val memo: String
+            @Redacted val transactionHash: String,
+            @Redacted val memo: String
         ) : F()
 
         object Close : F()

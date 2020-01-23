@@ -26,6 +26,7 @@ package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object NodeSelector {
 
@@ -33,7 +34,7 @@ object NodeSelector {
 
     data class M(
         val mode: Mode? = null,
-        val currentNode: String = "",
+        @Redacted val currentNode: String = "",
         val connected: Boolean = false
     ) {
 
@@ -56,16 +57,16 @@ object NodeSelector {
 
         data class OnConnectionInfoLoaded(
             val mode: Mode,
-            val node: String = ""
+            @Redacted val node: String = ""
         ) : E()
 
-        data class SetCustomNode(val node: String) : E()
+        data class SetCustomNode(@Redacted val node: String) : E()
     }
 
     sealed class F {
         object ShowNodeDialog : F()
         object LoadConnectionInfo : F()
         object SetToAutomatic : F()
-        data class SetCustomNode(val node: String) : F()
+        data class SetCustomNode(@Redacted val node: String) : F()
     }
 }

@@ -25,6 +25,7 @@
 package com.breadwallet.ui.login
 
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 
 object LoginScreen {
 
@@ -32,7 +33,7 @@ object LoginScreen {
         val fingerprintEnable: Boolean = false,
         val showHomeScreen: Boolean = true,
         val currentCurrencyCode: String = "",
-        val extraUrl: String
+        @Redacted val extraUrl: String
     ) {
         companion object {
             fun createDefault(extraUrl: String) = M(extraUrl = extraUrl)
@@ -67,7 +68,7 @@ object LoginScreen {
         object AuthenticationSuccess : F()
         object AuthenticationFailed : F()
         data class GoToWallet(val currencyCode: String) : F()
-        data class GoToDeepLink(val url: String) : F()
+        data class GoToDeepLink(@Redacted val url: String) : F()
         data class TrackEvent(
             val eventName: String,
             val attributes: Map<String, String>? = null

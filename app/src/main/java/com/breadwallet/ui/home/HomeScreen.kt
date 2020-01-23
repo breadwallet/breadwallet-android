@@ -26,12 +26,13 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
 object HomeScreen {
     data class M(
-        val wallets: Map<String, Wallet> = emptyMap(),
-        val displayOrder: List<String> = emptyList(),
+        @Redacted val wallets: Map<String, Wallet> = emptyMap(),
+        @Redacted val displayOrder: List<String> = emptyList(),
         val promptId: PromptItem? = null,
         val hasInternet: Boolean = true,
         val isBuyBellNeeded: Boolean = false,
@@ -48,16 +49,6 @@ object HomeScreen {
             }
 
         val showPrompt: Boolean = promptId != null
-
-        override fun toString(): String {
-            return "HomeScreenModel(aggregatedFiatBalance=$aggregatedFiatBalance, " +
-                "wallets=(size:${wallets.size}), " +
-                "showPrompt='$showPrompt', " +
-                "promptId=$promptId, " +
-                "hasInternet=$hasInternet, " +
-                "isBuyBellNeeded=$isBuyBellNeeded, " +
-                "showBuyAndSell=$showBuyAndSell)"
-        }
     }
 
     sealed class E {
@@ -75,7 +66,7 @@ object HomeScreen {
             }
         }
 
-        data class OnWalletsUpdated(val wallets: List<Wallet>) : E()
+        data class OnWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
         data class OnWalletBalanceUpdated(
             val currencyCode: String,
             val balance: BigDecimal,
@@ -84,7 +75,7 @@ object HomeScreen {
             val priceChange: PriceChange? = null
         ) : E()
 
-        data class OnWalletDisplayOrderUpdated(val displayOrder: List<String>) : E()
+        data class OnWalletDisplayOrderUpdated(@Redacted val displayOrder: List<String>) : E()
 
         data class OnBuyBellNeededLoaded(val isBuyBellNeeded: Boolean) : E()
 
@@ -112,7 +103,7 @@ object HomeScreen {
         object OnPaperKeyPromptClicked : E()
         object OnUpgradePinPromptClicked : E()
         object OnRescanPromptClicked : E()
-        data class OnEmailPromptClicked(val email: String) : E()
+        data class OnEmailPromptClicked(@Redacted val email: String) : E()
     }
 
     sealed class F {
@@ -150,7 +141,7 @@ object HomeScreen {
 
         object StartRescan : F()
 
-        data class SaveEmail(val email: String) : F()
+        data class SaveEmail(@Redacted val email: String) : F()
     }
 }
 

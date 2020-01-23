@@ -28,6 +28,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.ui.settings.SettingsSection
 import io.hypno.switchboard.MobiusHandlerSpec
+import io.sweers.redacted.annotation.Redacted
 
 /**
  * [NavEffectHolder] can be applied to a screen specific
@@ -88,18 +89,14 @@ sealed class NavigationEffect {
     data class GoToWriteDownKey(val onComplete: OnCompleteAction) : NavigationEffect()
 
     data class GoToPaperKey(
-        val phrase: List<String>,
+        @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction
-    ) : NavigationEffect() {
-        override fun toString() = "GoToPaperKey()"
-    }
+    ) : NavigationEffect()
 
     data class GoToPaperKeyProve(
-        val phrase: List<String>,
+        @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction
-    ) : NavigationEffect() {
-        override fun toString() = "GoToPaperKeyProve()"
-    }
+    ) : NavigationEffect()
 
     data class GoToMenu(val settingsOption: SettingsSection) : NavigationEffect()
 

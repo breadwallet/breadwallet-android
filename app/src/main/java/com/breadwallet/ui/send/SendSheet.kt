@@ -37,6 +37,7 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import io.hypno.switchboard.MobiusUpdateSpec
+import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
 object SendSheet {
@@ -73,13 +74,13 @@ object SendSheet {
         val isTotalCostOverBalance: Boolean = false,
 
         /** The user supplied address to send the [amount] of [currencyCode] to. */
-        val targetAddress: String = "",
+        @Redacted val targetAddress: String = "",
         /** The user supplied amount to send as a string. */
         val rawAmount: String = "",
         /** The user supplied amount as [BigDecimal]. */
         val amount: BigDecimal = BigDecimal.ZERO,
         /** A user provided memo to store with the transaction. */
-        val memo: String? = null,
+        @Redacted val memo: String? = null,
 
         /** The user supplied amount in fiat. */
         val fiatAmount: BigDecimal = BigDecimal.ZERO,
@@ -119,9 +120,9 @@ object SendSheet {
         val isFingerprintAuthEnable: Boolean = false,
 
         /** Url from where we need to fetch the crypto request */
-        val cryptoRequestUrl: Link.CryptoRequestUrl? = null,
+        @Redacted val cryptoRequestUrl: Link.CryptoRequestUrl? = null,
         /** A payment request fetched from bitpay */
-        val paymentProtocolRequest: PaymentProtocolRequest? = null,
+        @Redacted val paymentProtocolRequest: PaymentProtocolRequest? = null,
         /** True when a payment request data is being fetched */
         val isFetchingPayment: Boolean = false
     ) {
@@ -224,31 +225,6 @@ object SendSheet {
                 } else null
             )
         }
-
-        override fun toString(): String {
-            return "SendSheetModel(" +
-                "currencyCode='$currencyCode', " +
-                "fiatCode='$fiatCode', " +
-                "balance=$balance, " +
-                "networkFee=$networkFee, " +
-                "fiatBalance=$fiatBalance, " +
-                "fiatNetworkFee=$fiatNetworkFee, " +
-                "isAmountCrypto=$isAmountCrypto, " +
-                "isAmountEditVisible=$isAmountEditVisible, " +
-                "isAmountOverBalance=$isTotalCostOverBalance, " +
-                "targetAddress='***', " +
-                "rawAmount='$rawAmount', " +
-                "amount=$amount, " +
-                "memo='***', " +
-                "fiatAmount=$fiatAmount, " +
-                "fiatPricePerUnit=$fiatPricePerUnit, " +
-                "targetSpeed=$transferSpeed, " +
-                "feeCurrencyCode='$feeCurrencyCode', " +
-                "isConfirmingTx=$isConfirmingTx, " +
-                "showFeeSelect=$showFeeSelect, " +
-                "totalCost=$totalCost, " +
-                "fiatTotalCost=$fiatTotalCost)"
-        }
     }
 
     @MobiusUpdateSpec(
@@ -261,7 +237,7 @@ object SendSheet {
         data class OnRequestScanned(
             val currencyCode: CurrencyCode,
             val amount: BigDecimal?,
-            val targetAddress: String?
+            @Redacted val targetAddress: String?
         ) : E()
 
         data class OnExchangeRateUpdated(
@@ -273,16 +249,12 @@ object SendSheet {
         data class OnBalanceUpdated(
             val balance: BigDecimal,
             val fiatBalance: BigDecimal
-        ) : E() {
-            override fun toString(): String {
-                return "OnBalanceUpdated(balance='***', fiatBalance='***')"
-            }
-        }
+        ) : E()
 
         object OnNetworkFeeError : E()
 
         data class OnNetworkFeeUpdated(
-            val targetAddress: String,
+            @Redacted val targetAddress: String,
             val amount: BigDecimal,
             val networkFee: BigDecimal,
             val transferFeeBasis: TransferFeeBasis
@@ -293,11 +265,9 @@ object SendSheet {
         ) : E()
 
         data class OnAddressValidated(
-            val address: String,
+            @Redacted val address: String,
             val isValid: Boolean
-        ) : E() {
-            override fun toString() = "OnAddressValidated(isValid=$isValid)"
-        }
+        ) : E()
 
         sealed class OnAmountChange : E() {
             object AddDecimal : OnAmountChange()
@@ -305,21 +275,15 @@ object SendSheet {
             object Clear : OnAmountChange()
 
             data class AddDigit(
-                val digit: Int
-            ) : OnAmountChange() {
-                override fun toString() = "AddDigit(digit=***)"
-            }
+                @Redacted val digit: Int
+            ) : OnAmountChange()
         }
 
         data class OnTargetAddressChanged(
-            val toAddress: String
-        ) : E() {
-            override fun toString() = "${this::class.java.name}(toAddress='***')"
-        }
+            @Redacted val toAddress: String
+        ) : E()
 
-        data class OnMemoChanged(val memo: String) : E() {
-            override fun toString() = "${this::class.java.name}(memo='***')"
-        }
+        data class OnMemoChanged(@Redacted val memo: String) : E()
 
         sealed class ConfirmTx : E() {
             object OnConfirmClicked : ConfirmTx()
@@ -329,10 +293,8 @@ object SendSheet {
         sealed class OnAddressPasted : E() {
 
             data class ValidAddress(
-                val address: String
-            ) : OnAddressPasted() {
-                override fun toString() = "${this::class.java.name}()"
-            }
+                @Redacted val address: String
+            ) : OnAddressPasted()
 
             object NoAddress : OnAddressPasted()
             object InvalidAddress : OnAddressPasted()
@@ -392,10 +354,8 @@ object SendSheet {
 
         data class ValidateAddress(
             val currencyCode: CurrencyCode,
-            val address: String
-        ) : F() {
-            override fun toString() = "ValidateAddress()"
-        }
+            @Redacted val address: String
+        ) : F()
 
         data class ShowEthTooLowForTokenFee(
             val currencyCode: CurrencyCode,
@@ -413,37 +373,21 @@ object SendSheet {
 
         data class EstimateFee(
             val currencyCode: CurrencyCode,
-            val address: String,
+            @Redacted val address: String,
             val amount: BigDecimal,
             val transferSpeed: TransferSpeed
-        ) : F() {
-            override fun toString(): String {
-                return "EstimateFee(" +
-                    "currencyCode='$currencyCode', " +
-                    "address='***', " +
-                    "amount=$amount, " +
-                    "fee=$transferSpeed)"
-            }
-        }
+        ) : F()
 
         data class SendTransaction(
             val currencyCode: CurrencyCode,
-            val address: String,
+            @Redacted val address: String,
             val amount: BigDecimal,
             val transferFeeBasis: TransferFeeBasis
-        ) : F() {
-            override fun toString(): String {
-                return "SendTransaction(" +
-                    "currencyCode='$currencyCode', " +
-                    "address='***', " +
-                    "amount=$amount, " +
-                    "transferFeeBasis=$transferFeeBasis)"
-            }
-        }
+        ) : F()
 
         data class AddTransactionMetaData(
             val transaction: Transfer,
-            val memo: String,
+            @Redacted val memo: String,
             val fiatCurrencyCode: String,
             val fiatPricePerUnit: BigDecimal
         ) : F()
@@ -459,7 +403,10 @@ object SendSheet {
         ): F()
 
         sealed class PaymentProtocol : F() {
-            data class LoadPaymentData(val cryptoRequestUrl: Link.CryptoRequestUrl) : PaymentProtocol()
+            data class LoadPaymentData(
+                @Redacted val cryptoRequestUrl: Link.CryptoRequestUrl
+            ) : PaymentProtocol()
+
             data class ContinueWitPayment(
                 val paymentProtocolRequest: PaymentProtocolRequest,
                 val transferFeeBasis: TransferFeeBasis

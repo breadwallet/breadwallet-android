@@ -8,8 +8,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'io.sweers.redacted.redacted-plugin'
+
 if (file('fabric.properties').exists()) {
     apply plugin: 'io.fabric'
+}
+
+redactedPlugin {
+    replacementString = '***'
 }
 
 detekt {
@@ -228,6 +234,7 @@ repositories {
     maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI' } // TODO: Remove when kodein inclusion is handled
     maven { url 'https://jitpack.io' }
     maven { url 'https://dl.bintray.com/brcore/core' } // TODO: Remove when core is published to maven central
+    maven { url 'https://dl.bintray.com/drewcarlson/redacted-plugin' }
 }
 
 dependencies {
@@ -284,6 +291,8 @@ dependencies {
 
     compileOnly 'com.github.DrewCarlson.switchboard:api-mobius:0.6.1'
     kapt 'com.github.DrewCarlson.switchboard:generator-mobius:0.6.1'
+
+    compileOnly 'io.sweers.redacted:redacted-compiler-plugin-annotation:0.0.3'
 
     implementation 'com.bluelinelabs:conductor:3.0.0-rc2'
     implementation 'com.bluelinelabs:conductor-support:3.0.0-rc2'
