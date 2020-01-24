@@ -121,7 +121,12 @@ class BdbAuthInterceptor(
     }
 
     private suspend fun createAndSetJwt() {
-        val (newJwt, expiration) = createAccountJwt()
+        val (newJwt, expiration) = try {
+            createAccountJwt()
+        } catch (e: IOException) {
+            logError("Failed to create JWT", e)
+            return
+        }
         if (newJwt != null) {
             jwtString = newJwt
             jwtExpiration = expiration
@@ -134,7 +139,7 @@ class BdbAuthInterceptor(
         // Lock acquired after successful jwt creation
         if (jwtString != null) return@withLock null to 0
 
-        val (token, clientId) = requestToken() ?: error("Failed to create Account JWT.")
+        val (token, clientId) = requestToken()
 
         // The JWT deals with exp in seconds, but we will use millis everywhere else.
         val now = TimeUnit.MILLISECONDS.toSeconds(Date().time)
@@ -156,7 +161,7 @@ class BdbAuthInterceptor(
         "$jwtHeader.$jwtBody.$jwtSignature" to TimeUnit.SECONDS.toMillis(expiration)
     }
 
-    private fun requestToken(attempt: Int = 0): Pair<String, String>? {
+    private fun requestToken(attempt: Int = 0): Pair<String, String> {
         val request = Request.Builder()
             .addHeader("Authorization", "Bearer ${BuildConfig.BDB_CLIENT_TOKEN}")
             .url("https://api.blockset.com/users/token")
@@ -176,7 +181,7 @@ class BdbAuthInterceptor(
         } catch (e: IOException) {
             return if (attempt == MAX_TOKEN_RETRIES) {
                 logError("Failed to create account token.", e)
-                null
+                throw e
             } else {
                 requestToken(attempt + 1)
             }
