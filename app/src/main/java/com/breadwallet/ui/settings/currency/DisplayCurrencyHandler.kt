@@ -29,7 +29,7 @@ import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.BRSharedPrefs.putPreferredFiatIso
 import com.breadwallet.ui.navigation.NavEffectTransformer
-import com.spotify.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.subtypeEffectHandler
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 

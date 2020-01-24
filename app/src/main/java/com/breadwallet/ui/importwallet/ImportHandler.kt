@@ -32,8 +32,8 @@ import com.breadwallet.crypto.Wallet
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
-import com.spotify.mobius.flow.flowTransformer
-import com.spotify.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.flowTransformer
+import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
