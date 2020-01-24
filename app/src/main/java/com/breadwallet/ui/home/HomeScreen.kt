@@ -31,8 +31,8 @@ import java.math.BigDecimal
 
 object HomeScreen {
     data class M(
-        @Redacted val wallets: Map<String, Wallet> = emptyMap(),
-        @Redacted val displayOrder: List<String> = emptyList(),
+        val wallets: Map<String, Wallet> = emptyMap(),
+        val displayOrder: List<String> = emptyList(),
         val promptId: PromptItem? = null,
         val hasInternet: Boolean = true,
         val isBuyBellNeeded: Boolean = false,
@@ -65,6 +65,8 @@ object HomeScreen {
                 }
             }
         }
+
+        data class OnEnabledWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
 
         data class OnWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
         data class OnWalletBalanceUpdated(
@@ -155,7 +157,8 @@ data class Wallet(
     val syncProgress: Float = 0f,
     val syncingThroughMillis: Long = 0L,
     val isSyncing: Boolean = false,
-    val priceChange: PriceChange? = null
+    val priceChange: PriceChange? = null,
+    val isInitialized: Boolean = false
 ) {
     val hasSyncTime: Boolean = syncingThroughMillis != 0L
 

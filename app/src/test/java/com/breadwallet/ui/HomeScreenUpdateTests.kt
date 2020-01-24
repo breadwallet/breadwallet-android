@@ -57,7 +57,7 @@ class HomeScreenUpdateTests {
 
         spec.given(initState)
             .`when`(
-                E.OnWalletsUpdated(wallets.values.toList())
+                E.OnEnabledWalletsUpdated(wallets.values.toList())
             )
             .then(
                 assertThatNext(
@@ -65,6 +65,21 @@ class HomeScreenUpdateTests {
                         wallets = wallets,
                         displayOrder = wallets.values.map { it.currencyId }
                     )),
+                    hasNoEffects()
+                )
+            )
+
+        spec.given(initState)
+            .`when`(
+                E.OnWalletsUpdated(wallets.values.toList())
+            )
+            .then(
+                assertThatNext(
+                    hasModel(
+                        initState.copy(
+                            wallets = wallets
+                        )
+                    ),
                     hasNoEffects()
                 )
             )
@@ -82,10 +97,11 @@ class HomeScreenUpdateTests {
             )
             .then(
                 assertThatNext(
-                    hasModel(initialWalletsAddedState.copy(
-                        wallets = expectedWallets,
-                        displayOrder = expectedWallets.values.map { it.currencyId }
-                    )),
+                    hasModel(
+                        initialWalletsAddedState.copy(
+                            wallets = expectedWallets
+                        )
+                    ),
                     hasNoEffects()
                 )
             )
@@ -96,7 +112,8 @@ class HomeScreenUpdateTests {
             balance = BigDecimal.valueOf(1),
             fiatBalance = BigDecimal.valueOf(1000),
             fiatPricePerUnit = BigDecimal.valueOf(1000),
-            priceChange = PriceChange(0.1, 10.0)
+            priceChange = PriceChange(0.1, 10.0),
+            isInitialized = true
         )
 
 
@@ -127,7 +144,8 @@ class HomeScreenUpdateTests {
         val initState = M.createDefault().copy(wallets = wallets)
 
         val progress = 0.15f
-        val expectedWallet = WALLET_BITCOIN.copy(syncProgress = progress, isSyncing = true)
+        val expectedWallet =
+            WALLET_BITCOIN.copy(syncProgress = progress, isSyncing = true, isInitialized = true)
         wallets[expectedWallet.currencyCode] = expectedWallet
 
         spec.given(initState)
@@ -168,11 +186,24 @@ class HomeScreenUpdateTests {
         val initState = M.createDefault()
             .copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))
 
-        val expectedEffect = F.GoToWallet(WALLET_BITCOIN.currencyCode)
-
         spec.given(initState)
             .`when`(
                 E.OnWalletClicked(currencyCode = WALLET_BITCOIN.currencyCode)
+            )
+            .then(
+                assertThatNext(
+                    hasNoEffects()
+                )
+            )
+
+        val initializedWallet = WALLET_BITCOIN.copy(isInitialized = true)
+        val updatedState =
+            initState.copy(wallets = mutableMapOf(initializedWallet.currencyCode to initializedWallet))
+        val expectedEffect = F.GoToWallet(WALLET_BITCOIN.currencyCode)
+
+        spec.given(updatedState)
+            .`when`(
+                E.OnWalletClicked(currencyCode = initializedWallet.currencyCode)
             )
             .then(
                 assertThatNext(

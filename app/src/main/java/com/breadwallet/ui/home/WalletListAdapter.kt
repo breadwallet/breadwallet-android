@@ -32,6 +32,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
@@ -39,6 +40,7 @@ import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.ext.swap
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.legacy.presenter.customviews.ShimmerLayout
+import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -211,15 +213,12 @@ class WalletListAdapter(
             val fiatBalance = wallet.fiatBalance.formatFiatForUi(preferredFiatIso)
             val cryptoBalance = wallet.balance.formatCryptoForUi(currencyCode)
 
-            if (wallet.fiatPricePerUnit == BigDecimal.ZERO) {
-                wallet_balance_fiat.visibility = View.INVISIBLE
-                wallet_trade_price.visibility = View.INVISIBLE
-            } else {
-                wallet_balance_fiat.visibility = View.VISIBLE
-                wallet_trade_price.visibility = View.VISIBLE
-            }
+            wallet_balance_fiat.isInvisible = wallet.fiatPricePerUnit == BigDecimal.ZERO
+            wallet_trade_price.isInvisible = wallet.fiatPricePerUnit == BigDecimal.ZERO
+            divider.isInvisible = wallet.fiatPricePerUnit == BigDecimal.ZERO
 
             val isSyncing = wallet.isSyncing
+            val isInitialized = wallet.isInitialized
             // Set wallet fields
             wallet_name.text = wallet.currencyName
             wallet_trade_price.text = exchangeRate
@@ -233,8 +232,8 @@ class WalletListAdapter(
                 )
             )
             wallet_balance_currency.text = cryptoBalance
-            wallet_balance_currency.isGone = isSyncing
-            sync_progress.isVisible = isSyncing
+            wallet_balance_currency.isGone = isSyncing || !isInitialized
+            sync_progress.isVisible = isSyncing || !isInitialized
             syncing_label.isVisible = isSyncing
             if (isSyncing) {
                 val syncProgress = wallet.syncProgress
