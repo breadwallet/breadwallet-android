@@ -49,9 +49,9 @@ import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.flow.flowTransformer
-import com.spotify.mobius.flow.subtypeEffectHandler
-import com.spotify.mobius.flow.transform
+import drewcarlson.mobius.flow.flowTransformer
+import drewcarlson.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
