@@ -26,8 +26,8 @@ package com.breadwallet.ui.navigation
 
 import com.breadwallet.ext.throttleFirst
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.flow.FlowTransformer
-import com.spotify.mobius.flow.transform
+import drewcarlson.mobius.flow.FlowTransformer
+import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

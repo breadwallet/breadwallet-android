@@ -235,6 +235,7 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://dl.bintray.com/brcore/core' } // TODO: Remove when core is published to maven central
     maven { url 'https://dl.bintray.com/drewcarlson/redacted-plugin' }
+    maven { url 'https://dl.bintray.com/drewcarlson/mobius' }
 }
 
 dependencies {
@@ -286,8 +287,8 @@ dependencies {
 
     implementation 'com.spotify.mobius:mobius-core:1.3.0'
     implementation 'com.spotify.mobius:mobius-android:1.3.0'
-    implementation 'com.github.DrewCarlson.mobius:mobius-coroutines:dc8c693'
     testImplementation 'com.spotify.mobius:mobius-test:1.3.0'
+    implementation 'drewcarlson.mobius:mobius-coroutines:0.0.2'
 
     compileOnly 'com.github.DrewCarlson.switchboard:api-mobius:0.6.1'
     kapt 'com.github.DrewCarlson.switchboard:generator-mobius:0.6.1'

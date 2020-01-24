@@ -47,8 +47,8 @@ import com.breadwallet.ui.settings.fastsync.FastSync.F
 import com.breadwallet.ui.settings.fastsync.FastSync.M
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.flow.subtypeEffectHandler
-import com.spotify.mobius.flow.transform
+import drewcarlson.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.transform
 import kotlinx.android.synthetic.main.controller_fast_sync.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main

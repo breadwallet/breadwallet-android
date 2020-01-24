@@ -62,9 +62,9 @@ import com.breadwallet.util.getContentTypeHeader
 import com.breadwallet.util.getPaymentRequestHeader
 import com.platform.APIClient
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.flow.flowTransformer
-import com.spotify.mobius.flow.subtypeEffectHandler
-import com.spotify.mobius.flow.transform
+import drewcarlson.mobius.flow.flowTransformer
+import drewcarlson.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.transform
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

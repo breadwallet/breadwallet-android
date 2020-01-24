@@ -29,7 +29,7 @@ import com.breadwallet.crypto.WalletManagerSyncDepth.FROM_LAST_TRUSTED_BLOCK
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.sync.SyncBlockchain.E
 import com.breadwallet.ui.sync.SyncBlockchain.F
-import com.spotify.mobius.flow.subtypeEffectHandler
+import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.first
 
