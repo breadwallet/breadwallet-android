@@ -41,6 +41,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.platform.interfaces.AccountMetaDataProvider
@@ -56,6 +57,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
@@ -111,6 +113,28 @@ class HomeScreenHandler(
     }
 
     private fun loadWallets() {
+        // Load enabled wallets
+        walletProvider.enabledWallets()
+            .distinctUntilChanged { old, new -> old.containsAll(new) }
+            .mapLatest { wallets ->
+                wallets.mapNotNull { currencyId ->
+                    val token = TokenUtil.getTokenItems(context)
+                        .find { currencyId.equals(it.currencyId, true) }
+                    if (token == null) {
+                        null
+                    } else {
+                        Wallet(
+                            currencyId = currencyId,
+                            currencyCode = token.symbol.toLowerCase(),
+                            currencyName = token.name,
+                            isInitialized = false
+                        )
+                    }
+                }
+            }
+            .map { E.OnEnabledWalletsUpdated(it) }
+            .bindConsumerIn(output, this)
+
         // Update wallets list
         breadBox.wallets()
             .throttleLatest(DATA_THROTTLE_MS)
@@ -250,7 +274,8 @@ class HomeScreenHandler(
             fiatBalance = getBalanceInFiat(balance),
             syncProgress = 0f, // will update via sync events
             syncingThroughMillis = 0L, // will update via sync events
-            priceChange = getPriceChange(currency.code)
+            priceChange = getPriceChange(currency.code),
+            isInitialized = true
         )
     }
 

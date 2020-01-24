@@ -47,18 +47,32 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                     wallets[event.currencyCode] = wallet.copy(
                         syncProgress = event.progress,
                         syncingThroughMillis = event.syncThroughMillis,
-                        isSyncing = event.isSyncing
+                        isSyncing = event.isSyncing,
+                        isInitialized = true
                     )
                     next(model.copy(wallets = wallets))
                 }
             }
         }
         is E.OnBuyBellNeededLoaded -> next(model.copy(isBuyBellNeeded = event.isBuyBellNeeded))
+        is E.OnEnabledWalletsUpdated -> {
+            next(
+                model.copy(
+                    wallets = event.wallets.associateBy { it.currencyCode },
+                    displayOrder = event.wallets.map { it.currencyId }
+                )
+            )
+        }
         is E.OnWalletsUpdated -> {
-            next(model.copy(
-                wallets = event.wallets.associateBy { it.currencyCode },
-                displayOrder = event.wallets.map { it.currencyId }
-            ))
+            val wallets = model.wallets.toMutableMap()
+            event.wallets.forEach { wallet ->
+                wallets[wallet.currencyCode] = wallet
+            }
+            next(
+                model.copy(
+                    wallets = wallets
+                )
+            )
         }
         is E.OnWalletBalanceUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {
@@ -73,7 +87,8 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                                 balance = event.balance,
                                 fiatBalance = event.fiatBalance,
                                 fiatPricePerUnit = event.fiatPricePerUnit,
-                                priceChange = event.priceChange
+                                priceChange = event.priceChange,
+                                isInitialized = true
                             )
                             next(model.copy(wallets = wallets))
                         }
@@ -82,7 +97,16 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
             }
         }
         is E.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
-        is E.OnWalletClicked -> dispatch(effects(F.GoToWallet(event.currencyCode)))
+        is E.OnWalletClicked -> {
+            when {
+                model.wallets[event.currencyCode]?.isInitialized ?: false -> dispatch<M, F>(
+                    effects(
+                        F.GoToWallet(event.currencyCode)
+                    )
+                )
+                else -> noChange<M, F>()
+            }
+        }
         is E.OnAddWalletsClicked -> dispatch(effects(F.GoToAddWallet))
         E.OnBuyClicked -> dispatch(effects(F.GoToBuy))
         E.OnTradeClicked -> dispatch(effects(F.GoToTrade))
