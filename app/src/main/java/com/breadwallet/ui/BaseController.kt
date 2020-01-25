@@ -30,8 +30,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.bluelinelabs.conductor.Controller
-import com.breadwallet.tools.util.newTrace
-import com.breadwallet.tools.util.traceResult
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 import kotlinx.coroutines.CoroutineScope
@@ -54,8 +52,6 @@ abstract class BaseController(
     protected val viewAttachScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     protected val viewCreatedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val createViewTrace = newTrace("BaseController_onCreateView")
-
     /** Provides the root Application Kodein instance. */
     override val kodein by closestKodein {
         checkNotNull(applicationContext) {
@@ -75,11 +71,9 @@ abstract class BaseController(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         check(layoutId > 0) { "Must set layoutId or override onCreateView." }
-        return createViewTrace.traceResult {
-            inflater.inflate(layoutId, container, false).apply {
-                containerView = this
-                onCreateView(this)
-            }
+        return inflater.inflate(layoutId, container, false).apply {
+            containerView = this
+            onCreateView(this)
         }
     }
 
