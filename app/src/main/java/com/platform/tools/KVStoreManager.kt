@@ -49,6 +49,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions", "TooGenericExceptionCaught")
@@ -64,7 +65,7 @@ class KVStoreManager(
         private val mutex = Mutex()
     }
 
-    private val keyChannelMap = mutableMapOf<String, BroadcastChannel<JSONObject>>().run {
+    private val keyChannelMap = ConcurrentHashMap<String, BroadcastChannel<JSONObject>>().run {
         withDefault { key -> getOrPut(key) { BroadcastChannel(Channel.BUFFERED) } }
     }
 
