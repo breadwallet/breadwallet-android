@@ -229,13 +229,10 @@ clean {
 }
 
 repositories {
-    mavenCentral()
-    google()
     maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI' } // TODO: Remove when kodein inclusion is handled
-    maven { url 'https://jitpack.io' }
     maven { url 'https://dl.bintray.com/brcore/core' } // TODO: Remove when core is published to maven central
     maven { url 'https://dl.bintray.com/drewcarlson/redacted-plugin' }
-    maven { url 'https://dl.bintray.com/drewcarlson/mobius' }
+    maven { url 'https://dl.bintray.com/drewcarlson/switchboard' }
 }
 
 dependencies {
@@ -290,8 +287,8 @@ dependencies {
     testImplementation 'com.spotify.mobius:mobius-test:1.3.0'
     implementation 'drewcarlson.mobius:mobius-coroutines:0.0.2'
 
-    compileOnly 'com.github.DrewCarlson.switchboard:api-mobius:0.6.1'
-    kapt 'com.github.DrewCarlson.switchboard:generator-mobius:0.6.1'
+    compileOnly 'drewcarlson.switchboard:api-mobius:0.7.0'
+    kapt 'drewcarlson.switchboard:generator-mobius:0.7.0'
 
     compileOnly 'io.sweers.redacted:redacted-compiler-plugin-annotation:0.0.3'
 
