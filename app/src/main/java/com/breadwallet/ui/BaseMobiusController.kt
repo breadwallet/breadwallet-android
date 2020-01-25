@@ -30,9 +30,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
-import com.breadwallet.tools.util.newTrace
-import com.breadwallet.tools.util.trace
-import com.breadwallet.tools.util.traceResult
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.spotify.mobius.Connectable
@@ -164,10 +161,6 @@ abstract class BaseMobiusController<M, E, F>(
      */
     open fun bindView(modelFlow: Flow<M>): Flow<E> = emptyFlow()
 
-    private val renderLegacyTrace = newTrace("BaseMobiusController_render_legacy")
-    private val bindViewTrace = newTrace("BaseMobiusController_bindView")
-    private val bindViewLegacyTrace = newTrace("BaseMobiusController_bindView_legacy")
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return super.onCreateView(inflater, container).apply {
             // TODO: This code maintains the old render and model diffing support
@@ -175,33 +168,25 @@ abstract class BaseMobiusController<M, E, F>(
             //  loopController.connect(flowConnectable(transform = ::bindView))
             loopController.connect(flowConnectable { modelFlow ->
                 val eventChannel = Channel<E>(Channel.BUFFERED)
-                val disposable = bindViewLegacyTrace.traceResult {
-                    bindView(Consumer { event ->
-                        eventChannel.offer(event)
-                    })
-                }
+                val disposable = bindView(Consumer { event ->
+                    eventChannel.offer(event)
+                })
 
                 val scope = CoroutineScope(Dispatchers.Main)
                 modelFlow
                     .onStart {
                         previousModel = null
-                        renderLegacyTrace.trace {
-                            loopController.model.render()
-                        }
+                        loopController.model.render()
                         previousModel = loopController.model
                     }
                     .onEach { model ->
-                        renderLegacyTrace.trace {
-                            model.render()
-                        }
+                        model.render()
                         previousModel = model
                     }
                     .launchIn(scope)
 
                 merge(
-                    bindViewTrace.traceResult {
-                        bindView(modelFlow)
-                    },
+                    bindView(modelFlow),
                     eventChannel.consumeAsFlow()
                 ).onCompletion {
                     scope.cancel()
