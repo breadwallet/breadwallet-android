@@ -36,7 +36,7 @@ import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 

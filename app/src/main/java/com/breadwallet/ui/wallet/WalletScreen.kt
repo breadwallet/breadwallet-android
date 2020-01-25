@@ -31,7 +31,7 @@ import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.platform.entities.TxMetaData
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 

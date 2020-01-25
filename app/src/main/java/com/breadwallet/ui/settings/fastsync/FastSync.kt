@@ -29,7 +29,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 
 object FastSync {
 

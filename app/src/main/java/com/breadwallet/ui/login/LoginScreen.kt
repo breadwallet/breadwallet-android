@@ -24,7 +24,7 @@
  */
 package com.breadwallet.ui.login
 
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object LoginScreen {
