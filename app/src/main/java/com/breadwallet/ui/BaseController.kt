@@ -111,14 +111,14 @@ abstract class BaseController(
         } as T
 
     /** Display a [Toast] message of [resId] with a short duration. */
-    fun toast(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_SHORT)
+    fun toast(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_SHORT).show()
 
     /** Display a [Toast] message of [text] with a short duration. */
-    fun toast(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_SHORT)
+    fun toast(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_SHORT).show()
 
     /** Display a [Toast] message of [resId] with a long duration. */
-    fun toastLong(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_LONG)
+    fun toastLong(resId: Int) = Toast.makeText(checkNotNull(applicationContext), resId, Toast.LENGTH_LONG).show()
 
     /** Display a [Toast] message of [text] with a long duration. */
-    fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG)
+    fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG).show()
 }
