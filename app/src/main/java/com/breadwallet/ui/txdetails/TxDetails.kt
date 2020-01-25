@@ -27,7 +27,7 @@ package com.breadwallet.ui.txdetails
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 import java.util.Date

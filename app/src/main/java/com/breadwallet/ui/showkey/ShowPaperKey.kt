@@ -25,7 +25,7 @@
 package com.breadwallet.ui.showkey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object ShowPaperKey {

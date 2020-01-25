@@ -25,7 +25,7 @@
 package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object NodeSelector {
