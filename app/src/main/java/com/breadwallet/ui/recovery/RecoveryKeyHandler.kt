@@ -80,6 +80,7 @@ class RecoveryKeyHandler(
             is F.Unlink -> unlink(effect)
             is F.RecoverWallet -> recoverWallet(effect)
             is F.ValidateWord -> validateWord(effect)
+            is F.ValidatePhrase -> validatePhrase(effect)
         }
     }
 
@@ -90,6 +91,14 @@ class RecoveryKeyHandler(
     private fun validateWord(effect: F.ValidateWord) {
         val isValid = Bip39Reader.isWordValid(BreadApp.getBreadContext(), effect.word)
         output.accept(E.OnWordValidated(effect.index, !isValid))
+    }
+
+    private fun validatePhrase(effect: F.ValidatePhrase) {
+        val errors = MutableList(RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) { false }
+        effect.phrase.forEachIndexed { index, word ->
+            errors[index] = !Bip39Reader.isWordValid(BreadApp.getBreadContext(), word)
+        }
+        output.accept(E.OnPhraseValidated(errors))
     }
 
     private fun resetPin(effect: F.ResetPin) {

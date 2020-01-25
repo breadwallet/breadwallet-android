@@ -94,7 +94,7 @@ class RecoveryKeyController(
     override val layoutId: Int = R.layout.controller_recovery_key
 
     override val defaultModel
-        get() = RecoveryKey.M.createWithOptionalPhrase(
+        get() = M.createWithOptionalPhrase(
             mode = RecoveryKey.Mode.valueOf(mode),
             phrase = launchPhrase
         )

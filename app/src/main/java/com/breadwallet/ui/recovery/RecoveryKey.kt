@@ -102,6 +102,12 @@ object RecoveryKey {
             }
         }
 
+        data class OnPhraseValidated(val errors: List<Boolean>) : E() {
+            init {
+                require(errors.size == M.RECOVERY_KEY_WORDS_COUNT) { "Errors size must be ${M.RECOVERY_KEY_WORDS_COUNT}" }
+            }
+        }
+
         data class OnFocusedWordChanged(val index: Int) : E() {
             init {
                 require(index in -1..11) { "Focused word index must be in -1..11" }
