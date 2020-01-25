@@ -24,7 +24,7 @@
  */
 package com.breadwallet.ui.settings.segwit
 
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 
 object EnableSegWit {
 

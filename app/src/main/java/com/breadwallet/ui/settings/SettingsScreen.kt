@@ -25,7 +25,7 @@
 package com.breadwallet.ui.settings
 
 import com.breadwallet.util.CurrencyCode
-import io.hypno.switchboard.MobiusUpdateSpec
+import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object SettingsScreen {

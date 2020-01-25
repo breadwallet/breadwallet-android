@@ -27,7 +27,7 @@ package com.breadwallet.ui.navigation
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.ui.settings.SettingsSection
-import io.hypno.switchboard.MobiusHandlerSpec
+import drewcarlson.switchboard.MobiusHandlerSpec
 import io.sweers.redacted.annotation.Redacted
 
 /**
