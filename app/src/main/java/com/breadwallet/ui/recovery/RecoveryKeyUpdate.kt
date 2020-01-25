@@ -69,9 +69,12 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     }
 
     override fun onNextClicked(model: M): Next<M, F> {
+        return dispatch(setOf<F>(F.ValidatePhrase(model.phrase)))
+    }
+
+    override fun onPhraseValidated(model: M, event: E.OnPhraseValidated): Next<M, F> {
         return when {
-            model.phrase.all { it.isNotBlank() } &&
-                model.errors.none { it } -> {
+            event.errors.none { it } -> {
                 val nextEffect = when (model.mode) {
                     RecoveryKey.Mode.RECOVER ->
                         F.RecoverWallet(model.phrase)
@@ -82,7 +85,7 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
                 }
                 next(model.copy(isLoading = true), setOf(nextEffect))
             }
-            else -> dispatch(setOf(F.ErrorShake))
+            else -> next(model.copy(errors = event.errors), setOf(F.ErrorShake))
         }
     }
 
