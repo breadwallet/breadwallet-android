@@ -63,22 +63,15 @@ class TransactionListItem(
                 showTransactionFailed(transaction, received)
             }
 
-            var cryptoAmount = transaction.amount.abs()
-
-            // TODO: Properly handle fee case -- if fee & fiat preferred, need fee in fiat
-            if (transaction.isFeeForToken) {
-                cryptoAmount = transaction.fee
-            }
-
             val preferredCurrencyCode = when {
                 isCryptoPreferred -> transaction.currencyCode
                 else -> BRSharedPrefs.getPreferredFiatIso(mContext)
             }
             var amount = when {
-                isCryptoPreferred -> cryptoAmount
+                isCryptoPreferred -> transaction.amount
                 else -> transaction.amountInFiat
             }
-            if (!received && amount != null) {
+            if (!received) {
                 amount = amount.negate()
             }
             val formattedAmount = when {

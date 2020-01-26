@@ -277,6 +277,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             )
 
             awaitClose {
+                tx_list.layoutManager = null
                 tx_list.clearOnScrollListeners()
             }
         }
