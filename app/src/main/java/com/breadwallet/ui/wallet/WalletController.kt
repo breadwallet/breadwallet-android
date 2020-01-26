@@ -38,6 +38,7 @@ import android.view.animation.AccelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.RouterTransaction
@@ -64,6 +65,10 @@ import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.util.WalletDisplayUtils
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.GenericFastAdapter
+import com.mikepenz.fastadapter.adapters.GenericModelAdapter
+import com.mikepenz.fastadapter.adapters.ModelAdapter
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.controller_wallet.*
@@ -76,6 +81,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.text.NumberFormat
@@ -101,12 +107,9 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
 
     private val currencyCode = arg<String>(EXTRA_CURRENCY_CODE)
 
-    companion object {
-    }
-
     override val layoutId = R.layout.controller_wallet
 
-    override val defaultModel = WalletScreen.M.createDefault(currencyCode)
+    override val defaultModel = M.createDefault(currencyCode)
     override val init = WalletInit
     override val update = WalletUpdate
     override val flowEffectHandler
@@ -114,12 +117,14 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             checkNotNull(applicationContext),
             direct.instance(),
             direct.instance(),
+            direct.instance(),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
             }
         )
 
-    private var mAdapter: TransactionListAdapter? = null
+    private var fastAdapter: GenericFastAdapter? = null
+    private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
     private var mPriceDataAdapter = SparkAdapter()
     private val mIntervalButtons: List<BaseTextView>
         get() = listOf<BaseTextView>(
@@ -163,6 +168,20 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
         }
 
+        txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
+        fastAdapter = FastAdapter.with(listOf(txAdapter!!))
+
+        checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
+            when (item) {
+                is TransactionListItem ->
+                    eventConsumer.accept(E.OnTransactionClicked(item.model.txHash))
+            }
+            true
+        }
+
+        tx_list.adapter = fastAdapter
+        tx_list.itemAnimator = DefaultItemAnimator()
+
         return merge(
             send_button.clicks().map { E.OnSendClicked },
             receive_button.clicks().map { E.OnReceiveClicked },
@@ -179,7 +198,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                 search_bar.setEventOutput(channel)
                 awaitClose { search_bar.setEventOutput(null) }
             }
-        )
+        ).onCompletion {
+            txAdapter = null
+            fastAdapter = null
+        }
     }
 
     @Suppress("ComplexMethod")
@@ -229,14 +251,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
-                    val adapter = checkNotNull(mAdapter)
+                    val adapter = checkNotNull(txAdapter)
                     updateVisibleTransactions(adapter, this, channel)
                 }
             }
-            mAdapter = TransactionListAdapter(applicationContext!!, null) { (txHash) ->
-                offer(E.OnTransactionClicked(txHash))
-            }
-            tx_list.adapter = mAdapter
             tx_list.addOnScrollListener(
                 object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -247,7 +265,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                                 offer(E.OnVisibleTransactionsChanged(emptyList()))
                             }
                             RecyclerView.SCROLL_STATE_IDLE -> {
-                                val adapter = checkNotNull(mAdapter)
+                                val adapter = checkNotNull(txAdapter)
                                 val layoutManager =
                                     (checkNotNull(recyclerView.layoutManager) as LinearLayoutManager)
                                 updateVisibleTransactions(adapter, layoutManager, channel)
@@ -264,7 +282,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         }
 
     private fun updateVisibleTransactions(
-        adapter: TransactionListAdapter,
+        adapter: GenericModelAdapter<WalletTransaction>,
         layoutManager: LinearLayoutManager,
         output: SendChannel<E>
     ) {
@@ -273,7 +291,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         if (firstIndex != RecyclerView.NO_POSITION) {
             output.offer(
                 E.OnVisibleTransactionsChanged(
-                    adapter.items
+                    adapter.models
                         .slice(firstIndex..lastIndex)
                         .map { it.txHash }
                 )
@@ -283,9 +301,8 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
 
     @Suppress("LongMethod", "ComplexMethod")
     override fun M.render() {
-        val adapter = checkNotNull(mAdapter)
+        val adapter = checkNotNull(txAdapter)
         val resources = checkNotNull(resources)
-        var adapterHasChanged = false
 
         ifChanged(M::currencyName, currency_label::setText)
 
@@ -302,8 +319,12 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         ifChanged(M::isCryptoPreferred) {
             setPriceTags(it, true)
 
-            adapter.setIsCryptoPreferred(isCryptoPreferred)
-            adapterHasChanged = true
+            adapter.itemList.items
+                .filterIsInstance<TransactionListItem>()
+                .forEach { item ->
+                    item.isCryptoPreferred = isCryptoPreferred
+                }
+            checkNotNull(fastAdapter).notifyAdapterDataSetChanged()
         }
 
         ifChanged(
@@ -312,16 +333,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             M::transactions
         ) {
             if (isFilterApplied) {
-                adapter.items = filteredTransactions
-                adapterHasChanged = true
+                adapter.setNewList(filteredTransactions)
             } else {
-                adapter.items = transactions
-                adapterHasChanged = true
+                adapter.setNewList(transactions)
             }
-        }
-
-        if (adapterHasChanged) {
-            adapter.notifyDataSetChanged()
         }
 
         // Update header area
