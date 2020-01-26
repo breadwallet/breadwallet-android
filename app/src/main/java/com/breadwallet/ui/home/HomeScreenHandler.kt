@@ -30,6 +30,7 @@ import com.breadwallet.breadbox.applyDisplayOrder
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
+import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.model.Experiments
@@ -64,6 +65,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import java.math.BigDecimal
@@ -146,12 +148,11 @@ class HomeScreenHandler(
         // Update wallet balances
         breadBox.currencyCodes()
             .throttleLatest(DATA_THROTTLE_MS)
-            .flatMapLatest { it.asFlow() }
-            // FIXME: merge concurrency default prevents
-            //  this from working with > 16 Wallets.
-            .flatMapMerge { currencyCode ->
-                breadBox.wallet(currencyCode)
-                    .distinctUntilChangedBy { it.balance }
+            .flatMapLatest { currencyCodes ->
+                currencyCodes.map { currencyCode ->
+                    breadBox.wallet(currencyCode)
+                        .distinctUntilChangedBy { it.balance }
+                }.merge()
             }
             .map {
                 E.OnWalletBalanceUpdated(
@@ -166,19 +167,18 @@ class HomeScreenHandler(
 
         // Update wallet sync state
         breadBox.currencyCodes()
-            .flatMapLatest { it.asFlow() }
-            // FIXME: merge concurrency default prevents
-            //  this from working with > 16 Wallets.
-            .flatMapMerge {
-                breadBox.walletSyncState(it)
-                    .mapLatest { syncState ->
-                        E.OnWalletSyncProgressUpdated(
-                            currencyCode = syncState.currencyCode,
-                            progress = syncState.percentComplete,
-                            syncThroughMillis = syncState.timestamp,
-                            isSyncing = syncState.isSyncing
-                        )
-                    }
+            .flatMapLatest { currencyCodes ->
+                currencyCodes.map {
+                    breadBox.walletSyncState(it)
+                        .mapLatest { syncState ->
+                            E.OnWalletSyncProgressUpdated(
+                                currencyCode = syncState.currencyCode,
+                                progress = syncState.percentComplete,
+                                syncThroughMillis = syncState.timestamp,
+                                isSyncing = syncState.isSyncing
+                            )
+                        }
+                }.merge()
             }
             .bindConsumerIn(output, this)
     }
@@ -275,7 +275,8 @@ class HomeScreenHandler(
             syncProgress = 0f, // will update via sync events
             syncingThroughMillis = 0L, // will update via sync events
             priceChange = getPriceChange(currency.code),
-            isInitialized = true
+            isInitialized = true,
+            isSyncing = walletManager.state == WalletManagerState.SYNCING()
         )
     }
 

@@ -25,14 +25,15 @@
 package com.breadwallet.ui.home
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
@@ -41,7 +42,6 @@ import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
-import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
@@ -54,6 +54,14 @@ import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.SettingsSection
 import com.breadwallet.util.isValidEmail
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.GenericFastAdapter
+import com.mikepenz.fastadapter.adapters.GenericModelAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.adapters.ModelAdapter
+import com.mikepenz.fastadapter.drag.ItemTouchCallback
+import com.mikepenz.fastadapter.drag.SimpleDragCallback
+import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -111,28 +119,42 @@ class HomeController(
             }
         )
 
-    private var walletAdapter: WalletListAdapter? = null
+    private var fastAdapter: GenericFastAdapter? = null
+    private var walletAdapter:  ModelAdapter<Wallet, WalletListItem>? = null
+    private var addWalletAdapter: ItemAdapter<AddWalletItem>? = null
 
     override fun bindView(output: Consumer<E>): Disposable {
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
-        walletAdapter = WalletListAdapter({
-            output.accept(E.OnWalletClicked(it.currencyCode))
-        }, {
-            output.accept(E.OnAddWalletsClicked)
-        }) { displayOrder ->
-            output.accept(E.OnWalletDisplayOrderUpdated(displayOrder))
+        walletAdapter = ModelAdapter(::WalletListItem)
+        addWalletAdapter = ItemAdapter()
+
+        fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
+        val fastAdapter = checkNotNull(fastAdapter)
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            val event = when (item) {
+                is AddWalletItem -> E.OnAddWalletsClicked
+                is WalletListItem -> E.OnWalletClicked(item.model.currencyCode)
+                else -> error("Unknown item clicked.")
+            }
+            output.accept(event)
+            true
         }
 
-        rv_wallet_list.adapter = walletAdapter
-        rv_wallet_list.layoutManager = LinearLayoutManager(activity)
+        val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter, output))
+        val touchHelper = ItemTouchHelper(dragCallback)
+        touchHelper.attachToRecyclerView(rv_wallet_list)
 
-        ItemTouchHelper(object : SimpleItemTouchHelperCallback(walletAdapter) {
-            override fun isItemViewSwipeEnabled() = false
-        }).attachToRecyclerView(rv_wallet_list)
-        return Disposable {}
+        rv_wallet_list.layoutManager = LinearLayoutManager(activity)
+        rv_wallet_list.adapter = fastAdapter
+        rv_wallet_list.itemAnimator = DefaultItemAnimator()
+
+        return Disposable {
+            this.fastAdapter = null
+            walletAdapter = null
+        }
     }
 
     override fun onCreateView(view: View) {
@@ -141,12 +163,11 @@ class HomeController(
     }
 
     override fun M.render() {
-        ifChanged(M::displayOrder) {
-            walletAdapter!!.setDisplayOrder(displayOrder)
-        }
-
         ifChanged(M::wallets) {
-            walletAdapter!!.setWallets(wallets.values.toList())
+            walletAdapter?.setNewList(wallets.values.toList())
+            if (addWalletAdapter?.itemList?.size() == 0 && wallets.isNotEmpty()) {
+                addWalletAdapter?.add(AddWalletItem())
+            }
         }
 
         ifChanged(M::aggregatedFiatBalance) {
@@ -276,6 +297,33 @@ class HomeController(
 
         }
         return customLayout
+    }
+
+    private class DragEventHandler(
+        private val fastAdapter: GenericFastAdapter,
+        private val output: Consumer<E>
+    ) : ItemTouchCallback {
+
+        fun isAddWallet(position: Int) = fastAdapter.getItem(position) is AddWalletItem
+
+        override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
+            if (isAddWallet(newPosition)) return false
+
+            val adapter = fastAdapter.getAdapter(newPosition)
+            check(adapter is GenericModelAdapter<*>)
+            DragDropUtil.onMove(adapter, oldPosition, newPosition)
+
+            output.accept(
+                E.OnWalletDisplayOrderUpdated(
+                    adapter.models
+                        .filterIsInstance<Wallet>()
+                        .map(Wallet::currencyId)
+                )
+            )
+            return true
+        }
+
+        override fun itemTouchDropped(oldPosition: Int, newPosition: Int) = Unit
     }
 }
 

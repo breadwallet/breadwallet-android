@@ -292,6 +292,11 @@ dependencies {
 
     compileOnly 'io.sweers.redacted:redacted-compiler-plugin-annotation:0.0.3'
 
+    implementation "com.mikepenz:fastadapter:4.1.2"
+    implementation "com.mikepenz:fastadapter-extensions-diff:4.1.2"
+    implementation "com.mikepenz:fastadapter-extensions-drag:4.1.2"
+    implementation "com.mikepenz:fastadapter-extensions-utils:4.1.2"
+
     implementation 'com.bluelinelabs:conductor:3.0.0-rc2'
     implementation 'com.bluelinelabs:conductor-support:3.0.0-rc2'
 
