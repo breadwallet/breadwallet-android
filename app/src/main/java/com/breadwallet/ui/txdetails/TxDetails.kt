@@ -25,6 +25,7 @@
 package com.breadwallet.ui.txdetails
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -55,6 +56,7 @@ object TxDetails {
         val confirmationDate: Date? = null,
         @Redacted val confirmedInBlockNumber: String = "",
         val transactionState: TransactionState? = null,
+        val isCompleted: Boolean = false,
         val feeToken: String = ""
     ) {
         companion object {
