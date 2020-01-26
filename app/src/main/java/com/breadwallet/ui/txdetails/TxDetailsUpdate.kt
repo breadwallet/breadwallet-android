@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.txdetails
 
+import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.feeForToken
 import com.breadwallet.breadbox.isErc20
 import com.breadwallet.breadbox.isEthereum
@@ -60,7 +61,10 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
             model.copy(
                 isEth = amount.currency.isEthereum(),
                 isErc20 = amount.currency.isErc20(),
-                cryptoTransferredAmount = amount.toBigDecimal(),
+                cryptoTransferredAmount = when {
+                    amount.unit == wallet.defaultUnit -> amount
+                    else -> amount.convert(wallet.defaultUnit).get()
+                }.toBigDecimal(),
                 fee = fee.toBigDecimal(),
                 isReceived = isReceived(),
                 blockNumber = confirmation.orNull()?.blockNumber?.toInt() ?: 0,
