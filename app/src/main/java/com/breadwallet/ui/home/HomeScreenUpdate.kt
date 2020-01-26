@@ -36,9 +36,14 @@ import com.spotify.mobius.Update
 
 val HomeScreenUpdate = Update<M, E, F> { model, event ->
     when (event) {
-        is E.OnWalletDisplayOrderUpdated -> {
-            dispatch(setOf(F.UpdateWalletOrder(event.displayOrder)))
-        }
+        is E.OnWalletDisplayOrderUpdated -> next(
+            model.copy(
+                wallets = model.wallets.values
+                    .sortedBy { event.displayOrder.indexOf(it.currencyId) }
+                    .associateBy(Wallet::currencyCode)
+            ),
+            setOf(F.UpdateWalletOrder(event.displayOrder))
+        )
         is E.OnWalletSyncProgressUpdated -> {
             when (val wallet = model.wallets[event.currencyCode]) {
                 null -> noChange<M, F>()

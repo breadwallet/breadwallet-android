@@ -115,6 +115,10 @@ object WalletScreen {
             val transactionMetaData: TxMetaData
         ) : E()
 
+        data class OnTransactionMetaDataLoaded(
+            val metadata: Map<String, TxMetaData>
+        ) : E()
+
         data class OnVisibleTransactionsChanged(
             @Redacted val transactionHashes: List<String>
         ) : E()
@@ -202,6 +206,7 @@ object WalletScreen {
         data class LoadTransactions(val currencyId: String) : F()
         data class LoadFiatPricePerUnit(val currencyId: String) : F()
         data class LoadTransactionMetaData(@Redacted val transactionHashes: List<String>) : F()
+        data class LoadTransactionMetaDataSingle(@Redacted val transactionHashes: List<String>) : F()
         data class LoadIsTokenSupported(val currencyCode: String) : F()
 
         object LoadCryptoPreferred : F()

@@ -33,7 +33,9 @@ import com.platform.entities.TxMetaDataEmpty
 import com.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
-import com.spotify.mobius.Next.*
+import com.spotify.mobius.Next.dispatch
+import com.spotify.mobius.Next.next
+import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
 @Suppress("TooManyFunctions", "ComplexMethod")
@@ -329,13 +331,30 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                 model.copy(transactions = event.walletTransactions),
                 effects(
                     F.CheckReviewPrompt(model.currencyCode, event.walletTransactions),
-                    F.LoadTransactionMetaData(txHashes)
+                    F.LoadTransactionMetaData(txHashes),
+                    F.LoadTransactionMetaDataSingle(event.walletTransactions.map(WalletTransaction::txHash))
                 )
             )
         } else {
+            val newHashes = mutableListOf<String>()
             next(
                 model.copy(
                     transactions = event.walletTransactions
+                        .mapIndexed { index, walletTransaction ->
+                            val oldTx = model.transactions.getOrNull(index)
+                            if (oldTx == null) {
+                                newHashes.add(walletTransaction.txHash)
+                            }
+
+                            if (oldTx?.memo != null) {
+                                walletTransaction.copy(
+                                    memo = oldTx.memo
+                                )
+                            } else walletTransaction
+                        }
+                ),
+                effects(
+                    F.LoadTransactionMetaDataSingle(newHashes)
                 )
             )
         }
@@ -354,6 +373,27 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         val transactions = model.transactions.replaceAt(index, transaction)
         return next(
             model.copy(transactions = transactions)
+        )
+    }
+
+    override fun onTransactionMetaDataLoaded(
+        model: M,
+        event: E.OnTransactionMetaDataLoaded
+    ): Next<M, F> {
+        return next(
+            model.copy(
+                transactions = model.transactions
+                    .map { transaction ->
+                        val metadata = event.metadata[transaction.txHash]
+                        transaction.copy(
+                            memo = when (metadata) {
+                                is TxMetaDataValue -> metadata.comment ?: ""
+                                is TxMetaDataEmpty -> ""
+                                null -> transaction.memo
+                            }
+                        )
+                    }
+            )
         )
     }
 
