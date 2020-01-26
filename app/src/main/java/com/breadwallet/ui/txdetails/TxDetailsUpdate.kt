@@ -30,6 +30,7 @@ import com.breadwallet.breadbox.isEthereum
 import com.breadwallet.breadbox.isReceived
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
+import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
@@ -53,6 +54,9 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
         event: E.OnTransactionUpdated
     ): Next<M, F> {
         val updatedModel = with(event.transaction) {
+            val confirmations = confirmations.orNull()?.toInt() ?: 0
+            val confirmationsUntilFinal =
+                wallet.walletManager.network.confirmationsUntilFinal.toInt()
             model.copy(
                 isEth = amount.currency.isEthereum(),
                 isErc20 = amount.currency.isErc20(),
@@ -71,6 +75,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                     .transform { it?.blockNumber?.toString() }
                     .or(""),
                 transactionState = TransactionState.valueOf(state),
+                isCompleted = confirmations >= confirmationsUntilFinal,
                 gasPrice = event.gasPrice,
                 gasLimit = event.gasLimit,
                 feeToken = feeForToken()

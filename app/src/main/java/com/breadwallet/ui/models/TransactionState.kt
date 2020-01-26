@@ -22,17 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.txdetails
+package com.breadwallet.ui.models
 
 import com.breadwallet.crypto.TransferState
 
 enum class TransactionState {
-    COMPLETED, CONFIRMING, FAILED, DELETED;
+    CONFIRMED, CONFIRMING, FAILED, DELETED;
 
     companion object {
         fun valueOf(transferState: TransferState): TransactionState {
             return when (transferState.type) {
-                TransferState.Type.INCLUDED -> COMPLETED
+                TransferState.Type.INCLUDED -> CONFIRMED
                 TransferState.Type.FAILED -> FAILED
                 TransferState.Type.CREATED,
                 TransferState.Type.SIGNED,

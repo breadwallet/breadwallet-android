@@ -36,17 +36,14 @@ data class WalletTransaction(
     val isReceived: Boolean,
     @Redacted val timeStamp: Long,
     @Redacted val memo: String? = null,
-    val isErrored: Boolean,
-    val isValid: Boolean,
     val fee: BigDecimal,
     val confirmations: Int,
-    val confirmationsUntilFinal: Int,
+    val isComplete: Boolean,
+    val isPending: Boolean,
+    val isErrored: Boolean,
+    val progress: Int,
     val currencyCode: String,
     val feeToken: String = ""
 ) {
-    val isPending: Boolean = confirmations < confirmationsUntilFinal && !isErrored
-
-    val isComplete: Boolean = confirmations >= confirmationsUntilFinal && !isErrored
-
     val isFeeForToken: Boolean = feeToken.isNotBlank()
 }
