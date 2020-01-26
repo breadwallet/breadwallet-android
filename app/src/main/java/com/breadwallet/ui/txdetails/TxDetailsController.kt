@@ -48,6 +48,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
+import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.txdetails.TxDetails.E
@@ -375,7 +376,13 @@ class TxDetailsController(
 
         ifChanged(M::transactionState) {
             when (transactionState) {
-                TransactionState.COMPLETED -> tx_status.setText(R.string.Transaction_complete)
+                TransactionState.CONFIRMED -> {
+                    if (isCompleted) {
+                        tx_status.setText(R.string.Transaction_complete)
+                    } else {
+                        tx_status.setText(R.string.Transaction_confirming)
+                    }
+                }
                 TransactionState.FAILED -> {
                     tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     tx_status.setText(R.string.TransactionDetails_initializedTimestampHeader)

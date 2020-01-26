@@ -27,7 +27,6 @@ package com.breadwallet.ui.wallet
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,7 +52,6 @@ private const val DP_120 = 120
 private const val DP_36 = 36
 private const val DP_16 = 16
 private const val PROGRESS_FULL = 100
-private const val PROGRESS_PACE = 20
 private const val TX_TYPE = 0
 
 class TransactionListAdapter(
@@ -112,7 +110,7 @@ class TransactionListAdapter(
         convertView.transactionAmount.setTextColor(mContext.resources.getColor(amountColor, null))
 
         // If this transaction failed, show the "FAILED" indicator in the cell
-        if (!item.isValid || item.isErrored) {
+        if (item.isErrored) {
             showTransactionFailed(convertView, item, received)
         }
 
@@ -140,10 +138,9 @@ class TransactionListAdapter(
         }
 
         convertView.transactionAmount.text = formattedAmount
+        
+        showTransactionProgress(convertView, item.progress)
 
-        if (item.isPending) {
-            showTransactionProgress(convertView, item.confirmations * PROGRESS_PACE)
-        }
         val sentTo = mContext.getString(R.string.Transaction_sentTo).format(item.toAddress)
         val receivedVia = mContext.getString(R.string.TransactionDetails_receivedVia)
             .format(item.fromAddress)
@@ -152,19 +149,17 @@ class TransactionListAdapter(
         val receivingVia = mContext.getString(R.string.TransactionDetails_receivingVia)
             .format(item.fromAddress)
 
-        val confirmationsComplete = item.confirmations > item.confirmationsUntilFinal
-
         convertView.transactionDetail.text = when {
             commentString == null -> ""
             commentString.isNotEmpty() -> commentString
             item.isFeeForToken -> mContext.getString(R.string.Transaction_tokenTransfer)
                 .format(item.feeToken)
             received -> {
-                if (confirmationsComplete) receivedVia
+                if (item.isComplete) receivedVia
                 else receivingVia
             }
             else -> {
-                if (confirmationsComplete) sentTo
+                if (item.isComplete) sentTo
                 else sendingTo
             }
         }

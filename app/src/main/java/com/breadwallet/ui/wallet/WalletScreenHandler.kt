@@ -35,7 +35,6 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
-import com.breadwallet.crypto.TransferState
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
@@ -44,6 +43,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
@@ -55,6 +55,7 @@ import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
@@ -63,6 +64,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformLatest
 import java.math.BigDecimal
+import kotlin.math.min
+
+private const val MAX_PROGRESS = 100
 
 @Suppress("TooManyFunctions")
 object WalletScreenHandler {
@@ -186,7 +190,12 @@ object WalletScreenHandler {
     ) = flowTransformer<F.LoadTransactions, E> { effects ->
         effects
             .flatMapLatest { effect ->
-                breadBox.walletTransfers(effect.currencyId)
+                breadBox.walletTransfers(effect.currencyId).combine(
+                    breadBox.wallet(effect.currencyId)
+                        .mapLatest { it.walletManager.network.height }
+                        .distinctUntilChanged()
+                )
+                { transfers, _ -> transfers }
             }
             .mapLatest { wallets ->
                 E.OnTransactionsUpdated(
@@ -273,9 +282,10 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
 }
 
 fun Transfer.asWalletTransaction(): WalletTransaction {
-    val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal
-    val confirmation = confirmation.orNull()
-
+    val confirmations = confirmations.orNull()?.toInt() ?: 0
+    val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal.toInt()
+    val isComplete = confirmations >= confirmationsUntilFinal
+    val transferState = TransactionState.valueOf(state)
     return WalletTransaction(
         txHash = hashString(),
         amount = amount.toBigDecimal(),
@@ -283,12 +293,20 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,
-        isErrored = state.type == TransferState.Type.FAILED,
-        isValid = state.type != TransferState.Type.FAILED, // TODO: Is this correct?
         fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
-        confirmations = confirmations.orNull()?.toInt() ?: 0,
-        confirmationsUntilFinal = confirmationsUntilFinal.toInt(),
-        timeStamp = confirmation?.confirmationTime?.time ?: System.currentTimeMillis(),
+        confirmations = confirmations,
+        isComplete = isComplete,
+        isPending = when (transferState) {
+            TransactionState.CONFIRMING -> true
+            TransactionState.CONFIRMED -> !isComplete
+            else -> false
+        },
+        isErrored = transferState == TransactionState.FAILED,
+        progress = min(
+            ((confirmations.toDouble() / confirmationsUntilFinal) * MAX_PROGRESS).toInt(),
+            MAX_PROGRESS
+        ),
+        timeStamp = confirmation.orNull()?.confirmationTime?.time ?: System.currentTimeMillis(),
         currencyCode = wallet.currency.code,
         feeToken = feeForToken()
     )
