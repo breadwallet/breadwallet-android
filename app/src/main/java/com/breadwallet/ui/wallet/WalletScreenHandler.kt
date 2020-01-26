@@ -27,6 +27,7 @@ package com.breadwallet.ui.wallet
 import android.content.Context
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.feeForToken
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.breadbox.hashString
@@ -313,10 +314,21 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
     val confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal.toInt()
     val isComplete = confirmations >= confirmationsUntilFinal
     val transferState = TransactionState.valueOf(state)
+    val feeForToken = feeForToken()
+    val amountInDefault = when {
+        amount.unit == wallet.defaultUnit -> amount
+        else -> amount.convert(wallet.defaultUnit).get()
+    }
     return WalletTransaction(
         txHash = hashString(),
-        amount = amount.toBigDecimal(),
-        amountInFiat = getBalanceInFiat(amount),
+        amount = when {
+            feeForToken.isBlank() -> amountInDefault.toBigDecimal()
+            else -> fee.toBigDecimal()
+        },
+        amountInFiat = getBalanceInFiat(when {
+            feeForToken.isBlank() -> amountInDefault
+            else -> fee
+        }),
         toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,
@@ -335,6 +347,6 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         ),
         timeStamp = confirmation.orNull()?.confirmationTime?.time ?: System.currentTimeMillis(),
         currencyCode = wallet.currency.code,
-        feeToken = feeForToken()
+        feeToken = feeForToken
     )
 }
