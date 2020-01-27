@@ -69,6 +69,7 @@ public class BRButton extends Button {
     private static final int ROUND_PIXELS = 8;
     private boolean isBreadButton; //meaning is has the special animation and shadow
     private boolean hasShadow; // allows us to add/remove the drop shadow from the button without affecting the animation
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListener;
 
     public BRButton(Context context) {
         super(context);
@@ -127,8 +128,18 @@ public class BRButton extends Button {
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         attributes.recycle();
         arr.recycle();
+
+        if (buttonColor > 0) {
+            bPaint.setColor(getContext().getColor(buttonColor));
+            invalidate();
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
         final ViewTreeObserver observer = getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 if (observer.isAlive()) {
@@ -137,11 +148,17 @@ public class BRButton extends Button {
                 Utils.correctTextSizeIfNeeded(BRButton.this);
                 correctTextBalance();
             }
-        });
-        if (buttonColor > 0) {
-            bPaint.setColor(getContext().getColor(buttonColor));
-            invalidate();
-        }
+        };
+        observer.addOnGlobalLayoutListener(layoutListener);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        final ViewTreeObserver observer = getViewTreeObserver();
+        observer.removeOnGlobalLayoutListener(layoutListener);
+        layoutListener = null;
     }
 
     @Override
