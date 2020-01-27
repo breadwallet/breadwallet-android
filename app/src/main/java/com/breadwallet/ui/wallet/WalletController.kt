@@ -407,6 +407,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                     .setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
+                            if (view == null) return
                             progress_layout.visibility = View.GONE
                             progress_layout.alpha = 1f
                         }
