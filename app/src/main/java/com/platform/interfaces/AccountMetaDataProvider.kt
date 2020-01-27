@@ -92,4 +92,7 @@ interface AccountMetaDataProvider {
 
     /** Persists the last cursor (used in retrieving inbox messages). */
     fun putLastCursor(lastCursor: String): Boolean
+
+    /** Restore the list of enabled wallets to the defaults. */
+    fun resetDefaultWallets()
 }
