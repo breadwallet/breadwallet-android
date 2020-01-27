@@ -59,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tx_amount"
-                    android:layout_marginStart="60dp"
+                    android:layout_centerHorizontal="true"
                     android:textColor="@color/settings_chevron_right"
                     tools:text="@string/TransactionDetails.amountWhenSent" />
 
@@ -70,8 +70,8 @@
                     android:layout_below="@id/tx_amount"
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="2dp"
-                    android:textColor="@color/settings_chevron_right"
                     android:fontFamily="@font/circular_pro_bold"
+                    android:textColor="@color/settings_chevron_right"
                     tools:text="X" />
 
                 <View
