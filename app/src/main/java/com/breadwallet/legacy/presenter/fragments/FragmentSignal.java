@@ -11,10 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.util.Preconditions;
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.interfaces.BROnSignalCompletion;
-
-import junit.framework.Assert;
 
 
 /**
@@ -77,9 +76,9 @@ public class FragmentSignal extends Fragment {
             String title = bundle.getString(TITLE, "");
             String description = bundle.getString(ICON_DESCRIPTION, "");
             int resId = bundle.getInt(RES_ID, 0);
-            Assert.assertNotSame(title, "");
-            Assert.assertNotSame(description, "");
-            Assert.assertNotSame(resId, 0);
+            Preconditions.checkState(!title.contentEquals(""));
+            Preconditions.checkState(!description.contentEquals(""));
+            Preconditions.checkState(resId != 0);
 
             mTitle.setText(title);
             mDescription.setText(description);
