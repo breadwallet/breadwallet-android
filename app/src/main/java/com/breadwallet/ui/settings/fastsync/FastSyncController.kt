@@ -160,8 +160,8 @@ class FastSyncController(
     private fun showDisableFastSyncDialog() {
         val act = checkNotNull(activity)
         val controller = AlertDialogController(
-            message = act.getString(R.string.FastSync_disableConfirmationDialog),
-            positiveText = act.getString(R.string.FastSync_turnOff),
+            message = act.getString(R.string.WalletConnectionSettings_confirmation),
+            positiveText = act.getString(R.string.WalletConnectionSettings_turnOff),
             negativeText = act.getString(R.string.Button_cancel)
         )
         controller.targetController = this
@@ -170,8 +170,8 @@ class FastSyncController(
 
     private fun bindLearnMoreLink() = callbackFlow<E> {
         val act = checkNotNull(activity)
-        val message: String = act.getString(R.string.FastSync_description)
-        val clickableText = act.getString(R.string.FastSync_learnMoreLink)
+        val message: String = act.getString(R.string.WalletConnectionSettings_explanatoryText)
+        val clickableText = act.getString(R.string.WalletConnectionSettings_link)
         val linkPos = message.lastIndexOf(clickableText)
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
