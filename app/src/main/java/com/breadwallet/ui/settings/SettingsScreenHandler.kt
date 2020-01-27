@@ -40,6 +40,7 @@ import com.breadwallet.ui.settings.SettingsScreen.F
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.buildSignedRequest
+import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.middlewares.plugins.LinkPlugin
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -59,7 +60,8 @@ class SettingsScreenHandler(
     private val showApiServerDialog: (String) -> Unit,
     private val showPlatformDebugUrlDialog: (String) -> Unit,
     private val showPlatformBundleDialog: (String) -> Unit,
-    private val showTokenBundleDialog: (String) -> Unit
+    private val showTokenBundleDialog: (String) -> Unit,
+    private val metaDataManager: AccountMetaDataProvider
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
@@ -119,6 +121,10 @@ class SettingsScreenHandler(
                     value.bundle
                 )
                 loadOptions(SettingsSection.DEVELOPER_OPTION)
+            }
+            F.ResetDefaultCurrencies -> {
+                metaDataManager.resetDefaultWallets()
+                output.accept(E.OnWalletsUpdated)
             }
         }
     }
@@ -220,6 +226,10 @@ class SettingsScreenHandler(
         SettingsItem(
             context.getString(R.string.Prompts_ShareData_title),
             SettingsOption.SHARE_ANONYMOUS_DATA
+        ),
+        SettingsItem(
+            context.getString(R.string.Settings_resetCurrencies),
+            SettingsOption.RESET_DEFAULT_CURRENCIES
         ),
         SettingsItem(
             context.getString(R.string.Settings_notifications),

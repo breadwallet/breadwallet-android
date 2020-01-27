@@ -73,6 +73,9 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     ): Next<M, F> =
         dispatch(setOf(F.SetTokenBundle(event.bundle)))
 
+    override fun onWalletsUpdated(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToHomeScreen))
+
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: M,
@@ -113,6 +116,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.TOKEN_BUNDLE -> F.ShowTokenBundleDialog
                     SettingsOption.NATIVE_API_EXPLORER -> F.GoToNativeApiExplorer
                     SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
+                    SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                 }
             )
         )

@@ -287,6 +287,10 @@ class MetaDataManager(
             null
         }
 
+    override fun resetDefaultWallets() {
+        putEnabledWallets(BreadApp.getDefaultEnabledWallets())
+    }
+
     private fun putEnabledWallets(enabledWallets: List<String>) =
         enabledWalletsToJSON(enabledWallets)
             .also {
