@@ -210,7 +210,7 @@ class TxDetailsController(
             details_container.isVisible = showDetails
             show_hide_details.setText(
                 when {
-                    showDetails -> R.string.TransactionDetails_titleFailed
+                    showDetails -> R.string.TransactionDetails_hideDetails
                     else -> R.string.TransactionDetails_showDetails
                 }
             )
