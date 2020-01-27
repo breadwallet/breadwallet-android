@@ -234,6 +234,8 @@
     <string name="ErrorMessages.touchIdFailed.android">指紋が認識されませんでした。もう一度やり直してください。</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">%1$sからFace ID使用限度額をカスタマイズすることができます。</string>
+    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
+    <string name="FaceIDSettings.explanatoryText">Face IDを使用してBRDアプリのロックを解除し、送金してください。</string>
     <!-- Face Id screen label -->
     <string name="FaceIDSettings.label">自分の顔を使って、ブレッドのロックを解除して、設定された使用限度額までお金を送金しましょう。</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
@@ -242,10 +244,14 @@
     <string name="FaceIDSettings.switchLabel">ブレッド利用時にFace IDを有効にする</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">Face ID</string>
+    <!-- Text label for a toggle that enables Face ID for sending money. -->
+    <string name="FaceIDSettings.transactionsTitleText">Face IDを有効にして送金する</string>
     <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
     <string name="FaceIDSettings.unavailableAlertMessage">このデバイスではFace IDのセットアップが完了していません。設定-&gt;Face IDとパスコードに移動して、今すぐセットアップしましょう。</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">Face IDがセットアップされていません</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
+    <string name="FaceIDSettings.unlockTitleText">Face IDを有効にしてBRDのロックを解除する</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">Face ID使用限度額</string>
     <!-- Economy fee -->
@@ -270,6 +276,14 @@
     <string name="FeeSelector.title">処理速度</string>
     <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
     <string name="FileChooser.selectImageSource.android">画像ソースを選択</string>
+    <!-- Fingerprint authentication settings screen description -->
+    <string name="FingerprintSettings.description">設定された限度額以下の送金を行う場合には、指紋認証でご自身のブレッドのロックを解除できます。</string>
+    <!-- Switch label to enable fingerprint authentication to send money -->
+    <string name="FingerprintSettings.sendMoney">指紋を使用して送金する</string>
+    <!-- Fingerprint authentication settings sceen title -->
+    <string name="FingerprintSettings.title">指紋</string>
+    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
+    <string name="FingerprintSettings.unlockApp">指紋を使用してBRDのロックを解除する</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -392,6 +406,8 @@
     <string name="Modal.PaperKeySkip.Button.IllDoItLater">後で行います</string>
     <!-- Paper Key Skip modal title -->
     <string name="Modal.PaperKeySkip.Title">注意</string>
+    <!-- Node selection mode is automatic -->
+    <string name="NodeSelector.automatic">自動</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">自動モードに切り替える</string>
     <!-- Node is connected label -->
@@ -402,6 +418,8 @@
     <string name="NodeSelector.enterBody">ノードのIPアドレスとポートを入力する（任意）</string>
     <!-- Enter Node ip address view title -->
     <string name="NodeSelector.enterTitle">ノードを入力する</string>
+    <!-- Entered invalid node address at the node selection screen -->
+    <string name="NodeSelector.invalid">無効なノード</string>
     <!-- Switch to manual mode button label -->
     <string name="NodeSelector.manualButton">マニュアルモードに切り替える</string>
     <!-- Node address label -->
@@ -528,6 +546,8 @@
     <string name="PushNotifications.on">オン</string>
     <!-- Push notifications settings view title label -->
     <string name="PushNotifications.title">情報の輪からそのまま離れないで</string>
+    <!-- Push notifications settings failed to update settings on the back end -->
+    <string name="PushNotifications.updateFailed">プッシュ通知設定を更新できませんでした</string>
     <!-- Google play review prompt body -->
     <string name="RateAppPrompt.Body.Android">当社のアプリをとても気に入っているなら、少しお時間をいただき評価とレビューをお願いします。</string>
     <!-- Google play review prompt, revivew button -->
@@ -630,6 +650,10 @@
     <string name="RecoveryKeyFlow.unlinkWalletSubtext">端末から現在インストールされているウォレットを解除し,新しいウォレットを始めます。</string>
     <!-- Warning displayed when the user starts the process of unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWalletWarning">ウォレットは再アクセスのために復元を開始します。</string>
+    <!-- Title displayed to the user on the intro screen when wiping a wallet -->
+    <string name="RecoveryKeyFlow.wipeWallet">端末からウォレットを解除する。</string>
+    <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
+    <string name="RecoveryKeyFlow.wipeWalletSubtext">デバイスから現在のウォレットを消去して、新しいウォレットを開始します。</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">復元キーをメモする</string>
     <!-- Title for the recovery key landing page if the key has already been generated. -->
@@ -849,6 +873,8 @@
     <string name="Settings.wallet">ウォレット</string>
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">この端末から削除する</string>
+    <!-- Wipe/delete your wallet from the current device. -->
+    <string name="Settings.wipe.android">端末からウォレットを解除する。</string>
     <!-- Share data view body -->
     <string name="ShareData.body">匿名データをシェアして、ブレッドの改善にご協力ください。これにはいかなる財務情報も含まれません。私たちはあなたの財務プライバシーを尊重しています。</string>
     <!-- Share data header -->
@@ -913,6 +939,8 @@
     <string name="TouchIdSettings.disabledWarning.body.android">この機器は指紋認証が有効化されていません。設定 -&gt; セキュリティに移動して指紋認証を設定してください。</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">指紋認証が有効ではありません</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
+    <string name="TouchIdSettings.explanatoryText">Touch IDを使用してBRDアプリのロックを解除し、送金してください。</string>
     <!-- Touch Id screen label -->
     <string name="TouchIdSettings.label">設定された限度額以下の送金を行う場合には、指紋認証でご自身のブレッドのロックを解除できます。</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -927,10 +955,14 @@
     <string name="TouchIdSettings.title">Touch ID</string>
     <!-- Fingerprint authentication label -->
     <string name="TouchIdSettings.title.android">指紋認証</string>
+    <!-- Text label for a toggle that enables Touch ID for sending money. -->
+    <string name="TouchIdSettings.transactionsTitleText">Touch IDを有効にして送金する</string>
     <!-- Touch ID unavailable alert message -->
     <string name="TouchIdSettings.unavailableAlertMessage">あなたはこの端末でTouch IDの利用設定をしていません。設定-&gt;Touch IDとパスコードに移動し、今すぐ設定してください。</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">Touch IDが設定されていません</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
+    <string name="TouchIdSettings.unlockTitleText">Touch IDを有効にしてBRDのロックを解除する</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">常にパスコードを要求する</string>
     <!-- Touch ID spending limit screen body -->
@@ -1014,6 +1046,8 @@
     <string name="TransactionDetails.gasLimitHeader">ガソリン上限</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">ガソリン価格</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.hideDetails">詳細を隠す</string>
     <!-- Label showing the transaction was started (initialized) -->
     <string name="TransactionDetails.initializedTimestampHeader">初期化済み</string>
     <!-- More button title -->
@@ -1048,7 +1082,7 @@
     <string name="TransactionDetails.statusHeader">ステータス</string>
     <!-- Transaction Details Title -->
     <string name="TransactionDetails.title">取引詳細</string>
-    <!-- Hide Details button -->
+    <!-- Transaction Details Title - Failed -->
     <string name="TransactionDetails.titleFailed">詳細を隠す</string>
     <!-- Transaction Details Title - Internal -->
     <string name="TransactionDetails.titleInternal">内部</string>
@@ -1126,6 +1160,23 @@
     <string name="VerifyPin.title">PINコードが必要です</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">このトランザクションを認証する</string>
+    <!-- Turn off fast sync confirmation question -->
+    <string name="WalletConnectionSettings.confirmation">Fastsyncをオフにしてもよろしいですか？</string>
+    <!-- Explanation for wallet connection setting -->
+    <string name="WalletConnectionSettings.explanatoryText">ビットコインウォレットの同期を実質的に瞬時にします。仕組みの詳細については、こちらをご覧ください。</string>
+    <!-- Connection mode switch label. -->
+    <string name="WalletConnectionSettings.footerTitle">搭載</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.header">Fastsync（パイロット）</string>
+    <!-- Link text in explanatoryText This NB: This should exactly match the last word of WalletConnectionSettings.explanatoryText -->
+    <string name="WalletConnectionSettings.link">ここに</string>
+    <!-- WalletConnectionSettiongs -->
+    <!--Wallet connection settings menu item title.-->
+    <string name="WalletConnectionSettings.menuTitle">接続モード</string>
+    <!-- Turn off fast sync button label -->
+    <string name="WalletConnectionSettings.turnOff">消す</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
     <string name="Watch.noWalletWarning">BRDのiPhoneアプリを開き、ウォレットをセットアップする</string>
     <!-- Dismiss button label -->

@@ -157,7 +157,7 @@
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Sälj</string>
     <!-- send button -->
-    <string name="Button.send">skicka</string>
+    <string name="Button.send">Senden</string>
     <!-- Settings button label -->
     <string name="Button.settings">Inställningar</string>
     <!-- Setup button label -->
@@ -234,6 +234,8 @@
     <string name="ErrorMessages.touchIdFailed.android">Fingeravtryck ej bekräftat. Försök igen.</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">Du kan anpassa din utgiftsgräns för Face ID från %1$s.</string>
+    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
+    <string name="FaceIDSettings.explanatoryText">Använd Face ID för att låsa upp din BRD-app och skicka pengar.</string>
     <!-- Face Id screen label -->
     <string name="FaceIDSettings.label">Använd ditt ansikte för att låsa upp din BRD och skicka pengar upp till en satt gräns.</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
@@ -242,10 +244,14 @@
     <string name="FaceIDSettings.switchLabel">Aktivera Face ID för BRD</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">Face ID</string>
+    <!-- Text label for a toggle that enables Face ID for sending money. -->
+    <string name="FaceIDSettings.transactionsTitleText">Aktivera Face ID för att skicka pengar</string>
     <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
     <string name="FaceIDSettings.unavailableAlertMessage">Du har inte satt upp Face ID på den här enheten. Gå till Inställningar-&gt;Face ID &amp; Lösenord för att sätta upp det nu.</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">Face ID har inte satts upp</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
+    <string name="FaceIDSettings.unlockTitleText">Aktivera Face ID för att låsa upp BRD</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">Utgiftsgräns för Face ID</string>
     <!-- Economy fee -->
@@ -270,6 +276,14 @@
     <string name="FeeSelector.title">Bearbetningshastighet</string>
     <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
     <string name="FileChooser.selectImageSource.android">Välj bildkälla</string>
+    <!-- Fingerprint authentication settings screen description -->
+    <string name="FingerprintSettings.description">Använd ditt fingeravtryck för att låsa upp din BRD-app och skicka transaktioner.</string>
+    <!-- Switch label to enable fingerprint authentication to send money -->
+    <string name="FingerprintSettings.sendMoney">Använd fingeravtryck för att skicka pengar</string>
+    <!-- Fingerprint authentication settings sceen title -->
+    <string name="FingerprintSettings.title">Fingeravtryck</string>
+    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
+    <string name="FingerprintSettings.unlockApp">Använd fingeravtryck för att låsa upp BRD</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Admin</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -392,6 +406,8 @@
     <string name="Modal.PaperKeySkip.Button.IllDoItLater">Jag gör det senare</string>
     <!-- Paper Key Skip modal title -->
     <string name="Modal.PaperKeySkip.Title">Observera</string>
+    <!-- Node selection mode is automatic -->
+    <string name="NodeSelector.automatic">Automatisk</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">Byt till automatiskt läge</string>
     <!-- Node is connected label -->
@@ -402,6 +418,8 @@
     <string name="NodeSelector.enterBody">Ange nodens IP-adress och port (valfritt)</string>
     <!-- Enter Node ip address view title -->
     <string name="NodeSelector.enterTitle">Ange nod</string>
+    <!-- Entered invalid node address at the node selection screen -->
+    <string name="NodeSelector.invalid">Ogiltig nod</string>
     <!-- Switch to manual mode button label -->
     <string name="NodeSelector.manualButton">Byt till manuellt läge</string>
     <!-- Node address label -->
@@ -528,6 +546,8 @@
     <string name="PushNotifications.on">På</string>
     <!-- Push notifications settings view title label -->
     <string name="PushNotifications.title">Håll dig uppdaterad</string>
+    <!-- Push notifications settings failed to update settings on the back end -->
+    <string name="PushNotifications.updateFailed">Det gick inte att uppdatera inställningarna för push-aviseringar</string>
     <!-- Google play review prompt body -->
     <string name="RateAppPrompt.Body.Android">Om du älskar vår app, var god ta en stund att betygsätta den och ge oss en recension.</string>
     <!-- Google play review prompt, revivew button -->
@@ -630,6 +650,10 @@
     <string name="RecoveryKeyFlow.unlinkWalletSubtext">Starta en ny plånbok genom att ta bort länken till den för närvarande installerade plånboken från denna enhet.</string>
     <!-- Warning displayed when the user starts the process of unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWalletWarning">Plånboken måste återställas för att du ska återfå tillgång till den.</string>
+    <!-- Title displayed to the user on the intro screen when wiping a wallet -->
+    <string name="RecoveryKeyFlow.wipeWallet">Ta bort länken till din plånbok från denna enhet.</string>
+    <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
+    <string name="RecoveryKeyFlow.wipeWalletSubtext">Starta en ny plånbok genom att torka av den nuvarande plånboken från din enhet.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Skriv ner din nyckel</string>
     <!-- Title for the recovery key landing page if the key has already been generated. -->
@@ -849,6 +873,8 @@
     <string name="Settings.wallet">Plånbok</string>
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">Ta Bort Länken Från Denna Enhet</string>
+    <!-- Wipe/delete your wallet from the current device. -->
+    <string name="Settings.wipe.android">Ta bort länken till din plånbok från denna enhet.</string>
     <!-- Share data view body -->
     <string name="ShareData.body">Hjälp till att förbättra BRD genom att dela dina anonyma uppgifter med oss. Detta inbegriper inga ekonomiska uppgifter. Vi respekterar din ekonomiska sekretess.</string>
     <!-- Share data header -->
@@ -913,6 +939,8 @@
     <string name="TouchIdSettings.disabledWarning.body.android">Du har inte aktiverat fingeravtrycksautentisering på den här enheten. Gå till Inställningar &gt; Säkerhet för att konfigurera fingeravtrycksautentisering.</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">Fingeravtrycksautentisering har inte aktiverats</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
+    <string name="TouchIdSettings.explanatoryText">Använd Touch ID för att låsa upp din BRD-app och skicka pengar.</string>
     <!-- Touch Id screen label -->
     <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp BRD och skicka pengar upp till en inställd gräns.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -927,10 +955,14 @@
     <string name="TouchIdSettings.title">Touch ID</string>
     <!-- Fingerprint authentication label -->
     <string name="TouchIdSettings.title.android">Fingeravtrycksautentisering</string>
+    <!-- Text label for a toggle that enables Touch ID for sending money. -->
+    <string name="TouchIdSettings.transactionsTitleText">Aktivera Touch ID för att skicka pengar</string>
     <!-- Touch ID unavailable alert message -->
     <string name="TouchIdSettings.unavailableAlertMessage">Du har inte ställt in Touch ID på denna enhet. Gå till Inställningar-&gt;Touch ID &amp; Lösenkod för att ställa in det nu.</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">Touch ID är inte inställt</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
+    <string name="TouchIdSettings.unlockTitleText">Aktivera Touch ID för att låsa upp BRD</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">Kräver alltid lösenord</string>
     <!-- Touch ID spending limit screen body -->
@@ -1014,6 +1046,8 @@
     <string name="TransactionDetails.gasLimitHeader">Gasbegränsning</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gaspris</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.hideDetails">Dölj detaljer</string>
     <!-- Label showing the transaction was started (initialized) -->
     <string name="TransactionDetails.initializedTimestampHeader">Initierad</string>
     <!-- More button title -->
@@ -1048,7 +1082,7 @@
     <string name="TransactionDetails.statusHeader">Status</string>
     <!-- Transaction Details Title -->
     <string name="TransactionDetails.title">Transaktionsuppgifter</string>
-    <!-- Hide Details button -->
+    <!-- Transaction Details Title - Failed -->
     <string name="TransactionDetails.titleFailed">Dölj detaljer</string>
     <!-- Transaction Details Title - Internal -->
     <string name="TransactionDetails.titleInternal">Intern</string>
@@ -1126,6 +1160,23 @@
     <string name="VerifyPin.title">PIN-kod krävs</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Godkänn denna transaktion</string>
+    <!-- Turn off fast sync confirmation question -->
+    <string name="WalletConnectionSettings.confirmation">Är du säker på att du vill stänga av Fastsync?</string>
+    <!-- Explanation for wallet connection setting -->
+    <string name="WalletConnectionSettings.explanatoryText">Gör synkronisering av din bitcoin-plånbok praktiskt taget omedelbart. Läs mer om hur det fungerar här.</string>
+    <!-- Connection mode switch label. -->
+    <string name="WalletConnectionSettings.footerTitle">Drivs av</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.header">Fastsync (pilot)</string>
+    <!-- Link text in explanatoryText This NB: This should exactly match the last word of WalletConnectionSettings.explanatoryText -->
+    <string name="WalletConnectionSettings.link">här</string>
+    <!-- WalletConnectionSettiongs -->
+    <!--Wallet connection settings menu item title.-->
+    <string name="WalletConnectionSettings.menuTitle">Anslutningsläge</string>
+    <!-- Turn off fast sync button label -->
+    <string name="WalletConnectionSettings.turnOff">Stäng av</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
     <string name="Watch.noWalletWarning">Öppna iPhone-appen BRD för att ställa in din plånbok.</string>
     <!-- Dismiss button label -->
