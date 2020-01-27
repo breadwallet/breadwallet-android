@@ -63,8 +63,12 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
         is E.OnEnabledWalletsUpdated -> {
             next(
                 model.copy(
-                    wallets = event.wallets.associateBy { it.currencyCode },
-                    displayOrder = event.wallets.map { it.currencyId }
+                    wallets = event.wallets
+                        .associateBy(Wallet::currencyCode)
+                        .mapValues { (currencyCode, wallet) ->
+                            model.wallets[currencyCode] ?: wallet
+                        },
+                    displayOrder = event.wallets.map(Wallet::currencyId)
                 )
             )
         }
