@@ -57,17 +57,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import java.math.BigDecimal
 import com.breadwallet.crypto.Wallet as CryptoWallet
 
@@ -219,12 +215,10 @@ class HomeScreenHandler(
     }
 
     override fun onChanged() {
-        breadBox.currencyCodes()
-            .take(1)
-            .flatMapLatest { it.asFlow() }
-            .flatMapMerge { breadBox.wallet(it).take(1) }
-            .onEach { updateBalance(it.currency.code, it.balance) }
-            .launchIn(this)
+        val wallets = breadBox.getSystemUnsafe()?.wallets ?: emptyList()
+        wallets.onEach { wallet ->
+            updateBalance(wallet.currency.code, wallet.balance)
+        }
     }
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
