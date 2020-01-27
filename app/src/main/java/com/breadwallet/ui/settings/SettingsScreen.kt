@@ -56,6 +56,7 @@ object SettingsScreen {
         data class SetPlatformDebugUrl(val url: String) : E()
         data class SetPlatformBundle(val bundle: String) : E()
         data class SetTokenBundle(val bundle: String) : E()
+        object OnWalletsUpdated : E()
     }
 
     sealed class F {
@@ -90,6 +91,8 @@ object SettingsScreen {
         object ShowPlatformDebugUrlDialog : F()
         object ShowPlatformBundleDialog : F()
         object ShowTokenBundleDialog : F()
+        object ResetDefaultCurrencies: F()
+        object GoToHomeScreen: F()
 
         data class GoToFastSync(
             val currencyCode: CurrencyCode

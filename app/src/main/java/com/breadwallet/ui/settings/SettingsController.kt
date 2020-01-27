@@ -43,6 +43,7 @@ import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
 import com.breadwallet.ui.view
+import com.platform.interfaces.MetaDataManager
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_settings.*
@@ -75,7 +76,8 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
                 ::showApiServerDialog,
                 ::showPlatformDebugUrlDialog,
                 ::showPlatformBundleDialog,
-                ::showTokenBundleDialog
+                ::showTokenBundleDialog,
+                direct.instance()
             )
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
@@ -102,6 +104,7 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
                 F.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
                 F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
                 is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
+                F.GoToHomeScreen -> NavigationEffect.GoToHome
                 else -> null
             }
         })
