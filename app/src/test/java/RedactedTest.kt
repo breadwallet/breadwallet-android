@@ -34,5 +34,6 @@ class RedactedTest {
     fun testRedaction() {
         val event = InputPin.E.OnPinEntered(pin = "0000", isPinCorrect = true)
         assertTrue(event.toString().contains("pin=\"***\""))
+        assertTrue(event.toString().contains("pin=\"***\""))
     }
 }
