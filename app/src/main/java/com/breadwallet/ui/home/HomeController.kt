@@ -154,6 +154,7 @@ class HomeController(
         return Disposable {
             this.fastAdapter = null
             walletAdapter = null
+            addWalletAdapter = null
         }
     }
 

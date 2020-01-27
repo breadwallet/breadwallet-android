@@ -157,6 +157,12 @@ class SendSheetController(args: Bundle? = null) :
         showKeyboard(false)
 
         layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
+        layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
+    }
+
+    override fun onDestroyView(view: View) {
+        layoutSignal.setOnTouchListener(null)
+        super.onDestroyView(view)
     }
 
     override fun onDetach(view: View) {
@@ -165,8 +171,6 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
-
         return merge(
             keyboard.bindInput(),
             textInputMemo.bindFocusChanged(),
@@ -188,9 +192,7 @@ class SendSheetController(args: Bundle? = null) :
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
             buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
-        ).onCompletion {
-            layoutSignal.setOnTouchListener(null)
-        }
+        )
     }
 
     private fun EditText.bindActionComplete(output: E) =

@@ -81,6 +81,7 @@ abstract class BaseController(
         super.onDestroyView(view)
         viewCreatedScope.coroutineContext.cancelChildren()
         clearFindViewByIdCache()
+        containerView = null
     }
 
     override fun onDetach(view: View) {
