@@ -43,8 +43,8 @@ object SendSheetInit : Init<M, F> {
         }
 
         var isPaymentProtocolRequest = false
-        model.cryptoRequestUrl?.let {
-            effects.add(F.PaymentProtocol.LoadPaymentData(it))
+        if (!model.cryptoRequestUrl?.rUrlParam.isNullOrBlank()) {
+            effects.add(F.PaymentProtocol.LoadPaymentData(model.cryptoRequestUrl!!))
             isPaymentProtocolRequest = true
         }
 
