@@ -76,9 +76,9 @@ object AddWalletsHandler {
                 .mapLatest { (trackedWallets, query) ->
                     TokenUtil.getTokenItems(context)
                         .filter { token ->
-                            token.isSupported || trackedWallets.any { wallet ->
-                                wallet.currencyId == token.currencyId
-                            }
+                            // TODO: Remove ripple filter when core-5.0.0 is stable
+                            (token.currencyId != "ripple-mainnet:__native__" && token.isSupported)
+                                || trackedWallets.any { it.currencyId == token.currencyId  }
                         }
                         .applyFilter(query)
                         .map { tokenItem ->
