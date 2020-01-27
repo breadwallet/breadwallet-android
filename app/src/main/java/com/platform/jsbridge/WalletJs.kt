@@ -353,7 +353,14 @@ class WalletJs(
             is TransactionResultMessage.TransactionConfirmed -> {
                 try {
                     val transfer =
-                        checkNotNull(wallet.createTransfer(address, amount, feeBasis).orNull())
+                        checkNotNull(
+                            wallet.createTransfer(
+                                address,
+                                amount,
+                                feeBasis,
+                                null
+                            ).orNull()
+                        )
                     val phrase = checkNotNull(keyStore.getPhrase())
                     wallet.walletManager.submit(transfer, phrase)
 
