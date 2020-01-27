@@ -75,7 +75,11 @@ object AddWalletsHandler {
                 }
                 .mapLatest { (trackedWallets, query) ->
                     TokenUtil.getTokenItems(context)
-                        .filter { it.isSupported }
+                        .filter { token ->
+                            token.isSupported || trackedWallets.any { wallet ->
+                                wallet.currencyId == token.currencyId
+                            }
+                        }
                         .applyFilter(query)
                         .map { tokenItem ->
                             val currencyId = tokenItem.currencyId ?: ""
