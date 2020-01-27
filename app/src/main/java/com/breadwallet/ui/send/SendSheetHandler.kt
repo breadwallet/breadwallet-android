@@ -265,7 +265,7 @@ object SendSheetHandler {
                 }
 
                 try {
-                    val transfer = wallet.createTransfer(address, amount, feeBasis).orNull()
+                    val transfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
                     checkNotNull(transfer) { "Failed to create transfer." }
 
                     val phrase = checkNotNull(keyStore.getPhrase())
