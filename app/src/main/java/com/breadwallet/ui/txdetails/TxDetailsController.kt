@@ -378,8 +378,10 @@ class TxDetailsController(
             when (transactionState) {
                 TransactionState.CONFIRMED -> {
                     if (isCompleted) {
+                        tx_status.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.checkmark_circled, 0, 0, 0)
                         tx_status.setText(R.string.Transaction_complete)
                     } else {
+                        tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                         tx_status.setText(R.string.Transaction_confirming)
                     }
                 }
@@ -387,8 +389,10 @@ class TxDetailsController(
                     tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     tx_status.setText(R.string.TransactionDetails_initializedTimestampHeader)
                 }
-                TransactionState.CONFIRMING -> tx_status.setText(R.string.Transaction_confirming)
-                else -> null
+                TransactionState.CONFIRMING -> {
+                    tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    tx_status.setText(R.string.Transaction_confirming)
+                }
             }
         }
     }
