@@ -240,6 +240,11 @@ class RecoveryKeyController(
             }
         }
 
+        wordInputs.zip(currentModel.phrase)
+            .forEach { (input, word) ->
+                input.setText(word, TextView.BufferType.EDITABLE)
+            }
+
         // Bind word input text event
         val watchers = wordInputs.mapIndexed { index, input ->
             createTextWatcher(output, index, input)
@@ -254,16 +259,6 @@ class RecoveryKeyController(
     }
 
     override fun M.render() {
-        ifChanged(M::phrase) { phrase ->
-            wordInputs.zip(phrase)
-                .filter { (input, word) ->
-                    input.text.toString() != word
-                }
-                .forEach { (input, word) ->
-                    input.setText(word, TextView.BufferType.EDITABLE)
-                }
-        }
-
         ifChanged(M::isLoading) {
             // TODO: Show loading msg
             loading_view.isVisible = it
