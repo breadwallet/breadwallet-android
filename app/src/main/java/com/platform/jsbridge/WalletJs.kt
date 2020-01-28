@@ -102,6 +102,9 @@ class WalletJs(
 
         private const val DOLLAR_IN_CENTS = 100
         private const val BASE_10 = 10
+
+        private const val FORMAT_DELIMITER = "?format="
+        private const val FORMAT_SEGWIT = "segwit"
     }
 
     @JavascriptInterface
@@ -147,18 +150,17 @@ class WalletJs(
 
     @JavascriptInterface
     fun addresses(
-        currencyCode: String
+        currencyCodeQ: String
     ) = nativePromiseFactory.create {
+        var (currencyCode, format) = parseCurrencyCodeQuery(currencyCodeQ)
+
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val wallet = system.wallets.first { it.currency.code.equals(currencyCode, true) }
+        val address = getAddress(wallet, format)
 
         JSONObject().apply {
             put(KEY_CURRENCY, currencyCode)
-            put(
-                KEY_ADDRESS,
-                if (wallet.currency.isBitcoin()) wallet.getTargetForScheme(AddressScheme.BTC_LEGACY)
-                else wallet.target.toSanitizedString()
-            )
+            put(KEY_ADDRESS, address)
         }
     }
 
@@ -259,7 +261,11 @@ class WalletJs(
             checkNotNull(estimateFee(wallet, address, amount)) { ERR_ESTIMATE_FEE }
 
         val fee = feeBasis.fee.toBigDecimal()
-        val totalCost = amount.toBigDecimal() + fee
+        val totalCost = if (feeBasis.currency.code == wallet.currency.code) {
+            amount.toBigDecimal() + fee
+        } else {
+            amount.toBigDecimal()
+        }
         val balance = wallet.balance.toBigDecimal()
 
         check(!amount.isZero && totalCost <= balance) { ERR_INSUFFICIENT_BALANCE }
@@ -375,5 +381,27 @@ class WalletJs(
                 null
             }
         }
+    }
+
+    private fun parseCurrencyCodeQuery(currencyCodeQuery: String) = when {
+        currencyCodeQuery.contains(FORMAT_DELIMITER) -> {
+            val parts = currencyCodeQuery.split(FORMAT_DELIMITER)
+            parts[0] to parts[1]
+        }
+        else -> {
+            currencyCodeQuery to ""
+        }
+    }
+
+    private fun getAddress(wallet: Wallet, format: String) = when {
+        wallet.currency.isBitcoin() -> {
+            wallet.getTargetForScheme(
+                when {
+                    format.equals(FORMAT_SEGWIT, true) -> AddressScheme.BTC_SEGWIT
+                    else -> AddressScheme.BTC_LEGACY
+                }
+            ).toString()
+        }
+        else -> wallet.target.toSanitizedString()
     }
 }
