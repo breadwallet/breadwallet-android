@@ -1,5 +1,3 @@
-package com.breadwallet.tools.sqlite;
-
 /**
  * BreadWallet
  * <p/>
@@ -24,16 +22,13 @@ package com.breadwallet.tools.sqlite;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.sqlite;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.PeerEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.legacy.presenter.entities.BRPeerEntity;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
@@ -41,7 +36,6 @@ import java.util.List;
 
 public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
-
 
     // Database fields
     private SQLiteDatabase database;
@@ -65,46 +59,6 @@ public class PeerDataSource implements BRDataSourceInterface {
 
     private PeerDataSource(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
-    }
-
-    public void putPeers(Context app, String iso, PeerEntity[] peerEntities) {
-
-        try {
-            database = openDatabase();
-            database.beginTransaction();
-            for (PeerEntity p : peerEntities) {
-//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
-                ContentValues values = new ContentValues();
-                values.put(BRSQLiteHelper.PEER_ADDRESS, p.getPeerAddress());
-                values.put(BRSQLiteHelper.PEER_PORT, p.getPeerPort());
-                values.put(BRSQLiteHelper.PEER_TIMESTAMP, p.getPeerTimeStamp());
-                values.put(BRSQLiteHelper.PEER_ISO, iso.toUpperCase());
-                database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
-            }
-
-            database.setTransactionSuccessful();
-        } catch (Exception ex) {
-            BRReportsManager.reportBug(ex);
-            Log.e(TAG, "Error inserting into SQLite", ex);
-            //Error in between database transaction
-        } finally {
-            database.endTransaction();
-            closeDatabase();
-        }
-
-    }
-
-    public void deletePeer(Context app, String iso, BRPeerEntity peerEntity) {
-        try {
-            database = openDatabase();
-            long id = peerEntity.getId();
-            Log.e(TAG, "Peer deleted with id: " + id);
-            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
-                    + " = ? AND " + BRSQLiteHelper.PEER_ISO + " = ?", new String[]{String.valueOf(id), iso.toUpperCase()});
-        } finally {
-            closeDatabase();
-        }
-
     }
 
     public void deleteAllPeers(Context app, String iso) {

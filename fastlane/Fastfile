@@ -27,6 +27,10 @@ end
 # [upload:true/false] Flag indicating if the build should be uploaded to Crashlytics, True as default.
 # fastlane beta flavor:"brdTestnet" build_type:"debug" [output_path:"~/Desktop/3.8.1.1/"] [upload:false]
 lane :beta do |options|
+  # Generate a changelog from commit messages since the last tag
+  changelog_from_git_commits(
+    merge_commit_filtering: "exclude_merges"
+  )
   # build the release variant
   gradle(
     task: 'assemble',
@@ -42,7 +46,7 @@ lane :beta do |options|
   # upload to Beta by Crashlytics
   if !options.key?(:upload) or options[:upload]
     crashlytics(
-      notes_path: "fastlane/changelog.txt",
+      notes: lane_context[SharedValues::FL_CHANGELOG],
       groups: ["android-team", "support"]
     )
   end

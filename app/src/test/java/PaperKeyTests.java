@@ -1,25 +1,7 @@
-import android.util.Log;
-
-import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.wallet.WalletsMaster;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/3/17.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/3/17.
  * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +22,22 @@ import static org.junit.Assert.assertThat;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+import android.util.Log;
+
+import com.breadwallet.tools.util.Bip39Reader;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 public class PaperKeyTests {
 
     private static final String TAG = PaperKeyTests.class.getName();

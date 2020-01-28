@@ -1,14 +1,21 @@
 package com.breadwallet.tools.animation;
 
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Interface to notify a {@link RecyclerView.Adapter} of moving and dismissal event from a {@link
- * android.support.v7.widget.helper.ItemTouchHelper.Callback}.
- *
+ * androidx.recyclerview.widget.ItemTouchHelper.Callback}.
  */
 public interface ItemTouchHelperAdapter {
+
+    /**
+     * Called when an item has been dragged and dropped.
+     *
+     * @param fromPosition The start position of the dragged item.
+     * @param toPosition   The end position of the dragged item.
+     */
+    void onItemDrop(int fromPosition, int toPosition);
 
     /**
      * Called when an item has been dragged far enough to trigger a move. This is called every time

@@ -11,6 +11,11 @@
         <item name="android:actionBarStyle">@style/BreadActionBar</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+        <item name="add_wallet_button_text">@color/blue_button_text</item>
+        <item name="colorControlNormal">@color/light_gray</item>
+        <item name="colorControlActivated">@color/prompt_action_button</item>
+        <item name="android:fontFamily">@font/circular_pro</item>
     </style>
 
     <!-- ActionBar styles -->
@@ -19,12 +24,16 @@
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/circular_pro_book</item>
     </style>
 
     <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/circular_pro_medium</item>
         <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:fontFamily">@font/circular_pro_medium</item>
     </style>
 
     <style name="AppTheme.Dark" parent="AppTheme">
@@ -50,7 +59,8 @@
         <item name="faq_button_primary_color">@drawable/ic_faq_button_dark</item>
         <item name="faq_button_secondary_color">@drawable/faq_question_white</item>
         <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
-        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark</item>
+        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark
+        </item>
         <item name="input_words_text_color">@color/white</item>
         <item name="token_secondary_text_color">@color/white_60_percent_opaque</item>
         <item name="approve_wallet_link_button">@color/approve_wallet_link_dark</item>
@@ -82,7 +92,8 @@
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
         <item name="faq_button_primary_color">@drawable/faq_question_black</item>
         <item name="faq_button_secondary_color">@drawable/faq_question_black</item>
-        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light</item>
+        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light
+        </item>
         <item name="input_words_text_color">@color/almost_black</item>
         <item name="token_secondary_text_color">@color/almost_black</item>
         <item name="approve_wallet_link_button">@color/approve_wallet_link_light</item>
@@ -106,17 +117,18 @@
     <attr name="pin_dot_filled_background" format="reference" />
     <attr name="create_new_wallet_background" format="reference" />
     <attr name="recover_wallet_background" format="reference" />
-    <attr name="fingerprint_icon_background" format="reference"/>
-    <attr name="faq_button_primary_color" format="reference"/>
-    <attr name="faq_button_secondary_color" format="reference"/>
-    <attr name="wallet_footer_button_background" format="reference"/>
-    <attr name="spend_limit_list_divider_color" format="reference"/>
+    <attr name="fingerprint_icon_background" format="reference" />
+    <attr name="faq_button_primary_color" format="reference" />
+    <attr name="faq_button_secondary_color" format="reference" />
+    <attr name="wallet_footer_button_background" format="reference" />
+    <attr name="spend_limit_list_divider_color" format="reference" />
     <attr name="input_words_text_color" format="reference" />
     <attr name="token_secondary_text_color" format="reference" />
-    <attr name="approve_wallet_link_button" format="reference"/>
-    <attr name="deny_wallet_link_button" format="reference"/>
-    <attr name="confirmation_footer_background" format="reference"/>
-    <attr name="link_wallet_subtitle_text_color" format="reference"/>
-    <attr name="new_price_alert_button" format="reference"/>
-    <attr name="save_price_alert_button" format="reference"/>
+    <attr name="approve_wallet_link_button" format="reference" />
+    <attr name="deny_wallet_link_button" format="reference" />
+    <attr name="confirmation_footer_background" format="reference" />
+    <attr name="link_wallet_subtitle_text_color" format="reference" />
+    <attr name="new_price_alert_button" format="reference" />
+    <attr name="save_price_alert_button" format="reference" />
+    <attr name="add_wallet_button_text" format="reference" />
 </resources>

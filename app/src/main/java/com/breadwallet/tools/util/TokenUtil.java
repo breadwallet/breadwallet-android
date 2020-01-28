@@ -25,12 +25,13 @@
 
 package com.breadwallet.tools.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.model.TokenItem;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -55,7 +56,7 @@ public final class TokenUtil {
 
     private static final String TAG = TokenUtil.class.getSimpleName();
 
-    private static final String ENDPOINT_CURRENCIES = "/currencies?type=erc20";
+    private static final String ENDPOINT_CURRENCIES = "/currencies";
     private static final String ENDPOINT_CURRENCIES_SALE_ADDRESS = "/currencies?saleAddress=";
     private static final String FIELD_CODE = "code";
     private static final String FIELD_NAME = "name";
@@ -65,6 +66,7 @@ public final class TokenUtil {
     private static final String FIELD_SALE_ADDRESS = "sale_address";
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
+    private static final String FIELD_CURRENCY_ID = "currency_id";
     private static final String FIELD_ALTERNATE_NAMES = "alternate_names";
     private static final String FIELD_CRYPTOCOMPARE = "cryptocompare";
     private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
@@ -73,6 +75,11 @@ public final class TokenUtil {
     private static final int START_COLOR_INDEX = 0;
     private static final int END_COLOR_INDEX = 1;
     private static final String TOKENS_FILENAME = "tokens.json";
+
+    private static final String ETHEREUM = "ethereum";
+    private static final String ETHEREUM_TESTNET = "ropsten";
+    private static final String TESTNET = "testnet";
+    private static final String MAINNET = "mainnet";
 
     // TODO: In DROID-878 fix this so we don't have to store this mTokenItems... (Should be stored in appropriate wallet.)
     private static List<TokenItem> mTokenItems = new ArrayList<>();
@@ -103,9 +110,7 @@ public final class TokenUtil {
 
                 // Copy the APK tokens.json to a file on internal storage
                 saveTokenListToFile(context, stringBuilder.toString());
-
                 loadTokens(parseJsonToTokenList(context, stringBuilder.toString()));
-
             } catch (IOException e) {
                 Log.e(TAG, "Could not read from resource file at res/raw/tokens.json ", e);
             }
@@ -147,6 +152,13 @@ public final class TokenUtil {
         return null;
     }
 
+    public static synchronized List<TokenItem> getTokenItems(Context context) {
+        if (mTokenItems == null || mTokenItems.isEmpty()) {
+            loadTokens(getTokensFromFile(context));
+        }
+        return mTokenItems;
+    }
+
     /**
      * Return a TokenItem with the given currency code or null if non TokenItem has the currency code.
      *
@@ -155,13 +167,6 @@ public final class TokenUtil {
      */
     public static TokenItem getTokenItemByCurrencyCode(String currencyCode) {
         return mTokenMap.get(currencyCode.toLowerCase());
-    }
-
-    public static synchronized List<TokenItem> getTokenItems(Context context) {
-        if (mTokenItems == null || mTokenItems.isEmpty()) {
-            loadTokens(getTokensFromFile(context));
-        }
-        return mTokenItems;
     }
 
     public static void fetchTokensFromServer(Context context) {
@@ -180,13 +185,14 @@ public final class TokenUtil {
                     loadTokens(parseJsonToTokenList(context, responseBody));
                 }
             }
+        } else {
+            Log.e(TAG, "failed to fetch tokens: " + response.getCode());
         }
     }
 
     // TODO refactor to avoid passing in context.
     private static ArrayList<TokenItem> parseJsonToTokenList(Context context, String jsonString) {
         ArrayList<TokenItem> tokenItems = new ArrayList<>();
-        WalletEthManager ethWalletManager = WalletEthManager.getInstance(context.getApplicationContext());
         // Iterate over the token list and announce each token to Core.
         try {
             JSONArray tokenListArray = new JSONArray(jsonString);
@@ -196,8 +202,6 @@ public final class TokenUtil {
                 String address = "";
                 String name = "";
                 String symbol = "";
-                String contractInitialValue = "";
-                int decimals = 0;
                 boolean isSupported = true;
                 String cryptocompareAlias = null;
 
@@ -213,17 +217,10 @@ public final class TokenUtil {
                     symbol = tokenObject.getString(FIELD_CODE);
                 }
 
-                if (tokenObject.has(FIELD_SCALE)) {
-                    decimals = tokenObject.getInt(FIELD_SCALE);
-                }
-
-                if (tokenObject.has(FIELD_CONTRACT_INITIAL_VALUE)) {
-                    contractInitialValue = tokenObject.getString(FIELD_CONTRACT_INITIAL_VALUE);
-                }
-
                 if (tokenObject.has(FIELD_IS_SUPPORTED)) {
                     isSupported = tokenObject.getBoolean(FIELD_IS_SUPPORTED);
                 }
+
                 if (tokenObject.has(FIELD_ALTERNATE_NAMES)) {
                     JSONObject altNameObject = tokenObject.getJSONObject(FIELD_ALTERNATE_NAMES);
                     if (altNameObject.has(FIELD_CRYPTOCOMPARE)) {
@@ -231,25 +228,31 @@ public final class TokenUtil {
                     }
                 }
 
-                if (!Utils.isNullOrEmpty(address) && !Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
-                    ethWalletManager.node.announceToken(address, symbol, name, "", decimals, null, null, 0);
-                    // Keep a local reference to the token list, so that we can make token symbols to their
-                    // gradient colors in WalletListAdapter
-                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, cryptocompareAlias);
-
+                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
+                    String startColor = null;
+                    String endColor = null;
+                    String currencyId = null;
                     if (tokenObject.has(FIELD_COLORS)) {
                         JSONArray colorsArray = tokenObject.getJSONArray(FIELD_COLORS);
-                        item.setStartColor((String) colorsArray.get(START_COLOR_INDEX));
-                        item.setEndColor((String) colorsArray.get(END_COLOR_INDEX));
+                        startColor = (String) colorsArray.get(START_COLOR_INDEX);
+                        endColor = (String) colorsArray.get(END_COLOR_INDEX);
                     }
-                    item.setContractInitialValue(contractInitialValue);
+
+                    if (tokenObject.has(FIELD_CURRENCY_ID)) {
+                        currencyId = tokenObject.getString(FIELD_CURRENCY_ID);
+
+                        if (BuildConfig.BITCOIN_TESTNET) {
+                            currencyId = currencyId.replace(MAINNET, currencyId.contains(ETHEREUM) ? ETHEREUM_TESTNET : TESTNET);
+                        }
+                    }
+
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId, cryptocompareAlias);
+
                     tokenItems.add(item);
                 }
             }
-            ethWalletManager.node.announceTokenComplete(0, true);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing token list response from server:", e);
-            ethWalletManager.node.announceTokenComplete(0, false);
         }
         return tokenItems;
     }
@@ -305,35 +308,40 @@ public final class TokenUtil {
         return "";
     }
 
-    public static String getTokenStartColor(String currencyCode) {
-        for (TokenItem token : mTokenItems) {
-            if (token.symbol.equalsIgnoreCase(currencyCode)) {
-                return token.getStartColor();
-            }
+    @SuppressLint("ResourceType")
+    public static String getTokenStartColor(String currencyCode, Context context) {
+        TokenItem tokenItem = mTokenMap.get(currencyCode.toLowerCase());
+        if (tokenItem != null && !tokenItem.getStartColor().isEmpty()) {
+            return tokenItem.getStartColor();
+        } else {
+            return context.getString(R.color.wallet_delisted_token_background);
         }
-
-        return "";
     }
 
-    public static String getTokenEndColor(String currencyCode) {
-        for (TokenItem token : mTokenItems) {
-            if (token.symbol.equalsIgnoreCase(currencyCode)) {
-                return token.getEndColor();
-            }
+    @SuppressLint("ResourceType")
+    public static String getTokenEndColor(String currencyCode, Context context) {
+        TokenItem tokenItem = mTokenMap.get(currencyCode.toLowerCase());
+        if (tokenItem != null && !tokenItem.getEndColor().isEmpty()) {
+            return tokenItem.getEndColor();
+        } else {
+            return context.getString(R.color.wallet_delisted_token_background);
         }
-
-        return "";
     }
 
     public static boolean isTokenSupported(String symbol) {
-        for (TokenItem tokenItem : mTokenItems) {
-            if (tokenItem.symbol.equalsIgnoreCase(symbol)) {
-                return tokenItem.isSupported();
-            }
+        if (mTokenMap.containsKey(symbol.toLowerCase())) {
+            return mTokenMap.get(symbol.toLowerCase()).isSupported();
         }
         return true;
     }
 
+    /**
+     * Returns the currency code to be used when fetching the exchange rate for the token with the
+     * given currency code.
+     *
+     * @param currencyCode the currency code
+     * @return
+     */
     public static String getExchangeRateCode(String currencyCode) {
         return mTokenMap.containsKey(currencyCode.toLowerCase())
                 ? mTokenMap.get(currencyCode.toLowerCase()).getExchangeRateCurrencyCode() : currencyCode;
@@ -343,7 +351,8 @@ public final class TokenUtil {
         mTokenItems = tokenItems;
         mTokenMap.clear();
         for (TokenItem tokenItem : tokenItems) {
-            mTokenMap.put(tokenItem.symbol.toLowerCase(), tokenItem);
+            mTokenMap.put(tokenItem.getSymbol().toLowerCase(), tokenItem);
         }
     }
+
 }

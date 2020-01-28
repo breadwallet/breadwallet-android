@@ -1,10 +1,12 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.breadwallet.legacy.presenter.customviews.BRRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:filterTouchesWhenObscured="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true">
 
     <LinearLayout
         android:id="@+id/signal_layout"
@@ -15,7 +17,7 @@
         android:background="@drawable/signal_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,14 +27,14 @@
             android:layout_marginEnd="16dp"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-            app:brdFont="@string/Font.CircularPro_Bold" />
+            android:fontFamily="@font/circular_pro_bold"/>
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginTop="16dp"
-            android:background="@color/separator_gray" />
+            android:background="@color/separator_gray"/>
 
         <ImageView
             android:id="@+id/qr_image"
@@ -42,9 +44,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_check_mark_white" />
+            android:src="@drawable/ic_check_mark_white"/>
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,9 +55,10 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:fontFamily="@font/circular_pro_book"/>
 
     </LinearLayout>
 
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</com.breadwallet.legacy.presenter.customviews.BRRelativeLayout>

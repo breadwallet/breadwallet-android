@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/activity_intro_set_pit"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_back_arrow"
+        app:layout_constraintStart_toStartOf="@id/brd_rewards_id"
+        app:layout_constraintTop_toTopOf="@id/title"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/brd_rewards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/About.walletID"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/divider4"
+        app:layout_constraintLeft_toLeftOf="@id/divider4"
+        android:fontFamily="@font/circular_pro_book" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/brd_rewards_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/divider4"
+        app:layout_constraintTop_toBottomOf="@+id/brd_rewards"
+        android:fontFamily="@font/circular_pro_book" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/extra_light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/textView24"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/brd_copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:text="@string/URLHandling.copy"
+        android:textColor="@color/dark_blue"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/brd_rewards"
+        android:fontFamily="@font/circular_pro_book" />
+
+    <ImageView
+        android:id="@+id/brd_logo"
+        android:layout_width="132dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_horizontal"
+        android:src="@drawable/brd_logo_gradient"
+        android:textColor="@color/white"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/About.title"
+        android:textSize="@dimen/header"
+        android:fontFamily="@font/circular_pro_bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/extra_light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/policy_text"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/extra_light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/textView21"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/extra_light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/textView22"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/textView22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/About.twitter"
+        android:textSize="18sp"
+        android:fontFamily="@font/circular_pro_book"
+        app:layout_constraintBottom_toTopOf="@+id/view4"
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/About.blog"
+        android:textSize="18sp"
+        android:fontFamily="@font/circular_pro_book"
+        app:layout_constraintBottom_toTopOf="@+id/view5"
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
+
+    <ImageView
+        android:id="@+id/twitter_share_button"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_share"
+        app:layout_constraintBottom_toBottomOf="@+id/textView22"
+        app:layout_constraintRight_toRightOf="@+id/view4"
+        app:layout_constraintTop_toTopOf="@+id/textView22" />
+
+    <ImageView
+        android:id="@+id/blog_share_button"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:src="@drawable/ic_share"
+        app:layout_constraintBottom_toBottomOf="@+id/textView24"
+        app:layout_constraintRight_toRightOf="@+id/view5"
+        app:layout_constraintTop_toTopOf="@+id/textView24" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/policy_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.8"
+        android:text="@string/About.privacy"
+        android:textColor="@color/dark_blue"
+        android:textSize="16sp"
+        android:fontFamily="@font/circular_pro_book"
+        app:layout_constraintBottom_toTopOf="@+id/info_text"
+        app:layout_constraintHorizontal_bias="0.525"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="40dp"
+        android:text="@string/About.footer"
+        android:fontFamily="@font/circular_pro_book"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/textView21"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/About.reddit"
+        android:textSize="18sp"
+        android:fontFamily="@font/circular_pro_book"
+        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
+
+    <ImageView
+        android:id="@+id/reddit_share_button"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_share"
+        app:layout_constraintBottom_toBottomOf="@+id/textView21"
+        app:layout_constraintRight_toRightOf="@+id/divider1"
+        app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

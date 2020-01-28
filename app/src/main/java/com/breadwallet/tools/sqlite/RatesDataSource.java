@@ -31,11 +31,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
 
 import java.util.ArrayList;
 import java.util.Collection;

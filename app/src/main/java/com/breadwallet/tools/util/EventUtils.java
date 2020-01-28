@@ -163,6 +163,13 @@ public final class EventUtils {
     // wallet.{currencyCode}.scrubbed
     public static final String EVENT_WALLET_CHART_SCRUBBED = "wallet.%s.scrubbed";
 
+    // Home screen prompts events
+    public static final String PROMPT_TOUCH_ID = EventUtils.EVENT_PROMPT_PREFIX + "touchIdPrompt";
+    public static final String PROMPT_PAPER_KEY = EventUtils.EVENT_PROMPT_PREFIX + "paperKeyPrompt";
+    public static final String PROMPT_UPGRADE_PIN = EventUtils.EVENT_PROMPT_PREFIX + "upgradePinPrompt";
+    public static final String PROMPT_RECOMMEND_RESCAN = EventUtils.EVENT_PROMPT_PREFIX + "recommendRescanPrompt";
+    public static final String PROMPT_EMAIL = EventUtils.EVENT_PROMPT_PREFIX + "emailPrompt";
+
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";

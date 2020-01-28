@@ -1,22 +1,3 @@
-package com.breadwallet.tools.sqlite;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import com.breadwallet.BuildConfig;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * BreadWallet
  * <p/>
@@ -41,6 +22,22 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.sqlite;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.breadwallet.BuildConfig;
+import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
@@ -68,12 +65,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String MB_HEIGHT = "merkleBlockHeight";
     public static final String MB_ISO = "merkleBlockIso";
 
-    private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + " (" +
-            MB_COLUMN_ID + " integer primary key autoincrement, " +
-            MB_BUFF + " blob, " +
-            MB_ISO + " text DEFAULT 'BTC' , " +
-            MB_HEIGHT + " integer);";
-
     /**
      * Transaction table
      */
@@ -85,13 +76,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
     public static final String TX_ISO = "transactionISO";
-
-    private static final String TX_DATABASE_CREATE = "create table if not exists " + TX_TABLE_NAME + " (" +
-            TX_COLUMN_ID + " text, " +
-            TX_BUFF + " blob, " +
-            TX_BLOCK_HEIGHT + " integer, " +
-            TX_TIME_STAMP + " integer, " +
-            TX_ISO + " text DEFAULT 'BTC' );";
 
     /**
      * Peer table
@@ -105,12 +89,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_TIMESTAMP = "peerTimestamp";
     public static final String PEER_ISO = "peerIso";
 
-    private static final String PEER_DATABASE_CREATE = "create table if not exists " + PEER_TABLE_NAME + " (" +
-            PEER_COLUMN_ID + " integer primary key autoincrement, " +
-            PEER_ADDRESS + " blob," +
-            PEER_PORT + " blob," +
-            PEER_TIMESTAMP + " blob," +
-            PEER_ISO + "  text default 'BTC');";
     /**
      * Currency table
      */
@@ -135,13 +113,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         //drop peers table due to multiple changes
 
-        Log.e(TAG, "onCreate: " + MB_DATABASE_CREATE);
-        Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
-        Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
-        Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
-        database.execSQL(MB_DATABASE_CREATE);
-        database.execSQL(TX_DATABASE_CREATE);
-        database.execSQL(PEER_DATABASE_CREATE);
+        //database.execSQL(MB_DATABASE_CREATE);
+        //database.execSQL(TX_DATABASE_CREATE);
+        //database.execSQL(PEER_DATABASE_CREATE);
         database.execSQL(CURRENCY_DATABASE_CREATE);
 
 //        printTableStructures(database, MB_TABLE_NAME);

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/secondary_background">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,16 +20,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/PaymentConfirmation.title"
                 android:textSize="18sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

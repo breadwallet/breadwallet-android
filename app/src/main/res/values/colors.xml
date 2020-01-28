@@ -4,6 +4,7 @@
     <item name="white" type="color">#ffffff</item>
     <item name="white_transparent_25" type="color">#40ffffff</item>
     <item name="white_transparent_10" type="color">#14ffffff</item>
+    <item name="white_transparent" type="color">#00ffffff</item>
 
     <color name="white_60_percent_opaque">#99FFFFFF</color>
     <item name="blue" type="color">#FF33B5E5</item>
@@ -65,6 +66,7 @@
     <item name="button_secondary" type="color">#F5F8FA</item>
     <item name="button_secondary_text" type="color">#232426</item>
     <item name="confirmation_box" type="color">#141233</item>
+    <item name="platform_webview_bg" type="color">#141233</item>
 
     //fingerprint
     <color name="warning_color">#f04a5d</color>
@@ -165,5 +167,7 @@
         <item>#FC6667</item>
         <item>#FF548D</item>
     </array>
+
+    <color name="ui_accent">#5B6DEE</color>
 
 </resources>

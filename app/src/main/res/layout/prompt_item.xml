@@ -8,7 +8,7 @@
 
     >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/prompt_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         tools:layout_constraintTop_creator="1">
 
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,11 +28,11 @@
             android:layout_marginTop="16dp"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/sub_header"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/info_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -61,5 +61,5 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
