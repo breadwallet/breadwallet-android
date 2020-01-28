@@ -120,7 +120,7 @@ class HomeController(
         )
 
     private var fastAdapter: GenericFastAdapter? = null
-    private var walletAdapter:  ModelAdapter<Wallet, WalletListItem>? = null
+    private var walletAdapter: ModelAdapter<Wallet, WalletListItem>? = null
     private var addWalletAdapter: ItemAdapter<AddWalletItem>? = null
 
     override fun bindView(output: Consumer<E>): Disposable {
@@ -128,10 +128,6 @@ class HomeController(
         trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
-        walletAdapter = ModelAdapter(::WalletListItem)
-        addWalletAdapter = ItemAdapter()
-
-        fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
         val fastAdapter = checkNotNull(fastAdapter)
         fastAdapter.onClickListener = { _, _, item, _ ->
             val event = when (item) {
@@ -143,24 +139,34 @@ class HomeController(
             true
         }
 
-        val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter, output))
-        val touchHelper = ItemTouchHelper(dragCallback)
-        touchHelper.attachToRecyclerView(rv_wallet_list)
-
-        rv_wallet_list.layoutManager = LinearLayoutManager(activity)
-        rv_wallet_list.adapter = fastAdapter
-        rv_wallet_list.itemAnimator = DefaultItemAnimator()
-
         return Disposable {
-            this.fastAdapter = null
-            walletAdapter = null
-            addWalletAdapter = null
+            fastAdapter.onClickListener = null
         }
     }
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         setUpBuildInfoLabel()
+
+        walletAdapter = ModelAdapter(::WalletListItem)
+        addWalletAdapter = ItemAdapter()
+
+        fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
+
+        val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter!!, eventConsumer))
+        val touchHelper = ItemTouchHelper(dragCallback)
+        touchHelper.attachToRecyclerView(rv_wallet_list)
+
+        rv_wallet_list.adapter = fastAdapter
+        rv_wallet_list.itemAnimator = DefaultItemAnimator()
+        rv_wallet_list.layoutManager = LinearLayoutManager(view.context)
+    }
+
+    override fun onDestroyView(view: View) {
+        walletAdapter = null
+        addWalletAdapter = null
+        fastAdapter = null
+        super.onDestroyView(view)
     }
 
     override fun M.render() {
