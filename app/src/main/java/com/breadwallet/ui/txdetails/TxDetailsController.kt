@@ -165,7 +165,6 @@ class TxDetailsController(
         // NOTE: This allows animateLayoutChanges to properly animate details show/hide
         (view as ViewGroup).layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-        memo_input.imeOptions = EditorInfo.IME_ACTION_DONE
         val color = tx_to_from_address.textColors.defaultColor
         memo_input.setTextColor(color)
         fee_primary_label.text = resources!!.getString(R.string.Send_fee, "")
