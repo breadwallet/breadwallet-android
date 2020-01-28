@@ -86,7 +86,10 @@ sealed class NavigationEffect {
     object GoToDisabledScreen : NavigationEffect()
     object GoToNativeApiExplorer : NavigationEffect()
 
-    data class GoToWriteDownKey(val onComplete: OnCompleteAction) : NavigationEffect()
+    data class GoToWriteDownKey(
+        val onComplete: OnCompleteAction,
+        val requestAuth: Boolean = true
+    ) : NavigationEffect()
 
     data class GoToPaperKey(
         @Redacted val phrase: List<String>,

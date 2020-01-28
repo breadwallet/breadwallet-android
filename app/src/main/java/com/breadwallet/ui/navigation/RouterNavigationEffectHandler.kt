@@ -295,7 +295,7 @@ class RouterNavigationEffectHandler(
 
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
         router.pushController(
-            RouterTransaction.with(WriteDownKeyController(effect.onComplete))
+            RouterTransaction.with(WriteDownKeyController(effect.onComplete, effect.requestAuth))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler())
         )
