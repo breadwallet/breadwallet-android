@@ -49,7 +49,14 @@ object WriteDownKeyUpdate : Update<M, E, F>, WriteDownKeyUpdateSpec {
         dispatch(setOf(F.GoToFaq))
 
     override fun onWriteDownClicked(model: M): Next<M, F> =
-        dispatch(setOf(F.ShowAuthPrompt))
+        dispatch(
+            setOf(
+                when {
+                    model.requestAuth -> F.ShowAuthPrompt
+                    else -> F.GetPhrase
+                }
+            )
+        )
 
     override fun onGetPhraseFailed(model: M): Next<M, F> =
         noChange()

@@ -37,7 +37,8 @@ import kotlinx.coroutines.launch
 class WriteDownKeyHandler(
     private val output: Consumer<E>,
     private val controllerScope: CoroutineScope,
-    private val keyStore: KeyStore
+    private val keyStore: KeyStore,
+    private val showBrdAuthPrompt: () -> Unit
 ) : Connection<WriteDownKey.F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
@@ -45,6 +46,7 @@ class WriteDownKeyHandler(
     override fun accept(value: WriteDownKey.F) {
         when (value) {
             WriteDownKey.F.GetPhrase -> getPhrase()
+            WriteDownKey.F.ShowAuthPrompt -> launch(Dispatchers.Main) { showBrdAuthPrompt() }
         }
     }
 

@@ -88,7 +88,7 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                 F.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
                 F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
                 F.GoToHome -> NavigationEffect.GoToHome
-                is F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete)
+                is F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete, false)
                 else -> null
             }
         })

@@ -32,11 +32,12 @@ object WriteDownKey {
 
     data class M(
         val onComplete: OnCompleteAction,
+        val requestAuth: Boolean,
         @Redacted val phrase: List<String> = listOf()
     ) {
         companion object {
-            fun createDefault(doneAction: OnCompleteAction) =
-                M(doneAction)
+            fun createDefault(doneAction: OnCompleteAction, requestAuth: Boolean) =
+                M(doneAction, requestAuth)
         }
     }
 
