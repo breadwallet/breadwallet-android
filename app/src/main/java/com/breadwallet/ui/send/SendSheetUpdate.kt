@@ -296,7 +296,11 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnNetworkFeeUpdated
     ): Next<M, F> {
-        val isTotalCostOverBalance = model.amount + event.networkFee > model.balance
+        val isTotalCostOverBalance = when {
+            model.currencyCode == model.feeCurrencyCode ->
+                model.amount + event.networkFee > model.balance
+            else -> model.amount > model.balance
+        }
         return when {
             model.amount != event.amount -> noChange()
             model.targetAddress != event.targetAddress -> noChange()
