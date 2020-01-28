@@ -139,7 +139,10 @@ object SendSheet {
         val showFeeSelect: Boolean = currencyCode.isBitcoin()
 
         /** The total cost of this transaction in [currencyCode]. */
-        val totalCost: BigDecimal = amount + networkFee
+        val totalCost: BigDecimal = when {
+            currencyCode == feeCurrencyCode -> amount + networkFee
+            else -> amount
+        }
 
         /** The total cost of this transaction in [fiatCode]. */
         val fiatTotalCost: BigDecimal = fiatAmount + fiatNetworkFee
@@ -201,7 +204,11 @@ object SendSheet {
                 } else {
                     fiatAmount
                 }
-                isTotalCostOverBalance = newAmount + networkFee > balance
+                isTotalCostOverBalance = when {
+                    currencyCode == feeCurrencyCode ->
+                        newAmount + networkFee > balance
+                    else -> newAmount > balance
+                }
             } else {
                 newFiatAmount = BigDecimal(newRawAmount)
                 val hasRate = fiatPricePerUnit > BigDecimal.ZERO
@@ -400,7 +407,7 @@ object SendSheet {
 
         data class ShowErrorDialog(
             val message: String
-        ): F()
+        ) : F()
 
         sealed class PaymentProtocol : F() {
             data class LoadPaymentData(
