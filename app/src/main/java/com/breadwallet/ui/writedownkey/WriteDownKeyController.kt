@@ -55,13 +55,16 @@ class WriteDownKeyController(args: Bundle? = null) :
 
     companion object {
         private const val EXTRA_ON_COMPLETE = "on-complete"
+        private const val EXTRA_REQUEST_AUTH = "request-brd-auth"
     }
 
     constructor(
-        doneAction: OnCompleteAction
+        doneAction: OnCompleteAction,
+        requestAuth: Boolean
     ) : this(
         bundleOf(
-            EXTRA_ON_COMPLETE to doneAction.name
+            EXTRA_ON_COMPLETE to doneAction.name,
+            EXTRA_REQUEST_AUTH to requestAuth
         )
     )
 
@@ -70,13 +73,24 @@ class WriteDownKeyController(args: Bundle? = null) :
     }
 
     private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
+    private val requestAuth = arg<Boolean>(EXTRA_REQUEST_AUTH)
 
     override val layoutId: Int = R.layout.controller_write_down
-    override val defaultModel = WriteDownKey.M.createDefault(onComplete)
+    override val defaultModel = M.createDefault(onComplete, requestAuth)
     override val update = WriteDownKeyUpdate
     override val effectHandler = CompositeEffectHandler.from<F, E>(
-        Connectable { output ->
-            WriteDownKeyHandler(eventConsumer, controllerScope, direct.instance())
+        Connectable {
+            WriteDownKeyHandler(eventConsumer, controllerScope, direct.instance()) {
+                val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
+                if (!isAuthOnTop) {
+                    val controller = AuthenticationController(
+                        title = resources!!.getString(R.string.VerifyPin_title),
+                        message = resources!!.getString(R.string.VerifyPin_authorize)
+                    )
+                    controller.targetController = this@WriteDownKeyController
+                    router.pushController(RouterTransaction.with(controller))
+                }
+            }
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
@@ -98,18 +112,7 @@ class WriteDownKeyController(args: Bundle? = null) :
     override fun bindView(output: Consumer<E>): Disposable {
         close_button.setOnClickListener { output.accept(E.OnCloseClicked) }
         faq_button.setOnClickListener { output.accept(E.OnFaqClicked) }
-
-        button_write_down.setOnClickListener {
-            val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
-            if (!isAuthOnTop) {
-                val controller = AuthenticationController(
-                    title = resources!!.getString(R.string.VerifyPin_title),
-                    message = resources!!.getString(R.string.VerifyPin_authorize)
-                )
-                controller.targetController = this@WriteDownKeyController
-                router.pushController(RouterTransaction.with(controller))
-            }
-        }
+        button_write_down.setOnClickListener { output.accept(E.OnWriteDownClicked) }
         return Disposable {}
     }
 
