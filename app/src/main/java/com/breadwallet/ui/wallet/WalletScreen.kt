@@ -104,7 +104,8 @@ object WalletScreen {
         data class OnBrdRewardsUpdated(val showing: Boolean) : E()
         data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) : E()
 
-        data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange?) : E()
+        data class OnFiatPricePerUpdated(val pricePerUnit: String, val priceChange: PriceChange?) :
+            E()
 
         data class OnTransactionsUpdated(
             @Redacted val walletTransactions: List<WalletTransaction>
@@ -184,6 +185,7 @@ object WalletScreen {
                 override val navigationEffect =
                     NavigationEffect.GoToReceive(currencyId)
             }
+
             data class GoToTransaction(
                 val currencyId: String,
                 val txHash: String
@@ -195,8 +197,9 @@ object WalletScreen {
             object GoBack : Nav() {
                 override val navigationEffect = NavigationEffect.GoBack
             }
+
             object GoToBrdRewards : Nav() {
-                override val navigationEffect = NavigationEffect.GoToReview
+                override val navigationEffect = NavigationEffect.GoToBrdRewards
             }
         }
 
@@ -206,7 +209,9 @@ object WalletScreen {
         data class LoadTransactions(val currencyId: String) : F()
         data class LoadFiatPricePerUnit(val currencyId: String) : F()
         data class LoadTransactionMetaData(@Redacted val transactionHashes: List<String>) : F()
-        data class LoadTransactionMetaDataSingle(@Redacted val transactionHashes: List<String>) : F()
+        data class LoadTransactionMetaDataSingle(@Redacted val transactionHashes: List<String>) :
+            F()
+
         data class LoadIsTokenSupported(val currencyCode: String) : F()
 
         object LoadCryptoPreferred : F()

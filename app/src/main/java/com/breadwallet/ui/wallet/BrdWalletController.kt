@@ -32,12 +32,15 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import androidx.core.os.bundleOf
+import com.bluelinelabs.conductor.RouterTransaction
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.ui.web.WebController
+import com.platform.HTTPServer
 import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.rewards_announcement_view.*
 
@@ -66,7 +69,12 @@ class BrdWalletController : WalletController("BRD") {
             //Collapse without animation before showing the rewards webview.
             EventUtils.pushEvent(EventUtils.EVENT_REWARDS_BANNER)
             mAppBarLayoutRoot!!.setExpanded(false, true)
-            UiUtils.openRewardsWebView(activity)
+            val rewardsUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS)
+            router.pushController(
+                RouterTransaction.with(
+                    WebController(rewardsUrl)
+                )
+            )
         }
 
         if (!BRSharedPrefs.getRewardsAnimationShown()) {
