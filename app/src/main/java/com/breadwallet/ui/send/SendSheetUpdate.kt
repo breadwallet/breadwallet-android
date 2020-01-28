@@ -649,7 +649,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnRequestScanned
     ): Next<M, F> {
-        if (!event.currencyCode.equals(model.currencyCode, ignoreCase = true)) {
+        if (
+            !event.currencyCode.equals(model.feeCurrencyCode, true) &&
+            !event.currencyCode.equals(model.currencyCode, true)
+        ) {
             return noChange()
         }
 
