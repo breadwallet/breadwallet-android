@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.ui.browser.BrdBrowserActivity;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.ui.browser.BrdBrowserActivity;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -125,6 +125,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
+                    //TODO: Migrate to WebController
                     BrdBrowserActivity.Companion.startWithUrl(app, getUri.toString());
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse resp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
@@ -185,6 +186,7 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
+                    //TODO: Migrate to WebController
                     BrdBrowserActivity.Companion.startJson(app, json);
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse brResp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);

@@ -37,7 +37,7 @@
                 android:layout_marginRight="@dimen/bread_margin"
                 android:background="@drawable/ic_close_black_24dp" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                 android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/header"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/date_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,9 +90,9 @@
                     android:textColor="@color/light_gray"
                     android:textIsSelectable="true"
                     android:textSize="18sp"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/description_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -103,9 +103,9 @@
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="true"
                     android:textSize="30sp"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/sub_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -117,7 +117,8 @@
                     android:text=""
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="false"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:fontFamily="@font/circular_pro_book" />
 
                 <View
                     android:layout_width="match_parent"
@@ -127,24 +128,25 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.statusHeader"
                     android:textColor="@color/light_gray"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/confirmation_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textColor="@color/almost_black"
-                    android:textIsSelectable="true" />
+                    android:textIsSelectable="true"
+                    android:fontFamily="@font/circular_pro_book" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/available_spend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,7 +154,7 @@
                     android:text="@string/Transaction.available"
                     android:textColor="#48F0B8"
                     android:textIsSelectable="true"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
                 <View
                     android:layout_width="match_parent"
@@ -162,14 +164,14 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.commentsHeader"
                     android:textColor="@color/light_gray"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
                 <EditText
                     android:id="@+id/comment_text"
@@ -187,16 +189,16 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.amountHeader"
                     android:textColor="@color/light_gray"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/amount_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -212,7 +214,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/to_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -220,9 +222,9 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/Confirmation.to"
                     android:textColor="@color/light_gray"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
 
                     android:id="@+id/address_text"
                     android:layout_width="wrap_content"
@@ -240,16 +242,16 @@
                     android:layout_marginEnd="16dp"
                     android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.txHashHeader"
                     android:textColor="@color/light_gray"
-                    app:brdFont="@string/Font.CircularPro_Bold" />
+                    android:fontFamily="@font/circular_pro_bold" />
 
-                <com.breadwallet.presenter.customviews.BaseTextView
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:id="@+id/tx_hash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

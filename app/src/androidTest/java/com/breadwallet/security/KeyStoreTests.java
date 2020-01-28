@@ -1,24 +1,7 @@
-package com.breadwallet.security;
-
-import android.app.Activity;
-import android.security.keystore.UserNotAuthenticatedException;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.breadwallet.presenter.activities.settings.TestActivity;
-import com.breadwallet.tools.security.BRKeyStore;
-
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.math.BigDecimal;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/20/16.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/20/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,7 +22,24 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.security;
+
+import android.app.Activity;
+import android.security.keystore.UserNotAuthenticatedException;
+import androidx.test.rule.ActivityTestRule;
+
+import androidx.test.runner.AndroidJUnit4;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
+import com.breadwallet.tools.security.BRKeyStore;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 @RunWith(AndroidJUnit4.class)
+@Ignore("TokenUtils does not function")
 public class KeyStoreTests {
     public static final String TAG = KeyStoreTests.class.getName();
 
@@ -114,7 +114,7 @@ public class KeyStoreTests {
         int time = 1479686841;
         BRKeyStore.putWalletCreationTime(time, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.WALLET_CREATION_TIME_ALIAS);
-        int freshTime = BRKeyStore.getWalletCreationTime(mActivityRule.getActivity());
+        long freshTime = BRKeyStore.getWalletCreationTime(mActivityRule.getActivity());
         Assert.assertEquals(time, freshTime);
 
         String passCode = "0124";
@@ -155,24 +155,6 @@ public class KeyStoreTests {
         assertFilesExist(BRKeyStore.PASS_TIME_ALIAS);
         long freshPassTime = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
         Assert.assertEquals(passTime, freshPassTime);
-
-
-        BigDecimal spendLimitBtc = new BigDecimal(1000);
-        BigDecimal spendLimitEth = new BigDecimal(800);
-        BigDecimal spendLimitBch = new BigDecimal(600);
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBtc, "BTC");
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitEth, "ETH");
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBch, "BCH");
-        BigDecimal freshLimitBtc = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BTC");
-        BigDecimal freshLimitEth = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "ETH");
-        BigDecimal freshLimitBch = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BCH");
-        Assert.assertNotNull(freshLimitBtc);
-        Assert.assertNotNull(freshLimitEth);
-        Assert.assertNotNull(freshLimitBch);
-        Assert.assertTrue(freshLimitBtc.compareTo(spendLimitBtc) == 0);
-        Assert.assertTrue(freshLimitEth.compareTo(spendLimitEth) == 0);
-        Assert.assertTrue(freshLimitBch.compareTo(spendLimitBch) == 0);
-
     }
 
     @Test
@@ -191,9 +173,7 @@ public class KeyStoreTests {
         BRKeyStore.putPinCode("0123", mActivityRule.getActivity());
         BRKeyStore.putFailCount(3, mActivityRule.getActivity());
         BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), new BigDecimal(10000000), "BTC");
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putTotalLimit(mActivityRule.getActivity(), new BigDecimal(1479686841), "BTC");
         BRKeyStore.putEthPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
 
         for (String a : BRKeyStore.ALIAS_OBJECT_MAP.keySet()) {

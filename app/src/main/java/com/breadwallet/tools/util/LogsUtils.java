@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.widget.Toast;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRToast;
+import com.breadwallet.legacy.presenter.customviews.BRToast;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import org.apache.commons.io.IOUtils;

@@ -1,10 +1,10 @@
 package com.breadwallet.tools.animation;
 
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 /**
  * Interface to notify an item ViewHolder of relevant callbacks from {@link
- * android.support.v7.widget.helper.ItemTouchHelper.Callback}.
+ * androidx.recyclerview.widget.ItemTouchHelper.Callback}.
  *
  */
 public interface ItemTouchHelperViewHolder {

@@ -1,7 +1,7 @@
 package com.breadwallet.tools.animation;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 /**
  * An implementation of {@link ItemTouchHelper.Callback} that enables basic drag & drop and
@@ -10,11 +10,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
  * Expects the <code>RecyclerView.Adapter</code> to react to {@link
  * ItemTouchHelperAdapter} callbacks and the <code>RecyclerView.ViewHolder</code> to implement
  * {@link ItemTouchHelperViewHolder}.
- *
  */
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter mAdapter;
+    private int dragFrom = -1;
+    private int dragTo = -1;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
         mAdapter = adapter;
@@ -38,7 +39,16 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
-        mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
+        int fromPosition = source.getAdapterPosition();
+        int toPosition = target.getAdapterPosition();
+
+        if (dragFrom == -1) {
+            dragFrom = fromPosition;
+        }
+        dragTo = toPosition;
+
+        mAdapter.onItemMove(fromPosition, toPosition);
+
         return true;
     }
 
@@ -63,5 +73,11 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
         itemViewHolder.onItemClear();
+
+        if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+            mAdapter.onItemDrop(dragFrom, dragTo);
+        }
+
+        dragFrom = dragTo = -1;
     }
 }

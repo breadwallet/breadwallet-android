@@ -2,23 +2,17 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.WorkerThread;
-import android.text.format.DateUtils;
+import androidx.annotation.WorkerThread;
 import android.util.Log;
 
-import com.breadwallet.model.FeeOption;
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.model.PriceChange;
-import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.repository.FeeRepository;
 import com.breadwallet.repository.RatesRepository;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 import com.platform.network.service.CurrencyHistoricalDataClient;
 
@@ -37,8 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Request;
 
@@ -76,84 +68,29 @@ public final class BRApiManager {
     private static final String NAME = "name";
     private static final String CODE = "code";
     private static final String RATE = "rate";
-    private static final String PRICE_BTC = "price_btc";
-    private static final String SYMBOL = "symbol";
     private static final String TOKEN_RATES_URL_PREFIX = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=";
     private static final String TOKEN_RATES_URL_SUFFIX = "&tsyms=BTC";
     private static final int FSYMS_CHAR_LIMIT = 300;
     private static final String CONTRACT_INITIAL_VALUE = "contract_initial_value";
-    private static final String FEE_URL_FORMAT = "%s/fee-per-kb?currency=%s";
-    private static final String FEE_FIELD_REGULAR = "fee_per_kb";
-    private static final String FEE_FIELD_ECONOMY = "fee_per_kb_economy";
-    private static final String FEE_FIELD_PRIORITY = "fee_per_kb_priority";
 
-    private static BRApiManager mInstance;
-    private Timer mTimer;
-    private TimerTask mTimerTask;
+    private static volatile BRApiManager mInstance;
 
     private BRApiManager() {
     }
 
     public static BRApiManager getInstance() {
         if (mInstance == null) {
-            mInstance = new BRApiManager();
+            synchronized (BRApiManager.class) {
+                if (mInstance == null) {
+                    mInstance = new BRApiManager();
+                }
+            }
         }
         return mInstance;
     }
 
-    /**
-     * Retrieves fee rates for the given currency and stores them in the fee repository.
-     * @param context the context
-     * @param currencyCode the currency for which fee rates are being retrieved
-     */
-    public static void updateFeeForCurrency(Context context, String currencyCode) {
-        String feeUpdateJSONStr = BRApiManager.urlGET(context, String.format(FEE_URL_FORMAT, APIClient.getBaseURL(), currencyCode));
-        long timestamp = System.currentTimeMillis();
-
-        if (Utils.isNullOrEmpty(feeUpdateJSONStr)) {
-            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + feeUpdateJSONStr);
-            return;
-        }
-
-        try {
-            JSONObject feeUpdateJSONObj = new JSONObject(feeUpdateJSONStr);
-
-            BigDecimal fee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_REGULAR));
-            BigDecimal economyFee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_ECONOMY));
-            BigDecimal priorityFee = new BigDecimal(feeUpdateJSONObj.getString(FEE_FIELD_PRIORITY));
-
-            Log.d(TAG, "updateFee: " + currencyCode + ":" + fee + "|" + economyFee + " | " + priorityFee);
-
-            if (fee.compareTo(BigDecimal.ZERO) > 0) {
-                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, fee, FeeOption.REGULAR, timestamp);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
-                Log.d(TAG, "Error: Fee is unexpected value");
-            }
-
-            if (economyFee.compareTo(BigDecimal.ZERO) > 0) {
-                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, economyFee, FeeOption.ECONOMY, timestamp);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
-                Log.d(TAG, "Error: Economy fee is unexpected value");
-            }
-
-            if (priorityFee.compareTo(BigDecimal.ZERO) > 0) {
-                FeeRepository.getInstance(context).putFeeForCurrency(currencyCode, priorityFee, FeeOption.PRIORITY, timestamp);
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("Priority fee is weird:" + economyFee));
-                Log.d(TAG, "Error: Priority fee is unexpected value");
-            }
-
-        } catch (JSONException e) {
-            Log.e(TAG, "updateFeePerKb: FAILED: " + feeUpdateJSONStr, e);
-            BRReportsManager.reportBug(e);
-            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + feeUpdateJSONStr));
-        }
-    }
-
     @WorkerThread
-    private void updateFiatRates(Context context) {
+    public void updateFiatRates(Context context) {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
@@ -184,23 +121,16 @@ public final class BRApiManager {
         if (set.size() > 0) {
             RatesRepository.getInstance(context).putCurrencyRates(set);
         }
-
     }
 
-    private void initializeTimerTask(final Context context) {
-        mTimerTask = new TimerTask() {
-            public void run() {
-                updateData(context);
-            }
-        };
-    }
-
-    /** Synchronously updates RateRepository data. */
+    /**
+     * Synchronously updates RateRepository data.
+     */
     @WorkerThread
     public void updateRatesSync(final Context context) {
         Log.d(TAG, "Fetching rates");
         //Update Crypto Rates
-        List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible(context);
+        List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible();
         updateCryptoRates(context, codeList);
 
         //Update BTC/Fiat rates
@@ -208,29 +138,15 @@ public final class BRApiManager {
     }
 
     @WorkerThread
-    private void updateData(final Context context) {
-        Log.d(TAG, "Fetching rates");
-        final List<String> codeList = RatesRepository.getInstance(context).getAllCurrencyCodesPossible(context);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
-            //Update Crypto Rates
-            updateCryptoRates(context, codeList);
-            //Update new tokens rate (e.g. CCC)
-            fetchNewTokensData(context);
-        });
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> fetchPriceChanges(context, codeList));
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
-            //Update BTC/Fiat rates
-            updateFiatRates(context);
-        });
-        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance().getAllWallets(context));
-        for (final BaseWalletManager walletManager : list) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> walletManager.updateFee(context));
-        }
-
+    public void updateCryptoData(final Context context, List<String> currencyCodes) {
+        //Update Crypto Rates
+        updateCryptoRates(context, currencyCodes);
+        //Update new tokens rate (e.g. CCC)
+        fetchNewTokensData(context);
     }
 
     @WorkerThread
-    private synchronized void updateCryptoRates(Context context, List<String> currencyCodeList) {
+    private void updateCryptoRates(Context context, List<String> currencyCodeList) {
         List<String> currencyCodeListChunks = new ArrayList<>();
         StringBuilder chunkStringBuilder = new StringBuilder();
         for (String currencyCode : currencyCodeList) {
@@ -256,7 +172,7 @@ public final class BRApiManager {
      * @param context       The Context
      * @param codeListChunk The comma separated code list.
      */
-    private synchronized void fetchCryptoRates(Context context, String codeListChunk) {
+    private void fetchCryptoRates(Context context, String codeListChunk) {
         String url = TOKEN_RATES_URL_PREFIX + codeListChunk + TOKEN_RATES_URL_SUFFIX;
         String result = urlGET(context, url);
         try {
@@ -284,27 +200,6 @@ public final class BRApiManager {
         } catch (JSONException e) {
             BRReportsManager.reportBug(e);
             Log.e(TAG, "fetchCryptoRates: ", e);
-        }
-    }
-
-    public synchronized void startTimer(Context context) {
-        //set a new Timer
-        if (mTimer != null) {
-            return;
-        }
-        mTimer = new Timer();
-        Log.d(TAG, "startTimer: started...");
-        //initialize the TimerTask's job
-        initializeTimerTask(context);
-
-        mTimer.schedule(mTimerTask, DateUtils.SECOND_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS);
-    }
-
-    public synchronized void stopTimerTask() {
-        //stop the timer, if it's not already null
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
         }
     }
 
@@ -344,7 +239,7 @@ public final class BRApiManager {
             List<CurrencyEntity> currencyEntities = new ArrayList<>();
             JSONArray tokenDataArray = new JSONArray(tokenDataJsonString);
             for (int i = 0; i < tokenDataArray.length(); i++) {
-                JSONObject tokenDataJsonObject =  tokenDataArray.getJSONObject(i);
+                JSONObject tokenDataJsonObject = tokenDataArray.getJSONObject(i);
                 if (tokenDataJsonObject.has(CONTRACT_INITIAL_VALUE)) {
                     String priceInEth = tokenDataJsonObject.getString(CONTRACT_INITIAL_VALUE)
                             .replace(WalletEthManager.ETH_CURRENCY_CODE, "").trim();
@@ -380,6 +275,7 @@ public final class BRApiManager {
 
     /**
      * uses https://bitpay.com/rates to fetch the rates as a backup in case our api is down.
+     *
      * @param context
      * @return JSONArray with rates data.
      */
@@ -428,10 +324,9 @@ public final class BRApiManager {
         return bodyText;
     }
 
-    private void fetchPriceChanges(Context context, List<String> tokenList) {
+    public void fetchPriceChanges(Context context, List<String> tokenList) {
         String toCurrency = BRSharedPrefs.getPreferredFiatIso(context);
         Map<String, PriceChange> priceChanges = CurrencyHistoricalDataClient.fetch24HrsChange(context, tokenList, toCurrency);
         RatesRepository.getInstance(context).updatePriceChanges(priceChanges);
     }
-
 }

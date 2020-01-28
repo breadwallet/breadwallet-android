@@ -11,7 +11,7 @@ import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -173,7 +173,10 @@ public class Utils {
     public static boolean isFingerprintEnrolled(Context app) {
         FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
         // Device doesn't support fingerprint authentication
-        return ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED && fingerprintManager.isHardwareDetected() && fingerprintManager.hasEnrolledFingerprints();
+        return ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED
+                && fingerprintManager != null
+                && fingerprintManager.isHardwareDetected()
+                && fingerprintManager.hasEnrolledFingerprints();
     }
 
     public static boolean isFingerprintAvailable(Context app) {
@@ -189,7 +192,9 @@ public class Utils {
 
     public static void hideKeyboard(Context app) {
         if (app != null) {
-            View view = ((Activity) app).getCurrentFocus();
+            Activity activity = (Activity) app;
+            View view = activity.getCurrentFocus() != null ?
+                    activity.getCurrentFocus() : activity.findViewById(android.R.id.content);
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
@@ -197,7 +202,6 @@ public class Utils {
                 }
             }
         }
-
     }
 
     // This method checks if a screen altering app(such as Twightlight) is currently running

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="4">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:columnCount="3"
+    android:orientation="horizontal"
+    android:rowCount="4">
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num1"
         android:layout_column="0"
         android:layout_columnWeight="1"
@@ -23,9 +23,9 @@
         android:text="1"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num2"
         android:layout_column="1"
         android:layout_columnWeight="1"
@@ -39,9 +39,9 @@
         android:text="2"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num3"
         android:layout_column="2"
         android:layout_columnWeight="1"
@@ -55,9 +55,9 @@
         android:text="3"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num4"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -70,9 +70,9 @@
         android:text="4"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num5"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -85,9 +85,9 @@
         android:text="5"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num6"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -100,9 +100,9 @@
         android:text="6"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num7"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -115,9 +115,9 @@
         android:text="7"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num8"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -130,9 +130,9 @@
         android:text="8"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num9"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -145,9 +145,9 @@
         android:text="9"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/decimal"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -160,9 +160,9 @@
         android:text="."
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/num0"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal|fill_vertical"
@@ -175,7 +175,7 @@
         android:text="0"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        android:fontFamily="@font/circular_pro_book" />
 
     <ImageButton
         android:id="@+id/delete"
@@ -191,7 +191,6 @@
         android:src="?attr/pin_pad_delete_src"
         android:text=""
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        />
+        android:textSize="@dimen/pin_par_text_size" />
 
 </GridLayout>

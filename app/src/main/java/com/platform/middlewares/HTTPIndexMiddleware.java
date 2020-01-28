@@ -3,13 +3,12 @@ package com.platform.middlewares;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
+import androidx.core.util.Preconditions;
+import com.breadwallet.app.BreadApp;
 import com.breadwallet.tools.util.ServerBundlesHelper;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
-
-import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 
@@ -66,10 +65,10 @@ public class HTTPIndexMiddleware implements Middleware {
 
         try {
             byte[] body = FileUtils.readFileToByteArray(temp);
-            Assert.assertNotNull(body);
-            Assert.assertNotSame(body.length, 0);
+            Preconditions.checkNotNull(body);
+            Preconditions.checkState(body.length != 0);
             response.setHeader("Content-Length", String.valueOf(body.length));
-            APIClient.BRResponse resp = new APIClient.BRResponse(body, 200,"text/html;charset=utf-8");
+            APIClient.BRResponse resp = new APIClient.BRResponse(body, 200, "text/html;charset=utf-8");
 
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } catch (IOException e) {

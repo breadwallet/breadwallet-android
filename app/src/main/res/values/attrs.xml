@@ -3,9 +3,6 @@
     <declare-styleable name="BaseTextView">
         <attr name="brdFont" format="string"/>
     </declare-styleable>
-    <declare-styleable name="BREdit">
-        <attr name="customEFont" format="string"/>
-    </declare-styleable>
 
     <declare-styleable name="BRLinearLayoutWithCaret">
         <attr name="strokeColor" format="color"/>
@@ -16,7 +13,6 @@
     <declare-styleable name="BRButton">
         <attr name="isBreadButton" format="boolean"/>
         <attr name="buttonType" format="integer"/>
-        <attr name="customBFont" format="string"/>
         <attr name="buttonColor" format="reference"/>
         <attr name="hasShadow" format="boolean"/>
     </declare-styleable>
@@ -31,12 +27,6 @@
     <declare-styleable name="BRNotificationBar">
         <attr name="breadText" format="string"/>
     </declare-styleable>
-
-    <!-- Font file names -->
-    <string name="Font.CircularPro_Bold">CircularPro-Bold.otf</string>
-    <string name="Font.CircularPro_Book">CircularPro-Book.otf</string>
-    <string name="Font.CircularPro_Medium">CircularPro-Medium.otf</string>
-    <string name="Font.Celevenia">Celevenia.otf</string>
 
     <declare-styleable name="SparkView">
         <attr name="spark_lineColor" format="color|reference" />
