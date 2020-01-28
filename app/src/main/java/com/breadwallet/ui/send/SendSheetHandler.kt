@@ -40,6 +40,7 @@ import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.TransferSubmitError
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
+import com.breadwallet.ext.isZero
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logWarning
 import com.breadwallet.repository.RatesRepository
@@ -152,6 +153,7 @@ object SendSheetHandler {
             try {
                 val data = wallet.estimateFee(address, amount, networkFee)
                 val fee = data.fee.toBigDecimal()
+                check(!fee.isZero()) { "Estimated fee was zero" }
                 E.OnNetworkFeeUpdated(effect.address, effect.amount, fee, data)
             } catch (e: FeeEstimationError) {
                 logError("Failed get fee estimate", e)

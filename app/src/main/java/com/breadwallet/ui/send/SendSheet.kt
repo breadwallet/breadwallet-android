@@ -133,6 +133,8 @@ object SendSheet {
 
             object ClipboardEmpty : InputError()
             object ClipboardInvalid : InputError()
+
+            object FailedToEstimateFee : InputError()
         }
 
         /** True when the user can select the [TransferSpeed], currently only BTC. */

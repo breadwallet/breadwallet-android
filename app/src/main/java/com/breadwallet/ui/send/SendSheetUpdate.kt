@@ -320,7 +320,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     ): Next<M, F> {
         return next(
             model.copy(
-                feeEstimateFailed = true
+                feeEstimateFailed = true,
+                amountInputError = M.InputError.FailedToEstimateFee
             )
         )
     }
