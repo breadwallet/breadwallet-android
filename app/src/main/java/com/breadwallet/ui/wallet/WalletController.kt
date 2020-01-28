@@ -76,6 +76,7 @@ import kotlinx.android.synthetic.main.view_delisted_token.*
 import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -155,22 +156,9 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                 )
             )
         }
-    }
-
-    override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        // Tx Action buttons
-        send_button.setHasShadow(false)
-        receive_button.setHasShadow(false)
-
-        spark_line.setAdapter(mPriceDataAdapter)
-        spark_line.sparkAnimator = LineSparkAnimator().apply {
-            duration = MARKET_CHART_ANIMATION_DURATION
-            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
-        }
 
         txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
         fastAdapter = FastAdapter.with(listOf(txAdapter!!))
-
         checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
             when (item) {
                 is TransactionListItem ->
@@ -178,9 +166,37 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             }
             true
         }
-
         tx_list.adapter = fastAdapter
         tx_list.itemAnimator = DefaultItemAnimator()
+        tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
+            override fun onLayoutCompleted(state: RecyclerView.State?) {
+                super.onLayoutCompleted(state)
+                val adapter = checkNotNull(txAdapter)
+                updateVisibleTransactions(adapter, this, viewCreatedScope.actor {
+                    for (event in channel) {
+                        eventConsumer.accept(event)
+                    }
+                })
+            }
+        }
+
+        spark_line.setAdapter(mPriceDataAdapter)
+        spark_line.sparkAnimator = LineSparkAnimator().apply {
+            duration = MARKET_CHART_ANIMATION_DURATION
+            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
+        }
+    }
+
+    override fun onDestroyView(view: View) {
+        txAdapter = null
+        fastAdapter = null
+        super.onDestroyView(view)
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        // Tx Action buttons
+        send_button.setHasShadow(false)
+        receive_button.setHasShadow(false)
 
         return merge(
             send_button.clicks().map { E.OnSendClicked },
@@ -198,10 +214,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                 search_bar.setEventOutput(channel)
                 awaitClose { search_bar.setEventOutput(null) }
             }
-        ).onCompletion {
-            txAdapter = null
-            fastAdapter = null
-        }
+        )
     }
 
     @Suppress("ComplexMethod")
@@ -248,13 +261,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
     private fun bindTxList(): Flow<E> =
         callbackFlow {
             // Tx List
-            tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
-                override fun onLayoutCompleted(state: RecyclerView.State?) {
-                    super.onLayoutCompleted(state)
-                    val adapter = checkNotNull(txAdapter)
-                    updateVisibleTransactions(adapter, this, channel)
-                }
-            }
             tx_list.addOnScrollListener(
                 object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -277,7 +283,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             )
 
             awaitClose {
-                tx_list.layoutManager = null
                 tx_list.clearOnScrollListeners()
             }
         }
