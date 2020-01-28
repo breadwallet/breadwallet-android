@@ -175,11 +175,13 @@ abstract class BaseMobiusController<M, E, F>(
                 val scope = CoroutineScope(Dispatchers.Main)
                 modelFlow
                     .onStart {
+                        view ?: return@onStart
                         previousModel = null
                         loopController.model.render()
                         previousModel = loopController.model
                     }
                     .onEach { model ->
+                        view ?: return@onEach
                         model.render()
                         previousModel = model
                     }
