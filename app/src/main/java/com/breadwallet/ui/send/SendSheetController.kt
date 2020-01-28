@@ -265,6 +265,8 @@ class SendSheetController(args: Bundle? = null) :
                     res.getString(R.string.Send_noAmount)
                 is M.InputError.BalanceTooLow ->
                     res.getString(R.string.Send_insufficientFunds)
+                is M.InputError.FailedToEstimateFee ->
+                    res.getString(R.string.Send_noFeesError)
                 else -> null
             }
         }
