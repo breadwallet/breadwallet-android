@@ -53,7 +53,8 @@ object SendSheetInit : Init<M, F> {
             effects + setOf(
                 F.LoadBalance(model.currencyCode),
                 F.LoadExchangeRate(model.currencyCode, model.fiatCode),
-                F.LoadAuthenticationSettings
+                F.LoadAuthenticationSettings,
+                F.GetTransferFields(model.currencyCode, model.targetAddress)
             )
         )
     }

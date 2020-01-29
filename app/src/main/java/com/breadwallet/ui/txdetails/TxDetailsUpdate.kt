@@ -32,6 +32,7 @@ import com.breadwallet.breadbox.isReceived
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.ui.models.TransactionState
+import com.breadwallet.ui.send.TransferField
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
@@ -63,11 +64,8 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
             model.copy(
                 isEth = amount.currency.isEthereum(),
                 isErc20 = amount.currency.isErc20(),
-                cryptoTransferredAmount = when {
-                    amount.unit == wallet.defaultUnit -> amount
-                    else -> amount.convert(wallet.defaultUnit).get()
-                }.toBigDecimal(),
-                fee = fee.toBigDecimal(),
+                cryptoTransferredAmount = amount.toBigDecimal(wallet.defaultUnit),
+                fee = fee.toBigDecimal(wallet.defaultUnit),
                 isReceived = isReceived(),
                 blockNumber = confirmation.orNull()?.blockNumber?.toInt() ?: 0,
                 toOrFromAddress = when {
@@ -85,7 +83,17 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 gasPrice = event.gasPrice,
                 gasLimit = event.gasLimit,
                 feeToken = feeForToken(),
-                confirmations = confirmations
+                confirmations = confirmations,
+                transferFields = event.transaction
+                    .attributes
+                    .map { attribute ->
+                        TransferField(
+                            key = attribute.key,
+                            required = attribute.isRequired,
+                            invalid = false,
+                            value = attribute.value.orNull()
+                        )
+                    }
             )
         }
 

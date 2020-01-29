@@ -26,6 +26,7 @@ package com.breadwallet.ui.txdetails
 
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.ui.models.TransactionState
+import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -58,7 +59,8 @@ object TxDetails {
         val transactionState: TransactionState? = null,
         val isCompleted: Boolean = false,
         val feeToken: String = "",
-        val confirmations: Int = 0
+        val confirmations: Int = 0,
+        val transferFields: List<TransferField> = emptyList()
     ) {
         companion object {
             /** Create a [TxDetails.M] using only the required values. */
@@ -74,6 +76,9 @@ object TxDetails {
                 isCryptoPreferred = isCryptoPreferred
             )
         }
+
+        val destinationTag: TransferField? =
+            transferFields.find { it.key == TransferField.DESTINATION_TAG }
 
         val transactionTotal: BigDecimal
             get() = cryptoTransferredAmount + fee

@@ -55,11 +55,11 @@ import com.breadwallet.util.WalletDisplayUtils
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
+import com.breadwallet.util.isRipple
 import com.google.common.primitives.UnsignedInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.transform
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -74,7 +74,7 @@ import kotlin.math.absoluteValue
 private const val DEFAULT_PORT = 8333L
 
 /** Returns the [Amount] as a [BigDecimal]. */
-fun Amount.toBigDecimal(): BigDecimal {
+fun Amount.toBigDecimal(unit: Unit = this.unit): BigDecimal {
     return BigDecimal(doubleAmount(unit).or(0.0))
         .setScale(unit.decimals.toInt(), BRConstants.ROUNDING_MODE)
 }
@@ -295,12 +295,19 @@ fun Flow<List<Wallet>>.applyDisplayOrder(displayOrderCurrencyIds: Flow<List<Stri
 val Wallet.urlScheme: String?
     get() = when {
         currency.code.isEthereum() || currency.isErc20() -> "ethereum"
+        currency.code.isRipple() -> "xrp"
         currency.code.isBitcoin() -> "bitcoin"
         currency.code.isBitcoinCash() -> when {
             BuildConfig.BITCOIN_TESTNET -> "bchtest"
             else -> "bitcoincash"
         }
         else -> null
+    }
+
+val Wallet.urlSchemes: List<String>
+    get() = when {
+        currency.code.isRipple() -> listOf(urlScheme!!, "xrpl", "ripple")
+        else -> urlScheme?.run(::listOf) ?: emptyList()
     }
 
 /** Creates a [WalletManager] using the appropriate address scheme and [WalletManagerMode]. */

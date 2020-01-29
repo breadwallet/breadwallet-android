@@ -36,6 +36,7 @@ import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferState
@@ -91,6 +92,8 @@ import java.math.BigDecimal
 
 private const val RATE_UPDATE_MS = 60_000L
 
+private const val XRP_DESTINATION_TAG = "DestinationTag"
+
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object SendSheetHandler {
 
@@ -117,6 +120,8 @@ object SendSheetHandler {
         addTransformer(handleContinueWithPayment(keyStore, breadBox, retainedScope, outputProducer))
         addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
+        addFunction(handleGetTransferFields(breadBox))
+        addFunction(handleValidateTransferFields(breadBox))
         addConsumerSync(Dispatchers.Main, showBalanceTooLowForFee(router))
         addConsumerSync(Dispatchers.Main, showErrorDialog(router))
         addConsumerSync(Dispatchers.Main, showTransferFailed(router))
@@ -126,6 +131,51 @@ object SendSheetHandler {
                 isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
             E.OnAuthenticationSettingsUpdated(isEnabled)
         }
+    }
+
+    private fun handleGetTransferFields(
+        breadBox: BreadBox
+    ): suspend (F.GetTransferFields) -> E = { (currencyCode, targetAddress) ->
+        val wallet = breadBox.wallet(currencyCode).first()
+        val network = wallet.walletManager.network
+        val address = Address.create(targetAddress, network).orNull()
+        val fields = when (address) {
+            null -> wallet.transferAttributes
+            else -> wallet.getTransferAttributesFor(address)
+        }.map { attribute ->
+            TransferField(
+                attribute.key,
+                attribute.isRequired,
+                false,
+                attribute.value.orNull()
+            )
+        }
+        E.OnTransferFieldsUpdated(fields)
+    }
+
+    private fun handleValidateTransferFields(
+        breadBox: BreadBox
+    ): suspend (F.ValidateTransferFields) -> E = { effect ->
+        val (currencyCode, targetAddress, transferFields) = effect
+
+        val wallet = breadBox.wallet(currencyCode).first()
+        val network = wallet.walletManager.network
+        val address = Address.create(targetAddress, network).orNull()
+
+        val validatedFields = when (address) {
+            null -> wallet.transferAttributes
+            else -> wallet.getTransferAttributesFor(address)
+        }.mapNotNull { attribute ->
+            val field = transferFields.find { it.key == attribute.key }
+            if (field != null) {
+                attribute.setValue(field.value)
+                field.copy(
+                    invalid = wallet.validateTransferAttribute(attribute).isPresent
+                )
+            } else null
+        }
+
+        E.OnTransferFieldsUpdated(validatedFields)
     }
 
     private fun handleLoadBalance(
@@ -267,9 +317,23 @@ object SendSheetHandler {
                 val address = wallet.addressFor(effect.address)
                 val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
                 val feeBasis = effect.transferFeeBasis
+                val fields = effect.transferFields
 
                 if (address == null || wallet.containsAddress(address)) {
                     return@mapLatest E.OnAddressValidated(effect.address, false)
+                }
+
+
+                val attributes = wallet.getTransferAttributesFor(address)
+                attributes.forEach { attribute ->
+                    fields.find { it.key == attribute.key }
+                        ?.let { field ->
+                            attribute.setValue(field.value)
+                        }
+                }
+
+                if (attributes.any { wallet.validateTransferAttribute(it).isPresent }) {
+                    return@mapLatest E.OnSendFailed
                 }
 
                 val phrase = try {
@@ -279,7 +343,7 @@ object SendSheetHandler {
                     return@mapLatest E.OnSendFailed
                 }
 
-                val newTransfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
+                val newTransfer = wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
                 checkNotNull(newTransfer) { "Failed to create transfer." }
 
                 wallet.walletManager.submit(newTransfer, phrase)

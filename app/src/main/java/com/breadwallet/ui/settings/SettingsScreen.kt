@@ -95,6 +95,7 @@ object SettingsScreen {
         object ResetDefaultCurrencies : F()
         object GoToHomeScreen : F()
         object ToggleSecureMode : F()
+        object EnableXrp : F()
 
         object GoToBetaFeedback : F()
 

@@ -404,6 +404,18 @@ class TxDetailsController(
                 }
             }
         }
+
+        ifChanged(M::destinationTag) {
+            if (destinationTag != null) {
+                layoutDestinationTag.isVisible = true
+                destination_tag_divider.isVisible = true
+                if (destinationTag.value == null) {
+                    destination_tag_value.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
+                } else {
+                    destination_tag_value.text = destinationTag.value
+                }
+            }
+        }
     }
 
     private fun showSentViews(show: Boolean) {
