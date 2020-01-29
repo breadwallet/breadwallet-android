@@ -402,7 +402,8 @@ object SendSheet {
         ) : F()
 
         data class ParseClipboardData(
-            val currencyCode: CurrencyCode
+            val currencyCode: CurrencyCode,
+            val feeCurrencyCode: CurrencyCode
         ) : F()
 
         object LoadAuthenticationSettings : F()
