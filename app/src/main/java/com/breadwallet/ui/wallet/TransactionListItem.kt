@@ -58,11 +58,6 @@ class TransactionListItem(
 
             tx_amount.setTextColor(mContext.resources.getColor(amountColor, null))
 
-            // If this transaction failed, show the "FAILED" indicator in the cell
-            if (transaction.isErrored) {
-                showTransactionFailed(transaction, received)
-            }
-
             val preferredCurrencyCode = when {
                 isCryptoPreferred -> transaction.currencyCode
                 else -> BRSharedPrefs.getPreferredFiatIso(mContext)
@@ -81,13 +76,20 @@ class TransactionListItem(
 
             tx_amount.text = formattedAmount
 
-            showTransactionProgress(transaction.progress)
+            // If this transaction failed, show the "FAILED" indicator in the cell
+            if (transaction.isErrored) {
+                showTransactionFailed(transaction, received)
+            } else {
+                showTransactionProgress(transaction.progress)
+            }
 
-            val sentTo = mContext.getString(R.string.Transaction_sentTo).format(transaction.toAddress)
+            val sentTo =
+                mContext.getString(R.string.Transaction_sentTo).format(transaction.toAddress)
             val receivedVia = mContext.getString(R.string.TransactionDetails_receivedVia)
                 .format(transaction.fromAddress)
 
-            val sendingTo = mContext.getString(R.string.Transaction_sendingTo).format(transaction.toAddress)
+            val sendingTo =
+                mContext.getString(R.string.Transaction_sendingTo).format(transaction.toAddress)
             val receivingVia = mContext.getString(R.string.TransactionDetails_receivingVia)
                 .format(transaction.fromAddress)
 
@@ -107,7 +109,8 @@ class TransactionListItem(
             }
 
             //if it's 0 we use the current time.
-            val timeStamp = if (transaction.timeStamp == 0L) System.currentTimeMillis() else transaction.timeStamp
+            val timeStamp =
+                if (transaction.timeStamp == 0L) System.currentTimeMillis() else transaction.timeStamp
 
             tx_date.text = BRDateUtil.getShortDate(timeStamp)
         }
