@@ -412,6 +412,8 @@ object SendSheet {
             val message: String
         ) : F()
 
+        object ShowTransferFailed : F()
+
         sealed class PaymentProtocol : F() {
             data class LoadPaymentData(
                 @Redacted val cryptoRequestUrl: Link.CryptoRequestUrl

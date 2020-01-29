@@ -34,10 +34,12 @@ import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Amount
+import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.errors.FeeEstimationError
-import com.breadwallet.crypto.errors.TransferSubmitError
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.ext.isZero
@@ -72,6 +74,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -111,11 +114,12 @@ object SendSheetHandler {
         addTransformer(handleSendTransaction(breadBox, keyStore, retainedScope, outputProducer))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
-        addTransformer(handleContinueWithPayment(keyStore, retainedScope, outputProducer))
+        addTransformer(handleContinueWithPayment(keyStore, breadBox, retainedScope, outputProducer))
         addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
         addConsumerSync(Dispatchers.Main, showBalanceTooLowForFee(router))
         addConsumerSync(Dispatchers.Main, showErrorDialog(router))
+        addConsumerSync(Dispatchers.Main, showTransferFailed(router))
 
         addFunctionSync<F.LoadAuthenticationSettings> {
             val isEnabled =
@@ -268,21 +272,23 @@ object SendSheetHandler {
                     return@mapLatest E.OnAddressValidated(effect.address, false)
                 }
 
-                try {
-                    val transfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
-                    checkNotNull(transfer) { "Failed to create transfer." }
-
-                    val phrase = checkNotNull(keyStore.getPhrase())
-
-                    wallet.walletManager.submit(transfer, phrase)
-                    E.OnSendComplete(transfer)
-                } catch (e: TransferSubmitError) {
-                    logError("Transaction submit failed", e)
-                    E.OnSendFailed
+                val phrase = try {
+                    checkNotNull(keyStore.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
-                    E.OnSendFailed
+                    return@mapLatest E.OnSendFailed
                 }
+
+                val newTransfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
+                checkNotNull(newTransfer) { "Failed to create transfer." }
+
+                wallet.walletManager.submit(newTransfer, phrase)
+
+                val hash = checkNotNull(newTransfer.hash.orNull()).toString()
+
+                breadBox.walletTransfer(effect.currencyCode, hash)
+                    .mapToSendEvent()
+                    .first()
             }
             // outputProducer]must return a valid [Consumer] that
             // can accept events even if the original loop has been
@@ -356,6 +362,7 @@ object SendSheetHandler {
 
     private fun handleContinueWithPayment(
         keyStore: KeyStore,
+        breadBox: BreadBox,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
     ) = flowTransformer<F.PaymentProtocol.ContinueWitPayment, E> { effects ->
@@ -365,23 +372,25 @@ object SendSheetHandler {
                 val transfer = paymentRequest.createTransfer(effect.transferFeeBasis).orNull()
                 checkNotNull(transfer) { "Failed to create transfer." }
 
-                try {
-                    val phrase = checkNotNull(keyStore.getPhrase())
-                    check(
-                        paymentRequest.signTransfer(
-                            transfer,
-                            phrase
-                        )
-                    ) { "Failed to sign transfer" }
-                    paymentRequest.submitTransfer(transfer)
-                    E.OnSendComplete(transfer)
-                } catch (e: TransferSubmitError) {
-                    logError("Transaction submit failed", e)
-                    E.OnSendFailed
+                val phrase = try {
+                    checkNotNull(keyStore.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
-                    E.OnSendFailed
+                    return@mapLatest E.OnSendFailed
                 }
+
+                check(paymentRequest.signTransfer(transfer, phrase)) {
+                    "Failed to sign transfer"
+                }
+
+                paymentRequest.submitTransfer(transfer)
+
+                val currencyCode = transfer.wallet.currency.code
+                val transferHash = transfer.hashString()
+
+                breadBox.walletTransfer(currencyCode, transferHash)
+                    .mapToSendEvent()
+                    .first()
             }
             // outputProducer]must return a valid [Consumer] that
             // can accept events even if the original loop has been
@@ -442,4 +451,36 @@ object SendSheetHandler {
         )
         router.pushController(RouterTransaction.with(controller))
     }
+
+    private fun showTransferFailed(
+        router: Router
+    ) = { _: F.ShowTransferFailed ->
+        val res = checkNotNull(router.activity).resources
+        val controller = AlertDialogController(
+            title = res.getString(R.string.Alert_error),
+            message = res.getString(R.string.Send_publishTransactionError),
+            positiveText = res.getString(R.string.Button_ok)
+        )
+        router.pushController(RouterTransaction.with(controller))
+    }
 }
+
+/**
+ * Map the post-submit transfer state to an [E] result or fail.
+ */
+private fun Flow<Transfer>.mapToSendEvent(): Flow<E> =
+    mapNotNull { transfer ->
+        when (checkNotNull(transfer.state.type)) {
+            TransferState.Type.INCLUDED,
+            TransferState.Type.PENDING,
+            TransferState.Type.SUBMITTED -> E.OnSendComplete(transfer)
+            TransferState.Type.DELETED,
+            TransferState.Type.FAILED -> {
+                logError("Failed to submit transfer ${transfer.state.failedError.orNull()}")
+                E.OnSendFailed
+            }
+            // Ignore pre-submit states
+            TransferState.Type.CREATED,
+            TransferState.Type.SIGNED -> null
+        }
+    }
