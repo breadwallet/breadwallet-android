@@ -30,11 +30,11 @@ import com.breadwallet.R
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.BaseController
 import com.google.firebase.perf.FirebasePerformance
-import kotlinx.android.synthetic.main.activity_share_data.*
+import kotlinx.android.synthetic.main.controller_share_data.*
 
 class ShareDataController(args: Bundle? = null) : BaseController(args) {
 
-    override val layoutId = R.layout.activity_share_data
+    override val layoutId = R.layout.controller_share_data
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
