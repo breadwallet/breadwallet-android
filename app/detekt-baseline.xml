@@ -11,13 +11,19 @@
     <ID>ComplexMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
     <ID>ComplexMethod:RecoveryKeyHandler.kt$RecoveryKeyHandler$// TODO: This method serves as a collection point for all // of the necessary steps in creating a wallet from a phrase. // After all operations have been collected and reviewed, // this function can be broken down into smaller pieces. private fun recoverWallet(effect: F.RecoverWallet)</ID>
     <ID>ComplexMethod:SignedRequestMiddleware.kt$SignedRequestMiddleware$override fun handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Boolean</ID>
+    <ID>ComplexMethod:WalletJs.kt$WalletJs$@Suppress("LongMethod") private suspend fun sendTransaction( wallet: Wallet, address: Address, amount: Amount, totalCost: BigDecimal, feeBasis: TransferFeeBasis ): String?</ID>
+    <ID>ComplexMethod:WalletListItem.kt$WalletListItem.ViewHolder$override fun bindView(item: WalletListItem, payloads: MutableList&lt;Any&gt;)</ID>
+    <ID>ComplexMethod:WalletScreenHandler.kt$fun Transfer.asWalletTransaction(): WalletTransaction</ID>
     <ID>ComplexMethod:WalletUpdate.kt$ private fun List&lt;WalletTransaction&gt;.filtered( filterQuery: String, filterSent: Boolean, filterReceived: Boolean, filterComplete: Boolean, filterPending: Boolean )</ID>
-    <ID>EmptyClassBlock:WalletController.kt$WalletController$Companion</ID>
     <ID>EmptyFunctionBlock:DefaultTextWatcher.kt$DefaultTextWatcher${ }</ID>
     <ID>EmptyFunctionBlock:HomeScreenHandler.kt$HomeScreenHandler.&lt;no name provided&gt;${ }</ID>
+    <ID>EmptyFunctionBlock:TransactionListItem.kt$TransactionListItem.ViewHolder${ }</ID>
     <ID>FinalNewline:</ID>
+    <ID>LongMethod:HomeScreenHandler.kt$HomeScreenHandler$private fun loadWallets()</ID>
     <ID>LongMethod:NewPriceAlertActivity.kt$NewPriceAlertActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:PriceAlertWorker.kt$PriceAlertWorker$override fun doWork(): Result</ID>
+    <ID>LongMethod:SettingsScreenHandler.kt$SettingsScreenHandler$@Suppress("ComplexMethod") override fun accept(value: F)</ID>
+    <ID>LongMethod:WalletListItem.kt$WalletListItem.ViewHolder$override fun bindView(item: WalletListItem, payloads: MutableList&lt;Any&gt;)</ID>
     <ID>MagicNumber:BRSharedPrefs.kt$BRSharedPrefs$15</ID>
     <ID>MagicNumber:CoreBreadBox.kt$CoreBreadBox$100</ID>
     <ID>MagicNumber:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$1000</ID>
@@ -62,13 +68,13 @@
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.BOTH, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.DECREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
     <ID>MaxLineLength:PriceAlert.kt$PriceAlert.Companion$PriceAlert(Type.PERCENTAGE_CHANGE_DAY_WEEK, Direction.INCREASE, forCurrencyCode, value, currencyCode, startTime, pinnedPrice)</ID>
+    <ID>MaxLineLength:RecoveryKey.kt$RecoveryKey.E.OnPhraseValidated$require(errors.size == M.RECOVERY_KEY_WORDS_COUNT) { "Errors size must be ${M.RECOVERY_KEY_WORDS_COUNT}" }</ID>
     <ID>MaximumLineLength:</ID>
     <ID>MultiLineIfElse:</ID>
     <ID>NestedBlockDepth:CurrencyHistoricalDataClient.kt$CurrencyHistoricalDataClient$private fun fetchHistoricalData( context: Context, fromCurrency: String, toCurrency: String, history: History, limit: Limit ): List&lt;PriceDataPoint&gt;</ID>
     <ID>NestedBlockDepth:WebController.kt$WebController$override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?)</ID>
     <ID>NoBlankLineBeforeRbrace:</ID>
     <ID>NoConsecutiveBlankLines:</ID>
-    <ID>NoEmptyClassBody:</ID>
     <ID>NoMultipleSpaces:</ID>
     <ID>NoTrailingSpaces:</ID>
     <ID>NoUnusedImports:</ID>
@@ -83,6 +89,7 @@
     <ID>ReturnCount:ScrubGestureDetector.kt$ScrubGestureDetector$override fun onTouch(v: View, event: MotionEvent): Boolean</ID>
     <ID>ReturnCount:SignedRequestMiddleware.kt$SignedRequestMiddleware$override fun handle( target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse ): Boolean</ID>
     <ID>ReturnCount:SparkView.kt$SparkView.Companion$ internal fun getNearestIndex(points: List&lt;Float&gt;, x: Float): Int</ID>
+    <ID>ReturnCount:WalletJs.kt$WalletJs$@Suppress("LongMethod") private suspend fun sendTransaction( wallet: Wallet, address: Address, amount: Amount, totalCost: BigDecimal, feeBasis: TransferFeeBasis ): String?</ID>
     <ID>ReturnCount:WalletJs.kt$WalletJs$private suspend fun estimateFee( wallet: Wallet, address: Address?, amount: Amount ): TransferFeeBasis?</ID>
     <ID>SpacingAroundColon:</ID>
     <ID>SpacingAroundCurly:</ID>
@@ -104,8 +111,8 @@
     <ID>TooManyFunctions:RecoveryKeyUpdate.kt$RecoveryKeyUpdate : UpdateRecoveryKeyUpdateSpec</ID>
     <ID>TooManyFunctions:SendSheetHandler.kt$SendSheetHandler</ID>
     <ID>TooManyFunctions:SparkView.kt$SparkView : ViewScrubListener</ID>
+    <ID>TooManyFunctions:WalletController.kt$WalletController : BaseMobiusController</ID>
     <ID>VariableNaming:PriceAlertListViewModel.kt$PriceAlertListViewModel$private val TAG: String = PriceAlertListViewModel::class.java.simpleName</ID>
     <ID>WildcardImport:Resource.kt$import com.breadwallet.tools.mvvm.Status.*</ID>
-    <ID>WildcardImport:WalletUpdate.kt$import com.spotify.mobius.Next.*</ID>
   </Whitelist>
 </SmellBaseline>
