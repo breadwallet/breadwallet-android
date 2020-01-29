@@ -36,6 +36,7 @@ import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.feeForSpeed
+import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.isBitcoin
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
@@ -43,9 +44,9 @@ import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.TransferFeeBasis
+import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.errors.FeeEstimationError
-import com.breadwallet.crypto.errors.TransferSubmitError
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -59,6 +60,7 @@ import com.platform.entities.TxMetaDataValue
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.transform
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -357,28 +359,37 @@ class WalletJs(
                 context.getString(R.string.Platform_transaction_cancelled)
             )
             is TransactionResultMessage.TransactionConfirmed -> {
-                try {
-                    val transfer =
-                        checkNotNull(
-                            wallet.createTransfer(
-                                address,
-                                amount,
-                                feeBasis,
-                                null
-                            ).orNull()
-                        )
-                    val phrase = checkNotNull(keyStore.getPhrase())
-                    wallet.walletManager.submit(transfer, phrase)
-
-                    return transfer.hash.orNull()?.toString()
-                } catch (ex: TransferSubmitError) {
-                    logError("Transaction submit failed.", ex)
+                val phrase = try {
+                    checkNotNull(keyStore.getPhrase())
                 } catch (ex: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", ex)
-                } catch (ex: IllegalStateException) {
-                    logError("Failed to create transfer.", ex)
+                    return null
                 }
-                null
+
+                val newTransfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
+                if (newTransfer == null) {
+                    logError("Failed to create transfer.")
+                    return null
+                }
+
+                wallet.walletManager.submit(newTransfer, phrase)
+
+                breadBox.walletTransfer(wallet.currency.code, newTransfer.hashString())
+                    .transform { transfer ->
+                        when (checkNotNull(transfer.state.type)) {
+                            TransferState.Type.INCLUDED,
+                            TransferState.Type.PENDING,
+                            TransferState.Type.SUBMITTED -> emit(transfer.hashString())
+                            TransferState.Type.DELETED,
+                            TransferState.Type.FAILED -> {
+                                logError("Failed to submit transfer ${transfer.state.failedError.orNull()}")
+                                emit(null)
+                            }
+                            // Ignore pre-submit states
+                            TransferState.Type.CREATED,
+                            TransferState.Type.SIGNED -> Unit
+                        }
+                    }.first()
             }
         }
     }

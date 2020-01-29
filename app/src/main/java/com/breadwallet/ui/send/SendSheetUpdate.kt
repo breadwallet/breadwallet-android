@@ -604,8 +604,9 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 next(
                     model.copy(
                         isSendingTransaction = false
-                    )
-                )// TODO: Display error (not "something went wrong")
+                    ),
+                    effects(F.ShowTransferFailed)
+                )
             else -> noChange()
         }
     }
