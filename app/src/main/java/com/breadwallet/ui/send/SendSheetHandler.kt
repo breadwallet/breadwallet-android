@@ -63,10 +63,10 @@ import com.breadwallet.util.getContentTypeHeader
 import com.breadwallet.util.getPaymentRequestHeader
 import com.platform.APIClient
 import com.spotify.mobius.Connectable
+import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
-import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -235,7 +235,9 @@ object SendSheetHandler {
         when {
             text.isNullOrBlank() -> E.OnAddressPasted.NoAddress
             reqAddress.isNullOrBlank() -> E.OnAddressPasted.NoAddress
-            !reqCurrencyCode.isNullOrBlank() && reqCurrencyCode != effect.currencyCode ->
+            !reqCurrencyCode.isNullOrBlank() &&
+                reqCurrencyCode != effect.currencyCode &&
+                reqCurrencyCode != effect.feeCurrencyCode ->
                 E.OnAddressPasted.InvalidAddress
             else -> {
                 val wallet = breadBox.wallet(effect.currencyCode).first()

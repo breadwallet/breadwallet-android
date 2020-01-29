@@ -228,7 +228,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             model.isConfirmingTx -> noChange()
             else -> dispatch(
                 setOf(
-                    F.ParseClipboardData(model.currencyCode)
+                    F.ParseClipboardData(model.currencyCode, model.feeCurrencyCode)
                 )
             )
         }
