@@ -30,6 +30,7 @@ import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.isErc20
 import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.breadbox.urlScheme
+import com.breadwallet.breadbox.urlSchemes
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.EventUtils
@@ -45,6 +46,7 @@ private const val REQ = "req"
 /** "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched */
 private const val R_URL = "r"
 private const val TOKEN_ADDRESS = "tokenaddress"
+private const val DESTINATION_TAG = "dt"
 
 class CryptoUriParser(
     private val breadBox: BreadBox
@@ -105,7 +107,7 @@ class CryptoUriParser(
         val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
         return if (request != null && request.scheme.isNotBlank()) {
             val wallet = wallets.firstOrNull {
-                it.urlScheme == request.scheme
+                it.urlSchemes.contains(request.scheme)
             }
 
             if (wallet != null) {
@@ -142,7 +144,7 @@ class CryptoUriParser(
         } else {
             builder.currencyCode = wallets
                 .mapNotNull { wallet ->
-                    if (wallet.urlScheme == uri.scheme) {
+                    if (wallet.urlSchemes.contains(uri.scheme)) {
                         wallet.currency.code
                     } else null
                 }
@@ -160,6 +162,7 @@ class CryptoUriParser(
         pushUrlEvent(uri)
 
         with(uri) {
+            getQueryParameter(DESTINATION_TAG)?.run(builder::setDestinationTag)
             getQueryParameter(REQ)?.run(builder::setReqUrl)
             getQueryParameter(R_URL)?.run(builder::setRUrl)
             getQueryParameter(LABEL)?.run(builder::setLabel)

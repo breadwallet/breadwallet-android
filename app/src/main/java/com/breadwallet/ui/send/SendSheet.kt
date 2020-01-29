@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.send
 
+import android.os.Parcelable
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.Transfer
@@ -38,7 +39,20 @@ import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
+import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
+
+@Parcelize
+data class TransferField(
+    val key: String,
+    val required: Boolean,
+    val invalid: Boolean,
+    @Redacted val value: String?
+) : Parcelable {
+    companion object {
+        const val DESTINATION_TAG = "DestinationTag"
+    }
+}
 
 object SendSheet {
 
@@ -124,8 +138,11 @@ object SendSheet {
         /** A payment request fetched from bitpay */
         @Redacted val paymentProtocolRequest: PaymentProtocolRequest? = null,
         /** True when a payment request data is being fetched */
-        val isFetchingPayment: Boolean = false
+        val isFetchingPayment: Boolean = false,
+
+        val transferFields: List<TransferField> = emptyList()
     ) {
+
         sealed class InputError {
             object Empty : InputError()
             object Invalid : InputError()
@@ -158,6 +175,9 @@ object SendSheet {
 
         /** True when we are displaying the information of a payment request */
         val isBitpayPayment: Boolean = paymentProtocolRequest != null
+
+        val destinationTag: TransferField? =
+            transferFields.find { it.key == TransferField.DESTINATION_TAG }
 
         companion object {
 
@@ -243,10 +263,27 @@ object SendSheet {
     )
     sealed class E {
 
+        sealed class TransferFieldUpdate : E() {
+
+            abstract val key: String
+
+            data class Value(
+                override val key: String,
+                @Redacted val value: String
+            ) : TransferFieldUpdate()
+
+            data class Validation(
+                override val key: String,
+                @Redacted val invalid: Boolean
+            ) : TransferFieldUpdate()
+        }
+
+        data class OnTransferFieldsUpdated(
+            val transferFields: List<TransferField>
+        ) : E()
+
         data class OnRequestScanned(
-            val currencyCode: CurrencyCode,
-            val amount: BigDecimal?,
-            @Redacted val targetAddress: String?
+            val link: Link.CryptoRequestUrl
         ) : E()
 
         data class OnExchangeRateUpdated(
@@ -361,6 +398,17 @@ object SendSheet {
             object GoToTransactionComplete : Nav(NavigationEffect.GoToTransactionComplete)
         }
 
+        data class GetTransferFields(
+            val currencyCode: CurrencyCode,
+            @Redacted val targetAddress: String? = null
+        ) : F()
+
+        data class ValidateTransferFields(
+            val currencyCode: CurrencyCode,
+            @Redacted val targetAddress: String? = null,
+            val transferFields: List<TransferField>
+        ) : F()
+
         data class ValidateAddress(
             val currencyCode: CurrencyCode,
             @Redacted val address: String
@@ -391,7 +439,8 @@ object SendSheet {
             val currencyCode: CurrencyCode,
             @Redacted val address: String,
             val amount: BigDecimal,
-            val transferFeeBasis: TransferFeeBasis
+            val transferFeeBasis: TransferFeeBasis,
+            val transferFields: List<TransferField>
         ) : F()
 
         data class AddTransactionMetaData(
@@ -433,7 +482,6 @@ object SendSheet {
 }
 
 fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
-    // TODO: Handle all request params
     SendSheet.M(
         currencyCode = currencyCode,
         fiatCode = fiatCode,
@@ -441,7 +489,18 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         amount = amount ?: BigDecimal.ZERO,
         rawAmount = amount?.stripTrailingZeros()?.toPlainString() ?: "",
         targetAddress = address ?: "",
-        cryptoRequestUrl = this
+        cryptoRequestUrl = this,
+        memo = message,
+        transferFields = when {
+            destinationTag != null ->
+                listOf(TransferField(
+                    key = TransferField.DESTINATION_TAG,
+                    required = false,
+                    invalid = false,
+                    value = destinationTag
+                ))
+            else -> emptyList()
+        }
     )
 
 fun CryptoRequest.asSendSheetModel(fiatCode: String) =
@@ -451,6 +510,16 @@ fun CryptoRequest.asSendSheetModel(fiatCode: String) =
         isAmountCrypto = true,
         amount = amount ?: value ?: BigDecimal.ZERO,
         rawAmount = (amount ?: value)?.stripTrailingZeros()?.toPlainString() ?: "",
-        targetAddress = if (hasAddress()) getAddress(false) else ""
+        targetAddress = if (hasAddress()) getAddress(false) else "",
+        transferFields = when {
+            destinationTag != null ->
+                listOf(TransferField(
+                    key = TransferField.DESTINATION_TAG,
+                    required = false,
+                    invalid = false,
+                    value = destinationTag
+                ))
+            else -> emptyList()
+        }
     )
 

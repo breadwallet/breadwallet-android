@@ -214,8 +214,6 @@ class SystemWalletTracker(
         currencyId: String,
         walletModeMap: Map<String, WalletManagerMode>
     ) {
-        // TODO: Remove ripple filter when core-5.0.0 is stable
-        if (currencyId == "ripple-mainnet:__native__") return
         val network = system
             .networks
             .find {
