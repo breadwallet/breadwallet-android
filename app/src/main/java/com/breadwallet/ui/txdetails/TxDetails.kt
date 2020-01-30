@@ -57,7 +57,8 @@ object TxDetails {
         @Redacted val confirmedInBlockNumber: String = "",
         val transactionState: TransactionState? = null,
         val isCompleted: Boolean = false,
-        val feeToken: String = ""
+        val feeToken: String = "",
+        val confirmations: Int = 0
     ) {
         companion object {
             /** Create a [TxDetails.M] using only the required values. */
