@@ -489,7 +489,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         val newAmount: BigDecimal
         val newFiatAmount: BigDecimal
 
-        if (model.isAmountCrypto) {
+        if (model.isAmountCrypto || model.isBitpayPayment) {
             newAmount = model.amount
             newFiatAmount = if (pricePerUnit > BigDecimal.ZERO) {
                 (newAmount * pricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
@@ -499,7 +499,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         } else {
             newFiatAmount = model.fiatAmount
             newAmount = if (pricePerUnit > BigDecimal.ZERO) {
-                newFiatAmount.divide(pricePerUnit, BRConstants.ROUNDING_MODE)
+                newFiatAmount.setScale(
+                    pricePerUnit.scale().coerceAtMost(MAX_DIGITS),
+                    BRConstants.ROUNDING_MODE
+                ) / pricePerUnit
             } else {
                 model.amount
             }
