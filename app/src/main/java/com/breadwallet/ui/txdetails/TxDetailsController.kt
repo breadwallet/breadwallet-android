@@ -28,7 +28,6 @@ import android.animation.LayoutTransition
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -373,6 +372,10 @@ class TxDetailsController(
             confirmed_in_block_number.text = confirmedInBlockNumber
         }
 
+        ifChanged(M::confirmations) {
+            confirmations_value.text = confirmations.toString()
+        }
+
         ifChanged(M::transactionState) {
             when (transactionState) {
                 TransactionState.CONFIRMED -> {
@@ -397,28 +400,30 @@ class TxDetailsController(
     }
 
     private fun showSentViews(show: Boolean) {
-        fee_primary_container.visibility = if (show) View.VISIBLE else View.GONE
-        fee_secondary_container.visibility = if (show) View.VISIBLE else View.GONE
-        fee_primary_divider.visibility = if (show) View.VISIBLE else View.GONE
-        fee_secondary_divider.visibility = if (show) View.VISIBLE else View.GONE
+        fee_primary_container.isVisible = show
+        fee_secondary_container.isVisible = show
+        fee_primary_divider.isVisible = show
+        fee_secondary_divider.isVisible = show
         showEthViews(show)
     }
 
     private fun showEthViews(show: Boolean) {
-        gas_price_container.visibility = if (show) View.VISIBLE else View.GONE
-        gas_limit_container.visibility = if (show) View.VISIBLE else View.GONE
-        gas_price_divider.visibility = if (show) View.VISIBLE else View.GONE
-        gas_limit_divider.visibility = if (show) View.VISIBLE else View.GONE
+        gas_price_container.isVisible = show
+        gas_limit_container.isVisible = show
+        gas_price_divider.isVisible = show
+        gas_limit_divider.isVisible = show
     }
 
     private fun showTotalCost(show: Boolean) {
-        fee_secondary_container.visibility = if (show) View.VISIBLE else View.GONE
-        fee_secondary_divider.visibility = if (show) View.VISIBLE else View.GONE
+        fee_secondary_container.isVisible = show
+        fee_secondary_divider.isVisible = show
     }
 
     private fun showConfirmedView(show: Boolean) {
-        confirmed_container.visibility = if (show) View.VISIBLE else View.GONE
-        confirmed_divider.visibility = if (show) View.VISIBLE else View.GONE
+        confirmed_container.isVisible = show
+        confirmed_divider.isVisible = show
+        confirmations_divider.isVisible = show
+        confirmations_container.isVisible = show
     }
 
     private fun copyToClipboard(text: String) {

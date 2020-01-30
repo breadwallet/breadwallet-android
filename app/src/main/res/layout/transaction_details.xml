@@ -379,6 +379,7 @@
                         android:layout_height="1px"
                         android:background="@color/light_gray" />
 
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/confirmed_container"
                         android:layout_width="match_parent"
@@ -414,6 +415,44 @@
 
                     <View
                         android:id="@+id/confirmed_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@color/light_gray" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/confirmations_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                            android:id="@+id/confirmations_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginBottom="14dp"
+                            android:text="@string/TransactionDetails.confirmationsLabel"
+                            android:textColor="@color/settings_chevron_right"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                            android:id="@+id/confirmations_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="16dp"
+                            android:textColor="?attr/secondary_text_color"
+                            app:layout_constraintBottom_toBottomOf="@+id/confirmations_label"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/confirmations_label"
+                            tools:text="3" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/confirmations_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
                         android:background="@color/light_gray" />
