@@ -82,7 +82,8 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 isCompleted = confirmations >= confirmationsUntilFinal,
                 gasPrice = event.gasPrice,
                 gasLimit = event.gasLimit,
-                feeToken = feeForToken()
+                feeToken = feeForToken(),
+                confirmations = confirmations
             )
         }
 
