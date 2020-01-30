@@ -317,7 +317,6 @@ internal class CoreBreadBox(
                     ?.transfers
                     ?.singleOrNull { it.hashString() == transferHash }
             }
-            .distinctUntilChanged()
 
     @Synchronized
     override fun walletTransferUpdates(currencyCode: String): Flow<Transfer> =
@@ -438,7 +437,7 @@ internal class CoreBreadBox(
         walletTracker.handleTransferEvent(system, manager, wallet, transfer, event)
 
         synchronized(this) {
-            transferUpdatedChannelMap.getValue(transfer.hash.toString()).offer(transfer)
+            transferUpdatedChannelMap.getValue(wallet.currency.code).offer(transfer)
             walletTransfersChannelMap.getValue(wallet.currency.code).offer(wallet.transfers)
         }
     }
