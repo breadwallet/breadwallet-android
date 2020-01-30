@@ -27,6 +27,7 @@ package com.platform.jsbridge
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
 import android.webkit.JavascriptInterface
+import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.TransferSpeed
@@ -82,6 +83,8 @@ class WalletJs(
         private const val KEY_LOCAL_CURRENCY_CODE = "local_currency_code"
         private const val KEY_LOCAL_CURRENCY_PRECISION = "local_currency_precision"
         private const val KEY_LOCAL_CURRENCY_SYMBOL = "local_currency_symbol"
+        private const val KEY_APP_PLATFORM = "app_platform"
+        private const val KEY_APP_VERSION = "app_version"
         private const val KEY_CURRENCY = "currency"
         private const val KEY_ADDRESS = "address"
         private const val KEY_CURRENCIES = "currencies"
@@ -96,6 +99,8 @@ class WalletJs(
         private const val KEY_DENOMINATOR = "denominator"
         private const val KEY_HASH = "hash"
         private const val KEY_TRANSMITTED = "transmitted"
+
+        private const val APP_PLATFORM = "android"
 
         private const val ERR_EMPTY_CURRENCIES = "currencies_empty"
         private const val ERR_ESTIMATE_FEE = "estimate_fee"
@@ -118,17 +123,12 @@ class WalletJs(
         val fiatCurrency = Currency.getInstance(preferredCode)
 
         JSONObject().apply {
-            /** how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc */
             put(KEY_BTC_DENOMINATION_DIGITS, btcWallet.defaultUnit.decimals)
-
-            /** the users native fiat currency as an ISO 4217 code. Should be uppercased  */
             put(KEY_LOCAL_CURRENCY_CODE, fiatCurrency.currencyCode.toUpperCase())
-
-            /** the user's fiat precision (e.g. 2 for USD, 0 for JPY, etc) */
             put(KEY_LOCAL_CURRENCY_PRECISION, fiatCurrency.defaultFractionDigits)
-
-            /** the user's native fiat currency symbol */
             put(KEY_LOCAL_CURRENCY_SYMBOL, fiatCurrency.symbol)
+            put(KEY_APP_PLATFORM, APP_PLATFORM)
+            put(KEY_APP_VERSION, "${BuildConfig.VERSION_NAME}.${BuildConfig.BUILD_VERSION}")
         }
     }
 
