@@ -181,6 +181,8 @@ internal class CoreBreadBox(
 
             logDebug("Dispatching initial System values")
 
+            system.connectAll()
+
             systemChannel.offer(system)
             accountChannel.offer(system.account)
             system.wallets?.let { wallets ->
