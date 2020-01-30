@@ -221,6 +221,14 @@ class RecoveryKeyController(
             if (event == BREdit.EditTextEvent.PASTE) {
                 val clipboardText = BRClipboardManager.getClipboard(activity)
                 output.accept(E.OnTextPasted(clipboardText))
+
+                val phrase = clipboardText.split("\\s+".toRegex())
+                if (phrase.isNotEmpty()) {
+                    wordInputs.zip(phrase)
+                        .forEach { (input, word) ->
+                            input.setText(word, TextView.BufferType.EDITABLE)
+                        }
+                }
             }
         }
 
