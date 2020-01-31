@@ -74,7 +74,7 @@ class RecoveryKeyHandler(
 
     override fun accept(effect: F) {
         when (effect) {
-            F.ErrorShake -> errorShake()
+            F.ErrorShake -> launch(Dispatchers.Main) { errorShake() }
             F.GoToPhraseError -> goToErrorDialog()
             is F.ResetPin -> resetPin(effect)
             is F.Unlink -> unlink(effect)

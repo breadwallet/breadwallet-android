@@ -48,7 +48,7 @@ class InputPinHandler(
     override fun accept(effect: F) {
         when (effect) {
             is F.SetupPin -> setupPin(effect)
-            is F.ErrorShake -> errorShake()
+            is F.ErrorShake -> launch(Dispatchers.Main) { errorShake() }
             is F.CheckIfPinExists -> checkIfPinExists()
         }
     }
