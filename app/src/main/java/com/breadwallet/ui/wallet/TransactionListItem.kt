@@ -43,6 +43,9 @@ class TransactionListItem(
         }
 
         override fun unbindView(item: TransactionListItem) {
+            tx_amount.text = null
+            tx_date.text = null
+            tx_description.text = null
         }
 
         @Suppress("LongMethod", "ComplexMethod")
