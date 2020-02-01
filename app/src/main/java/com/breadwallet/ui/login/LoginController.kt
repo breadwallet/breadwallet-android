@@ -55,6 +55,7 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 private const val EXTRA_URL = "PENDING_URL"
+private const val EXTRA_SHOW_HOME = "SHOW_HOME"
 
 class LoginController(args: Bundle? = null) :
     BaseMobiusController<M, E, F>(args),
@@ -66,7 +67,14 @@ class LoginController(args: Bundle? = null) :
         bundleOf(EXTRA_URL to intentUrl)
     )
 
-    override val defaultModel = M.createDefault(arg(EXTRA_URL, ""))
+    constructor(showHome: Boolean) : this(
+        bundleOf(EXTRA_SHOW_HOME to showHome)
+    )
+
+    override val defaultModel = M.createDefault(
+        arg(EXTRA_URL, ""),
+        arg(EXTRA_SHOW_HOME, true)
+    )
     override val update = LoginUpdate
     override val init = LoginInit
     override val effectHandler: Connectable<F, E> = CompositeEffectHandler.from(
@@ -89,6 +97,7 @@ class LoginController(args: Bundle? = null) :
                 is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
                 F.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
                 F.GoToHome -> NavigationEffect.GoToHome
+                F.GoBack -> NavigationEffect.GoBack
                 else -> null
             }
         })
@@ -134,7 +143,8 @@ class LoginController(args: Bundle? = null) :
     }
 
     override fun handleBack() =
-        router.backstackSize > 1 || activity?.isTaskRoot == false
+        (router.backstackSize > 1 && !currentModel.isUnlocked) ||
+            activity?.isTaskRoot == false
 
     private fun unlockWallet() {
         fingerprint_icon.visibility = View.INVISIBLE

@@ -33,10 +33,17 @@ object LoginScreen {
         val fingerprintEnable: Boolean = false,
         val showHomeScreen: Boolean = true,
         val currentCurrencyCode: String = "",
-        @Redacted val extraUrl: String
+        @Redacted val extraUrl: String,
+        val isUnlocked: Boolean = false
     ) {
         companion object {
-            fun createDefault(extraUrl: String) = M(extraUrl = extraUrl)
+            fun createDefault(
+                extraUrl: String,
+                showHomeScreen: Boolean
+            ) = M(
+                extraUrl = extraUrl,
+                showHomeScreen = showHomeScreen
+            )
         }
     }
 
@@ -67,6 +74,7 @@ object LoginScreen {
         object ShowFingerprintController : F()
         object AuthenticationSuccess : F()
         object AuthenticationFailed : F()
+        object GoBack : F()
         data class GoToWallet(val currencyCode: String) : F()
         data class GoToDeepLink(@Redacted val url: String) : F()
         data class TrackEvent(
