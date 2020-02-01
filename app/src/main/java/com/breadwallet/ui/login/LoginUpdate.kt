@@ -42,7 +42,8 @@ object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
         dispatch(setOf(F.ShowFingerprintController))
 
     override fun onAuthenticationSuccess(model: M): Next<M, F> =
-        dispatch(
+        next(
+            model.copy(isUnlocked = true),
             setOf(
                 F.AuthenticationSuccess,
                 F.TrackEvent(EventUtils.EVENT_LOGIN_SUCCESS)
@@ -67,7 +68,7 @@ object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
             model.showHomeScreen -> F.GoToHome
             model.currentCurrencyCode.isNotBlank() ->
                 F.GoToWallet(model.currentCurrencyCode)
-            else -> F.GoToHome
+            else -> F.GoBack
         }
         return dispatch(setOf(effect))
     }
