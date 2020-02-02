@@ -77,6 +77,7 @@ object SettingsScreen {
         data class GoToSyncBlockchain(
             val currencyCode: CurrencyCode
         ) : F()
+
         object GoToNodeSelector : F()
         object GoToEnableSegWit : F()
         object GoToLegacyAddress : F()
@@ -91,8 +92,10 @@ object SettingsScreen {
         object ShowPlatformDebugUrlDialog : F()
         object ShowPlatformBundleDialog : F()
         object ShowTokenBundleDialog : F()
-        object ResetDefaultCurrencies: F()
-        object GoToHomeScreen: F()
+        object ResetDefaultCurrencies : F()
+        object GoToHomeScreen : F()
+
+        object GoToBetaFeedback : F()
 
         data class GoToFastSync(
             val currencyCode: CurrencyCode
