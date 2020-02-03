@@ -173,12 +173,15 @@ public abstract class BRActivity extends AppCompatActivity {
         long backgroudedTime = breadApp.getBackgroundedTime();
         if (backgroudedTime != 0
                 && (System.currentTimeMillis() - backgroudedTime >= LOCK_TIMEOUT)
-                && !(this instanceof DisabledActivity)) {
+                && !(this instanceof DisabledActivity)
+                && !(this instanceof MainActivity)) {
             if (!BRKeyStore.getPinCode(this).isEmpty()) {
                 UiUtils.startBreadActivity(this, true);
             }
         }
-        breadApp.resetBackgroundedTime();
+        if (!(this instanceof MainActivity)) {
+            breadApp.resetBackgroundedTime();
+        }
     }
 
     /**

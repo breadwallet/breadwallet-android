@@ -261,8 +261,8 @@ class RouterNavigationEffectHandler(
     override fun goToLogin() {
         router.pushController(
             RouterTransaction.with(LoginController())
-                .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+                .pushChangeHandler(FadeChangeHandler())
         )
     }
 
