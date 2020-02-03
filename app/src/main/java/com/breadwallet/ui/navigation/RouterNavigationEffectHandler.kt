@@ -31,6 +31,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.ui.settings.analytics.ShareDataController
@@ -150,8 +151,8 @@ class RouterNavigationEffectHandler(
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
         router.pushController(
             RouterTransaction.with(SettingsController(effect.settingsOption))
-                .popChangeHandler(HorizontalChangeHandler())
-                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(VerticalChangeHandler())
+                .pushChangeHandler(VerticalChangeHandler())
         )
     }
 

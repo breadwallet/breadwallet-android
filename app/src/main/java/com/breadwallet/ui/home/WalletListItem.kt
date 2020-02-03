@@ -56,7 +56,7 @@ class WalletListItem(
             val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso(context)
             val exchangeRate = wallet.fiatPricePerUnit.formatFiatForUi(preferredFiatIso)
             val fiatBalance = wallet.fiatBalance.formatFiatForUi(preferredFiatIso)
-            val cryptoBalance = wallet.balance.formatCryptoForUi(currencyCode)
+            val cryptoBalance = wallet.balance.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
 
             if (wallet.fiatPricePerUnit == BigDecimal.ZERO) {
                 wallet_balance_fiat.visibility = View.INVISIBLE

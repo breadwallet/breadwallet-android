@@ -4,15 +4,16 @@
     android:id="@+id/shimmerLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
     android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp">
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wallet_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/crypto_card_shape">
+        android:background="@drawable/crypto_card_shape"
+        android:foreground="?android:attr/selectableItemBackground">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,9 +33,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:fontFamily="@font/circular_pro_bold"
                 android:textSize="16sp"
                 android:visibility="gone"
-                android:fontFamily="@font/circular_pro_bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -59,11 +60,11 @@
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/icon_container"
             android:ellipsize="end"
+            android:fontFamily="@font/circular_pro_bold"
             android:maxWidth="180dp"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/icon_container" />
 
@@ -74,9 +75,9 @@
             android:layout_below="@id/wallet_name"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/icon_container"
+            android:fontFamily="@font/circular_pro_bold"
             android:textColor="@color/balance_crypto_color"
             android:textSize="14sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintStart_toEndOf="@+id/icon_container"
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
@@ -88,9 +89,9 @@
             android:layout_below="@id/wallet_name"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/icon_container"
+            android:fontFamily="@font/circular_pro_bold"
             android:textColor="@color/balance_crypto_color"
             android:textSize="14sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintStart_toEndOf="@+id/divider"
             app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
@@ -100,10 +101,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="8dp"
+            android:fontFamily="@font/circular_pro_bold"
             android:text="$12.00"
             android:textColor="@color/wallet_balance_fiat"
             android:textSize="18sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -113,9 +114,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/wallet_balance_fiat"
             android:layout_alignEnd="@id/wallet_balance_fiat"
+            android:fontFamily="@font/circular_pro_bold"
             android:textColor="@color/balance_crypto_color"
             android:textSize="14sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintEnd_toEndOf="@+id/wallet_balance_fiat"
             app:layout_constraintTop_toBottomOf="@+id/wallet_balance_fiat" />
 
@@ -141,10 +142,10 @@
             android:layout_below="@id/wallet_balance_fiat"
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@id/sync_progress"
+            android:fontFamily="@font/circular_pro_bold"
             android:text="@string/SyncingView.syncing"
             android:textColor="@color/sync_text"
             android:textSize="14sp"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintEnd_toStartOf="@+id/sync_progress"
             app:layout_constraintTop_toBottomOf="@+id/wallet_balance_fiat" />
 
