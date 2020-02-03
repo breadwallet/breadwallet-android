@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/primary_background">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -20,8 +21,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
-                android:src="?attr/toolbar_back_arrow"
                 android:background="@null"
+                android:src="?attr/toolbar_back_arrow"
                 android:tint="@color/white"
                 android:visibility="gone" />
 
@@ -34,10 +35,10 @@
                 android:layout_marginStart="@dimen/bread_margin"
                 android:layout_marginTop="@dimen/bread_margin"
                 android:layout_marginEnd="@dimen/bread_margin"
+                android:fontFamily="@font/circular_pro_bold"
                 android:text="@string/MenuViewController.modalTitle"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                android:fontFamily="@font/circular_pro_bold" />
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/close_button"
@@ -46,8 +47,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_close_blue_24dp"
                 android:background="@null"
+                android:src="@drawable/ic_close_blue_24dp"
                 android:tint="@color/white"
                 android:visibility="gone" />
 
