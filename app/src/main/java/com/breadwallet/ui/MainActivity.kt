@@ -62,6 +62,7 @@ import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.web.WebController
 import com.google.firebase.perf.metrics.AddTrace
 
+private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val SECURE_MODE_WARNING =
     "WARNING: Secure mode is disabled, other apps can view your wallet contents."
 
@@ -163,7 +164,10 @@ class MainActivity : BRActivity() {
             } else {
                 logError("Device state is invalid.")
             }
+            return
         }
+
+        lockIfTimedOut()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -260,5 +264,24 @@ class MainActivity : BRActivity() {
             is Link.BreadUrl.Address -> null
             is Link.BreadUrl.AddressList -> null
         }
+    }
+
+    private fun lockIfTimedOut() {
+        val app = applicationContext as BreadApp
+        val currentController = router.backstack.last().controller()
+        if (currentController is LoginController) {
+            app.resetBackgroundedTime()
+            return
+        }
+        val backgroundedTime = app.backgroundedTime
+        val diff = System.currentTimeMillis() - backgroundedTime
+        if (backgroundedTime != 0L && diff >= LOCK_TIMEOUT) {
+            if (BRKeyStore.getPinCode(this).isNotEmpty()) {
+                router.pushController(RouterTransaction.with(LoginController(showHome = false))
+                    .pushChangeHandler(FadeChangeHandler())
+                    .popChangeHandler(FadeChangeHandler()))
+            }
+        }
+        app.resetBackgroundedTime()
     }
 }
