@@ -43,7 +43,6 @@ import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
 import com.breadwallet.ui.view
-import com.platform.interfaces.MetaDataManager
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_settings.*
