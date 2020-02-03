@@ -43,6 +43,8 @@ import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 import java.util.Date
 
+const val MAX_CRYPTO_DIGITS = 8
+
 object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
 
     override fun update(

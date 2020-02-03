@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:foreground="?android:attr/selectableItemBackground">
 
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView

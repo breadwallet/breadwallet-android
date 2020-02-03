@@ -34,6 +34,8 @@ import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 
+const val MAX_CRYPTO_DIGITS = 8
+
 val HomeScreenUpdate = Update<M, E, F> { model, event ->
     when (event) {
         is E.OnWalletDisplayOrderUpdated -> next(

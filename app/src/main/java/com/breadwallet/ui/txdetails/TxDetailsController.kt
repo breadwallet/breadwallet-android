@@ -272,7 +272,8 @@ class TxDetailsController(
             }
 
             ifChanged(M::transactionTotal) {
-                fee_secondary.text = transactionTotal.formatCryptoForUi(currencyCode)
+                fee_secondary.text =
+                    transactionTotal.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
             }
 
             ifChanged(
@@ -289,7 +290,7 @@ class TxDetailsController(
                             "gwei"
                         )
                     }
-                    else -> fee.formatCryptoForUi(currencyCode)
+                    else -> fee.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
                 }
             }
         }
@@ -332,7 +333,8 @@ class TxDetailsController(
         ifChanged(M::cryptoTransferredAmount) {
             tx_amount.text = cryptoTransferredAmount.formatCryptoForUi(
                 currencyCode,
-                negate = !isReceived
+                MAX_CRYPTO_DIGITS,
+                !isReceived
             )
         }
 
@@ -380,7 +382,12 @@ class TxDetailsController(
             when (transactionState) {
                 TransactionState.CONFIRMED -> {
                     if (isCompleted) {
-                        tx_status.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.checkmark_circled, 0, 0, 0)
+                        tx_status.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            R.drawable.checkmark_circled,
+                            0,
+                            0,
+                            0
+                        )
                         tx_status.setText(R.string.Transaction_complete)
                     } else {
                         tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
