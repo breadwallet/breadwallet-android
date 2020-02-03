@@ -26,9 +26,9 @@ package com.breadwallet.tools.manager
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.annotation.VisibleForTesting
 import android.text.format.DateUtils
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.model.FeeOption
@@ -101,6 +101,7 @@ object BRSharedPrefs {
     private const val LANGUAGE = "language"
     private const val UNLOCK_WITH_FINGERPRINT = "unlock-with-fingerprint"
     private const val CONFIRM_SEND_WITH_FINGERPRINT = "confirm-send-with-fingerprint"
+    private const val SECURE_SCREEN_MODE = "secure_screen_mode"
     const val APP_FOREGROUNDED_COUNT = "appForegroundedCount"
     const val APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated"
     const val APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed"
@@ -699,5 +700,11 @@ object BRSharedPrefs {
         get() = brdPrefs.getBoolean(CONFIRM_SEND_WITH_FINGERPRINT, getUseFingerprint())
         set(value) = brdPrefs.edit {
             putBoolean(CONFIRM_SEND_WITH_FINGERPRINT, value)
+        }
+
+    var secureScreenMode: Boolean
+        get() = brdPrefs.getBoolean(SECURE_SCREEN_MODE, true)
+        set(value) = brdPrefs.edit {
+            putBoolean(SECURE_SCREEN_MODE, value)
         }
 }

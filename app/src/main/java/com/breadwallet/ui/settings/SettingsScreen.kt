@@ -94,6 +94,7 @@ object SettingsScreen {
         object ShowTokenBundleDialog : F()
         object ResetDefaultCurrencies : F()
         object GoToHomeScreen : F()
+        object ToggleSecureMode : F()
 
         object GoToBetaFeedback : F()
 

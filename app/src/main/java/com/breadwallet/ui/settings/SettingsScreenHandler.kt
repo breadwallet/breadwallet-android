@@ -134,6 +134,12 @@ class SettingsScreenHandler(
                         .run(activity::startActivity)
                 }
             }
+            F.ToggleSecureMode -> {
+                launch(Dispatchers.Main) {
+                    BRSharedPrefs.secureScreenMode = !BRSharedPrefs.secureScreenMode
+                    activity.recreate()
+                }
+            }
         }
     }
 
@@ -311,6 +317,10 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Native API Explorer",
                 SettingsOption.NATIVE_API_EXPLORER
+            ),
+            SettingsItem(
+                "Secure Mode: ${BRSharedPrefs.secureScreenMode}",
+                SettingsOption.TOGGLE_SECURE_MODE
             )
         )
     }
