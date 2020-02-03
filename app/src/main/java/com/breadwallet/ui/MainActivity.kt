@@ -28,6 +28,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.WindowManager
+import android.widget.Toast
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
@@ -40,6 +41,7 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -60,6 +62,9 @@ import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.web.WebController
 import com.google.firebase.perf.metrics.AddTrace
 
+private const val SECURE_MODE_WARNING =
+    "WARNING: Secure mode is disabled, other apps can view your wallet contents."
+
 /**
  * The main user entrypoint into the app.
  *
@@ -73,6 +78,7 @@ class MainActivity : BRActivity() {
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
         const val EXTRA_RECOVER_PHRASE = "com.breadwallet.ui.MainActivity.EXTRA_RECOVER_PHRASE"
+        const val EXTRA_SECURE_SCREEN_MODE = "EXTRA_SECURE_SCREEN_MODE"
     }
 
     private lateinit var router: Router
@@ -85,10 +91,14 @@ class MainActivity : BRActivity() {
     @AddTrace(name = "MainActivity_onCreate")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_SCREEN_MODE, BRSharedPrefs.secureScreenMode)) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        } else {
+            Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
+        }
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
