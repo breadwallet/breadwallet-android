@@ -67,6 +67,7 @@ class WalletListItem(
             }
 
             val isSyncing = wallet.isSyncing
+            val isInitialized = wallet.isInitialized
             // Set wallet fields
             wallet_name.text = wallet.currencyName
             wallet_trade_price.text = exchangeRate
@@ -80,8 +81,8 @@ class WalletListItem(
                 )
             )
             wallet_balance_currency.text = cryptoBalance
-            wallet_balance_currency.isGone = isSyncing
-            sync_progress.isVisible = isSyncing
+            wallet_balance_currency.isGone = isSyncing || !isInitialized
+            sync_progress.isVisible = isSyncing || !isInitialized
             syncing_label.isVisible = isSyncing
             if (isSyncing) {
                 val syncProgress = wallet.syncProgress
