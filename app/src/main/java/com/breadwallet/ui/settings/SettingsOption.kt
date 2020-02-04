@@ -65,6 +65,7 @@ enum class SettingsOption {
     VIEW_LEGACY_ADDRESS,
     FAST_SYNC_BTC,
     // Beta
-    BETA_FEEDBACK_FORM
+    BETA_FEEDBACK_FORM,
+    ENABLE_XRP
 }
 

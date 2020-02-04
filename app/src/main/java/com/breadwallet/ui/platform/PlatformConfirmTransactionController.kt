@@ -52,6 +52,7 @@ private const val KEY_AMOUNT = "amount"
 private const val KEY_FIAT_AMOUNT = "fiat_amount"
 private const val KEY_FIAT_TOTAL_COST = "fiat_total_cost"
 private const val KEY_NETWORK_FEE = "fiat_network_fee"
+private const val KEY_TRANSFER_FIELDS = "transfer_fields"
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class PlatformConfirmTransactionController(
@@ -75,7 +76,8 @@ class PlatformConfirmTransactionController(
             KEY_AMOUNT to confirmationTxMessage.amount,
             KEY_FIAT_AMOUNT to confirmationTxMessage.fiatAmount,
             KEY_FIAT_TOTAL_COST to confirmationTxMessage.fiatTotalCost,
-            KEY_NETWORK_FEE to confirmationTxMessage.fiatNetworkFee
+            KEY_NETWORK_FEE to confirmationTxMessage.fiatNetworkFee,
+            KEY_TRANSFER_FIELDS to confirmationTxMessage.transferFields
         )
     )
 
@@ -94,7 +96,8 @@ class PlatformConfirmTransactionController(
             arg(KEY_AMOUNT),
             arg(KEY_FIAT_AMOUNT),
             arg(KEY_FIAT_TOTAL_COST),
-            arg(KEY_NETWORK_FEE)
+            arg(KEY_NETWORK_FEE),
+            arg(KEY_TRANSFER_FIELDS)
         )
         controller.targetController = this
         router.pushController(RouterTransaction.with(controller))
@@ -157,6 +160,7 @@ class PlatformConfirmTransactionController(
         arg(KEY_AMOUNT),
         arg(KEY_FIAT_AMOUNT),
         arg(KEY_FIAT_TOTAL_COST),
-        arg(KEY_NETWORK_FEE)
+        arg(KEY_NETWORK_FEE),
+        arg(KEY_TRANSFER_FIELDS)
     )
 }

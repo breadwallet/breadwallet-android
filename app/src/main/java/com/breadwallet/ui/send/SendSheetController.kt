@@ -65,7 +65,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.math.BigDecimal
@@ -118,7 +117,6 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     private val currencyCode = arg<String>(CURRENCY_CODE)
-    private val cryptoRequest = argOptional<CryptoRequest>(CRYPTO_REQUEST)
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
@@ -127,8 +125,7 @@ class SendSheetController(args: Bundle? = null) :
     override val defaultModel: M
         get() {
             val fiatCode = BRSharedPrefs.getPreferredFiatIso()
-            return cryptoRequest?.asSendSheetModel(fiatCode)
-                ?: cryptoRequestLink?.asSendSheetModel(fiatCode)
+            return cryptoRequestLink?.asSendSheetModel(fiatCode)
                 ?: M.createDefault(currencyCode, fiatCode)
         }
 
@@ -181,6 +178,9 @@ class SendSheetController(args: Bundle? = null) :
             textInputAddress.clicks().map { E.OnAmountEditDismissed },
             textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
             textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            textInputDestinationTag.textChanges().map {
+                E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
+            },
             buttonFaq.clicks().map { E.OnFaqClicked },
             buttonScan.clicks().map { E.OnScanClicked },
             buttonSend.clicks().map { E.OnSendClicked },
@@ -371,7 +371,8 @@ class SendSheetController(args: Bundle? = null) :
                     amount,
                     fiatAmount,
                     fiatTotalCost,
-                    fiatNetworkFee
+                    fiatNetworkFee,
+                    transferFields
                 )
                 controller.targetController = this@SendSheetController
                 router.pushController(RouterTransaction.with(controller))
@@ -410,6 +411,28 @@ class SendSheetController(args: Bundle? = null) :
         ifChanged(M::isFetchingPayment, M::isSendingTransaction) {
             loadingView.isVisible = isFetchingPayment || isSendingTransaction
         }
+
+        ifChanged(M::destinationTag) {
+            if (destinationTag != null) {
+                groupDestinationTag.isVisible = true
+                inputLayoutDestinationTag.isErrorEnabled = destinationTag.invalid
+                inputLayoutDestinationTag.error = if (destinationTag.invalid) {
+                    res.getString(R.string.Send_destinationTag_required_error)
+                } else null
+                inputLayoutDestinationTag.hint = res.getString(
+                    when {
+                        destinationTag.required ->
+                            R.string.Send_destinationTag_required
+                        else -> R.string.Send_destinationTag_optional
+                    }
+                )
+                if (!destinationTag.value.isNullOrBlank() &&
+                    textInputDestinationTag.text.isNullOrBlank()
+                ) {
+                    textInputDestinationTag.setText(currentModel.destinationTag?.value)
+                }
+            }
+        }
     }
 
     private fun showKeyboard(show: Boolean) {
@@ -421,11 +444,7 @@ class SendSheetController(args: Bundle? = null) :
 
     override fun onLinkScanned(link: Link) {
         if (link is Link.CryptoRequestUrl) {
-            E.OnRequestScanned(
-                currencyCode = link.currencyCode,
-                amount = link.amount,
-                targetAddress = link.address
-            ).run(eventConsumer::accept)
+            eventConsumer.accept(E.OnRequestScanned(link))
         }
     }
 

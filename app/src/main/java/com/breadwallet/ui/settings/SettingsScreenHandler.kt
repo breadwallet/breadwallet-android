@@ -140,6 +140,21 @@ class SettingsScreenHandler(
                     activity.recreate()
                 }
             }
+            F.EnableXrp -> {
+                val isEnabled = !BRSharedPrefs.enableXrp
+                BRSharedPrefs.enableXrp = isEnabled
+                val currencyId = when {
+                    BuildConfig.BITCOIN_TESTNET ->
+                        "ripple-testnet:__native__"
+                    else -> "ripple-mainnet:__native__"
+                }
+                if (isEnabled) {
+                    metaDataManager.enableWallet(currencyId)
+                } else {
+                    metaDataManager.disableWallet(currencyId)
+                }
+                loadOptions(SettingsSection.DEVELOPER_OPTION)
+            }
         }
     }
 
@@ -322,6 +337,13 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Secure Mode: ${BRSharedPrefs.secureScreenMode}",
                 SettingsOption.TOGGLE_SECURE_MODE
+            ),
+            SettingsItem(
+                when {
+                    BRSharedPrefs.enableXrp -> "Disable XRP"
+                    else -> "Enable XRP"
+                },
+                SettingsOption.ENABLE_XRP
             )
         )
     }

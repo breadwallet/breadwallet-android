@@ -28,6 +28,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
@@ -36,6 +37,19 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
 import java.math.BigDecimal
+
+private const val KEY_CURRENCY_CODE = "currency_code"
+private const val KEY_FIAT_CODE = "fiat_code"
+private const val KEY_FEE_CODE = "fee_code"
+private const val KEY_TARGET_ADDRESS = "target_address"
+private const val KEY_TRANSFER_SPEED = "transfer_speed"
+private const val KEY_AMOUNT = "amount"
+private const val KEY_FIAT_AMOUNT = "fiat_amount"
+private const val KEY_FIAT_TOTAL_COST = "fiat_total_cost"
+private const val KEY_NETWORK_FEE = "fiat_network_fee"
+private const val KEY_TRANSFER_FIELDS = "transfer_fields"
+
+private val NOOP_LISTENER = object : ConfirmTxController.Listener {}
 
 /**
  * Transaction detail to be shown for user verification before requesting authentication.
@@ -49,20 +63,6 @@ class ConfirmTxController(
         fun onNegativeClicked(controller: ConfirmTxController) = Unit
     }
 
-    companion object {
-        private const val KEY_CURRENCY_CODE = "currency_code"
-        private const val KEY_FIAT_CODE = "fiat_code"
-        private const val KEY_FEE_CODE = "fee_code"
-        private const val KEY_TARGET_ADDRESS = "target_address"
-        private const val KEY_TRANSFER_SPEED = "transfer_speed"
-        private const val KEY_AMOUNT = "amount"
-        private const val KEY_FIAT_AMOUNT = "fiat_amount"
-        private const val KEY_FIAT_TOTAL_COST = "fiat_total_cost"
-        private const val KEY_NETWORK_FEE = "fiat_network_fee"
-
-        private val NOOP_LISTENER = object : Listener {}
-    }
-
     constructor(
         currencyCode: String,
         fiatCode: String,
@@ -72,7 +72,8 @@ class ConfirmTxController(
         amount: BigDecimal,
         fiatAmount: BigDecimal,
         fiatTotalCost: BigDecimal,
-        fiatNetworkFee: BigDecimal
+        fiatNetworkFee: BigDecimal,
+        transferFields: List<TransferField>
     ) : this(
         bundleOf(
             KEY_CURRENCY_CODE to currencyCode,
@@ -83,7 +84,8 @@ class ConfirmTxController(
             KEY_AMOUNT to amount,
             KEY_FIAT_AMOUNT to fiatAmount,
             KEY_FIAT_TOTAL_COST to fiatTotalCost,
-            KEY_NETWORK_FEE to fiatNetworkFee
+            KEY_NETWORK_FEE to fiatNetworkFee,
+            KEY_TRANSFER_FIELDS to transferFields
         )
     )
 
@@ -96,7 +98,8 @@ class ConfirmTxController(
         BigDecimal(arg<Double>(KEY_AMOUNT)),
         BigDecimal(arg<Double>(KEY_FIAT_AMOUNT)),
         BigDecimal(arg<Double>(KEY_FIAT_TOTAL_COST)),
-        BigDecimal(arg<Double>(KEY_NETWORK_FEE))
+        BigDecimal(arg<Double>(KEY_NETWORK_FEE)),
+        arg(KEY_TRANSFER_FIELDS)
     )
 
     override val layoutId = R.layout.controller_confirm_tx_details
@@ -162,6 +165,19 @@ class ConfirmTxController(
         total_cost_value.isGone = isErc20
         total_cost_value.text = fiatTotalCost.formatFiatForUi(fiatCode)
         network_fee_value.text = fiatNetworkFee.formatFiatForUi(fiatCode)
+
+        transferFields.forEach { field ->
+            when (field.key) {
+                TransferField.DESTINATION_TAG -> {
+                    groupDestinationTag.isVisible = true
+                    if (field.value.isNullOrEmpty()) {
+                        destination_tag_value.setText(R.string.Confirmation_destinationTag_EmptyHint)
+                    } else {
+                        destination_tag_value.text = field.value
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -174,5 +190,6 @@ data class ConfirmTxModel(
     val amount: BigDecimal,
     val fiatAmount: BigDecimal,
     val fiatTotalCost: BigDecimal,
-    val fiatNetworkFee: BigDecimal
+    val fiatNetworkFee: BigDecimal,
+    val transferFields: List<TransferField>
 )

@@ -14,20 +14,19 @@
         android:animateLayoutChanges="true"
         android:padding="0dp">
 
-
         <include
             android:id="@+id/loadingView"
             layout="@layout/loading_overlay"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@color/gray_shadow"
             android:elevation="20dp"
             android:visibility="invisible"
-            android:background="@color/gray_shadow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="invisible"/>
 
         <View
             android:id="@+id/view3"
@@ -46,7 +45,7 @@
             android:layout_width="1dp"
             android:layout_height="1dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/separator0"
+            app:layout_constraintBottom_toTopOf="@+id/labelTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -195,8 +194,39 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/extra_light_gray"
-            app:layout_constraintBottom_toTopOf="@+id/inputLayoutAmount"
+            app:layout_constraintBottom_toTopOf="@+id/inputLayoutDestinationTag"
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutAddress" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutDestinationTag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/separator">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputDestinationTag"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@android:color/transparent"
+                android:singleLine="true"
+                android:inputType="textNoSuggestions"
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:hint="Destination Tag (Optional)"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/separator5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
+            app:layout_constraintBottom_toTopOf="@+id/inputLayoutAmount"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutAmount"
@@ -209,7 +239,7 @@
             app:layout_constraintBottom_toTopOf="@+id/labelBalance"
             app:layout_constraintEnd_toStartOf="@+id/buttonCurrencySelect"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/separator"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag"
             app:layout_constraintVertical_bias="0.0">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -274,10 +304,9 @@
             app:layout_constraintBottom_toTopOf="@+id/layoutFeeOption"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/inputLayoutAmount"
-            app:layout_constraintTop_toBottomOf="@+id/separator"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_goneMarginBottom="8dp"
-            tools:text="iso" />
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag"
+            app:layout_constraintVertical_bias="0.0" app:layout_goneMarginBottom="8dp"
+            tools:text="iso"/>
 
         <LinearLayout
             android:id="@+id/layoutFeeOption"
@@ -469,5 +498,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="keyboard,separator3" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupDestinationTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="separator5,inputLayoutDestinationTag"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -349,7 +349,8 @@ class WalletJs(
                     amount.toBigDecimal(),
                     fiatAmount,
                     fiatTotalCost,
-                    fiatNetworkFee
+                    fiatNetworkFee,
+                    emptyList()
                 )
             )
         }.first()
