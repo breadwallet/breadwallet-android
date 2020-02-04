@@ -71,7 +71,10 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     override fun onNextClicked(model: M): Next<M, F> {
         return when {
             model.isLoading -> noChange()
-            else -> dispatch(setOf<F>(F.ValidatePhrase(model.phrase)))
+            else -> next(
+                model.copy(isLoading = true),
+                setOf<F>(F.ValidatePhrase(model.phrase))
+            )
         }
     }
 
@@ -88,7 +91,12 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
                 }
                 next(model.copy(isLoading = true), setOf(nextEffect))
             }
-            else -> next(model.copy(errors = event.errors), setOf(F.ErrorShake))
+            else -> next(
+                model.copy(
+                    errors = event.errors,
+                    isLoading = false
+                ), setOf(F.ErrorShake)
+            )
         }
     }
 
