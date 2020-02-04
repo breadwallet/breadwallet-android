@@ -69,7 +69,10 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     }
 
     override fun onNextClicked(model: M): Next<M, F> {
-        return dispatch(setOf<F>(F.ValidatePhrase(model.phrase)))
+        return when {
+            model.isLoading -> noChange()
+            else -> dispatch(setOf<F>(F.ValidatePhrase(model.phrase)))
+        }
     }
 
     override fun onPhraseValidated(model: M, event: E.OnPhraseValidated): Next<M, F> {
@@ -157,12 +160,16 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     ): Next<M, F> {
         return when {
             event.text.isBlank() -> noChange()
+            model.isLoading -> noChange()
             else -> {
                 val phrase = event.text.split("\\s+".toRegex())
                 when (phrase.size) {
                     0 -> dispatch(setOf<F>(F.ErrorShake))
                     12 -> next(
-                        model.copy(phrase = phrase),
+                        model.copy(
+                            isLoading = true,
+                            phrase = phrase
+                        ),
                         setOf<F>(F.ValidatePhrase(phrase))
                     )
                     else -> next(model.copy(
