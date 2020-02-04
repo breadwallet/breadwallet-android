@@ -1267,4 +1267,12 @@
 
     <string name="Platform.transaction_cancelled">Transaction Cancelled</string>
 
+    <string name="TransactionDetails.destinationTag">Destination Tag</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(empty)</string>
+    <string name="Confirmation.destinationTag">Destination Tag</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
+    <string name="Send.destinationTag_required">Destination Tag (required)</string>
+    <string name="Send.destinationTag_optional">Destination Tag (optional)</string>
+    <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
+
 </resources>

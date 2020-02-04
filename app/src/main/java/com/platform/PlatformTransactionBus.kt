@@ -25,6 +25,7 @@
 package com.platform
 
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.ui.send.TransferField
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -59,7 +60,8 @@ data class ConfirmTransactionMessage(
     val amount: BigDecimal,
     val fiatAmount: BigDecimal,
     val fiatTotalCost: BigDecimal,
-    val fiatNetworkFee: BigDecimal
+    val fiatNetworkFee: BigDecimal,
+    val transferFields: List<TransferField>
 ) : TransactionMessage()
 
 sealed class TransactionResultMessage : TransactionMessage() {

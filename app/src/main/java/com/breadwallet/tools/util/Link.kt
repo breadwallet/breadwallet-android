@@ -73,6 +73,7 @@ sealed class Link {
         @Redacted val message: String? = null,
         @Redacted val reqParam: String? = null,
         @Redacted val rUrlParam: String? = null,
+        @Redacted val destinationTag: String? = null,
         val transactionMetaData: GenericTransactionMetaData? = null
     ) : Link(), Serializable
 
@@ -159,6 +160,7 @@ private fun CryptoRequest.asCryptoRequestUrl() =
         message = message,
         reqParam = reqVariable,
         rUrlParam = rUrl,
+        destinationTag = destinationTag,
         transactionMetaData = genericTransactionMetaData
     )
 

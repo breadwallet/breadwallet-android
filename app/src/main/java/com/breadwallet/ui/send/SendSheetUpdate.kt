@@ -192,6 +192,9 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         return when {
             model.isSendingTransaction || model.isConfirmingTx -> noChange()
             model.feeEstimateFailed || model.transferFeeBasis == null -> noChange()
+            model.transferFields.any {
+                it.invalid || (it.required && it.value.isNullOrEmpty())
+            } -> noChange()
             else -> next(
                 model.copy(
                     isConfirmingTx = true,
@@ -363,7 +366,9 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             model.isConfirmingTx -> noChange()
             model.targetAddress == event.toAddress -> noChange()
             else -> {
-                val effects = mutableSetOf<F>()
+                val effects = mutableSetOf<F>(
+                    F.GetTransferFields(model.currencyCode, event.toAddress)
+                )
                 val newModel = model.copy(
                     targetAddress = event.toAddress,
                     targetInputError = null
@@ -444,7 +449,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                             targetAddress = event.address,
                             targetInputError = null
                         ),
-                        effects
+                        effects + F.GetTransferFields(model.currencyCode, event.address)
                     )
                 }
                 is InvalidAddress -> next(
@@ -570,7 +575,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                         currencyCode = model.currencyCode,
                         address = model.targetAddress,
                         amount = model.amount,
-                        transferFeeBasis = checkNotNull(model.transferFeeBasis)
+                        transferFeeBasis = checkNotNull(model.transferFeeBasis),
+                        transferFields = model.transferFields
                     )
             }
         )
@@ -658,44 +664,58 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnRequestScanned
     ): Next<M, F> {
+        val currencyCode = event.link.currencyCode
         if (
-            !event.currencyCode.equals(model.feeCurrencyCode, true) &&
-            !event.currencyCode.equals(model.currencyCode, true)
+            !currencyCode.equals(model.feeCurrencyCode, true) &&
+            !currencyCode.equals(model.currencyCode, true)
         ) {
             return noChange()
         }
+        val link = event.link.run {
+            copy(
+                // Replace the currencyCode because it may contain the
+                // address for feeCurrencyCode which may be different
+                currencyCode = model.currencyCode,
+                amount = amount ?: if (!model.amount.isZero()) model.amount else null,
+                message = message ?: model.memo
+            )
+        }
 
-        val targetAddress = event.targetAddress ?: ""
-        val amount = event.amount ?: model.amount
-        val rawAmount = event.amount?.stripTrailingZeros()?.toPlainString() ?: model.rawAmount
+        val nextModel = link.asSendSheetModel(model.fiatCode).copy(
+            balance = model.balance,
+            transferSpeed = model.transferSpeed,
+            fiatPricePerFeeUnit = model.fiatPricePerUnit,
+            fiatPricePerUnit = model.fiatPricePerUnit,
+            fiatBalance = model.fiatBalance,
+            fiatAmount = if (link.amount != null && model.fiatPricePerUnit > BigDecimal.ZERO) {
+                (link.amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+            } else BigDecimal.ZERO
+        )
 
-        val effects = mutableSetOf<F>()
+        val effects = mutableSetOf<F>(
+            F.GetTransferFields(
+                nextModel.currencyCode,
+                nextModel.targetAddress
+            ),
+            F.ValidateTransferFields(
+                nextModel.currencyCode,
+                nextModel.targetAddress,
+                nextModel.transferFields
+            )
+        )
 
-        if (!event.targetAddress.isNullOrBlank() && !amount.isZero()) {
+        if (nextModel.targetAddress.isNotBlank() && !nextModel.amount.isZero()) {
             effects.add(
                 F.EstimateFee(
-                    model.currencyCode,
-                    targetAddress,
-                    amount,
-                    model.transferSpeed
+                    nextModel.currencyCode,
+                    nextModel.targetAddress,
+                    nextModel.amount,
+                    nextModel.transferSpeed
                 )
             )
         }
 
-        return next(
-            model.copy(
-                isAmountCrypto = true,
-                targetAddress = targetAddress,
-                amount = amount,
-                rawAmount = rawAmount,
-                fiatAmount = if (model.fiatPricePerUnit > BigDecimal.ZERO) {
-                    (amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
-                } else {
-                    model.fiatAmount
-                }
-            ),
-            effects
-        )
+        return next(nextModel, effects)
     }
 
     override fun paymentProtocol(
@@ -730,6 +750,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                             newModel.targetAddress,
                             amount,
                             model.transferSpeed
+                        ),
+                        F.GetTransferFields(
+                            model.currencyCode,
+                            newModel.targetAddress
                         )
                     )
                 )
@@ -741,6 +765,71 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 )
             }
             else -> noChange()
+        }
+    }
+
+    override fun onTransferFieldsUpdated(
+        model: M,
+        event: E.OnTransferFieldsUpdated
+    ): Next<M, F> {
+        return when {
+            model.transferFields.isEmpty() ->
+                next(model.copy(transferFields = event.transferFields))
+            else -> {
+                val fields = event.transferFields
+                    .map { field ->
+                        val existingField = model.transferFields
+                            .find { it.key == field.key }
+                        when {
+                            existingField != null ->
+                                field.copy(
+                                    invalid = field.invalid,
+                                    value = existingField.value
+                                )
+                            else -> field
+                        }
+                    }
+                next(
+                    model.copy(
+                        transferFields = fields
+                    )
+                )
+            }
+        }
+    }
+
+    override fun transferFieldUpdate(
+        model: M,
+        event: E.TransferFieldUpdate
+    ): Next<M, F> {
+        val updatedFields = model.transferFields
+            .map { field ->
+                if (field.key == event.key) {
+                    when (event) {
+                        is E.TransferFieldUpdate.Validation ->
+                            field.copy(invalid = event.invalid)
+                        is E.TransferFieldUpdate.Value ->
+                            field.copy(value = event.value)
+                    }
+                } else field
+            }
+
+        val nextModel = model.copy(
+            transferFields = updatedFields
+        )
+
+        return when (event) {
+            is E.TransferFieldUpdate.Value ->
+                next(
+                    nextModel, effects(
+                        F.ValidateTransferFields(
+                            model.currencyCode,
+                            model.targetAddress,
+                            updatedFields
+                        )
+                    )
+                )
+            else -> next(nextModel)
         }
     }
 }

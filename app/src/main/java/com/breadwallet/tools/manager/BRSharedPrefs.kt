@@ -707,4 +707,11 @@ object BRSharedPrefs {
         set(value) = brdPrefs.edit {
             putBoolean(SECURE_SCREEN_MODE, value)
         }
+
+    // TODO: Remove with ripple release
+    var enableXrp: Boolean
+       get() = brdPrefs.getBoolean("ENABLE_XRP", false)
+       set(value) = brdPrefs.edit {
+           putBoolean("ENABLE_XRP", value)
+       }
 }

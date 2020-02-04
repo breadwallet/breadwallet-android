@@ -52,6 +52,7 @@ public class CryptoRequest implements Serializable {
     private BigDecimal mValue; // ETH payment request amounts are called `value`
     private GenericTransactionMetaData mGenericTransactionMetaData;
     private boolean mIsAmountRequested;
+    private String destinationTag; // xrp destination tag for exchange account routing.
 
     public CryptoRequest(Builder builder) {
         mCurrencyCode = builder.getCurrencyCode(); //make it default
@@ -64,6 +65,7 @@ public class CryptoRequest implements Serializable {
         mReqVariable = builder.getReqVariable();
         mValue = builder.getValue(); // ETH payment request amounts are called `value`
         mGenericTransactionMetaData = builder.getGenericTransactionMetaData();
+        destinationTag = builder.destinationTag;
     }
 
     public boolean isPaymentProtocol() {
@@ -220,6 +222,14 @@ public class CryptoRequest implements Serializable {
         mIsAmountRequested = isAmountRequested;
     }
 
+    public void setDestinationTag(String destinationTag) {
+        this.destinationTag = destinationTag;
+    }
+
+    public String getDestinationTag() {
+        return destinationTag;
+    }
+
     public static class Builder {
         private String mCurrencyCode;
         private String mAddress;
@@ -231,6 +241,7 @@ public class CryptoRequest implements Serializable {
         private String mReqVariable;
         private BigDecimal mValue; // ETH payment request amounts are called `value`
         private GenericTransactionMetaData mGenericTransactionMetaData;
+        private String destinationTag;
 
         public String getCurrencyCode() {
             return mCurrencyCode;
@@ -319,6 +330,15 @@ public class CryptoRequest implements Serializable {
 
         public Builder setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
             mGenericTransactionMetaData = genericTransactionMetaData;
+            return this;
+        }
+
+        public String getDestinationTag() {
+            return destinationTag;
+        }
+
+        public Builder setDestinationTag(String destinationTag) {
+            this.destinationTag = destinationTag;
             return this;
         }
 
