@@ -151,10 +151,6 @@ class RecoveryKeyHandler(
         }
     }
 
-    // TODO: This method serves as a collection point for all
-    //  of the necessary steps in creating a wallet from a phrase.
-    //  After all operations have been collected and reviewed,
-    //  this function can be broken down into smaller pieces.
     private fun recoverWallet(effect: F.RecoverWallet) {
         val context = BreadApp.getBreadContext()
 
