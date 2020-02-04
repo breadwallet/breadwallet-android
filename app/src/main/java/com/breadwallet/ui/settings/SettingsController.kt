@@ -33,6 +33,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
@@ -63,6 +64,14 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
     )
 
     private val section: SettingsSection = SettingsSection.valueOf(arg(EXT_SECTION))
+
+    init {
+        if (section != SettingsSection.HOME) {
+            overridePopHandler(HorizontalChangeHandler())
+            overridePushHandler(HorizontalChangeHandler())
+        }
+    }
+
     override val layoutId = R.layout.controller_settings
     override val defaultModel = M.createDefault(section)
     override val update = SettingsUpdate
