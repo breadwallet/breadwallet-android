@@ -6,7 +6,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
 
@@ -254,7 +253,6 @@ dependencies {
     implementation "com.google.android.material:material:$material_components_version"
     implementation "com.google.firebase:firebase-core:$firebase_core"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
-    implementation "com.google.firebase:firebase-perf:$firebase_perf"
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
