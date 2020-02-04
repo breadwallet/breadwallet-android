@@ -60,7 +60,6 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.web.WebController
-import com.google.firebase.perf.metrics.AddTrace
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val SECURE_MODE_WARNING =
@@ -89,7 +88,6 @@ class MainActivity : BRActivity() {
         get() = (application as BreadApp).isDeviceStateValid
 
     @Suppress("ComplexMethod", "LongMethod")
-    @AddTrace(name = "MainActivity_onCreate")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_SCREEN_MODE, BRSharedPrefs.secureScreenMode)) {
