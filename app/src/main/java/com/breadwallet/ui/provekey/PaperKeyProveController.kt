@@ -26,6 +26,7 @@ package com.breadwallet.ui.provekey
 
 import android.os.Bundle
 import android.text.Editable
+import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
@@ -33,6 +34,7 @@ import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
+import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -114,6 +116,11 @@ class PaperKeyProveController(args: Bundle) :
             }
         })
         return Disposable { } // remove text watcher here
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        Utils.hideKeyboard(activity)
     }
 
     override fun M.render() {
