@@ -29,7 +29,6 @@ import android.view.View
 import com.breadwallet.R
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.BaseController
-import com.google.firebase.perf.FirebasePerformance
 import kotlinx.android.synthetic.main.controller_share_data.*
 
 class ShareDataController(args: Bundle? = null) : BaseController(args) {
@@ -41,7 +40,6 @@ class ShareDataController(args: Bundle? = null) : BaseController(args) {
         toggleButton.isChecked = BRSharedPrefs.getShareData()
         toggleButton.setOnCheckedChangeListener { _, isChecked ->
             BRSharedPrefs.putShareData(isChecked)
-            FirebasePerformance.getInstance().isPerformanceCollectionEnabled = isChecked
         }
 
         back_button.setOnClickListener {
