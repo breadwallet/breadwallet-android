@@ -32,6 +32,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
@@ -114,6 +115,12 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         settings_list.layoutManager = LinearLayoutManager(activity!!)
+        settings_list.addItemDecoration(
+            DividerItemDecoration(
+                activity!!,
+                DividerItemDecoration.VERTICAL
+            )
+        )
     }
 
     override fun bindView(output: Consumer<E>) = output.view {

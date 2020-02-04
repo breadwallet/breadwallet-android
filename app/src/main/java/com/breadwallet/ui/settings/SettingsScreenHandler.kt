@@ -208,7 +208,8 @@ class SettingsScreenHandler(
                     SettingsItem(
                         context.getString(R.string.Settings_atmMapMenuItemTitle),
                         SettingsOption.ATM_FINDER,
-                        R.drawable.ic_atm_finder
+                        R.drawable.ic_atm_finder,
+                        subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
                     )
                 )
             }
