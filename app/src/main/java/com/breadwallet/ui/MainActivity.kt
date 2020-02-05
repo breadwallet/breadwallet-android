@@ -192,8 +192,8 @@ class MainActivity : BRActivity() {
         val data = processIntentData(intent) ?: ""
         if (data.isNotBlank()) {
             val hasNoRoot = !router.hasRootController()
-            val topIsLogin = router.backstack.first().controller() is LoginController
-            val controller = if (hasNoRoot || topIsLogin) {
+            val topIsLogin = router.backstack.last().controller() is LoginController
+            val controller = if (hasNoRoot || !topIsLogin) {
                 LoginController(data)
             } else {
                 data.asLink()?.run(this::handleLink)
