@@ -164,6 +164,9 @@ class LoginController(args: Bundle? = null) :
     }
 
     private fun showFingerprintPrompt() {
+        if (router.backstack.last().controller() is AuthenticationController) {
+            return
+        }
         val controller = AuthenticationController(
             mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
             title = resources!!.getString(R.string.UnlockScreen_touchIdTitle_android)
