@@ -175,7 +175,7 @@ class TxDetailsController(
     override fun bindView(output: Consumer<E>) = output.view {
         close_button.onClick(E.OnClosedClicked)
         show_hide_details.onClick(E.OnShowHideDetailsClicked)
-        memo_input.onTextChanged { E.OnMemoChanged(it) }
+        memo_input.onTextChanged(E::OnMemoChanged)
 
         transaction_id.setOnClickListener {
             transaction_id.text?.toString()?.run(::copyToClipboard)
@@ -338,8 +338,10 @@ class TxDetailsController(
             )
         }
 
-        ifChanged(M::memo) {
-            if (memo_input.text.isNullOrEmpty() && !isFeeForToken) memo_input.setText(memo)
+        ifChanged(M::memoLoaded) {
+            if (memoLoaded && !isFeeForToken) {
+                memo_input.setText(memo)
+            }
         }
 
         ifChanged(
