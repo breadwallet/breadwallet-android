@@ -360,8 +360,7 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isConfirmingTx) {
-            val isConfirmOnTop = router.backstack.first().controller() is ConfirmTxController
-            if (isConfirmingTx && !isConfirmOnTop) {
+            if (isConfirmingTx) {
                 val controller = ConfirmTxController(
                     currencyCode,
                     fiatCode,
@@ -376,14 +375,11 @@ class SendSheetController(args: Bundle? = null) :
                 )
                 controller.targetController = this@SendSheetController
                 router.pushController(RouterTransaction.with(controller))
-            } else if (!isConfirmingTx && isConfirmOnTop) {
-                router.popCurrentController()
             }
         }
 
         ifChanged(M::isAuthenticating) {
-            val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
-            if (isAuthenticating && !isAuthOnTop) {
+            if (isAuthenticating) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
                     AuthenticationController.Mode.USER_PREFERRED
                 } else {
@@ -396,8 +392,6 @@ class SendSheetController(args: Bundle? = null) :
                 )
                 controller.targetController = this@SendSheetController
                 router.pushController(RouterTransaction.with(controller))
-            } else if (!isAuthenticating && isAuthOnTop) {
-                router.popCurrentController()
             }
         }
 

@@ -81,7 +81,7 @@ class WriteDownKeyController(args: Bundle? = null) :
     override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable {
             WriteDownKeyHandler(eventConsumer, controllerScope, direct.instance()) {
-                val isAuthOnTop = router.backstack.first().controller() is AuthenticationController
+                val isAuthOnTop = router.backstack.last().controller() is AuthenticationController
                 if (!isAuthOnTop) {
                     val controller = AuthenticationController(
                         title = resources!!.getString(R.string.VerifyPin_title),
