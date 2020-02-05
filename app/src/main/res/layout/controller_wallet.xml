@@ -145,7 +145,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
                         android:maxLines="1"
                         android:text="@string/Account.balance"
@@ -153,7 +153,7 @@
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
