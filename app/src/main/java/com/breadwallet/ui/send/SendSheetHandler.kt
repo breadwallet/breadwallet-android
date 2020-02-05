@@ -348,7 +348,7 @@ object SendSheetHandler {
 
                 wallet.walletManager.submit(newTransfer, phrase)
 
-                val hash = checkNotNull(newTransfer.hash.orNull()).toString()
+                val hash = newTransfer.hashString()
 
                 breadBox.walletTransfer(effect.currencyCode, hash)
                     .mapToSendEvent()

@@ -100,7 +100,14 @@ fun Currency.isBitcoinCash() = code.isBitcoinCash()
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
-    hash.orNull()?.toString() ?: ""
+    checkNotNull(hash.orNull()).toString()
+        .let { hash ->
+            val isEthHash = wallet.currency.run { isErc20() || isEthereum() }
+            when {
+                isEthHash -> hash
+                else -> hash.removePrefix("0x")
+            }
+        }
 
 /** Returns the [Address] object for [address] from the [Wallet]'s [Network]*/
 fun Wallet.addressFor(address: String): Address? {
