@@ -468,6 +468,7 @@ class BreadApp : Application(), KodeinAware {
      * Even if the wallet is not initialized, we may need tell the user to enable the password.
      */
     private fun handleOnStart() {
+        setDelayServerShutdown(false, -1)
         val breadBox = getBreadBox()
 
         if (isDeviceStateValid && isBRDWalletInitialized) {
