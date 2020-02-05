@@ -186,6 +186,9 @@ class RouterNavigationEffectHandler(
         val link = checkNotNull(effect.url.asLink()) {
             "Invalid deep link provided"
         }
+        if (router.backstack.lastOrNull()?.controller() is LoginController) {
+            router.popCurrentController()
+        }
         when (link) {
             is Link.CryptoRequestUrl -> {
                 val sendController = SendSheetController(link).asTransaction()
