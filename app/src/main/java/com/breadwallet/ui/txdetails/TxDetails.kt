@@ -52,6 +52,7 @@ object TxDetails {
         val blockNumber: Int = 0,
         @Redacted val toOrFromAddress: String = "",
         @Redacted val memo: String = "",
+        val memoLoaded: Boolean = false,
         val exchangeRate: BigDecimal = BigDecimal.ZERO,
         val exchangeCurrencyCode: String = "",
         val confirmationDate: Date? = null,

@@ -218,8 +218,8 @@ class MetaDataManager(
             )
         )
 
-    override fun txMetaData(transactionHash: String): Flow<TxMetaData> =
-        storeProvider.keyFlow(getTxMetaDataKey(transactionHash))
+    override fun txMetaData(transactionHash: String): Flow<TxMetaData> {
+        return storeProvider.keyFlow(getTxMetaDataKey(transactionHash))
             .mapLatest {
                 TxMetaDataValue.fromJsonObject(it)
             }
@@ -235,17 +235,19 @@ class MetaDataManager(
                             true
                         )
                     )
+                    metaData?.run {
+                        storeProvider.put(key, this)
+                        emit(TxMetaDataValue.fromJsonObject(this))
+                    }
+                } else {
+                    emit(TxMetaDataValue.fromJsonObject(metaData))
                 }
-                metaData?.run {
-                    storeProvider.put(key, this)
-                    emit(TxMetaDataValue.fromJsonObject(this))
-                }
-
             }
             .distinctUntilChanged()
+    }
 
-    override suspend fun putTxMetaData(newTxMetaData: TxMetaDataValue, txHash: String) {
-        var txMetaData = txMetaData(txHash).first()
+    override suspend fun putTxMetaData(newTxMetaData: TxMetaDataValue, rawTxHash: String) {
+        var txMetaData = txMetaData(rawTxHash).first()
 
         var needsUpdate = false
         when (txMetaData) {
@@ -270,7 +272,7 @@ class MetaDataManager(
         }
 
         if (needsUpdate) {
-            val key = getTxMetaDataKey(txHash)
+            val key = getTxMetaDataKey(rawTxHash)
             storeProvider.put(key, txMetaData.toJSON())
         }
     }
@@ -374,7 +376,7 @@ class MetaDataManager(
         TX_META_DATA_KEY_PREFIX + if (legacy) {
             Utils.bytesToHex(CryptoHelper.sha256(txHash.toByteArray())!!)
         } else {
-            CryptoHelper.hexDecode(txHash)
+            CryptoHelper.hexDecode(txHash.removePrefix("0x"))
                 .apply {
                     reverse()
                 }

@@ -41,6 +41,7 @@ import com.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
+import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 import java.util.Date
 
@@ -128,26 +129,36 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 next(
                     model.copy(
                         memo = event.metaData.comment ?: "",
+                        memoLoaded = true,
                         exchangeCurrencyCode = event.metaData.exchangeCurrency ?: "",
                         exchangeRate = event.metaData.exchangeRate.toBigDecimal()
                     )
                 )
             }
-            is TxMetaDataEmpty -> next(model.copy(memo = ""))
+            is TxMetaDataEmpty -> next(
+                model.copy(
+                    memo = "",
+                    memoLoaded = true
+                )
+            )
         }
 
     override fun onMemoChanged(
         model: M,
         event: E.OnMemoChanged
-    ): Next<M, F> =
-        dispatch(
-            setOf(
-                F.UpdateMemo(
-                    model.transactionHash,
-                    event.memo
+    ): Next<M, F> {
+        return when {
+            model.memoLoaded -> dispatch(
+                setOf(
+                    F.UpdateMemo(
+                        model.transactionHash,
+                        event.memo
+                    )
                 )
             )
-        )
+            else -> noChange()
+        }
+    }
 
     override fun onClosedClicked(model: M): Next<M, F> =
         dispatch(setOf(F.Close))

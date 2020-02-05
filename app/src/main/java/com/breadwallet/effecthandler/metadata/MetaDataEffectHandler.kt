@@ -28,6 +28,7 @@ import android.text.format.DateUtils
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.getSize
+import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.WalletManagerMode
@@ -166,7 +167,7 @@ class MetaDataEffectHandler(
         )
 
         BreadApp.applicationScope.launch {
-            metaDataProvider.putTxMetaData(metaData, transaction.hash.get().toString())
+            metaDataProvider.putTxMetaData(metaData, transaction.hashString())
         }
     }
 
