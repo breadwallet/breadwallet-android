@@ -750,7 +750,11 @@ public final class BRKeyStore {
                 return 0;
             }
         } else {
-            return TypesConverter.byteArray2long(result);
+            if (result.length == 4) {
+                return TypesConverter.bytesToInt(result);
+            } else {
+                return TypesConverter.byteArray2long(result);
+            }
         }
     }
 
