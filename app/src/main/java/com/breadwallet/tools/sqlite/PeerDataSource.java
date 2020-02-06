@@ -28,6 +28,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
 import com.breadwallet.legacy.presenter.entities.BRPeerEntity;
 import com.breadwallet.tools.util.BRConstants;
 
@@ -36,9 +37,7 @@ import java.util.List;
 
 public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
-
-    // Database fields
-    private SQLiteDatabase database;
+    private static PeerDataSource instance;
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.PEER_COLUMN_ID,
@@ -47,18 +46,18 @@ public class PeerDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.PEER_TIMESTAMP,
             BRSQLiteHelper.PEER_ISO
     };
+    // Database fields
+    private SQLiteDatabase database;
 
-    private static PeerDataSource instance;
+    private PeerDataSource(Context context) {
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
 
     public static PeerDataSource getInstance(Context context) {
         if (instance == null) {
             instance = new PeerDataSource(context);
         }
         return instance;
-    }
-
-    private PeerDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void deleteAllPeers(Context app, String iso) {
@@ -92,9 +91,8 @@ public class PeerDataSource implements BRDataSourceInterface {
             if (cursor != null)
                 cursor.close();
             closeDatabase();
+            return peers;
         }
-
-        return peers;
     }
 
     private BRPeerEntity cursorToPeer(Cursor cursor) {
