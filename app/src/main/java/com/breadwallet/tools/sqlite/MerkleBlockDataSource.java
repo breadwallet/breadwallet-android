@@ -37,9 +37,7 @@ import java.util.List;
 
 public class MerkleBlockDataSource implements BRDataSourceInterface {
     private static final String TAG = MerkleBlockDataSource.class.getName();
-
-    // Database fields
-    private SQLiteDatabase database;
+    private static MerkleBlockDataSource instance;
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.MB_COLUMN_ID,
@@ -47,18 +45,18 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.MB_HEIGHT,
             BRSQLiteHelper.MB_ISO
     };
+    // Database fields
+    private SQLiteDatabase database;
 
-    private static MerkleBlockDataSource instance;
+    private MerkleBlockDataSource(Context context) {
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
 
     public static MerkleBlockDataSource getInstance(Context context) {
         if (instance == null) {
             instance = new MerkleBlockDataSource(context);
         }
         return instance;
-    }
-
-    private MerkleBlockDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void deleteAllBlocks(Context app, String iso) {
@@ -92,8 +90,8 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         } finally {
             closeDatabase();
             if (cursor != null) cursor.close();
+            return merkleBlocks;
         }
-        return merkleBlocks;
     }
 
     private BRMerkleBlockEntity cursorToMerkleBlock(Cursor cursor) {

@@ -36,11 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BtcBchTransactionDataStore implements BRDataSourceInterface {
-    private static final String TAG = BtcBchTransactionDataStore.class.getName();
-
-    // Database fields
-    private SQLiteDatabase database;
-    private final BRSQLiteHelper dbHelper;
     public static final String[] allColumns = {
             BRSQLiteHelper.TX_COLUMN_ID,
             BRSQLiteHelper.TX_BUFF,
@@ -48,8 +43,16 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             BRSQLiteHelper.TX_TIME_STAMP,
             BRSQLiteHelper.TX_ISO
     };
-
+    private static final String TAG = BtcBchTransactionDataStore.class.getName();
     private static BtcBchTransactionDataStore instance;
+    private final BRSQLiteHelper dbHelper;
+    // Database fields
+    private SQLiteDatabase database;
+
+    private BtcBchTransactionDataStore(Context context) {
+        dbHelper = BRSQLiteHelper.getInstance(context);
+
+    }
 
     public static BtcBchTransactionDataStore getInstance(Context context) {
         if (instance == null) {
@@ -58,9 +61,8 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
         return instance;
     }
 
-    private BtcBchTransactionDataStore(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
-
+    public static BRTransactionEntity cursorToTransaction(Context app, String iso, Cursor cursor) {
+        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), iso.toUpperCase());
     }
 
     public void deleteAllTransactions(Context app, String iso) {
@@ -93,14 +95,8 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             closeDatabase();
             if (cursor != null)
                 cursor.close();
-            printTest(app, iso);
+            return transactions;
         }
-        return transactions;
-    }
-
-
-    public static BRTransactionEntity cursorToTransaction(Context app, String iso, Cursor cursor) {
-        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), iso.toUpperCase());
     }
 
     @Override
