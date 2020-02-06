@@ -142,7 +142,9 @@ class BdbAuthInterceptor(
         val (token, clientId) = requestToken()
 
         // The JWT deals with exp in seconds, but we will use millis everywhere else.
-        val now = TimeUnit.MILLISECONDS.toSeconds(Date().time)
+        // Remove 5 second from our current time to ensure the issued at time is not
+        // in the future.
+        val now = TimeUnit.MILLISECONDS.toSeconds(Date().time) - 5
         val expiration = now + TimeUnit.DAYS.toSeconds(JWT_EXP_DAYS)
 
         val jwtBody = JSONObject()
