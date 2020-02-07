@@ -94,6 +94,7 @@ class NodeSelectorHandler(
             val walletManager = breadBox.wallet(BITCOIN_CURRENCY_CODE).first().walletManager
             walletManager.connect(null)
         }
+        output.accept(E.OnConnectionInfoLoaded(NodeSelector.Mode.AUTOMATIC))
     }
 
     private fun setToManual(effect: F.SetCustomNode) {
@@ -111,6 +112,7 @@ class NodeSelectorHandler(
             val networkPeer = network?.getPeerOrNull(effect.node)
             if (networkPeer != null) {
                 wallet.walletManager.connect(networkPeer)
+                output.accept(E.OnConnectionInfoLoaded(NodeSelector.Mode.MANUAL, effect.node))
             } else {
                 logError("Failed to create network peer")
             }

@@ -142,6 +142,7 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
             val node = input.text.toString()
             if (TrustedNode.isValid(node)) {
                 eventConsumer.accept(E.SetCustomNode(node))
+                dialog.dismiss()
             } else {
                 viewAttachScope.launch(Dispatchers.Main) {
                     customTitle.setText(R.string.NodeSelector_invalid)
