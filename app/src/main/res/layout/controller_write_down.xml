@@ -48,7 +48,7 @@
             android:layout_height="@dimen/faq_dimen"
             android:layout_gravity="start"
             android:layout_margin="@dimen/bread_margin"
-            android:background="?attr/faq_button_secondary_color" />
+            android:background="?attr/faq_button_primary_color" />
 
     </FrameLayout>
 

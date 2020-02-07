@@ -120,7 +120,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_margin="@dimen/bread_margin"
-            android:background="?attr/back_arrow_secondary"
+            android:background="?attr/toolbar_back_arrow"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="81dp"/>
 
@@ -131,7 +131,7 @@
             android:layout_height="@dimen/faq_dimen"
             android:layout_alignParentEnd="true"
             android:layout_margin="@dimen/bread_margin"
-            android:background="?attr/faq_button_secondary_color"
+            android:background="?attr/faq_button_primary_color"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="81dp"/>
 
