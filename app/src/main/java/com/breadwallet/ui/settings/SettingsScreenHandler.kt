@@ -31,12 +31,14 @@ import android.net.Uri
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.platform.APIClient
@@ -50,6 +52,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
@@ -361,12 +364,21 @@ class SettingsScreenHandler(
             SettingsItem(
                 context.getString(R.string.ReScan_header),
                 SettingsOption.SYNC_BLOCKCHAIN_BTC
-            ),
-            SettingsItem(
-                context.getString(R.string.NodeSelector_title),
-                SettingsOption.BTC_NODES
             )
         ).apply {
+            launch {
+                val modeMap = metaDataManager.walletModes().first()
+                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode("BTC")?.currencyId ?: ""
+                if (modeMap[btcCurrencyId] != WalletManagerMode.API_ONLY) {
+                    add(
+                        SettingsItem(
+                            context.getString(R.string.NodeSelector_title),
+                            SettingsOption.BTC_NODES
+                        )
+                    )
+                }
+            }
+
             val segWitOption = if (BRSharedPrefs.getIsSegwitEnabled()) {
                 SettingsItem(
                     context.getString(R.string.Settings_ViewLegacyAddress),

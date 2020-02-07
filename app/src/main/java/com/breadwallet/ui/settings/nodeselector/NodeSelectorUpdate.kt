@@ -66,7 +66,14 @@ object NodeSelectorUpdate : Update<M, E, F>, NodeSelectorUpdateSpec {
         model: M,
         event: E.OnConnectionStateUpdated
     ): Next<M, F> =
-        next(model.copy(connected = event.state == WalletManagerState.CONNECTED()))
+        next(
+            model.copy(
+                connected = when (event.state) {
+                    WalletManagerState.SYNCING(), WalletManagerState.CONNECTED() -> true
+                    else -> false
+                }
+            )
+        )
 
     override fun onConnectionInfoLoaded(
         model: M,
