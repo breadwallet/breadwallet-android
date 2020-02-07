@@ -25,8 +25,7 @@
     <com.breadwallet.ui.wallet.BRSearchBar
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:background="@drawable/bread_gradient"
+        android:layout_height="wrap_content"
         android:contentInsetStart="0dp"
         android:contentInsetLeft="0dp"
         android:translationZ="1dp"
