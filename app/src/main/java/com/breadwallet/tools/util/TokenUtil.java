@@ -29,6 +29,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.core.util.Preconditions;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.model.TokenItem;
@@ -51,6 +53,8 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Request;
+
+import static androidx.core.util.Preconditions.checkNotNull;
 
 public final class TokenUtil {
 
@@ -355,4 +359,14 @@ public final class TokenUtil {
         }
     }
 
+    @Nullable
+    public static TokenItem getTokenItemForCurrencyId(String currencyId) {
+        checkNotNull(currencyId);
+        for (TokenItem item : mTokenItems) {
+            if (item.getCurrencyId().equalsIgnoreCase(currencyId)) {
+                return item;
+            }
+        }
+        return null;
+    }
 }
