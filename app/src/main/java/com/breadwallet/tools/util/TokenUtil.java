@@ -93,11 +93,11 @@ public final class TokenUtil {
      *
      * @param context The Context of the caller
      */
-    public static void initialize(Context context) {
+    public static void initialize(Context context, Boolean forceLoad) {
         String filePath = context.getFilesDir().getAbsolutePath() + File.separator + TOKENS_FILENAME;
         File tokensFile = new File(filePath);
 
-        if (!tokensFile.exists()) {
+        if (!tokensFile.exists() || forceLoad) {
             InputStream tokensInputStream = context.getResources().openRawResource(R.raw.tokens);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(tokensInputStream));
             StringBuilder stringBuilder = new StringBuilder();
