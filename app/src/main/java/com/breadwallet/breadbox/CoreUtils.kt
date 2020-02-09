@@ -286,8 +286,7 @@ fun Transfer.findIssuerCurrency() =
     }
 
 fun WalletManagerState.isTracked() =
-    type == WalletManagerState.Type.CREATED ||
-        type == WalletManagerState.Type.CONNECTED ||
+    type == WalletManagerState.Type.CONNECTED ||
         type == WalletManagerState.Type.SYNCING
 
 /** Returns [Wallet] [Flow] sorted by [displayOrderCurrencyIds]. */

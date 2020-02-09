@@ -93,7 +93,14 @@ class MetaDataManager(
         }
         // Not redundant to prioritize the above in ordered keys
         // if above was successful, will be a no-op, and if failed, it's a retry
-        val syncResult = storeProvider.syncAll(migrate, ORDERED_KEYS)
+        val syncResult = storeProvider.syncAll(ORDERED_KEYS)
+        if (storeProvider.get(KEY_ASSET_INDEX) == null) {
+            // Something went wrong, put default wallets
+            storeProvider.put(
+                KEY_ASSET_INDEX,
+                enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets())
+            )
+        }
         emit(syncResult)
     }
 
@@ -126,15 +133,9 @@ class MetaDataManager(
                 jsonToEnabledWallets(it)
             }
             .onStart {
-                emit(
-                    getOrSync(
-                        KEY_ASSET_INDEX
-                    )
-                    { enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets()) }
-                    !!.run {
-                        jsonToEnabledWallets(this)
-                    }
-                )
+                getOrSync(KEY_ASSET_INDEX)?.run {
+                    emit(jsonToEnabledWallets(this))
+                }
             }
             .distinctUntilChanged()
 
@@ -314,11 +315,21 @@ class MetaDataManager(
                 return
             }
 
+            TokenUtil.initialize(BreadApp.getBreadContext(), true)
             val currencyCodeToToken =
                 TokenUtil.getTokenItems(BreadApp.getBreadContext())
                     ?.associateBy { it.symbol.toLowerCase() } ?: emptyMap()
 
             tokenListMetaData.enabledCurrencies
+                .filter { enabledToken ->
+                    // Need to also ensure not in hidden currencies list
+                    tokenListMetaData.hiddenCurrencies.find {
+                        it.symbol.equals(
+                            enabledToken.symbol,
+                            true
+                        )
+                    } == null
+                }
                 .mapNotNull {
                     currencyCodeToToken[it.symbol.toLowerCase()]?.currencyId
                 }

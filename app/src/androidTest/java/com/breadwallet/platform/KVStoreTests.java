@@ -26,9 +26,11 @@ package com.breadwallet.platform;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+
 import android.util.Base64;
 
 import androidx.test.runner.AndroidJUnit4;
+
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -62,70 +64,6 @@ public class KVStoreTests {
     public static ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
     private static KVStoreAdaptor remote = new MockUpAdapter();
     private static ReplicatedKVStore store;
-
-    public static class MockUpAdapter implements KVStoreAdaptor {
-        public Map<String, KVItem> remoteKVs = new HashMap<>();
-
-        @Override
-        public CompletionObject ver(String key) {
-            KVItem result = remoteKVs.get(key);
-            return result == null ? new CompletionObject(CompletionObject.RemoteKVStoreError.notFound) : new CompletionObject(result.version, result.time, result.deleted == 0 ? null : CompletionObject.RemoteKVStoreError.tombstone);
-        }
-
-        @Override
-        public CompletionObject put(String key, byte[] value, long version) {
-            KVItem result = remoteKVs.get(key);
-            if (result == null) {
-                if (version != 1)
-                    return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
-                KVItem newObj = new KVItem(1, -1, key, value, System.currentTimeMillis(), 0);
-                remoteKVs.put(key, newObj);
-                return new CompletionObject(1, newObj.time, null);
-            }
-            if (version != result.version)
-                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
-            KVItem newObj = new KVItem(result.version + 1, -1, key, value, System.currentTimeMillis(), 0);
-            remoteKVs.put(newObj.key, newObj);
-            return new CompletionObject(newObj.version, newObj.time, null);
-        }
-
-        @Override
-        public CompletionObject del(String key, long version) {
-            KVItem result = remoteKVs.get(key);
-            if (result == null)
-                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
-            if (result.version != version)
-                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
-            KVItem newObj = new KVItem(result.version + 1, -1, result.key, result.value, result.time, 1);
-            remoteKVs.put(newObj.key, newObj);
-            return new CompletionObject(newObj.version, newObj.time, null);
-        }
-
-        @Override
-        public CompletionObject get(String key, long version) {
-            KVItem result = remoteKVs.get(key);
-            if (result == null)
-                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
-            if (version != result.version)
-                return new CompletionObject(0, System.currentTimeMillis(), CompletionObject.RemoteKVStoreError.conflict);
-            return new CompletionObject(result.version, result.time, result.value, result.deleted == 0 ? null : CompletionObject.RemoteKVStoreError.tombstone);
-        }
-
-        @Override
-        public CompletionObject keys() {
-            List<KVItem> result = new ArrayList<>();
-            for (KVItem kv : remoteKVs.values()) {
-                if (kv.deleted != 0) kv.err = CompletionObject.RemoteKVStoreError.tombstone;
-                result.add(kv);
-            }
-            return new CompletionObject(result);
-        }
-
-        public void putKv(KVItem kv) {
-            remoteKVs.put(kv.key, kv);
-        }
-
-    }
 
     @Before
     public void setUp() {
@@ -174,7 +112,7 @@ public class KVStoreTests {
         Iterator it = remoteKV.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            byte[] val = ReplicatedKVStore.decrypt((byte[]) pair.getValue(), mActivityRule.getActivity(), false);
+            byte[] val = ReplicatedKVStore.decrypt((byte[]) pair.getValue(), mActivityRule.getActivity());
             byte[] valToAssert = localKV.get((String) pair.getKey());
             String valStr = new String(val);
             String valToAssertStr = new String(valToAssert);
@@ -185,12 +123,11 @@ public class KVStoreTests {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             byte[] val = (byte[]) pair.getValue();
-            byte[] valToAssert = ReplicatedKVStore.decrypt(remoteKV.get((String) pair.getKey()), mActivityRule.getActivity(), false);
+            byte[] valToAssert = ReplicatedKVStore.decrypt(remoteKV.get((String) pair.getKey()), mActivityRule.getActivity());
             Assert.assertArrayEquals(val, valToAssert);
         }
 
     }
-
 
     @Test
     public void testSetLocal() {
@@ -409,7 +346,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys(false, Collections.emptyList());
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity(), false), "derp".getBytes());
+        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
     }
 
     @Test
@@ -463,7 +400,7 @@ public class KVStoreTests {
         success = store.syncAllKeys(false, Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
-        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity(), false));
+        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity(), ));
 
     }
 
@@ -515,7 +452,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys(false, Collections.emptyList());
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity(), false), "derp".getBytes());
+        Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
 
     }
 
@@ -570,7 +507,7 @@ public class KVStoreTests {
 
         Assert.assertTrue(encryptedData != null && encryptedData.length > 0);
 
-        byte[] decryptedData = ReplicatedKVStore.decrypt(encryptedData, mActivityRule.getActivity(), false);
+        byte[] decryptedData = ReplicatedKVStore.decrypt(encryptedData, mActivityRule.getActivity());
 
         Assert.assertNotEquals(encryptedData, decryptedData);
 
@@ -630,5 +567,69 @@ public class KVStoreTests {
         Assert.assertEquals(getMD.getService(), "pwb");
         Assert.assertEquals(getMD.getReturnUrl(), "some.url");
          */
+    }
+
+    public static class MockUpAdapter implements KVStoreAdaptor {
+        public Map<String, KVItem> remoteKVs = new HashMap<>();
+
+        @Override
+        public CompletionObject ver(String key) {
+            KVItem result = remoteKVs.get(key);
+            return result == null ? new CompletionObject(CompletionObject.RemoteKVStoreError.notFound) : new CompletionObject(result.version, result.time, result.deleted == 0 ? null : CompletionObject.RemoteKVStoreError.tombstone);
+        }
+
+        @Override
+        public CompletionObject put(String key, byte[] value, long version) {
+            KVItem result = remoteKVs.get(key);
+            if (result == null) {
+                if (version != 1)
+                    return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+                KVItem newObj = new KVItem(1, -1, key, value, System.currentTimeMillis(), 0);
+                remoteKVs.put(key, newObj);
+                return new CompletionObject(1, newObj.time, null);
+            }
+            if (version != result.version)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            KVItem newObj = new KVItem(result.version + 1, -1, key, value, System.currentTimeMillis(), 0);
+            remoteKVs.put(newObj.key, newObj);
+            return new CompletionObject(newObj.version, newObj.time, null);
+        }
+
+        @Override
+        public CompletionObject del(String key, long version) {
+            KVItem result = remoteKVs.get(key);
+            if (result == null)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+            if (result.version != version)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            KVItem newObj = new KVItem(result.version + 1, -1, result.key, result.value, result.time, 1);
+            remoteKVs.put(newObj.key, newObj);
+            return new CompletionObject(newObj.version, newObj.time, null);
+        }
+
+        @Override
+        public CompletionObject get(String key, long version) {
+            KVItem result = remoteKVs.get(key);
+            if (result == null)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+            if (version != result.version)
+                return new CompletionObject(0, System.currentTimeMillis(), CompletionObject.RemoteKVStoreError.conflict);
+            return new CompletionObject(result.version, result.time, result.value, result.deleted == 0 ? null : CompletionObject.RemoteKVStoreError.tombstone);
+        }
+
+        @Override
+        public CompletionObject keys() {
+            List<KVItem> result = new ArrayList<>();
+            for (KVItem kv : remoteKVs.values()) {
+                if (kv.deleted != 0) kv.err = CompletionObject.RemoteKVStoreError.tombstone;
+                result.add(kv);
+            }
+            return new CompletionObject(result);
+        }
+
+        public void putKv(KVItem kv) {
+            remoteKVs.put(kv.key, kv);
+        }
+
     }
 }
