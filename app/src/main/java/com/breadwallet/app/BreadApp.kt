@@ -191,7 +191,7 @@ class BreadApp : Application(), KodeinAware {
 
                 // Initialize TokenUtil to load our tokens.json file from res/raw
                 applicationScope.launch(Dispatchers.Default) {
-                    TokenUtil.initialize(mInstance)
+                    TokenUtil.initialize(mInstance, false)
                 }
             }
         }
@@ -540,7 +540,7 @@ class BreadApp : Application(), KodeinAware {
             val account = checkNotNull(BRKeyStore.getAccount(this@BreadApp)) {
                 "Wallet is initialized but Account is null"
             }
-
+            
             breadBox.open(account)
         }
 
