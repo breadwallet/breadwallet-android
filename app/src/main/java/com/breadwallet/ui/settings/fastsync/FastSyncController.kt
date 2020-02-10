@@ -59,7 +59,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -132,7 +131,7 @@ class FastSyncController(
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         modelFlow
-            .mapLatest { it.fastSyncEnable }
+            .map { it.fastSyncEnable }
             .distinctUntilChanged()
             .onEach { isChecked ->
                 switch_fast_sync.isChecked = isChecked
