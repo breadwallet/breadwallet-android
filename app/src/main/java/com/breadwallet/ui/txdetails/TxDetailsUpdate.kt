@@ -151,6 +151,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
             model.memoLoaded -> dispatch(
                 setOf(
                     F.UpdateMemo(
+                        model.currencyCode,
                         model.transactionHash,
                         event.memo
                     )

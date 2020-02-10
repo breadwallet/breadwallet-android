@@ -117,7 +117,10 @@ object TxDetails {
             val transactionHash: String
         ) : F()
 
-        data class LoadTransactionMetaData(@Redacted val transactionHash: String) : F()
+        data class LoadTransactionMetaData(
+            val currencyCode: String,
+            @Redacted val transactionHash: String
+        ) : F()
 
         data class LoadFiatAmountNow(
             val cryptoTransferredAmount: BigDecimal,
@@ -126,6 +129,7 @@ object TxDetails {
         ) : F()
 
         data class UpdateMemo(
+            val currencyCode: String,
             @Redacted val transactionHash: String,
             @Redacted val memo: String
         ) : F()

@@ -575,7 +575,6 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
 
         long recorderRemoteVersion = remoteVersion(key);
         if (err != CompletionObject.RemoteKVStoreError.notFound && remoteVersion > 0 && recorderRemoteVersion == remoteVersion) {
-            Log.d(TAG, "_syncKey: Remote version of key: " + key + " is the same as the one we have");
             return true;
         }
 

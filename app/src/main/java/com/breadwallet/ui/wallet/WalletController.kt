@@ -82,7 +82,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.text.NumberFormat
@@ -116,7 +115,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
     override val flowEffectHandler
         get() = WalletScreenHandler.createEffectHandler(
             checkNotNull(applicationContext),
-            direct.instance(),
             direct.instance(),
             direct.instance(),
             Connectable { output ->
