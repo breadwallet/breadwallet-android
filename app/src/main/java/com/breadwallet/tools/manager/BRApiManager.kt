@@ -33,39 +33,54 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.invoke
-
-/** Debounce timeout to prevent excessive api requests when System boots. */
-private const val RATE_UPDATE_DEBOUNCE_MS = 500L
+import java.util.Locale
 
 /** Delay between each data request. */
 private const val REFRESH_DELAY_MS = 60_000L
 
-/** Updates the token and exchange rate data for the current list of currency codes. */
+/** Updates the token and exchange rate data for the current list of currency ids. */
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 fun Flow<List<String>>.updateRatesForCurrencies(
     context: Context
 ): Flow<Unit> =
     onStart {
-        // Load token items from disk
+        // Read the initial token list from disk
         IO { TokenUtil.getTokenItems(context) }
+        // Initial sync of btc-fiat rates
         IO {
             BRApiManager.getInstance()
                 .updateFiatRates(context)
         }
+        emitAll(callbackFlow {
+            // Fetch an updated token list from the server
+            TokenUtil.fetchTokensFromServer(context)
+            // Emit the current list again to ensure we update
+            // the currency code for the given id. (DAI to SAI)
+            offer(first())
+            close()
+        })
     }
     .filter { it.isNotEmpty() }
-    // Prevent System boot from spamming api calls
-    .debounce(RATE_UPDATE_DEBOUNCE_MS)
     // Currency APIs expect uppercase currency codes
-    .map { currencyCode ->
-        currencyCode.map { TokenUtil.getExchangeRateCode(it).toUpperCase() }
+    .map { currencyIds ->
+        currencyIds.mapNotNull { id ->
+            TokenUtil.getTokenItemForCurrencyId(id)
+                ?.symbol
+                ?.toUpperCase(Locale.ROOT)
+        }
+    }
+    .distinctUntilChanged { old, new ->
+        old.size == new.size && old.containsAll(new)
     }
     // Repeat the latest list every 60 seconds
     .transformLatest { codes ->
