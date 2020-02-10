@@ -40,7 +40,11 @@ import android.webkit.ConsoleMessage
 import android.webkit.JsResult
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
@@ -49,6 +53,7 @@ import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.browser.BrdNativeJs
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
@@ -58,6 +63,7 @@ import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.jsbridge.WalletJs
+import com.platform.middlewares.plugins.GeoLocationPlugin
 import kotlinx.android.synthetic.main.fragment_support.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -69,10 +75,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import com.breadwallet.tools.util.BRConstants
-import com.platform.middlewares.plugins.GeoLocationPlugin
 
 private const val ARG_URL = "WebController.URL"
 private const val CLOSE_URL = "_close"
@@ -142,8 +144,8 @@ class WebController(
         val url: String = arg(ARG_URL)
         val isPlatformUrl =
             url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))
+        nativePromiseFactory = NativePromiseFactory(web_view)
         if (isPlatformUrl || url.startsWith("file:///")) {
-            nativePromiseFactory = NativePromiseFactory(web_view)
             val availableApis = NativeApisJs.from(WalletJs.NATIVE_NAME)
             val walletJs = WalletJs(
                 nativePromiseFactory,
@@ -158,6 +160,21 @@ class WebController(
             web_view.addJavascriptInterface(availableApis, NativeApisJs.JS_NAME)
         }
 
+        web_view.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                val trimmedUrl = request.url.toString().trimEnd('/')
+
+                if (mOnCloseUrl != null && trimmedUrl.equals(mOnCloseUrl, true)) {
+                    router.popController(this@WebController)
+                    mOnCloseUrl = null
+                } else if (trimmedUrl.contains(CLOSE_URL)) {
+                    router.popController(this@WebController)
+                } else if (trimmedUrl.startsWith("file://")) {
+                    view.loadUrl(trimmedUrl)
+                }
+                return true
+            }
+        }
         web_view.webChromeClient = BRWebChromeClient()
         web_view.loadUrl(url)
 
@@ -372,25 +389,6 @@ class WebController(
         override fun onCloseWindow(window: WebView) {
             super.onCloseWindow(window)
             logInfo("onCloseWindow: ")
-        }
-
-        override fun onReceivedTitle(view: WebView, title: String) {
-            super.onReceivedTitle(view, title)
-            logInfo("onReceivedTitle: view.getUrl:" + view.url)
-            val trimmedUrl = view.url.trimEnd('/')
-
-            if (mOnCloseUrl != null && trimmedUrl.equals(
-                    mOnCloseUrl,
-                    ignoreCase = true
-                )
-            ) {
-                router.popController(this@WebController)
-                mOnCloseUrl = null
-            } else if (trimmedUrl.contains(CLOSE_URL)) {
-                router.popController(this@WebController)
-            } else if (trimmedUrl.startsWith("file://")) {
-                view.loadUrl(trimmedUrl)
-            }
         }
 
         override fun onShowFileChooser(
