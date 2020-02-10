@@ -54,14 +54,14 @@ public class RemoteKVStore implements KVStoreAdaptor {
     private static RemoteKVStore instance;
     private APIClient apiClient;
 
+    private RemoteKVStore(APIClient apiClient) {
+        this.apiClient = apiClient;
+    }
+
     public static RemoteKVStore getInstance(APIClient apiClient) {
         if (instance == null)
             instance = new RemoteKVStore(apiClient);
         return instance;
-    }
-
-    private RemoteKVStore(APIClient apiClient) {
-        this.apiClient = apiClient;
     }
 
     @Override
@@ -77,7 +77,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
         APIClient.BRResponse res = apiClient.sendRequest(request, true);
         if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
             return new CompletionObject(0, 0, extractErr(res));
         }
         v = extractVersion(res);
@@ -157,7 +156,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
             }
 
             if (!res.isSuccessful()) {
-                Log.e(TAG, "get: [KV] PUT key=" + key + ", err=" + (res.getCode()));
                 return new CompletionObject(0, 0, extractErr(res));
             }
             v = extractVersion(res);
@@ -190,7 +188,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
         byte[] reqData = res.getBody();
 
-        if(Utils.isNullOrEmpty(reqData)) return new CompletionObject(unknown);
+        if (Utils.isNullOrEmpty(reqData)) return new CompletionObject(unknown);
 
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 

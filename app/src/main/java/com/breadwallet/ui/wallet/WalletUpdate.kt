@@ -331,8 +331,11 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                 model.copy(transactions = event.walletTransactions),
                 effects(
                     F.CheckReviewPrompt(model.currencyCode, event.walletTransactions),
-                    F.LoadTransactionMetaData(txHashes),
-                    F.LoadTransactionMetaDataSingle(event.walletTransactions.map(WalletTransaction::txHash))
+                    F.LoadTransactionMetaData(model.currencyCode, txHashes),
+                    F.LoadTransactionMetaDataSingle(
+                        model.currencyCode,
+                        event.walletTransactions.map(WalletTransaction::txHash)
+                    )
                 )
             )
         } else {
@@ -354,7 +357,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                         }
                 ),
                 effects(
-                    F.LoadTransactionMetaDataSingle(newHashes)
+                    F.LoadTransactionMetaDataSingle(model.currencyCode, newHashes)
                 )
             )
         }
@@ -404,7 +407,12 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         if (model.transactions.isNullOrEmpty())
             next(
                 model.copy(transactions = listOf(event.walletTransaction) + model.transactions),
-                effects(F.CheckReviewPrompt(model.currencyCode, model.transactions + event.walletTransaction))
+                effects(
+                    F.CheckReviewPrompt(
+                        model.currencyCode,
+                        model.transactions + event.walletTransaction
+                    )
+                )
             )
         else
             next(
@@ -417,7 +425,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         model: M,
         event: E.OnVisibleTransactionsChanged
     ): Next<M, F> =
-        dispatch(effects(F.LoadTransactionMetaData(event.transactionHashes)))
+        dispatch(effects(F.LoadTransactionMetaData(model.currencyCode, event.transactionHashes)))
 
     override fun onTransactionRemoved(
         model: M,

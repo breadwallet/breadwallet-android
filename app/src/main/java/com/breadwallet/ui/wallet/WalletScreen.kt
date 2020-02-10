@@ -208,8 +208,12 @@ object WalletScreen {
         data class LoadWalletBalance(val currencyId: String) : F()
         data class LoadTransactions(val currencyId: String) : F()
         data class LoadFiatPricePerUnit(val currencyId: String) : F()
-        data class LoadTransactionMetaData(@Redacted val transactionHashes: List<String>) : F()
-        data class LoadTransactionMetaDataSingle(@Redacted val transactionHashes: List<String>) :
+        data class LoadTransactionMetaData(
+            val currencyId: String,
+            @Redacted val transactionHashes: List<String>
+        ) : F()
+
+        data class LoadTransactionMetaDataSingle(val currencyId: String, @Redacted val transactionHashes: List<String>) :
             F()
 
         data class LoadIsTokenSupported(val currencyCode: String) : F()
