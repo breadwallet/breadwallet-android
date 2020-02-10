@@ -117,7 +117,7 @@ class SystemWalletTracker(
                     }
                     .onEach {
                         val address = BRSharedPrefs
-                            .getTrustNode(iso = manager.currency.code.capitalize())
+                            .getTrustNode(iso = manager.currency.code)
                             .orEmpty()
                         val networkPeer = manager
                             .network
@@ -260,9 +260,12 @@ class SystemWalletTracker(
         currencyId: String,
         walletModeMap: Map<String, WalletManagerMode>
     ) {
-        val mode = walletModeMap[walletManager.network.currency.uids] ?: walletManager.mode
+        val mode = when {
+            walletManager.currency.isBitcoinCash() -> WalletManagerMode.API_ONLY
+            else -> walletModeMap[walletManager.network.currency.uids] ?: walletManager.mode
+        }
         val address = BRSharedPrefs
-            .getTrustNode(iso = walletManager.currency.code.capitalize())
+            .getTrustNode(iso = walletManager.currency.code)
             .orEmpty()
         val networkPeer = walletManager
             .network
