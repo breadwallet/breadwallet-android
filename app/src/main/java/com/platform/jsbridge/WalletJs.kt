@@ -44,6 +44,7 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
@@ -272,7 +273,7 @@ class WalletJs(
 
         check(!amount.isZero && totalCost <= balance) { ERR_INSUFFICIENT_BALANCE }
 
-        val txHash =
+        val transaction =
             checkNotNull(
                 sendTransaction(
                     wallet,
@@ -284,12 +285,12 @@ class WalletJs(
             ) { ERR_SEND_TXN }
 
         metaDataProvider.putTxMetaData(
-            TxMetaDataValue(comment = description),
-            txHash
+            transaction,
+            TxMetaDataValue(comment = description)
         )
 
         JSONObject().apply {
-            put(KEY_HASH, txHash)
+            put(KEY_HASH, transaction.hashString())
             put(KEY_TRANSMITTED, true)
         }
     }
@@ -320,7 +321,7 @@ class WalletJs(
         amount: Amount,
         totalCost: BigDecimal,
         feeBasis: TransferFeeBasis
-    ): String? {
+    ): Transfer? {
         val fiatCode = BRSharedPrefs.getPreferredFiatIso(context)
         val fiatAmount = ratesRepository.getFiatForCrypto(
             amount.toBigDecimal(),
@@ -380,7 +381,7 @@ class WalletJs(
                         when (checkNotNull(transfer.state.type)) {
                             TransferState.Type.INCLUDED,
                             TransferState.Type.PENDING,
-                            TransferState.Type.SUBMITTED -> emit(transfer.hashString())
+                            TransferState.Type.SUBMITTED -> emit(transfer)
                             TransferState.Type.DELETED,
                             TransferState.Type.FAILED -> {
                                 logError("Failed to submit transfer ${transfer.state.failedError.orNull()}")

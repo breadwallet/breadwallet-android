@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import com.platform.entities.TxMetaData
 import com.platform.entities.WalletInfoData
 import com.breadwallet.crypto.Account
+import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.WalletManagerMode
 import com.platform.entities.TxMetaDataValue
 import java.util.Date
@@ -77,11 +78,11 @@ interface AccountMetaDataProvider {
     /** Clean up. */
     //fun close()
 
-    /** Returns a [Flow] of [TxMetaData] associated with [transactionHash], will recover it if necessary. */
-    fun txMetaData(transactionHash: String): Flow<TxMetaData>
+    /** Returns a [Flow] of [TxMetaData] associated with [transaction], will recover it if necessary. */
+    fun txMetaData(transaction: Transfer): Flow<TxMetaData>
 
-    /** Persist given [TxMetaData] for transaction hash, but ONLY if the comment or exchange rate has changed. */
-    suspend fun putTxMetaData(newTxMetaData: TxMetaDataValue, txHash: String)
+    /** Persist given [TxMetaData] for [transaction], but ONLY if the comment or exchange rate has changed. */
+    suspend fun putTxMetaData(transaction: Transfer, newTxMetaData: TxMetaDataValue)
 
     fun getPairingMetadata(pubKey: ByteArray): PairingMetaData?
 

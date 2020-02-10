@@ -32,9 +32,20 @@ sealed class MetaDataEffect {
 
     object RecoverMetaData : MetaDataEffect()
 
-    data class LoadTransactionMetaData(val transactionHashes: List<String>) : MetaDataEffect() {
-        constructor(transactionHash: String) : this(listOf(transactionHash))
+    data class LoadTransactionMetaData(
+        val currencyCode: String,
+        val transactionHashes: List<String>
+    ) : MetaDataEffect() {
+        constructor(currencyCode: String, transactionHash: String) : this(
+            currencyCode,
+            listOf(transactionHash)
+        )
     }
+
+    data class LoadTransactionMetaDataSingle(
+        val currencyCode: String,
+        val transactionHashes: List<String>
+    ) : MetaDataEffect()
 
     data class AddTransactionMetaData(
         val transaction: Transfer,
@@ -44,6 +55,7 @@ sealed class MetaDataEffect {
     ) : MetaDataEffect()
 
     data class UpdateTransactionComment(
+        val currencyCode: String,
         val transactionHash: String,
         val comment: String
     ) : MetaDataEffect()

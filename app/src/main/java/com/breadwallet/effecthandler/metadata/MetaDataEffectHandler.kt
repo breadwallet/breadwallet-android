@@ -35,7 +35,6 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.platform.entities.TxMetaData
 import com.platform.entities.TxMetaDataValue
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
@@ -49,12 +48,15 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -74,8 +76,8 @@ class MetaDataEffectHandler(
                 logError("Error in coroutine", throwable)
             }
 
-    private val commentUpdateChannel = Channel<CommentUpdatePair>()
-    private val loadMetaDataChannel = Channel<List<String>>()
+    private val commentUpdateChannel = Channel<CommentUpdateElem>()
+    private val loadMetaDataChannel = Channel<List<MetaDataElem>>()
 
     init {
         commentUpdateChannel
@@ -83,26 +85,28 @@ class MetaDataEffectHandler(
             .debounce(COMMENT_UPDATE_DEBOUNCE)
             .onEach {
                 metaDataProvider.putTxMetaData(
-                    TxMetaDataValue(comment = it.comment),
-                    it.transactionHash
+                    breadBox.walletTransfer(it.currencyCode, it.txHash).first(),
+                    TxMetaDataValue(comment = it.comment)
                 )
             }
             .launchIn(this)
 
         loadMetaDataChannel
             .consumeAsFlow()
-            .flatMapLatest { txHashes: List<String> ->
-                txHashes.asFlow()
-                    .flatMapMerge { transactionHash ->
+            .flatMapLatest {
+                it.asFlow()
+                    .flatMapMerge {
+                        val transaction =
+                            breadBox.walletTransfer(it.currencyCode, it.txHash).first()
                         metaDataProvider
-                            .txMetaData(transactionHash)
+                            .txMetaData(transaction)
                             .map { txMetaData ->
-                                MetaDataPair(transactionHash, txMetaData)
+                                Pair(transaction.hashString(), txMetaData)
                             }
                     }
             }
             .map {
-                MetaDataEvent.OnTransactionMetaDataUpdated(it.transactionHash, it.txMetaData)
+                MetaDataEvent.OnTransactionMetaDataUpdated(it.first, it.second)
             }
             .bindConsumerIn(output, this)
     }
@@ -111,7 +115,9 @@ class MetaDataEffectHandler(
         when (effect) {
             MetaDataEffect.RecoverMetaData -> recoverMetaData()
             is MetaDataEffect.LoadTransactionMetaData ->
-                loadTransactionMetaData(effect.transactionHashes)
+                loadTransactionMetaData(effect.currencyCode, effect.transactionHashes)
+            is MetaDataEffect.LoadTransactionMetaDataSingle ->
+                loadTransactionMetaDataSingle(effect.currencyCode, effect.transactionHashes)
             is MetaDataEffect.AddTransactionMetaData ->
                 addTransactionMetaData(
                     effect.transaction,
@@ -120,7 +126,11 @@ class MetaDataEffectHandler(
                     effect.fiatPricePerUnit
                 )
             is MetaDataEffect.UpdateTransactionComment ->
-                updateTransactionComment(effect.transactionHash, effect.comment)
+                updateTransactionComment(
+                    effect.currencyCode,
+                    effect.transactionHash,
+                    effect.comment
+                )
             is MetaDataEffect.UpdateWalletMode -> updateWalletMode(effect.currencyId, effect.mode)
             is MetaDataEffect.LoadWalletModes -> loadWalletModes()
         }
@@ -136,8 +146,33 @@ class MetaDataEffectHandler(
             .flowOn(Dispatchers.IO)
             .launchIn(BreadApp.applicationScope)
 
-    private fun loadTransactionMetaData(transactionHashes: List<String>) {
-        loadMetaDataChannel.offer(transactionHashes)
+    private fun loadTransactionMetaData(currencyCode: String, transactionHashes: List<String>) {
+        loadMetaDataChannel.offer(
+            transactionHashes.map {
+                MetaDataElem(currencyCode, it)
+            }
+        )
+    }
+
+    private fun loadTransactionMetaDataSingle(
+        currencyCode: String,
+        transactionHashes: List<String>
+    ) {
+        launch {
+            transactionHashes
+                .asFlow()
+                .flatMapMerge { hash ->
+                    val transaction = breadBox.walletTransfer(currencyCode, hash).first()
+                    metaDataProvider.txMetaData(transaction)
+                        .take(1)
+                        .map { hash to it }
+                }
+                .toList()
+                .toMap()
+                .run {
+                    output.accept(MetaDataEvent.OnTransactionMetaDataSingleUpdated(this))
+                }
+        }
     }
 
     private fun addTransactionMetaData(
@@ -167,16 +202,17 @@ class MetaDataEffectHandler(
         )
 
         BreadApp.applicationScope.launch {
-            metaDataProvider.putTxMetaData(metaData, transaction.hashString())
+            metaDataProvider.putTxMetaData(transaction, metaData)
         }
     }
 
-    private fun updateTransactionComment(transactionHash: String, comment: String) {
+    private fun updateTransactionComment(
+        currencyCode: String,
+        transactionHash: String,
+        comment: String
+    ) {
         commentUpdateChannel.offer(
-            CommentUpdatePair(
-                transactionHash,
-                comment
-            )
+            CommentUpdateElem(currencyCode, transactionHash, comment)
         )
     }
 
@@ -191,14 +227,7 @@ class MetaDataEffectHandler(
                 MetaDataEvent.OnWalletModesUpdated(modeMap)
             }
             .bindConsumerIn(output, this)
+
+    data class CommentUpdateElem(val currencyCode: String, val txHash: String, val comment: String)
+    data class MetaDataElem(val currencyCode: String, val txHash: String)
 }
-
-data class CommentUpdatePair(
-    val transactionHash: String,
-    val comment: String
-)
-
-data class MetaDataPair(
-    val transactionHash: String,
-    val txMetaData: TxMetaData
-)

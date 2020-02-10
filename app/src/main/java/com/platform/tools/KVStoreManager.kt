@@ -70,20 +70,13 @@ class KVStoreManager(
     }
 
     override fun get(key: String): JSONObject? =
-        when (val data = getData(context, key)) {
-            null -> {
-                logError("Data value is null")
-                null
-            }
-            else -> JSONObject(String(data))
-        }
+        getData(context, key)?.run { JSONObject(String(this)) }
 
     override fun put(key: String, value: JSONObject): Boolean {
         logDebug("put $key -> $value")
         val valueStr = value.toString().toByteArray()
 
         if (valueStr.isEmpty()) {
-            logError("FAILED: result is empty")
             return false
         }
         val completionObject = setData(context, valueStr, key)
@@ -154,12 +147,11 @@ class KVStoreManager(
         val ver = kvStore.localVersion(key).version
         val obj = kvStore.get(key, ver)
         if (obj.kv == null) {
-            logWarning("getData: value is null for key: $key")
             return null
         }
         return when (val decompressed = BRCompressor.bz2Extract(obj.kv.value)) {
             null -> {
-                logError("getData: decompressed value is null")
+                logError("Decompression failed for $key: ${String(obj.kv.value)}")
                 null
             }
             else -> decompressed

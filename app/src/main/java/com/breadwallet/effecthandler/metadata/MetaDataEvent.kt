@@ -33,6 +33,10 @@ sealed class MetaDataEvent {
         val txMetaData: TxMetaData
     ) : MetaDataEvent()
 
+    data class OnTransactionMetaDataSingleUpdated(
+        val metadata: Map<String, TxMetaData>
+    ) : MetaDataEvent()
+
     data class OnWalletModesUpdated(
         val modeMap: Map<String, WalletManagerMode>
     ) : MetaDataEvent()
