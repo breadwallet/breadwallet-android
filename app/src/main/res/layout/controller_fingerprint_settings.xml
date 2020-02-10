@@ -17,14 +17,10 @@
 
     <ImageButton
         android:id="@+id/faq_btn"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@null"
-        android:src="@drawable/ic_faq_button_dark"
-        android:tint="@color/white"
-        app:layout_constraintDimensionRatio="w,1:1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/bread_margin"
+        android:background="?attr/faq_button_primary_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
