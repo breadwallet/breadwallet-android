@@ -29,15 +29,20 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.flowbind.checked
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.E
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.F
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.M
-import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_fingerprint_settings.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -61,16 +66,24 @@ class FingerprintSettingsController : BaseMobiusController<M, E, F>() {
             })
         )
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        switch_unlock_app.onCheckChanged(E::OnAppUnlockChanged)
-        switch_send_money.onCheckChanged(E::OnSendMoneyChanged)
-        faq_btn.onClick(E.OnFaqClicked)
-        back_btn.onClick(E.OnBackClicked)
-    }
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        modelFlow.map { it.unlockApp }
+            .onEach { switch_unlock_app.isChecked = it }
+            .launchIn(uiBindScope)
 
-    override fun M.render() {
-        ifChanged(M::unlockApp, switch_unlock_app::setChecked)
-        ifChanged(M::sendMoney, switch_send_money::setChecked)
-        ifChanged(M::sendMoneyEnable, switch_send_money::setEnabled)
+        modelFlow.map { it.sendMoney }
+            .onEach { switch_send_money.isChecked = it }
+            .launchIn(uiBindScope)
+
+        modelFlow.map { it.sendMoneyEnable }
+            .onEach { switch_send_money.isEnabled = it }
+            .launchIn(uiBindScope)
+
+        return merge(
+            faq_btn.clicks().map { E.OnFaqClicked },
+            back_btn.clicks().map { E.OnBackClicked },
+            switch_send_money.checked().map { E.OnSendMoneyChanged(it) },
+            switch_unlock_app.checked().map { E.OnAppUnlockChanged(it) }
+        )
     }
 }

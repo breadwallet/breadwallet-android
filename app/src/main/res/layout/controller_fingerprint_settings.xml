@@ -6,11 +6,11 @@
 
     <ImageButton
         android:id="@+id/back_btn"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/bread_margin"
         android:layout_centerVertical="true"
         android:background="?attr/toolbar_back_arrow"
-        app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
