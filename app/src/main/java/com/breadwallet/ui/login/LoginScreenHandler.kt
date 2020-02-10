@@ -66,10 +66,12 @@ class LoginScreenHandler(
     private fun checkFingerprintEnable() {
         val fingerprintEnable =
             isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.unlockWithFingerprint
+
+        output.accept(E.OnFingerprintEnabled(fingerprintEnable))
+
         if (fingerprintEnable) {
             launch(Dispatchers.Main) { showFingerprintPrompt() }
         }
-        output.accept(E.OnFingerprintEnabled(fingerprintEnable))
     }
 
     private fun loadLoginPreferences() {
