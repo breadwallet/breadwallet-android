@@ -48,7 +48,6 @@ import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
-import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.flowTransformer
@@ -56,18 +55,14 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.transformLatest
 import java.math.BigDecimal
 import kotlin.math.min
@@ -81,7 +76,6 @@ object WalletScreenHandler {
         context: Context,
         breadBox: BreadBox,
         navEffectHandler: NavEffectTransformer,
-        metaDataProvider: AccountMetaDataProvider,
         metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
         addTransformer<F.Nav>(navEffectHandler)
@@ -94,7 +88,7 @@ object WalletScreenHandler {
         addTransformer(handleLoadSyncState(breadBox))
 
         addTransformer(handleLoadTransactionMetaData(metadataEffectHandler))
-        addTransformer(handleLoadTransactionMetaDataSingle(metaDataProvider))
+        addTransformer(handleLoadTransactionMetaDataSingle(metadataEffectHandler))
 
         addActionSync<F.RecordReviewPrompt>(Default, ::handleRecordReviewPrompt)
         addActionSync<F.RecordReviewPromptDismissed>(
@@ -259,7 +253,7 @@ object WalletScreenHandler {
         metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = flowTransformer<F.LoadTransactionMetaData, E> { effects ->
         effects
-            .map { MetaDataEffect.LoadTransactionMetaData(it.transactionHashes) }
+            .map { MetaDataEffect.LoadTransactionMetaData(it.currencyId, it.transactionHashes) }
             .transform(metadataEffectHandler)
             .filterIsInstance<MetaDataEvent.OnTransactionMetaDataUpdated>()
             .map { event ->
@@ -271,22 +265,19 @@ object WalletScreenHandler {
     }
 
     private fun handleLoadTransactionMetaDataSingle(
-        metaDataProvider: AccountMetaDataProvider
+        metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = flowTransformer<F.LoadTransactionMetaDataSingle, E> { effects ->
         effects
-            .map { effect ->
-                effect.transactionHashes
-                    .asFlow()
-                    .flatMapMerge { hash ->
-                        metaDataProvider.txMetaData(hash)
-                            .take(1)
-                            .map { hash to it }
-                    }
-                    .toList()
-                    .toMap()
+            .map {
+                MetaDataEffect.LoadTransactionMetaDataSingle(
+                    it.currencyId,
+                    it.transactionHashes
+                )
             }
+            .transform(metaDataEffectHandler)
+            .filterIsInstance<MetaDataEvent.OnTransactionMetaDataSingleUpdated>()
             .map { event ->
-                E.OnTransactionMetaDataLoaded(event)
+                E.OnTransactionMetaDataLoaded(event.metadata)
             }
     }
 
@@ -325,10 +316,12 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
             feeForToken.isBlank() -> amountInDefault.toBigDecimal()
             else -> fee.toBigDecimal()
         },
-        amountInFiat = getBalanceInFiat(when {
-            feeForToken.isBlank() -> amountInDefault
-            else -> fee
-        }),
+        amountInFiat = getBalanceInFiat(
+            when {
+                feeForToken.isBlank() -> amountInDefault
+                else -> fee
+            }
+        ),
         toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,

@@ -134,9 +134,13 @@ class TxDetailsController(
             }, { effect: F ->
                 when (effect) {
                     is F.LoadTransactionMetaData ->
-                        MetaDataEffect.LoadTransactionMetaData(effect.transactionHash)
+                        MetaDataEffect.LoadTransactionMetaData(
+                            effect.currencyCode,
+                            effect.transactionHash
+                        )
                     is F.UpdateMemo ->
                         MetaDataEffect.UpdateTransactionComment(
+                            effect.currencyCode,
                             effect.transactionHash,
                             effect.memo
                         )

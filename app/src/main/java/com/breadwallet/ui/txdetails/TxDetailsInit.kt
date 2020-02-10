@@ -34,7 +34,7 @@ object TxDetailsInit : Init<M, F> {
         return First.first(
             model, setOf(
                 F.LoadTransaction(model.currencyCode, model.transactionHash),
-                F.LoadTransactionMetaData(model.transactionHash)
+                F.LoadTransactionMetaData(model.currencyCode, model.transactionHash)
             )
         )
     }
