@@ -66,14 +66,12 @@ class MigrateController(
     }
 
     private fun migrateAccount(phrase: ByteArray) {
-        val timestamp = Date(BRKeyStore.getWalletCreationTime(applicationContext).toLong())
+        val timestamp = Date(BRKeyStore.getWalletCreationTime(applicationContext))
         val account = Account.createFromPhrase(phrase, timestamp, BRSharedPrefs.getDeviceId())
         BRKeyStore.putAccount(account, applicationContext)
         BRKeyStore.deleteMasterPublicKey(applicationContext)
 
         (applicationContext as BreadApp).startWithInitializedWallet(direct.instance(), true)
-
-        BreadApp.initialize()
 
         router.replaceTopController(RouterTransaction.with(LoginController()))
     }

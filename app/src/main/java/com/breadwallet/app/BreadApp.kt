@@ -28,14 +28,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.KeyguardManager
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.BreadBoxCloseWorker
@@ -82,12 +82,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -474,14 +472,6 @@ class BreadApp : Application(), KodeinAware {
         if (isDeviceStateValid && isBRDWalletInitialized) {
             startWithInitializedWallet(breadBox)
         }
-
-        // Update rate information when wallets change
-        // and periodically after that
-        breadBox.wallets()
-            .mapLatest { wallets -> wallets.map { it.currency.code } }
-            .distinctUntilChanged()
-            .updateRatesForCurrencies(this)
-            .launchIn(startedScope)
     }
 
     private fun handleOnStop() {
@@ -540,7 +530,7 @@ class BreadApp : Application(), KodeinAware {
             val account = checkNotNull(BRKeyStore.getAccount(this@BreadApp)) {
                 "Wallet is initialized but Account is null"
             }
-            
+
             breadBox.open(account)
         }
 
@@ -550,8 +540,6 @@ class BreadApp : Application(), KodeinAware {
 
         HTTPServer.getInstance().startServer(this)
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks()
-            .execute { TokenUtil.fetchTokensFromServer(mInstance) }
         APIClient.getInstance(this).updatePlatform()
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks()
@@ -559,6 +547,11 @@ class BreadApp : Application(), KodeinAware {
         incrementAppForegroundedCounter()
 
         initialize()
+
+        getAccountMetaDataProvider()
+            .enabledWallets()
+            .updateRatesForCurrencies(this)
+            .launchIn(startedScope)
     }
 
     /**
