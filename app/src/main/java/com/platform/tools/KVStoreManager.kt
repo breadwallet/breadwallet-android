@@ -27,7 +27,6 @@ package com.platform.tools
 import android.content.Context
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
-import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.util.BRCompressor
 import com.breadwallet.tools.util.netRetry
@@ -65,9 +64,7 @@ class KVStoreManager(
         private val mutex = Mutex()
     }
 
-    private val keyChannelMap = ConcurrentHashMap<String, BroadcastChannel<JSONObject>>().run {
-        withDefault { key -> getOrPut(key) { BroadcastChannel(Channel.BUFFERED) } }
-    }
+    private val keyChannelMap = ConcurrentHashMap<String, BroadcastChannel<JSONObject>>()
 
     override fun get(key: String): JSONObject? =
         getData(context, key)?.run { JSONObject(String(this)) }
@@ -82,7 +79,7 @@ class KVStoreManager(
         val completionObject = setData(context, valueStr, key)
         return when (completionObject?.err) {
             null -> {
-                keyChannelMap.getValue(key).offer(value)
+                keyChannelMap.getSafe(key).offer(value)
                 true
             }
             else -> {
@@ -103,7 +100,7 @@ class KVStoreManager(
                         getReplicatedKvStore(context).syncKey(key)
                     }
                 }
-                value = get(key)?.also { keyChannelMap.getValue(key).offer(it) }
+                value = get(key)?.also { keyChannelMap.getSafe(key).offer(it) }
             }
         } catch (ex: Exception) {
             logError("Sync exception for key: $key", ex)
@@ -120,14 +117,14 @@ class KVStoreManager(
             if (syncSuccess) {
                 keyChannelMap.keys.forEach { key ->
                     get(key)?.let { value ->
-                        keyChannelMap.getValue(key).offer(value)
+                        keyChannelMap.getSafe(key).offer(value)
                     }
                 }
             }
         }
 
     override fun keyFlow(key: String): Flow<JSONObject> =
-        keyChannelMap.getValue(key).asFlow().onStart { get(key)?.let { emit(it) } }
+        keyChannelMap.getSafe(key).asFlow().onStart { get(key)?.let { emit(it) } }
 
     private fun setData(context: Context, data: ByteArray, key: String?): CompletionObject? =
         try {
@@ -161,5 +158,9 @@ class KVStoreManager(
     private fun getReplicatedKvStore(context: Context): ReplicatedKVStore {
         val remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(context))
         return ReplicatedKVStore.getInstance(context, remoteKVStore)
+    }
+
+    private fun ConcurrentHashMap<String, BroadcastChannel<JSONObject>>.getSafe(key: String) = run {
+        getOrElse(key, { BroadcastChannel(Channel.BUFFERED) }).also { putIfAbsent(key, it) }
     }
 }
