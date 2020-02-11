@@ -63,6 +63,7 @@ public final class BRApiManager {
     private static final String TAG = BRApiManager.class.getName();
     private static final String BIT_PAY_URL = "https://bitpay.com/rates";
     private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+    private static final String DATE_HEADER = "date";
     private static final String CURRENCY_QUERY_STRING = "/rates?currency=";
     private static final String CURRENCIES_PATH = "/currencies";
     private static final String NAME = "name";
@@ -309,7 +310,7 @@ public final class BRApiManager {
 
         try {
             bodyText = resp.getBodyText();
-            String strDate = resp.getHeaders().get(BRConstants.DATE);
+            String strDate = resp.getHeaders().get(DATE_HEADER);
             if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
                 return bodyText;
