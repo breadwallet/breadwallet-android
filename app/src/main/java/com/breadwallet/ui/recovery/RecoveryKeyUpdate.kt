@@ -191,7 +191,15 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     }
 
     override fun onShowPhraseGranted(model: M): Next<M, F> {
-        return dispatch(setOf(F.Unlink(model.phrase)))
+        return dispatch(
+            setOf(
+                when (model.mode) {
+                    RecoveryKey.Mode.WIPE -> F.Unlink(model.phrase)
+                    RecoveryKey.Mode.RESET_PIN -> F.ResetPin(model.phrase)
+                    else -> error("Unexpected mode")
+                }
+            )
+        )
     }
 
     override fun onShowPhraseFailed(model: M): Next<M, F> {
