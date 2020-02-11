@@ -56,3 +56,36 @@ lane :beta do |options|
     sh("mv -fv #{apk_location} #{options[:output_path]}")
   end
 end
+
+lane :appetizeUploadAll do |options|
+  appetizeUpload(flavor: 'brdTestnet', build_type: 'debug', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brdTestnet', build_type: 'release', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brd', build_type: 'debug', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brd', build_type: 'release', output_path: options[:output_path])
+end
+
+lane :appetizeUpload do |options|
+  gradle(
+    task: 'assemble',
+    flavor: options[:flavor],
+    build_type: options[:build_type],
+    flags: options[:flags],
+    properties: {
+      "android.injected.signing.store.file" => ENV['SIGNING_KEY'],
+      "android.injected.signing.store.password" => ENV['SIGNING_PASSWORD'],
+      "android.injected.signing.key.alias" => ENV['SIGNING_ALIAS'],
+      "android.injected.signing.key.password" => ENV['SIGNING_ALIAS_PASSWORD']
+    }
+  )
+  appetize(
+    path: "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}",
+    api_token: ENV['APPETIZE_TOKEN'],
+    platform: 'android'
+  )
+
+  fileName = "../app/build/review-#{options[:flavor]}-#{options[:build_type]}.html"
+  reviewUrl = "#{ENV['NATIVE_REVIEW_URL']}?publicKey=#{lane_context[SharedValues::APPETIZE_PUBLIC_KEY]}"
+  fileContents = "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=#{reviewUrl}\"/></head></html>"
+
+  File.write(fileName, fileContents)
+end
