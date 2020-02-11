@@ -1,53 +1,96 @@
-image: circleci/android:api-29
+image: drewcarlson/docker-android
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  SIGNING_KEY: /builds/breadwallet/breadwallet-android/FakeSigningKey
+  SIGNING_PASSWORD: qwerty
+  SIGNING_ALIAS: key0
+  SIGNING_ALIAS_PASSWORD: qwerty
+  NATIVE_REVIEW_URL: https://breadwallet.gitlab.io/-/native-wallet-review/-/jobs/352606597/artifacts/build/distributions/index.html
 
 cache:
   key: ${CI_PROJECT_ID}-2
   paths:
-    - /home/circleci/.m2/
-    - /home/circleci/.gradle/
-    - .gradle/
+    - ~/.gradle/
+    - /root/.gradle/
 
-stages:
-  - build
-
-debug:
+detekt:
   stage: build
   script:
-    - ./gradlew assembleDebug
-    - ./gradlew --console=plain testBrdDebugUnitTest
     - ./gradlew --console=plain detekt
-    # - ./gradlew -Pci --console=plain :app:lintBrdDebug -PbuildDir=lint
   only:
-    - crypto/prototype
+    - merge_requests
+  artifacts:
+    expose_as: "Detekt Report"
+    paths:
+      - app/build/reports/detekt/detekt.html
+
+debug:test:
+  stage: build
+  script:
+    - ./gradlew --console=plain testBrdDebugUnitTest testBrdTestnetDebugUnitTest
+  only:
     - develop
     - master
     - /^release.*$/
     - merge_requests
   artifacts:
-    paths:
-      - app/build/outputs/
-      - app/build/test-results
-      - app/lint/reports/
-      - app/build/reports/detekt
+    reports:
+      junit: app/build/test-results/**/TEST-*.xml
 
-release:
+testnet:debug:build-deploy:
   stage: build
   script:
-    - ./gradlew assembleRelease -PIGNORE_FABRIC_KEYS_MISSING
-    - ./gradlew --console=plain testBrdReleaseUnitTest
-    - ./gradlew --console=plain detekt
-    # - ./gradlew -Pci --console=plain :app:lintBrdRelease -PbuildDir=lint
+    - fastlane appetizeUpload flavor:brdTestnet build_type:debug
   only:
-    - crypto/prototype
+    - develop
+    - master
+    - /^release.*$/
+    - merge_requests
+  artifacts:
+    expose_as: "Review Testnet"
+    paths:
+      - app/build/review-brdTestnet-debug.html
+
+mainnet:debug:build-deploy:
+  stage: build
+  script:
+    - fastlane appetizeUpload flavor:brd build_type:debug
+  only:
+    - develop
+    - master
+    - /^release.*$/
+    - merge_requests
+  artifacts:
+    expose_as: "Review Mainnet"
+    paths:
+      - app/build/review-brd-debug.html
+
+release:test:
+  stage: build
+  script:
+    - ./gradlew --console=plain testBrdReleaseUnitTest testBrdTestnetReleaseUnitTest
+  only:
+    - develop
+    - master
+    - /^release.*$/
+    - merge_requests
+  artifacts:
+    reports:
+      junit: app/build/test-results/**/TEST-*.xml
+
+release:build-deploy:
+  stage: build
+  script:
+    - ./gradlew --console=plain assembleRelease -PIGNORE_FABRIC_KEYS_MISSING
+    - fastlane appetizeUpload flavor:brd build_type:release flags:"-PIGNORE_FABRIC_KEYS_MISSING"
+    - fastlane appetizeUpload flavor:brdTestnet build_type:release flags:"-PIGNORE_FABRIC_KEYS_MISSING"
+  only:
     - develop
     - master
     - /^release.*$/
   artifacts:
     paths:
-      - app/build/outputs/
-      - app/build/test-results
-      - app/lint/reports/
-      - app/build/reports/detekt
+      - app/build/outputs/apk/
+      - app/build/review-brd-release.html
+      - app/build/review-brdTestnet-release.html
