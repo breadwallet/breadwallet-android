@@ -185,9 +185,9 @@ class CryptoUriParser(
 
     private fun pushUrlEvent(u: Uri?) {
         val attr = HashMap<String, String>()
-        attr["scheme"] = if (u == null) "null" else u.scheme
-        attr["host"] = if (u == null) "null" else u.host
-        attr["path"] = if (u == null) "null" else u.path
+        attr["scheme"] = u?.scheme ?: "null"
+        attr["host"] = u?.host ?: "null"
+        attr["path"] = u?.path ?: "null"
         EventUtils.pushEvent(EventUtils.EVENT_SEND_HANDLE_URL, attr)
     }
 }
