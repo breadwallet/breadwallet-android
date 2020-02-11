@@ -24,8 +24,8 @@ detekt {
 }
 
 android {
-    compileSdkVersion = 28
-    buildToolsVersion = '28.0.3'
+    compileSdkVersion = 29
+    buildToolsVersion = '29.0.3'
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 0    // Minor version. Usually affected by product. Maximum value: 99
