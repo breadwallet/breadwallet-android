@@ -4,7 +4,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 cache:
-  key: ${CI_PROJECT_ID}
+  key: ${CI_PROJECT_ID}-2
   paths:
     - /home/circleci/.m2/
     - /home/circleci/.gradle/

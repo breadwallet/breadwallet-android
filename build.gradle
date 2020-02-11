@@ -1,9 +1,15 @@
 buildscript {
     repositories {
+        mavenCentral()
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
-        maven { url 'https://dl.bintray.com/drewcarlson/redacted-plugin' }
+        maven {
+            url 'https://dl.bintray.com/drewcarlson/redacted-plugin'
+            content {
+                includeGroup "io.sweers.redacted"
+            }
+        }
     }
     dependencies {
         classpath "io.sweers.redacted:redacted-compiler-gradle-plugin:$redacted_version"
@@ -17,11 +23,25 @@ buildscript {
 
 allprojects {
     repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    // TODO: When core is released use: /brd/walletkit-java
+                    url 'https://dl.bintray.com/brcore/core'
+                }
+            }
+            filter {
+                includeGroup "com.breadwallet.core"
+            }
+        }
         mavenCentral()
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/drewcarlson/redacted-plugin' }
-        // TODO: Remove when core is published to jcenter or maven central
-        maven { url 'https://dl.bintray.com/brcore/core' }
+        maven {
+            url 'https://dl.bintray.com/drewcarlson/redacted-plugin'
+            content {
+                includeGroup "io.sweers.redacted"
+            }
+        }
     }
 }
