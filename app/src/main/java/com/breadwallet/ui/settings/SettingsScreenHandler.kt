@@ -25,6 +25,7 @@
 package com.breadwallet.ui.settings
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -157,6 +158,10 @@ class SettingsScreenHandler(
                     metaDataManager.disableWallet(currencyId)
                 }
                 loadOptions(SettingsSection.DEVELOPER_OPTION)
+            }
+            F.WipeNoPrompt -> {
+                activity.getSystemService(ActivityManager::class.java)
+                    ?.clearApplicationUserData()
             }
         }
     }
@@ -347,6 +352,10 @@ class SettingsScreenHandler(
                     else -> "Enable XRP"
                 },
                 SettingsOption.ENABLE_XRP
+            ),
+            SettingsItem(
+                "Wipe Wallet (no prompt)",
+                SettingsOption.WIPE_NO_PROMPT
             )
         )
     }

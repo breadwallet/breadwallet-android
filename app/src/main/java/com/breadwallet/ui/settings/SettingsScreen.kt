@@ -96,6 +96,7 @@ object SettingsScreen {
         object GoToHomeScreen : F()
         object ToggleSecureMode : F()
         object EnableXrp : F()
+        object WipeNoPrompt : F()
 
         object GoToBetaFeedback : F()
 
