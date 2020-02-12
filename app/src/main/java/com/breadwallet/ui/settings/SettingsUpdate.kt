@@ -120,6 +120,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.BETA_FEEDBACK_FORM -> F.GoToBetaFeedback
                     SettingsOption.TOGGLE_SECURE_MODE -> F.ToggleSecureMode
                     SettingsOption.ENABLE_XRP -> F.EnableXrp
+                    SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                 }
             )
         )
