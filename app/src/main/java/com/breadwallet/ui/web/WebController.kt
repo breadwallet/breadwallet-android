@@ -102,8 +102,6 @@ class WebController(
     }
 
     init {
-        overridePopHandler(BottomSheetChangeHandler())
-        overridePushHandler(BottomSheetChangeHandler())
         retainViewMode = RetainViewMode.RETAIN_DETACH
 
         registerForActivityResult(CHOOSE_IMAGE_REQUEST_CODE)
@@ -161,7 +159,10 @@ class WebController(
         }
 
         web_view.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
                 val trimmedUrl = request.url.toString().trimEnd('/')
 
                 if (mOnCloseUrl != null && trimmedUrl.equals(mOnCloseUrl, true)) {
