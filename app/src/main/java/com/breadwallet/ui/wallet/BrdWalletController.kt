@@ -31,12 +31,10 @@ import com.google.android.material.appbar.AppBarLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
-import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
-
+import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.web.WebController
@@ -71,9 +69,9 @@ class BrdWalletController : WalletController("BRD") {
             mAppBarLayoutRoot!!.setExpanded(false, true)
             val rewardsUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS)
             router.pushController(
-                RouterTransaction.with(
-                    WebController(rewardsUrl)
-                )
+                RouterTransaction.with(WebController(rewardsUrl))
+                    .popChangeHandler(VerticalChangeHandler())
+                    .pushChangeHandler(VerticalChangeHandler())
             )
         }
 

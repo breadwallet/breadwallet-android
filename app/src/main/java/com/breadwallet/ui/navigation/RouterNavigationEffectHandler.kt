@@ -43,6 +43,7 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
@@ -126,7 +127,12 @@ class RouterNavigationEffectHandler(
 
     override fun goToBrdRewards() {
         val rewardsUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS)
-        router.pushController(RouterTransaction.with(WebController(rewardsUrl)))
+        router.pushController(
+            WebController(rewardsUrl).asTransaction(
+                VerticalChangeHandler(),
+                VerticalChangeHandler()
+            )
+        )
     }
 
     override fun goToReview() {
@@ -140,12 +146,34 @@ class RouterNavigationEffectHandler(
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
             BITCOIN_CURRENCY_CODE
         )
-        router.pushController(WebController(url).asTransaction())
+        val webTransaction =
+            WebController(url).asTransaction(
+                VerticalChangeHandler(),
+                VerticalChangeHandler()
+            )
+
+        when (router.backstack.lastOrNull()?.controller()) {
+            is HomeController -> router.pushController(webTransaction)
+            else -> {
+                router.setBackstack(
+                    listOf(
+                        HomeController().asTransaction(),
+                        webTransaction
+                    ),
+                    VerticalChangeHandler()
+                )
+            }
+        }
     }
 
     override fun goToTrade() {
         val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
-        router.pushController(WebController(url).asTransaction())
+        router.pushController(
+            WebController(url).asTransaction(
+                VerticalChangeHandler(),
+                VerticalChangeHandler()
+            )
+        )
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
@@ -236,7 +264,10 @@ class RouterNavigationEffectHandler(
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
         router.pushController(
-            RouterTransaction.with(WebController(effect.asSupportUrl()))
+            WebController(effect.asSupportUrl()).asTransaction(
+                BottomSheetChangeHandler(),
+                BottomSheetChangeHandler()
+            )
         )
     }
 
