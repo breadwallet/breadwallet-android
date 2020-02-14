@@ -65,6 +65,11 @@ private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val SECURE_MODE_WARNING =
     "WARNING: Secure mode is disabled, other apps can view your wallet contents."
 
+// String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
+private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
+// Boolean extra to toggle on/off secure window mode. (debug only)
+private const val EXTRA_SECURE_WINDOW = "SECURE_WINDOW"
+
 /**
  * The main user entrypoint into the app.
  *
@@ -77,8 +82,6 @@ class MainActivity : BRActivity() {
         const val EXTRA_DATA = "com.breadwallet.ui.MainActivity.EXTRA_DATA"
         const val EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID =
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
-        const val EXTRA_RECOVER_PHRASE = "com.breadwallet.ui.MainActivity.EXTRA_RECOVER_PHRASE"
-        const val EXTRA_SECURE_SCREEN_MODE = "EXTRA_SECURE_SCREEN_MODE"
     }
 
     private lateinit var router: Router
@@ -90,7 +93,7 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_SCREEN_MODE, BRSharedPrefs.secureScreenMode)) {
+        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
