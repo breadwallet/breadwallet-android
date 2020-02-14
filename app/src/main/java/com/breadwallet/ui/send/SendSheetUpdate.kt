@@ -535,8 +535,14 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     ): Next<M, F> {
         return when {
             model.isSendingTransaction -> {
-                val effects = mutableSetOf<F>(
-                    F.Nav.GoToTransactionComplete
+                val effects = mutableSetOf(
+                    F.Nav.GoToTransactionComplete,
+                    F.AddTransactionMetaData(
+                        event.transfer,
+                        model.memo ?: "",
+                        model.fiatCode,
+                        model.fiatPricePerUnit
+                    )
                 )
                 if (model.isBitpayPayment) {
                     effects.add(
@@ -545,14 +551,6 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                             event.transfer
                         )
                     )
-                }
-                if (!model.memo.isNullOrBlank()) {
-                    F.AddTransactionMetaData(
-                        event.transfer,
-                        model.memo,
-                        model.fiatCode,
-                        model.fiatPricePerUnit
-                    ).run(effects::add)
                 }
                 dispatch(effects)
             }
