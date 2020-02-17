@@ -98,8 +98,6 @@ object SettingsScreen {
         object EnableXrp : F()
         object WipeNoPrompt : F()
 
-        object GoToBetaFeedback : F()
-
         data class GoToFastSync(
             val currencyCode: CurrencyCode
         ) : F()
