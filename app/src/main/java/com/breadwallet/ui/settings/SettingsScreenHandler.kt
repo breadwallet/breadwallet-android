@@ -27,8 +27,6 @@ package com.breadwallet.ui.settings
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
@@ -132,12 +130,6 @@ class SettingsScreenHandler(
                 metaDataManager.resetDefaultWallets()
                 output.accept(E.OnWalletsUpdated)
             }
-            F.GoToBetaFeedback -> {
-                launch(Dispatchers.Main) {
-                    Intent(Intent.ACTION_VIEW, Uri.parse("https://forms.gle/cocja3P4DdKGG9BH7"))
-                        .run(activity::startActivity)
-                }
-            }
             F.ToggleSecureMode -> {
                 launch(Dispatchers.Main) {
                     BRSharedPrefs.secureScreenMode = !BRSharedPrefs.secureScreenMode
@@ -236,13 +228,6 @@ class SettingsScreenHandler(
                     )
                 )
             }
-            // TODO: To be removed after 4.0.0-beta
-            add(
-                SettingsItem(
-                    "Beta Feedback",
-                    SettingsOption.BETA_FEEDBACK_FORM
-                )
-            )
             if (BuildConfig.DEBUG) {
                 add(
                     SettingsItem(
