@@ -127,7 +127,6 @@ class BreadApp : Application(), KodeinAware {
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var mInstance: BreadApp
-        private var mBackgroundedTime: Long = 0
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
 
@@ -274,14 +273,6 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        /**
-         * Returns true if the application is in the background; false, otherwise.
-         *
-         * @return True if the application is in the background; false, otherwise.
-         */
-        val isInBackground: Boolean
-            get() = mBackgroundedTime > 0
-
         // TODO: Refactor so this does not store the current activity like this.
         @JvmStatic
         @Deprecated("")
@@ -379,13 +370,6 @@ class BreadApp : Application(), KodeinAware {
     private var mServerShutdownRunnable: Runnable? = null
 
     /**
-     * Get the time when the app was sent to background.
-     *
-     * @return the timestamp when the app was sent sent to background or 0 if it's in the foreground.
-     */
-    val backgroundedTime: Long get() = mBackgroundedTime
-
-    /**
      * Returns true if the device state is valid. The device state is considered valid, if the device password
      * is enabled and if the Android key store state is valid.  The Android key store can be invalided if the
      * device password was removed or if fingerprints are added/removed.
@@ -476,7 +460,6 @@ class BreadApp : Application(), KodeinAware {
 
     private fun handleOnStop() {
         if (isBRDWalletInitialized) {
-            mBackgroundedTime = System.currentTimeMillis()
             BreadBoxCloseWorker.enqueueWork()
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
                 EventUtils.saveEvents(this@BreadApp)
@@ -552,13 +535,6 @@ class BreadApp : Application(), KodeinAware {
             .enabledWallets()
             .updateRatesForCurrencies(this)
             .launchIn(startedScope)
-    }
-
-    /**
-     * Reset the backgrounded time to 0. Intended to be called only from BRActivity.onResume
-     */
-    fun resetBackgroundedTime() {
-        mBackgroundedTime = 0
     }
 
     private fun incrementAppForegroundedCounter() {

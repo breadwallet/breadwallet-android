@@ -60,6 +60,11 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.web.WebController
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val SECURE_MODE_WARNING =
@@ -76,6 +81,7 @@ private const val EXTRA_SECURE_WINDOW = "SECURE_WINDOW"
  * This activity serves as a Conductor router host and translates
  * platform events into Mobius events.
  */
+@Suppress("TooManyFunctions")
 class MainActivity : BRActivity() {
 
     companion object {
@@ -85,6 +91,8 @@ class MainActivity : BRActivity() {
     }
 
     private lateinit var router: Router
+
+    private var walletLockJob: Job? = null
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
@@ -152,6 +160,12 @@ class MainActivity : BRActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        walletLockJob?.cancel()
+        walletLockJob = null
+    }
+
     override fun onResume() {
         super.onResume()
         // If we come back to the activity after launching with
@@ -167,8 +181,20 @@ class MainActivity : BRActivity() {
             }
             return
         }
+    }
 
-        lockIfTimedOut()
+    override fun onStart() {
+        super.onStart()
+        walletLockJob?.cancel()
+        walletLockJob = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        walletLockJob = GlobalScope.launch(Main) {
+            delay(LOCK_TIMEOUT)
+            lockApp()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -184,7 +210,7 @@ class MainActivity : BRActivity() {
         }
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         return checkOverlayAndDispatchTouchEvent(ev)
     }
 
@@ -267,22 +293,25 @@ class MainActivity : BRActivity() {
         }
     }
 
-    private fun lockIfTimedOut() {
-        val app = applicationContext as BreadApp
-        val currentController = router.backstack.last().controller()
-        if (currentController is LoginController) {
-            app.resetBackgroundedTime()
-            return
+    private fun lockApp() {
+        val hasPin = BRKeyStore.getPinCode(this).isNotEmpty()
+        val controller = when {
+            hasPin -> LoginController(showHome = false)
+            else -> InputPinController(
+                onComplete = OnCompleteAction.GO_HOME,
+                skipWriteDown = true
+            )
         }
-        val backgroundedTime = app.backgroundedTime
-        val diff = System.currentTimeMillis() - backgroundedTime
-        if (backgroundedTime != 0L && diff >= LOCK_TIMEOUT) {
-            if (BRKeyStore.getPinCode(this).isNotEmpty()) {
-                router.pushController(RouterTransaction.with(LoginController(showHome = false))
-                    .pushChangeHandler(FadeChangeHandler())
-                    .popChangeHandler(FadeChangeHandler()))
+
+        val transaction = RouterTransaction.with(controller)
+            .popChangeHandler(FadeChangeHandler())
+            .pushChangeHandler(FadeChangeHandler())
+
+        with(router) {
+            when (backstack.lastOrNull()?.controller()) {
+                is LoginController -> replaceTopController(transaction)
+                else -> pushController(transaction)
             }
         }
-        app.resetBackgroundedTime()
     }
 }
