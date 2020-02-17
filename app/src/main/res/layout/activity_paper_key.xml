@@ -9,7 +9,7 @@
     android:background="@color/white"
     tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gradient_layout"
         android:layout_width="match_parent"
         android:layout_height="180dp"
@@ -31,7 +31,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-            app:customTFont="CircularPro-Bold.otf"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -73,9 +73,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
             app:layout_constraintVertical_bias="0.506"/>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/phrase_words_pager"
         android:layout_width="match_parent"
         android:layout_height="160dp"
@@ -143,7 +143,7 @@
         android:layout_marginTop="16dp"
         android:text="1 of 12"
         android:textColor="@color/light_gray"
-        app:customTFont="CircularPro-Medium.otf"/>
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"/>
 
 
 </RelativeLayout>

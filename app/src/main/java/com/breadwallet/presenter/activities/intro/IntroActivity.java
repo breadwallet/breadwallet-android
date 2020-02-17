@@ -2,34 +2,33 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
-import com.jniwrappers.BRKey;
 import com.platform.APIClient;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 
 /**
@@ -65,7 +64,8 @@ public class IntroActivity extends BRActivity implements Serializable {
     public static boolean appVisible = false;
     private static IntroActivity app;
     private View splashScreen;
-    private ImageButton faq;
+    private BRText versionText;
+
 
     public static IntroActivity getApp() {
         return app;
@@ -85,18 +85,10 @@ public class IntroActivity extends BRActivity implements Serializable {
         newWalletButton = (Button) findViewById(R.id.button_new_wallet);
         recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
         splashScreen = findViewById(R.id.splash_screen);
+        versionText = findViewById(R.id.version_text);
         setListeners();
         updateBundles();
 //        SyncManager.getInstance().updateAlarms(this);
-        faq = (ImageButton) findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.startView);
-            }
-        });
 
         if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
@@ -105,6 +97,15 @@ public class IntroActivity extends BRActivity implements Serializable {
         introActivity = this;
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String verName = pInfo != null ? pInfo.versionName : " ";
+        versionText.setText(String.format(Locale.US, "%1$s", verName));
 
         if (Utils.isEmulatorOrDebug(this))
             Utils.printPhoneSpecs();

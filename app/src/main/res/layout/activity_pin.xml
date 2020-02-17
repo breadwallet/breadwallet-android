@@ -6,7 +6,7 @@
     android:id="@+id/activity_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bread_gradient"
+    android:background="@color/litecoin_litewallet_blue"
     tools:context="com.breadwallet.presenter.activities.LoginActivity">
 
     <ImageView
@@ -21,7 +21,6 @@
         android:src="@drawable/ltc_logo"
         android:textColor="@color/white"
         android:textSize="48sp"
-        app:customTFont="Celevenia.otf"
         app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -47,36 +46,41 @@
             android:id="@+id/dot1"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot2"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
-
         <View
             android:id="@+id/dot3"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot4"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot5"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot6"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:alpha="0.5"
             android:background="@drawable/ic_pin_dot_white"/>
     </LinearLayout>
 
@@ -95,9 +99,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/UnlockScreen.subheader"
-        android:textColor="@color/almost_black"
+        android:textColor="@color/white"
         android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
         app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
@@ -106,11 +110,11 @@
         android:id="@+id/buttons_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:orientation="horizontal"
         android:weightSum="2.0"
         app:layout_constraintHorizontal_bias="0.5"
@@ -124,14 +128,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_left_white"
-            android:paddingBottom="0dp"
             android:paddingTop="8dp"
+            android:paddingBottom="0dp"
             android:text="@string/UnlockScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customBFont="CircularPro-Medium.otf"
-            app:isBreadButton="false"
-            />
+            app:customBFont="BarlowSemiCondensed-Medium.ttf"
+            app:isBreadButton="false" />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/right_button"
@@ -139,13 +142,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_right_white"
-            android:paddingBottom="0dp"
             android:paddingTop="8dp"
+            android:paddingBottom="0dp"
             android:text="@string/UnlockScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customBFont="CircularPro-Medium.otf"
-            />
+            app:customBFont="BarlowSemiCondensed-Medium.ttf" />
     </LinearLayout>
 
     <ImageView
@@ -174,11 +176,25 @@
         android:text="@string/UnlockScreen.unlocked"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_image"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintLeft_toLeftOf="@+id/unlocked_image"
         app:layout_constraintRight_toRightOf="@+id/unlocked_image"/>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/About.appVersion"
+        android:textColor="@color/white_trans"
+        android:textSize="14sp"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttons_layout"/>
 
     <ImageButton
         android:id="@+id/fingerprint_icon"

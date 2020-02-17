@@ -1,7 +1,6 @@
 package com.platform;
 
 import android.annotation.TargetApi;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -13,10 +12,10 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
@@ -322,21 +321,17 @@ public class APIClient {
             if (request == null) return null;
         }
 
-        Response response = null;
-        ResponseBody postReqBody = null;
+        Response response;
+        ResponseBody postReqBody;
         byte[] data = new byte[0];
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
-//            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
-//            Log.e(TAG, "sendRequest: agent: " + agent);
             request = request.newBuilder().header("User-agent", agent).build();
             response = client.newCall(request).execute();
-            String s = null;
             try {
                 data = response.body().bytes();
-                s = new String(data);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -353,11 +348,11 @@ public class APIClient {
                     response.close();
                     return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
                 }
-                return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+                return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).message("Internal Error").protocol(Protocol.HTTP_1_1).build();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+            return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).message("Network Connection Timeout").build();
         }
 
         if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {

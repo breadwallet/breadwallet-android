@@ -1,12 +1,11 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 
@@ -41,7 +40,7 @@ public class BRNotificationManager {
 
     public static void sendNotification(Context ctx, int icon, String title, String message, int mId) {
         if (ctx == null) return;
-        android.support.v4.app.NotificationCompat.Builder mBuilder =
+        androidx.core.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(icon)
                         .setContentTitle(title)

@@ -23,7 +23,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BarlowSemiCondensed-Bold.ttf"/>
 
     <ImageView
         android:id="@+id/currency_checkmark"

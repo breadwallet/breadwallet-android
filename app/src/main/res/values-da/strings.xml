@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Lavet af det globale Loaf hold. Version %1$s</string>
+  <string name="About.footer">Gemaakt door het Litewallet-team van de Litecoin Foundation\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privatlivspolitik</string>
   <!-- About screen reddit label -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Administrer pung</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Køb Litecoin</string>
+  <string name="MenuButton.buy">Køb</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås pung</string>
   <!-- Menu button title -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Indstillinger</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Support</string>
+  <string name="MenuButton.support">Support:       litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Opret ny pung</string>
   <!-- Menu modal title -->

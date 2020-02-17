@@ -1,9 +1,8 @@
 package com.breadwallet.platform;
 
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -17,10 +16,8 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.KVStoreManager;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

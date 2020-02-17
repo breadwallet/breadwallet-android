@@ -31,7 +31,7 @@
         android:orientation="vertical">
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customTFont="CircularPro-Bold.otf"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             android:id="@+id/fingerprint_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

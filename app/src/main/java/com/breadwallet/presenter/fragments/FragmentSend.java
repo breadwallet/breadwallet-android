@@ -2,18 +2,16 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.transition.AutoTransition;
-import android.support.transition.TransitionManager;
-import android.text.Editable;
-import android.text.TextWatcher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,10 +27,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -95,12 +91,15 @@ public class FragmentSend extends Fragment {
     private Button scan;
     private Button paste;
     private Button send;
+    private Button donate;
     private EditText commentEdit;
     private StringBuilder amountBuilder;
     private TextView isoText;
+    private TextView donate_isoText;
     private EditText amountEdit;
     private TextView balanceText;
     private TextView feeText;
+    private TextView donateText;
     private ImageView edit;
     private long curBalance;
     private String selectedIso;
@@ -134,14 +133,17 @@ public class FragmentSend extends Fragment {
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
+
         addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
         scan = (Button) rootView.findViewById(R.id.scan);
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
+        donate = (Button) rootView.findViewById(R.id.donate_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         feeText = (TextView) rootView.findViewById(R.id.fee_text);
+        donateText = (TextView) rootView.findViewById(R.id.donateLabel);
         edit = (ImageView) rootView.findViewById(R.id.edit);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
@@ -153,7 +155,7 @@ public class FragmentSend extends Fragment {
         regular = (BRButton) rootView.findViewById(R.id.left_button);
         economy = (BRButton) rootView.findViewById(R.id.right_button);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
-        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "LTC" : BRSharedPrefs.getIso(getContext());
+        selectedIso = BRSharedPrefs.getPreferredLTC(getContext()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 
         amountBuilder = new StringBuilder(0);
         setListeners();
@@ -161,14 +163,13 @@ public class FragmentSend extends Fragment {
         isoText.setTextSize(18);
         isoText.setTextColor(getContext().getColor(R.color.light_gray));
         isoText.requestLayout();
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
-
 
         showFeeSelectionButtons(feeButtonsShown);
 
@@ -180,21 +181,9 @@ public class FragmentSend extends Fragment {
             }
         });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
-
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                Activity app = getActivity();
-                if (app == null) {
-                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
-                    return;
-                }
-                BRAnimator.showSupportFragment(app, BRConstants.send);
-            }
-        });
 
         showKeyboard(false);
         setButton(true);
@@ -215,6 +204,7 @@ public class FragmentSend extends Fragment {
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
                     feeText.setVisibility(View.VISIBLE);
+                    donateText.setVisibility(View.VISIBLE);
                     edit.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
@@ -224,30 +214,30 @@ public class FragmentSend extends Fragment {
 
                     AutoTransition tr = new AutoTransition();
                     tr.setInterpolator(new OvershootInterpolator());
-                    tr.addListener(new android.support.transition.Transition.TransitionListener() {
+                    tr.addListener(new androidx.transition.Transition.TransitionListener() {
                         @Override
-                        public void onTransitionStart(@NonNull android.support.transition.Transition transition) {
+                        public void onTransitionStart(@NonNull androidx.transition.Transition transition) {
 
                         }
 
                         @Override
-                        public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
+                        public void onTransitionEnd(@NonNull androidx.transition.Transition transition) {
                             amountEdit.requestLayout();
                             amountEdit.animate().setDuration(100).scaleX(scaleX);
                         }
 
                         @Override
-                        public void onTransitionCancel(@NonNull android.support.transition.Transition transition) {
+                        public void onTransitionCancel(@NonNull androidx.transition.Transition transition) {
 
                         }
 
                         @Override
-                        public void onTransitionPause(@NonNull android.support.transition.Transition transition) {
+                        public void onTransitionPause(@NonNull androidx.transition.Transition transition) {
 
                         }
 
                         @Override
-                        public void onTransitionResume(@NonNull android.support.transition.Transition transition) {
+                        public void onTransitionResume(@NonNull androidx.transition.Transition transition) {
 
                         }
                     });
@@ -388,6 +378,7 @@ public class FragmentSend extends Fragment {
 
             }
         });
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -424,6 +415,33 @@ public class FragmentSend extends Fragment {
             }
         });
 
+        donate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //not allowed now
+                if (!BRAnimator.isClickAllowed()) {
+                    return;
+                }
+
+                //TODO: leaving this for a dynamic donation mechanism will refactor method (getSatoshisFromAmount) then
+                String iso = selectedIso;
+
+                //get amount in satoshis from any isos
+                BigDecimal bigAmount = new BigDecimal(BRConstants.DONATION_AMOUNT_BASE);
+                BigDecimal litoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
+
+                if (litoshiAmount.longValue() > BRWalletManager.getInstance().getBalance(getActivity())) {
+                     SpringAnimator.donationFailShakeAnimation(getActivity(), donateText);
+                }
+
+                BRSender.getInstance().sendTransaction(getContext(),
+                            new PaymentItem(new String[]{BRConstants.DONATION_ADDRESS1},
+                                    null, litoshiAmount.longValue(),
+                                    null,
+                                    false, BRConstants.DONATION_MEMO));
+            }
+        });
+
         backgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -440,7 +458,6 @@ public class FragmentSend extends Fragment {
                     app.getFragmentManager().popBackStack();
             }
         });
-
 
         addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

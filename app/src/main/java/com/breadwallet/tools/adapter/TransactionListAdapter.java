@@ -2,18 +2,16 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -21,40 +19,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
-import com.platform.APIClient;
-import com.platform.entities.TxMetaData;
-import com.platform.kvstore.RemoteKVStore;
-import com.platform.kvstore.ReplicatedKVStore;
-import com.platform.sqlite.KVItem;
 import com.platform.tools.KVStoreManager;
-
-import org.eclipse.jetty.webapp.MetaData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -338,7 +319,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
-        boolean isBTCPreferred = BRSharedPrefs.getPreferredBTC(mContext);
+        boolean isBTCPreferred = BRSharedPrefs.getPreferredLTC(mContext);
         String iso = isBTCPreferred ? "LTC" : BRSharedPrefs.getIso(mContext);
         convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRExchange.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
 

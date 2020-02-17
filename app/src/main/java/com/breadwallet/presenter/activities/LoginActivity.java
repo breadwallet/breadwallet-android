@@ -4,13 +4,14 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -19,13 +20,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -39,6 +39,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
+import java.util.Locale;
 
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -61,6 +62,7 @@ public class LoginActivity extends BRActivity {
     private ImageView unlockedImage;
     private TextView unlockedText;
     private TextView enterPinLabel;
+    private BRText versionText;
     private LinearLayout offlineButtonsLayout;
 
     private ImageButton fingerPrint;
@@ -87,12 +89,12 @@ public class LoginActivity extends BRActivity {
             if (!LoginActivity.this.isDestroyed()) finish();
             return;
         }
-
         if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
+        versionText = (BRText) findViewById(R.id.version_text);
 
         unlockedImage = (ImageView) findViewById(R.id.unlocked_image);
         unlockedText = (TextView) findViewById(R.id.unlocked_text);
@@ -112,15 +114,23 @@ public class LoginActivity extends BRActivity {
                 handleClick(key);
             }
         });
-        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_trans_button);
         keyboard.setBRButtonTextColor(R.color.white);
         keyboard.setShowDot(false);
-        keyboard.setBreadground(getDrawable(R.drawable.bread_gradient));
+
         keyboard.setCustomButtonBackgroundColor(10, getColor(android.R.color.transparent));
         keyboard.setDeleteImage(getDrawable(R.drawable.ic_delete_white));
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String verName = pInfo != null ? pInfo.versionName : " ";
+        versionText.setText(String.format(Locale.US, "%1$s", verName));
 
         setUpOfflineButtons();
 

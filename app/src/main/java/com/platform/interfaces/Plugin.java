@@ -28,7 +28,5 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public interface Plugin {
-    public static final String TAG = Plugin.class.getName();
-
-    public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response);
+    boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response);
 }

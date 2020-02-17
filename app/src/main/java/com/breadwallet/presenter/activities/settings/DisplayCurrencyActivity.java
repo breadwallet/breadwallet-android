@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,15 +57,9 @@ public class DisplayCurrencyActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_currency);
 
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
         ImageButton faq = findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.displayCurrency);
-            }
-        });
 
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);
@@ -184,6 +179,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             final int tmp = BRSharedPrefs.getCurrencyListPosition(mContext);
+
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -200,7 +196,8 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
             textViewItem.setText(c == null ? iso : String.format("%s (%s)", iso, c.getSymbol()));
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
-
+            Log.d("TMP", "Value of TMP " + tmp);
+            Log.d("TMP", "Value of position " + position);
             if (position == tmp) {
                 checkMark.setVisibility(View.VISIBLE);
             } else {

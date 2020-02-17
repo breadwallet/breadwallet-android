@@ -10,6 +10,7 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 
@@ -93,6 +94,13 @@ public class SpringAnimator {
     }
 
     public static void failShakeAnimation(Activity context, View view) {
+        if (view == null) return;
+        Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(shake);
+    }
+
+    public static void donationFailShakeAnimation(Activity context, TextView view) {
         if (view == null) return;
         Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
         view.setVisibility(View.VISIBLE);

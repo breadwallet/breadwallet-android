@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<resources>
-    <string name="default_web_client_id" translatable="false"></string>
-    <string name="gcm_defaultSenderId" translatable="false">1094171723819</string>
-    <string name="firebase_database_url" translatable="false">https://breadwallet-c14dc.firebaseio.com/</string>
-    <string name="google_app_id" translatable="false">1:1094171723819:android:424ca306cf8b29cf</string>
-    <string name="google_api_key" translatable="false">AIzaSyDne1mwpasbOS8likcGvHxE4K5JcV9yc0w</string>
-    <string name="google_storage_bucket" translatable="false"></string>
-</resources>

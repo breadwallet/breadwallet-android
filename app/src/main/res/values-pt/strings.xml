@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Criada pela equipa Loaf global. Versão %1$s</string>
+  <string name="About.footer">Feito pela equipe Litewallet da Fundação Litecoin\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Política de Privacidade</string>
   <!-- About screen reddit label -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Definições</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Ajuda</string>
+  <string name="MenuButton.support">Ajuda:      litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Criar Nova Carteira</string>
   <!-- Menu modal title -->

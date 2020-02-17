@@ -2,7 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 
 /**
@@ -36,7 +36,7 @@ public class BRReportsManager {
     public static void reportBug(RuntimeException er, boolean crash) {
         Log.e(TAG, "reportBug: ", er);
         try {
-            FirebaseCrash.report(er); //todo fix this crashing Firebase...
+            FirebaseCrashlytics.getInstance().recordException(er); //todo fix this crashing Firebase...
         } catch (Exception e) {
             Log.e(TAG, "reportBug: failed to report to FireBase: ", e);
         }
@@ -46,7 +46,7 @@ public class BRReportsManager {
     public static void reportBug(Exception er) {
         Log.e(TAG, "reportBug: ", er);
         try {
-            FirebaseCrash.report(er);
+            FirebaseCrashlytics.getInstance().recordException(er);
         } catch (Exception e) {
             Log.e(TAG, "reportBug: failed to report to FireBase: ", e);
         }

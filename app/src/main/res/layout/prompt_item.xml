@@ -9,7 +9,7 @@
                 android:elevation="4dp"
     >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/prompt_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:layout_marginTop="16dp"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/sub_header"
-            app:customTFont="CircularPro-Bold.otf"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -43,7 +43,7 @@
             android:lineSpacingMultiplier="1.3"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/paragraph"
-            app:customTFont="CircularPro-Book.otf"
+            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/info_title"
@@ -63,5 +63,5 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

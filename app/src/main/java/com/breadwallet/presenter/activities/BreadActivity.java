@@ -10,12 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.transition.TransitionManager;
-import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
@@ -25,12 +19,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.transition.ChangeBounds;
+import androidx.transition.Fade;
+import androidx.transition.TransitionManager;
+import androidx.transition.TransitionSet;
+
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.TextSizeTransition;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
@@ -51,8 +54,8 @@ import java.math.BigDecimal;
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
 import static com.breadwallet.presenter.activities.SetPinActivity.introSetPitActivity;
-import static com.breadwallet.tools.animation.BRAnimator.t1Size;
-import static com.breadwallet.tools.animation.BRAnimator.t2Size;
+import static com.breadwallet.tools.animation.BRAnimator.primaryTextSize;
+import static com.breadwallet.tools.animation.BRAnimator.secondaryTextSize;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -88,25 +91,21 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
+    //TODO: Add back when server can handle the buy
+    //private LinearLayout buyButton;
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
     private InternetManager mConnectionReceiver;
-
     private TextView primaryPrice;
     private TextView secondaryPrice;
     private TextView equals;
-    private TextView priceChange;
-
+    private int progress = 0;
     private TextView manageText;
     //    private TextView walletName;
-    private TextView emptyTip;
     private ConstraintLayout walletProgressLayout;
 
-    private RelativeLayout mainLayout;
     private LinearLayout toolbarLayout;
-    private Toolbar toolBar;
-    private int progress = 0;
     public static boolean appVisible = false;
     private ImageButton searchIcon;
     public ViewFlipper barFlipper;
@@ -141,7 +140,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         initializeViews();
-
         setListeners();
 
         toolbarLayout.removeView(walletProgressLayout);
@@ -149,8 +147,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         setUpBarFlipper();
 
         BRAnimator.init(this);
-        primaryPrice.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it the size it should be after animation to get the X
-        secondaryPrice.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it the size it should be after animation to get the X
+        primaryPrice.setTextSize(primaryTextSize);
+        secondaryPrice.setTextSize(secondaryTextSize);
 
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
@@ -171,7 +169,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUI();
-
     }
 
     @Override
@@ -212,6 +209,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 BRAnimator.showReceiveFragment(BreadActivity.this, true);
             }
         });
+        //TODO: Add back when server can handle the buy
+        //        buyButton.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                if (!BRAnimator.isClickAllowed()) return;
+        //                BRAnimator.showBuyFragment(BreadActivity.this);
+        //            }
+        //        });
 
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,28 +266,62 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     private void swap() {
         if (!BRAnimator.isClickAllowed()) return;
-        boolean b = !BRSharedPrefs.getPreferredBTC(this);
+        boolean b = !BRSharedPrefs.getPreferredLTC(this);
         setPriceTags(b, true);
-        BRSharedPrefs.putPreferredBTC(this, b);
+        BRSharedPrefs.putPreferredLTC(this, b);
     }
 
-    private void setPriceTags(boolean btcPreferred, boolean animate) {
-        secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);
-        primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);
+    private void setPriceTags(boolean ltcPreferred, boolean animate) {
+
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
-        if (animate)
-            TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
-        int px4 = Utils.getPixelsFromDps(this, 4);
-        int px16 = Utils.getPixelsFromDps(this, 16);
-        //align to parent left
-        set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
-        //align equals after the first item
-        set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? secondaryPrice.getId() : primaryPrice.getId(), ConstraintSet.END, px4);
-        //align second item after equals
-        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, equals.getId(), ConstraintSet.END, px4);
-//        align the second item to the baseline of the first
-//        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, 0);
+
+        if (animate) {
+            TransitionSet textSizeTransition = new TransitionSet()
+                    .setOrdering(TransitionSet.ORDERING_TOGETHER)
+                    .addTransition(new TextSizeTransition())
+                    .addTransition(new ChangeBounds());
+
+            TransitionSet transition = new TransitionSet()
+                    .setOrdering(TransitionSet.ORDERING_SEQUENTIAL)
+                    .addTransition(new Fade(Fade.OUT))
+                    .addTransition(textSizeTransition)
+                    .addTransition(new Fade(Fade.IN));
+            TransitionManager.beginDelayedTransition(toolBarConstraintLayout, transition);
+        }
+
+        primaryPrice.setTextSize(ltcPreferred ? primaryTextSize : secondaryTextSize);
+        secondaryPrice.setTextSize(ltcPreferred ? secondaryTextSize : primaryTextSize);
+
+        int[] ids = {primaryPrice.getId(), secondaryPrice.getId(), equals.getId()};
+        // Clear views constraints
+        for (int id : ids) {
+            set.clear(id);
+            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+        }
+
+        int dp16 = Utils.getPixelsFromDps(this, 16);
+        int dp8 = Utils.getPixelsFromDps(this, 4);
+
+        int leftId = ltcPreferred ? primaryPrice.getId() : secondaryPrice.getId();
+        int rightId = ltcPreferred ? secondaryPrice.getId() : primaryPrice.getId();
+
+        int[] chainViews = {leftId, equals.getId(), rightId};
+
+        set.connect(leftId, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, dp16);
+        set.connect(leftId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+        set.connect(leftId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, dp16);
+        set.setVerticalBias(leftId, 1.0f);
+
+        set.connect(rightId, ConstraintSet.BASELINE, leftId, ConstraintSet.BASELINE);
+        set.connect(equals.getId(), ConstraintSet.BASELINE, leftId, ConstraintSet.BASELINE);
+
+        set.connect(equals.getId(), ConstraintSet.START, leftId, ConstraintSet.END, dp8);
+        set.connect(equals.getId(), ConstraintSet.END, rightId, ConstraintSet.START, dp8);
+
+        set.createHorizontalChain(leftId, ConstraintSet.LEFT, equals.getId(), ConstraintSet.RIGHT, chainViews, null, ConstraintSet.CHAIN_PACKED);
+
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
@@ -380,28 +419,27 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     private void initializeViews() {
         // Always cast your custom Toolbar here, and set it as the ActionBar.
-        toolBar = (Toolbar) findViewById(R.id.bread_bar);
+        Toolbar toolBar = (Toolbar) findViewById(R.id.bread_bar);
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
-        manageText = (TextView) findViewById(R.id.manage_text);
-//        walletName = (TextView) findViewById(R.id.wallet_name_text);
+
+        //TODO: Add back when server can handle the buy
+        //buyButton = (LinearLayout) findViewById(R.id.buy_layout);
+        //walletName = (TextView) findViewById(R.id.wallet_name_text);
+
+
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
+        manageText = (TextView) findViewById(R.id.manage_text);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         equals = (TextView) findViewById(R.id.equals);
-        priceChange = (TextView) findViewById(R.id.price_change_text);
-        emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
-//        syncLabel = (TextView) findViewById(R.id.syncing_label);
-//        syncDate = (TextView) findViewById(R.id.sync_date);
-//        loadProgressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
-//        syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
+       // TextView priceChange = (TextView) findViewById(R.id.price_change_text);
+        TextView emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         toolBarConstraintLayout = (ConstraintLayout) findViewById(R.id.bread_toolbar);
         walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
 
-        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
-//        syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
-//        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
         searchBar = (BRSearchBar) findViewById(R.id.search_bar);
@@ -414,7 +452,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     observer.removeOnGlobalLayoutListener(this);
                 if (uiIsDone) return;
                 uiIsDone = true;
-                setPriceTags(BRSharedPrefs.getPreferredBTC(BreadActivity.this), false);
+                setPriceTags(BRSharedPrefs.getPreferredLTC(BreadActivity.this), false);
             }
         });
 

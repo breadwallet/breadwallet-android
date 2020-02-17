@@ -48,15 +48,10 @@ public class SetPinActivity extends BRActivity {
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
-        faq = (ImageButton) findViewById(R.id.faq_button);
 
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.setPin);
-            }
-        });
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
+        faq = (ImageButton) findViewById(R.id.faq_button);
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);

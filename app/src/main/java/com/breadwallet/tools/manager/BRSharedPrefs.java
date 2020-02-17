@@ -276,28 +276,28 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
-    public static boolean getPreferredBTC(Context activity) {
+    //if the user prefers all in litecoin units, not other currencies
+    public static boolean getPreferredLTC(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("priceSetToLitecoin", true);
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
-    public static void putPreferredBTC(Context activity, boolean b) {
-        Log.e(TAG, "putPreferredBTC: " + b);
+    //if the user prefers all in litecoin units, not other currencies
+    public static void putPreferredLTC(Context activity, boolean b) {
+        Log.e(TAG, "putPreferredLTC: " + b);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("priceSetToLitecoin", b);
         editor.apply();
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
+    //if the user prefers all in litecoin units, not other currencies
     public static boolean getUseFingerprint(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("useFingerprint", false);
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
+    //if the user prefers all in litecoin units, not other currencies
     public static void putUseFingerprint(Context activity, boolean use) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

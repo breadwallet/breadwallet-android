@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">Блог</string>
   <!-- About screen footer -->
-  <string name="About.footer">Создано международной командой Loaf. Версия %1$s</string>
+  <string name="About.footer">Сделано командой Litewallet Фонда Litecoin\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Политика конфиденциальности</string>
   <!-- About screen reddit label -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Настройки</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Поддержка</string>
+  <string name="MenuButton.support">Поддержка:       litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Создать новый кошелек</string>
   <!-- Menu modal title -->

@@ -15,7 +15,6 @@ import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.InvalidKeyException;
 

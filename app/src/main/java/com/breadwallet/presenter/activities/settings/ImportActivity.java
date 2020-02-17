@@ -2,13 +2,12 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
@@ -41,14 +40,8 @@ public class ImportActivity extends BRActivity {
         });
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.importWallet);
-            }
-        });
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override

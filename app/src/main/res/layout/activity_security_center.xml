@@ -11,7 +11,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:background="@drawable/bread_gradient"
+        android:background="@color/litecoin_litewallet_blue"
         android:orientation="vertical">
 
 
@@ -45,7 +45,7 @@
                 android:text="@string/SecurityCenter.title"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header"
-                app:customTFont="CircularPro-Bold.otf"
+                app:customTFont="BarlowSemiCondensed-Bold.ttf"
                 />
 
             <ImageButton
@@ -54,7 +54,7 @@
                 android:layout_height="@dimen/faq_dimen"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_white"
+                android:visibility="invisible"
                 />
 
 

@@ -3,16 +3,13 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +18,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Button;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -113,20 +107,9 @@ public class FragmentTransactionItem extends Fragment {
         mTxHashLink = (TextView) rootView.findViewById(R.id.tx_hash_link);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                Activity app = getActivity();
-                if (app == null) {
-                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
-                    return;
-                }
-                BRAnimator.showSupportFragment(app, BRConstants.transactionDetails);
-            }
-        });
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
@@ -164,7 +147,7 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts fee: " + item.getFee());
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
-        String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "LTC" : BRSharedPrefs.getIso(getContext());
+        String iso = BRSharedPrefs.getPreferredLTC(getActivity()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();

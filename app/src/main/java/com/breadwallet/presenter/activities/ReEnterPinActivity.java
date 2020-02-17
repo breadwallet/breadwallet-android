@@ -1,8 +1,7 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -10,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -21,7 +18,6 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.platform.HTTPServer;
 
 public class ReEnterPinActivity extends BRActivity {
     private static final String TAG = ReEnterPinActivity.class.getName();
@@ -55,14 +51,8 @@ public class ReEnterPinActivity extends BRActivity {
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.setPin);
-            }
-        });
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
 
         title = (TextView) findViewById(R.id.title);
         title.setText(getString(R.string.UpdatePin_createTitleConfirm));

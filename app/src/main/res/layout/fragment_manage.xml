@@ -27,7 +27,7 @@
             android:text="Manage Wallet"
             android:textColor="@color/almost_black"
             android:textSize="22sp"
-            app:customTFont="CircularPro-Bold.otf"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             />
 
         <View

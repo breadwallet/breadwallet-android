@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">ブログ</string>
   <!-- About screen footer -->
-  <string name="About.footer">グローバルブレッドチームによって開発されました。バージョン %1$s</string>
+  <string name="About.footer">Litecoin FoundationのLitewalletチームが作成\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">プライバシーポリシー</string>
   <!-- About screen reddit label -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">設定</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">サポート</string>
+  <string name="MenuButton.support">サポート:       litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">新規ウォレットを作成</string>
   <!-- Menu modal title -->

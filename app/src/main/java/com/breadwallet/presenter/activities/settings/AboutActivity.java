@@ -44,7 +44,6 @@ public class AboutActivity extends BRActivity {
         setContentView(R.layout.activity_about);
 
         infoText = (TextView) findViewById(R.id.info_text);
-//        termsText = (TextView) findViewById(R.id.terms_text);
         policyText = (TextView) findViewById(R.id.policy_text);
 
         PackageInfo pInfo = null;
@@ -53,9 +52,8 @@ public class AboutActivity extends BRActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        int verCode = pInfo != null ? pInfo.versionCode : 0;
-
-        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), verCode));
+        String verName = pInfo != null ? pInfo.versionName : " ";
+        infoText.setText(getString(R.string.About_footer, verName));
 
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);

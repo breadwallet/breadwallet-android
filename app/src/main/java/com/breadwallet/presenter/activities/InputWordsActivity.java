@@ -98,14 +98,8 @@ public class InputWordsActivity extends BRActivity {
         }
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
-
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.paperKey);
-            }
-        });
+        //TODO: all views are using the layout of this button. Views should be refactored without it
+        // Hiding until layouts are built.
 
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);

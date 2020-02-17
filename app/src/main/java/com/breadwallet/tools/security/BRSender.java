@@ -18,11 +18,10 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.math.BigDecimal;
 import java.util.Locale;
-import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -76,7 +75,7 @@ public class BRSender {
             public void run() {
                 try {
                     if (sending) {
-                        FirebaseCrash.report(new NullPointerException("sendTransaction returned because already sending.."));
+                        FirebaseCrashlytics.getInstance().recordException(new NullPointerException("sendTransaction returned because already sending.."));
                         return;
                     }
                     sending = true;
@@ -106,7 +105,7 @@ public class BRSender {
                     if (!timedOut)
                         tryPay(app, request);
                     else
-                        FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
+                        FirebaseCrashlytics.getInstance().recordException(new NullPointerException("did not send, timedOut!"));
                     return; //return so no error is shown
                 } catch (InsufficientFundsException ignored) {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
@@ -126,7 +125,7 @@ public class BRSender {
                     return;
                 } catch (FeeOutOfDate ex) {
                     //Fee is out of date, show not connected error
-                    FirebaseCrash.report(ex);
+                    FirebaseCrashlytics.getInstance().recordException(ex);
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {

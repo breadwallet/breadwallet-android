@@ -15,13 +15,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -29,12 +31,13 @@ import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.fragments.FragmentBuy;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentMenu;
-import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -76,8 +79,8 @@ public class BRAnimator {
     private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
     public static int SLIDE_ANIMATION_DURATION = 300;
-    public static float t1Size;
-    public static float t2Size;
+    public static float primaryTextSize;
+    public static float secondaryTextSize;
     public static boolean supportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
@@ -98,10 +101,8 @@ public class BRAnimator {
 
     public static void init(Activity app) {
         if (app == null) return;
-//        t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, app.getResources().getDisplayMetrics());
-//        t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, app.getResources().getDisplayMetrics());
-        t1Size = 30;
-        t2Size = 16;
+        primaryTextSize = 24f;
+        secondaryTextSize = 12.8f;
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
@@ -204,8 +205,6 @@ public class BRAnimator {
             app.getFragmentManager().popBackStackImmediate(entry.getId(),
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
-
-
     }
 
     public static void showTransactionPager(Activity app, List<TxItem> items, int position) {
@@ -333,6 +332,18 @@ public class BRAnimator {
 
     }
 
+    public static void showBuyFragment(Activity app) {
+        if (app == null) {
+            Log.e(TAG, "showBuyFragment: app is null");
+            return;
+        }
+        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+        transaction.add(android.R.id.content, new FragmentBuy(), FragmentBuy.class.getName());
+        transaction.addToBackStack(FragmentBuy.class.getName());
+        transaction.commit();
+    }
+
     public static void showMenuFragment(Activity app) {
         if (app == null) {
             Log.e(TAG, "showReceiveFragment: app is null");
@@ -400,7 +411,7 @@ public class BRAnimator {
         }
     }
 
-    public static void animateSignalSlide(ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
+    public static void animateSignalSlide(ViewGroup signalLayout, final boolean reverse, @Nullable final OnSlideAnimationEnd listener) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);

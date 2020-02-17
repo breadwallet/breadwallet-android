@@ -2,7 +2,6 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
@@ -10,10 +9,9 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -33,9 +31,10 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 
 /**
  * BreadWallet
@@ -77,7 +76,6 @@ public class BRApiManager {
     }
 
     public static BRApiManager getInstance() {
-
         if (instance == null) {
             instance = new BRApiManager();
         }
@@ -99,10 +97,7 @@ public class BRApiManager {
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("n");
                         String selectedISO = BRSharedPrefs.getIso(context);
-//                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
-//                            Log.e(TAG, "theIso : " + theIso);
-//                                Log.e(TAG, "Putting the shit in the shared preffs");
                             BRSharedPrefs.putIso(context, tmp.code);
                             BRSharedPrefs.putCurrencyListPosition(context, i - 1);
                         }
@@ -210,12 +205,12 @@ public class BRApiManager {
                 BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
                 BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
-                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
+                FirebaseCrashlytics.getInstance().recordException(new NullPointerException("Fee is weird:" + fee));
             }
             if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
                 BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
             } else {
-                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
+                FirebaseCrashlytics.getInstance().recordException(new NullPointerException("Economy fee is weird:" + economyFee));
             }
         } catch (JSONException e) {
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
@@ -225,7 +220,6 @@ public class BRApiManager {
     }
 
     private static String urlGET(Context app, String myURL) {
-//        System.out.println("Requested URL_EA:" + myURL);
         Request request = new Request.Builder()
                 .url(myURL)
                 .header("Content-Type", "application/json")

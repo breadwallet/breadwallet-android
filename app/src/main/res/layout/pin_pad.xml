@@ -23,7 +23,7 @@
         android:text="1"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num2"
@@ -39,7 +39,7 @@
         android:text="2"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num3"
@@ -55,7 +55,7 @@
         android:text="3"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num4"
@@ -70,7 +70,7 @@
         android:text="4"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num5"
@@ -85,7 +85,7 @@
         android:text="5"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num6"
@@ -100,7 +100,7 @@
         android:text="6"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num7"
@@ -115,7 +115,7 @@
         android:text="7"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num8"
@@ -130,7 +130,7 @@
         android:text="8"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num9"
@@ -145,7 +145,7 @@
         android:text="9"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/numDot"
@@ -160,7 +160,7 @@
         android:text="."
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/num0"
@@ -175,7 +175,7 @@
         android:text="0"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="CircularPro-Book.otf"/>
+        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
 
     <ImageButton
         android:id="@+id/numDelete"

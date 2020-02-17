@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">블로그</string>
   <!-- About screen footer -->
-  <string name="About.footer">글로벌 Loaf 팀 제작. 버전 %1$s</string>
+  <string name="About.footer">라이트 코인 재단 라이트 월렛 팀\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">개인정보 보호정책</string>
   <!-- About screen reddit label -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">설정</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">고객지원</string>
+  <string name="MenuButton.support">고객지원:      litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">새 지갑 만들기</string>
   <!-- Menu modal title -->

@@ -3,20 +3,19 @@ package com.breadwallet.presenter.customviews;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
@@ -268,53 +267,6 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     public void setBreadground(Drawable drawable) {
         setBackground(drawable);
         invalidate();
-    }
-
-    /**
-     * Change the background of a specific button
-     *
-     * @param index    the index of the button (10 - delete, 11 - dot)
-     * @param drawable the drawable to be used
-     */
-    public void setCustomButtonBackgroundDrawable(int index, Drawable drawable) {
-        switch (index) {
-            case 0:
-                num0.setBackground(drawable);
-                break;
-            case 1:
-                num1.setBackground(drawable);
-                break;
-            case 2:
-                num2.setBackground(drawable);
-                break;
-            case 3:
-                num3.setBackground(drawable);
-                break;
-            case 4:
-                num4.setBackground(drawable);
-                break;
-            case 5:
-                num5.setBackground(drawable);
-                break;
-            case 6:
-                num6.setBackground(drawable);
-                break;
-            case 7:
-                num7.setBackground(drawable);
-                break;
-            case 8:
-                num8.setBackground(drawable);
-                break;
-            case 9:
-                num9.setBackground(drawable);
-                break;
-            case 10:
-                numDelete.setBackground(drawable);
-                break;
-            case 11:
-                numDot.setBackground(drawable);
-                break;
-        }
     }
 
     /**

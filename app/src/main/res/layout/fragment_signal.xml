@@ -26,7 +26,7 @@
             android:layout_marginTop="16dp"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-            app:customTFont="CircularPro-Bold.otf"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             />
 
         <View

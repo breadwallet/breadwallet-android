@@ -2,7 +2,7 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -10,18 +10,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
-
-import org.eclipse.jetty.webapp.MetaData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BreadWallet
@@ -47,7 +40,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRSearchBar extends android.support.v7.widget.Toolbar {
+public class BRSearchBar extends androidx.appcompat.widget.Toolbar {
 
     private static final String TAG = BRSearchBar.class.getName();
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,7 +27,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
-            android:src="@drawable/loafwallet" />
+            android:src="@drawable/litewalletlogo" />
 
     </RelativeLayout>
 
@@ -40,7 +40,7 @@
         android:text="@string/About.title"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
-        app:customTFont="CircularPro-Bold.otf"
+        app:customTFont="BarlowSemiCondensed-Bold.ttf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -89,7 +89,7 @@
         app:layout_constraintLeft_toLeftOf="parent"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
         android:src="@drawable/ic_share"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         android:id="@+id/policy_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -151,22 +151,21 @@
         app:layout_constraintBottom_toTopOf="@+id/info_text"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Book.otf"
         android:id="@+id/info_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="40dp"
         android:text="@string/About.footer"
+        android:textAlignment="center"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Book.otf"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -185,4 +184,4 @@
         app:layout_constraintTop_toTopOf="@+id/textView21"
         android:src="@drawable/ic_share"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

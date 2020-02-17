@@ -62,5 +62,12 @@
     <color name="viewfinder_laser">#ffcc0000</color>
     <color name="viewfinder_border">#ffafed44</color>
 
+    //Litewallet brand color palette
+    <item name="litecoin_gray" type="color">#F1F1F1</item>
+    <item name="litecoin_silver" type="color">#A6A9AA</item>
+    <item name="litecoin_dark_silver" type="color">#4D4D4E</item>
+    <item name="litecoin_litewallet_blue" type="color">#345D9D</item>
+    <item name="litecoin_litewallet_orange" type="color">#FE5F55</item>
+    <item name="litecoin_litewallet_green" type="color">#179E27</item>
 
 </resources>

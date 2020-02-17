@@ -37,7 +37,7 @@
                 android:text="@string/TouchIdSettings.title.android"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header"
-                app:customTFont="CircularPro-Bold.otf"/>
+                app:customTFont="BarlowSemiCondensed-Bold.ttf"/>
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -45,9 +45,8 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_white"
+                android:visibility="invisible"
                 />
-
 
         </RelativeLayout>
 
@@ -85,7 +84,7 @@
         android:text="@string/TouchIdSettings.switchLabel.android"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/paragraph"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="BarlowSemiCondensed-Bold.ttf"/>
 
     <ToggleButton
         android:id="@+id/toggleButton"

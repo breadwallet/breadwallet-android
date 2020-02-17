@@ -110,9 +110,9 @@ public class LinkPlugin implements Plugin {
 
                     hasBrowser = true;
                     Intent getInt = new Intent(app, WebViewActivity.class);
-                    getInt.putExtra("url", getUri.toString());
+                    getInt.putExtra(WebViewActivity.URL_EXTRA, getUri.toString());
                     app.startActivity(getInt);
-                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
                 case "POST":
                     // opens a browser with a customized request object
@@ -143,7 +143,7 @@ public class LinkPlugin implements Plugin {
 
                     JSONObject json;
                     try {
-                        json = new JSONObject(new String(body)); //just check for validity
+                        json = new JSONObject(new String(body)); //TODO: just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: the json is not valid:" + target + " " + baseRequest.getMethod());
@@ -168,12 +168,11 @@ public class LinkPlugin implements Plugin {
 
                     hasBrowser = true;
                     Intent postInt = new Intent(app, WebViewActivity.class);
-                    postInt.putExtra("url", postUrl);
-                    postInt.putExtra("json", json.toString());
+                    postInt.putExtra(WebViewActivity.URL_EXTRA, postUrl);
+                    postInt.putExtra(WebViewActivity.JSON_EXTRA, json.toString());
                     app.startActivity(postInt);
-                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
-
             }
         }
         return false;

@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">博客</string>
   <!-- About screen footer -->
-  <string name="About.footer">由全球 Loaf 团队制作。版本%1$s</string>
+  <string name="About.footer">由萊特幣基金會的萊特錢包團隊製作\n%1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">隐私政策</string>
   <!-- About screen reddit label -->
@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">设置</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">支持</string>
+  <string name="MenuButton.support">支持:       litewallet@litecoinfoundation.net</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">创建新的钱包</string>
   <!-- Menu modal title -->

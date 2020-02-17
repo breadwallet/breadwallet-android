@@ -5,11 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +16,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.settings.NodesActivity;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.platform.APIClient;
@@ -36,8 +33,6 @@ import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.breadwallet.R.id.menu_listview;
 
 /**
  * BreadWallet
@@ -65,7 +60,6 @@ import static com.breadwallet.R.id.menu_listview;
  */
 
 public class FragmentMenu extends Fragment {
-    private static final String TAG = FragmentMenu.class.getName();
 
     public TextView mTitle;
     public ListView mListView;
@@ -74,16 +68,13 @@ public class FragmentMenu extends Fragment {
     public ConstraintLayout signalLayout;
     private ImageButton close;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
-        background = (RelativeLayout) rootView.findViewById(R.id.layout);
-        signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
+        background = rootView.findViewById(R.id.layout);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +83,7 @@ public class FragmentMenu extends Fragment {
             }
         });
 
-        close = (ImageButton) rootView.findViewById(R.id.close_button);
+        close = rootView.findViewById(R.id.close_button);
 
         itemList = new ArrayList<>();
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
@@ -101,7 +92,7 @@ public class FragmentMenu extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                    intent.putExtra("url", HTTPServer.URL_BUY);
+                    intent.putExtra(WebViewActivity.URL_EXTRA, HTTPServer.URL_BUY);
                     Activity app = getActivity();
                     app.startActivity(intent);
                     app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
@@ -117,13 +108,9 @@ public class FragmentMenu extends Fragment {
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
-        itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.ic_question_mark, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(getActivity(), null);
-            }
-        }));
+        //TODO: Refactor with new FAQ / Support design using on-board FAQ data
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.faq_question_white, null) {
+        });
         itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,12 +133,11 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Activity app = getActivity();
-                if (app != null)
-                    app.getFragmentManager().popBackStack();
+                app.getFragmentManager().popBackStack();
             }
         });
         mTitle = rootView.findViewById(R.id.title);
-        mListView = rootView.findViewById(menu_listview);
+        mListView = rootView.findViewById(R.id.menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
@@ -166,7 +152,7 @@ public class FragmentMenu extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeGlobalOnLayoutListener(this);
+                observer.removeOnGlobalLayoutListener(this);
                 BRAnimator.animateBackgroundDim(background, false);
                 BRAnimator.animateSignalSlide(signalLayout, false, null);
             }
@@ -175,38 +161,27 @@ public class FragmentMenu extends Fragment {
 
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
-//        private List<BRMenuItem> items;
-        private Context mContext;
-        private int defaultLayoutResource = R.layout.menu_list_item;
+        private LayoutInflater mInflater;
 
         public MenuListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<BRMenuItem> items) {
             super(context, resource, items);
-//            this.items = items;
-            this.mContext = context;
+            mInflater = ((Activity) context).getLayoutInflater();
         }
 
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
-                // inflate the background
-                LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-                convertView = inflater.inflate(defaultLayoutResource, parent, false);
+                convertView = mInflater.inflate(R.layout.menu_list_item, parent, false);
             }
-            TextView text = (TextView) convertView.findViewById(R.id.item_text);
-            ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
+            TextView text = convertView.findViewById(R.id.item_text);
+            ImageView icon = convertView.findViewById(R.id.item_icon);
 
-            text.setText(getItem(position).text);
-            icon.setImageResource(getItem(position).resId);
-            convertView.setOnClickListener(getItem(position).listener);
-//            applyBlur();
+            final BRMenuItem item = getItem(position);
+            text.setText(item.text);
+            icon.setImageResource(item.resId);
+            convertView.setOnClickListener(item.listener);
             return convertView;
-
-        }
-
-        @Override
-        public int getCount() {
-            return super.getCount();
         }
     }
 
@@ -223,16 +198,4 @@ public class FragmentMenu extends Fragment {
         });
 
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
 }

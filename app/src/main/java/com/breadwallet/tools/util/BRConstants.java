@@ -120,6 +120,13 @@ public class BRConstants {
     public static final boolean WAL = true;
 
     /**
+     * Donation
+     */
+    public static final String DONATION_ADDRESS1 = "MDPqwDf9eUErGLcZNt1HN9HqnbFCSCSRme";
+    public static final String DONATION_AMOUNT_BASE = "0.009";
+    public static final String DONATION_MEMO = "Donation to the Litecoin Foundation.";
+
+    /**
      * Support Center article ids.
      */
     public static final String displayCurrency = "display-currency";

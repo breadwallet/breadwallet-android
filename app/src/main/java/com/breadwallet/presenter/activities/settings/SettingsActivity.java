@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -141,17 +140,6 @@ public class SettingsActivity extends BRActivity {
 
         items.add(new BRSettingsItem(getString(R.string.Settings_manage), "", null, true));
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_notifications), BRSharedPrefs.getShowNotification(this) ?
-                getString(R.string.PushNotifications_on) : getString(R.string.PushNotifications_off), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
-            }
-        }, false));
-
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
             items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
                 @Override
@@ -209,7 +197,7 @@ public class SettingsActivity extends BRActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
-                    intent.putExtra("url", HTTPServer.URL_EA);
+                    intent.putExtra(WebViewActivity.URL_EXTRA, HTTPServer.URL_EA);
                     Activity app = SettingsActivity.this;
                     app.startActivity(intent);
                     app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);

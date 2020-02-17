@@ -1,30 +1,24 @@
 package com.breadwallet;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 /**
  * BreadWallet
@@ -55,41 +49,31 @@ public class BreadApp extends Application {
     private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
-    // host is the server(s) on which the API is hosted
-    public static String HOST = "api.breadwallet.com";
+    public static String HOST = "api.loafwallet.org";
     private static List<OnAppBackgrounded> listeners;
     private static Timer isBackgroundChecker;
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
-    public static boolean appInBackground;
 
     private static Activity currentActivity;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        boolean enableCrashlytics = true;
         if (Utils.isEmulatorOrDebug(this)) {
 //            BRKeyStore.putFailCount(0, this);
-            HOST = "stage2.breadwallet.com";
-            FirebaseCrash.setCrashCollectionEnabled(false);
-//            FirebaseCrash.report(new RuntimeException("test with new json file"));
+            enableCrashlytics = false;
         }
+
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enableCrashlytics);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
-
-//        addOnBackgroundedListener(new OnAppBackgrounded() {
-//            @Override
-//            public void onBackgrounded() {
-//
-//            }
-//        });
-
     }
 
 

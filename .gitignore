@@ -10,6 +10,9 @@ app/src/main/jni/transition/testingStuff.c
 # Java class files
 *.class
 
+# Generated C++ make files
+.cxx/
+
 # Generated files
 bin/
 gen/
@@ -34,6 +37,7 @@ proguard/
 # Android Studio
 *.iml
 *.keystore
+release.properties
 gradle.properties
 */local.properties
 */out
@@ -54,6 +58,9 @@ gradle.properties
 .idea/compiler.xml
 .idea/runConfigurations.xml
 .idea/copyright/profiles_settings.xml
+.idea/caches/
+.idea/assetWizardSettings.xml
+.idea/codeStyles/Project.xml
 .navigation/
 
 # jniLibs files
