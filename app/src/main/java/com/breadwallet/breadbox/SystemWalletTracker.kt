@@ -24,6 +24,7 @@
  */
 package com.breadwallet.breadbox
 
+import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
@@ -31,6 +32,7 @@ import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.crypto.errors.MigrateError
 import com.breadwallet.crypto.events.network.NetworkEvent
 import com.breadwallet.crypto.events.system.SystemEvent
 import com.breadwallet.crypto.events.system.SystemListener
@@ -40,9 +42,16 @@ import com.breadwallet.crypto.events.wallet.WalletEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerCreatedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
+import com.breadwallet.crypto.migration.BlockBlob
+import com.breadwallet.crypto.migration.PeerBlob
+import com.breadwallet.crypto.migration.TransactionBlob
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore
+import com.breadwallet.tools.sqlite.MerkleBlockDataSource
+import com.breadwallet.tools.sqlite.PeerDataSource
+import com.google.common.primitives.UnsignedInteger
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +62,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import java.nio.ByteBuffer
 
 /**
  * Responsible for tracking (and un-tracking) [Wallet]s and handles Core [System] events related to created
@@ -165,6 +175,10 @@ class SystemWalletTracker(
                 val network = event.network
 
                 logDebug("Network '${network.name}' added.")
+
+                if (systemEvt.migrateRequired(event.network)) {
+                    migrateNetwork(systemEvt, event.network, event.network.currency.code)
+                }
 
                 walletProvider
                     .enabledWallets()
@@ -286,5 +300,52 @@ class SystemWalletTracker(
                 currencyId
             )
         )
+    }
+
+    private fun migrateNetwork(system: System, network: Network, currencyCode: String) {
+        logDebug("Migrating Network: $currencyCode")
+
+        val context = BreadApp.getBreadContext()
+        val txStore = BtcBchTransactionDataStore.getInstance(context)
+        val peerStore = PeerDataSource.getInstance(context)
+        val blockStore = MerkleBlockDataSource.getInstance(context)
+
+        val transactions = txStore.getAllTransactions(context, currencyCode)
+            .map { entity ->
+                TransactionBlob.BTC(
+                    entity.buff,
+                    UnsignedInteger.valueOf(entity.blockheight),
+                    UnsignedInteger.valueOf(entity.timestamp)
+                )
+            }
+        val blocks = blockStore.getAllMerkleBlocks(context, currencyCode)
+            .map { entity ->
+                BlockBlob.BTC(entity.buff, UnsignedInteger.valueOf(entity.blockHeight.toLong()))
+            }
+        val peers = peerStore.getAllPeers(context, currencyCode)
+            .map { entity ->
+                PeerBlob.BTC(
+                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.address).long),
+                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.port).long),
+                    PeerBlob.SERVICES_NODE_NETWORK,
+                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.timeStamp).long)
+                )
+            }
+
+        if (transactions.isEmpty() && blocks.isEmpty() && peers.isEmpty()) {
+            logDebug("Migration Ignored: $currencyCode")
+            return
+        }
+
+        try {
+            system.migrateStorage(network, transactions, blocks, peers)
+            logDebug("Migration Complete: $currencyCode")
+        } catch (e: MigrateError) {
+            logError("Migration Failed: $currencyCode", e)
+        } finally {
+            txStore.deleteAllTransactions(context, currencyCode)
+            blockStore.deleteAllBlocks(context, currencyCode)
+            peerStore.deleteAllPeers(context, currencyCode)
+        }
     }
 }
