@@ -421,10 +421,6 @@ internal class CoreBreadBox(
 
     override fun handleSystemEvent(system: System, event: SystemEvent) {
         walletTracker.handleSystemEvent(system, event)
-
-        if (event is SystemNetworkAddedEvent && system.migrateRequired(event.network)) {
-            migrateNetwork(system, event.network, event.network.currency.code)
-        }
     }
 
     override fun handleTransferEvent(
@@ -439,53 +435,6 @@ internal class CoreBreadBox(
         synchronized(this) {
             transferUpdatedChannelMap.getValue(wallet.currency.code).offer(transfer)
             walletTransfersChannelMap.getValue(wallet.currency.code).offer(wallet.transfers)
-        }
-    }
-
-    private fun migrateNetwork(system: System, network: Network, currencyCode: String) {
-        logDebug("Migrating Network: $currencyCode")
-
-        val context = BreadApp.getBreadContext()
-        val txStore = BtcBchTransactionDataStore.getInstance(context)
-        val peerStore = PeerDataSource.getInstance(context)
-        val blockStore = MerkleBlockDataSource.getInstance(context)
-
-        val transactions = txStore.getAllTransactions(context, currencyCode)
-            .map { entity ->
-                TransactionBlob.BTC(
-                    entity.buff,
-                    UnsignedInteger.valueOf(entity.blockheight),
-                    UnsignedInteger.valueOf(entity.timestamp)
-                )
-            }
-        val blocks = blockStore.getAllMerkleBlocks(context, currencyCode)
-            .map { entity ->
-                BlockBlob.BTC(entity.buff, UnsignedInteger.valueOf(entity.blockHeight.toLong()))
-            }
-        val peers = peerStore.getAllPeers(context, currencyCode)
-            .map { entity ->
-                PeerBlob.BTC(
-                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.address).long),
-                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.port).long),
-                    PeerBlob.SERVICES_NODE_NETWORK,
-                    UnsignedInteger.valueOf(ByteBuffer.wrap(entity.timeStamp).long)
-                )
-            }
-
-        if (transactions.isEmpty() && blocks.isEmpty() && peers.isEmpty()) {
-            logDebug("Migration Ignored: $currencyCode")
-            return
-        }
-
-        try {
-            system.migrateStorage(network, transactions, blocks, peers)
-            logDebug("Migration Complete: $currencyCode")
-        } catch (e: MigrateError) {
-            logError("Migration Failed: $currencyCode", e)
-        } finally {
-            txStore.deleteAllTransactions(context, currencyCode)
-            blockStore.deleteAllBlocks(context, currencyCode)
-            peerStore.deleteAllPeers(context, currencyCode)
         }
     }
 
