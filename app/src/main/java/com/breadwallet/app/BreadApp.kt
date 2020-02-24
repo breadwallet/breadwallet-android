@@ -100,6 +100,7 @@ import org.kodein.di.erased.on
 import org.kodein.di.erased.singleton
 import java.io.File
 import java.io.UnsupportedEncodingException
+import java.util.Locale
 import java.util.regex.Pattern
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
@@ -255,7 +256,7 @@ class BreadApp : Application(), KodeinAware {
                     sha256Address.sliceArray(0 until NUMBER_OF_BYTES_FOR_SHA256_NEEDED)
 
                 // Convert the first 10 bytes to a lower case string.
-                val base32String = Base32.encode(firstTenBytes).toLowerCase()
+                val base32String = Base32.encode(firstTenBytes).toLowerCase(Locale.ROOT)
 
                 // Insert a space every 4 chars to match the specified format.
                 val builder = StringBuilder()
