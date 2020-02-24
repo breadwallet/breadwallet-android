@@ -51,7 +51,7 @@ class PaperKeyProveHandler(
                 output.accept(E.OnWroteDownKeySaved)
                 launch(Dispatchers.Main) { showBrdSignal() }
             }
-            is F.ShakeWords -> shakeWords(value)
+            is F.ShakeWords -> launch(Dispatchers.Main) { shakeWords(value) }
         }
     }
 
