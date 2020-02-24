@@ -44,6 +44,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 import java.nio.charset.Charset
@@ -139,7 +140,7 @@ class BdbAuthInterceptor(
         // Lock acquired after successful jwt creation
         if (jwtString != null) return@withLock null to 0
 
-        val (token, clientId) = requestToken()
+        val (token, clientId) = requestToken() ?: return@withLock null to 0
 
         // The JWT deals with exp in seconds, but we will use millis everywhere else.
         // Remove 5 second from our current time to ensure the issued at time is not
@@ -163,7 +164,7 @@ class BdbAuthInterceptor(
         "$jwtHeader.$jwtBody.$jwtSignature" to TimeUnit.SECONDS.toMillis(expiration)
     }
 
-    private fun requestToken(attempt: Int = 0): Pair<String, String> {
+    private fun requestToken(attempt: Int = 0): Pair<String, String>? {
         val request = Request.Builder()
             .addHeader("Authorization", "Bearer ${BuildConfig.BDB_CLIENT_TOKEN}")
             .url("https://api.blockset.com/users/token")
@@ -189,7 +190,20 @@ class BdbAuthInterceptor(
             }
         }
 
-        return JSONObject(checkNotNull(response.body).string()).run {
+        val body = if (response.isSuccessful) {
+            val bodyString = checkNotNull(response.body).string()
+            try {
+                JSONObject(bodyString)
+            } catch (e: JSONException) {
+                logError("Failed to parse token response body", e)
+                null
+            }
+        } else {
+            logError("Token request failed at API with status '${response.code}'")
+            null
+        }
+
+        return body?.run {
             getString("token") to getString("client_token")
         }
     }
