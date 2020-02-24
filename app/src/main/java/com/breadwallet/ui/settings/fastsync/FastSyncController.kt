@@ -177,13 +177,16 @@ class FastSyncController(
                 offer(E.OnLearnMoreClicked)
             }
         }
-        description.text = SpannableString(message).apply {
-            setSpan(
-                clickableSpan,
-                linkPos,
-                linkPos + clickableText.length,
-                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        if (linkPos != -1) {
+            // TODO(DROID-1624): WalletConnectionSettings_link is not correct in CJK translations, ignore link for now.
+            description.text = SpannableString(message).apply {
+                setSpan(
+                    clickableSpan,
+                    linkPos,
+                    linkPos + clickableText.length,
+                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
         description.movementMethod = LinkMovementMethod.getInstance()
         awaitClose()
