@@ -51,6 +51,7 @@ class BrdWalletController : WalletController("BRD") {
     private var mAppBarLayoutRoot: AppBarLayout? = null
     private val mCollapseRewardsDelayHandler = Handler()
     private var mCollapseRewardsRunnable: Runnable? = null
+    private var offsetChangedListener: AppBarLayout.OnOffsetChangedListener? = null
 
     // The view was expanded and ready to lock when collapsed again.
     private var mCanScroll = false
@@ -76,8 +77,7 @@ class BrdWalletController : WalletController("BRD") {
         }
 
         if (!BRSharedPrefs.getRewardsAnimationShown()) {
-            mAppBarLayoutRoot!!.addOnOffsetChangedListener(object :
-                AppBarLayout.OnOffsetChangedListener {
+            offsetChangedListener = object : AppBarLayout.OnOffsetChangedListener {
                 private var mScrollRange =
                     UNINITIALIZED_POSITION
                 private var mTotalDistance = 0
@@ -104,7 +104,8 @@ class BrdWalletController : WalletController("BRD") {
                         expanded_rewards_layout.alpha = 0f
                     }
                 }
-            })
+            }
+            mAppBarLayoutRoot!!.addOnOffsetChangedListener(offsetChangedListener)
 
             // Prepares and plays the confetti brd video.
             confetti_video_view.setVideoURI(CONFETTI_VIDEO_URI)
@@ -129,6 +130,12 @@ class BrdWalletController : WalletController("BRD") {
                 COLLAPSE_REWARDS_DELAY_MILLISECONDS.toLong()
             )
         }
+    }
+
+    override fun onDestroyView(view: View) {
+        mAppBarLayoutRoot?.removeOnOffsetChangedListener(offsetChangedListener)
+        offsetChangedListener = null
+        super.onDestroyView(view)
     }
 
     override fun onDetach(view: View) {
