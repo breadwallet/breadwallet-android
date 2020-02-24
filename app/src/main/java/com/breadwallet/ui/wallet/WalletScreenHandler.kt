@@ -116,6 +116,7 @@ object WalletScreenHandler {
     private fun handleConvertCryptoTransactions(
         effect: F.ConvertCryptoTransactions
     ) = effect.transactions
+        .filter { it.hash.isPresent }
         .map { it.asWalletTransaction() }
         .run(E::OnTransactionsUpdated)
 
@@ -199,9 +200,11 @@ object WalletScreenHandler {
                 )
                 { transfers, _ -> transfers }
             }
-            .mapLatest { wallets ->
+            .mapLatest { transactions ->
                 E.OnTransactionsUpdated(
-                    wallets.map { it.asWalletTransaction() }
+                    transactions
+                        .filter { it.hash.isPresent }
+                        .map { it.asWalletTransaction() }
                         .sortedByDescending(WalletTransaction::timeStamp)
                 )
             }
