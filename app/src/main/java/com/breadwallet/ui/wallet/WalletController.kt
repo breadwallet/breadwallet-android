@@ -490,7 +490,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                         MARKET_CHART_DATE_WITH_HOUR
                     else -> MARKET_CHART_DATE_WITH_YEAR
                 }
-                val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+                val dateFormat = SimpleDateFormat(format, Locale.ROOT)
                 chart_label.text = dateFormat.format(selectedPriceDataPoint.time)
             }
         }
