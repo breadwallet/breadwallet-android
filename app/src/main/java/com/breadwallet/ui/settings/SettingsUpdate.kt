@@ -76,6 +76,12 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun onWalletsUpdated(model: M): Next<M, F> =
         dispatch(setOf(F.GoToHomeScreen))
 
+    override fun onTransactionScanned(
+        model: M,
+        event: E.OnTransactionScanned
+    ): Next<M, F> =
+        dispatch(setOf(F.GoToSend(event.cryptoRequestUrl)))
+
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: M,
@@ -118,7 +124,6 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                     SettingsOption.TOGGLE_SECURE_MODE -> F.ToggleSecureMode
-                    SettingsOption.ENABLE_XRP -> F.EnableXrp
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                 }
             )
