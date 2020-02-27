@@ -125,6 +125,9 @@ public final class EventUtils {
     public static final String EVENT_REWARDS_BANNER = "rewards.banner";
     public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
 
+    public static final String EVENT_PUB_KEY_MISMATCH = "publicKeyMismatch";
+    public static final String EVENT_ATTRIBUTE_REWARDS_ID = "rewards_id";
+
     // In-app messages
     public static final String EVENT_IN_APP_NOTIFICATION_RECEIVED = "inAppNotifications.receivedNotification";
     public static final String EVENT_IN_APP_NOTIFICATION_APPEARED = "inAppNotifications.inAppNotification.appeared";
