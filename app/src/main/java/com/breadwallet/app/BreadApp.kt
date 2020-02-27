@@ -536,6 +536,22 @@ class BreadApp : Application(), KodeinAware {
             .enabledWallets()
             .updateRatesForCurrencies(this)
             .launchIn(startedScope)
+
+        applicationScope.launch {
+            val oldEthAddress = BRKeyStore.getEthPublicKey(applicationContext)
+            if (oldEthAddress?.isNotEmpty() == true) {
+                val currentEthAddress = breadBox.wallet("eth").first().target.toString()
+                if (String(oldEthAddress) != currentEthAddress) {
+                    val rewardsId = BRSharedPrefs.getWalletRewardId()
+                    EventUtils.pushEvent(EventUtils.EVENT_PUB_KEY_MISMATCH, mapOf(
+                        EventUtils.EVENT_ATTRIBUTE_REWARDS_ID to rewardsId
+                    ))
+                    Crashlytics.setUserIdentifier(rewardsId)
+                    Crashlytics.logException(IllegalStateException("eth public key mismatch"))
+                    Crashlytics.setUserIdentifier("")
+                }
+            }
+        }
     }
 
     private fun incrementAppForegroundedCounter() {
