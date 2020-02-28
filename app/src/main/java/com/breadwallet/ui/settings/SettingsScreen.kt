@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.tools.util.Link
 import com.breadwallet.util.CurrencyCode
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -45,6 +46,9 @@ object SettingsScreen {
     )
     sealed class E {
 
+        data class OnTransactionScanned(
+            val cryptoRequestUrl: Link.CryptoRequestUrl
+        ) : E()
         data class OnOptionClicked(val option: SettingsOption) : E()
 
         data class OnOptionsLoaded(@Redacted val options: List<SettingsItem>) : E()
@@ -95,7 +99,6 @@ object SettingsScreen {
         object ResetDefaultCurrencies : F()
         object GoToHomeScreen : F()
         object ToggleSecureMode : F()
-        object EnableXrp : F()
         object WipeNoPrompt : F()
 
         data class GoToFastSync(
@@ -106,5 +109,10 @@ object SettingsScreen {
         data class SetPlatformDebugUrl(val url: String) : F()
         data class SetPlatformBundle(val bundle: String) : F()
         data class SetTokenBundle(val bundle: String) : F()
+
+        data class GoToSend(
+            val cryptoRequestUrl: Link.CryptoRequestUrl,
+            val currencyCode: String = cryptoRequestUrl.currencyCode
+        ) : F()
     }
 }

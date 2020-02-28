@@ -195,6 +195,7 @@ class RouterNavigationEffectHandler(
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         val controller = when {
             effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest)
+            effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl)
             else -> SendSheetController(effect.currencyId)
         }
         router.pushController(RouterTransaction.with(controller))
