@@ -37,11 +37,13 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.breadwallet.BuildConfig
+import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.BreadBoxCloseWorker
 import com.breadwallet.breadbox.CoreBreadBox
 import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
+import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.installHooks
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
@@ -65,6 +67,7 @@ import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isEthereum
+import com.breadwallet.util.trackAddressMismatch
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.crashlytics.android.Crashlytics
 import com.platform.APIClient
@@ -89,6 +92,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -352,10 +356,21 @@ class BreadApp : Application(), KodeinAware {
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
+        bind<BlockchainDb>() with singleton {
+            val httpClient = OkHttpClient()
+            val authInterceptor = BdbAuthInterceptor(this@BreadApp, httpClient)
+            BlockchainDb(
+                httpClient.newBuilder()
+                    .addInterceptor(authInterceptor)
+                    .build()
+            )
+        }
+
         bind<BreadBox>() with singleton {
             CoreBreadBox(
                 getStorageDir(this@BreadApp),
                 !BuildConfig.BITCOIN_TESTNET,
+                instance(),
                 instance()
             )
         }
@@ -538,19 +553,7 @@ class BreadApp : Application(), KodeinAware {
             .launchIn(startedScope)
 
         applicationScope.launch {
-            val oldEthAddress = BRKeyStore.getEthPublicKey(applicationContext)
-            if (oldEthAddress?.isNotEmpty() == true) {
-                val currentEthAddress = breadBox.wallet("eth").first().target.toString()
-                if (String(oldEthAddress) != currentEthAddress) {
-                    val rewardsId = BRSharedPrefs.getWalletRewardId()
-                    EventUtils.pushEvent(EventUtils.EVENT_PUB_KEY_MISMATCH, mapOf(
-                        EventUtils.EVENT_ATTRIBUTE_REWARDS_ID to rewardsId
-                    ))
-                    Crashlytics.setUserIdentifier(rewardsId)
-                    Crashlytics.logException(IllegalStateException("eth public key mismatch"))
-                    Crashlytics.setUserIdentifier("")
-                }
-            }
+            trackAddressMismatch(breadBox)
         }
     }
 
