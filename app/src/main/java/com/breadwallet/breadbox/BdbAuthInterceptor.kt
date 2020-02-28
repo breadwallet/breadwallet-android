@@ -68,12 +68,16 @@ class BdbAuthInterceptor(
         .toString()
         .jwtEncode()
 
-    private val authKeyBytes = checkNotNull(BRKeyStore.getAuthKey(context)) {
-        "BdbAuthInterceptor created before API Auth Key was set."
+    private val authKeyBytes by lazy {
+        checkNotNull(BRKeyStore.getAuthKey(context)) {
+            "BdbAuthInterceptor created before API Auth Key was set."
+        }
     }
 
-    private val authKey = checkNotNull(Key.createFromPrivateKeyString(authKeyBytes).orNull()) {
-        "Failed to create Key from Auth Key Bytes"
+    private val authKey by lazy {
+        checkNotNull(Key.createFromPrivateKeyString(authKeyBytes).orNull()) {
+            "Failed to create Key from Auth Key Bytes"
+        }
     }
 
     @Volatile
@@ -87,9 +91,11 @@ class BdbAuthInterceptor(
         signBasicDer(signingData, authKey).base64EncodedString()
     }
 
-    private val publicKeyString = String(authKey.encodeAsPublic())
-        .run(CryptoHelper::hexDecode)
-        .base64EncodedString()
+    private val publicKeyString by lazy {
+        String(authKey.encodeAsPublic())
+            .run(CryptoHelper::hexDecode)
+            .base64EncodedString()
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!chain.request().url.host.endsWith("blockset.com")) {
