@@ -48,22 +48,24 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.transform
 import org.kodein.di.erased.instance
 
-private const val ETH_PUB_KEY_LENGTH = 20
+private const val ETH_ADDRESS_BYTES = 20
+
+fun ByteArray?.pubKeyToEthAddress(): String? = when {
+    this == null || isEmpty() -> null
+    else -> {
+        val addressBytes = keccak256(this)
+            ?.takeLast(ETH_ADDRESS_BYTES)
+            ?.toByteArray()
+        if (addressBytes?.size == ETH_ADDRESS_BYTES) {
+            "0x${hexEncode(addressBytes)}"
+        } else null
+    }
+}
 
 @Suppress("LongMethod", "ReturnCount")
 suspend fun BreadApp.trackAddressMismatch(breadBox: BreadBox) {
-    val oldPubKeyBytes = BRKeyStore.getEthPublicKey(this)
-    if (oldPubKeyBytes?.isEmpty() == true) {
-        return
-    }
-    val oldEthAddressBytes = keccak256(oldPubKeyBytes)
-        ?.takeLast(ETH_PUB_KEY_LENGTH)?.toByteArray()
-    if (oldEthAddressBytes == null) {
-        logError("Failed to read old address bytes.")
-        return
-    }
+    val oldAddressString = BRKeyStore.getEthPublicKey(this).pubKeyToEthAddress() ?: return
     val ethWallet = breadBox.wallet("eth").first()
-    val oldAddressString = "0x${hexEncode(oldEthAddressBytes)}"
     val coreAddressOld = ethWallet.addressFor(oldAddressString)
     if (coreAddressOld == null) {
         logError("Failed to get core Address for old eth address.")

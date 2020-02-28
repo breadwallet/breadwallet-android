@@ -240,7 +240,7 @@ class BreadApp : Application(), KodeinAware {
         // TODO: This entire operation should be moved into a separate class.
         @Synchronized
         @Suppress("ReturnCount")
-        private fun generateWalletId(address: String): String? {
+        fun generateWalletId(address: String): String? {
             try {
                 // Remove the first 2 characters i.e. 0x
                 val rawAddress = address.drop(2)
