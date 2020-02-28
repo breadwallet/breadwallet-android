@@ -148,7 +148,7 @@ class KVStoreManager(
         }
         return when (val decompressed = BRCompressor.bz2Extract(obj.kv.value)) {
             null -> {
-                logError("Decompression failed for $key: ${String(obj.kv.value)}")
+                logError("Decompression failed for $key: ${obj.kv.value?.let { String(it) }}")
                 null
             }
             else -> decompressed
