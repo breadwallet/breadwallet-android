@@ -215,9 +215,9 @@
                 android:layout_height="32dp"
                 android:background="@android:color/transparent"
                 android:singleLine="true"
-                android:inputType="textNoSuggestions"
+                android:inputType="numberSigned|textNoSuggestions"
                 android:imeOptions="flagNoPersonalizedLearning"
-                android:hint="Destination Tag (Optional)"/>
+                android:hint="@string/Send.destinationTag_optional"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <View

@@ -26,6 +26,7 @@ package com.breadwallet.ui.navigation
 
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
+import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.settings.SettingsSection
 import drewcarlson.switchboard.MobiusHandlerSpec
 import io.sweers.redacted.annotation.Redacted
@@ -45,7 +46,8 @@ interface NavEffectHolder {
 sealed class NavigationEffect {
     data class GoToSend(
         val currencyId: String,
-        val cryptoRequest: CryptoRequest? = null
+        val cryptoRequest: CryptoRequest? = null,
+        val cryptoRequestUrl: Link.CryptoRequestUrl? = null
     ) : NavigationEffect()
 
     data class GoToReceive(val currencyCode: String) : NavigationEffect()

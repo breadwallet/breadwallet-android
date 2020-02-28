@@ -25,22 +25,27 @@
 package com.breadwallet.ui.settings
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
@@ -51,7 +56,10 @@ import kotlinx.android.synthetic.main.controller_settings.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(args) {
+class SettingsController(
+    args: Bundle? = null
+) : BaseMobiusController<M, E, F>(args),
+    ScannerController.Listener {
 
     companion object {
         private const val EXT_SECTION = "section"
@@ -114,6 +122,10 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
                 F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
                 is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 F.GoToHomeScreen -> NavigationEffect.GoToHome
+                is F.GoToSend -> NavigationEffect.GoToSend(
+                    effect.currencyCode,
+                    cryptoRequestUrl = effect.cryptoRequestUrl
+                )
                 else -> null
             }
         })
@@ -157,6 +169,21 @@ class SettingsController(args: Bundle? = null) : BaseMobiusController<M, E, F>(a
                 eventConsumer.accept(E.OnOptionClicked(option))
             }
             settings_list.adapter = adapter
+        }
+    }
+
+    override fun onLinkScanned(link: Link) = Unit
+
+    override fun onRawTextScanned(text: String) {
+        when (val link = text.asLink()) {
+            is Link.CryptoRequestUrl ->
+                eventConsumer.accept(E.OnTransactionScanned(link))
+            else -> {
+                Intent(applicationContext, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .putExtra(MainActivity.EXTRA_DATA, text)
+                    .run(this::startActivity)
+            }
         }
     }
 

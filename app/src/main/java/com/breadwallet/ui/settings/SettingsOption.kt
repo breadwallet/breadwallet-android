@@ -65,7 +65,5 @@ enum class SettingsOption {
     ENABLE_SEG_WIT,
     VIEW_LEGACY_ADDRESS,
     FAST_SYNC_BTC,
-    // Beta
-    ENABLE_XRP
 }
 

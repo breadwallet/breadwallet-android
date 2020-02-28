@@ -76,10 +76,7 @@ object AddWalletsHandler {
                 .mapLatest { (trackedWallets, query) ->
                     TokenUtil.getTokenItems(context)
                         .filter { token ->
-                            // TODO: Remove with ripple release
-                            !token.symbol.equals("xrp", true) &&
-                                (token.isSupported ||
-                                trackedWallets.any { it.currencyId == token.currencyId  })
+                            (token.isSupported || trackedWallets.any { it.currencyId == token.currencyId })
                         }
                         .applyFilter(query)
                         .map { tokenItem ->

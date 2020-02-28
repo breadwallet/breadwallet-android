@@ -60,6 +60,8 @@ class ScannerController(
 
     interface Listener {
         fun onLinkScanned(link: Link)
+
+        fun onRawTextScanned(text: String) = Unit
     }
 
     override val layoutId = R.layout.controller_scanner
@@ -115,7 +117,10 @@ class ScannerController(
     private fun handleValidLink(text: String, link: Link) {
         // Try calling the targetController to handle the link,
         // if no listener handles it, dispatch to MainActivity.
-        val consumed: Unit? = (targetController as? Listener)?.onLinkScanned(link)
+        val consumed: Unit? = (targetController as? Listener)?.run {
+            onRawTextScanned(text)
+            onLinkScanned(link)
+        }
         if (consumed == null) {
             Intent(applicationContext, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
