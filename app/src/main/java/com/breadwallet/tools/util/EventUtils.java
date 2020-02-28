@@ -126,7 +126,8 @@ public final class EventUtils {
     public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
 
     public static final String EVENT_PUB_KEY_MISMATCH = "publicKeyMismatch";
-    public static final String EVENT_ATTRIBUTE_REWARDS_ID = "rewards_id";
+    public static final String EVENT_ATTRIBUTE_REWARDS_ID_HASH = "rewards_id_hash";
+    public static final String EVENT_ATTRIBUTE_ADDRESS_HASH = "address_hash";
 
     // In-app messages
     public static final String EVENT_IN_APP_NOTIFICATION_RECEIVED = "inAppNotifications.receivedNotification";

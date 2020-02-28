@@ -34,11 +34,9 @@ import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
-import com.breadwallet.crypto.errors.MigrateError
 import com.breadwallet.crypto.events.network.NetworkEvent
 import com.breadwallet.crypto.events.system.SystemEvent
 import com.breadwallet.crypto.events.system.SystemListener
-import com.breadwallet.crypto.events.system.SystemNetworkAddedEvent
 import com.breadwallet.crypto.events.transfer.TranferEvent
 import com.breadwallet.crypto.events.wallet.WalletEvent
 import com.breadwallet.crypto.events.wallet.WalletTransferAddedEvent
@@ -48,19 +46,12 @@ import com.breadwallet.crypto.events.wallet.WalletTransferSubmittedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
-import com.breadwallet.crypto.migration.BlockBlob
-import com.breadwallet.crypto.migration.PeerBlob
-import com.breadwallet.crypto.migration.TransactionBlob
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore
-import com.breadwallet.tools.sqlite.MerkleBlockDataSource
-import com.breadwallet.tools.sqlite.PeerDataSource
 import com.breadwallet.tools.util.Bip39Reader
-import com.google.common.primitives.UnsignedInteger
 import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -83,9 +74,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import okhttp3.OkHttpClient
 import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
 private const val DEFAULT_THROTTLE_MS = 100L
@@ -96,7 +85,8 @@ private const val AGGRESSIVE_THROTTLE_MS = 300L
 internal class CoreBreadBox(
     private val storageFile: File,
     private val isMainnet: Boolean = false,
-    private val walletProvider: WalletProvider
+    private val walletProvider: WalletProvider,
+    private val blockchainDb: BlockchainDb
 ) : BreadBox,
     SystemListener {
 
@@ -109,14 +99,6 @@ internal class CoreBreadBox(
 
     private var system: System? = null
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
-    // TODO: Use createForTest until auth flow is implemented.
-    private val blockchainDb by lazy {
-        BlockchainDb(
-            OkHttpClient.Builder()
-                .addInterceptor(BdbAuthInterceptor(BreadApp.getBreadContext(), OkHttpClient()))
-                .build()
-        )
-    }
 
     private val openScope = CoroutineScope(
         SupervisorJob() +
