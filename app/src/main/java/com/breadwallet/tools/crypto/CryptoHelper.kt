@@ -54,6 +54,10 @@ object CryptoHelper {
         Hasher.createForAlgorithm(Hasher.Algorithm.MD5)
     }
 
+    private val keccak256: Hasher by lazy {
+        Hasher.createForAlgorithm(Hasher.Algorithm.KECCAK256)
+    }
+
     private val compact: Signer by lazy {
         Signer.createForAlgorithm(Signer.Algorithm.COMPACT)
     }
@@ -119,6 +123,10 @@ object CryptoHelper {
     @JvmStatic
     fun md5(data: ByteArray): ByteArray? {
         return md5.hash(data).orNull()
+    }
+
+    fun keccak256(data: ByteArray): ByteArray? {
+        return keccak256.hash(data).orNull()
     }
 
     /**
