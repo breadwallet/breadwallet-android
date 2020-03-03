@@ -53,7 +53,7 @@ private const val ETH_ADDRESS_BYTES = 20
 fun ByteArray?.pubKeyToEthAddress(): String? = when {
     this == null || isEmpty() -> null
     else -> {
-        val addressBytes = keccak256(this)
+        val addressBytes = keccak256(sliceArray(1..lastIndex))
             ?.takeLast(ETH_ADDRESS_BYTES)
             ?.toByteArray()
         if (addressBytes?.size == ETH_ADDRESS_BYTES) {
