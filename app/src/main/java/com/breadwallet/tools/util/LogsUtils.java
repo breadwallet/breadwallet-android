@@ -119,8 +119,8 @@ public class LogsUtils {
                     } catch (Exception error) {
                         error.printStackTrace();
                     }
-                    stringBuilder.append("Address: " + storedAddress);
-                    stringBuilder.append("Id: " + walletId);
+                    stringBuilder.append("Address: " + storedAddress + "\n");
+                    stringBuilder.append("Id: " + walletId + "\n");
                 }
             }
         }
