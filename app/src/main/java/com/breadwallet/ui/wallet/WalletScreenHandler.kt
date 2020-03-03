@@ -313,6 +313,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         amount.unit == wallet.defaultUnit -> amount
         else -> amount.convert(wallet.defaultUnit).get()
     }
+    val isErrored = state.failedError.isPresent || confirmation.orNull()?.success == false
     return WalletTransaction(
         txHash = hashString(),
         amount = when {
@@ -336,7 +337,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
             TransactionState.CONFIRMED -> !isComplete
             else -> false
         },
-        isErrored = transferState == TransactionState.FAILED,
+        isErrored = isErrored,
         progress = min(
             ((confirmations.toDouble() / confirmationsUntilFinal) * MAX_PROGRESS).toInt(),
             MAX_PROGRESS
