@@ -1,8 +1,11 @@
 package com.breadwallet.tools.util;
 
+import android.util.Pair;
+
+import com.breadwallet.BuildConfig;
+
 import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
-import com.breadwallet.BuildConfig;
 
 /**
  * BreadWallet
@@ -34,7 +37,7 @@ public class BRConstants {
     /**
      * Native library name
      */
-    public static final String NATIVE_LIB_NAME =  "core-lib";
+    public static final String NATIVE_LIB_NAME = "core-lib";
 
 
     /**
@@ -72,6 +75,7 @@ public class BRConstants {
     public static final String FEE_KB_PREFS = "feeKb";
     public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
     public static final String LITTLE_CIRCLE = "\u2022";
+
     public static String SUPPORT_EMAIL = "support@loafwallet.com";
 
     public static final int ONE_BITCOIN = 100000000;
@@ -122,9 +126,12 @@ public class BRConstants {
     /**
      * Donation
      */
-    public static final String DONATION_ADDRESS1 = "MDPqwDf9eUErGLcZNt1HN9HqnbFCSCSRme";
-    public static final String DONATION_AMOUNT_BASE = "0.009";
-    public static final String DONATION_MEMO = "Donation to the Litecoin Foundation.";
+    public static final Pair[] DONATION_ADDRESSES = new Pair[]
+            {
+                    Pair.create("Litewallet Hardware Fundraiser", "MVRj1whQ8hqcpffjRxLLCJG1mD27V9YygY"),
+                    Pair.create("Litecoin Foundation", "MDPqwDf9eUErGLcZNt1HN9HqnbFCSCSRme")
+            };
+    public static final long DONATION_AMOUNT = 1_800_000;
 
     /**
      * Support Center article ids.
@@ -137,7 +144,7 @@ public class BRConstants {
     public static final String enableFingerprint = "enable-fingerprint-authentication";
     public static final String fingerprintSpendingLimit = "fingerprint-spending-limit";
     public static final String transactionDetails = "transaction-details";
-//    public static final String manageWallet = "manage-wallet";
+    //    public static final String manageWallet = "manage-wallet";
     public static final String receive = "receive-litecoin";
     public static final String requestAmount = "request-amount";
     public static final String send = "send-litecoin";
@@ -146,7 +153,7 @@ public class BRConstants {
     public static final String setPin = "set-pin";
     public static final String importWallet = "import-wallet";
     public static final String writePhrase = "write-phrase";
-//    public static final String confirmPhrase = "confirm-phrase";
+    //    public static final String confirmPhrase = "confirm-phrase";
     public static final String startView = "start-view";
     public static final String wipeWallet = "wipe-wallet";
     public static final String loopBug = "android-loop-bug";
@@ -156,7 +163,7 @@ public class BRConstants {
     public static final String WEB_LINK = "https://loafwallet.org";
     public static final String TOS_LINK = "https://loafwallet.org/tos";
 
-    public static final String BLOCK_EXPLORER_BASE_URL = BuildConfig.BITCOIN_TESTNET ? "https://testnet.litecore.io/tx/" :"https://insight.litecore.io/tx/";
+    public static final String BLOCK_EXPLORER_BASE_URL = BuildConfig.BITCOIN_TESTNET ? "https://testnet.litecore.io/tx/" : "https://insight.litecore.io/tx/";
 
     private BRConstants() {
     }

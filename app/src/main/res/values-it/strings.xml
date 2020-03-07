@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">Precedente</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d di %2$d</string>
+    <string name="Donate.title">Tocca per donare alla Fondazione Litecoin (%1$s)</string>
+  <string name="Donate.title.confirmation">Conferma donazione</string>
+  <string name="Confirmation.processingAndDonationTime">Tempo di elaborazione: l\'elaborazione di queste transazioni richiederà %1$s minuti.</string>
+  <string name="Confirmation.donateLabel">Importo da donare:</string>
+  <string name="Confirmation.staticAddressLabel">Indirizzo:</string>
+  <string name="Donate.word">Donare</string>
+  <string name="Donate.toThe">"Dona al "</string>
 </resources>

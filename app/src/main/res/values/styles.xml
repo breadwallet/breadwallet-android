@@ -14,8 +14,7 @@
     </style>
 
     <!-- ActionBar styles -->
-    <style name="BreadActionBar"
-           parent="@style/Widget.AppCompat.ActionBar">
+    <style name="BreadActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@color/white_trans</item>
     </style>
 
@@ -27,6 +26,15 @@
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/dark_blue</item>
 
+    </style>
+
+    <style name="Send_ActionButStyle">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

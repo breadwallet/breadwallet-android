@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">Назад</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d из %2$d</string>
+    <string name="Donate.title">Нажмите, чтобы пожертвовать в фонд Litecoin (%1$s)</string>
+  <string name="Donate.title.confirmation">Подтвердите Пожертвование</string>
+  <string name="Confirmation.processingAndDonationTime">Время обработки: обработка этих транзакций займет  %1$s минут.</string>
+  <string name="Confirmation.donateLabel">Сумма пожертвования:</string>
+  <string name="Confirmation.staticAddressLabel">Адрес:</string>
+  <string name="Donate.word">жертвовать</string>
+  <string name="Donate.toThe">"Пожертвовать "</string>
 </resources>

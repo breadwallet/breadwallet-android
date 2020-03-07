@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">上一頁</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d 之 %1$d</string>
+    <string name="Donate.title">點擊捐贈給萊特幣基金會 (%1$s)</string>
+  <string name="Donate.title.confirmation">確認捐贈</string>
+  <string name="Confirmation.processingAndDonationTime">處理時間：這些交易將花費 %1$s 分鐘來處理。</string>
+  <string name="Confirmation.donateLabel">捐款金額：</string>
+  <string name="Confirmation.staticAddressLabel">地址：</string>
+  <string name="Donate.word">捐</string>
+  <string name="Donate.toThe">"捐贈給 "</string>
 </resources>

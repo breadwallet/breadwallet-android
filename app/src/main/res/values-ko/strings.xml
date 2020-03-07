@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">이전</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
+    <string name="Donate.title">라이트 코인 재단에 기부하려면 탭하세요 (%1$s)</string>
+  <string name="Donate.title.confirmation">기부 확인</string>
+  <string name="Confirmation.processingAndDonationTime">처리 시간 :이 거래는 %1$s 분이 소요됩니다.</string>
+  <string name="Confirmation.donateLabel">기부 금액</string>
+  <string name="Confirmation.staticAddressLabel">주소</string>
+  <string name="Donate.word">기부</string>
+  <string name="Donate.toThe">"에 기부 "</string>
 </resources>

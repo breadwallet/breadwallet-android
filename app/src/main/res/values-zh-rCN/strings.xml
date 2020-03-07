@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">上一步</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d / %2$d</string>
+    <string name="Donate.title">点击捐赠给莱特币基金会 (%1$s)</string>
+  <string name="Donate.title.confirmation">确认捐赠</string>
+  <string name="Confirmation.processingAndDonationTime">处理时间：这些交易将花费 %1$s 分钟来处理。</string>
+  <string name="Confirmation.donateLabel">捐款金额:</string>
+  <string name="Confirmation.staticAddressLabel">地址:</string>
+  <string name="Donate.word">捐</string>
+  <string name="Donate.toThe">"捐赠给 "</string>
 </resources>

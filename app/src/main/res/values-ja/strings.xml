@@ -738,4 +738,11 @@
   <string name="WritePaperPhrase.previous">前へ</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$dの%1$d</string>
+    <string name="Donate.title">ライトコイン財団に寄付してください (%1$s)</string>
+  <string name="Donate.title.confirmation">寄付を確認する</string>
+  <string name="Confirmation.processingAndDonationTime">処理時間：これらのトランザクションの処理には %1$s 分かかります。</string>
+  <string name="Confirmation.donateLabel">寄付金額：</string>
+  <string name="Confirmation.staticAddressLabel">住所：</string>
+  <string name="Donate.word">寄付</string>
+  <string name="Donate.toThe">"に寄付する "</string>
 </resources>
