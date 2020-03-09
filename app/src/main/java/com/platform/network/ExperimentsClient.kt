@@ -27,7 +27,7 @@ package com.platform.network
 import android.content.Context
 import android.util.Log
 import com.breadwallet.model.Experiment
-import com.crashlytics.android.Crashlytics
+import com.breadwallet.tools.manager.BRReportsManager
 import com.platform.APIClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -81,7 +81,7 @@ object ExperimentsClientImpl : ExperimentsClient {
                 List(jsonArray.length()) { parseExperiment(jsonArray.getJSONObject(it)) }
             } catch (e: JSONException) {
                 Log.e(TAG, "Failed to parse experiments response", e)
-                Crashlytics.logException(e)
+                BRReportsManager.reportBug(e)
                 emptyList()
             }
 
