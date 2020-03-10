@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">경제</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1~24시간</string>
+  <string name="FeeSelector.economyTime">10분 이상</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">이 옵션은 시간에 민감한 거래에는 추천하지 않습니다.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">일반</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10~60분</string>
+  <string name="FeeSelector.regularTime">2.5~5+분</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">처리 속도</string>
   <!-- Checking private key balance progress view text -->
@@ -745,4 +745,7 @@
   <string name="Confirmation.staticAddressLabel">주소</string>
   <string name="Donate.word">기부</string>
   <string name="Donate.toThe">"에 기부 "</string>
+    <string name="FeeSelector.luxury">사치</string>
+    <string name="FeeSelector.luxuryMessage">이 옵션은 귀하가 보험료를 지불하더라도 사실상 거래 수락을 보장합니다.</string>
+    <string name="FeeSelector.luxuryTime">2.5~5+분</string>
 </resources>

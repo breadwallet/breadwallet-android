@@ -254,47 +254,44 @@
                 android:layout_marginStart="16dp"
                 android:textColor="@color/light_gray" />
 
-            <LinearLayout
-                android:id="@+id/buttons_layout"
+            <RadioGroup
+                android:id="@+id/fees_segment"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
+                android:baselineAligned="true"
+                android:checkedButton="@id/regular_fee_but"
                 android:orientation="horizontal"
-                android:weightSum="2.0"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/BRText2">
 
-                <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/left_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_weight="1.0"
-                    android:background="@drawable/b_half_left_blue"
-                    android:padding="0dp"
-                    android:text="@string/FeeSelector.regular"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:customBFont="BarlowSemiCondensed-Medium.ttf"
-                    app:isBreadButton="false" />
+                <RadioButton
+                    android:id="@+id/regular_fee_but"
+                    style="@style/FeeSelectorStartStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/FeeSelector.regular" />
 
-                <com.breadwallet.presenter.customviews.BRButton
-                    android:id="@+id/right_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:background="@drawable/b_half_right_blue_stroke"
-                    android:padding="0dp"
-                    android:text="@string/FeeSelector.economy"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="14sp"
-                    app:customBFont="BarlowSemiCondensed-Medium.ttf"
-                    app:isBreadButton="false" />
-            </LinearLayout>
+                <RadioButton
+                    android:id="@+id/economy_fee_but"
+                    style="@style/FeeSelectorMiddleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/FeeSelector.economy" />
+
+                <RadioButton
+                    android:id="@+id/luxury_fee_but"
+                    style="@style/FeeSelectorEndStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/FeeSelector.luxury" />
+
+            </RadioGroup>
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/warning_text"
@@ -303,9 +300,9 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="@string/FeeSelector.economyWarning"
-                android:textColor="@color/red_text"
-                android:textSize="@dimen/paragraph" />
+                android:textSize="@dimen/paragraph"
+                tools:text="@string/FeeSelector.economyWarning"
+                tools:textColor="@color/red_text" />
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 

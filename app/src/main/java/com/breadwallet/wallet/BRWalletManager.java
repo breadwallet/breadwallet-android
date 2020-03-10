@@ -13,13 +13,13 @@ import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.WorkerThread;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -30,15 +30,17 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.Fee;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FeeManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -46,12 +48,11 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.tools.util.Bip39Reader;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -61,8 +62,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 
 /**
  * BreadWallet
@@ -532,12 +531,11 @@ public class BRWalletManager {
                 m.createWallet(transactionsCount, pubkeyEncoded);
                 String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
                 BRSharedPrefs.putFirstAddress(ctx, firstAddress);
-                long fee = BRSharedPrefs.getFeePerKb(ctx);
-                if (fee == 0) {
-                    fee = defaultFee();
-                    BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+                FeeManager feeManager = FeeManager.getInstance();
+                if (feeManager.isRegularFee()) {
+                    Fee fees = feeManager.getFees();
+                    BRWalletManager.getInstance().setFeePerKb(fees.regular);
                 }
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
             }
 
             if (!pm.isCreated()) {
@@ -600,7 +598,10 @@ public class BRWalletManager {
 
     public interface OnBalanceChanged {
         void onBalanceChanged(long balance);
+    }
 
+    public void setFeePerKb(long fee) {
+        setFeePerKb(fee, false);
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

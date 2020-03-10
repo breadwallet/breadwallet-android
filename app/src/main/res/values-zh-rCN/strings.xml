@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">经济</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1-24 小时</string>
+  <string name="FeeSelector.economyTime">10 分钟以上</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">对于有时效性的交易，不推荐使用此选项。</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">常规</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10-60 分钟</string>
+  <string name="FeeSelector.regularTime">2.5 - 5+ 分钟</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">处理速度</string>
   <!-- Checking private key balance progress view text -->
@@ -745,4 +745,7 @@
   <string name="Confirmation.staticAddressLabel">地址:</string>
   <string name="Donate.word">捐</string>
   <string name="Donate.toThe">"捐赠给 "</string>
+    <string name="FeeSelector.luxury">豪华</string>
+    <string name="FeeSelector.luxuryMessage">尽管您要支付一定的费用，但此选项实际上可以保证您接受交易。</string>
+    <string name="FeeSelector.luxuryTime">2.5 - 5+ 分钟</string>
 </resources>

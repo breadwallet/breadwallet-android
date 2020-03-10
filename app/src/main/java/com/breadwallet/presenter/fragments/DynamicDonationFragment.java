@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FeeManager;
 import com.breadwallet.tools.security.BRSender;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -154,9 +155,17 @@ public class DynamicDonationFragment extends Fragment {
             }
         });
 
+        setFeeToRegular();
+
         currentBalance = BRSharedPrefs.getCatchedBalance(getContext());
 
         updateDonationValues(BRConstants.DONATION_AMOUNT);
+    }
+
+    private void setFeeToRegular() {
+        FeeManager feeManager = FeeManager.getInstance();
+        feeManager.resetFeeType();
+        BRWalletManager.getInstance().setFeePerKb(feeManager.getFees().regular);
     }
 
     private int diff() {

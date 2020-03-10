@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Sparsam</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1 - 24 Stunden</string>
+  <string name="FeeSelector.economyTime">10+ Minuten</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">Diese Option wird nicht für zeitkritische Transaktionen empfohlen.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Regulär</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10 - 60 Minuten</string>
+  <string name="FeeSelector.regularTime">2.5 - 5+ Minuten</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">Verarbeitungsgeschwindigkeit</string>
   <!-- Checking private key balance progress view text -->
@@ -745,4 +745,7 @@
   <string name="Confirmation.staticAddressLabel">Adres:</string>
   <string name="Donate.word">Spenden</string>
   <string name="Donate.toThe">"Spenden Sie an die "</string>
+    <string name="FeeSelector.luxury">Luxus</string>
+    <string name="FeeSelector.luxuryMessage">Diese Option garantiert praktisch die Annahme Ihrer Transaktion, obwohl Sie eine Prämie zahlen.</string>
+    <string name="FeeSelector.luxuryTime">2.5 - 5+ Minuten</string>
 </resources>

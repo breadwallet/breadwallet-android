@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Economy</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1-24 hours</string>
+  <string name="FeeSelector.economyTime">10+ minutes</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">This option is not recommended for time-sensitive transactions.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Regular</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10-60 minutes</string>
+  <string name="FeeSelector.regularTime">2.5 - 5+ minutes</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">Processing Speed</string>
   <!-- Checking private key balance progress view text -->
@@ -747,5 +747,8 @@
     <string name="Confirmation.staticAddressLabel">Address:</string>
     <string name="Donate.word">Donate</string>
     <string name="Donate.toThe">"Donate to the "</string>
+    <string name="FeeSelector.luxury">Luxury</string>
+  <string name="FeeSelector.luxuryTime">2.5 - 5+ minutes</string>
+  <string name="FeeSelector.luxuryMessage">This option virtually guarantees acceptance of your transaction though you are paying a premium.</string>
 
 </resources>

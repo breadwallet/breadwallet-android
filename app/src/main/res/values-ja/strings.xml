@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">エコノミー</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1～24時間</string>
+  <string name="FeeSelector.economyTime">60分以上</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">このオプションは速く送金を済ませたい方にはお勧めしません。</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">レギュラー</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10～60分</string>
+  <string name="FeeSelector.regularTime">2.5～5+分</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">処理速度</string>
   <!-- Checking private key balance progress view text -->
@@ -745,4 +745,7 @@
   <string name="Confirmation.staticAddressLabel">住所：</string>
   <string name="Donate.word">寄付</string>
   <string name="Donate.toThe">"に寄付する "</string>
+    <string name="FeeSelector.luxury">ぜいたく</string>
+    <string name="FeeSelector.luxuryMessage">このオプションは、プレミアムを支払っていますが、トランザクションの受け入れを事実上保証します。</string>
+    <string name="FeeSelector.luxuryTime">2.5～5+分</string>
 </resources>

@@ -157,7 +157,7 @@
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Экономия</string>
   <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
-  <string name="FeeSelector.economyTime">1-24 часов</string>
+  <string name="FeeSelector.economyTime">10+ минут</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">Этот параметр не рекомендуется для транзакций, чувствительных с точки зрения времени.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
@@ -165,7 +165,7 @@
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Обычна сумма</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
-  <string name="FeeSelector.regularTime">10-60 минут</string>
+  <string name="FeeSelector.regularTime">2.5 - 5+ минут</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">Скорость обработки</string>
   <!-- Checking private key balance progress view text -->
@@ -745,4 +745,7 @@
   <string name="Confirmation.staticAddressLabel">Адрес:</string>
   <string name="Donate.word">жертвовать</string>
   <string name="Donate.toThe">"Пожертвовать "</string>
+    <string name="FeeSelector.luxury">люкс</string>
+    <string name="FeeSelector.luxuryMessage">Эта опция фактически гарантирует принятие вашей транзакции, хотя вы платите премию.</string>
+    <string name="FeeSelector.luxuryTime">2.5 - 5+ минут</string>
 </resources>

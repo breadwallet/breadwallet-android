@@ -10,8 +10,6 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -33,8 +31,6 @@ import java.util.TimerTask;
 
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 
 /**
  * BreadWallet
@@ -194,24 +190,13 @@ public class BRApiManager {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
         }
-        long fee;
-        long economyFee;
         try {
             JSONObject obj = new JSONObject(jsonString);
-            fee = obj.getLong("fee_per_kb");
-            economyFee = obj.getLong("fee_per_kb_economy");
-            if (fee != 0 && fee < BRWalletManager.getInstance().maxFee()) {
-                BRSharedPrefs.putFeePerKb(app, fee);
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
-                BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
-            } else {
-                FirebaseCrashlytics.getInstance().recordException(new NullPointerException("Fee is weird:" + fee));
-            }
-            if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
-                BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
-            } else {
-                FirebaseCrashlytics.getInstance().recordException(new NullPointerException("Economy fee is weird:" + economyFee));
-            }
+            // TODO: Refactor when mobile-api v0.4.0 is in prod
+            long regularFee = obj.optLong("fee_per_kb");
+            long economyFee = obj.optLong("fee_per_kb_economy");
+            long luxuryFee = obj.optLong("fee_per_kb_luxury");
+            FeeManager.getInstance().setFees(luxuryFee, regularFee, economyFee);
         } catch (JSONException e) {
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
             BRReportsManager.reportBug(e);
@@ -252,6 +237,4 @@ public class BRApiManager {
         }
         return response;
     }
-
-
 }

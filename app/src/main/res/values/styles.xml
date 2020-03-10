@@ -37,4 +37,25 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="FeeSelectorStyle">
+        <item name="android:layout_weight">1</item>
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/fee_selector_text_selector</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="FeeSelectorStartStyle" parent="FeeSelectorStyle">
+        <item name="android:background">@drawable/fee_selector_bg_start</item>
+    </style>
+
+    <style name="FeeSelectorMiddleStyle" parent="FeeSelectorStyle">
+        <item name="android:background">@drawable/fee_selector_bg_middle</item>
+    </style>
+
+    <style name="FeeSelectorEndStyle" parent="FeeSelectorStyle">
+        <item name="android:background">@drawable/fee_selector_bg_end</item>
+    </style>
+
 </resources>

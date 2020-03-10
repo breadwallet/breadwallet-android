@@ -18,18 +18,21 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
@@ -42,6 +45,8 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FeeManager;
+import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.BRSender;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -106,13 +111,10 @@ public class FragmentSend extends Fragment {
     private LinearLayout keyboardLayout;
     private ImageButton close;
     private ConstraintLayout amountLayout;
-    private BRButton regular;
-    private BRButton economy;
     private BRLinearLayoutWithCaret feeLayout;
     private boolean feeButtonsShown = false;
     private BRText feeDescription;
     private BRText warningText;
-    public static boolean isEconomyFee;
     private boolean amountLabelOn = true;
 
     private static String savedMemo;
@@ -149,8 +151,6 @@ public class FragmentSend extends Fragment {
         feeDescription = (BRText) rootView.findViewById(R.id.fee_description);
         warningText = (BRText) rootView.findViewById(R.id.warning_text);
 
-        regular = (BRButton) rootView.findViewById(R.id.left_button);
-        economy = (BRButton) rootView.findViewById(R.id.right_button);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         selectedIso = BRSharedPrefs.getPreferredLTC(getContext()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 
@@ -162,6 +162,8 @@ public class FragmentSend extends Fragment {
         isoText.requestLayout();
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
+        setupFeesSelector(rootView);
 
         showFeeSelectionButtons(feeButtonsShown);
 
@@ -178,11 +180,59 @@ public class FragmentSend extends Fragment {
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
         showKeyboard(false);
-        setButton(true);
 
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         return rootView;
+    }
+
+    private void setupFeesSelector(View rootView) {
+        RadioGroup feesSegment = rootView.findViewById(R.id.fees_segment);
+        for (int i = 0; i < feesSegment.getChildCount(); i++) {
+            FontManager.setCustomFont(getContext(), (RadioButton) feesSegment.getChildAt(i), "BarlowSemiCondensed-Medium.ttf");
+        }
+        feesSegment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                onFeeTypeSelected(checkedId);
+            }
+        });
+        onFeeTypeSelected(R.id.regular_fee_but);
+    }
+
+    private void onFeeTypeSelected(int checkedId) {
+        FeeManager feeManager = FeeManager.getInstance();
+        switch (checkedId) {
+            case R.id.regular_fee_but:
+                feeManager.setFeeType(FeeManager.REGULAR);
+                BRWalletManager.getInstance().setFeePerKb(feeManager.getFees().regular);
+                setFeeInformation(R.string.FeeSelector_regularTime, 0, 0, View.GONE);
+                break;
+            case R.id.economy_fee_but:
+                feeManager.setFeeType(FeeManager.ECONOMY);
+                BRWalletManager.getInstance().setFeePerKb(feeManager.getFees().economy);
+                setFeeInformation(R.string.FeeSelector_economyTime, R.string.FeeSelector_economyWarning, R.color.red_text, View.VISIBLE);
+                break;
+            case R.id.luxury_fee_but:
+                feeManager.setFeeType(FeeManager.LUXURY);
+                BRWalletManager.getInstance().setFeePerKb(feeManager.getFees().luxury);
+                setFeeInformation(R.string.FeeSelector_luxuryTime, R.string.FeeSelector_luxuryMessage, R.color.light_gray, View.VISIBLE);
+                break;
+            default:
+                break;
+        }
+        updateText();
+    }
+
+    private void setFeeInformation(@StringRes int deliveryTime, @StringRes int warningStringId, @ColorRes int warningColorId, int visibility) {
+        feeDescription.setText(getString(R.string.FeeSelector_estimatedDeliver, getString(deliveryTime)));
+        if (warningStringId != 0) {
+            warningText.setText(warningStringId);
+        }
+        if (warningColorId != 0) {
+            warningText.setTextColor(getResources().getColor(warningColorId, null));
+        }
+        warningText.setVisibility(visibility);
     }
 
     private void setListeners() {
@@ -457,20 +507,7 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        regular.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(true);
-            }
-        });
-        economy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(false);
-            }
-        });
 //        updateText();
-
     }
 
     private void showKeyboard(boolean b) {
@@ -478,14 +515,12 @@ public class FragmentSend extends Fragment {
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
-
         } else {
             Utils.hideKeyboard(getActivity());
             if (signalLayout.indexOfChild(keyboardLayout) == -1)
                 signalLayout.addView(keyboardLayout, curIndex);
             else
                 signalLayout.removeView(keyboardLayout);
-
         }
     }
 
@@ -538,14 +573,13 @@ public class FragmentSend extends Fragment {
                 }
             }
         });
-        isEconomyFee = false;
+        FeeManager.getInstance().resetFeeType();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         loadMetaData();
-
     }
 
     @Override
@@ -683,7 +717,6 @@ public class FragmentSend extends Fragment {
             signalLayout.removeView(feeLayout);
         } else {
             signalLayout.addView(feeLayout, signalLayout.indexOfChild(amountLayout) + 1);
-
         }
     }
 
@@ -701,30 +734,6 @@ public class FragmentSend extends Fragment {
             }
         }
         amountEdit.setText(newAmount.toString());
-    }
-
-    private void setButton(boolean isRegular) {
-        if (isRegular) {
-            isEconomyFee = false;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
-            regular.setTextColor(getContext().getColor(R.color.white));
-            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
-            economy.setTextColor(getContext().getColor(R.color.dark_blue));
-            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
-            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
-            warningText.getLayoutParams().height = 0;
-        } else {
-            isEconomyFee = true;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
-            regular.setTextColor(getContext().getColor(R.color.dark_blue));
-            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
-            economy.setTextColor(getContext().getColor(R.color.white));
-            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
-            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
-            warningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        }
-        warningText.requestLayout();
-        updateText();
     }
 
     private boolean isInputValid(String input) {
