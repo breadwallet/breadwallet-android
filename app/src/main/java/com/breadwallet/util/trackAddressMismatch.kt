@@ -37,7 +37,7 @@ import com.breadwallet.tools.crypto.CryptoHelper.sha256
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.util.EventUtils
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
@@ -136,14 +136,15 @@ private fun sendMismatchEvent(
             "has_balance_eth" to balanceString(ethBalance)
         ) + tokens
     )
-    Crashlytics.getInstance().core.apply {
+
+    FirebaseCrashlytics.getInstance().apply {
         log("rewards_id_hash = $rewardsIdHash")
         log("old_address_hash = $ethAddressHash")
         log("has_balance_eth = ${balanceString(ethBalance)}")
         tokens.forEach { (key, balance) ->
             log("$key = $balance")
         }
-        logException(IllegalStateException("eth address mismatch"))
+        recordException(IllegalStateException("eth address mismatch"))
     }
 }
 
