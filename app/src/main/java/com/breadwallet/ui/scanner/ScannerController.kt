@@ -84,9 +84,9 @@ class ScannerController(
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
-            when (grantResults.single()) {
+            when (grantResults.singleOrNull()) {
                 PackageManager.PERMISSION_GRANTED -> startScanner()
-                PackageManager.PERMISSION_DENIED -> router.popController(this)
+                PackageManager.PERMISSION_DENIED, null -> router.popController(this)
             }
         }
     }
