@@ -168,6 +168,9 @@ class MainActivity : BRActivity() {
 
     override fun onResume() {
         super.onResume()
+        walletLockJob?.cancel()
+        walletLockJob = null
+
         // If we come back to the activity after launching with
         // an invalid device state, check the state again.
         // If the state is valid, recreate the activity otherwise
@@ -183,14 +186,8 @@ class MainActivity : BRActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        walletLockJob?.cancel()
-        walletLockJob = null
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         walletLockJob = GlobalScope.launch(Main) {
             delay(LOCK_TIMEOUT)
             lockApp()

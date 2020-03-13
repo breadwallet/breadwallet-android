@@ -77,31 +77,32 @@ abstract class BRActivity : AppCompatActivity() {
         (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        walletLockJob?.cancel()
-        walletLockJob = null
-        if (locked) {
-            lockApp()
-            locked = false
-        }
-    }
-
     override fun onStop() {
         super.onStop()
+        if (this is MainActivity) putAppBackgroundedFromHome(this, true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (this !is MainActivity) {
+            walletLockJob?.cancel()
+            walletLockJob = null
+            if (locked) {
+                lockApp()
+                locked = false
+            }
+        }
+        init()
+    }
+
+    override fun onPause() {
+        super.onPause()
         if (this !is MainActivity) {
             walletLockJob = GlobalScope.launch(Main) {
                 delay(LOCK_TIMEOUT)
                 locked = true
             }
         }
-        if (this is MainActivity) putAppBackgroundedFromHome(this, true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        init()
     }
 
     override fun onRequestPermissionsResult(
