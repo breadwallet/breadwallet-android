@@ -22,7 +22,6 @@ import android.graphics.PointF;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -43,6 +42,8 @@ import com.google.zxing.qrcode.QRCodeReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static android.hardware.Camera.getCameraInfo;
 
@@ -65,8 +66,6 @@ public class QRCodeReaderView extends SurfaceView
     }
 
     private OnQRCodeReadListener mOnQRCodeReadListener;
-
-    private static final String TAG = QRCodeReaderView.class.getName();
 
     private QRCodeReader mQRCodeReader;
     private int mPreviewWidth;
@@ -212,13 +211,13 @@ public class QRCodeReaderView extends SurfaceView
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated");
+        Timber.d("surfaceCreated");
 
         try {
             // Indicate camera, our View dimensions
             mCameraManager.openDriver(holder, this.getWidth(), this.getHeight());
         } catch (IOException | RuntimeException e) {
-            Log.w(TAG, "Can not openDriver: " + e.getMessage());
+            Timber.e(e, "Can not openDriver");
             mCameraManager.closeDriver();
         }
 
@@ -226,22 +225,22 @@ public class QRCodeReaderView extends SurfaceView
             mQRCodeReader = new QRCodeReader();
             mCameraManager.startPreview();
         } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+            Timber.e(e, "Exception");
             mCameraManager.closeDriver();
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d(TAG, "surfaceChanged");
+        Timber.d("surfaceChanged");
 
         if (holder.getSurface() == null) {
-            Log.e(TAG, "Error: preview surface does not exist");
+            Timber.d("Error: preview surface does not exist");
             return;
         }
 
         if (mCameraManager.getPreviewSize() == null) {
-            Log.e(TAG, "Error: preview size does not exist");
+            Timber.d("Error: preview size does not exist");
             return;
         }
 
@@ -259,7 +258,7 @@ public class QRCodeReaderView extends SurfaceView
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed");
+        Timber.d("surfaceDestroyed");
 
         mCameraManager.setPreviewCallback(null);
         mCameraManager.stopPreview();
@@ -367,11 +366,11 @@ public class QRCodeReaderView extends SurfaceView
             try {
                 return view.mQRCodeReader.decode(bitmap, hintsRef.get());
             } catch (ChecksumException e) {
-                Log.d(TAG, "ChecksumException", e);
+                Timber.e(e, "ChecksumException");
             } catch (NotFoundException e) {
-                Log.d(TAG, "No QR Code found");
+                Timber.e(e, "No QR Code found");
             } catch (FormatException e) {
-                Log.d(TAG, "FormatException", e);
+                Timber.e(e, "FormatException");
             } finally {
                 view.mQRCodeReader.reset();
             }

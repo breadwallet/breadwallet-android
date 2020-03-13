@@ -7,6 +7,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p>
@@ -43,7 +45,7 @@ public class BRClipboardManager {
                     .newPlainText("message", text);
             clipboard.setPrimaryClip(clip);
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 

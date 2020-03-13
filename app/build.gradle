@@ -208,5 +208,6 @@ dependencies {
     // Firebase Crashlytics NDK
     implementation 'com.google.firebase:firebase-crashlytics-ndk:17.0.0-beta01'
 
-
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }

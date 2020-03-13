@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -16,11 +15,11 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
+import timber.log.Timber;
+
 public class ReEnterPinActivity extends BRActivity {
-    private static final String TAG = ReEnterPinActivity.class.getName();
     private BRKeyboard keyboard;
     public static ReEnterPinActivity reEnterPinActivity;
     private View dot1;
@@ -96,7 +95,7 @@ public class ReEnterPinActivity extends BRActivity {
     private void handleClick(String key) {
         if (!isPressAllowed) return;
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -105,7 +104,7 @@ public class ReEnterPinActivity extends BRActivity {
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
-            Log.e(TAG, "handleClick: oops: " + key);
+            Timber.d("handleClick: oops: %s", key);
         }
     }
 
@@ -146,18 +145,16 @@ public class ReEnterPinActivity extends BRActivity {
         if (pin.length() == 6) {
             verifyPin();
         }
-
     }
 
     private void verifyPin() {
         if (firstPIN.equalsIgnoreCase(pin.toString())) {
             AuthManager.getInstance().authSuccess(this);
-//            Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    pin = new StringBuilder("");
+                    pin = new StringBuilder();
                     updateDots();
                 }
             }, 200);
@@ -169,19 +166,15 @@ public class ReEnterPinActivity extends BRActivity {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
-
                     }
                 });
             }
-
         } else {
             AuthManager.getInstance().authFail(this);
-            Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-//            title.setText("Wrong PIN,\nplease try again");
+            Timber.d("verifyPin: FAIL: firs: %s, reEnter: %s ", firstPIN, pin);
             SpringAnimator.failShakeAnimation(this, pinLayout);
             pin = new StringBuilder();
         }
-
     }
 
     @Override

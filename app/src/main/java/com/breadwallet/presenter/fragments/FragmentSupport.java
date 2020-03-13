@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,8 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
+
+import timber.log.Timber;
 
 import static com.platform.HTTPServer.URL_SUPPORT;
 
@@ -53,7 +54,6 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  */
 
 public class FragmentSupport extends Fragment {
-    private static final String TAG = FragmentSupport.class.getName();
     public LinearLayout backgroundLayout;
     public CardView signalLayout;
     WebView webView;
@@ -75,8 +75,7 @@ public class FragmentSupport extends Fragment {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+                Timber.d("shouldOverrideUrlLoading: %s %s", request.getUrl(), request.getMethod());
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
                     getActivity().onBackPressed();
                     onCloseUrl = null;
@@ -137,7 +136,7 @@ public class FragmentSupport extends Fragment {
                     try {
                         getActivity().getFragmentManager().popBackStack();
                     } catch (Exception ignored) {
-                        Log.e(TAG, "", ignored);
+                        Timber.e(ignored);
                     }
                 }
             }

@@ -6,7 +6,6 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.NetworkOnMainThreadException;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
@@ -14,7 +13,6 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -60,6 +58,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
+import timber.log.Timber;
 
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
@@ -89,8 +88,6 @@ import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
  * THE SOFTWARE.
  */
 public class APIClient {
-
-    public static final String TAG = APIClient.class.getName();
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
@@ -148,7 +145,6 @@ public class APIClient {
     }
 
     public static synchronized APIClient getInstance(Context context) {
-
         if (ourInstance == null) ourInstance = new APIClient(context);
         return ourInstance;
     }
@@ -177,14 +173,13 @@ public class APIClient {
                 response = sendRequest(request, false, 0);
                 body = response.body().string();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             JSONObject object = null;
             object = new JSONObject(body);
             return (long) object.getInt("fee_per_kb");
         } catch (JSONException e) {
-            e.printStackTrace();
-
+            Timber.e(e);
         } finally {
             if (response != null) response.close();
         }
@@ -214,7 +209,7 @@ public class APIClient {
                 response = res.body().string();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         if (response == null) throw new NullPointerException();
@@ -252,25 +247,22 @@ public class APIClient {
                 if (response != null)
                     strResponse = response.body().string();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             } finally {
                 if (response != null) response.close();
             }
             if (Utils.isNullOrEmpty(strResponse)) {
-                Log.e(TAG, "getToken: retrieving token failed");
+                Timber.d("getToken: retrieving token failed");
                 return null;
             }
-            JSONObject obj = null;
-            obj = new JSONObject(strResponse);
+            JSONObject obj = new JSONObject(strResponse);
             String token = obj.getString("token");
             BRKeyStore.putToken(token.getBytes(), ctx);
             return token;
         } catch (JSONException e) {
-            e.printStackTrace();
-
+            Timber.e(e);
         }
         return null;
-
     }
 
     private String createRequest(String reqMethod, String base58Body, String contentType, String dateHeader, String url) {
@@ -282,28 +274,27 @@ public class APIClient {
     }
 
     public String signRequest(String request) {
-        Log.d(TAG, "signRequest: " + request);
+        Timber.d("signRequest: %s", request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRKey key;
         try {
             byte[] authKey;
             authKey = BRKeyStore.getAuthKey(ctx);
             if (Utils.isNullOrEmpty(authKey)) {
-                Log.e(TAG, "signRequest: authkey is null");
+                Timber.d("signRequest: authkey is null");
                 return null;
             }
             key = new BRKey(authKey);
         } catch (IllegalArgumentException ex) {
             key = null;
-            Log.e(TAG, "signRequest: " + request, ex);
+            Timber.e(ex, "signRequest: %s", request);
         }
         if (key == null) {
-            Log.e(TAG, "signRequest: key is null, failed to create BRKey");
+            Timber.d("signRequest: key is null, failed to create BRKey");
             return null;
         }
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
-
     }
 
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
@@ -326,58 +317,58 @@ public class APIClient {
         byte[] data = new byte[0];
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
-            Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
+            Timber.d("sendRequest: headers for : %s \n %s", request.url(), request.headers());
             String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
             request = request.newBuilder().header("User-agent", agent).build();
             response = client.newCall(request).execute();
             try {
                 data = response.body().bytes();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
 
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
-                    Log.e(TAG, "sendRequest: redirect uri is null");
+                    Timber.d("sendRequest: redirect uri is null");
                 } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
-                    Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
+                    Timber.d("sendRequest: WARNING: redirect is NOT safe: %s", newLocation);
                 } else {
-                    Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
+                    Timber.d("redirecting: %s >>> %s", request.url(), newLocation);
                     response.close();
                     return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
                 }
                 return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).message("Internal Error").protocol(Protocol.HTTP_1_1).build();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
             return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).message("Network Connection Timeout").build();
         }
 
         if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-            Log.d(TAG, "sendRequest: the content is gzip, unzipping");
+            Timber.d("sendRequest: the content is gzip, unzipping");
             byte[] decompressed = gZipExtract(data);
             postReqBody = ResponseBody.create(null, decompressed);
             try {
-                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
+                Timber.d("sendRequest: (%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(decompressed, "utf-8"));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             return response.newBuilder().body(postReqBody).build();
         } else {
             try {
-                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(data, "utf-8")));
+                Timber.d("sendRequest: (%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(data, "utf-8"));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
         postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
-            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+            Timber.d("sendRequest: got authentication challenge from API - will attempt to get token");
             getToken();
             if (retryCount < 1) {
                 response.close();
@@ -398,13 +389,13 @@ public class APIClient {
                 try {
                     body.writeTo(sink);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 byte[] bytes = sink.buffer().readByteArray();
                 base58Body = CryptoHelper.base58ofSha256(bytes);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String httpDate = sdf.format(new Date());
@@ -423,17 +414,16 @@ public class APIClient {
         String token = tokenBytes == null ? "" : new String(tokenBytes);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {
-            Log.e(TAG, "sendRequest: failed to retrieve token");
+            Timber.i("sendRequest: failed to retrieve token");
             return null;
         }
         String authValue = "bread " + token + ":" + signedRequest;
-//            Log.e(TAG, "sendRequest: authValue: " + authValue);
         modifiedRequest = request.newBuilder();
 
         try {
             request = modifiedRequest.header("Authorization", authValue).build();
         } catch (Exception e) {
-            BRReportsManager.reportBug(e);
+            Timber.e(e);
             return null;
         }
         return request;
@@ -524,7 +514,7 @@ public class APIClient {
                 try {
                     respBody = response.body().string();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 response.close();
             }
@@ -538,7 +528,7 @@ public class APIClient {
             latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return latestVersion;
     }
@@ -557,7 +547,7 @@ public class APIClient {
         try {
             patchFile = new File(getBundleResource(ctx, BREAD_POINT + "-patch.diff"));
             patchBytes = diffResponse.body().bytes();
-            Log.e(TAG, "downloadDiff: trying to write to file");
+            Timber.d("downloadDiff: trying to write to file");
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
             tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-2temp.tar"));
             boolean a = tempFile.createNewFile();
@@ -565,11 +555,11 @@ public class APIClient {
             FileUI.patch(bundleFile, tempFile, patchFile);
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
             if (Utils.isNullOrEmpty(updatedBundleBytes))
-                Log.e(TAG, "downloadDiff: failed to get bytes from the updatedBundle: " + tempFile.getAbsolutePath());
+                Timber.d("downloadDiff: failed to get bytes from the updatedBundle: %s", tempFile.getAbsolutePath());
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
-            Log.e(TAG, "downloadDiff: ", e);
+            Timber.e(e, "downloadDiff");
             new File(getBundleResource(ctx, BREAD_POINT + ".tar")).delete();
         } finally {
             if (patchFile != null)
@@ -588,7 +578,7 @@ public class APIClient {
         assert (response != null);
         try {
             if (response == null) {
-                Log.e(TAG, "writeBundleToFile: WARNING, response is null");
+                Timber.i("writeBundleToFile: WARNING, response is null");
                 return null;
             }
             bodyBytes = response.body().bytes();
@@ -596,14 +586,14 @@ public class APIClient {
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
             return bodyBytes;
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 if (fileOutputStream != null) {
                     fileOutputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
@@ -613,7 +603,7 @@ public class APIClient {
     public boolean tryExtractTar() {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
-            Log.e(TAG, "tryExtractTar: failed to extract, app is null");
+            Timber.i("tryExtractTar: failed to extract, app is null");
             return false;
         }
         File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
@@ -622,7 +612,7 @@ public class APIClient {
         try {
             final InputStream is = new FileInputStream(bundleFile);
             debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-            TarArchiveEntry entry = null;
+            TarArchiveEntry entry;
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
 
                 final String outPutFileName = entry.getName().replace("./", "");
@@ -634,13 +624,13 @@ public class APIClient {
 
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 if (debInputStream != null)
                     debInputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         logFiles("tryExtractTar", ctx);
@@ -705,7 +695,6 @@ public class APIClient {
 
     public boolean isFeatureEnabled(String feature) {
         boolean b = BRSharedPrefs.getFeatureEnabled(ctx, feature);
-//        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
         return b;
     }
 
@@ -719,14 +708,14 @@ public class APIClient {
             Request request = chain.request();
 
             long t1 = System.nanoTime();
-            Log.d(TAG, String.format("Sending request %s on %s%n%s",
-                    request.url(), chain.connection(), request.headers()));
+            Timber.d("Sending request %s on %s%n%s",
+                    request.url(), chain.connection(), request.headers());
 
             Response response = chain.proceed(request);
 
             long t2 = System.nanoTime();
-            Log.d(TAG, String.format("Received response for %s in %.1fms%n%s",
-                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+            Timber.d("Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers());
 
             return response;
         }
@@ -734,7 +723,7 @@ public class APIClient {
 
     public void updatePlatform() {
         if (platformUpdating) {
-            Log.e(TAG, "updatePlatform: platform already Updating!");
+            Timber.i("updatePlatform: platform already Updating!");
             return;
         }
         platformUpdating = true;
@@ -748,7 +737,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
+                Timber.d("updateBundle %s: DONE in %sms", BREAD_POINT, endTime - startTime);
                 itemFinished();
             }
         });
@@ -760,14 +749,14 @@ public class APIClient {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 Thread.currentThread().setName("updateFeatureFlag");
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.updateFeatureFlag();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
+                Timber.d("updateFeatureFlag: DONE in %sms", endTime - startTime);
                 itemFinished();
             }
         });
@@ -781,7 +770,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.syncKvStore();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+                Timber.d("syncKvStore: DONE in %sms", endTime - startTime);
                 itemFinished();
             }
         });
@@ -793,17 +782,16 @@ public class APIClient {
                 final long startTime = System.currentTimeMillis();
                 BRApiManager.updateFeePerKb(ctx);
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
+                Timber.d("update fee: DONE in %sms", endTime - startTime);
                 itemFinished();
             }
         });
-
     }
 
     private void itemFinished() {
         int items = itemsLeftToUpdate.incrementAndGet();
         if (items >= 4) {
-            Log.d(TAG, "PLATFORM ALL UPDATED: " + items);
+            Timber.d("PLATFORM ALL UPDATED: %s", items);
             platformUpdating = false;
             itemsLeftToUpdate.set(0);
         }
@@ -848,16 +836,15 @@ public class APIClient {
 
     public void logFiles(String tag, Context ctx) {
         if (PRINT_FILES) {
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+            Timber.d("logFiles %s : START LOGGING", tag);
             String path = getExtractedPath(ctx, null);
 
             File directory = new File(path);
             File[] files = directory.listFiles();
-            Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
+            Timber.d("Path: %s, size: %d", path, files == null ? 0 : files.length);
             for (int i = 0; files != null && i < files.length; i++) {
-                Log.e("Files", "FileName:" + files[i].getName());
+                Timber.d("FileName:%s", files[i].getName());
             }
-            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
         }
     }
 
@@ -871,5 +858,4 @@ public class APIClient {
             return ctx.getResources().getConfiguration().locale.getLanguage();
         }
     }
-
 }

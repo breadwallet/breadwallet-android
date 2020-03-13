@@ -51,9 +51,11 @@ import com.platform.APIClient;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
+import timber.log.Timber;
+
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
 import static com.breadwallet.presenter.activities.SetPinActivity.introSetPitActivity;
+import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.tools.animation.BRAnimator.primaryTextSize;
 import static com.breadwallet.tools.animation.BRAnimator.secondaryTextSize;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -433,7 +435,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         equals = (TextView) findViewById(R.id.equals);
-       // TextView priceChange = (TextView) findViewById(R.id.price_change_text);
+        // TextView priceChange = (TextView) findViewById(R.id.price_change_text);
         TextView emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         toolBarConstraintLayout = (ConstraintLayout) findViewById(R.id.bread_toolbar);
         walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
@@ -597,7 +599,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 @Override
                 public void run() {
                     final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
-//                    Log.e(TAG, "run: " + progress);
+                    Timber.d("Sync Progress: %s", progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncingProgressThread();
                     }

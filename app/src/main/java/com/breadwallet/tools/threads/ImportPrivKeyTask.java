@@ -25,6 +25,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -167,7 +169,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             result = BRWalletManager.getInstance().getPrivKeyObject();
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return result;
     }

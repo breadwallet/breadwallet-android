@@ -20,6 +20,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -46,14 +48,13 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class HTTPIndexMiddleware implements Middleware {
-    public static final String TAG = HTTPIndexMiddleware.class.getName();
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+        Timber.d("handling: " + target + " " + baseRequest.getMethod());
         Context app = BreadApp.getBreadContext();
         if (app == null) {
-            Log.e(TAG, "handle: app is null!");
+            Timber.i("handle: app is null!");
             return true;
         }
 
@@ -61,7 +62,6 @@ public class HTTPIndexMiddleware implements Middleware {
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
-//            Log.d(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
             return false;
         }
 
@@ -72,11 +72,9 @@ public class HTTPIndexMiddleware implements Middleware {
             response.setHeader("Content-Length", String.valueOf(body.length));
             return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, "text/html;charset=utf-8");
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG, "handle: error sending response: " + target + " " + baseRequest.getMethod());
+            Timber.e(e, "handle: error sending response: ");
             return BRHTTPHelper.handleError(500, null, baseRequest, response);
         }
-
     }
 
     public String rTrim(String str, String piece) {

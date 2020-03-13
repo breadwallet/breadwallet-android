@@ -1,7 +1,6 @@
 package com.platform.middlewares.plugins;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BREventManager;
@@ -30,6 +29,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -56,7 +57,6 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class WalletPlugin implements Plugin {
-    public static final String TAG = WalletPlugin.class.getName();
     private static Continuation continuation;
     private static Request globalBaseRequest;
 
@@ -66,9 +66,9 @@ public class WalletPlugin implements Plugin {
         Activity app = (Activity) BreadApp.getBreadContext();
 
         if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             BRWalletManager wm = BRWalletManager.getInstance();
@@ -87,22 +87,21 @@ public class WalletPlugin implements Plugin {
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
                 return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, "application/json");
             } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
+                Timber.e(e);
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
         } else if (target.startsWith("/_wallet/_event") && request.getMethod().equalsIgnoreCase("get")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             byte[] rawData = BRHTTPHelper.getBody(request);
             String name = target.replace("/_event/", "");
 
-            Log.e(TAG, "handle: body: " + new String(rawData != null ? rawData : "null".getBytes()));
+            Timber.d("handle: body: %s", new String(rawData != null ? rawData : "null".getBytes()));
             JSONObject json = null;
             if (rawData != null) {
                 try {
                     json = new JSONObject(new String(rawData));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
             if (json != null) {
@@ -112,8 +111,7 @@ public class WalletPlugin implements Plugin {
                     try {
                         attr.put(key, json.getString(key));
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, String.format("Failed to get the key: %s, from json: %s", key, json.toString()));
+                        Timber.e(e);
                     }
                 }
                 BREventManager.getInstance().pushEvent(name, attr);
@@ -123,7 +121,7 @@ public class WalletPlugin implements Plugin {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
 
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             /**
              * POST /_wallet/sign_bitid
 
@@ -143,22 +141,22 @@ public class WalletPlugin implements Plugin {
              }
              */
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             String contentType = request.getHeader("content-type");
             if (contentType == null || !contentType.equalsIgnoreCase("application/json")) {
-                Log.e(TAG, "handle: content type is not application/json: " + target + " " + baseRequest.getMethod());
+                Timber.d("handle: content type is not application/json: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
             String reqBody = null;
             try {
                 reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             if (Utils.isNullOrEmpty(reqBody)) {
-                Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                Timber.d("handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
 
@@ -169,15 +167,14 @@ public class WalletPlugin implements Plugin {
                 globalBaseRequest = baseRequest;
                 BRBitId.signBitID(app, null, obj);
             } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
+                Timber.e(e);
                 return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
             }
 
             return true;
         }
 
-        Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
+        Timber.d("handle: WALLET PLUGIN DID NOT HANDLE: %s %s", target, baseRequest.getMethod());
         return true;
     }
 
@@ -191,23 +188,21 @@ public class WalletPlugin implements Plugin {
                         try {
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
                         } catch (IOException e) {
-                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
-                            e.printStackTrace();
+                            Timber.e(e, "sendBitIdResponse: failed to send error 401");
                         }
                         return;
                     }
                     if (restJson == null || restJson.isNull("signature")) {
-                        Log.e(TAG, "sendBitIdResponse: WARNING restJson is null: " + restJson);
+                        Timber.d("sendBitIdResponse: WARNING restJson is null: %s", restJson);
                         try {
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(500, "json malformed or null");
                         } catch (IOException e) {
-                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
-                            e.printStackTrace();
+                            Timber.e(e, "sendBitIdResponse: failed to send error 401");
                         }
                         return;
                     }
                     if (continuation == null) {
-                        Log.e(TAG, "sendBitIdResponse: WARNING continuation is null");
+                        Timber.d("sendBitIdResponse: WARNING continuation is null");
                         return;
                     }
 
@@ -215,10 +210,9 @@ public class WalletPlugin implements Plugin {
                         continuation.getServletResponse().setContentType("application/json");
                         continuation.getServletResponse().setCharacterEncoding("UTF-8");
                         continuation.getServletResponse().getWriter().print(restJson);
-                        Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
+                        Timber.d("sendBitIdResponse: finished with writing to the response: %s", restJson);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
+                        Timber.e(e, "sendBitIdResponse Failed to send json: ");
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
@@ -231,6 +225,5 @@ public class WalletPlugin implements Plugin {
                 }
             }
         });
-
     }
 }

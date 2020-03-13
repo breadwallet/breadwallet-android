@@ -17,6 +17,8 @@ import com.breadwallet.tools.util.TrustedNode;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -43,7 +45,6 @@ import java.util.List;
  */
 
 public class BRPeerManager {
-    public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
 
     private static List<OnTxStatusUpdate> statusUpdateListeners;
@@ -73,7 +74,7 @@ public class BRPeerManager {
      */
 
     public static void syncStarted() {
-        Log.d(TAG, "syncStarted: " + Thread.currentThread().getName());
+        Timber.d("syncStarted: %s", Thread.currentThread().getName());
 //        BRPeerManager.getInstance().refreshConnection();
         Context ctx = BreadApp.getBreadContext();
         int startHeight = BRSharedPrefs.getStartHeight(ctx);
@@ -83,7 +84,7 @@ public class BRPeerManager {
     }
 
     public static void syncSucceeded() {
-        Log.d(TAG, "syncSucceeded");
+        Timber.d("syncSucceeded");
         final Context app = BreadApp.getBreadContext();
         if (app == null) return;
         BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
@@ -97,22 +98,21 @@ public class BRPeerManager {
             }
         });
         if (onSyncFinished != null) onSyncFinished.onFinished();
-
     }
 
     public static void syncFailed() {
-        Log.d(TAG, "syncFailed");
+        Timber.d("syncFailed");
         SyncManager.getInstance().stopSyncingProgressThread();
         Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        Log.e(TAG, "Network Not Available, showing not connected bar  ");
+        Timber.d("Network Not Available, showing not connected bar");
 
         SyncManager.getInstance().stopSyncingProgressThread();
         if (onSyncFinished != null) onSyncFinished.onFinished();
     }
 
     public static void txStatusUpdate() {
-        Log.d(TAG, "txStatusUpdate");
+        Timber.d("txStatusUpdate");
 
         for (OnTxStatusUpdate listener : statusUpdateListeners) {
             if (listener != null) listener.onStatusUpdate();
@@ -127,7 +127,7 @@ public class BRPeerManager {
     }
 
     public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {
-        Log.d(TAG, "saveBlocks: " + blockEntities.length);
+        Timber.d("saveBlocks: %s", blockEntities.length);
 
         final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
@@ -142,7 +142,7 @@ public class BRPeerManager {
     }
 
     public static void savePeers(final PeerEntity[] peerEntities, final boolean replace) {
-        Log.d(TAG, "savePeers: " + peerEntities.length);
+        Timber.d("savePeers: %s", peerEntities.length);
         final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -152,16 +152,15 @@ public class BRPeerManager {
                 PeerDataSource.getInstance(ctx).putPeers(peerEntities);
             }
         });
-
     }
 
     public static boolean networkIsReachable() {
-        Log.d(TAG, "networkIsReachable");
+        Timber.d("networkIsReachable");
         return BRWalletManager.getInstance().isNetworkAvailable(BreadApp.getBreadContext());
     }
 
     public static void deleteBlocks() {
-        Log.d(TAG, "deleteBlocks");
+        Timber.d("deleteBlocks");
         final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -170,11 +169,10 @@ public class BRPeerManager {
                 MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
             }
         });
-
     }
 
     public static void deletePeers() {
-        Log.d(TAG, "deletePeers");
+        Timber.d("deletePeers");
         final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -183,21 +181,17 @@ public class BRPeerManager {
                 PeerDataSource.getInstance(ctx).deleteAllPeers();
             }
         });
-
     }
-
 
     public void updateFixedPeer(Context ctx) {
         String node = BRSharedPrefs.getTrustNode(ctx);
         String host = TrustedNode.getNodeHost(node);
         int port = TrustedNode.getNodePort(node);
-//        Log.e(TAG, "trust onClick: host:" + host);
-//        Log.e(TAG, "trust onClick: port:" + port);
         boolean success = setFixedPeer(host, port);
         if (!success) {
-            Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+            Timber.i("updateFixedPeer: Failed to updateFixedPeer with input: %s", node);
         } else {
-            Log.d(TAG, "updateFixedPeer: succeeded");
+            Timber.d("updateFixedPeer: succeeded");
         }
         connect();
     }
@@ -210,7 +204,6 @@ public class BRPeerManager {
                     BRPeerManager.getInstance().connect();
                 }
             });
-
     }
 
     public void addStatusUpdateListener(OnTxStatusUpdate listener) {
@@ -226,7 +219,6 @@ public class BRPeerManager {
             return;
         }
         statusUpdateListeners.remove(listener);
-
     }
 
     public static void setOnSyncFinished(OnSyncSucceeded listener) {

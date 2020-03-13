@@ -41,6 +41,8 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -67,8 +69,6 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class CameraPlugin implements Plugin {
-    public static final String TAG = CameraPlugin.class.getName();
-
     private static Request globalBaseRequest;
     private static Continuation continuation;
 
@@ -88,24 +88,22 @@ public class CameraPlugin implements Plugin {
         //
 
         if (target.startsWith("/_camera/take_picture")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             final Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
 
             if (globalBaseRequest != null) {
-                Log.e(TAG, "handle: already taking a picture: " + target + " " + baseRequest.getMethod());
-
+                Timber.i("handle: already taking a picture: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(423, null, baseRequest, response);
             }
 
             PackageManager pm = app.getPackageManager();
 
             if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                Log.e(TAG, "handle: no camera available: ");
+                Timber.i("handle: no camera available: ");
                 return BRHTTPHelper.handleError(404, null, baseRequest, response);
             }
 
@@ -143,21 +141,21 @@ public class CameraPlugin implements Plugin {
                     ((Activity) app).overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.i("handling: " + target + " " + baseRequest.getMethod());
             final Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
             if (pictureBytes == null) {
-                Log.e(TAG, "handle: WARNING pictureBytes is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: WARNING pictureBytes is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "pictureBytes is null", baseRequest, response);
             }
             byte[] imgBytes = pictureBytes;
@@ -169,7 +167,7 @@ public class CameraPlugin implements Plugin {
                 try {
                     imgBytes = b64.getBytes("UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                     return BRHTTPHelper.handleError(500, null, baseRequest, response);
                 }
             }
@@ -182,10 +180,10 @@ public class CameraPlugin implements Plugin {
             @Override
             public void run() {
                 Bitmap img = getResizedBitmap(BitmapFactory.decodeByteArray(data, 0, data.length), 1000);
-                Log.e(TAG, "handleCameraImageTaken: w:" + img.getWidth() + "h:" + img.getHeight());
+                Timber.i("handleCameraImageTaken: w:" + img.getWidth() + "h:" + img.getHeight());
                 if (globalBaseRequest == null || continuation == null) {
                     //shit should now happen
-                    Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
+                    Timber.i("handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
                     return;
                 }
                 try {
@@ -197,18 +195,18 @@ public class CameraPlugin implements Plugin {
                         return;
                     }
                     String id = writeToFile(context, img);
-                    Log.e(TAG, "handleCameraImageTaken: " + id);
+                    Timber.d("handleCameraImageTaken: %s", id);
                     if (id != null) {
                         JSONObject respJson = new JSONObject();
                         try {
                             respJson.put("id", id);
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Timber.e(e);
                             globalBaseRequest.setHandled(true);
                             try {
                                 ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                             } catch (IOException e1) {
-                                e1.printStackTrace();
+                                Timber.e(e1);
                             }
                             continuation.complete();
                             return;
@@ -219,43 +217,40 @@ public class CameraPlugin implements Plugin {
                         continuation.complete();
 
                     } else {
-                        Log.e(TAG, "handleCameraImageTaken: error writing image");
+                        Timber.i("handleCameraImageTaken: error writing image");
                         try {
                             globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                             continuation.complete();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Timber.e(e);
                         }
                     }
                 } finally {
                     globalBaseRequest = null;
                     continuation = null;
                 }
-
             }
         });
-
     }
 
     private static String writeToFile(Context context, Bitmap img) {
-        String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             img.compress(Bitmap.CompressFormat.JPEG, 70, out);
-            name = CryptoHelper.base58ofSha256(out.toByteArray());
+            String name = CryptoHelper.base58ofSha256(out.toByteArray());
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             File image = new File(storageDir, name + ".jpeg");
             FileUtils.writeByteArrayToFile(image, out.toByteArray());
             return name;
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 out.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -277,18 +272,17 @@ public class CameraPlugin implements Plugin {
     }
 
     public byte[] readPictureForId(Context context, String id) {
-        Log.i(TAG, "readPictureForId: " + id);
+        Timber.d("readPictureForId: %s", id);
         try {
             //create FileInputStream object
             FileInputStream fin = new FileInputStream(new File(context.getFilesDir().getAbsolutePath() + "/pictures/" + id + ".jpeg"));
 
             //create string from byte array
             return IOUtils.toByteArray(fin);
-
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found " + e);
+            Timber.e(e);
         } catch (IOException ioe) {
-            Log.e(TAG, "Exception while reading the file " + ioe);
+            Timber.e(ioe);
         }
         return null;
     }

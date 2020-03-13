@@ -10,6 +10,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -53,17 +55,17 @@ public class BytesUtil {
                 byteBuffer.write(buffer, 0, len);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 byteBuffer.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             if (in != null) try {
                 in.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 

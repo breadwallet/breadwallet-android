@@ -5,9 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -27,6 +27,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -53,7 +55,6 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class GeoLocationPlugin implements Plugin {
-    public static final String TAG = GeoLocationPlugin.class.getName();
 
     private static Continuation continuation;
     private static Request globalBaseRequest;
@@ -63,7 +64,7 @@ public class GeoLocationPlugin implements Plugin {
             @Override
             public void run() {
                 if (continuation == null) {
-                    Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
+                    Timber.d("handleGeoPermission: WARNING continuation is null");
                     return;
                 }
 
@@ -74,11 +75,11 @@ public class GeoLocationPlugin implements Plugin {
 
                     } else {
                         try {
-                            Log.e(TAG, "handleGeoPermission: granted is false");
+                            Timber.d("handleGeoPermission: granted is false");
                             globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Timber.e(e);
                         }
                     }
                 } finally {
@@ -88,17 +89,16 @@ public class GeoLocationPlugin implements Plugin {
                 }
             }
         });
-
     }
 
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_permissions/geo")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Context app =  BreadApp.getBreadContext();
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             switch (request.getMethod()) {
@@ -125,7 +125,7 @@ public class GeoLocationPlugin implements Plugin {
                         status = "always";
                         enabled = true;
                     } else {
-                        Log.e(TAG, "handle: sending permission denied: " + target + " " + baseRequest.getMethod());
+                        Timber.d("handle: sending permission denied: " + target + " " + baseRequest.getMethod());
                         status = permRequested ? "denied" : "undetermined";
                         enabled = false;
                     }
@@ -135,22 +135,22 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("location_enabled", enabled);
                         return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, null);
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
+                        Timber.e(e);
+                        Timber.d("handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(500, null, baseRequest, response);
                     }
-                // POST /_permissions/geo
-                //
-                // Call this method to request the geo permission from the user.
-                // The request body should be a JSON dictionary containing a single key, "style"
-                // the value of which should be either "inuse" or "always" - these correspond to the
-                // two ways the user can authorize geo access to the app. "inuse" will request
-                // geo availability to the app when the app is foregrounded, and "always" will request
-                // full time geo availability to the app
+                    // POST /_permissions/geo
+                    //
+                    // Call this method to request the geo permission from the user.
+                    // The request body should be a JSON dictionary containing a single key, "style"
+                    // the value of which should be either "inuse" or "always" - these correspond to the
+                    // two ways the user can authorize geo access to the app. "inuse" will request
+                    // geo availability to the app when the app is foregrounded, and "always" will request
+                    // full time geo availability to the app
                 case "POST":
                     if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
-                        Log.e(TAG, "handle: requesting permissions: " + target + " " + baseRequest.getMethod());
+                        Timber.d("handle: requesting permissions: " + target + " " + baseRequest.getMethod());
                         ActivityCompat.requestPermissions((Activity) app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
                     }
                     BRSharedPrefs.putGeoPermissionsRequested(app, true);
@@ -161,7 +161,7 @@ public class GeoLocationPlugin implements Plugin {
 
             }
         } else if (target.startsWith("/_geo") && !target.startsWith("/_geosocket")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             // GET /_geo
             //
             // Calling this method will query CoreLocation for a location object. The returned value may not be returned
@@ -175,14 +175,16 @@ public class GeoLocationPlugin implements Plugin {
             // "description" = "a string representation of this object"
             // "timestamp" = "ISO-8601 timestamp of when this location was generated"
             // "horizontal_accuracy" = double
-            Context app =  BreadApp.getBreadContext();
-            if (app == null) {                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+            Context app = BreadApp.getBreadContext();
+            if (app == null) {
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
             if (request.getMethod().equalsIgnoreCase("GET")) {
                 JSONObject obj = getAuthorizationError(app);
-                if (obj != null) {                        Log.e(TAG, "handle: error getting location: " + obj.toString() + ", " + target + " " + baseRequest.getMethod());
+                if (obj != null) {
+                    Timber.d("handle: error getting location: " + obj.toString() + ", " + target + " " + baseRequest.getMethod());
                     return BRHTTPHelper.handleError(500, obj.toString(), baseRequest, response);
                 }
 
@@ -192,7 +194,7 @@ public class GeoLocationPlugin implements Plugin {
                 return true;
             }
         } else if (target.startsWith("/_geosocket")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             // GET /_geosocket
             //
             // This opens up a websocket to the location manager. It will return a new location every so often (but with no
@@ -200,7 +202,6 @@ public class GeoLocationPlugin implements Plugin {
             //
             // It will start the location manager when there is at least one client connected and stop the location manager
             // when the last client disconnects.
-
             return true;
         }
 
@@ -217,6 +218,7 @@ public class GeoLocationPlugin implements Plugin {
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ignored) {
+            Timber.e(ignored);
         }
 
         try {
@@ -236,13 +238,11 @@ public class GeoLocationPlugin implements Plugin {
             try {
                 obj.put("error", error);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
             return obj;
         } else {
             return null;
         }
-
     }
-
 }

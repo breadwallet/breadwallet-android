@@ -5,14 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Looper;
+import android.util.AttributeSet;
+import android.view.View;
 
 import androidx.annotation.WorkerThread;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -27,6 +26,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import timber.log.Timber;
 
 
 /**
@@ -55,7 +56,6 @@ import java.util.List;
  */
 public class TxManager {
 
-    private static final String TAG = TxManager.class.getName();
     private static TxManager instance;
     private RecyclerView txList;
     public TransactionListAdapter adapter;
@@ -170,12 +170,12 @@ public class TxManager {
         crashIfNotMain();
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
-//            Log.d(TAG, "showNextPrompt: " + toShow);
+            Timber.d("showNextPrompt: %s", toShow);
             currentPrompt = toShow;
             promptInfo = PromptManager.getInstance().promptInfo(app, currentPrompt);
             updateCard(app);
         } else {
-            Log.i(TAG, "showNextPrompt: nothing to show");
+            Timber.d("showNextPrompt: nothing to show");
         }
     }
 
@@ -187,15 +187,15 @@ public class TxManager {
 
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
-            Log.e(TAG, "updateTxList: took: " + took);
-        if (adapter != null ) {
+            Timber.d("updateTxList: took: %s", took);
+        if (adapter != null) {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     adapter.setItems(items);
                     txList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                    Log.e(TAG, "updateTxList: " + currentPrompt);
+                    Timber.d("updateTxList: %s", currentPrompt);
                 }
             });
         }

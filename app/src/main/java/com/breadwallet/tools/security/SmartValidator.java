@@ -2,9 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
@@ -14,6 +12,8 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -41,7 +41,6 @@ import java.util.Locale;
  */
 public class SmartValidator {
 
-    private static final String TAG = SmartValidator.class.getName();
     private static List<String> list;
 
     public static boolean isPaperKeyValid(Context ctx, String paperKey) {
@@ -58,15 +57,15 @@ public class SmartValidator {
         }
 
         return false;
-
     }
 
     private static boolean isValid(Context ctx, String paperKey, String lang) {
         List<String> list = Bip39Reader.bip39List(ctx, lang);
         String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
-            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
-            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
+            IllegalArgumentException ex = new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE);
+            Timber.e(ex);
+            throw ex;
         }
         return BRWalletManager.getInstance().validateRecoveryPhrase(words, paperKey);
     }
@@ -83,8 +82,7 @@ public class SmartValidator {
         try {
             pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
         } catch (Exception e) {
-            e.printStackTrace();
-            BRReportsManager.reportBug(e);
+            Timber.e(e);
         }
         Arrays.fill(bytePhrase, (byte) 0);
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
@@ -94,7 +92,7 @@ public class SmartValidator {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
-            Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
+            Timber.d("checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
         }
         return addressFromPrefs.equals(generatedAddress);
     }
@@ -104,11 +102,10 @@ public class SmartValidator {
     }
 
     public static boolean isWordValid(Context ctx, String word) {
-        Log.e(TAG, "isWordValid: word:" + word + ":" + word.length());
+        Timber.d("isWordValid: word:" + word + ":" + word.length());
         if (list == null) list = Bip39Reader.bip39List(ctx, null);
         String cleanWord = Bip39Reader.cleanWord(word);
-        Log.e(TAG, "isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
+        Timber.d("isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
         return list.contains(cleanWord);
-
     }
 }

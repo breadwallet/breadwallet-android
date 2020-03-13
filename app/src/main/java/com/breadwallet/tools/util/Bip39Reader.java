@@ -3,8 +3,6 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.breadwallet.tools.manager.BRReportsManager;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +10,8 @@ import java.io.InputStreamReader;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -75,18 +75,19 @@ public class Bip39Reader {
                     wordList.add(cleanWord(line));
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
-
+                Timber.e(ex);
             } finally {
                 try {
                     if (reader != null)
                         reader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
             if (wordList.size() % WORD_LIST_SIZE != 0) {
-                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
+                IllegalArgumentException ex = new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE);
+                Timber.e(ex);
+                throw ex;
             }
             result.addAll(wordList);
 

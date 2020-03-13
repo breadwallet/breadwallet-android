@@ -9,10 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
@@ -20,6 +16,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -41,12 +42,13 @@ import com.platform.APIClient;
 
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
 public class LoginActivity extends BRActivity {
-    private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard keyboard;
     private LinearLayout pinLayout;
     private View dot1;
@@ -127,7 +129,7 @@ public class LoginActivity extends BRActivity {
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         String verName = pInfo != null ? pInfo.versionName : " ";
         versionText.setText(String.format(Locale.US, "%1$s", verName));
@@ -139,7 +141,6 @@ public class LoginActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showReceiveFragment(LoginActivity.this, false);
-//                chooseWordsSize(true);
             }
         });
 
@@ -175,13 +176,12 @@ public class LoginActivity extends BRActivity {
                         app.overridePendingTransition(R.anim.fade_up, 0);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         });
 
         final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
-//        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 
         if (useFingerprint)
@@ -191,7 +191,6 @@ public class LoginActivity extends BRActivity {
                     AuthManager.getInstance().authPrompt(LoginActivity.this, "", "", false, true, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
-//                            AuthManager.getInstance().authSuccess(LoginActivity.this);
                             unlockWallet();
                         }
 
@@ -241,11 +240,11 @@ public class LoginActivity extends BRActivity {
 
     private void handleClick(String key) {
         if (!inputAllowed) {
-            Log.e(TAG, "handleClick: input not allowed");
+            Timber.d("handleClick: input not allowed");
             return;
         }
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -254,7 +253,7 @@ public class LoginActivity extends BRActivity {
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
-            Log.e(TAG, "handleClick: oops: " + key);
+            Timber.d("handleClick: oops: %s", key);
         }
     }
 
@@ -364,9 +363,8 @@ public class LoginActivity extends BRActivity {
                     BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
                 } else {
-                    Log.e(TAG, "onRequestPermissionsResult: permission isn't granted for: " + requestCode);
+                    Timber.i("onRequestPermissionsResult: permission isn't granted for: %s", requestCode);
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -381,5 +379,4 @@ public class LoginActivity extends BRActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
-
 }

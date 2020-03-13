@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -20,6 +18,8 @@ import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -46,18 +46,17 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class LinkPlugin implements Plugin {
-    public static final String TAG = LinkPlugin.class.getName();
     public static boolean hasBrowser;
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_open_url")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
             Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
@@ -65,22 +64,21 @@ public class LinkPlugin implements Plugin {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/", "")));
                 app.startActivity(intent);
             } else {
-                Log.e(TAG, "handle: could not handle url: " + url);
-                BRReportsManager.reportBug(new RuntimeException("could not handle url: " + url));
+                Timber.e(new RuntimeException("could not handle url: " + url));
             }
 
             return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
         } else if (target.startsWith("/_open_maps")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.d("handling: " + target + " " + baseRequest.getMethod());
             Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             String address = baseRequest.getParameter("address");
             String fromPoint = baseRequest.getParameter("from_point");
             if (address == null || fromPoint == null) {
-                Log.e(TAG, "handle: bad request: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: bad request: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "bad request", baseRequest, response);
             }
             String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
@@ -90,13 +88,13 @@ public class LinkPlugin implements Plugin {
         } else if (target.startsWith("/_browser")) {
             Context app = BreadApp.getBreadContext();
             if (app == null) {
-                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                Timber.i("handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             switch (request.getMethod()) {
                 case "GET":
                     // opens the in-app browser for the provided URL
-                    Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+                    Timber.d("handling: " + target + " " + baseRequest.getMethod());
 
                     if (hasBrowser)
                         return BRHTTPHelper.handleError(409, "Conflict", baseRequest, response);
@@ -131,7 +129,7 @@ public class LinkPlugin implements Plugin {
                     // if the browser navigates to this exact URL. It is useful for oauth redirects
                     // and the like
 
-                    Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+                    Timber.d("handling: " + target + " " + baseRequest.getMethod());
 
                     if (hasBrowser)
                         return BRHTTPHelper.handleError(409, "Conflict", baseRequest, response);
@@ -145,8 +143,7 @@ public class LinkPlugin implements Plugin {
                     try {
                         json = new JSONObject(new String(body)); //TODO: just check for validity
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "handle: the json is not valid:" + target + " " + baseRequest.getMethod());
+                        Timber.e(e, "handle: the json is not valid: %s %s", target, baseRequest.getMethod());
                         return BRHTTPHelper.handleError(400, "could not deserialize json object ", baseRequest, response);
                     }
 
@@ -162,7 +159,7 @@ public class LinkPlugin implements Plugin {
                                 Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn))
                             return BRHTTPHelper.handleError(400, "malformed json:" + json.toString(), baseRequest, response);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                         return BRHTTPHelper.handleError(400, "malformed json:" + json.toString(), baseRequest, response);
                     }
 
@@ -176,7 +173,5 @@ public class LinkPlugin implements Plugin {
             }
         }
         return false;
-
     }
-
 }

@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -50,6 +49,8 @@ import com.breadwallet.tools.util.Utils;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -77,7 +78,6 @@ import java.util.List;
  */
 
 public class BRAnimator {
-    private static final String TAG = BRAnimator.class.getName();
     private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
     public static int SLIDE_ANIMATION_DURATION = 300;
@@ -108,7 +108,7 @@ public class BRAnimator {
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
-        Log.e(TAG, "showFragmentByTag: " + tag);
+        Timber.d("showFragmentByTag: %s", tag);
         if (tag == null) return;
         //catch animation duration, make it 0 for no animation, then restore it.
         final int slideAnimation = SLIDE_ANIMATION_DURATION;
@@ -123,7 +123,7 @@ public class BRAnimator {
             } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
                 showMenuFragment(app);
             } else {
-                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
+                Timber.d("showFragmentByTag: error, no such tag: %s", tag);
             }
         } finally {
             new Handler().postDelayed(new Runnable() {
@@ -132,13 +132,12 @@ public class BRAnimator {
                     SLIDE_ANIMATION_DURATION = slideAnimation;
                 }
             }, 800);
-
         }
     }
 
     public static void showSendFragment(Activity app, final String bitcoinUrl) {
         if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
+            Timber.i("showSendFragment: app is null");
             return;
         }
         FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
@@ -160,14 +159,13 @@ public class BRAnimator {
         } finally {
 
         }
-
     }
 
     public static void showSupportFragment(Activity app, String articleId) {
         if (supportIsShowing) return;
         supportIsShowing = true;
         if (app == null) {
-            Log.e(TAG, "showSupportFragment: app is null");
+            Timber.i("showSupportFragment: app is null");
             return;
         }
         FragmentSupport fragmentSupport = (FragmentSupport) app.getFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
@@ -190,7 +188,6 @@ public class BRAnimator {
         } finally {
 
         }
-
     }
 
     public static void popBackStackTillEntry(Activity app, int entryIndex) {
@@ -211,13 +208,13 @@ public class BRAnimator {
 
     public static void showTransactionPager(Activity app, List<TxItem> items, int position) {
         if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
+            Timber.i("showSendFragment: app is null");
             return;
         }
         FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
         if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
             fragmentTransactionDetails.setItems(items);
-            Log.e(TAG, "showTransactionPager: Already showing");
+            Timber.i("showTransactionPager: Already showing");
             return;
         }
         fragmentTransactionDetails = new FragmentTransactionDetails();
@@ -263,9 +260,8 @@ public class BRAnimator {
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
-
     }
 
     public static LayoutTransition getDefaultTransition() {
@@ -290,11 +286,11 @@ public class BRAnimator {
 
     public static void showRequestFragment(Activity app, String address) {
         if (app == null) {
-            Log.e(TAG, "showRequestFragment: app is null");
+            Timber.i("showRequestFragment: app is null");
             return;
         }
         if (Utils.isNullOrEmpty(address)) {
-            Log.e(TAG, "showRequestFragment: address is empty: " + address);
+            Timber.i("showRequestFragment: address is empty");
             return;
         }
 
@@ -316,7 +312,7 @@ public class BRAnimator {
     //isReceive tells the Animator that the Receive fragment is requested, not My Address
     public static void showReceiveFragment(Activity app, boolean isReceive) {
         if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
+            Timber.i("showReceiveFragment: app is null");
             return;
         }
         FragmentReceive fragmentReceive = (FragmentReceive) app.getFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
@@ -336,7 +332,7 @@ public class BRAnimator {
 
     public static void showBuyFragment(Activity app) {
         if (app == null) {
-            Log.e(TAG, "showBuyFragment: app is null");
+            Timber.i("showBuyFragment: app is null");
             return;
         }
         FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
@@ -356,7 +352,7 @@ public class BRAnimator {
 
     public static void showMenuFragment(Activity app) {
         if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
+            Timber.i("showReceiveFragment: app is null");
             return;
         }
         FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
@@ -364,12 +360,11 @@ public class BRAnimator {
         transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
         transaction.addToBackStack(FragmentMenu.class.getName());
         transaction.commit();
-
     }
 
     public static void showGreetingsMessage(Activity app) {
         if (app == null) {
-            Log.e(TAG, "showGreetingsMessage: app is null");
+            Timber.i("showGreetingsMessage: app is null");
             return;
         }
         FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
@@ -377,7 +372,6 @@ public class BRAnimator {
         transaction.add(android.R.id.content, new FragmentGreetings(), FragmentGreetings.class.getName());
         transaction.addToBackStack(FragmentGreetings.class.getName());
         transaction.commit();
-
     }
 
     public static boolean isClickAllowed() {
@@ -389,7 +383,7 @@ public class BRAnimator {
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
                     clickAllowed = true;
                 }
@@ -410,7 +404,7 @@ public class BRAnimator {
 
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
-        Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
+        Timber.i("startBreadActivity: %s", from.getClass().getName());
         Class toStart = auth ? LoginActivity.class : BreadActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -457,9 +451,7 @@ public class BRAnimator {
         anim.start();
     }
 
-
     public interface OnSlideAnimationEnd {
         void onAnimationEnd();
     }
-
 }

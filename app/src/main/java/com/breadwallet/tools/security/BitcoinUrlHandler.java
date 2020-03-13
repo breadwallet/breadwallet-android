@@ -1,7 +1,6 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -11,7 +10,6 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -22,6 +20,8 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import timber.log.Timber;
 
 
 /**
@@ -50,12 +50,11 @@ import java.util.Map;
  */
 
 public class BitcoinUrlHandler {
-    private static final String TAG = BitcoinUrlHandler.class.getName();
     private static final Object lockObject = new Object();
 
     public static synchronized boolean processRequest(Activity app, String url) {
         if (url == null) {
-            Log.e(TAG, "processRequest: url is null");
+            Timber.d("processRequest: url is null");
             return false;
         }
 
@@ -64,7 +63,7 @@ public class BitcoinUrlHandler {
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         attr.put("scheme", uri == null ? "null" : uri.getScheme());
         attr.put("host", uri == null ? "null" : uri.getHost());
@@ -131,7 +130,7 @@ public class BitcoinUrlHandler {
         try {
             uri = URI.create(tmp);
         } catch (IllegalArgumentException ex) {
-            Log.e(TAG, "getRequestFromString: ", ex);
+            Timber.e(ex, "getRequestFromString: ");
             return null;
         }
 
@@ -154,7 +153,7 @@ public class BitcoinUrlHandler {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
                     obj.amount = bigDecimal.multiply(new BigDecimal("100000000")).toString();
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
@@ -170,13 +169,13 @@ public class BitcoinUrlHandler {
     }
 
     private static boolean tryPaymentRequest(RequestObject requestObject) {
-        String theURL = null;
+        String theURL;
         String url = requestObject.r;
         synchronized (lockObject) {
             try {
                 theURL = URLDecoder.decode(url, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Timber.e(e);
                 return false;
             }
             new PaymentProtocolTask().execute(theURL, requestObject.label);
@@ -205,12 +204,11 @@ public class BitcoinUrlHandler {
                 BRAnimator.killAllFragments(app);
                 BRSender.getInstance().sendTransaction(app, new PaymentItem(addresses, null, new BigDecimal(amount).longValue(), null, true));
             } else {
-                BRReportsManager.reportBug(new NullPointerException("tryBitcoinURL, app is null!"));
+                Timber.e(new NullPointerException("tryBitcoinURL, app is null!"));
             }
         }
 
         return true;
-
     }
 
     public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);

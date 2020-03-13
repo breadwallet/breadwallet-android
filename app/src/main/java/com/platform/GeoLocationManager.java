@@ -7,12 +7,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
-import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 
@@ -25,6 +23,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class GeoLocationManager {
-    private static final String TAG = GeoLocationManager.class.getName();
     private Session session;
     private Continuation continuation;
     private Request baseRequest;
@@ -72,7 +71,7 @@ public class GeoLocationManager {
             return;
         locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null) {
-            Log.e(TAG, "getOneTimeGeoLocation: locationManager is null!");
+            Timber.i("getOneTimeGeoLocation: locationManager is null!");
             return;
         }
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -80,19 +79,16 @@ public class GeoLocationManager {
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    RuntimeException ex = new RuntimeException("getOneTimeGeoLocation, can't happen");
-                    Log.e(TAG, "run: getOneTimeGeoLocation, can't happen");
-                    BRReportsManager.reportBug(ex);
+                    Timber.e(new RuntimeException("getOneTimeGeoLocation, can't happen"));
                     return;
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         });
-
     }
 
-    public void startGeoSocket(Session sess) {
+    void startGeoSocket(Session sess) {
         session = sess;
 
         final Context app = BreadApp.getBreadContext();
@@ -104,9 +100,7 @@ public class GeoLocationManager {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    RuntimeException ex = new RuntimeException("startGeoSocket, can't happen");
-                    Log.e(TAG, "run: startGeoSocket, can't happen");
-                    BRReportsManager.reportBug(ex);
+                    Timber.e(new RuntimeException("startGeoSocket, can't happen"));
                     return;
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
@@ -124,9 +118,8 @@ public class GeoLocationManager {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Log.e(TAG, "stopGeoSocket, can't happen");
                     RuntimeException ex = new RuntimeException("stopGeoSocket, can't happen");
-                    BRReportsManager.reportBug(ex);
+                    Timber.e(ex);
                     throw ex;
                 }
                 locationManager.removeUpdates(socketLocationListener);
@@ -150,13 +143,12 @@ public class GeoLocationManager {
                         try {
                             session.getRemote().sendString(jsonLocation);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Timber.e(e);
                         } finally {
                             sending = false;
                         }
                     }
                 });
-
             } else {
                 sending = false;
             }
@@ -193,7 +185,7 @@ public class GeoLocationManager {
                                     continuation.complete();
                                     continuation = null;
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Timber.e(e);
                                 }
                             } else {
                                 try {
@@ -202,33 +194,26 @@ public class GeoLocationManager {
                                     continuation.complete();
                                     continuation = null;
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Timber.e(e);
                                 }
-                                Log.e(TAG, "onLocationChanged: WARNING respStr is null or empty: " + jsonLocation);
-                                BRReportsManager.reportBug(new NullPointerException("onLocationChanged: " + jsonLocation));
-
+                                Timber.e(new NullPointerException("onLocationChanged: " + jsonLocation));
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Timber.e(e);
                         } finally {
-
                             processing = false;
                             Context app = BreadApp.getBreadContext();
                             if (app == null || ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app,
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                Log.e(TAG, "onLocationChanged: PERMISSION DENIED for removeUpdates");
+                                Timber.d("onLocationChanged: PERMISSION DENIED for removeUpdates");
                             } else {
                                 locationManager.removeUpdates(locationListener);
-
                             }
-
                         }
-
                     }
                 }
             });
-
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -256,8 +241,7 @@ public class GeoLocationManager {
             responseJson.put("description", "");
             return responseJson.toString();
         } catch (JSONException e) {
-            Log.e(TAG, "handleLocation: Failed to create json response");
-            e.printStackTrace();
+            Timber.e(e);
         }
         return null;
 

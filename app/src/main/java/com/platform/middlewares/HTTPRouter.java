@@ -1,7 +1,5 @@
 package com.platform.middlewares;
 
-import android.util.Log;
-
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 
@@ -11,8 +9,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Request;
-import okhttp3.Response;
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -39,7 +36,6 @@ import okhttp3.Response;
  * THE SOFTWARE.
  */
 public class HTTPRouter implements Middleware {
-    public static final String TAG = HTTPRouter.class.getName();
     Set<Plugin> plugins;
 
     public HTTPRouter() {
@@ -51,7 +47,7 @@ public class HTTPRouter implements Middleware {
         for (Plugin plugin : plugins) {
             boolean success = plugin.handle(target, baseRequest, request, response);
             if (success) {
-                Log.i(TAG, "plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
+                Timber.d("plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
                 return true;
             }
         }

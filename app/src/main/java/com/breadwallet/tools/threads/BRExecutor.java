@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -37,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 * Singleton class for default executor supplier
 */
 public class BRExecutor implements RejectedExecutionHandler {
-    private static final String TAG = BRExecutor.class.getName();
     /*
     * Number of cores to decide the number of threads
     */
@@ -153,6 +154,6 @@ public class BRExecutor implements RejectedExecutionHandler {
 
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-        Log.e(TAG, "rejectedExecution: ");
+        Timber.d("rejectedExecution: ");
     }
 }

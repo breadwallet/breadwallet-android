@@ -58,8 +58,10 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
+import timber.log.Timber;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
 /**
  * BreadWallet
@@ -87,7 +89,6 @@ import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromStr
  */
 
 public class FragmentSend extends Fragment {
-    private static final String TAG = FragmentSend.class.getName();
     public ScrollView backgroundLayout;
     public LinearLayout signalLayout;
     private BRKeyboard keyboard;
@@ -288,16 +289,13 @@ public class FragmentSend extends Fragment {
                     TransitionManager.beginDelayedTransition(amountLayout, tr);
 
                     int px4 = Utils.getPixelsFromDps(getContext(), 4);
-//                    int px8 = Utils.getPixelsFromDps(getContext(), 8);
                     set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
                     set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
                     set.connect(isoText.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
                     set.applyTo(amountLayout);
-
                 }
-
             }
         });
 
@@ -324,15 +322,13 @@ public class FragmentSend extends Fragment {
                     showClipboardError();
                     return;
                 }
-                String address = null;
-
                 RequestObject obj = getRequestFromString(bitcoinUrl);
 
                 if (obj == null || obj.address == null) {
                     showClipboardError();
                     return;
                 }
-                address = obj.address;
+                String address = obj.address;
                 final BRWalletManager wm = BRWalletManager.getInstance();
 
                 if (BRWalletManager.validateAddress(address)) {
@@ -377,23 +373,19 @@ public class FragmentSend extends Fragment {
                                         }, null, 0);
                                     }
                                 });
-
                             } else {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         addressEdit.setText(finalAddress);
-
                                     }
                                 });
                             }
                         }
                     });
-
                 } else {
                     showClipboardError();
                 }
-
             }
         });
 
@@ -416,7 +408,6 @@ public class FragmentSend extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 saveMetaData();
                 BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
-
             }
         });
 
@@ -595,7 +586,7 @@ public class FragmentSend extends Fragment {
 
     private void handleClick(String key) {
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -636,7 +627,6 @@ public class FragmentSend extends Fragment {
             amountBuilder.deleteCharAt(currAmount.length() - 1);
             updateText();
         }
-
     }
 
     private void updateText() {
@@ -653,7 +643,7 @@ public class FragmentSend extends Fragment {
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
                 (selectedIso.equalsIgnoreCase("btc") ? BRExchange.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : BRExchange.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
-        Log.e(TAG, "updateText: balanceForISO: " + balanceForISO);
+        Timber.d("updateText: balanceForISO: %s", balanceForISO);
 
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
@@ -664,16 +654,16 @@ public class FragmentSend extends Fragment {
         } else {
             fee = BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
             if (fee == 0) {
-                Log.e(TAG, "updateText: fee is 0, trying the estimate");
+                Timber.i("updateText: fee is 0, trying the estimate");
                 fee = BRWalletManager.getInstance().feeForTransaction(addressEdit.getText().toString(), satoshis);
             }
         }
 
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
-        Log.e(TAG, "updateText: feeForISO: " + feeForISO);
+        Timber.d("updateText: feeForISO: %s", feeForISO);
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
-        Log.e(TAG, "updateText: aproxFee: " + aproxFee);
+        Timber.d("updateText: aproxFee: %s", aproxFee);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
@@ -708,7 +698,6 @@ public class FragmentSend extends Fragment {
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
             amountBuilder = new StringBuilder(BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
             updateText();
-
         }
     }
 
@@ -747,10 +736,10 @@ public class FragmentSend extends Fragment {
 
         // Checks whether a hardware keyboard is available
         if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
-            Log.e(TAG, "onConfigurationChanged: hidden");
+            Timber.d("onConfigurationChanged: hidden");
             showKeyboard(true);
         } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            Log.e(TAG, "onConfigurationChanged: shown");
+            Timber.d("onConfigurationChanged: shown");
             showKeyboard(false);
         }
     }
@@ -779,8 +768,6 @@ public class FragmentSend extends Fragment {
                     updateText();
                 }
             }, 500);
-
         }
     }
-
 }

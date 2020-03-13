@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -53,7 +55,6 @@ import static android.graphics.Color.WHITE;
  * THE SOFTWARE.
  */
 public class QRUtils {
-    private static final String TAG = QRUtils.class.getName();
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
@@ -74,7 +75,7 @@ public class QRUtils {
             // Unsupported format
             return null;
         } catch (WriterException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         if (result == null) return null;
         int width = result.getWidth();
@@ -104,12 +105,9 @@ public class QRUtils {
         smallerDimension = (int) (smallerDimension * 0.45f);
         Bitmap bitmap = null;
         bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
-        //qrcode.setPadding(1, 1, 1, 1);
-        //qrcode.setBackgroundResource(R.color.gray);
         if (bitmap == null) return false;
         qrcode.setImageBitmap(bitmap);
         return true;
-
     }
 
     private static String guessAppropriateEncoding(CharSequence contents) {
@@ -124,12 +122,9 @@ public class QRUtils {
 
     public static void share(String via, Activity app, String bitcoinUri) {
         if (app == null) {
-            Log.e(TAG, "share: app is null");
+            Timber.d("share: app is null");
             return;
         }
-
-//        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
-//        Uri uri = Uri.fromFile(file);
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_SEND);
@@ -137,14 +132,11 @@ public class QRUtils {
         intent.putExtra(Intent.EXTRA_SUBJECT, "Litecoin Address");
         intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
         app.startActivity(Intent.createChooser(intent, "Open mail app"));
-//        if (uri != null)
-//            intent.putExtra(Intent.EXTRA_STREAM, uri);
-
     }
 
     private static File saveToExternalStorage(Bitmap bitmapImage, Activity app) {
         if (app == null) {
-            Log.e(TAG, "saveToExternalStorage: app is null");
+            Timber.d("saveToExternalStorage: app is null");
             return null;
         }
 
@@ -156,23 +148,23 @@ public class QRUtils {
         f.setReadable(true, false);
         try {
             boolean a = f.createNewFile();
-            if(!a) Log.e(TAG, "saveToExternalStorage: createNewFile: failed");
+            if(!a) Timber.d("saveToExternalStorage: createNewFile: failed");
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
-        Log.e(TAG, "saveToExternalStorage: " + f.getAbsolutePath());
+        Timber.d("saveToExternalStorage: " + f.getAbsolutePath());
         if (f.exists()) f.delete();
 
         try {
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 bytes.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return f;

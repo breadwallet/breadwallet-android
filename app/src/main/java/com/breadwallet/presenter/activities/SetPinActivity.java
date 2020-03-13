@@ -3,23 +3,18 @@ package com.breadwallet.presenter.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.BRConstants;
-import com.platform.HTTPServer;
+
+import timber.log.Timber;
 
 public class SetPinActivity extends BRActivity {
-    private static final String TAG = SetPinActivity.class.getName();
     private BRKeyboard keyboard;
     public static SetPinActivity introSetPitActivity;
     private View dot1;
@@ -68,7 +63,6 @@ public class SetPinActivity extends BRActivity {
         });
         keyboard.setShowDot(false);
         BRSharedPrefs.putGreetingsShown(this, true);
-
     }
 
     @Override
@@ -88,7 +82,7 @@ public class SetPinActivity extends BRActivity {
 
     private void handleClick(String key) {
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -97,7 +91,7 @@ public class SetPinActivity extends BRActivity {
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
-            Log.e(TAG, "handleClick: oops: " + key);
+            Timber.d("handleClick: oops: %s", key);
         }
     }
 
@@ -149,9 +143,7 @@ public class SetPinActivity extends BRActivity {
                     startingNextActivity = false;
                 }
             }, 100);
-
         }
-
     }
 
     @Override

@@ -25,6 +25,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -85,10 +87,8 @@ public class X509CertificateValidator {
             signature.update(paymentRequest.signature);
             signature.initVerify(publicKey);
             result = certList.get(0).getSubjectX500Principal().getName();
-//            Log.e(TAG,"result cn getName(): " + result);
-
         } catch (CertificateException | InvalidKeyException | SignatureException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return result;
     }
@@ -110,7 +110,7 @@ public class X509CertificateValidator {
                         cert.getIssuerDN().getName());
             }
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return certificates;
     }
@@ -135,7 +135,7 @@ public class X509CertificateValidator {
                 }
             }
         } catch (CertificateException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return theList;
     }

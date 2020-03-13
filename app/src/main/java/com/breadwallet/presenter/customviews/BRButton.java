@@ -11,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
@@ -25,6 +24,8 @@ import androidx.annotation.Nullable;
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.util.Utils;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -52,7 +53,6 @@ import com.breadwallet.tools.util.Utils;
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
-    private static final String TAG = BRButton.class.getName();
     private static int ANIMATION_DURATION = 30;
     private Bitmap shadow;
     private Rect shadowRect;
@@ -171,7 +171,7 @@ public class BRButton extends Button {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
             lines = getLineCount();
             if (limit <= 0) {
-                Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
+                Timber.d("correctTextSizeIfNeeded: Failed to rescale, limit reached, final: %s", px);
                 break;
             }
         }

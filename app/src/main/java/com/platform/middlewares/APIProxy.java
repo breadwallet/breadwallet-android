@@ -1,13 +1,9 @@
 package com.platform.middlewares;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.IOUtils;
@@ -25,6 +21,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import timber.log.Timber;
 
 
 /**
@@ -52,7 +49,6 @@ import okhttp3.ResponseBody;
  * THE SOFTWARE.
  */
 public class APIProxy implements Middleware {
-    public static final String TAG = APIProxy.class.getName();
 
     private APIClient apiInstance;
     private static final String MOUNT_POINT = "/_api";
@@ -74,7 +70,7 @@ public class APIProxy implements Middleware {
     public APIProxy() {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
-            Log.e(TAG, "APIProxy: app is null!");
+            Timber.i("APIProxy: app is null!");
         }
         apiInstance = APIClient.getInstance(app);
     }
@@ -82,7 +78,7 @@ public class APIProxy implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith(MOUNT_POINT)) return false;
-        Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+        Timber.d("handling: " + target + " " + baseRequest.getMethod());
         String path = target.substring(MOUNT_POINT.length());
         String queryString = baseRequest.getQueryString();
         if (queryString != null && queryString.length() > 0)
@@ -105,7 +101,7 @@ public class APIProxy implements Middleware {
                 bodyBytes = body.bytes();
                 resString = new String(bodyBytes);
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
 
             response.setContentType(cType);
@@ -117,8 +113,7 @@ public class APIProxy implements Middleware {
             response.setContentLength(bodyBytes.length);
 
             if (!res.isSuccessful()) {
-                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
-//            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
+                Timber.d("RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
             }
 
             try {
@@ -128,7 +123,7 @@ public class APIProxy implements Middleware {
                 response.getOutputStream().write(bodyBytes);
                 baseRequest.setHandled(true);
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         } finally {
             if (res != null) res.close();
@@ -153,7 +148,7 @@ public class APIProxy implements Middleware {
         try {
             bodyText = IOUtils.toByteArray(request.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         String contentType = baseRequest.getContentType() == null ? null : baseRequest.getContentType();
         RequestBody reqBody = RequestBody.create(contentType == null ? null : MediaType.parse(contentType), bodyText);
@@ -172,12 +167,11 @@ public class APIProxy implements Middleware {
                 builder.put(reqBody);
                 break;
             default:
-                Log.e(TAG, "mapToOkHttpRequest: WARNING: method: " + baseRequest.getMethod());
+                Timber.d("mapToOkHttpRequest: WARNING: method: %s", baseRequest.getMethod());
                 break;
         }
 
         req = builder.build();
         return req;
     }
-
 }

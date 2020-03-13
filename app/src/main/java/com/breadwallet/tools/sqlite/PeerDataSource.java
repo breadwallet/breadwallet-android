@@ -30,17 +30,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.NetworkOnMainThreadException;
-import android.util.Log;
 
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import timber.log.Timber;
 
 public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
@@ -70,13 +71,13 @@ public class PeerDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public  void putPeers(PeerEntity[] peerEntities) {
+    public void putPeers(PeerEntity[] peerEntities) {
 
         try {
             database = openDatabase();
             database.beginTransaction();
             for (PeerEntity p : peerEntities) {
-//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
+                Timber.d("SQLite peer saved: %s", Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.PEER_ADDRESS, p.getPeerAddress());
                 values.put(BRSQLiteHelper.PEER_PORT, p.getPeerPort());
@@ -86,9 +87,7 @@ public class PeerDataSource implements BRDataSourceInterface {
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
-            BRReportsManager.reportBug(ex);
-            Log.e(TAG, "Error inserting into SQLite", ex);
-            //Error in between database transaction
+            Timber.e(ex, "Error inserting into SQLite");
         } finally {
             database.endTransaction();
             closeDatabase();
@@ -96,20 +95,19 @@ public class PeerDataSource implements BRDataSourceInterface {
 
     }
 
-    public  void deletePeer(BRPeerEntity peerEntity) {
+    public void deletePeer(BRPeerEntity peerEntity) {
         try {
             database = openDatabase();
             long id = peerEntity.getId();
-            Log.e(TAG, "Peer deleted with id: " + id);
+            Timber.d("Peer deleted with id: %s", id);
             database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
                     + " = " + id, null);
         } finally {
             closeDatabase();
         }
-
     }
 
-    public  void deleteAllPeers() {
+    public void deleteAllPeers() {
         try {
             database = dbHelper.getWritableDatabase();
             database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
@@ -118,7 +116,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         }
     }
 
-    public  List<BRPeerEntity> getAllPeers() {
+    public List<BRPeerEntity> getAllPeers() {
         List<BRPeerEntity> peers = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -133,15 +131,12 @@ public class PeerDataSource implements BRDataSourceInterface {
                 peers.add(peerEntity);
                 cursor.moveToNext();
             }
-            // make sure to close the cursor
-
-            Log.e(TAG, "peers: " + peers.size());
         } finally {
             if (cursor != null)
                 cursor.close();
             closeDatabase();
         }
-
+        Timber.d("peers: %s", peers.size());
         return peers;
     }
 
@@ -152,25 +147,23 @@ public class PeerDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  SQLiteDatabase openDatabase() {
+    public SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
 //        }
-//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
     }
 
     @Override
-    public  void closeDatabase() {
+    public void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
         // Closing database
 //            database.close();
 
 //        }
-//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

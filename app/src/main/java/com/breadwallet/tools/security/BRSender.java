@@ -2,7 +2,6 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -11,7 +10,6 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -22,6 +20,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.math.BigDecimal;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -48,8 +48,6 @@ import java.util.Locale;
  * THE SOFTWARE.
  */
 public class BRSender {
-    private static final String TAG = BRSender.class.getName();
-
     private static BRSender instance;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
     private boolean timedOut;
@@ -88,7 +86,7 @@ public class BRSender {
                                 try {
                                     Thread.sleep(3000);
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                    Timber.e(e);
                                 }
 
                                 if (sending) timedOut = true;
@@ -98,7 +96,7 @@ public class BRSender {
                         //if the fee is STILL out of date then fail with network problem message
                         long time = BRSharedPrefs.getFeeTime(app);
                         if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
-                            Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
+                            Timber.d("sendTransaction: fee out of date even after fetching...");
                             throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app), now);
                         }
                     }
@@ -156,10 +154,8 @@ public class BRSender {
                             }, null, null, 0);
                         }
                     });
-
             }
         });
-
     }
 
     /**
@@ -169,9 +165,11 @@ public class BRSender {
     public void tryPay(final Context app, final PaymentItem paymentRequest) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust {
         if (paymentRequest == null || paymentRequest.addresses == null) {
-            Log.e(TAG, "handlePay: WRONG PARAMS");
+            Timber.d("handlePay: WRONG PARAMS");
             String message = paymentRequest == null ? "paymentRequest is null" : "addresses is null";
-            BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
+            RuntimeException ex = new RuntimeException("paymentRequest is malformed: " + message);
+            Timber.e(ex);
+            throw ex;
         }
         long amount = paymentRequest.amount;
         long balance = BRWalletManager.getInstance().getBalance(app);
@@ -198,7 +196,9 @@ public class BRSender {
         if (notEnoughForFee(app, paymentRequest)) {
             //weird bug when the core BRWalletManager is NULL
             if (maxOutputAmount == -1) {
-                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
+                RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
+                Timber.e(ex);
+                throw ex;
             }
             // max you can spend is smaller than the min you can spend
             if (maxOutputAmount < minOutputAmount) {
@@ -241,7 +241,7 @@ public class BRSender {
         BRWalletManager m = BRWalletManager.getInstance();
         long maxAmountDouble = m.getMaxOutputAmount();
         if (maxAmountDouble == -1) {
-            BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
+            Timber.e(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
         }
         if (maxAmountDouble == 0) {
@@ -334,7 +334,7 @@ public class BRSender {
 
     public void confirmPay(final Context ctx, final PaymentItem request) {
         if (ctx == null) {
-            Log.e(TAG, "confirmPay: context is null");
+            Timber.i("confirmPay: context is null");
             return;
         }
 
@@ -368,10 +368,10 @@ public class BRSender {
         }
         boolean forcePin = false;
 
-        Log.e(TAG, "confirmPay: totalSent: " + BRWalletManager.getInstance().getTotalSent());
-        Log.e(TAG, "confirmPay: request.amount: " + request.amount);
-        Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
-        Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
+        Timber.d("confirmPay: totalSent: %s", BRWalletManager.getInstance().getTotalSent());
+        Timber.d("confirmPay: request.amount: %s", request.amount);
+        Timber.d("confirmPay: total limit: %s", AuthManager.getInstance().getTotalLimit(ctx));
+        Timber.d("confirmPay: limit: %s", BRKeyStore.getSpendLimit(ctx));
 
         if (BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
@@ -395,7 +395,6 @@ public class BRSender {
 
                     }
                 });
-
             }
 
             @Override
@@ -403,7 +402,6 @@ public class BRSender {
                 //nothing
             }
         });
-
     }
 
     public String createConfirmation(Context ctx, PaymentItem request) {
@@ -416,7 +414,9 @@ public class BRSender {
         if (feeForTx == 0) {
             long maxAmount = m.getMaxOutputAmount();
             if (maxAmount == -1) {
-                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
+                RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
+                Timber.e(ex);
+                throw ex;
             }
             if (maxAmount == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure), ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -486,7 +486,7 @@ public class BRSender {
     }
 
     public static void showSpendNotAllowed(final Context app) {
-        Log.d(TAG, "showSpendNotAllowed");
+        Timber.d("showSpendNotAllowed");
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -517,26 +517,20 @@ public class BRSender {
     }
 
     private class SpendingNotAllowed extends Exception {
-
         public SpendingNotAllowed() {
             super("spending is not allowed at the moment");
         }
-
     }
 
     private class FeeNeedsAdjust extends Exception {
-
         public FeeNeedsAdjust(long amount, long balance, long fee) {
             super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
         }
-
     }
 
     private class FeeOutOfDate extends Exception {
-
         public FeeOutOfDate(long timestamp, long now) {
             super("FeeOutOfDate: timestamp: " + timestamp + ",now: " + now);
         }
-
     }
 }

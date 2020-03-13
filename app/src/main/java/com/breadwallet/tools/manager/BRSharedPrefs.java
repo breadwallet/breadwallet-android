@@ -1,9 +1,7 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
 
@@ -15,8 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import timber.log.Timber;
+
 import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
-import static com.breadwallet.tools.util.BRConstants.receive;
 
 /**
  * BreadWallet
@@ -44,7 +43,6 @@ import static com.breadwallet.tools.util.BRConstants.receive;
  */
 
 public class BRSharedPrefs {
-    public static final String TAG = BRSharedPrefs.class.getName();
 
     public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
 
@@ -75,7 +73,7 @@ public class BRSharedPrefs {
         try {
             defIso = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Timber.e(e);
             defIso = Currency.getInstance(Locale.US).getCurrencyCode();
         }
         return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, defIso);
@@ -225,6 +223,7 @@ public class BRSharedPrefs {
         editor.putLong("lastSyncTime", time);
         editor.apply();
     }
+
     public static long getFeeTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("feeTime", 0);
@@ -245,13 +244,12 @@ public class BRSharedPrefs {
             JSONArray arr = new JSONArray(result);
             for (int i = 0; i < arr.length(); i++) {
                 int a = arr.getInt(i);
-                Log.d("found a nonce: ", a + "");
+                Timber.d("found a nonce: %s", a);
                 list.add(a);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
-
         return list;
     }
 
@@ -284,7 +282,7 @@ public class BRSharedPrefs {
 
     //if the user prefers all in litecoin units, not other currencies
     public static void putPreferredLTC(Context activity, boolean b) {
-        Log.e(TAG, "putPreferredLTC: " + b);
+        Timber.d("putPreferredLTC: %s", b);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("priceSetToLitecoin", b);

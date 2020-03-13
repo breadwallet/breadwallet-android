@@ -36,6 +36,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -62,8 +64,6 @@ import javax.servlet.http.HttpServletResponse;
  * THE SOFTWARE.
  */
 public class HTTPServer {
-    public static final String TAG = HTTPServer.class.getName();
-
     private static Set<Middleware> middlewares;
     private static Server server;
     public static final int PORT = 31120;
@@ -88,7 +88,7 @@ public class HTTPServer {
         try {
             server.dump(System.err);
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         HandlerCollection handlerCollection = new HandlerCollection();
@@ -111,7 +111,7 @@ public class HTTPServer {
     }
 
     public synchronized static void startServer() {
-        Log.d(TAG, "startServer");
+        Timber.d("startServer");
         try {
             if (server != null && server.isStarted()) {
                 return;
@@ -120,17 +120,17 @@ public class HTTPServer {
             server.start();
             server.join();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Timber.e(ex);
         }
     }
 
     public static void stopServer() {
-        Log.d(TAG, "stopServer");
+        Timber.d("stopServer");
         try {
             if (server != null)
                 server.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         server = null;
     }
@@ -145,13 +145,13 @@ public class HTTPServer {
             boolean success;
             success = dispatch(target, baseRequest, request, response);
             if (!success) {
-                Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST: " + target);
+                Timber.i("handle: NO MIDDLEWARE HANDLED THE REQUEST: %s", target);
             }
         }
     }
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
+        Timber.d("TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         final Context app = BreadApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
@@ -166,9 +166,9 @@ public class HTTPServer {
             }
             return true;
         } else if (target.toLowerCase().startsWith("/_email")) {
-            Log.e(TAG, "dispatch: uri: " + baseRequest.getUri().toString());
+            Timber.d("dispatch: uri: %s", baseRequest.getUri().toString());
             String address = Uri.parse(baseRequest.getUri().toString()).getQueryParameter("address");
-            Log.e(TAG, "dispatch: address: " + address);
+            Timber.d("dispatch: address: %s", address);
             if (Utils.isNullOrEmpty(address)) {
                 return BRHTTPHelper.handleError(400, "no address", baseRequest, response);
             }
@@ -190,7 +190,7 @@ public class HTTPServer {
             if (result) {
                 String className = m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1);
                 if (!className.contains("HTTPRouter"))
-                    Log.d(TAG, "dispatch: " + className + " succeeded:" + request.getRequestURL());
+                    Timber.d("dispatch: " + className + " succeeded:" + request.getRequestURL());
                 break;
             }
         }

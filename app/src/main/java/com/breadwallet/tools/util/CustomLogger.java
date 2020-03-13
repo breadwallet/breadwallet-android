@@ -1,6 +1,6 @@
 package com.breadwallet.tools.util;
 
-import android.util.Log;
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -28,7 +28,6 @@ import android.util.Log;
  */
 
 public class CustomLogger {
-    private static final String TAG = CustomLogger.class.getName();
 
     public static void logThis(String... args) {
         StringBuilder strToLog = new StringBuilder();
@@ -39,9 +38,8 @@ public class CustomLogger {
             } else {
                 strToLog.append(arg);
             }
-            if(i % 4 == 0) strToLog.append("\n");
+            if (i % 4 == 0) strToLog.append("\n");
         }
-        Log.e(TAG, strToLog.toString());
+        Timber.d(strToLog.toString());
     }
-
 }

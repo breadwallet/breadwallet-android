@@ -1,7 +1,5 @@
 package com.platform;
 
-import android.util.Log;
-
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -9,7 +7,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import java.io.IOException;
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -38,28 +36,27 @@ import java.io.IOException;
 
 @WebSocket
 public class BRGeoWebSocketHandler {
-    public static final String TAG = BRGeoWebSocketHandler.class.getName();
 
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
-        Log.d(TAG, "GeoSocketClosed: statusCode=" + statusCode + ", reason=" + reason);
+        Timber.d("GeoSocketClosed: statusCode=%s, reason=%s", statusCode, reason);
         GeoLocationManager.getInstance().stopGeoSocket();
     }
 
     @OnWebSocketError
     public void onError(Throwable t) {
-        Log.e(TAG, "GeoSocketError: " + t.getMessage());
+        Timber.e(t, "GeoSocketError");
         GeoLocationManager.getInstance().stopGeoSocket();
     }
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        Log.d(TAG, "GeoSocketConnected: " + session.getRemoteAddress().getAddress());
+        Timber.d("GeoSocketConnected: %s", session.getRemoteAddress().getAddress());
         GeoLocationManager.getInstance().startGeoSocket(session);
     }
 
     @OnWebSocketMessage
     public void onMessage(String message) {
-        Log.d(TAG, "GeoSocketMessage: " + message);
+        Timber.d("GeoSocketMessage: %s", message);
     }
 }

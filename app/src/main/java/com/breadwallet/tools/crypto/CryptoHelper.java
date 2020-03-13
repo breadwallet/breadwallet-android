@@ -3,6 +3,8 @@ package com.breadwallet.tools.crypto;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -46,7 +48,7 @@ public class CryptoHelper {
         try {
             digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Timber.e(e);
             return null;
         }
         return digest.digest(data);
@@ -57,7 +59,7 @@ public class CryptoHelper {
         try {
             digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Timber.e(e);
             return null;
         }
         return digest.digest(data);

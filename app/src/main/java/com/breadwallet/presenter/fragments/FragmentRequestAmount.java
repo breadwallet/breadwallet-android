@@ -37,6 +37,8 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 
+import timber.log.Timber;
+
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
@@ -66,7 +68,6 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  */
 
 public class FragmentRequestAmount extends Fragment {
-    private static final String TAG = FragmentRequestAmount.class.getName();
     private BRKeyboard keyboard;
     private StringBuilder amountBuilder;
     private TextView isoText;
@@ -260,7 +261,6 @@ public class FragmentRequestAmount extends Fragment {
                 updateText();
             }
         });
-
     }
 
     private void copyText() {
@@ -269,7 +269,6 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void toggleShareButtonsVisibility() {
-
         if (shareButtonsShown) {
             signalLayout.removeView(shareButtonsLayout);
             shareButtonsShown = false;
@@ -277,7 +276,6 @@ public class FragmentRequestAmount extends Fragment {
             signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount());
             shareButtonsShown = true;
         }
-
     }
 
     @Override
@@ -314,7 +312,6 @@ public class FragmentRequestAmount extends Fragment {
                 });
             }
         });
-
     }
 
     @Override
@@ -328,27 +325,16 @@ public class FragmentRequestAmount extends Fragment {
                     try {
                         getActivity().getFragmentManager().popBackStack();
                     } catch (Exception ignored) {
-
+                        Timber.e(ignored);
                     }
                 }
             }
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-
     private void handleClick(String key) {
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -392,7 +378,6 @@ public class FragmentRequestAmount extends Fragment {
             amountBuilder.deleteCharAt(currAmount.length() - 1);
             updateText();
         }
-
     }
 
     private void updateText() {
@@ -401,7 +386,6 @@ public class FragmentRequestAmount extends Fragment {
         amountEdit.setText(tmpAmount);
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
-
     }
 
     private void showKeyboard(boolean b) {
@@ -477,6 +461,4 @@ public class FragmentRequestAmount extends Fragment {
 
     private void showCurrencyList(boolean b) {
     }
-
-
 }

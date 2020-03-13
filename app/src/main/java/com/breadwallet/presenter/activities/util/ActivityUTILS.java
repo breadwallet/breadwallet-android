@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -12,16 +11,10 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.intro.RecoverActivity;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.platform.HTTPServer;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -52,8 +45,6 @@ import static android.content.Context.ACTIVITY_SERVICE;
  */
 public class ActivityUTILS {
 
-    private static final String TAG = ActivityUTILS.class.getName();
-
     private static void setStatusBarColor(Activity app, int color) {
         if (app == null) return;
         Window window = app.getWindow();
@@ -61,7 +52,6 @@ public class ActivityUTILS {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(app.getColor(color));
     }
-
 
     //return true if the app does need to show the disabled wallet screen
     public static boolean isAppSafe(Activity app) {
@@ -72,8 +62,7 @@ public class ActivityUTILS {
         Intent intent = new Intent(app, DisabledActivity.class);
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-        Log.e(TAG, "showWalletDisabled: " + app.getClass().getName());
-
+        Timber.d("showWalletDisabled: %s", app.getClass().getName());
     }
 
     public static boolean isLast(Activity app) {
@@ -88,10 +77,10 @@ public class ActivityUTILS {
         return false;
     }
 
-    public static boolean isMainThread(){
+    public static boolean isMainThread() {
         boolean isMain = Looper.myLooper() == Looper.getMainLooper();
-        if(isMain){
-            Log.e(TAG, "IS MAIN UI THREAD!");
+        if (isMain) {
+            Timber.d("IS MAIN UI THREAD!");
         }
         return isMain;
     }

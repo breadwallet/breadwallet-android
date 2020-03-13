@@ -9,7 +9,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -18,25 +17,23 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
 
+import timber.log.Timber;
+
 
 public class FingerprintActivity extends BRActivity {
-    private static final String TAG = FingerprintActivity.class.getName();
 
     public RelativeLayout layout;
     public static boolean appVisible = false;
@@ -75,7 +72,7 @@ public class FingerprintActivity extends BRActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Activity app = FingerprintActivity.this;
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
-                    Log.e(TAG, "onCheckedChanged: fingerprint not setup");
+                    Timber.d("onCheckedChanged: fingerprint not setup");
                     BRDialog.showCustomDialog(app, getString(R.string.TouchIdSettings_disabledWarning_title_android), getString(R.string.TouchIdSettings_disabledWarning_body_android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
@@ -86,7 +83,6 @@ public class FingerprintActivity extends BRActivity {
                 } else {
                     BRSharedPrefs.putUseFingerprint(app, isChecked);
                 }
-
             }
         });
         SpannableString ss = new SpannableString(getString(R.string.TouchIdSettings_customizeText_android));
@@ -108,8 +104,6 @@ public class FingerprintActivity extends BRActivity {
 
                     }
                 });
-
-
             }
 
             @Override
@@ -151,7 +145,6 @@ public class FingerprintActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        BRAnimator.startBreadActivity(this, false);
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 

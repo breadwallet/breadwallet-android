@@ -12,6 +12,8 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -47,7 +49,7 @@ public class BRHTTPHelper {
             else
                 resp.sendError(err, errMess);
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return true;
     }
@@ -63,7 +65,7 @@ public class BRHTTPHelper {
                 resp.getOutputStream().write(body);
             baseRequest.setHandled(true);
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return true;
     }

@@ -20,6 +20,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -46,7 +48,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class BreadApp extends Application {
-    private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
     public static String HOST = "api.loafwallet.org";
@@ -65,6 +66,9 @@ public class BreadApp extends Application {
 //            BRKeyStore.putFailCount(0, this);
             enableCrashlytics = false;
         }
+
+        // setup Timber
+        Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enableCrashlytics);
 
@@ -108,7 +112,7 @@ public class BreadApp extends Application {
             public void run() {
                 if (isAppInBackground(app)) {
                     backgroundedTime = System.currentTimeMillis();
-                    Log.e(TAG, "App went in background!");
+                    Timber.d("App went in background!");
                     // APP in background, do something
                     isBackgroundChecker.cancel();
                     fireListeners();
@@ -122,5 +126,28 @@ public class BreadApp extends Application {
 
     public interface OnAppBackgrounded {
         void onBackgrounded();
+    }
+
+    private class CrashReportingTree extends Timber.Tree {
+        private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
+        private static final String CRASHLYTICS_KEY_TAG = "tag";
+        private static final String CRASHLYTICS_KEY_MESSAGE = "message";
+
+        @Override
+        protected void log(int priority, String tag, String message, Throwable throwable) {
+            if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+                return;
+            }
+
+            Throwable t = throwable != null ? throwable : new Exception(message);
+
+            // Firebase Crash Reporting
+            FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+            crashlytics.setCustomKey(CRASHLYTICS_KEY_PRIORITY, priority);
+            crashlytics.setCustomKey(CRASHLYTICS_KEY_TAG, tag);
+            crashlytics.setCustomKey(CRASHLYTICS_KEY_MESSAGE, message);
+
+            crashlytics.recordException(t);
+        }
     }
 }

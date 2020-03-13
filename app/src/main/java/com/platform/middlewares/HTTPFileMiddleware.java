@@ -1,38 +1,28 @@
 package com.platform.middlewares;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
-import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
-
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.MediaType;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
+import timber.log.Timber;
 
 
 /**
@@ -60,7 +50,6 @@ import okhttp3.Response;
  * THE SOFTWARE.
  */
 public class HTTPFileMiddleware implements Middleware {
-    public static final String TAG = HTTPFileMiddleware.class.getName();
     private final static String DEBUG_URL = null; //modify for testing
 
     @Override
@@ -71,7 +60,7 @@ public class HTTPFileMiddleware implements Middleware {
         }
         Context app = BreadApp.getBreadContext();
         if (app == null) {
-            Log.e(TAG, "handle: app is null!");
+            Timber.e("handle: app is null!");
             return true;
         }
         File temp = null;
@@ -81,13 +70,13 @@ public class HTTPFileMiddleware implements Middleware {
             String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
             temp = new File(requestedFile);
             if (temp.exists() && !temp.isDirectory()) {
-                Log.d(TAG, "handle: found bundle for:" + target);
+                Timber.d("handle: found bundle for:%s", target);
             } else {
-                Log.d(TAG, "handle: no bundle found for: " + target);
+                Timber.i("handle: no bundle found for: %s", target);
                 return false;
             }
 
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Timber.i("handling: %s %s", target, baseRequest.getMethod());
             boolean modified = true;
             byte[] md5 = CryptoHelper.md5(TypesConverter.long2byteArray(temp.lastModified()));
             String hexEtag = Utils.bytesToHex(md5);
@@ -101,7 +90,7 @@ public class HTTPFileMiddleware implements Middleware {
                 try {
                     body = FileUtils.readFileToByteArray(temp);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 if (body == null) {
                     return BRHTTPHelper.handleError(400, "could not read the file", baseRequest, response);
@@ -124,7 +113,7 @@ public class HTTPFileMiddleware implements Middleware {
                 if (debugResp != null)
                     body = debugResp.body().bytes();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             } finally {
                 debugResp.close();
             }
@@ -136,7 +125,7 @@ public class HTTPFileMiddleware implements Middleware {
             // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
             return handlePartialRequest(baseRequest, response, temp);
         } else {
-            if(body == null) {
+            if (body == null) {
                 return BRHTTPHelper.handleError(404, "not found", baseRequest, response);
             } else {
                 return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
@@ -174,13 +163,13 @@ public class HTTPFileMiddleware implements Middleware {
                 return BRHTTPHelper.handleSuccess(206, respBody, request, response, detectContentType(file));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
             try {
                 request.setHandled(true);
                 response.getWriter().write("Invalid Range Header");
                 response.sendError(400, "Bad Request");
             } catch (IOException e1) {
-                e1.printStackTrace();
+                Timber.e(e1);
             }
 
             return true;

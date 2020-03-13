@@ -30,19 +30,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.NetworkOnMainThreadException;
-import android.util.Log;
 
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import timber.log.Timber;
+
 public class TransactionDataSource implements BRDataSourceInterface {
-    private static final String TAG = TransactionDataSource.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
 
@@ -109,20 +108,16 @@ public class TransactionDataSource implements BRDataSourceInterface {
             }
             return transactionEntity1;
         } catch (Exception ex) {
-            BRReportsManager.reportBug(ex);
-            Log.e(TAG, "Error inserting into SQLite", ex);
-            //Error in between database transaction
+            Timber.e(ex, "Error inserting into SQLite");
         } finally {
             database.endTransaction();
             closeDatabase();
             if (cursor != null) cursor.close();
         }
         return null;
-
-
     }
 
-    public  void deleteAllTransactions() {
+    public void deleteAllTransactions() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
@@ -131,7 +126,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         }
     }
 
-    public  List<BRTransactionEntity> getAllTransactions() {
+    public List<BRTransactionEntity> getAllTransactions() {
         List<BRTransactionEntity> transactions = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -146,7 +141,6 @@ public class TransactionDataSource implements BRDataSourceInterface {
                 transactions.add(transactionEntity);
                 cursor.moveToNext();
             }
-
         } finally {
             closeDatabase();
             if (cursor != null)
@@ -159,28 +153,25 @@ public class TransactionDataSource implements BRDataSourceInterface {
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public  void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+    public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
         try {
             database = openDatabase();
-            Log.e(TAG, "transaction updated with id: " + hash);
+            Timber.d("transaction updated with id: %s", hash);
             String strFilter = "_id=\'" + hash + "\'";
             ContentValues args = new ContentValues();
             args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
             args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
-//            Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
             database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
-//            Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
         } finally {
             closeDatabase();
         }
-
     }
 
-    public  void deleteTxByHash(String hash) {
+    public void deleteTxByHash(String hash) {
         try {
             database = openDatabase();
-            Log.e(TAG, "transaction deleted with id: " + hash);
+            Timber.d("transaction deleted with id: %s", hash);
             database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
                     + " = \'" + hash + "\'", null);
         } finally {
@@ -189,20 +180,17 @@ public class TransactionDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  SQLiteDatabase openDatabase() {
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-//        if (mOpenCounter.incrementAndGet() == 1) {
+    public SQLiteDatabase openDatabase() {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         // Opening new database
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
-//        }
-//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
     }
 
     @Override
-    public  void closeDatabase() {
+    public void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
 //            // Closing database
 //            database.close();
