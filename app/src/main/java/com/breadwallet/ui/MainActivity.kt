@@ -221,7 +221,7 @@ class MainActivity : BRActivity() {
         val data = processIntentData(intent) ?: ""
         if (data.isNotBlank()) {
             val hasNoRoot = !router.hasRootController()
-            val topIsLogin = router.backstack.last().controller() is LoginController
+            val topIsLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val controller = if (hasNoRoot || !topIsLogin) {
                 LoginController(data)
             } else {
