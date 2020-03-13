@@ -95,14 +95,6 @@ class SendSheetController(args: Bundle? = null) :
         bundleOf(CURRENCY_CODE to currencyCode)
     )
 
-    /** A [SendSheetController] to fulfill the provided [CryptoRequest]. */
-    constructor(cryptoRequest: CryptoRequest) : this(
-        bundleOf(
-            CURRENCY_CODE to cryptoRequest.currencyCode,
-            CRYPTO_REQUEST to cryptoRequest
-        )
-    )
-
     /** A [SendSheetController] to fulfill the provided [Link.CryptoRequestUrl]. */
     constructor(link: Link.CryptoRequestUrl) : this(
         bundleOf(

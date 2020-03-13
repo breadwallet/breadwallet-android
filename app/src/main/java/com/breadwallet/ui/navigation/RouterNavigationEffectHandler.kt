@@ -39,6 +39,7 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.settings.about.AboutController
@@ -194,7 +195,9 @@ class RouterNavigationEffectHandler(
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         val controller = when {
-            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest)
+            effect.cryptoRequest != null -> SendSheetController(
+                effect.cryptoRequest.asCryptoRequestUrl()
+            )
             effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl)
             else -> SendSheetController(effect.currencyId)
         }
