@@ -3,12 +3,14 @@ package com.breadwallet.tools.animation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import androidx.annotation.NonNull;
 import android.text.SpannableString;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.threads.BRExecutor;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -35,7 +37,6 @@ import com.breadwallet.tools.threads.BRExecutor;
  * THE SOFTWARE.
  */
 public class BRDialog {
-    private static final String TAG = BRDialog.class.getName();
     private static BRDialogView dialog;
 
     /**
@@ -47,7 +48,7 @@ public class BRDialog {
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
         if (((Activity) app).isDestroyed()) {
-            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
+            Timber.d("showCustomDialog: FAILED, context is destroyed");
             return;
         }
 
@@ -74,7 +75,7 @@ public class BRDialog {
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
         if (((Activity) app).isDestroyed()) {
-            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
+            Timber.d("showCustomDialog: FAILED, context is destroyed");
             return;
         }
 

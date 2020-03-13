@@ -39,6 +39,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 /**
@@ -67,8 +69,6 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  */
 
 public class FragmentTransactionItem extends Fragment {
-    private static final String TAG = FragmentTransactionItem.class.getName();
-
     public TextView mTitle;
     private TextView mDescriptionText;
     private TextView mSubHeader;
@@ -88,9 +88,6 @@ public class FragmentTransactionItem extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
-
         final View rootView = inflater.inflate(R.layout.transaction_details_item, container, false);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         mTitle = (TextView) rootView.findViewById(R.id.title);
@@ -140,12 +137,9 @@ public class FragmentTransactionItem extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fillTexts();
-
     }
 
     private void fillTexts() {
-//        Log.e(TAG, "fillTexts fee: " + item.getFee());
-//        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = BRSharedPrefs.getPreferredLTC(getActivity()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 
@@ -180,20 +174,16 @@ public class FragmentTransactionItem extends Fragment {
                 if (app != null)
                     app.getFragmentManager().popBackStack();
                 String txUrl = BRConstants.BLOCK_EXPLORER_BASE_URL + item.getTxHashHexReversed();
-                Log.d(TAG, "txUrl = " + txUrl);
+                Timber.d("txUrl = %s", txUrl);
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(txUrl));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
 
-
         int level = getLevel(item);
 
-
         boolean availableForSpend = false;
-//        String sentReceived = !sent ? "Receiving" : "Sending";
-//        sentReceived = ""; //make this empy for now
         String percentage = "";
         switch (level) {
             case 0:
@@ -221,7 +211,7 @@ public class FragmentTransactionItem extends Fragment {
         }
 
         boolean removeView = sent || !availableForSpend;
-        Log.e(TAG, "fillTexts: removeView : " + removeView);
+        Timber.d("fillTexts: removeView : %s", removeView);
         if (!removeView) {
             mAvailableSpend.setText(getString(R.string.Transaction_available));
         } else {
@@ -295,11 +285,9 @@ public class FragmentTransactionItem extends Fragment {
                 @Override
                 public void run() {
                     KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
-//                    item.metaData = KVStoreManager.getInstance().getTxMetaData(app, item.getTxHash());
                     TxManager.getInstance().updateTxList(app);
                 }
             });
-
         }
         oldComment = null;
         Utils.hideKeyboard(app);
@@ -315,7 +303,6 @@ public class FragmentTransactionItem extends Fragment {
 
     public void setItem(TxItem item) {
         this.item = item;
-
     }
 
     private String getFormattedDate(long timeStamp) {

@@ -23,6 +23,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -48,7 +50,6 @@ import com.platform.tools.BRBitId;
  * THE SOFTWARE.
  */
 public class BRActivity extends Activity {
-    private final String TAG = this.getClass().getName();
 
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
@@ -71,14 +72,12 @@ public class BRActivity extends Activity {
     protected void onResume() {
         init(this);
         super.onResume();
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
-
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -139,7 +138,7 @@ public class BRActivity extends Activity {
                             else if (BRBitId.isBitId(result))
                                 BRBitId.signBitID(BRActivity.this, result, null);
                             else
-                                Log.e(TAG, "onActivityResult: not litecoin address NOR bitID");
+                                Timber.i("onActivityResult: not litecoin address NOR bitID");
                         }
                     }, 500);
 
@@ -162,7 +161,7 @@ public class BRActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     PostAuth.getInstance().onCreateWalletAuth(this, true);
                 } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
+                    Timber.d("WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance();
                     m.wipeWalletButKeystore(this);
                     finish();
@@ -172,8 +171,6 @@ public class BRActivity extends Activity {
     }
 
     public static void init(Activity app) {
-        //set status bar color
-//        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(app);

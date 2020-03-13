@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
@@ -22,9 +21,10 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.jniwrappers.BRKey;
 
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -52,7 +52,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class AuthManager {
-    public static final String TAG = AuthManager.class.getName();
     private static AuthManager instance;
     private String previousTry;
 
@@ -67,7 +66,7 @@ public class AuthManager {
     }
 
     public boolean checkAuth(CharSequence passSequence, Context context) {
-        Log.e(TAG, "checkAuth: ");
+        Timber.d("checkAuth: ");
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
             int failCount = BRKeyStore.getFailCount(context);
@@ -95,7 +94,7 @@ public class AuthManager {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
                         + BRKeyStore.getSpendLimit(app));
@@ -113,7 +112,6 @@ public class AuthManager {
     public boolean isWalletDisabled(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
         return failCount >= 3 && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
-
     }
 
     public long disabledUntil(Activity app) {
@@ -161,7 +159,6 @@ public class AuthManager {
                     setTotalLimit(activity, totalLimit);
                 }
             });
-
         }
     }
 
@@ -196,16 +193,14 @@ public class AuthManager {
                 @Override
                 public void run() {
                     onPinSuccess.onSuccess();
-
                 }
             }, 100);
-
         }
     }
 
     public void authPrompt(final Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
         if (context == null || !(context instanceof Activity)) {
-            Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
+            Timber.i("authPrompt: context is null or not Activity: %s", context);
             return;
         }
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);

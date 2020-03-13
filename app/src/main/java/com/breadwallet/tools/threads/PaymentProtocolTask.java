@@ -1,26 +1,23 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.BRWalletManager;
@@ -34,6 +31,8 @@ import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 
 /**
@@ -62,7 +61,6 @@ import java.util.Locale;
  */
 
 public class PaymentProtocolTask extends AsyncTask<String, String, String> {
-    public static final String TAG = PaymentProtocolTask.class.getName();
     HttpURLConnection urlConnection;
     String certName = null;
     PaymentRequestWrapper paymentRequest = null;
@@ -75,7 +73,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         app = (Activity) BreadApp.getBreadContext();
         InputStream in;
         try {
-            Log.e(TAG, "the uri: " + params[0]);
+            Timber.d("the uri: %s", params[0]);
             URL url = new URL(params[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Accept", "application/litecoin-paymentrequest");
@@ -85,19 +83,19 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             in = urlConnection.getInputStream();
 
             if (in == null) {
-                Log.e(TAG, "The inputStream is null!");
+                Timber.i("The inputStream is null!");
                 return null;
             }
             byte[] serializedBytes = BytesUtil.readBytesFromStream(in);
             if (serializedBytes == null || serializedBytes.length == 0) {
-                Log.e(TAG, "serializedBytes are null!!!");
+                Timber.i("serializedBytes are null!!!");
                 return null;
             }
 
             paymentRequest = BitcoinUrlHandler.parsePaymentRequest(serializedBytes);
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
-                Log.e(TAG, "paymentRequest is null!!!");
+                Timber.i("paymentRequest is null!!!");
                 BRDialog.showCustomDialog(app, "", app.getString(R.string.Send_remoteRequestError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -107,7 +105,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
-                Log.e(TAG, "insufficient amount!!!");
+                Timber.i("insufficient amount!!!");
                 BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -117,8 +115,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
-                Log.e(TAG, "failed to sign tx!!!");
-                Log.e(TAG, "insufficient amount!!!");
+                Timber.i("failed to sign tx!!! \n insufficient amount!!!");
                 BRDialog.showCustomDialog(app, "", app.getString(R.string.Import_Error_signing), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -128,7 +125,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
-                Log.e(TAG, "failed to sign tx!!!");
+                Timber.i("failed to sign tx!!!");
                 BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), "Too long", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -138,7 +135,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.AMOUNTS_ERROR) {
-                Log.e(TAG, "failed to sign tx!!!");
+                Timber.i("failed to sign tx!!!");
                 BRDialog.showCustomDialog(app, "", app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -177,7 +174,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     "amount", String.valueOf(paymentRequest.amount));
             //end logging
             if (paymentRequest.expires != 0 && paymentRequest.time > paymentRequest.expires) {
-                Log.e(TAG, "Request is expired");
+                Timber.i("Request is expired");
                 if (app != null)
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.PaymentProtocol_Errors_requestExpired), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
@@ -190,7 +187,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
             List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
             certName = X509CertificateValidator.certificateValidation(certList, paymentRequest);
-
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
@@ -220,7 +216,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     }, null, null, 0);
                 paymentRequest = null;
             } else if (e instanceof CertificateChainNotFound) {
-                Log.e(TAG, "No certificates!", e);
+                Timber.e(e, "No certificates!");
             } else {
                 if (app != null)
                     BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest) + ":" + e.getMessage(), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
@@ -232,7 +228,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                 paymentRequest = null;
             }
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
         }
@@ -280,11 +276,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             } else {
                 certification = "\uD83D\uDD12 " + certName + "\n";
             }
-
         }
-
         continueWithThePayment(app, certification);
-
     }
 
     private String extractCNFromCertName(String str) {
@@ -301,7 +294,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     endIndex = i;
                     break;
                 }
-
             }
         }
         String cleanCN = str.substring(index, endIndex);
@@ -354,7 +346,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, false,new BRAuthCompletion() {
+                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
                                 PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
@@ -363,7 +355,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                             @Override
                             public void onCancel() {
-                                Log.e(TAG, "onCancel: ");
+                                Timber.d("onCancel: ");
                             }
                         });
                     }

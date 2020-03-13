@@ -1,23 +1,5 @@
 package com.breadwallet.tools.security;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.security.keystore.KeyPermanentlyInvalidatedException;
-import android.util.Log;
-
-import com.breadwallet.BreadApp;
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.intro.RecoverActivity;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-
-import java.security.InvalidKeyException;
-
 /**
  * BreadWallet
  * <p/>

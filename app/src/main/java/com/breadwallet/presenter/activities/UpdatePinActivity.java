@@ -2,14 +2,12 @@ package com.breadwallet.presenter.activities;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -17,10 +15,10 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRConstants;
+
+import timber.log.Timber;
 
 public class UpdatePinActivity extends BRActivity {
-    private static final String TAG = UpdatePinActivity.class.getName();
     private BRKeyboard keyboard;
     private View dot1;
     private View dot2;
@@ -97,7 +95,7 @@ public class UpdatePinActivity extends BRActivity {
 
     private void handleClick(String key) {
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -106,7 +104,7 @@ public class UpdatePinActivity extends BRActivity {
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
-            Log.e(TAG, "handleClick: oops: " + key);
+            Timber.d("handleClick: oops: %s", key);
         }
     }
 
@@ -142,7 +140,6 @@ public class UpdatePinActivity extends BRActivity {
                 }, 100);
             }
         });
-
     }
 
     private void goNext() {
@@ -154,13 +151,13 @@ public class UpdatePinActivity extends BRActivity {
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                 }
-                pin = new StringBuilder("");
+                pin = new StringBuilder();
                 updateDots();
                 break;
             case ENTER_NEW_PIN:
                 setMode(RE_ENTER_NEW_PIN);
                 curNewPin = pin.toString();
-                pin = new StringBuilder("");
+                pin = new StringBuilder();
                 updateDots();
                 break;
 
@@ -178,7 +175,7 @@ public class UpdatePinActivity extends BRActivity {
                     setMode(ENTER_NEW_PIN);
                     pinLimit = BRKeyStore.getPinCode(this).length();
                 }
-                pin = new StringBuilder("");
+                pin = new StringBuilder();
                 updateDots();
                 break;
         }

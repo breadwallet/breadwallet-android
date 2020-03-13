@@ -1,7 +1,5 @@
 package com.breadwallet.tools.util;
 
-import com.breadwallet.tools.manager.BRReportsManager;
-
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -12,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -46,8 +46,7 @@ public class BRCompressor {
             InputStream isr = new GZIPInputStream(new ByteArrayInputStream(compressed));
             return IOUtils.toByteArray(isr);
         } catch (IOException e) {
-            BRReportsManager.reportBug(e);
-            e.printStackTrace();
+            Timber.e(e);
         }
         return null;
     }
@@ -67,20 +66,19 @@ public class BRCompressor {
                     try {
                         zipStream.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
                 }
             } finally {
                 try {
                     byteStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
             compressedData = byteStream.toByteArray();
         } catch (Exception e) {
-            BRReportsManager.reportBug(e);
-            e.printStackTrace();
+            Timber.e(e);
         }
         return compressedData;
     }
@@ -95,7 +93,7 @@ public class BRCompressor {
             return IOUtils.toByteArray(bin);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             try {
                 if (bin != null) {
@@ -103,7 +101,7 @@ public class BRCompressor {
                 }
                 is.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -123,7 +121,7 @@ public class BRCompressor {
                 try {
                     bout.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
             compressedData = byteStream.toByteArray();
@@ -131,7 +129,7 @@ public class BRCompressor {
             try {
                 byteStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return compressedData;

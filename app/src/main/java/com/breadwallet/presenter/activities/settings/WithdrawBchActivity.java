@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -34,10 +32,11 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 
+import timber.log.Timber;
+
 import static com.breadwallet.tools.util.BRConstants.SCANNER_BCH_REQUEST;
 
 public class WithdrawBchActivity extends BRActivity {
-    private static final String TAG = WithdrawBchActivity.class.getName();
     private Button scan; //scan
     private Button paste; //paste
     private Button send; //button_send
@@ -72,7 +71,7 @@ public class WithdrawBchActivity extends BRActivity {
         addressEdit = (EditText) findViewById(R.id.address_edit);
         byte[] pubkey = BRKeyStore.getMasterPublicKey(this);
         if (Utils.isNullOrEmpty(pubkey)) {
-            BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
+            Timber.e(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
         long satoshis = BRWalletManager.getBCashBalance(pubkey);
         String iso = BRSharedPrefs.getPreferredLTC(this) ? "LTC" : BRSharedPrefs.getIso(this);
@@ -95,26 +94,10 @@ public class WithdrawBchActivity extends BRActivity {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                final AlertDialog.Builder builder = new AlertDialog.Builder(WithdrawBchActivity.this);
                 if (BRAnimator.isClickAllowed()) {
 
                     final String bitcoinUrl = BRClipboardManager.getClipboard(WithdrawBchActivity.this);
-//                    String ifAddress = null;
-//                    RequestObject obj = BitcoinUrlHandler.getRequestFromString(bitcoinUrl);
-//                    if (obj == null) {
-//                        //builder.setTitle(getResources().getString(R.string.alert));
-//                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                            @Override
-//                            public void onClick(BRDialogView brDialogView) {
-//                                brDialogView.dismissWithAnimation();
-//                            }
-//                        }, null, null, 0);
-//                        BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
-//                        return;
-//                    }
-//                    ifAddress = obj.address;
                     if (bitcoinUrl == null) {
-                        //builder.setTitle(getResources().getString(R.string.alert));
                         BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
@@ -124,7 +107,6 @@ public class WithdrawBchActivity extends BRActivity {
                         BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
                         return;
                     }
-//                    final String finalAddress = tempAddress;
                     BRWalletManager wm = BRWalletManager.getInstance();
 
                     if (wm.isValidBitcoinPrivateKey(bitcoinUrl) || wm.isValidBitcoinBIP38Key(bitcoinUrl)) {
@@ -132,7 +114,6 @@ public class WithdrawBchActivity extends BRActivity {
                         return;
                     }
 
-//                    if (BRWalletManager.validateAddress(bitcoinUrl.trim())) {
                     final BRWalletManager m = BRWalletManager.getInstance();
                     BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                         @Override
@@ -160,16 +141,6 @@ public class WithdrawBchActivity extends BRActivity {
                             });
                         }
                     });
-
-//                    } else {
-//                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                            @Override
-//                            public void onClick(BRDialogView brDialogView) {
-//                                brDialogView.dismissWithAnimation();
-//                            }
-//                        }, null, null, 0);
-//                        BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
-//                    }
                 }
             }
         });
@@ -192,7 +163,6 @@ public class WithdrawBchActivity extends BRActivity {
             }
         });
         updateUi(this);
-
     }
 
     //called from native
@@ -204,7 +174,7 @@ public class WithdrawBchActivity extends BRActivity {
         } else {
             Context activity = BreadApp.getBreadContext();
             BRSharedPrefs.putBCHTxId(activity, txId);
-            Log.e(TAG, "updateUi: app is null");
+            Timber.d("updateUi: app is null");
         }
     }
 
@@ -259,10 +229,8 @@ public class WithdrawBchActivity extends BRActivity {
 
                     }
                 });
-
             }
         }
-
     }
 
     @Override
@@ -283,5 +251,4 @@ public class WithdrawBchActivity extends BRActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
-
 }

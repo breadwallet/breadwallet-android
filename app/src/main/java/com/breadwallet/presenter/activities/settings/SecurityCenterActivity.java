@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,23 +14,25 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
+import com.breadwallet.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SecurityCenterActivity extends BRActivity {
-    private static final String TAG = SecurityCenterActivity.class.getName();
 
     public ListView mListView;
     public RelativeLayout layout;
@@ -116,8 +115,6 @@ public class SecurityCenterActivity extends BRActivity {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-//            Log.e(TAG, "getView: pos: " + position + ", item: " + items.get(position));
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -132,7 +129,6 @@ public class SecurityCenterActivity extends BRActivity {
             checkMark.setImageResource(items.get(position).checkMarkResId);
             convertView.setOnClickListener(items.get(position).listener);
             return convertView;
-
         }
 
         @Override

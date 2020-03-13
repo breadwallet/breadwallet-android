@@ -1,10 +1,8 @@
 package com.platform.tools;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -19,10 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -49,8 +48,6 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 public class KVStoreManager {
-    private static final String TAG = KVStoreManager.class.getName();
-
     private static KVStoreManager instance;
     String walletInfoKey = "wallet-info";
 
@@ -69,7 +66,7 @@ public class KVStoreManager {
         long ver = kvStore.localVersion(walletInfoKey).version;
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
+            Timber.i("getWalletInfo: value is null for key: %s", obj.key);
             return null;
         }
 
@@ -78,12 +75,12 @@ public class KVStoreManager {
         try {
             byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
             if (decompressed == null) {
-                Log.e(TAG, "getWalletInfo: decompressed value is null");
+                Timber.i("getWalletInfo: decompressed value is null");
                 return null;
             }
             json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
             return null;
         }
 
@@ -91,14 +88,13 @@ public class KVStoreManager {
             result.classVersion = json.getInt("classVersion");
             result.creationDate = json.getInt("creationDate");
             result.name = json.getString("name");
-//            result.currentCurrency = json.getString("currentCurrency");
-            Log.d(TAG, "getWalletInfo: " + result.creationDate + ", name: " + result.name);
+            Timber.d("getWalletInfo: " + result.creationDate + ", name: " + result.name);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+            Timber.e(e);
+            Timber.d("getWalletInfo: FAILED to get json value");
         }
 
-        Log.e(TAG, "getWalletInfo: " + json);
+        Timber.d("getWalletInfo: %s", json);
         return result;
     }
 
@@ -124,20 +120,19 @@ public class KVStoreManager {
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putWalletInfo: FAILED to create json");
+            Timber.e(e);
             return;
         }
 
         if (result.length == 0) {
-            Log.e(TAG, "putWalletInfo: FAILED: result is empty");
+            Timber.d("putWalletInfo: FAILED: result is empty");
             return;
         }
         byte[] compressed;
         try {
             compressed = BRCompressor.bz2Compress(result);
         } catch (IOException e) {
-            BRReportsManager.reportBug(e);
+            Timber.e(e);
             return;
         }
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -146,17 +141,11 @@ public class KVStoreManager {
         long removeVer = kvStore.remoteVersion(walletInfoKey);
         CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {
-            Log.e(TAG, "putWalletInfo: Error setting value for key: " + walletInfoKey + ", err: " + compObj.err);
+            Timber.d("putWalletInfo: Error setting value for key: " + walletInfoKey + ", err: " + compObj.err);
         }
-
     }
 
-//    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-//        return getTxMetaData(app, txHash, null);
-//    }
-
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-//        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -166,7 +155,6 @@ public class KVStoreManager {
         CompletionObject obj = kvStore.get(key, ver);
 
         if (obj.kv == null) {
-//            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
             return null;
         }
 
@@ -190,22 +178,21 @@ public class KVStoreManager {
         TxMetaData result = new TxMetaData();
         JSONObject json;
         if (value == null) {
-            Log.e(TAG, "valueToMetaData: value is null!");
+            Timber.d("valueToMetaData: value is null!");
             return null;
         }
         try {
             byte[] decompressed = BRCompressor.bz2Extract(value);
             if (decompressed == null) {
-                Log.e(TAG, "getTxMetaData: decompressed value is null");
+                Timber.d("getTxMetaData: decompressed value is null");
                 return null;
             }
             json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
-
-            Log.e(TAG, "valueToMetaData: " + new String(value) + ":", e);
+            Timber.e(e);
             return null;
         } catch (Exception e) {
-            Log.e(TAG, "valueToMetaData: ", e);
+            Timber.e(e);
             return null;
         }
 
@@ -220,14 +207,12 @@ public class KVStoreManager {
             result.deviceId = json.getString("dId");
             result.comment = json.getString("comment");
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getTxMetaData: FAILED to get json value");
+            Timber.e(e);
         }
         return result;
     }
 
     public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
-//        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
@@ -238,19 +223,19 @@ public class KVStoreManager {
         } else if (data != null) {
             String finalExchangeCurrency = getFinalValue(data.exchangeCurrency, old.exchangeCurrency);
             if (finalExchangeCurrency != null) {
-                Log.e(TAG, "putTxMetaData: finalExchangeCurrency:" + finalExchangeCurrency);
+                Timber.d("putTxMetaData: finalExchangeCurrency:%s", finalExchangeCurrency);
                 old.exchangeCurrency = finalExchangeCurrency;
                 needsUpdate = true;
             }
             String finalDeviceId = getFinalValue(data.deviceId, old.deviceId);
             if (finalDeviceId != null) {
-                Log.e(TAG, "putTxMetaData: finalDeviceId:" + finalDeviceId);
+                Timber.d("putTxMetaData: finalDeviceId:%s", finalDeviceId);
                 old.deviceId = finalDeviceId;
                 needsUpdate = true;
             }
             String finalComment = getFinalValue(data.comment, old.comment);
             if (finalComment != null) {
-                Log.e(TAG, "putTxMetaData: comment:" + finalComment);
+                Timber.d("putTxMetaData: comment:%s", finalComment);
                 old.comment = finalComment;
                 needsUpdate = true;
             }
@@ -288,11 +273,11 @@ public class KVStoreManager {
 
         if (!needsUpdate) return;
 
-        Log.d(TAG, "putTxMetaData: updating txMetadata for : " + key);
+        Timber.d("putTxMetaData: updating txMetadata for : %s", key);
 
-        JSONObject obj = new JSONObject();
         byte[] result;
         try {
+            JSONObject obj = new JSONObject();
             obj.put("classVersion", old.classVersion);
             obj.put("bh", old.blockHeight);
             obj.put("er", old.exchangeRate);
@@ -303,22 +288,20 @@ public class KVStoreManager {
             obj.put("dId", old.deviceId == null ? "" : old.deviceId);
             obj.put("comment", old.comment == null ? "" : old.comment);
             result = obj.toString().getBytes();
-
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putTxMetaData: FAILED to create json");
+            Timber.e(e);
             return;
         }
 
         if (result.length == 0) {
-            Log.e(TAG, "putTxMetaData: FAILED: result is empty");
+            Timber.d("putTxMetaData: FAILED: result is empty");
             return;
         }
         byte[] compressed;
         try {
             compressed = BRCompressor.bz2Compress(result);
         } catch (IOException e) {
-            BRReportsManager.reportBug(e);
+            Timber.e(e);
             return;
         }
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -327,60 +310,41 @@ public class KVStoreManager {
         long removeVer = kvStore.remoteVersion(key);
         CompletionObject compObj = kvStore.set(localVer, removeVer, key, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {
-            Log.e(TAG, "putTxMetaData: Error setting value for key: " + key + ", err: " + compObj.err);
+            Timber.d("putTxMetaData: Error setting value for key: " + key + ", err: " + compObj.err);
         }
-
     }
 
     //null means no change
     private String getFinalValue(String newVal, String oldVal) {
         if (newVal == null) return null;
         if (oldVal == null) return newVal;
-        if (newVal.equals(oldVal)) {
-            return null;
-        } else {
-            return newVal;
-        }
+        return newVal.equals(oldVal) ? null : newVal;
     }
 
     // -1 means no change
     private int getFinalValue(int newVal, int oldVal) {
         if (newVal <= 0) return -1;
         if (oldVal <= 0) return newVal;
-        if (newVal == oldVal) {
-            return -1;
-        } else {
-            return newVal;
-        }
+        return newVal == oldVal ? -1 : newVal;
     }
 
     // -1 means no change
     private long getFinalValue(long newVal, long oldVal) {
         if (newVal <= 0) return -1;
         if (oldVal <= 0) return newVal;
-        if (newVal == oldVal) {
-            return -1;
-        } else {
-            return newVal;
-        }
+        return newVal == oldVal ? -1 : newVal;
     }
 
     // -1 means no change
     private double getFinalValue(double newVal, double oldVal) {
         if (newVal <= 0) return -1;
         if (oldVal <= 0) return newVal;
-        if (newVal == oldVal) {
-            return -1;
-        } else {
-            return newVal;
-        }
+        return newVal == oldVal ? -1 : newVal;
     }
 
-
-    public static String txKey(byte[] txHash) {
+    private static String txKey(byte[] txHash) {
         if (Utils.isNullOrEmpty(txHash)) return null;
         String hex = Utils.bytesToHex(CryptoHelper.sha256(txHash));
-        if (Utils.isNullOrEmpty(hex)) return null;
-        return "txn2-" + hex;
+        return Utils.isNullOrEmpty(hex) ? null : "txn2-" + hex;
     }
 }

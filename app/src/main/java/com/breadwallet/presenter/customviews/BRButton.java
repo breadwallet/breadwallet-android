@@ -10,9 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
@@ -21,9 +19,13 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 
+import androidx.annotation.Nullable;
+
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.util.Utils;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -51,7 +53,6 @@ import com.breadwallet.tools.util.Utils;
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
-    private static final String TAG = BRButton.class.getName();
     private static int ANIMATION_DURATION = 30;
     private Bitmap shadow;
     private Rect shadowRect;
@@ -132,7 +133,6 @@ public class BRButton extends Button {
                     observer.removeOnGlobalLayoutListener(this);
                 }
                 correctTextSizeIfNeeded();
-                correctTextBalance();
             }
         });
     }
@@ -152,7 +152,6 @@ public class BRButton extends Button {
         }
 
         return super.onTouchEvent(event);
-
     }
 
     @Override
@@ -160,7 +159,6 @@ public class BRButton extends Button {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
-
     }
 
     private void correctTextSizeIfNeeded() {
@@ -173,29 +171,10 @@ public class BRButton extends Button {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
             lines = getLineCount();
             if (limit <= 0) {
-                Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
+                Timber.d("correctTextSizeIfNeeded: Failed to rescale, limit reached, final: %s", px);
                 break;
             }
         }
-    }
-
-    private void correctTextBalance() {
-//        Rect bounds = new Rect();
-//        Paint textPaint = getPaint();
-//        textPaint.getTextBounds(getText().toString(), 0, getText().toString().length(), bounds);
-//        int height = bounds.height();
-//        int width = bounds.width();
-
-//        int paddingLeft = getPaddingLeft();
-//        int paddingTop = getPaddingTop();
-//        int paddingRight = getPaddingRight();
-//        int paddingBottom = getPaddingBottom();
-//
-//        paddingTop = 5;
-//        paddingBottom = height - 5 - modifiedHeight;
-//
-//        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-//        invalidate();
     }
 
     @Override
@@ -211,7 +190,6 @@ public class BRButton extends Button {
                 canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
         }
         super.onDraw(canvas);
-
     }
 
     public void setType(int type) {
@@ -219,7 +197,7 @@ public class BRButton extends Button {
         this.type = type;
 
         if (type == 1) { //blue
-            bPaint.setColor(getContext().getColor(R.color.button_primary_normal));
+            bPaint.setColor(getContext().getColor(R.color.litecoin_litewallet_blue));
             setTextColor(getContext().getColor(R.color.white));
         } else if (type == 2) { //gray stroke
             bPaintStroke.setColor(getContext().getColor(R.color.extra_light_gray));
@@ -229,10 +207,10 @@ public class BRButton extends Button {
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
             bPaint.setStyle(Paint.Style.FILL);
         } else if (type == 3) { //blue strokeww
-            bPaintStroke.setColor(getContext().getColor(R.color.button_primary_normal));
+            bPaintStroke.setColor(getContext().getColor(R.color.litecoin_litewallet_blue));
             bPaintStroke.setStyle(Paint.Style.STROKE);
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
-            setTextColor(getContext().getColor(R.color.button_primary_normal));
+            setTextColor(getContext().getColor(R.color.litecoin_litewallet_blue));
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
             bPaint.setStyle(Paint.Style.FILL);
         }
@@ -264,7 +242,6 @@ public class BRButton extends Button {
 
         startAnimation(scaleAnim);
         shadowAnim.start();
-
     }
 
     private void unPress(int duration) {

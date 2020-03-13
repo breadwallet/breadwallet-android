@@ -24,14 +24,14 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.SmartValidator;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import java.util.Locale;
 import java.util.Random;
+
+import timber.log.Timber;
 
 
 public class PaperKeyProveActivity extends BRActivity {
@@ -154,12 +154,10 @@ public class PaperKeyProveActivity extends BRActivity {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            BRReportsManager.reportBug(new IllegalArgumentException("Paper Key error, please contact support at contact@loafwallet.org"), false);
+            Timber.e(new IllegalArgumentException("Paper Key error. Problem with OS Keystore"));
         } else {
             randomWordsSetUp(wordArray);
-
         }
-
     }
 
     @Override

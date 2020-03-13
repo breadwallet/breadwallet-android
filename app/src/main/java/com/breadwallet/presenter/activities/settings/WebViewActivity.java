@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.settings;
 import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -24,8 +23,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import timber.log.Timber;
+
 public class WebViewActivity extends BRActivity {
-    private static final String TAG = WebViewActivity.class.getName();
     public static final String URL_EXTRA = "url";
     public static final String JSON_EXTRA = "json";
     public static final String ARTICLE_ID_EXTRA = "articleId";
@@ -51,7 +51,7 @@ public class WebViewActivity extends BRActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
+                Timber.d("shouldOverrideUrlLoading: %s", request.getUrl());
                 if ((onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) || request.getUrl().toString().contains("_close")) {
                     onBackPressed();
                     onCloseUrl = null;
@@ -107,7 +107,7 @@ public class WebViewActivity extends BRActivity {
             String closeOn = json.getString("closeOn");
             if (Utils.isNullOrEmpty(url) || Utils.isNullOrEmpty(method) ||
                     Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn)) {
-                Log.e(TAG, "request: not enough params: " + jsonString);
+                Timber.d("request: not enough params: %s", jsonString);
                 return;
             }
             onCloseUrl = closeOn;
@@ -127,8 +127,7 @@ public class WebViewActivity extends BRActivity {
                 throw new NullPointerException("unexpected method: " + method);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "request: Failed to parse json or not enough params: " + jsonString);
-            e.printStackTrace();
+            Timber.e(e, "request: Failed to parse json or not enough params: %s", jsonString);
         }
     }
 
@@ -137,7 +136,7 @@ public class WebViewActivity extends BRActivity {
         webView.evaluateJavascript(js, new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
-                Log.e(TAG, "onReceiveValue: " + value);
+                Timber.d("onReceiveValue: %s", value);
             }
         });
     }
@@ -150,7 +149,7 @@ public class WebViewActivity extends BRActivity {
         } else if (url.equalsIgnoreCase(HTTPServer.URL_EA)) {
             HTTPServer.mode = HTTPServer.ServerMode.EA;
         } else {
-            Log.e(TAG, "setupServerMode: " + "unknown url: " + url);
+            Timber.d("setupServerMode: unknown url: %s", url);
             return false;
         }
         return true;
@@ -183,5 +182,4 @@ public class WebViewActivity extends BRActivity {
         appVisible = false;
         LinkPlugin.hasBrowser = false;
     }
-
 }

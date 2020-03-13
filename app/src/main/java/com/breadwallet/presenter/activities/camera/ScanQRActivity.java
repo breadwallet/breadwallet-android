@@ -22,6 +22,8 @@ import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.platform.tools.BRBitId;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -48,7 +50,6 @@ import com.platform.tools.BRBitId;
  * THE SOFTWARE.
  */
 public class ScanQRActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener {
-    private static final String TAG = ScanQRActivity.class.getName();
     private ImageView cameraGuide;
     private TextView descriptionText;
     private long lastUpdated;
@@ -85,7 +86,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
             initQRCodeReaderView();
         } else {
 //            requestCameraPermission();
-            Log.e(TAG, "onCreate: Permissions needed? HUH?");
+            Timber.d("onCreate: Permissions needed? HUH?");
         }
 
         new Handler().postDelayed(new Runnable() {
@@ -95,7 +96,6 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 SpringAnimator.showExpandCameraGuide(cameraGuide);
             }
         }, 400);
-
     }
 
 
@@ -144,7 +144,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         }
@@ -199,8 +199,6 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 }
             });
         }
-
-
     }
 
     private void initQRCodeReaderView() {

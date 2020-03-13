@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,7 +17,6 @@ import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
@@ -29,6 +27,8 @@ import com.platform.APIClient;
 
 import java.io.Serializable;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 
 /**
@@ -57,7 +57,6 @@ import java.util.Locale;
  */
 
 public class IntroActivity extends BRActivity implements Serializable {
-    private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
     public static IntroActivity introActivity;
@@ -91,8 +90,9 @@ public class IntroActivity extends BRActivity implements Serializable {
 //        SyncManager.getInstance().updateAlarms(this);
 
         if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
-            Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
-            BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
+            RuntimeException ex = new RuntimeException("onCreate: AUTH_DURATION_SEC should be 300");
+            Timber.e(ex);
+            throw ex;
         }
         introActivity = this;
 
@@ -102,7 +102,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         String verName = pInfo != null ? pInfo.versionName : " ";
         versionText.setText(String.format(Locale.US, "%1$s", verName));
@@ -138,7 +138,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle DONE in " + (endTime - startTime) + "ms");
+                Timber.d("updateBundle DONE in %sms",endTime - startTime);
             }
         });
     }

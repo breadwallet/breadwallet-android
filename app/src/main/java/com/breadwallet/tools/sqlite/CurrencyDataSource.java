@@ -31,13 +31,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import timber.log.Timber;
 
 public class CurrencyDataSource implements BRDataSourceInterface {
     private static final String TAG = CurrencyDataSource.class.getName();
@@ -83,7 +84,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
-            BRReportsManager.reportBug(ex);
+            Timber.e(ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();
@@ -185,7 +186,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
 //        }
-//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
     }
 
@@ -196,6 +196,5 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 //        database.close();
 //
 //        }
-//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

@@ -1,9 +1,9 @@
 package com.platform.sqlite;
 
 
-import android.util.Log;
-
 import com.platform.kvstore.CompletionObject;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -31,8 +31,6 @@ import com.platform.kvstore.CompletionObject;
  */
 
 public class KVItem {
-    public static final String TAG = KVItem.class.getName();
-
     public long version;
     public long remoteVersion;
     public String key;
@@ -61,13 +59,13 @@ public class KVItem {
     }
 
     public void printValues() {
-        Log.e(TAG, "KVItem values:");
-        Log.e(TAG, "version: " + version);
-        Log.e(TAG, "remoteVersion: " + remoteVersion);
-        Log.e(TAG, "key: " + key);
-        Log.e(TAG, "value.length: " + value.length);
-        Log.e(TAG, "time: " + time);
-        Log.e(TAG, "deleted: " + deleted);
+        Timber.d("KVItem values: \nversion: %s\nremoteVersion: %s\nkey: %s\nvalue.length: %s\ntime: %s\ndeleted: %s"
+                , version
+                , remoteVersion
+                , key
+                , value.length
+                , time
+                , deleted);
     }
 
     private KVItem() {

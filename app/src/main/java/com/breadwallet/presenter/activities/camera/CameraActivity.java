@@ -58,6 +58,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -84,7 +86,6 @@ import java.util.concurrent.TimeUnit;
  * THE SOFTWARE.
  */
 public class CameraActivity extends BRActivity implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
-    private static final String TAG = CameraActivity.class.getName();
     public static boolean appVisible = false;
     private static CameraActivity app;
     private boolean imageTaken;
@@ -413,7 +414,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
         } else if (notBigEnough.size() > 0) {
             return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+            Timber.d("Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -495,7 +496,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                         }
                         break;
                     default:
-                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+                        Timber.d("Display rotation is invalid: %s", displayRotation);
                 }
 
                 Point displaySize = new Point();
@@ -545,8 +546,9 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                 return;
             }
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } catch (NullPointerException e) {
+            Timber.e(e);
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
             ErrorDialog.newInstance("This device doesn\'t support Camera2 API.")
@@ -573,7 +575,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             }
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
@@ -623,7 +625,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             mBackgroundThread = null;
             mBackgroundHandler = null;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -671,7 +673,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                                 mCaptureSession.setRepeatingRequest(mPreviewRequest,
                                         mCaptureCallback, mBackgroundHandler);
                             } catch (CameraAccessException e) {
-                                e.printStackTrace();
+                                Timber.e(e);
                             }
                         }
 
@@ -683,7 +685,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                     }, null
             );
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -740,7 +742,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -758,7 +760,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -800,7 +802,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -835,7 +837,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -846,13 +848,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                 takePicture();
                 break;
             }
-//            case R.id.info: {
-//                new AlertDialog.Builder(CameraActivity.this)
-//                        .setMessage(R.string.intro_message)
-//                        .setPositiveButton(android.R.string.ok, null)
-//                        .show();
-//                break;
-//            }
         }
     }
 
@@ -883,7 +878,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
 
         @Override
         public void run() {
-            Log.e(TAG, "run: ");
+            Timber.d("run: ");
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             final byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
@@ -897,16 +892,14 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                                 Thread.sleep(1000);
                                 CameraPlugin.handleCameraImageTaken(BreadActivity.getApp(), bytes);
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Timber.e(e);
                             }
                         }
                     });
                     app.finish();
                 }
             });
-
         }
-
     }
 
     /**
@@ -951,7 +944,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                     })
                     .create();
         }
-
     }
 
     /**

@@ -16,6 +16,8 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 
 import junit.framework.Assert;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -43,8 +45,6 @@ import junit.framework.Assert;
  */
 
 public class FragmentSignal extends Fragment {
-    private static final String TAG = FragmentSignal.class.getName();
-
     public static final String TITLE = "title";
     public static final String ICON_DESCRIPTION = "iconDescription";
     public static final String RES_ID = "resId";
@@ -82,10 +82,9 @@ public class FragmentSignal extends Fragment {
             Assert.assertNotSame(resId, 0);
 
             mTitle.setText(title);
-//            mDescription.setText(description);
             mIcon.setImageResource(resId);
         } else {
-            Log.e(TAG, "onCreateView: bundle is null!");
+            Timber.d("onCreateView: bundle is null!");
         }
 
         return rootView;

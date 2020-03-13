@@ -4,6 +4,8 @@ import android.util.Log;
 
 import java.io.File;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -30,17 +32,15 @@ import java.io.File;
  */
 public class FileHelper {
 
-    private static final String TAG = FileHelper.class.getName();
-
     public static void printDirectoryTree(File folder) {
         if (!folder.isDirectory()) {
             throw new IllegalArgumentException("folder is not a Directory");
         }
-        Log.e(TAG, folder.getAbsolutePath());
+        Timber.d(folder.getAbsolutePath());
         int indent = 0;
         StringBuilder sb = new StringBuilder();
         printDirectoryTree(folder, indent, sb);
-        Log.e(TAG, sb.toString());
+        Timber.d(sb.toString());
     }
 
     private static void printDirectoryTree(File folder, int indent,
@@ -60,7 +60,6 @@ public class FileHelper {
                 printFile(file, indent + 1, sb);
             }
         }
-
     }
 
     private static void printFile(File file, int indent, StringBuilder sb) {

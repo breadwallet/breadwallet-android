@@ -10,7 +10,6 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -26,6 +25,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 import static android.content.Context.FINGERPRINT_SERVICE;
 
@@ -55,7 +56,6 @@ import static android.content.Context.FINGERPRINT_SERVICE;
  */
 
 public class Utils {
-    public static final String TAG = Utils.class.getName();
 
     public static boolean isUsingCustomInputMethod(Activity context) {
         if (context == null) return false;
@@ -82,16 +82,11 @@ public class Utils {
 
     @SuppressWarnings("deprecation")
     public static void printPhoneSpecs() {
-        String specsTag = "PHONE SPECS";
-        Log.e(specsTag, "");
-        Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + IntroActivity.screenParametersPoint.x + " , screen Y: " + IntroActivity.screenParametersPoint.y);
-        Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
-        Runtime rt = Runtime.getRuntime();
-        long maxMemory = rt.maxMemory();
-        Log.e(specsTag, "* maxMemory:" + maxMemory);
-        Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
-        Log.e(specsTag, "");
+        Timber.d("***************************PHONE SPECS***************************");
+        Timber.d("* screen X: %d , screen Y: %s", IntroActivity.screenParametersPoint.x, IntroActivity.screenParametersPoint.y);
+        Timber.d("* Build.CPU_ABI: %s", Build.CPU_ABI);
+        Timber.d("* maxMemory:%s", Runtime.getRuntime().maxMemory());
+        Timber.d("----------------------------PHONE SPECS----------------------------");
     }
 
     public static boolean isEmulatorOrDebug(Context app) {
@@ -214,7 +209,7 @@ public class Utils {
                 PackageInfo pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
                 versionNumber = pInfo.versionCode;
             } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return String.format(Locale.ENGLISH, "%s/%d %s Android/%s", "Litewallet", versionNumber, cfnetwork, Build.VERSION.RELEASE);

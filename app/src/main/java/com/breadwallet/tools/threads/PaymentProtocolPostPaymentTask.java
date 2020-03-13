@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 
 /**
  * BreadWallet
@@ -50,7 +52,6 @@ import java.util.Map;
  */
 
 public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, String> {
-    public static final String TAG = PaymentProtocolPostPaymentTask.class.getName();
 
     public static final String TITLE = "title";
     public static final String MESSAGE = "message";
@@ -90,12 +91,12 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             in = urlConnection.getInputStream();
 
             if (in == null) {
-                Log.e(TAG, "The inputStream is null!");
+                Timber.i("The inputStream is null!");
                 return null;
             }
             byte[] serializedBytes = BytesUtil.readBytesFromStream(in);
             if (serializedBytes == null || serializedBytes.length == 0) {
-                Log.e(TAG, "serializedBytes are null!!!");
+                Timber.d("serializedBytes are null!!!");
                 return null;
             }
 
@@ -131,7 +132,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 //                }
 //
 //            }
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
             waiting = false;
@@ -142,9 +143,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-
         handleMessage();
-
     }
 
     public static void handleMessage() {

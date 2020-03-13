@@ -3,7 +3,6 @@ package com.breadwallet.tools.manager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.Utils;
@@ -22,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.platform.APIClient.BASE_URL;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import timber.log.Timber;
+
+import static com.platform.APIClient.BASE_URL;
 
 /**
  * BreadWallet
@@ -53,8 +54,6 @@ import okhttp3.Response;
  * THE SOFTWARE.
  */
 public class BREventManager implements BreadApp.OnAppBackgrounded {
-    private static final String TAG = BREventManager.class.getName();
-
     private static BREventManager instance;
     private String sessionId;
     private List<Event> events = new ArrayList<>();
@@ -70,26 +69,25 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     public void pushEvent(String eventName, Map<String, String> attributes) {
-        Log.d(TAG, "pushEvent: " + eventName);
+        Timber.d("pushEvent: %s", eventName);
         Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, attributes);
         events.add(event);
     }
 
     public void pushEvent(String eventName) {
-        Log.d(TAG, "pushEvent: " + eventName);
+        Timber.d("pushEvent: %s", eventName);
         Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, null);
         events.add(event);
     }
 
     @Override
     public void onBackgrounded() {
-        Log.e(TAG, "onBackgrounded: ");
+        Timber.d("onBackgrounded: ");
         saveEvents();
         pushToServer();
     }
 
     private void saveEvents() {
-//        Log.d(TAG, "saveEvents: ");
         JSONArray array = new JSONArray();
         for (Event event : events) {
             JSONObject obj = new JSONObject();
@@ -100,15 +98,13 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                 JSONObject mdObj = new JSONObject();
                 if (event.attributes != null && event.attributes.size() > 0) {
                     for (Map.Entry<String, String> entry : event.attributes.entrySet()) {
-//                        System.out.println(entry.getKey() + "/" + entry.getValue());
                         mdObj.put(entry.getKey(), entry.getValue());
                     }
                 }
                 obj.put("metadata", mdObj);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
-//            Log.e(TAG, "saveEvents: insert json to array: " + obj);
             array.put(obj);
         }
         Context app = BreadApp.getBreadContext();
@@ -116,12 +112,11 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
             String fileName = app.getFilesDir().getAbsolutePath() + "/events/" + UUID.randomUUID().toString();
             writeEventsToDisk(fileName, array.toString());
         } else {
-            Log.e(TAG, "saveEvents: FAILED TO WRITE EVENTS TO FILE: app is null");
+            Timber.i("saveEvents: FAILED TO WRITE EVENTS TO FILE: app is null");
         }
     }
 
     private void pushToServer() {
-//        Log.d(TAG, "pushToServer");
         Context app = BreadApp.getBreadContext();
         if (app != null) {
             List<JSONArray> arrs = getEventsFromDisk(app);
@@ -135,7 +130,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                         PackageInfo pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
                         verCode = pInfo.versionCode;
                     } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
                     obj.put("appVersion", verCode);
                     obj.put("events", arr);
@@ -156,18 +151,17 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                         if (response != null)
                             strResponse = response.body().string();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                         fails++;
                     } finally {
                         if (response != null) response.close();
                     }
                     if (Utils.isNullOrEmpty(strResponse)) {
-                        Log.e(TAG, "pushToServer: response is empty");
+                        Timber.i("pushToServer: response is empty");
                         fails++;
                     }
-
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                     fails++;
                 }
             }
@@ -180,18 +174,18 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                         new File(dir, children[i]).delete();
                     }
                 } else {
-                    Log.e(TAG, "pushToServer:  HUH?");
+                    Timber.i("pushToServer: missing events directory");
                 }
             } else {
-                Log.e(TAG, "pushToServer: FAILED with:" + fails + " fails");
+                Timber.i("pushToServer: FAILED with: %s fails", fails);
             }
         } else {
-            Log.e(TAG, "pushToServer: Failed to push, app is null");
+            Timber.i("pushToServer: Failed to push, app is null");
         }
     }
 
     private boolean writeEventsToDisk(String fileName, String json) {
-        Log.e(TAG, "saveEvents: eventsFile: " + fileName + ", \njson: " + json);
+        Timber.d("saveEvents: eventsFile: %s,\njson: %s", fileName, json);
         try {
             FileWriter file = new FileWriter(fileName);
             file.write(json);
@@ -199,7 +193,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
             file.close();
             return true;
         } catch (IOException e) {
-            Log.e("TAG", "Error in Writing: " + e.getLocalizedMessage());
+            Timber.e(e, "Error in Writing");
         }
         return false;
     }
@@ -212,15 +206,15 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
         for (File f : dir.listFiles()) {
             if (f.isFile()) {
                 String name = f.getName();
-                Log.e(TAG, "getEventsFromDisk: name:" + name);
+                Timber.d("getEventsFromDisk: name:%s", name);
                 try {
                     JSONArray arr = new JSONArray(readFile(name));
                     result.add(arr);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             } else {
-                Log.e(TAG, "getEventsFromDisk: Unexpected directory where file is expected: " + f.getName());
+                Timber.i("getEventsFromDisk: Unexpected directory where file is expected: %s", f.getName());
             }
         }
         return result;
@@ -237,7 +231,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
             is.close();
             return new String(buffer);
         } catch (IOException e) {
-            Log.e("TAG", "Error in Reading: " + e.getLocalizedMessage());
+            Timber.e(e, "Error in Reading");
             return null;
         }
     }

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
+import com.breadwallet.tools.manager.AnalyticsManager;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
@@ -34,7 +34,6 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 /**
  * BreadWallet
@@ -108,6 +107,7 @@ public class FragmentReceive extends Fragment {
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         separator2 = rootView.findViewById(R.id.separator2);
         separator2.setVisibility(View.GONE);
+
         setListeners();
         BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
             @Override
@@ -126,6 +126,8 @@ public class FragmentReceive extends Fragment {
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
+        AnalyticsManager.logCustomEvent(BRConstants._20202116_VRC);
 
         return rootView;
     }

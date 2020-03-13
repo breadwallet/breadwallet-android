@@ -1,11 +1,9 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
@@ -13,6 +11,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -39,13 +39,10 @@ import java.util.concurrent.TimeUnit;
  * THE SOFTWARE.
  */
 public class SyncManager {
-
-    private static final String TAG = SyncManager.class.getName();
     private static SyncManager instance;
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
     private static SyncProgressTask syncTask;
     public boolean running;
-//    private final Object lock = new Object();
 
     public static SyncManager getInstance() {
         if (instance == null) instance = new SyncManager();
@@ -68,12 +65,12 @@ public class SyncManager {
     }
 
     public synchronized void startSyncingProgressThread() {
-        Log.d(TAG, "startSyncingProgressThread:" + Thread.currentThread().getName());
+        Timber.d("startSyncingProgressThread:%s", Thread.currentThread().getName());
 
         try {
             if (syncTask != null) {
                 if (running) {
-                    Log.e(TAG, "startSyncingProgressThread: syncTask.running == true, returning");
+                    Timber.d("startSyncingProgressThread: syncTask.running == true, returning");
                     return;
                 }
                 syncTask.interrupt();
@@ -81,18 +78,16 @@ public class SyncManager {
             }
             syncTask = new SyncProgressTask();
             syncTask.start();
-
         } catch (IllegalThreadStateException ex) {
-            ex.printStackTrace();
+            Timber.e(ex);
         }
-
     }
 
     public synchronized void stopSyncingProgressThread() {
-        Log.d(TAG, "stopSyncingProgressThread");
+        Timber.d("stopSyncingProgressThread");
         final BreadActivity ctx = BreadActivity.getApp();
         if (ctx == null) {
-            Log.e(TAG, "stopSyncingProgressThread: ctx is null");
+            Timber.i("stopSyncingProgressThread: ctx is null");
             return;
         }
         try {
@@ -101,7 +96,7 @@ public class SyncManager {
                 syncTask = null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Timber.e(ex);
         }
     }
 
@@ -120,7 +115,7 @@ public class SyncManager {
                 app = BreadActivity.getApp();
                 progressStatus = 0;
                 running = true;
-                Log.d(TAG, "run: starting: " + progressStatus);
+                Timber.d("run: starting: %s", progressStatus);
 
                 if (app != null) {
                     final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
@@ -139,19 +134,17 @@ public class SyncManager {
                     if (app != null) {
                         int startHeight = BRSharedPrefs.getStartHeight(app);
                         progressStatus = BRPeerManager.syncProgress(startHeight);
-//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
                             running = false;
                             continue;
                         }
                         final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
                         app.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
 
                                 if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
-                                    Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
+                                    Timber.d("run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
                                     TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
                                 }
 
@@ -163,23 +156,17 @@ public class SyncManager {
                         });
 
                     } else {
-//                        Log.e(TAG, "run: app is null");
                         app = BreadActivity.getApp();
                     }
 
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
-                        Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
+                        Timber.e(e, "run: Thread.sleep was Interrupted:%s", Thread.currentThread().getName());
                     }
-
                 }
-
-                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
+                Timber.d("run: SyncProgress task finished:%s", Thread.currentThread().getName());
             } finally {
-//                if (progressStatus != 1) {
-//                    throw new RuntimeException("didn't finish");
-//                }
                 running = false;
                 progressStatus = 0;
                 if (app != null)
@@ -190,8 +177,6 @@ public class SyncManager {
                         }
                     });
             }
-
         }
     }
-
 }

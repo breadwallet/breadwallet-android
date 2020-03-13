@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
-import android.util.Log;
 
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -42,6 +41,7 @@ import java.util.Map;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import timber.log.Timber;
 
 
 /**
@@ -69,7 +69,6 @@ import okhttp3.Response;
  * THE SOFTWARE.
  */
 public class BRBitId {
-    public static final String TAG = BRBitId.class.getName();
     public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Litecoin Signed Message:\n";
 
     private static String _bitUri;
@@ -86,23 +85,22 @@ public class BRBitId {
                 return true;
             }
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return false;
     }
 
     public static void signBitID(final Activity app, String uri, JSONObject jsonBody) {
-
         if (uri == null && jsonBody != null) {
             try {
                 uri = jsonBody.getString("bitid_url");
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
         if (uri == null) {
-            Log.e(TAG, "signBitID: uri is null");
+            Timber.i("signBitID: uri is null");
             return;
         }
         _bitUri = uri;
@@ -111,8 +109,7 @@ public class BRBitId {
         try {
             bitIdUri = new URI(_bitUri);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
-            Log.e(TAG, "signBitID: returning false: ", e);
+            Timber.e(e, "signBitID: returning false");
             return;
         }
 
@@ -126,34 +123,31 @@ public class BRBitId {
                 _index = jsonBody.getInt("bitid_index");
                 _strToSign = jsonBody.getString("string_to_sign");
             } catch (JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
                 return;
             }
         } else if ("bitid".equals(bitIdUri.getScheme())) {
             if (app == null) {
-                Log.e(TAG, "signBitID: app is null, returning true still");
+                Timber.i("signBitID: app is null, returning true still");
                 return;
             }
             _promptString = "BitID Authentication Request";
         }
 
-//        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
-//        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
-//        Log.e(TAG, "signBitID: _index: " + _index);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
 
                 if (authNeeded) {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true,false, new BRAuthCompletion() {
+                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, false, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
                                     PostAuth.getInstance().onBitIDAuth(app, true);
@@ -169,7 +163,6 @@ public class BRBitId {
                 } else {
                     PostAuth.getInstance().onBitIDAuth(app, true);
                 }
-
             }
         });
     }
@@ -183,11 +176,11 @@ public class BRBitId {
             return;
         }
         if (app == null) {
-            Log.e(TAG, "completeBitID: app is null");
+            Timber.i("completeBitID: app is null");
             return;
         }
         if (_bitUri == null) {
-            Log.e(TAG, "completeBitID: _bitUri is null");
+            Timber.i("completeBitID: _bitUri is null");
             return;
         }
 
@@ -202,7 +195,7 @@ public class BRBitId {
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
         if (Utils.isNullOrEmpty(seed)) {
-            Log.e(TAG, "completeBitID: seed is null!");
+            Timber.d("completeBitID: seed is null!");
             return;
         }
 
@@ -239,37 +232,37 @@ public class BRBitId {
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
-            Log.d(TAG, "bitIdPlatform: key is null!");
+            Timber.d("bitIdPlatform: key is null!");
             return;
         }
         if (_strToSign == null) {
-            Log.d(TAG, "bitIdPlatform: _strToSign is null!");
+            Timber.d("bitIdPlatform: _strToSign is null!");
             return;
         }
         final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
         final String address = new BRKey(key).address();
 
         JSONObject postJson = new JSONObject();
-        Log.e(TAG, "GLIDERA: address:" + address);
+        Timber.d("GLIDERA: address:%s", address);
         try {
             postJson.put("address", address);
             postJson.put("signature", sig);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         //keep auth off for this host for 60 seconds.
         if (!bitIdKeys.containsKey(biUri)) {
             bitIdKeys.put(biUri, true);
-            Log.d(TAG, "run: saved temporary sig for key: " + biUri);
+            Timber.d("run: saved temporary sig for key: %s", biUri);
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Thread.sleep(60000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Timber.e(e);
                     }
-                    Log.d(TAG, "run: removed temporary sig for key: " + biUri);
+                    Timber.d("run: removed temporary sig for key: %s", biUri);
                     if (bitIdKeys != null)
                         bitIdKeys.remove(biUri);
                 }
@@ -296,27 +289,26 @@ public class BRBitId {
         String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
 
         // build a payload consisting of the signature, address and signed uri
-
         String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
 
-        Log.e(TAG, "LINK: callbackUrl:" + callbackUrl);
+        Timber.d("LINK: callbackUrl:" + callbackUrl);
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
 
         if (key == null) {
-            Log.d(TAG, "completeBitID: key is null!");
+            Timber.d("completeBitID: key is null!");
             return;
         }
 
         final String sig = BRBitId.signMessage(uriWithNonce, new BRKey(key));
         final String address = new BRKey(key).address();
-        Log.e(TAG, "LINK: address: " + address);
+        Timber.d("LINK: address: %s", address);
         JSONObject postJson = new JSONObject();
         try {
             postJson.put("address", address);
             postJson.put("signature", sig);
             postJson.put("uri", uriWithNonce);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         RequestBody requestBody = RequestBody.create(null, postJson.toString());
@@ -326,18 +318,17 @@ public class BRBitId {
                 .header("Content-Type", "application/json")
                 .build();
         Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.e(TAG, "completeBitID: res.code: " + res.code());
-        Log.e(TAG, "completeBitID: res.code: " + res.message());
+        Timber.d("completeBitID: res.code: %s res.message: %s", res.code(), res.message());
         try {
-            Log.e(TAG, "completeBitID: body: " + res.body().string());
+            Timber.d("completeBitID: body: %s", res.body().string());
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.e(e);
         } finally {
             res.close();
         }
     }
 
-    public static String newNonce(Activity app, String nonceKey) {
+    private static String newNonce(Activity app, String nonceKey) {
         // load previous nonces. we save all nonces generated for each service
         // so they are not used twice from the same device
         List<Integer> existingNonces = BRSharedPrefs.getBitIdNonces(app, nonceKey);
@@ -355,11 +346,11 @@ public class BRBitId {
     public static String signMessage(String message, BRKey key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
 
-        MessageDigest digest = null;
+        MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Timber.e(e);
             return null;
         }
         byte[] sha256First = digest.digest(signingData);
@@ -377,7 +368,7 @@ public class BRBitId {
             headerBytes = BITCOIN_SIGNED_MESSAGE_HEADER.getBytes("UTF-8");
             messageBytes = message.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         assert (headerBytes != null);
         assert (messageBytes != null);

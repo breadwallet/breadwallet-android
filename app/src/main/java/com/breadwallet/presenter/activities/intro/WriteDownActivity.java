@@ -16,7 +16,6 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 
 public class WriteDownActivity extends BRActivity {
-    private static final String TAG = WriteDownActivity.class.getName();
     private Button writeButton;
     private ImageButton close;
     public static boolean appVisible = false;
@@ -87,11 +86,9 @@ public class WriteDownActivity extends BRActivity {
     }
 
     private void close() {
-        Log.e(TAG, "close: ");
         BRAnimator.startBreadActivity(this, false);
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
         if (!isDestroyed()) finish();
-        //additional code
     }
 
     @Override

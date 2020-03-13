@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +11,9 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -25,6 +25,8 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -52,8 +54,6 @@ import com.breadwallet.tools.util.Utils;
  */
 
 public class FragmentPin extends Fragment {
-    private static final String TAG = FragmentPin.class.getName();
-
     private BRAuthCompletion completion;
 
     private BRKeyboard keyboard;
@@ -78,9 +78,6 @@ public class FragmentPin extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
-
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
         keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
@@ -159,7 +156,7 @@ public class FragmentPin extends Fragment {
 
     private void handleClick(String key) {
         if (key == null) {
-            Log.e(TAG, "handleClick: key is null! ");
+            Timber.d("handleClick: key is null! ");
             return;
         }
 
@@ -168,7 +165,7 @@ public class FragmentPin extends Fragment {
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
-            Log.e(TAG, "handleClick: oops: " + key);
+            Timber.d("handleClick: oops: %s", key);
         }
     }
 
@@ -194,10 +191,9 @@ public class FragmentPin extends Fragment {
                 } else {
                     handleFail();
                 }
-                pin = new StringBuilder("");
+                pin = new StringBuilder();
             }
         });
-
     }
 
     private void handleSuccess() {
@@ -207,7 +203,7 @@ public class FragmentPin extends Fragment {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
                 authSucceeded = true;
                 completion.onComplete();
@@ -249,16 +245,9 @@ public class FragmentPin extends Fragment {
                     getActivity().getFragmentManager().beginTransaction().remove(FragmentPin.this).commit();
             }
         }, 1000);
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     public void setCompletion(BRAuthCompletion completion) {
         this.completion = completion;
     }
-
 }

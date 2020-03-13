@@ -1,18 +1,17 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.wallet.BRPeerManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 
 /**
@@ -42,15 +41,12 @@ import java.util.List;
 
 public class InternetManager extends BroadcastReceiver {
 
-    private static final String TAG = InternetManager.class.getName();
     public static List<ConnectionReceiverListener> connectionReceiverListeners;
 
     private static InternetManager instance;
-    public static final int MY_BACKGROUND_JOB = 0;
 
     private InternetManager() {
         connectionReceiverListeners = new ArrayList<>();
-
     }
 
     public static InternetManager getInstance() {
@@ -82,7 +78,7 @@ public class InternetManager extends BroadcastReceiver {
             for (ConnectionReceiverListener listener : connectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
             }
-            Log.e(TAG, "onReceive: " + connected);
+            Timber.d("onReceive: %s", connected);
         }
     }
 
@@ -94,9 +90,7 @@ public class InternetManager extends BroadcastReceiver {
                 && activeNetwork.isConnectedOrConnecting();
     }
 
-
     public interface ConnectionReceiverListener {
         void onConnectionChanged(boolean isConnected);
     }
-
 }

@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -16,10 +14,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
+
+import timber.log.Timber;
 
 /**
  * BreadWallet
@@ -140,7 +142,7 @@ public class BRDialogView extends DialogFragment {
 
     public void setSpan(SpannableString message) {
         if (message == null) {
-            BRReportsManager.reportBug(new NullPointerException("setSpan with null message"));
+            Timber.e(new NullPointerException("setSpan with null message"));
             return;
         }
         this.spanMessage = message;

@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import java.util.Hashtable;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -43,10 +45,9 @@ public class FontManager {
                     view.setTypeface(FONT_REGULAR);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
-
     }
 
     public static Typeface get(Context c, String name) {
