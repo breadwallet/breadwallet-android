@@ -67,13 +67,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
-private const val SECURE_MODE_WARNING =
-    "WARNING: Secure mode is disabled, other apps can view your wallet contents."
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
-// Boolean extra to toggle on/off secure window mode. (debug only)
-private const val EXTRA_SECURE_WINDOW = "SECURE_WINDOW"
 
 /**
  * The main user entrypoint into the app.
@@ -101,14 +97,6 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        } else {
-            Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
-        }
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)

@@ -55,7 +55,6 @@ enum class SettingsOption {
     WEB_PLAT_BUNDLE,
     TOKEN_BUNDLE,
     NATIVE_API_EXPLORER,
-    TOGGLE_SECURE_MODE,
     WIPE_NO_PROMPT,
     // BTC
     REDEEM_PRIVATE_KEY,

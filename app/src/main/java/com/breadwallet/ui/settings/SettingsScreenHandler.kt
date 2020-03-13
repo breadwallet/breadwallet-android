@@ -130,12 +130,6 @@ class SettingsScreenHandler(
                 metaDataManager.resetDefaultWallets()
                 output.accept(E.OnWalletsUpdated)
             }
-            F.ToggleSecureMode -> {
-                launch(Dispatchers.Main) {
-                    BRSharedPrefs.secureScreenMode = !BRSharedPrefs.secureScreenMode
-                    activity.recreate()
-                }
-            }
             F.WipeNoPrompt -> {
                 activity.getSystemService(ActivityManager::class.java)
                     ?.clearApplicationUserData()
@@ -311,10 +305,6 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Native API Explorer",
                 SettingsOption.NATIVE_API_EXPLORER
-            ),
-            SettingsItem(
-                "Secure Mode: ${BRSharedPrefs.secureScreenMode}",
-                SettingsOption.TOGGLE_SECURE_MODE
             ),
             SettingsItem(
                 "Wipe Wallet (no prompt)",
