@@ -3,6 +3,7 @@ package com.breadwallet.tools.manager;
 import androidx.annotation.StringDef;
 
 import com.breadwallet.presenter.entities.Fee;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

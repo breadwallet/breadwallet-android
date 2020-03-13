@@ -2,8 +2,12 @@ package com.breadwallet.tools.util;
 
 import android.util.Pair;
 
+import androidx.annotation.StringDef;
+
 import com.breadwallet.BuildConfig;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
@@ -168,4 +172,34 @@ public class BRConstants {
     private BRConstants() {
     }
 
+
+    public static final String _20191105_AL = "APP_LAUNCHED";
+    public static final String _20191105_VSC = "VISIT_SEND_CONTROLLER";
+    public static final String _20202116_VRC = "VISIT_RECEIVE_CONTROLLER";
+    public static final String _20191105_DSL = "DID_SEND_LTC";
+    public static final String _20191105_DULP = "DID_UPDATE_LTC_PRICE";
+    public static final String _20191105_DTBT = "DID_TAP_BUY_TAB";
+    public static final String _20200111_DEDG = "DID_ENTER_DISPATCH_GROUP";
+    public static final String _20200111_DLDG = "DID_LEAVE_DISPATCH_GROUP";
+    public static final String _20200111_RNI = "RATE_NOT_INITIALIZED";
+    public static final String _20200111_FNI = "FEEPERKB_NOT_INITIALIZED";
+    public static final String _20200111_TNI = "TRANSACTION_NOT_INITIALIZED";
+    public static final String _20200111_WNI = "WALLET_NOT_INITIALIZED";
+    public static final String _20200111_PNI = "PHRASE_NOT_INITIALIZED";
+    public static final String _20200111_UTST = "UNABLE_TO_SIGN_TRANSACTION";
+    public static final String _20200112_ERR = "ERROR";
+    public static final String _20200112_DSR = "DID_START_RESYNC";
+    public static final String _20200125_DSRR = "DID_SHOW_REVIEW_REQUEST";
+    public static final String _20200217_DLWP = "DID_LOGIN_WITH_PIN";
+    public static final String _20200217_DLWB = "DID_LOGIN_WITH_BIOMETRICS";
+    public static final String _20200223_DD = "DID_DONATE";
+    public static final String _20200225_DCD = "DID_CANCEL_DONATE";
+    public static final String _20200301_DUDFPK = "DID_USE_DEFAULT_FEE_PER_KB";
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({_20191105_AL,_20191105_VSC, _20202116_VRC,_20191105_DSL,_20191105_DULP,
+            _20191105_DTBT,_20200111_DEDG,_20200111_DLDG,_20200111_RNI,_20200111_FNI,
+            _20200111_TNI,_20200111_WNI,_20200111_PNI,_20200111_UTST,_20200112_ERR,_20200112_DSR,
+            _20200125_DSRR,_20200217_DLWP,_20200217_DLWB,_20200223_DD,_20200225_DCD,_20200301_DUDFPK})
+    public @interface Event {}
 }

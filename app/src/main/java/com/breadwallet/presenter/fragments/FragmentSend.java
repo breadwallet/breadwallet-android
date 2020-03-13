@@ -43,6 +43,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.AnalyticsManager;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FeeManager;
@@ -163,6 +164,8 @@ public class FragmentSend extends Fragment {
         isoText.requestLayout();
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
+        AnalyticsManager.logCustomEvent(BRConstants._20191105_VSC);
 
         setupFeesSelector(rootView);
 
@@ -442,8 +445,10 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 
-                if (allFilled)
+                if (allFilled) {
                     BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, null, satoshiAmount.longValue(), null, false, comment));
+                    AnalyticsManager.logCustomEvent(BRConstants._20191105_DSL);
+                }
             }
         });
 

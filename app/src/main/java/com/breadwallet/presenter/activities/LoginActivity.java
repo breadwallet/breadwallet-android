@@ -31,6 +31,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.AnalyticsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -73,7 +74,6 @@ public class LoginActivity extends BRActivity {
 
     private Button leftButton;
     private Button rightButton;
-
 
     public static LoginActivity getApp() {
         return app;
@@ -192,6 +192,7 @@ public class LoginActivity extends BRActivity {
                         @Override
                         public void onComplete() {
                             unlockWallet();
+                            AnalyticsManager.logCustomEvent(BRConstants._20200217_DLWB);
                         }
 
                         @Override
@@ -297,6 +298,7 @@ public class LoginActivity extends BRActivity {
                         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                         if (!LoginActivity.this.isDestroyed()) {
                             LoginActivity.this.finish();
+
                         }
                     }
                 }, 400);
@@ -326,6 +328,7 @@ public class LoginActivity extends BRActivity {
                         if (AuthManager.getInstance().checkAuth(pin.toString(), LoginActivity.this)) {
                             AuthManager.getInstance().authSuccess(LoginActivity.this);
                             unlockWallet();
+                            AnalyticsManager.logCustomEvent(BRConstants._20200217_DLWP);
                         } else {
                             AuthManager.getInstance().authFail(LoginActivity.this);
                             showFailedToUnlock();

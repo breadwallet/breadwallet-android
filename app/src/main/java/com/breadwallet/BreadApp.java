@@ -11,6 +11,8 @@ import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.AnalyticsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
@@ -71,6 +73,9 @@ public class BreadApp extends Application {
         Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enableCrashlytics);
+        AnalyticsManager.init(this);
+
+        AnalyticsManager.logCustomEvent(BRConstants._20191105_AL);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();

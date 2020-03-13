@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.annotation.Nullable;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.tools.manager.AnalyticsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FeeManager;
 import com.breadwallet.tools.security.BRSender;
@@ -52,6 +54,7 @@ public class DynamicDonationFragment extends Fragment {
     private boolean isLTCSwap = true;
     private Pair<String, String> chosenAddress;
     private long mDonationAmount;
+
 
     @Nullable
     @Override
@@ -97,6 +100,8 @@ public class DynamicDonationFragment extends Fragment {
         cancelBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnalyticsManager.logCustomEvent(BRConstants._20200225_DCD);
+
                 getActivity().onBackPressed();
             }
         });
@@ -107,6 +112,14 @@ public class DynamicDonationFragment extends Fragment {
             public void onClick(View v) {
                 String memo = getString(R.string.Donate_toThe) + chosenAddress.first;
                 PaymentItem request = new PaymentItem(new String[]{chosenAddress.second}, null, mDonationAmount, null, false, memo);
+
+                Bundle params = new Bundle();
+                params.putString("ANDROID", "PLATFORM");
+                params.putString("DONATION_ACCOUNT", memo);
+                params.putLong("DONATION_AMOUNT", mDonationAmount);
+
+                AnalyticsManager.logCustomEventWithParams(BRConstants._20200223_DD, params);
+
                 BRSender.getInstance().sendTransaction(getContext(), request);
             }
         });
@@ -164,6 +177,10 @@ public class DynamicDonationFragment extends Fragment {
 
     private void setFeeToRegular() {
         FeeManager feeManager = FeeManager.getInstance();
+
+        //TODO: This should be inserted into the FeeManager after v0.4.0
+        AnalyticsManager.logCustomEvent(BRConstants._20200301_DUDFPK);
+
         feeManager.resetFeeType();
         BRWalletManager.getInstance().setFeePerKb(feeManager.getFees().regular);
     }
