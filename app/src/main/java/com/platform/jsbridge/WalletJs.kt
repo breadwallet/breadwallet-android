@@ -327,17 +327,17 @@ class WalletJs(
             amount.toBigDecimal(),
             wallet.currency.code,
             fiatCode
-        )
+        ) ?: BigDecimal.ZERO
         val fiatTotalCost = ratesRepository.getFiatForCrypto(
             totalCost,
             wallet.currency.code,
             fiatCode
-        )
+        ) ?: BigDecimal.ZERO
         val fiatNetworkFee = ratesRepository.getFiatForCrypto(
             feeBasis.fee.toBigDecimal(),
             wallet.currency.code,
             fiatCode
-        )
+        ) ?: BigDecimal.ZERO
 
         val result = PlatformTransactionBus.results().onStart {
             PlatformTransactionBus.sendMessage(

@@ -330,22 +330,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context context, BigDecimal
             amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
-            return amount;
-        }
-        String iso = BRSharedPrefs.getPreferredFiatIso(context);
-        if (ent != null) {
-            //passed in a custom CurrencyEntity
-            //get crypto amount
-            //multiply by fiat rate
-            return getCryptoForSmallestCrypto(context, amount).multiply(new BigDecimal(ent.rate));
-        }
-        BigDecimal cryptoAmount = getCryptoForSmallestCrypto(context, amount);
-        BigDecimal fiatData = RatesRepository.getInstance(context).getFiatForCrypto(cryptoAmount, getCurrencyCode(), iso);
-        if (fiatData == null) {
-            return null;
-        }
-        return fiatData;
+        return null;
     }
 
     @Override
@@ -384,20 +369,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     //Token rates are in BTC (thus this math)
     private BigDecimal getTokensForFiat(Context context, BigDecimal fiatAmount, String
             code) {
-        //fiat rate for btc
-        CurrencyEntity btcRate = RatesRepository.getInstance(context).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
-        //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesRepository.getInstance(context).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        if (btcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
-            return null;
-        }
-        if (tokenBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
-            return null;
-        }
-
-        return fiatAmount.divide(new BigDecimal(tokenBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
+        return null;
     }
 
     @Override

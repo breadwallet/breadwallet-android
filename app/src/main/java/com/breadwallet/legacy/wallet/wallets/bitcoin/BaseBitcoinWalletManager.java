@@ -286,7 +286,7 @@ public abstract class BaseBitcoinWalletManager implements BaseWalletManager {
         if (btcFiatRate == null || currencyBtcRate == null) {
             return BigDecimal.ZERO;
         }
-        return new BigDecimal(btcFiatRate.rate).multiply(new BigDecimal(currencyBtcRate.rate));
+        return null;
     }
 
     @Override
@@ -303,21 +303,7 @@ public abstract class BaseBitcoinWalletManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount.doubleValue() == 0) {
-            return amount;
-        }
-        BigDecimal rate;
-        if (ent == null) {
-            rate = getFiatExchangeRate(app);
-        } else {
-            rate = new BigDecimal(ent.rate);
-        }
-        if (rate == null || rate.equals(BigDecimal.ZERO)) {
-            return null;
-        }
-        //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(rate);
+        return null;
     }
 
     @Override

@@ -37,6 +37,9 @@ import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
 import java.math.BigDecimal
 import java.util.Currency
@@ -45,6 +48,7 @@ import java.util.UUID
 
 // Suppress warnings about context usage, it remains to support legacy coe.
 @Suppress("UNUSED_PARAMETER")
+@UseExperimental(ExperimentalCoroutinesApi::class)
 object BRSharedPrefs {
     val TAG: String = BRSharedPrefs::class.java.name
 
@@ -700,4 +704,14 @@ object BRSharedPrefs {
         set(value) = brdPrefs.edit {
             putBoolean(CONFIRM_SEND_WITH_FINGERPRINT, value)
         }
+
+    fun preferredFiatIsoChanges() = callbackFlow<String> {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == CURRENT_CURRENCY) offer(getPreferredFiatIso())
+        }
+        brdPrefs.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose {
+            brdPrefs.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
 }
