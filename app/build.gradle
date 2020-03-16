@@ -249,7 +249,7 @@ dependencies {
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
-    implementation "com.google.firebase:firebase-core:$firebase_core"
+    implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
