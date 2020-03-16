@@ -151,7 +151,7 @@ private val breadBox by lazy {
     BreadApp.getKodeinInstance().instance<BreadBox>()
 }
 
-private fun CryptoRequest.asCryptoRequestUrl() =
+fun CryptoRequest.asCryptoRequestUrl() =
     Link.CryptoRequestUrl(
         address = address,
         currencyCode = currencyCode,

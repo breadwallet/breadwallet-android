@@ -176,7 +176,7 @@ class RecoveryKeyController(
         // TODO: This needs a better home
         if (Utils.isUsingCustomInputMethod(applicationContext)) {
             BRDialog.showCustomDialog(
-                applicationContext!!,
+                activity!!,
                 resources.getString(R.string.JailbreakWarnings_title),
                 resources.getString(R.string.Alert_customKeyboard_android),
                 resources.getString(R.string.Button_ok),

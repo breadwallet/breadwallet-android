@@ -206,7 +206,7 @@ public final class EventUtils {
         pushEvent(eventName, null);
     }
 
-    public static void saveEvents(Context context) {
+    public static synchronized void saveEvents(Context context) {
         JSONArray eventsJsonArray = new JSONArray();
         if (context != null) {
             for (Event event : mEvents) {

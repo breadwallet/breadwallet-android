@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -124,7 +125,8 @@ class AuthenticationController(
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        when (mode) {
+        val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
+        when (if (fingerprintManager == null) Mode.PIN_REQUIRED else mode) {
             Mode.PIN_REQUIRED -> {
                 pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
                     override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
@@ -145,10 +147,8 @@ class AuthenticationController(
                 })
             }
             Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
-                val mFingerprintManager =
-                    activity!!.getSystemService(Activity.FINGERPRINT_SERVICE) as FingerprintManager
                 val fingerprintUiHelperBuilder =
-                    FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager)
+                    FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
                 val callback = object : FingerprintUiHelper.Callback {
                     override fun onAuthenticated() {
                         listener?.onAuthenticationSuccess()
