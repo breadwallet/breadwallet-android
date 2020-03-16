@@ -176,9 +176,10 @@ class SystemWalletTracker(
 
                 logDebug("Network '${network.name}' added.")
 
-                if (systemEvt.migrateRequired(event.network)) {
-                    migrateNetwork(systemEvt, event.network, event.network.currency.code)
-                }
+                // TODO(DROID-1658): Restore migration
+                //if (systemEvt.migrateRequired(event.network)) {
+                //    migrateNetwork(systemEvt, event.network, event.network.currency.code)
+                //}
 
                 walletProvider
                     .enabledWallets()
