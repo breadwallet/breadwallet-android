@@ -83,10 +83,11 @@ class NewPriceAlertViewModel(
     private val exchangeRate = forCurrency.combineLatest(toCurrency, ::Pair)
             .switchMap { (forCurrency, toCurrency) ->
                 mutableLiveData<Float>().also {
-                    it.postValue(RatesRepository.getInstance(context)
+                    TODO("not implemented")
+                    /*it.postValue(RatesRepository.getInstance(context)
                             .getFiatForCrypto(BigDecimal.ONE, forCurrency, toCurrency)
                             .setScale(2, RoundingMode.HALF_EVEN)
-                            .toFloat())
+                            .toFloat())*/
                 }
             }
 

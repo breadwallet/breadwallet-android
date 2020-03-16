@@ -130,6 +130,7 @@ class SendSheetController(args: Bundle? = null) :
             breadBox = direct.instance(),
             keyStore = direct.instance(),
             apiClient = direct.instance(),
+            ratesRepository = direct.instance(),
             navEffectHandler = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())

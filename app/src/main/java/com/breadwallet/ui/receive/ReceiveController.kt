@@ -107,6 +107,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                     defaultModel.fiatCurrencyCode,
                     direct.instance(),
                     direct.instance(),
+                    direct.instance(),
                     this@ReceiveController
                 )
             },

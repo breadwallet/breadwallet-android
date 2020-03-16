@@ -131,22 +131,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context context, BigDecimal amount, CurrencyEntity currencyEntity) {
-        if (amount == null || amount.equals(BigDecimal.ZERO)) {
-            return amount;
-        }
-        if (currencyEntity != null) {
-            //passed in a custom CurrencyEntity
-            //get crypto amount
-            //multiply by fiat rate
-            return getCryptoForSmallestCrypto(context, amount).multiply(new BigDecimal(currencyEntity.rate));
-        }
-        String currencyCode = BRSharedPrefs.getPreferredFiatIso(context);
-        BigDecimal cryptoAmount = getCryptoForSmallestCrypto(context, amount);
-        BigDecimal fiatData = RatesRepository.getInstance(context).getFiatForCrypto(cryptoAmount, getCurrencyCode(), currencyCode);
-        if (fiatData == null) {
-            return null;
-        }
-        return fiatData;
+        return null;
     }
 
     protected void syncStopped(Context context) {
