@@ -91,7 +91,7 @@ import java.util.Locale
 private const val EXTRA_CURRENCY_CODE = "currency_code"
 private const val SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm"
 private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
-private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, YYYY"
+private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, yyyy"
 private const val SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f
 private const val MARKET_CHART_ANIMATION_DURATION = 500L
 private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
