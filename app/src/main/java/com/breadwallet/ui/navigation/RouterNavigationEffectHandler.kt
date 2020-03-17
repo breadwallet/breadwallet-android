@@ -34,6 +34,7 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
+import com.breadwallet.logger.logError
 import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
@@ -215,8 +216,11 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
-        val link = checkNotNull(effect.url.asLink()) {
-            "Invalid deep link provided"
+        val link = effect.url.asLink()
+        if (link == null) {
+            logError("Failed to parse url, ${effect.url}")
+            router.replaceTopController(HomeController().asTransaction())
+            return
         }
         if (router.backstack.lastOrNull()?.controller() is LoginController) {
             router.popCurrentController()
