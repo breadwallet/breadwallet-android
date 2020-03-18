@@ -15,16 +15,17 @@
         android:background="@drawable/faq_question_black" />
 
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/bch_dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="BRD now supports Bitcoin Cash!"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:fontFamily="@font/circular_pro_book" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/bch_dialog_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +34,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="8dp"
-        android:text="Any BCH in your wallet can be accessed through the home screen." />
+        android:text="Any BCH in your wallet can be accessed through the home screen."
+        android:fontFamily="@font/circular_pro_book" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,25 +46,25 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/dialog_home_button"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_weight="1"
             android:text="@string/Button.Home"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />
 
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/dialog_dismiss_button"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_weight="1"
             android:text="@string/Webview.dismiss"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />

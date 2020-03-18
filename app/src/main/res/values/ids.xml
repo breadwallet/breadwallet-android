@@ -17,4 +17,8 @@
     //The QR
     <!-- Messages IDs -->
     <item name="keyboard_back_button" type="id" />
+
+    <item name="wallet_list_item" type="id"/>
+    <item name="add_wallet_item" type="id"/>
+    <item name="transaction_item" type="id"/>
 </resources>

@@ -157,7 +157,7 @@
     <!-- Click this button to sell an asset -->
     <string name="Button.sell">Verkaufen</string>
     <!-- send button -->
-    <string name="Button.send">senden</string>
+    <string name="Button.send">Senden</string>
     <!-- Settings button label -->
     <string name="Button.settings">Einstellungen</string>
     <!-- Setup button label -->
@@ -234,6 +234,8 @@
     <string name="ErrorMessages.touchIdFailed.android">Fingerabdruck nicht erkannt. Bitte erneut versuchen.</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">Sie können Ihr Ausgabenlimit für Face ID im %1$s anpassen.</string>
+    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
+    <string name="FaceIDSettings.explanatoryText">Verwenden Sie Face ID, um Ihre BRD-App freizuschalten und Geld zu senden.</string>
     <!-- Face Id screen label -->
     <string name="FaceIDSettings.label">Mit Ihrem Gesicht können Sie Ihre BRD freischalten und Geld bis zu einem festgelegten Limit senden.</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
@@ -242,10 +244,14 @@
     <string name="FaceIDSettings.switchLabel">Face-ID für BRD aktivieren</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">Face ID</string>
+    <!-- Text label for a toggle that enables Face ID for sending money. -->
+    <string name="FaceIDSettings.transactionsTitleText">Aktivieren Sie die Face ID, um Geld zu senden</string>
     <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
     <string name="FaceIDSettings.unavailableAlertMessage">Sie haben auf diesem Gerät keine Face ID eingerichtet. Gehen Sie auf Einstellungen -&gt;Face ID und Passwort, um die Face ID jetzt einzurichten.</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">Face ID nicht eingerichtet</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
+    <string name="FaceIDSettings.unlockTitleText">Aktivieren Sie die Face ID, um die BRD zu entsperren</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">Face ID Ausgabenlimit</string>
     <!-- Economy fee -->
@@ -270,6 +276,14 @@
     <string name="FeeSelector.title">Verarbeitungsgeschwindigkeit</string>
     <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
     <string name="FileChooser.selectImageSource.android">Wählen Sie die Bildquelle</string>
+    <!-- Fingerprint authentication settings screen description -->
+    <string name="FingerprintSettings.description">Verwenden Sie Ihren Fingerabdruck, um Ihre BRD-App zu entsperren und Transaktionen zu senden.</string>
+    <!-- Switch label to enable fingerprint authentication to send money -->
+    <string name="FingerprintSettings.sendMoney">Verwenden Sie Fingerabdruck, um Geld zu senden</string>
+    <!-- Fingerprint authentication settings sceen title -->
+    <string name="FingerprintSettings.title">Fingerabdruck</string>
+    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
+    <string name="FingerprintSettings.unlockApp">Verwenden Sie den Fingerabdruck, um die BRD zu entsperren</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Administrator</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -392,6 +406,8 @@
     <string name="Modal.PaperKeySkip.Button.IllDoItLater">Ich mache das später</string>
     <!-- Paper Key Skip modal title -->
     <string name="Modal.PaperKeySkip.Title">Achtung</string>
+    <!-- Node selection mode is automatic -->
+    <string name="NodeSelector.automatic">Automatisch</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">Zum automatischen Modus wechseln</string>
     <!-- Node is connected label -->
@@ -402,6 +418,8 @@
     <string name="NodeSelector.enterBody">Geben Sie die Node-IP-Adresse und den Port ein (optional)</string>
     <!-- Enter Node ip address view title -->
     <string name="NodeSelector.enterTitle">Node eingeben</string>
+    <!-- Entered invalid node address at the node selection screen -->
+    <string name="NodeSelector.invalid">Ungültiger Knoten</string>
     <!-- Switch to manual mode button label -->
     <string name="NodeSelector.manualButton">Zum manuellen Modus wechseln</string>
     <!-- Node address label -->
@@ -528,6 +546,8 @@
     <string name="PushNotifications.on">Aktivieren</string>
     <!-- Push notifications settings view title label -->
     <string name="PushNotifications.title">Bleiben Sie auf dem Laufenden</string>
+    <!-- Push notifications settings failed to update settings on the back end -->
+    <string name="PushNotifications.updateFailed">Push-Benachrichtigungseinstellungen konnten nicht aktualisiert werden</string>
     <!-- Google play review prompt body -->
     <string name="RateAppPrompt.Body.Android">Wenn Ihnen unsere App gefällt, nehmen Sie sich bitte einen Moment Zeit, um sie zu bewerten und uns einen Kommentar zu hinterlassen.</string>
     <!-- Google play review prompt, revivew button -->
@@ -630,6 +650,10 @@
     <string name="RecoveryKeyFlow.unlinkWalletSubtext">Beginnen Sie einen neuen Geldbeutel, indem Sie die Verbindung Ihres Geräts mit dem aktuell eingestellten Geldbeutel aufheben.</string>
     <!-- Warning displayed when the user starts the process of unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWalletWarning">Geldbeutel muss wiederhergestellt werden, um den Zugriff zurückzuerlangen.</string>
+    <!-- Title displayed to the user on the intro screen when wiping a wallet -->
+    <string name="RecoveryKeyFlow.wipeWallet">Heben Sie die Verbindung Ihres Geldbeutels mit diesem Gerät auf.</string>
+    <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
+    <string name="RecoveryKeyFlow.wipeWalletSubtext">Starten Sie eine neue Brieftasche, indem Sie die aktuelle Brieftasche von Ihrem Gerät löschen.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Notieren Sie Ihren Schlüssel</string>
     <!-- Title for the recovery key landing page if the key has already been generated. -->
@@ -849,6 +873,8 @@
     <string name="Settings.wallet">Wallet</string>
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">Verknüpfung mit diesem Gerät aufheben</string>
+    <!-- Wipe/delete your wallet from the current device. -->
+    <string name="Settings.wipe.android">Heben Sie die Verbindung Ihres Geldbeutels mit diesem Gerät auf.</string>
     <!-- Share data view body -->
     <string name="ShareData.body">Hilf dabei, BRD zu verbessern, indem du uns deine Nutzungsdaten anonym übermittelst. Hiervon sind sämtliche Finanzinformationen ausgeschlossen. Wir respektieren deine finanzielle Privatsphäre.</string>
     <!-- Share data header -->
@@ -913,6 +939,8 @@
     <string name="TouchIdSettings.disabledWarning.body.android">Sie haben die Fingerabdruck-Authentifizierung auf diesem Gerät nicht aktiviert. Gehen Sie zu „Einstellungen” -&gt; „Sicherheit”, um die Fingerabdruck-Authentifizierung einzurichten.</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">Fingerabdruck-Authentifizierung nicht aktiviert</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
+    <string name="TouchIdSettings.explanatoryText">Verwenden Sie Touch ID, um Ihre BRD-App zu entsperren und Geld zu senden.</string>
     <!-- Touch Id screen label -->
     <string name="TouchIdSettings.label">Nutze deinen Fingerabdruck, um dein BRD zu entsperren und Geld bis zu einer festlegbaren Höchstgrenze zu versenden.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -927,10 +955,14 @@
     <string name="TouchIdSettings.title">Touch ID</string>
     <!-- Fingerprint authentication label -->
     <string name="TouchIdSettings.title.android">Fingerabdruck-Authentifizierung</string>
+    <!-- Text label for a toggle that enables Touch ID for sending money. -->
+    <string name="TouchIdSettings.transactionsTitleText">Aktivieren Sie Touch ID, um Geld zu senden</string>
     <!-- Touch ID unavailable alert message -->
     <string name="TouchIdSettings.unavailableAlertMessage">Du hast Touch ID auf diesem Gerät noch nicht eingerichtet. Öffne Einstellungen -&gt; Touch ID &amp; Passcode, um es jetzt einzurichten.</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">Touch ID nicht eingerichtet</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
+    <string name="TouchIdSettings.unlockTitleText">Aktivieren Sie Touch ID, um BRD zu entsperren</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">Immer PIN anfordern</string>
     <!-- Touch ID spending limit screen body -->
@@ -1014,6 +1046,8 @@
     <string name="TransactionDetails.gasLimitHeader">Benzinbegrenzung</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Benzinpreis</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.hideDetails">Details ausblenden</string>
     <!-- Label showing the transaction was started (initialized) -->
     <string name="TransactionDetails.initializedTimestampHeader">Initialisiert</string>
     <!-- More button title -->
@@ -1048,7 +1082,7 @@
     <string name="TransactionDetails.statusHeader">Status</string>
     <!-- Transaction Details Title -->
     <string name="TransactionDetails.title">Transaktionsdaten</string>
-    <!-- Hide Details button -->
+    <!-- Transaction Details Title - Failed -->
     <string name="TransactionDetails.titleFailed">Details ausblenden</string>
     <!-- Transaction Details Title - Internal -->
     <string name="TransactionDetails.titleInternal">Intern</string>
@@ -1126,6 +1160,23 @@
     <string name="VerifyPin.title">PIN erforderlich</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Diese Transaktion genehmigen</string>
+    <!-- Turn off fast sync confirmation question -->
+    <string name="WalletConnectionSettings.confirmation">Möchten Sie Fastsync wirklich deaktivieren?</string>
+    <!-- Explanation for wallet connection setting -->
+    <string name="WalletConnectionSettings.explanatoryText">Sie können Ihre Bitcoin-Geldbörse praktisch sofort synchronisieren. Erfahren Sie hier mehr darüber, wie es funktioniert.</string>
+    <!-- Connection mode switch label. -->
+    <string name="WalletConnectionSettings.footerTitle">Unterstützt von</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.header">Fastsync (Pilot)</string>
+    <!-- Link text in explanatoryText This NB: This should exactly match the last word of WalletConnectionSettings.explanatoryText -->
+    <string name="WalletConnectionSettings.link">hier</string>
+    <!-- WalletConnectionSettiongs -->
+    <!--Wallet connection settings menu item title.-->
+    <string name="WalletConnectionSettings.menuTitle">Verbindungsmodus</string>
+    <!-- Turn off fast sync button label -->
+    <string name="WalletConnectionSettings.turnOff">Ausschalten</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
     <string name="Watch.noWalletWarning">Öffne die BRD-iPhone-App, um dein Wallet einzurichten.</string>
     <!-- Dismiss button label -->

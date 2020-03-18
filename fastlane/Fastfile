@@ -27,6 +27,10 @@ end
 # [upload:true/false] Flag indicating if the build should be uploaded to Crashlytics, True as default.
 # fastlane beta flavor:"brdTestnet" build_type:"debug" [output_path:"~/Desktop/3.8.1.1/"] [upload:false]
 lane :beta do |options|
+  # Generate a changelog from commit messages since the last tag
+  changelog_from_git_commits(
+    merge_commit_filtering: "exclude_merges"
+  )
   # build the release variant
   gradle(
     task: 'assemble',
@@ -42,7 +46,7 @@ lane :beta do |options|
   # upload to Beta by Crashlytics
   if !options.key?(:upload) or options[:upload]
     crashlytics(
-      notes_path: "fastlane/changelog.txt",
+      notes: lane_context[SharedValues::FL_CHANGELOG],
       groups: ["android-team", "support"]
     )
   end
@@ -51,4 +55,37 @@ lane :beta do |options|
     sh("mkdir -pv #{options[:output_path]}")
     sh("mv -fv #{apk_location} #{options[:output_path]}")
   end
+end
+
+lane :appetizeUploadAll do |options|
+  appetizeUpload(flavor: 'brdTestnet', build_type: 'debug', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brdTestnet', build_type: 'release', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brd', build_type: 'debug', output_path: options[:output_path])
+  appetizeUpload(flavor: 'brd', build_type: 'release', output_path: options[:output_path])
+end
+
+lane :appetizeUpload do |options|
+  gradle(
+    task: 'assemble',
+    flavor: options[:flavor],
+    build_type: options[:build_type],
+    flags: options[:flags],
+    properties: {
+      "android.injected.signing.store.file" => ENV['SIGNING_KEY'],
+      "android.injected.signing.store.password" => ENV['SIGNING_PASSWORD'],
+      "android.injected.signing.key.alias" => ENV['SIGNING_ALIAS'],
+      "android.injected.signing.key.password" => ENV['SIGNING_ALIAS_PASSWORD']
+    }
+  )
+  appetize(
+    path: "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}",
+    api_token: ENV['APPETIZE_TOKEN'],
+    platform: 'android'
+  )
+
+  fileName = "../app/build/review-#{options[:flavor]}-#{options[:build_type]}.html"
+  reviewUrl = "#{ENV['NATIVE_REVIEW_URL']}?publicKey=#{lane_context[SharedValues::APPETIZE_PUBLIC_KEY]}"
+  fileContents = "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=#{reviewUrl}\"/></head></html>"
+
+  File.write(fileName, fileContents)
 end

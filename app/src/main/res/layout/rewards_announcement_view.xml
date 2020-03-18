@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/app_bar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/extra_light_blue_background"
-    android:fitsSystemWindows="true"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    app:elevation="0dp"
-    app:expanded="false">
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 android:id="@+id/app_bar"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="wrap_content"
+                                                 android:background="@color/extra_light_blue_background"
+                                                 android:fitsSystemWindows="true"
+                                                 android:paddingTop="8dp"
+                                                 android:paddingBottom="8dp"
+                                                 app:elevation="0dp"
+                                                 app:expanded="false">
 
-    <android.support.design.widget.CollapsingToolbarLayout
+    <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/collapsing_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/expanded_rewards_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/baseTextView2"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
@@ -47,13 +47,13 @@
                 android:text="@string/RewardsView.expandedTitle"
                 android:textColor="@color/rewards_text"
                 android:textSize="20sp"
-                app:brdFont="@string/Font.CircularPro_Bold"
+                android:fontFamily="@font/circular_pro_bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/confetti_video_view"
                 app:layout_constraintTop_toTopOf="@+id/confetti_video_view" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -63,15 +63,16 @@
                 android:text="@string/RewardsView.expandedBody"
                 android:textColor="@color/rewards_text"
                 android:textSize="14sp"
+                android:fontFamily="@font/circular_pro_book"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/baseTextView2"
                 app:layout_constraintTop_toBottomOf="@+id/baseTextView2" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.breadwallet.presenter.customviews.NonClickableToolbar
+        <com.breadwallet.legacy.presenter.customviews.NonClickableToolbar
             android:id="@+id/collapsed_rewards_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -85,11 +86,12 @@
                 android:layout_margin="8dp"
                 android:src="@drawable/rewards_gradient_icon" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/RewardsView.normalTitle"
-                android:textColor="@color/almost_black" />
+                android:textColor="@color/almost_black"
+                android:fontFamily="@font/circular_pro_book" />
 
             <ImageView
                 android:layout_width="24dp"
@@ -98,7 +100,7 @@
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/chevron_right_light" />
 
-        </com.breadwallet.presenter.customviews.NonClickableToolbar>
+        </com.breadwallet.legacy.presenter.customviews.NonClickableToolbar>
 
-    </android.support.design.widget.CollapsingToolbarLayout>
-</android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>

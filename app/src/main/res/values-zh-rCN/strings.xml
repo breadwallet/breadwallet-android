@@ -234,6 +234,8 @@
     <string name="ErrorMessages.touchIdFailed.android">未识别出指纹。请再试一次。</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">您可以在 %1$s 自定义面部识别支出限额。</string>
+    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
+    <string name="FaceIDSettings.explanatoryText">使用 Face ID 指纹解锁您的 BRD 应用并支付。</string>
     <!-- Face Id screen label -->
     <string name="FaceIDSettings.label">使用面部识别解锁 BRD，在设置的限额内汇款。</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
@@ -242,10 +244,14 @@
     <string name="FaceIDSettings.switchLabel">为 BRD 启用面部识别</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">面部识别</string>
+    <!-- Text label for a toggle that enables Face ID for sending money. -->
+    <string name="FaceIDSettings.transactionsTitleText">启用 Face ID 人脸支付</string>
     <!-- Instructions on how to turn on face id on the iPhone. Please ensure the name of the menu in this string matches the wording Apple uses in the iPhone menu. -->
     <string name="FaceIDSettings.unavailableAlertMessage">您在本设备上还未设置面部识别。立刻前往设置&gt;面部识别与密码进行设置。</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">未设置面部识别</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
+    <string name="FaceIDSettings.unlockTitleText">启用 Face ID 人脸解锁 BRD</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">面部识别支出限额</string>
     <!-- Economy fee -->
@@ -270,6 +276,14 @@
     <string name="FeeSelector.title">处理速度</string>
     <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
     <string name="FileChooser.selectImageSource.android">选择图像源</string>
+    <!-- Fingerprint authentication settings screen description -->
+    <string name="FingerprintSettings.description">请用指纹解锁 Bread 并在设定限额下汇钱。</string>
+    <!-- Switch label to enable fingerprint authentication to send money -->
+    <string name="FingerprintSettings.sendMoney">使用指纹汇款</string>
+    <!-- Fingerprint authentication settings sceen title -->
+    <string name="FingerprintSettings.title">指纹</string>
+    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
+    <string name="FingerprintSettings.unlockApp">使用指纹解锁BRD</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -392,6 +406,8 @@
     <string name="Modal.PaperKeySkip.Button.IllDoItLater">稍后进行</string>
     <!-- Paper Key Skip modal title -->
     <string name="Modal.PaperKeySkip.Title">注意</string>
+    <!-- Node selection mode is automatic -->
+    <string name="NodeSelector.automatic">自动</string>
     <!-- Switch to automatic mode button label -->
     <string name="NodeSelector.automaticButton">切换到自动模式</string>
     <!-- Node is connected label -->
@@ -402,6 +418,8 @@
     <string name="NodeSelector.enterBody">输入节点 IP 地址和端口（可选）</string>
     <!-- Enter Node ip address view title -->
     <string name="NodeSelector.enterTitle">输入节点</string>
+    <!-- Entered invalid node address at the node selection screen -->
+    <string name="NodeSelector.invalid">无效的节点</string>
     <!-- Switch to manual mode button label -->
     <string name="NodeSelector.manualButton">切换到手动模式</string>
     <!-- Node address label -->
@@ -528,6 +546,8 @@
     <string name="PushNotifications.on">开启</string>
     <!-- Push notifications settings view title label -->
     <string name="PushNotifications.title">敬请保持同步</string>
+    <!-- Push notifications settings failed to update settings on the back end -->
+    <string name="PushNotifications.updateFailed">无法更新推送通知设置</string>
     <!-- Google play review prompt body -->
     <string name="RateAppPrompt.Body.Android">如果您喜欢我们的应用程式，请花点时间对其进行评分并给我们一个评论。</string>
     <!-- Google play review prompt, revivew button -->
@@ -630,6 +650,10 @@
     <string name="RecoveryKeyFlow.unlinkWalletSubtext">要启用新钱包,请取消您的设备与当前设置的钱包间的关联。</string>
     <!-- Warning displayed when the user starts the process of unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWalletWarning">必须恢复钱包才能重新获得访问权限。</string>
+    <!-- Title displayed to the user on the intro screen when wiping a wallet -->
+    <string name="RecoveryKeyFlow.wipeWallet">取消钱包与此设备的关联。</string>
+    <!-- Subtitle displayed to the user on the intro screen when wiping a wallet. -->
+    <string name="RecoveryKeyFlow.wipeWalletSubtext">通过从设备中擦除当前钱包来启动新钱包。</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">记下您的密钥</string>
     <!-- Title for the recovery key landing page if the key has already been generated. -->
@@ -849,6 +873,8 @@
     <string name="Settings.wallet">钱包</string>
     <!-- Unlink/delete your wallet from the current device. -->
     <string name="Settings.wipe">取消与此设备的链接</string>
+    <!-- Wipe/delete your wallet from the current device. -->
+    <string name="Settings.wipe.android">取消钱包与此设备的关联。</string>
     <!-- Share data view body -->
     <string name="ShareData.body">同我们分享您的匿名数据来帮助改善 BRD。这不包括任何财务信息。我们尊重您的财务隐私。</string>
     <!-- Share data header -->
@@ -913,6 +939,8 @@
     <string name="TouchIdSettings.disabledWarning.body.android">您尚未在此设备上启用指纹认证。前往“设置” -&gt;“安全”来设置指纹认证。</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">指纹认证未启用</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
+    <string name="TouchIdSettings.explanatoryText">使用 Touch ID 指纹解锁您的 BRD 应用并支付。</string>
     <!-- Touch Id screen label -->
     <string name="TouchIdSettings.label">请用指纹解锁 BRD 并在设定限额下汇钱。</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -927,10 +955,14 @@
     <string name="TouchIdSettings.title">触摸 ID</string>
     <!-- Fingerprint authentication label -->
     <string name="TouchIdSettings.title.android">指纹认证</string>
+    <!-- Text label for a toggle that enables Touch ID for sending money. -->
+    <string name="TouchIdSettings.transactionsTitleText">启用 Touch ID 指纹支付</string>
     <!-- Touch ID unavailable alert message -->
     <string name="TouchIdSettings.unavailableAlertMessage">您尚未在本设备上设置触摸 ID。现在前往设置 -&gt; 触摸 ID和密码进行设置。</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">触摸 ID 未设置</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
+    <string name="TouchIdSettings.unlockTitleText">启用 Touch ID 指纹解锁BRD</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">始终需要密码</string>
     <!-- Touch ID spending limit screen body -->
@@ -1014,6 +1046,8 @@
     <string name="TransactionDetails.gasLimitHeader">燃料上限</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">燃料价格</string>
+    <!-- Hide Details button -->
+    <string name="TransactionDetails.hideDetails">隐藏详细信息</string>
     <!-- Label showing the transaction was started (initialized) -->
     <string name="TransactionDetails.initializedTimestampHeader">初始化</string>
     <!-- More button title -->
@@ -1048,7 +1082,7 @@
     <string name="TransactionDetails.statusHeader">状态</string>
     <!-- Transaction Details Title -->
     <string name="TransactionDetails.title">交易详情</string>
-    <!-- Hide Details button -->
+    <!-- Transaction Details Title - Failed -->
     <string name="TransactionDetails.titleFailed">隐藏详细信息</string>
     <!-- Transaction Details Title - Internal -->
     <string name="TransactionDetails.titleInternal">内部</string>
@@ -1126,6 +1160,23 @@
     <string name="VerifyPin.title">PIN 码为必填项</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">授权此交易</string>
+    <!-- Turn off fast sync confirmation question -->
+    <string name="WalletConnectionSettings.confirmation">您确定要关闭Fastsync吗？</string>
+    <!-- Explanation for wallet connection setting -->
+    <string name="WalletConnectionSettings.explanatoryText">几乎立即同步您的比特币钱包。在此处了解有关其工作原理的更多信息。</string>
+    <!-- Connection mode switch label. -->
+    <string name="WalletConnectionSettings.footerTitle">供电</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.header">Fastsync（试点）</string>
+    <!-- Link text in explanatoryText This NB: This should exactly match the last word of WalletConnectionSettings.explanatoryText -->
+    <string name="WalletConnectionSettings.link">这里</string>
+    <!-- WalletConnectionSettiongs -->
+    <!--Wallet connection settings menu item title.-->
+    <string name="WalletConnectionSettings.menuTitle">连接方式</string>
+    <!-- Turn off fast sync button label -->
+    <string name="WalletConnectionSettings.turnOff">关掉</string>
+    <!-- Wallet connection settings view title -->
+    <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
     <string name="Watch.noWalletWarning">打开 BRD iPhone app 以设置您的钱包。</string>
     <!-- Dismiss button label -->

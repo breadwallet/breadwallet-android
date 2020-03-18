@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_intro_set_pit"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.breadwallet.ui.pricealert.NewPriceAlertActivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/activity_intro_set_pit"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   tools:context=".legacy.pricealert.NewPriceAlertActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:background="?attr/save_price_alert_button" />
 
-            <com.breadwallet.presenter.customviews.BaseTextView
+            <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,10 +46,10 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:text="@string/NewPriceAlert.title"
                 android:textSize="20sp"
-                app:brdFont="@string/Font.CircularPro_Bold" />
+                android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <View
         android:id="@+id/separator"
@@ -64,7 +64,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/current_rate_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,6 +73,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toTopOf="@+id/separator2"
         app:layout_constraintEnd_toStartOf="@+id/select_crypto_button"
         app:layout_constraintHorizontal_bias="1.0"
@@ -80,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@+id/separator"
         tools:text="$160.32" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/select_crypto_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -89,11 +90,12 @@
         android:layout_marginBottom="8dp"
         android:text="@string/NewPriceAlert.selectCrypto"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toTopOf="@+id/separator2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_crypto_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -101,7 +103,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.select"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +122,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_crypto_button" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_to_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,19 +130,20 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.select"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator2" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/for_currency_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.selectToCurrency"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_to_currency"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_to_currency" />
@@ -158,19 +161,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_to_currency" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/alert_when_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.alertWhen"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_alert_when"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_alert_when"
         app:layout_constraintVertical_bias="0.50" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_alert_when"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -178,7 +182,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.priceChangedByValue"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -197,7 +201,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_alert_when" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/chart_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -205,13 +209,14 @@
         android:layout_marginEnd="8dp"
         android:text="@string/NewPriceAlert.value"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/value_input"
         app:layout_constraintEnd_toStartOf="@+id/value_input"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/value_input" />
 
-    <com.breadwallet.presenter.customviews.BREdit
+    <com.breadwallet.legacy.presenter.customviews.BREdit
         android:id="@+id/value_input"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
@@ -240,7 +245,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/value_input" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/select_window_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -248,20 +253,21 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.windowAnytime"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator5" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/window_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.window"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_window_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_window_button" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

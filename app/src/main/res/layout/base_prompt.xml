@@ -1,18 +1,17 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/prompt_card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp"
-    android:background="@color/secondary_background"
-    android:padding="8dp"
-    app:cardCornerRadius="4dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:id="@+id/prompt_card"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content"
+                                                   android:layout_marginStart="16dp"
+                                                   android:layout_marginTop="16dp"
+                                                   android:layout_marginEnd="16dp"
+                                                   android:layout_marginBottom="16dp"
+                                                   android:background="@color/secondary_background"
+                                                   android:padding="8dp"
+                                                   app:cardCornerRadius="4dp">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/prompt_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -22,12 +21,12 @@
         android:text="@string/Prompts.PaperKey.Body.Android"
         android:textColor="@color/text_secondary"
         android:textSize="16sp"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/prompt_title"
         app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/prompt_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,12 +35,12 @@
         android:text="@string/Prompts.PaperKey.title"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintEnd_toStartOf="@+id/dismiss_button"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/continue_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
@@ -51,7 +50,7 @@
         android:text="@string/Button.continueAction"
         android:textAllCaps="false"
         android:textColor="@color/prompt_action_button"
-        app:brdFont="@string/Font.CircularPro_Book"
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
 
@@ -77,4 +76,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

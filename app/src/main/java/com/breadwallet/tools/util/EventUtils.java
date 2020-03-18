@@ -125,6 +125,10 @@ public final class EventUtils {
     public static final String EVENT_REWARDS_BANNER = "rewards.banner";
     public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
 
+    public static final String EVENT_PUB_KEY_MISMATCH = "publicKeyMismatch";
+    public static final String EVENT_ATTRIBUTE_REWARDS_ID_HASH = "rewards_id_hash";
+    public static final String EVENT_ATTRIBUTE_ADDRESS_HASH = "address_hash";
+
     // In-app messages
     public static final String EVENT_IN_APP_NOTIFICATION_RECEIVED = "inAppNotifications.receivedNotification";
     public static final String EVENT_IN_APP_NOTIFICATION_APPEARED = "inAppNotifications.inAppNotification.appeared";
@@ -162,6 +166,13 @@ public final class EventUtils {
     public static final String EVENT_WALLET_CHART_AXIS_TOGGLE = "wallet.%s.axisToggle";
     // wallet.{currencyCode}.scrubbed
     public static final String EVENT_WALLET_CHART_SCRUBBED = "wallet.%s.scrubbed";
+
+    // Home screen prompts events
+    public static final String PROMPT_TOUCH_ID = EventUtils.EVENT_PROMPT_PREFIX + "touchIdPrompt";
+    public static final String PROMPT_PAPER_KEY = EventUtils.EVENT_PROMPT_PREFIX + "paperKeyPrompt";
+    public static final String PROMPT_UPGRADE_PIN = EventUtils.EVENT_PROMPT_PREFIX + "upgradePinPrompt";
+    public static final String PROMPT_RECOMMEND_RESCAN = EventUtils.EVENT_PROMPT_PREFIX + "recommendRescanPrompt";
+    public static final String PROMPT_EMAIL = EventUtils.EVENT_PROMPT_PREFIX + "emailPrompt";
 
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
