@@ -35,7 +35,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -44,12 +44,16 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.crypto.Account;
+import com.breadwallet.legacy.presenter.customviews.BRDialogView;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.logger.Logger;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -57,16 +61,12 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.platform.entities.WalletInfoData;
-import com.platform.tools.KVStoreManager;
+import com.platform.interfaces.AccountMetaDataProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -76,6 +76,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -88,6 +89,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+
+import static org.kodein.di.TypesKt.TT;
 
 /**
  * This class is responsible for storing sensitive data into the KeyStore.
@@ -126,9 +129,12 @@ public final class BRKeyStore {
     private static final String TOTAL_LIMIT_IV = "ivtotallimit";
     private static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     private static final String AUTH_KEY_IV = "ivauthkey";
+    private static final String ACCOUNT_IV = "ivaccount";
     private static final String TOKEN_IV = "ivtoken";
     private static final String PASS_TIME_IV = "ivpasstimetoken";
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
+    private static final String BDB_JWT_IV = "ivbdbjwt";
+    private static final String BDB_JWT_EXP_IV = "ivbdbjwtexp";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String PUB_KEY_ALIAS = "pubKey";
@@ -139,9 +145,12 @@ public final class BRKeyStore {
     public static final String TOTAL_LIMIT_ALIAS = "totallimit";
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
     public static final String AUTH_KEY_ALIAS = "authKey";
+    public static final String ACCOUNT_ALIAS = "account";
     public static final String TOKEN_ALIAS = "token";
     public static final String PASS_TIME_ALIAS = "passTime";
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
+    public static final String BDB_JWT_ALIAS = "bdbJwt";
+    public static final String BDB_JWT_EXP_ALIAS = "bdbJwtExp";
 
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
@@ -152,9 +161,12 @@ public final class BRKeyStore {
     private static final String TOTAL_LIMIT_FILENAME = "my_total_limit";
     private static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
     private static final String AUTH_KEY_FILENAME = "my_auth_key";
+    private static final String ACCOUNT_FILENAME = "my_account";
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
+    private static final String BDB_JWT_FILENAME = "my_bdb_jwt";
+    private static final String BDB_JWT_EXP_FILENAME = "my_bdb_exp_jwt";
     public static final int AUTH_DURATION_SEC = 300;
     private static final int GMC_TAG_LENGTH = 128;
 
@@ -183,10 +195,13 @@ public final class BRKeyStore {
         ALIAS_OBJECT_MAP.put(SPEND_LIMIT_ALIAS, new AliasObject(SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV));
         ALIAS_OBJECT_MAP.put(FAIL_TIMESTAMP_ALIAS, new AliasObject(FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV));
         ALIAS_OBJECT_MAP.put(AUTH_KEY_ALIAS, new AliasObject(AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV));
+        ALIAS_OBJECT_MAP.put(ACCOUNT_ALIAS, new AliasObject(ACCOUNT_ALIAS, ACCOUNT_FILENAME, ACCOUNT_IV));
         ALIAS_OBJECT_MAP.put(TOKEN_ALIAS, new AliasObject(TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV));
         ALIAS_OBJECT_MAP.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         ALIAS_OBJECT_MAP.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
         ALIAS_OBJECT_MAP.put(ETH_PUBKEY_ALIAS, new AliasObject(ETH_PUBKEY_ALIAS, ETH_PUBKEY_FILENAME, ETH_PUBKEY_IV));
+        ALIAS_OBJECT_MAP.put(BDB_JWT_ALIAS, new AliasObject(BDB_JWT_ALIAS, BDB_JWT_FILENAME, BDB_JWT_IV));
+        ALIAS_OBJECT_MAP.put(BDB_JWT_EXP_ALIAS, new AliasObject(BDB_JWT_EXP_ALIAS, BDB_JWT_EXP_FILENAME, BDB_JWT_EXP_IV));
     }
 
     /**
@@ -194,10 +209,10 @@ public final class BRKeyStore {
      * used because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
      * Android key store has been invalidated, our entire app data should be wiped and the app should be
      * re-initialized.  We cannot recover from this otherwise.
-     *
+     * <p>
      * We found on Google devices a wipe is sufficient to recover except on Android 8.1 which requires an uninstall.
      * On non-Google devices a wipe is required on Android 6-7.1 and an uninstall is required on Android 8+.
-     *
+     * <p>
      * See {@link KeyPermanentlyInvalidatedException} for further details.
      *
      * @return A {@link ValidityStatus} based on the current status of the Android key store.
@@ -331,6 +346,7 @@ public final class BRKeyStore {
 
     /**
      * Creates a new key for encrypting the specified alias.
+     *
      * @param alias        The mAlias to be used (key name).
      * @param authRequired Needs user authentication to retrieve if true.
      * @return The newly created key.
@@ -553,6 +569,17 @@ public final class BRKeyStore {
         return false;
     }
 
+    public static void deleteMasterPublicKey(Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(PUB_KEY_ALIAS);
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            removeAliasAndDatas(keyStore, obj.mAlias, context);
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static byte[] getMasterPublicKey(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(PUB_KEY_ALIAS);
         try {
@@ -579,6 +606,30 @@ public final class BRKeyStore {
             return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean putAccount(final Account account, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
+        try {
+            return account != null && setData(context, account.serialize(), obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            Logger.Companion.error("Failed to store Account.", e);
+        }
+        return false;
+    }
+
+    public static Account getAccount(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
+        try {
+            byte[] accountBytes = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+            if (accountBytes == null || accountBytes.length == 0) {
+                return null;
+            }
+            return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId(context)).orNull();
+        } catch (UserNotAuthenticatedException e) {
+            Logger.Companion.error("Failed to get Account.", e);
         }
         return null;
     }
@@ -623,9 +674,53 @@ public final class BRKeyStore {
         return null;
     }
 
-    public static boolean putWalletCreationTime(int creationTime, Context context) {
+    public static boolean putBdbJwt(final byte[] jwt, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
+        try {
+            return jwt != null && jwt.length != 0 && setData(context, jwt, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static byte[] getBdbJwt(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
+        try {
+            return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean putBdbJwtExp(final long exp, final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_EXP_ALIAS);
+        byte[] expBytes = TypesConverter.long2byteArray(exp);
+        try {
+            return expBytes.length != 0 && setData(context, expBytes, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static long getBdbJwtExp(final Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_EXP_ALIAS);
+        try {
+            byte[] expBytes = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
+            if (expBytes != null && expBytes.length > 0) {
+                return TypesConverter.byteArray2long(expBytes);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static boolean putWalletCreationTime(long creationTime, Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(WALLET_CREATION_TIME_ALIAS);
-        byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
+        byte[] bytesToStore = TypesConverter.long2byteArray(creationTime);
         try {
             return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
         } catch (UserNotAuthenticatedException e) {
@@ -634,7 +729,7 @@ public final class BRKeyStore {
         return false;
     }
 
-    public static int getWalletCreationTime(final Context context) {
+    public static long getWalletCreationTime(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(WALLET_CREATION_TIME_ALIAS);
         byte[] result = null;
         try {
@@ -642,18 +737,24 @@ public final class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
+
         if (Utils.isNullOrEmpty(result)) {
-            //if none, try getting from KVStore
-            WalletInfoData info = KVStoreManager.getWalletInfo(context);
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            WalletInfoData info = metadataProvider.getWalletInfoUnsafe();
             if (info != null) {
-                int creationDate = info.creationDate;
+                long creationDate = info.getCreationDate();
                 putWalletCreationTime(creationDate, context);
                 return creationDate;
             } else {
                 return 0;
             }
         } else {
-            return TypesConverter.bytesToInt(result);
+            if (result.length == 4) {
+                return TypesConverter.bytesToInt(result);
+            } else {
+                return TypesConverter.byteArray2long(result);
+            }
         }
     }
 
@@ -727,54 +828,6 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
-    }
-
-    public static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(SPEND_LIMIT_ALIAS);
-        byte[] bytesToStore = spendLimit.toPlainString().getBytes();
-        try {
-            return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static BigDecimal getSpendLimit(final Context context, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(SPEND_LIMIT_ALIAS);
-        byte[] result = null;
-        try {
-            result = getData(context, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        BaseWalletManager wm = WalletsMaster.getInstance().getWalletByIso(context, iso);
-        WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
-        return (result != null && result.length > 0)
-                ? new BigDecimal(new String(result))
-                : (configs.getFingerprintLimits().size() != 0 ? configs.getFingerprintLimits().get(1) : BigDecimal.ZERO);
-    }
-
-    public static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(TOTAL_LIMIT_ALIAS);
-        byte[] bytesToStore = totalLimit.toPlainString().getBytes();
-        try {
-            return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static BigDecimal getTotalLimit(final Context context, String iso) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(TOTAL_LIMIT_ALIAS);
-        byte[] result = new byte[0];
-        try {
-            result = getData(context, obj.mAlias + iso, obj.mDatafileName + iso, obj.mIvFileName + iso, 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : BigDecimal.ZERO;
     }
 
     public static boolean putFailTimeStamp(long spendLimit, Context context) {
@@ -887,7 +940,7 @@ public final class BRKeyStore {
         return base64 == null ? null : Base64.decode(base64, Base64.DEFAULT);
     }
 
-    private static synchronized void showAuthenticationScreen(Context context, int requestCode, String alias) {
+    private static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         if (!alias.equalsIgnoreCase(PHRASE_ALIAS)) {
@@ -895,18 +948,20 @@ public final class BRKeyStore {
         }
         if (context instanceof Activity) {
             Activity app = (Activity) context;
-            KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
-                    context.getString(R.string.UnlockScreen_touchIdTitle_android),
-                    context.getString(R.string.UnlockScreen_touchIdPrompt_android));
-            if (intent != null) {
-                ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
-                app.startActivityForResult(intent, requestCode);
-            } else {
-                Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
-                BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
-                app.finish();
-            }
+            app.runOnUiThread(() -> {
+                KeyguardManager keyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
+                        context.getString(R.string.UnlockScreen_touchIdTitle_android),
+                        context.getString(R.string.UnlockScreen_touchIdPrompt_android));
+                if (intent != null) {
+                    ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
+                    app.startActivityForResult(intent, requestCode);
+                } else {
+                    Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
+                    BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
+                    app.finish();
+                }
+            });
         } else {
             BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: context is not activity!"));
             Log.e(TAG, "showAuthenticationScreen: context is not activity!");

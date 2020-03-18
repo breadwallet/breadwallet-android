@@ -7,12 +7,12 @@
     android:fillViewport="true"
     android:filterTouchesWhenObscured="true">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
 
             </RelativeLayout>
 
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
 
         <ImageView
@@ -57,7 +57,7 @@
             app:layout_constraintWidth_percent="0.8"
             tools:src="@drawable/brd_logo_gradient" />
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/notification_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             app:layout_constraintVertical_bias="1.0"
             tools:text="Got it" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/notification_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,13 +83,14 @@
             android:layout_marginEnd="55dp"
             android:textAlignment="center"
             android:textSize="24sp"
+            android:fontFamily="@font/circular_pro_book"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/notification_image"
             app:layout_constraintWidth_percent="0.75"
             tools:text="Buy Hard! Buy Hard! Buy Hard! Buy Hard! Buy Hard!" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/notification_body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -103,5 +104,5 @@
             app:layout_constraintTop_toBottomOf="@+id/notification_title"
             app:layout_constraintWidth_percent="0.75"
             tools:text="Buy 1 bitcoin and win a Christmas party at the Nakatomi Plaza in Los Angeles hosted by Hans Gruber" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

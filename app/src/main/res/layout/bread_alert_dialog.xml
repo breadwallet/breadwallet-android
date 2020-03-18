@@ -36,7 +36,7 @@
 
     </RelativeLayout>
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,12 +47,12 @@
         android:textAlignment="center"
         android:textColor="?attr/secondary_text_color"
         android:textSize="18sp"
-        app:brdFont="@string/Font.CircularPro_Bold"
+        android:fontFamily="@font/circular_pro_bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_header" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/dialog_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dialog_text">
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/neg_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,12 +91,12 @@
             android:layout_marginEnd="16dp"
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/pos_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
             android:textColor="@color/white"
-            app:brdFont="@string/Font.CircularPro_Bold"
+            android:fontFamily="@font/circular_pro_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />

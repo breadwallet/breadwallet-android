@@ -1,42 +1,20 @@
 package com.breadwallet.tools.security;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.WorkerThread;
-import android.text.format.DateUtils;
+import androidx.annotation.WorkerThread;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.R;
-import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.ethereum.BREthereumEWM;
-import com.breadwallet.core.ethereum.BREthereumTransfer;
-import com.breadwallet.presenter.activities.PaperKeyActivity;
-import com.breadwallet.presenter.activities.PaperKeyProveActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.legacy.presenter.entities.CryptoRequest;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.legacy.wallet.wallets.CryptoTransaction;
 import com.breadwallet.tools.manager.SendManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.entities.GenericTransactionMetaData;
-import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
-import com.platform.tools.BRBitId;
-import com.platform.tools.KVStoreManager;
 
-import java.math.BigDecimal;
-import java.util.Timer;
-import java.util.TimerTask;
+import static org.kodein.di.TypesKt.TT;
 
 
 /**
@@ -96,6 +74,7 @@ public class PostAuth {
      * @param authAsked Device authentication for this action was asked already
      * @param listener  Action on device authentication or null if using the cached listener.
      */
+    /* not used
     public void onCreateWalletAuth(final Context context, boolean authAsked, AuthenticationSuccessListener listener) {
         if (listener != null) {
             mAuthenticationSuccessListener = listener;
@@ -111,79 +90,9 @@ public class PostAuth {
             }
         }
     }
+    */
 
-    /**
-     * Start the PaperKeyActivity with an extra action to be done on key confirmed or null for default action
-     *
-     * @param activity    - the activity to use
-     * @param authAsked   - was authentication already approved by user
-     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
-     */
-
-    public void onPhraseCheckAuth(Activity activity, boolean authAsked, String intentExtra) {
-        if (intentExtra != null) {
-            mOnDoneAction = intentExtra;
-        }
-        String cleanPhrase;
-        try {
-            byte[] raw = BRKeyStore.getPhrase(activity, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if (raw == null) {
-                BRReportsManager.reportBug(new NullPointerException("onPhraseCheckAuth: getPhrase = null"), true);
-                return;
-            }
-            cleanPhrase = new String(raw);
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onPhraseCheckAuth: WARNING!!!! LOOP");
-                mAuthLoopBugHappened = true;
-            }
-            return;
-        }
-        Intent intent = new Intent(activity, PaperKeyActivity.class);
-        intent.putExtra(PaperKeyActivity.EXTRA_PAPER_KEY, cleanPhrase);
-        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
-            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
-            mOnDoneAction = null;
-        }
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-    }
-
-    /**
-     * Start the PaperKeyProveActivity with an extra action to be done on key confirmed or null for default action
-     *
-     * @param activity    - the activity to use
-     * @param authAsked   - was authentication already approved by user
-     * @param intentExtra - the intent extra for EXTRA_DONE_ACTION or null
-     */
-    public void onPhraseProveAuth(Activity activity, boolean authAsked, String intentExtra) {
-        if (intentExtra != null) {
-            mOnDoneAction = intentExtra;
-        }
-        String cleanPhrase;
-        try {
-            cleanPhrase = new String(BRKeyStore.getPhrase(activity, BRConstants.PROVE_PHRASE_REQUEST));
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onPhraseProveAuth: WARNING!!!! LOOP");
-                mAuthLoopBugHappened = true;
-            }
-            return;
-        }
-        Intent intent = new Intent(activity, PaperKeyProveActivity.class);
-        intent.putExtra(PaperKeyProveActivity.EXTRA_PAPER_KEY, cleanPhrase);
-        if (!Utils.isNullOrEmpty(mOnDoneAction)) {
-            intent.putExtra(PaperKeyProveActivity.EXTRA_DONE_ACTION, mOnDoneAction);
-            mOnDoneAction = null;
-        }
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-    }
-
-    public void onBitIDAuth(Context context, boolean authenticated) {
-        BRBitId.completeBitID(context, authenticated);
-    }
-
+    /*
     public boolean onRecoverWalletAuth(final Activity activity, boolean authAsked) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
@@ -211,8 +120,10 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
 
                     // Recover wallet-info and token list before starting to sync wallets.
-                    KVStoreManager.syncWalletInfo(activity);
-                    KVStoreManager.syncTokenList(activity);
+                    AccountMetaDataProvider metadataProvider =
+                            BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+                    metadataProvider.syncWalletInfo();
+                    metadataProvider.syncAssetIndex();
 
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
@@ -231,10 +142,13 @@ public class PostAuth {
         }
         return false;
     }
+     */
 
     @WorkerThread
     public void onPublishTxAuth(final Context context, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
-        if (completion != null) {
+        /*
+        if (completion != null){
+
             mSendCompletion = completion;
         }
         if (wm != null) mWalletManager = wm;
@@ -267,16 +181,16 @@ public class PostAuth {
                         }
 
                         mTxMetaData = new TxMetaData();
-                        mTxMetaData.comment = mCryptoRequest.getMessage();
-                        mTxMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
+                        mTxMetaData.setComment(mCryptoRequest.getMessage());
+                        mTxMetaData.setExchangeCurrency(BRSharedPrefs.getPreferredFiatIso(context));
                         BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(context);
-                        mTxMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                        mTxMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
-                        mTxMetaData.txSize = tx.getTxSize().intValue();
-                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getCurrencyCode());
-                        mTxMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
-                        mTxMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
-                        mTxMetaData.classVersion = 1;
+                        mTxMetaData.setExchangeRate(fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue());
+                        mTxMetaData.setFee(mWalletManager.getTxFee(tx).toPlainString());
+                        mTxMetaData.setTxSize(tx.getTxSize().intValue());
+                        mTxMetaData.setBlockHeight(BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getCurrencyCode()));
+                        mTxMetaData.setCreationTime((int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS));
+                        mTxMetaData.setDeviceId(BRSharedPrefs.getDeviceId(context));
+                        mTxMetaData.setClassVersion(1);
 
 
                     } else {
@@ -330,7 +244,7 @@ public class PostAuth {
         } finally {
             mCryptoRequest = null;
         }
-
+        */
     }
 
     private void continueWithPayment(final Context context, byte[] rawPhrase, CryptoTransaction transaction) {
@@ -342,7 +256,7 @@ public class PostAuth {
                         mSendCompletion.onCompleted(hash, true);
                         mSendCompletion = null;
                     }
-                    stampMetaData(context, hash.getBytes());
+                    stampMetaData(hash.getBytes());
                 }
             });
         }
@@ -352,17 +266,19 @@ public class PostAuth {
                 mSendCompletion.onCompleted(transaction.getHash(), true);
                 mSendCompletion = null;
             }
-            stampMetaData(context, txHash);
+            stampMetaData(txHash);
         }
 
     }
 
-    public static void stampMetaData(Context activity, byte[] txHash) {
-        if (mTxMetaData != null) {
-            KVStoreManager.putTxMetaData(activity, mTxMetaData, txHash);
+    public static void stampMetaData(byte[] txHash) {
+        /*if (mTxMetaData != null) {
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            metadataProvider.putTxMetaData(mTxMetaData, txHash);
         } else {
             Log.e(TAG, "stampMetaData: mTxMetaData is null!");
-        }
+        }*/
     }
 
     public void onPaymentProtocolRequest(final Context context, boolean authAsked, CryptoTransaction transaction) {
@@ -406,46 +322,4 @@ public class PostAuth {
     public interface AuthenticationSuccessListener {
         void onAuthenticatedSuccess();
     }
-
-    /**
-     * Listener for transaction events emitted from WalletEthManager
-     */
-    class TransactionEventListener implements WalletEthManager.OnTransactionEventListener {
-        final private Context mContext;
-        final private WalletEthManager mWalletEthManager;
-        final private CryptoTransaction mTransaction;
-        final private byte[] mRawPhrase;
-        final private Timer mTimeoutTimer;
-
-        /**
-         * Constructor takes various state variables that are necessary when processing transaction events
-         *
-         * @param context the application context
-         * @param walletEthManager reference to the WalletEthManager
-         * @param transaction the transaction for which this listener is listening to events
-         * @param rawPhrase the phrase used in processing transactions
-         * @param timeoutTimer the timer that signals when a timeout has occurred
-         */
-        TransactionEventListener(Context context, WalletEthManager walletEthManager, CryptoTransaction transaction, byte[] rawPhrase, Timer timeoutTimer) {
-            mContext = context;
-            mWalletEthManager = walletEthManager;
-            mTransaction = transaction;
-            mRawPhrase = rawPhrase;
-            mTimeoutTimer = timeoutTimer;
-        }
-
-        public void onTransactionEvent(BREthereumEWM.TransactionEvent event, BREthereumTransfer transaction, BREthereumEWM.Status status) {
-            // Ensure event is for the transaction this listener is interested in
-            if (transaction != null && mTransaction != null && mTransaction.getEtherTx() != null && transaction.getIdentifier().equals(mTransaction.getEtherTx().getIdentifier())) {
-                switch (event) {
-                    case GAS_ESTIMATE_UPDATED:
-                        Log.d(TAG, "onTransactionEvent: GAS ESTIMATE UPDATED");
-                        mTimeoutTimer.cancel();
-                        mWalletEthManager.removeTransactionEventListener(this);
-                        continueWithPayment(mContext, mRawPhrase, mTransaction);
-                }
-            }
-        }
-    }
-
 }

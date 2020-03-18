@@ -3,7 +3,7 @@ package com.breadwallet.protocols.messageexchange;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.crypto.Coder;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
 import com.breadwallet.tools.util.BRConstants;
@@ -185,7 +185,7 @@ public final class MessageExchangeNetworkHelper {
 
     public static void sendAssociatedKey(Context context, byte[] publicKey) {
         String associatedUrl = APIClient.getBaseURL() + ASSOCIATED_KEYS;
-        String base58PublicKey = BRCoreKey.encodeBase58(publicKey);
+        String base58PublicKey = Coder.createForAlgorithm(Coder.Algorithm.BASE58).encode(publicKey).get();
         RequestBody requestBody = RequestBody.create(null, base58PublicKey);
         Request request = new Request.Builder()
                 .url(associatedUrl)

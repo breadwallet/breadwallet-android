@@ -17,6 +17,7 @@ package com.breadwallet.tools.qrcode;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.hardware.Camera;
@@ -128,14 +129,22 @@ public class QRCodeReaderView extends SurfaceView
     /**
      * Starts camera preview and decoding
      */
-    public static void startCamera() {
+    public void startCamera() {
+        if (!mCameraManager.isOpen()) {
+            // If the camera fails to open when the surface is created,
+            // startCamera will never succeed.  Here we simulate the
+            // callbacks manually to open the camera driver and setup
+            // the preview surface information.
+            surfaceCreated(getHolder());
+            surfaceChanged(getHolder(), PixelFormat.UNKNOWN, getWidth(), getHeight());
+        }
         mCameraManager.startPreview();
     }
 
     /**
      * Stop camera preview and decoding
      */
-    public static void stopCamera() {
+    public void stopCamera() {
         mCameraManager.stopPreview();
     }
 
@@ -395,7 +404,7 @@ public class QRCodeReaderView extends SurfaceView
                 if (handled) {
                     Log.e(TAG, "onPostExecute: Handled!");
                     this.cancel(true);
-                    stopCamera();
+                    view.stopCamera();
                 }
             }
         }

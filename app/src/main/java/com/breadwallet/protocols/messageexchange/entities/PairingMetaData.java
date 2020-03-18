@@ -4,8 +4,12 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Base64;
 
 import com.breadwallet.tools.util.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * BreadWallet
@@ -38,6 +42,13 @@ public class PairingMetaData implements Parcelable {
     private static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
     private static final String QUERY_PARAM_SERVICE = "service";
     private static final String QUERY_PARAM_RETURN_URL = "return-to";
+
+    private static final String CLASS_VERSION = "classVersion";
+    private static final String IDENTIFIER = "identifier";
+    private static final String CREATED = "created";
+    private static final String SERVICE = "service";
+    private static final String REMOTE_PUBKEY = "remotePubKey";
+    private static final String RETURN_URL = "return-to";
 
     private String mId;
     private String mPublicKeyHex; // Hex encoded pub key
@@ -79,6 +90,14 @@ public class PairingMetaData implements Parcelable {
             mService = uri.getQueryParameter(QUERY_PARAM_SERVICE);
             mReturnUrl = uri.getQueryParameter(QUERY_PARAM_RETURN_URL);
         }
+    }
+
+    // TODO: Should CLASS_VERSION and CREATED be read from the JSON (and defaulted to "1" and System.currentTimeMillis() if absent)?
+    public PairingMetaData(JSONObject json) throws JSONException{
+        mId = json.getString(IDENTIFIER);
+        mService = json.getString(SERVICE);
+        mReturnUrl = json.getString(RETURN_URL);
+        mPublicKeyHex = Utils.bytesToHex(Base64.decode(json.getString(REMOTE_PUBKEY), Base64.NO_WRAP));
     }
 
     public String getId() {
@@ -124,5 +143,20 @@ public class PairingMetaData implements Parcelable {
         destination.writeString(mPublicKeyHex);
         destination.writeString(mService);
         destination.writeString(mReturnUrl);
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        byte[] rawPubKey = Utils.hexToBytes(mPublicKeyHex);
+        String base64PubKey = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
+
+        JSONObject pairingJSON = new JSONObject();
+        pairingJSON.put(CLASS_VERSION, 1);
+        pairingJSON.put(IDENTIFIER, mId);
+        pairingJSON.put(SERVICE, mService);
+        pairingJSON.put(REMOTE_PUBKEY, base64PubKey);
+        pairingJSON.put(CREATED, System.currentTimeMillis());
+        pairingJSON.put(RETURN_URL, mReturnUrl);
+
+        return pairingJSON;
     }
 }

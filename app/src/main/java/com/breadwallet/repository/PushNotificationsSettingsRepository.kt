@@ -1,19 +1,19 @@
 /**
  * BreadWallet
- * <p/>
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 7/11/19.
+ *
+ * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 7/11/19.
  * Copyright (c) 2019 breadwallet LLC
- * <p/>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,8 +25,11 @@
 package com.breadwallet.repository
 
 import android.content.Context
-import android.support.v4.app.NotificationManagerCompat
-import com.breadwallet.BreadApp
+import androidx.core.app.NotificationManagerCompat
+import com.breadwallet.app.BreadApp
+import com.breadwallet.repository.NotificationsState.APP_DISABLED
+import com.breadwallet.repository.NotificationsState.APP_ENABLED
+import com.breadwallet.repository.NotificationsState.SYSTEM_DISABLED
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.network.NotificationsSettingsClientImpl
 

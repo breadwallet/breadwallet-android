@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<form>
+    <fieldset>
+        <p>
+            <label for="toAddress">To Address</label>
+            <input id="toAddress" type="text" value="n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF"/>
+        </p>
+        <p>
+            <label for="currencyCode">Currency Code</label>
+            <input id="currencyCode" type="text" value="btc"/>
+        </p>
+        <p>
+            <label for="amount">Amount</label>
+            <input id="amount" type="text" value="100000"/>
+        </p>
+        <p>
+            <button onclick="submitTransaction()">Submit</button>
+        </p>
+        <p>
+            <span id="txOutput"></span>
+        </p>
+    </fieldset>
+</form>
+
+<script type="application/javascript">
+    function injectPromiseHooks() {
+        let nativeObjs = JSON.parse(NativeApisJs.getApiNamesJson())
+        nativeObjs.forEach( nativeObjectName => {
+            let objectName = nativeObjectName.replace("_Native", "")
+            window[objectName] = Object()
+            for (let [key, value] of Object.entries(window[nativeObjectName])) {
+                window[objectName][key] = function() {
+                    let primaryArgs = arguments
+                    return new Promise(function(resolve, reject) {
+                        let promiseBinder = value.apply(window[nativeObjectName], primaryArgs)
+                        let callbackName = promiseBinder.getJsName()
+                        if (typeof window.brdCallbacks === 'undefined') {
+                            window.brdCallbacks = Object()
+                        }
+                        window.brdCallbacks[callbackName] = {
+                            scope: this,
+                            resolve: resolve,
+                            reject: reject
+                        }
+                        promiseBinder.execute()
+                    })
+                }
+            }
+        })
+    }
+
+    injectPromiseHooks()
+
+    function submitTransaction() {
+        let txOutput = document.getElementById("txOutput");
+        txOutput.innerText = "";
+
+        let toAddress = document.getElementById("toAddress").value;
+        let currencyCode = document.getElementById("currencyCode").value;
+        let amount = document.getElementById("amount").value;
+
+        WalletJs.transaction(toAddress, "", amount, currencyCode)
+            .then((transaction) => {
+                txOutput.innerText = `Hash: ${transaction.hash}\n Transmitted: ${transaction.transmitted}`;
+            })
+            .catch((error) => {
+                txOutput.innerText = error;
+            })
+    }
+
+</script>
+</body>
+</html>
