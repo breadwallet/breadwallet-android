@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /* //device/apps/common/assets/res/any/layout/simple_spinner_item.xml
 **
 ** Copyright 2006, The Android Open Source Project
@@ -17,8 +16,7 @@
 ** limitations under the License.
 */
 -->
-<com.breadwallet.presenter.customviews.BaseTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.breadwallet.legacy.presenter.customviews.BaseTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     style="?android:attr/spinnerItemStyle"
     android:layout_width="match_parent"
@@ -28,5 +26,4 @@
     android:textSize="@dimen/paragraph"
     android:singleLine="true"
     android:textAlignment="inherit"
-    android:textColor="@color/light_gray"
-   />
+    android:textColor="@color/light_gray" />

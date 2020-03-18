@@ -1,19 +1,19 @@
 /**
  * BreadWallet
- * <p/>
- * Created by Ahsan Butt on <ahsan.butt@breadwallet.com> 4/15/19.
+ *
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 4/15/19.
  * Copyright (c) 2019 breadwallet LLC
- * <p/>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,16 +27,16 @@ package com.breadwallet.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.model.PriceChange;
 import com.breadwallet.model.PriceDataPoint;
-import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.model.TokenItem;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.wallet.Interval;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.network.service.CurrencyHistoricalDataClient;
 
@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RatesRepository {
     private static final String TAG = RatesRepository.class.getName();
     private static final String CACHE_KEY_DELIMITER = ":";
-    private static RatesRepository mInstance;
+    private static volatile RatesRepository mInstance;
 
     private ConcurrentHashMap<String, CurrencyEntity> mCache;
     private ConcurrentHashMap<String, PriceChange> mPriceChanges;
@@ -64,7 +64,11 @@ public class RatesRepository {
 
     synchronized public static RatesRepository getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new RatesRepository(context);
+            synchronized (RatesRepository.class) {
+                if (mInstance == null) {
+                    mInstance = new RatesRepository(context);
+                }
+            }
         }
 
         return mInstance;
@@ -80,17 +84,17 @@ public class RatesRepository {
      * Retrieves the currency rate between two currencies.
      *
      * @param fromCurrency the 'from' currency
+     * @param toCurrency   the 'to' currency
      * @return a currency entity encapsulating the two currencies and the rate between them, returns
      * null if either the currencies are empty or the rate wasn't found
-     * @aram toCurrency the 'to' currency
      */
     public CurrencyEntity getCurrencyByCode(String fromCurrency, String toCurrency) {
         if (Utils.isNullOrEmpty(fromCurrency) || Utils.isNullOrEmpty(toCurrency)) {
             return null;
         }
 
-        fromCurrency = TokenUtil.getExchangeRateCode(fromCurrency);
-        String cacheKey = getCacheKey(fromCurrency, toCurrency);
+        String fromCurrencyCode = TokenUtil.getExchangeRateCode(fromCurrency);
+        String cacheKey = getCacheKey(fromCurrencyCode, toCurrency);
         CurrencyEntity currencyEntity = mCache.get(cacheKey);
 
         if (currencyEntity == null) {
@@ -212,21 +216,23 @@ public class RatesRepository {
      * @return the price change.
      */
     public PriceChange getPriceChange(String currencyCode) {
-        return mPriceChanges.get(TokenUtil.getExchangeRateCode(currencyCode));
+        return mPriceChanges.get(TokenUtil.getExchangeRateCode(currencyCode).toUpperCase());
     }
 
     public List<PriceDataPoint> getHistoricalData(String fromCurrencyCode, String toCurrencyCode, Interval interval) {
-        fromCurrencyCode = TokenUtil.getExchangeRateCode(fromCurrencyCode);
-        return CurrencyHistoricalDataClient.INSTANCE.getHistoricalData(mContext, fromCurrencyCode, toCurrencyCode, interval);
+        return CurrencyHistoricalDataClient.INSTANCE.getHistoricalData(
+                mContext,
+                TokenUtil.getExchangeRateCode(fromCurrencyCode),
+                toCurrencyCode,
+                interval);
     }
 
-
-    public synchronized List<String> getAllCurrencyCodesPossible(Context context) {
+    public synchronized List<String> getAllCurrencyCodesPossible() {
         LinkedHashSet<String> currencyCodes = new LinkedHashSet<>();
         for (TokenListMetaData.TokenInfo tokenInfo : BRConstants.DEFAULT_WALLETS) {
-            currencyCodes.add(tokenInfo.symbol);
+            currencyCodes.add(tokenInfo.getSymbol());
         }
-        for (TokenItem tokenItem : TokenUtil.getTokenItems(context)) {
+        for (TokenItem tokenItem : TokenUtil.getTokenItems(mContext)) {
             currencyCodes.add(tokenItem.getExchangeRateCurrencyCode());
         }
         return new ArrayList<>(currencyCodes);

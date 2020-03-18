@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  * <p/>
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 01/17/19.
+ * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 01/17/19.
  * Copyright (c) 2019 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;

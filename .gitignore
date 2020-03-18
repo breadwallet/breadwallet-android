@@ -20,6 +20,12 @@ build/
 */build/
 *.idea*
 
+# Include code styles
+!.idea/codeStyles/codestyleConfig.xml
+!.idea/codeStyles/Project.xml
+!.idea/inspectionProfiles/ktlint.xml
+!.idea/inspectionProfiles/profiles_settings.xml
+
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -35,7 +41,6 @@ proguard/
 # Android Studio
 *.iml
 *.keystore
-gradle.properties
 */local.properties
 */out
 */*/build
@@ -58,3 +63,6 @@ fastlane/
 Release_checklist
 
 /app/.externalNativeBuild/
+
+# Fabric config
+/app/fabric.properties

@@ -1,26 +1,7 @@
-package com.breadwallet.tools.util;
-
-import android.app.Activity;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.breadwallet.presenter.activities.settings.TestActivity;
-import com.breadwallet.tools.security.BRKeyStore;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.List;
-
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 11/20/16.
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/20/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,6 +22,24 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.util;
+
+import android.app.Activity;
+import androidx.test.rule.ActivityTestRule;
+
+import androidx.test.runner.AndroidJUnit4;
+import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
+import com.breadwallet.tools.security.BRKeyStore;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.List;
+
 @RunWith(AndroidJUnit4.class)
 public class Bip39Tests {
     private static final String EN_FIRST_WORD = "abandon";
@@ -64,14 +63,14 @@ public class Bip39Tests {
     public void testBip39() {
         Activity testActivity = mActivityRule.getActivity();
 
-        List<String> enList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.EN);
-        List<String> esList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ES);
-        List<String> frList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.FR);
-        List<String> itList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.IT);
-        List<String> jaList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.JA);
-        List<String> koList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.KO);
-        List<String> zhHansList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ZH_HANS);
-        List<String> zhHantList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ZH_HANT);
+        List<String> enList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.EN.toString());
+        List<String> esList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ES.toString());
+        List<String> frList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.FR.toString());
+        List<String> itList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.IT.toString());
+        List<String> jaList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.JA.toString());
+        List<String> koList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.KO.toString());
+        List<String> zhHansList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ZH_HANS.toString());
+        List<String> zhHantList = Bip39Reader.getBip39Words(testActivity, Bip39Reader.SupportedLanguage.ZH_HANT.toString());
 
         Assert.assertEquals(enList.size(), Bip39Reader.WORD_LIST_SIZE);
         Assert.assertEquals(esList.size(), Bip39Reader.WORD_LIST_SIZE);

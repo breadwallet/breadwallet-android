@@ -5,50 +5,40 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.JobIntentService;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.R;
-import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.presenter.activities.ConfirmationActivity;
-import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.crypto.Cipher;
+import com.breadwallet.crypto.Coder;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.crypto.Signer;
+import com.breadwallet.legacy.presenter.activities.ConfirmationActivity;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
 import com.breadwallet.protocols.messageexchange.entities.MetaData;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
-import com.breadwallet.protocols.messageexchange.entities.PaymentRequestMetaData;
-import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.entities.GenericTransactionMetaData;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
+import com.google.common.base.Optional;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.platform.entities.TokenListMetaData;
-import com.platform.tools.KVStoreManager;
+import com.platform.interfaces.AccountMetaDataProvider;
 
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static org.kodein.di.TypesKt.TT;
 
 /**
  * BreadWallet
@@ -75,6 +65,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * THE SOFTWARE.
  */
 public final class MessageExchangeService extends JobIntentService {
+    // TODO: As of release 4.0, this class is untested!
+
     private static final String TAG = MessageExchangeService.class.getSimpleName();
 
     private static final int JOB_ID = 0xcebbbf9b; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
@@ -82,28 +74,24 @@ public final class MessageExchangeService extends JobIntentService {
     public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
     public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
     private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
-    public static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
     private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
     public static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
     private static final int ENVELOPE_VERSION = 1;  // The current envelope version number for our message exchange protocol.
     private static final int NONCE_SIZE = 12; // Nonce size for our message exchange protocol.
-    private static final long GAS_LIMIT = 200000; // Gas limit for transactions that use our message exchange protocol.
+    // TODO: We only support pairing with one service
     private static final String SERVICE_PWB = "PWB"; // Our service name for the feature known as Participate With BRD, Secure Checkout, etc.
 
     public static PairingMetaData mPairingMetaData;
+    private static final Signer SIGNER_COMPACT = Signer.createForAlgorithm(Signer.Algorithm.COMPACT); // TODO: Need a safer way to access this that doesn't rely on underlying CryptoProviderAPI being init
 
     public enum MessageType {
         LINK,
         PING,
         PONG,
         ACCOUNT_REQUEST,
-        ACCOUNT_RESPONSE,
-        PAYMENT_REQUEST,
-        PAYMENT_RESPONSE,
-        CALL_REQUEST,
-        CALL_RESPONSE
+        ACCOUNT_RESPONSE
     }
 
     /**
@@ -131,15 +119,6 @@ public final class MessageExchangeService extends JobIntentService {
                     break;
                 case ACTION_RETRIEVE_MESSAGES:
                     retrieveInboxEntries(this);
-                    break;
-                case ACTION_PROCESS_REQUEST:
-                    boolean isUserApproved = intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false);
-                    RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_METADATA);
-                    if (requestMetaData != null) {
-                        processAsyncRequest(requestMetaData, isUserApproved);
-                    } else {
-                        Log.e(TAG, "Missing request meta data.  Ignoring intent.");
-                    }
                     break;
                 default:
                     Log.d(TAG, "Intent not recognized.");
@@ -202,31 +181,14 @@ public final class MessageExchangeService extends JobIntentService {
     }
 
     /**
-     * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
-     * Used for: Payment Request, Call Request.
-     *
-     * @param context        The context in which we are operating.
-     * @param parcelable     The parcelable containing meta data needed when the service starts again.
-     * @param isUserApproved True, if the user approved the pending request; false, otherwise.
-     * @return An intent with the specified parameters.
-     */
-    public static Intent createIntent(Context context, Parcelable parcelable, boolean isUserApproved) {
-        Intent intent = new Intent(context, MessageExchangeService.class);
-        intent.setAction(ACTION_PROCESS_REQUEST)
-                .putExtra(EXTRA_METADATA, parcelable)
-                .putExtra(EXTRA_IS_USER_APPROVED, isUserApproved);
-        return intent;
-    }
-
-    /**
      * Pairs the device to the remove wallet.
      *
      * @param isUserApproved True, if the user approved the pairing; false, otherwise.
      */
     public void pair(boolean isUserApproved) {
-        byte[] ephemeralKey = BRCoreKey.decodeHex(mPairingMetaData.getPublicKeyHex());
+        byte[] ephemeralKey = Coder.createForAlgorithm(Coder.Algorithm.HEX).decode(mPairingMetaData.getPublicKeyHex()).orNull();
 
-        BRCoreKey pairingKey = getPairingKey();
+        Key pairingKey = getPairingKey();
 
         ByteString message;
         if (isUserApproved) {
@@ -234,10 +196,10 @@ public final class MessageExchangeService extends JobIntentService {
             openUrl(mPairingMetaData.getReturnUrl());
 
             // The user has approved, send a link message containing the local entity's public key and id.
-            message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
+            message = createLink(ByteString.copyFrom(pairingKey.encodeAsPublic()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
 
             // Register our key with the server.
-            MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.getPubKey());
+            MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.encodeAsPublic());
         } else {
             // The user has denied the request, send a link message containing an error code.
             message = createLink(Protos.Error.USER_DENIED);
@@ -245,11 +207,11 @@ public final class MessageExchangeService extends JobIntentService {
 
         EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
         ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
-        Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.getPubKey()),
+        Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.encodeAsPublic()),
                 ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
         //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
 
-        byte[] signature = pairingKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
+        byte[] signature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(envelope.toByteArray()), pairingKey).get();
         envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
         Log.d(TAG, "pair: request envelope:" + envelope.toString());
 
@@ -303,9 +265,7 @@ public final class MessageExchangeService extends JobIntentService {
                     }
                 }
                 String cursor = inboxEntry.getCursor();
-                if (BreadApp.isInBackground() && envelope.getMessageType().equalsIgnoreCase(MessageType.CALL_REQUEST.name())) {
-                    continue;
-                }
+
                 cursors.add(cursor);
                 //TODO: temp hack for server bug
                 Log.e(TAG, "retrieveInboxEntries: cursor: " + cursor);
@@ -353,7 +313,6 @@ public final class MessageExchangeService extends JobIntentService {
     private void processEnvelope(Protos.Envelope envelope) {
         byte[] decryptedMessage = decryptEnvelope(envelope);
         MessageType messageType = MessageType.valueOf(envelope.getMessageType());
-        RequestMetaData metaData;
 
         try {
             switch (messageType) {
@@ -366,73 +325,12 @@ public final class MessageExchangeService extends JobIntentService {
                 case ACCOUNT_REQUEST:
                     processSyncRequest(messageType, envelope, decryptedMessage);
                     break;
-                case PAYMENT_REQUEST:
-                    // Ask the user for approval before completing the request. This is an asynchronous request.
-                    Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
-
-                    // Fetch the ICO token info and pass the relevant fields back to the metaData object.
-                    TokenItem paymentRequestTokenItem = getIcoTokenInfo(paymentRequest.getAddress());
-
-                    double tokenPurchaseAmount = calculateTokenAmount(paymentRequest.getAmount(), paymentRequestTokenItem);
-
-                    metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
-                            paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
-                            paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
-                            paymentRequest.getTransactionFee(),
-                            paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "",
-                            paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter),
-                            String.valueOf(tokenPurchaseAmount));
-
-                    Log.d(TAG, "Payment request metadata: " + metaData);
-                    confirmRequest(metaData);
-                    break;
-                case CALL_REQUEST:
-                    // Ask the user for approval before completing the request. This is an asynchronous request.
-                    Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
-
-                    // Fetch the ICO token info and pass the relevant fields back to the metaData object.
-                    TokenItem callRequestTokenItem = getIcoTokenInfo(callRequest.getAddress());
-
-                    double purchaseAmount = calculateTokenAmount(callRequest.getAmount(), callRequestTokenItem);
-
-                    metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
-                            callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
-                            callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
-                            callRequest.getTransactionFee(), callRequest.getAbi(),
-                            callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "",
-                            callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter),
-                            String.valueOf(purchaseAmount));
-
-                    Log.d(TAG, "Call request metadata: " + metaData);
-                    confirmRequest(metaData);
-                    break;
                 default:
                     Log.e(TAG, "RequestMetaData type not recognized:" + messageType.name());
             }
         } catch (InvalidProtocolBufferException e) {
             Log.e(TAG, "Error parsing protobuf for " + messageType.name() + "message.", e);
         }
-    }
-
-    /**
-     * Here we use the ICO token exchange rate to calculate the amount of tokens to be purchased.
-     *
-     * @param fromAmount The amount being sent to purchase a quantity of an ICO token (usually ETH).
-     * @param tokenItem  The ICO token being purchased.
-     * @return The amount of the ICO token being purchased.
-     */
-    private double calculateTokenAmount(String fromAmount, TokenItem tokenItem) {
-
-        if (tokenItem == null) {
-            return 0;
-        }
-
-        // Exchange rate contains prefix "ETH" - e.g ETH .00125000
-        // Remove all letters and symbols that are not 0-9 or a period
-        String tokenExchangeRate = tokenItem.getContractInitialValue();
-        tokenExchangeRate = tokenExchangeRate.replaceAll("\\D+", "");
-
-        return Double.parseDouble(fromAmount) / Double.parseDouble(tokenExchangeRate);
     }
 
     /**
@@ -466,29 +364,6 @@ public final class MessageExchangeService extends JobIntentService {
     }
 
     /**
-     * Processes an asynchronous message.  These are messages that cannot be processed immediately upon receipt
-     * because user approval is required.  This method is called once the user has been prompted for approval.
-     *
-     * @param requestMetaData The metadata associated with the request which is needed to create a response.
-     * @param isUserApproved  True if the user approved the request; false, otherwise.
-     */
-    private void processAsyncRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
-        MessageType messageType = MessageType.valueOf(requestMetaData.getMessageType());
-
-        switch (messageType) {
-            case PAYMENT_REQUEST:
-                processPaymentRequest(requestMetaData, isUserApproved);
-                break;
-            case CALL_REQUEST:
-                processCallRequest(requestMetaData, isUserApproved);
-                break;
-            default:
-                // Should never happen because unknown message type is handled by the caller (processRequest()).
-                throw new IllegalArgumentException("Request type unknown: " + messageType.name());
-        }
-    }
-
-    /**
      * Retrieves pairing metadata which is needed for the encrypted message exchange for encrypting and
      * decrypting messages.
      *
@@ -496,13 +371,15 @@ public final class MessageExchangeService extends JobIntentService {
      */
     private PairingMetaData getPairingMetaData(byte[] publicKey) {
         if (mPairingMetaData == null) {
-            mPairingMetaData = getPairingMetaDataFromKvStore(this, publicKey);
+            mPairingMetaData = getPairingMetaDataFromKvStore(publicKey);
         }
         return mPairingMetaData;
     }
 
-    public static PairingMetaData getPairingMetaDataFromKvStore(Context context, byte[] publicKey) {
-        return KVStoreManager.getPairingMetadata(context, publicKey);
+    public static PairingMetaData getPairingMetaDataFromKvStore(byte[] publicKey) {
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        return metadataProvider.getPairingMetadata(publicKey);
     }
 
     /**
@@ -517,18 +394,24 @@ public final class MessageExchangeService extends JobIntentService {
         }
 
         mPairingMetaData = pairingMetaData;
-        KVStoreManager.putPairingMetadata(this, pairingMetaData);
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        metadataProvider.putPairingMetadata(pairingMetaData);
     }
 
     private String getLastProcessedCursor() {
-        return KVStoreManager.getLastCursor(this);
+        AccountMetaDataProvider metadataProvider =
+                BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+        return metadataProvider.getLastCursor();
     }
 
 
     private void setLastProcessedCursor(String lastProcessedCursor) {
         Log.e(TAG, "setLastProcessedCursor: " + lastProcessedCursor);
         if (!Utils.isNullOrEmpty(lastProcessedCursor)) {
-            KVStoreManager.putLastCursor(this, lastProcessedCursor);
+            AccountMetaDataProvider metadataProvider =
+                    BreadApp.getKodeinInstance().Instance(TT(AccountMetaDataProvider.class), null);
+            metadataProvider.putLastCursor(lastProcessedCursor);
         }
     }
 
@@ -540,13 +423,18 @@ public final class MessageExchangeService extends JobIntentService {
      *
      * @return The remote entity's pairing key.
      */
-    private BRCoreKey getPairingKey() {
+    private Key getPairingKey() {
         byte[] authKey = BRKeyStore.getAuthKey(this);
         if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(mPairingMetaData.getId())) {
             Log.e(TAG, "getPairingKey: Auth key or sender id is null.");
             return null;
         }
-        return new BRCoreKey(authKey).getPairingKey(mPairingMetaData.getId().getBytes());
+        Optional<Key> optPrivateKey = Key.createFromPrivateKeyString(authKey);
+        if (!optPrivateKey.isPresent()) {
+            Log.e(TAG, "getPairingKey: Key.createFromPrivateKeyString failed with authkey.");
+            return null;
+        }
+        return Key.createForPigeon(optPrivateKey.get(), mPairingMetaData.getId().getBytes()).orNull();
     }
 
     /**
@@ -563,15 +451,16 @@ public final class MessageExchangeService extends JobIntentService {
     /**
      * Encrypts the specified message.
      *
-     * @param pairingKey      The local entity's pairing key.
-     * @param senderPublicKey The remote identity's public key.
-     * @param message         The message to encrypt.
+     * @param pairingKey           The local entity's pairing key.
+     * @param senderPublicKeyBytes The remote identity's public key.
+     * @param message              The message to encrypt.
      * @return The encrypted message.
      */
-    public EncryptedMessage encrypt(BRCoreKey pairingKey, byte[] senderPublicKey, byte[] message) {
+    public EncryptedMessage encrypt(Key pairingKey, byte[] senderPublicKeyBytes, byte[] message) {
+        Key senderPublicKey = Key.createFromPublicKeyString(senderPublicKeyBytes).get();
         byte[] nonce = generateRandomNonce();
-        byte[] encryptedData = pairingKey.encryptUsingSharedSecret(senderPublicKey, message, nonce);
-        return new EncryptedMessage(encryptedData, nonce);
+        Cipher cipher = Cipher.createForPigeon(pairingKey, senderPublicKey, nonce);
+        return new EncryptedMessage(cipher.encrypt(message).get(), nonce);
     }
 
     /**
@@ -581,21 +470,23 @@ public final class MessageExchangeService extends JobIntentService {
      * @return The decrypted message.
      */
     public byte[] decryptEnvelope(Protos.Envelope envelope) {
-        BRCoreKey pairingKey = getPairingKey();
+        Key pairingKey = getPairingKey();
         return decrypt(pairingKey, envelope.getSenderPublicKey().toByteArray(),
                 envelope.getEncryptedMessage().toByteArray(), envelope.getNonce().toByteArray());
     }
 
     /**
-     * @param key              The key to decrypt with
-     * @param senderPublicKey  Sender public key
-     * @param encryptedMessage The message to decrypt
-     * @param nonce            The nonce used to encrypt the message
+     * @param pairingKey           The key to decrypt with
+     * @param senderPublicKeyBytes Sender public key
+     * @param encryptedMessage     The message to decrypt
+     * @param nonce                The nonce used to encrypt the message
      * @return The decrypted message bytes
      */
     @VisibleForTesting
-    protected byte[] decrypt(BRCoreKey key, byte[] senderPublicKey, byte[] encryptedMessage, byte[] nonce) {
-        return key.decryptUsingSharedSecret(senderPublicKey, encryptedMessage, nonce);
+    protected byte[] decrypt(Key pairingKey, byte[] senderPublicKeyBytes, byte[] encryptedMessage, byte[] nonce) {
+        Key senderPublicKey = Key.createFromPublicKeyString(senderPublicKeyBytes).get();
+        Cipher cipher = Cipher.createForPigeon(pairingKey, senderPublicKey, nonce);
+        return cipher.decrypt(encryptedMessage).get();
     }
 
     /**
@@ -613,9 +504,11 @@ public final class MessageExchangeService extends JobIntentService {
             Log.e(TAG, "verifyEnvelope: signature missing.");
             return false;
         }
-        BRCoreKey key = BRCoreKey.compactSignRecoverKey(envelopeDoubleSha256, signature);
-        byte[] recoveredPubKey = key.getPubKey();
-        return Arrays.equals(senderPublicKey, recoveredPubKey);
+        Optional<? extends Key> recoveredKeyOpt = SIGNER_COMPACT.recover(envelopeDoubleSha256, signature);
+        if (recoveredKeyOpt.isPresent()) {
+            return Arrays.equals(senderPublicKey, recoveredKeyOpt.get().encodeAsPublic());
+        }
+        return false;
     }
 
     /**
@@ -632,10 +525,6 @@ public final class MessageExchangeService extends JobIntentService {
                 return MessageType.PONG;
             case ACCOUNT_REQUEST:
                 return MessageType.ACCOUNT_RESPONSE;
-            case PAYMENT_REQUEST:
-                return MessageType.PAYMENT_RESPONSE;
-            case CALL_REQUEST:
-                return MessageType.CALL_RESPONSE;
         }
         return null;
     }
@@ -677,7 +566,7 @@ public final class MessageExchangeService extends JobIntentService {
      */
     private Protos.Envelope createResponseEnvelope(String identifier, ByteString senderPublicKey, String requestMessageType, ByteString messageResponse) {
         // Encrypt the response message.
-        BRCoreKey pairingKey = getPairingKey();
+        Key pairingKey = getPairingKey();
         EncryptedMessage responseEncryptedMessage = encrypt(pairingKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
 
         // Determine type for response.
@@ -685,11 +574,11 @@ public final class MessageExchangeService extends JobIntentService {
 
         // Create message envelope sans signature.
         Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
-                responseMessageType, ByteString.copyFrom(pairingKey.getPubKey()), senderPublicKey, identifier,
+                responseMessageType, ByteString.copyFrom(pairingKey.encodeAsPublic()), senderPublicKey, identifier,
                 ByteString.copyFrom(responseEncryptedMessage.getNonce()));
 
         // Sign message envelope.
-        byte[] responseSignature = pairingKey.compactSign(CryptoHelper.doubleSha256(responseEnvelope.toByteArray()));
+        byte[] responseSignature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(responseEnvelope.toByteArray()), pairingKey).get();
 
         // Add signature to message envelope.
         return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
@@ -698,12 +587,6 @@ public final class MessageExchangeService extends JobIntentService {
     private void sendResponse(Protos.Envelope requestEnvelope, ByteString messageResponse) {
         Protos.Envelope envelope = createResponseEnvelope(requestEnvelope.getIdentifier(), requestEnvelope.getSenderPublicKey(),
                 requestEnvelope.getMessageType(), messageResponse);
-        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
-    }
-
-    private void sendResponse(RequestMetaData requestMetaData, ByteString messageResponse) {
-        Protos.Envelope envelope = createResponseEnvelope(requestMetaData.getId(), requestMetaData.getSenderPublicKey(),
-                requestMetaData.getMessageType(), messageResponse);
         MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
     }
 
@@ -804,203 +687,5 @@ public final class MessageExchangeService extends JobIntentService {
         }
 
         return responseBuilder.build().toByteString();
-    }
-
-    /**
-     * Process the {@link MessageType#PAYMENT_REQUEST} that was sent by the remote entity to request a payment
-     * from the local entity.
-     * <p>
-     * This must be called after the user has been prompted to confirm the request.
-     *
-     * @param requestMetaData The request metadata.
-     * @param isUserApproved  True if the user approved the request; false, otherwise.
-     */
-    private void processPaymentRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
-        if (isUserApproved) {
-            final String currencyCode = requestMetaData.getCurrencyCode();
-            WalletEthManager walletManager = WalletEthManager.getInstance(getApplicationContext());
-
-            // Assume ETH wallet type for now.
-            CryptoRequest cryptoRequest = new CryptoRequest.Builder()
-                    .setAddress(requestMetaData.getAddress())
-                    .setAmount(new BigDecimal(requestMetaData.getAmount()))
-                    .build();
-
-            GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
-                    requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
-                    Utils.isNullOrEmpty(requestMetaData.getTransactionFee()) ? walletManager.getWallet().getDefaultGasPrice() : Long.valueOf(requestMetaData.getTransactionFee()),
-                    BREthereumAmount.Unit.ETHER_WEI,
-                    Utils.isNullOrEmpty(requestMetaData.getTransactionSize()) ? GAS_LIMIT : Long.valueOf(requestMetaData.getTransactionSize()),
-                    ""); /* No extra data */
-            cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
-
-            SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
-                @Override
-                public void onCompleted(String hash, boolean succeed) {
-                    Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
-                    if (succeed) {
-                        responseBuilder.setScope(currencyCode)
-                                .setStatus(Protos.Status.ACCEPTED)
-                                .setTransactionId(hash);
-
-                        // Add token to home screen once request has been approved.
-                        addNewTokenToTokenList(requestMetaData);
-
-                        // Log transaction ACCEPTED event to me/metrics.
-                        logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
-
-                    } else {
-                        responseBuilder.setStatus(Protos.Status.REJECTED)
-                                .setError(Protos.Error.TRANSACTION_FAILED);
-
-                        // Log transaction REJECED event to me/metrics.
-                        logCallRequestResponse(hash, requestMetaData, Protos.Status.REJECTED, Protos.Error.TRANSACTION_FAILED);
-                    }
-                    ByteString messageResponse = responseBuilder.build().toByteString();
-                    sendResponse(requestMetaData, messageResponse);
-                }
-            });
-
-        } else {
-            Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
-            responseBuilder.setStatus(Protos.Status.REJECTED)
-                    .setError(Protos.Error.USER_DENIED);
-            ByteString messageResponse = responseBuilder.build().toByteString();
-            sendResponse(requestMetaData, messageResponse);
-
-            // Log transaction REJECTED event to me/metrics.
-            logCallRequestResponse(null, requestMetaData, Protos.Status.REJECTED, Protos.Error.USER_DENIED);
-        }
-    }
-
-    /**
-     * Process the {@link MessageType#CALL_REQUEST} that was sent by the remote entity to request a call
-     * from the local entity.
-     * <p>
-     * This must be called after the user has been prompted to confirm the request.
-     *
-     * @param requestMetaData The request metadata.
-     * @param isUserApproved  True if the user approved the request; false, otherwise.
-     */
-    private void processCallRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
-        if (isUserApproved) {
-            final String currencyCode = requestMetaData.getCurrencyCode();
-            WalletEthManager walletManager = WalletEthManager.getInstance(getApplicationContext());
-            // Assume ETH wallet type for now.
-            CryptoRequest cryptoRequest = new CryptoRequest.Builder()
-                    .setAddress(requestMetaData.getAddress())
-                    .setAmount(new BigDecimal(requestMetaData.getAmount()))
-                    .build();
-            GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
-                    requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
-                    Utils.isNullOrEmpty(requestMetaData.getTransactionFee()) ? walletManager.getWallet().getDefaultGasPrice() : Long.valueOf(requestMetaData.getTransactionFee()),
-                    BREthereumAmount.Unit.ETHER_WEI,
-                    Utils.isNullOrEmpty(requestMetaData.getTransactionSize()) ? GAS_LIMIT : Long.valueOf(requestMetaData.getTransactionSize()),
-                    ((CallRequestMetaData) requestMetaData).getAbi());
-            cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
-
-            SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
-                @Override
-                public void onCompleted(String hash, boolean succeed) {
-                    Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
-                    if (succeed) {
-                        responseBuilder.setScope(currencyCode)
-                                .setStatus(Protos.Status.ACCEPTED)
-                                .setTransactionId(hash);
-
-                        // Add token to home screen once request has been approved.
-                        addNewTokenToTokenList(requestMetaData);
-
-                        // Log transaction ACCEPTED event to me/metrics.
-                        logCallRequestResponse(hash, requestMetaData, Protos.Status.ACCEPTED, null);
-
-                    } else {
-                        responseBuilder.setStatus(Protos.Status.REJECTED)
-                                .setError(Protos.Error.TRANSACTION_FAILED);
-
-                        // Log transaction REJECTED event to me/metrics.
-                        logCallRequestResponse(hash, requestMetaData, Protos.Status.REJECTED, Protos.Error.TRANSACTION_FAILED);
-                    }
-                    ByteString messageResponse = responseBuilder.build().toByteString();
-                    sendResponse(requestMetaData, messageResponse);
-                }
-            });
-        } else {
-            Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
-            responseBuilder.setStatus(Protos.Status.REJECTED)
-                    .setError(Protos.Error.USER_DENIED);
-            ByteString messageResponse = responseBuilder.build().toByteString();
-            sendResponse(requestMetaData, messageResponse);
-
-            // Log transaction REJECTED event to me/metrics.
-            logCallRequestResponse(null, requestMetaData, Protos.Status.REJECTED, Protos.Error.USER_DENIED);
-        }
-    }
-
-    /**
-     * Log the response to a payment/call request to the BRD User Metrics endpoint me/metrics.
-     *
-     * @param transactionHash The transaction hash that is returned if successful.
-     * @param requestMetaData The payment/call request metadata that contains details of the request.
-     * @param status          The status of the request response (ACCEPTED, REJECTED, UNKNOWN).
-     * @param error           Optional error that is returned if the transaction failed for some reason.
-     */
-    private void logCallRequestResponse(String transactionHash, RequestMetaData requestMetaData, Protos.Status status, Protos.Error error) {
-        UserMetricsUtil.logCallRequestResponse(this, status.getNumber(),
-                requestMetaData.getId(),
-                SERVICE_PWB,
-                transactionHash,
-                requestMetaData.getCurrencyCode(),
-                requestMetaData.getAmount(),
-                WalletEthManager.getInstance(getApplicationContext()).getAddress(this),
-                requestMetaData.getTokenSymbol(),
-                requestMetaData.getTokenAmount(),
-                requestMetaData.getAddress(),
-                System.currentTimeMillis(),
-                error != null ? error.getNumber() : null);
-    }
-
-    /**
-     * Adds the token from a payment or call request to the token list and adds it to the home screen.
-     *
-     * @param requestMetaData The payment/call request metadata that contains details on the new token.
-     */
-    private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
-
-        if (requestMetaData != null) {
-            if (!WalletsMaster.getInstance().hasWallet(requestMetaData.getTokenSymbol())) {
-                WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getTokenSymbol());
-                TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
-
-                if (tokenWalletManager != null) {
-                    TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
-                    if (tokenListMetaData == null) {
-                        tokenListMetaData = new TokenListMetaData(null, null);
-                    }
-
-                    if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
-                        tokenListMetaData.enabledCurrencies.add(item);
-                    }
-
-                    KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
-                    WalletsMaster.getInstance().updateWallets(this);
-                }
-            }
-        }
-    }
-
-    /**
-     * Fetches information about a specific token sale from /currencies?saleAddress=[CONTRACT_ADDRESS].
-     *
-     * @param saleAddress The token sale address where the ICO is being held.
-     * @return A TokenItem comprising of all the info about the ICO token.
-     */
-    private TokenItem getIcoTokenInfo(String saleAddress) {
-        TokenItem tokenItem = TokenUtil.getTokenItem(this, saleAddress);
-        if (tokenItem == null) {
-            Log.e(TAG, "No token metadata found at sale address: " + saleAddress);
-        }
-
-        return tokenItem;
     }
 }

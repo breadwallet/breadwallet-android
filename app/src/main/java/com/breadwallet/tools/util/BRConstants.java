@@ -1,9 +1,9 @@
 package com.breadwallet.tools.util;
 
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.legacy.wallet.wallets.ethereum.WalletTokenManager;
 import com.google.common.collect.ImmutableList;
 import com.platform.entities.TokenListMetaData;
 
@@ -82,9 +82,15 @@ public final class BRConstants {
 
     /**
      * Currency units
+     * <p>
+     * TODO: No longer supported, remove with the
+     * deletion of legacy.wallet.wallets.*
      */
+    @Deprecated
     public static final int CURRENT_UNIT_BITS = 0;
+    @Deprecated
     public static final int CURRENT_UNIT_MBITS = 1;
+    @Deprecated
     public static final int CURRENT_UNIT_BITCOINS = 2;
 
     public static final String BITS_SYMBOL = "\u0180";
@@ -104,7 +110,6 @@ public final class BRConstants {
     public static final String FAQ_SECURITY_CENTER = "security-center";
     public static final String FAQ_PAPER_KEY = "paper-key";
     public static final String FAQ_ENABLE_FINGERPRINT = "enable-fingerprint-authentication";
-    public static final String FAQ_FINGERPRINT_SPENDING_LIMIT = "fingerprint-spending-limit";
     public static final String FAQ_TRANSACTION_DETAILS = "transaction-details";
     public static final String FAQ_RECEIVE = "receive-tx";
     public static final String FAQ_REQUEST_AMOUNT = "request-amount";
@@ -119,6 +124,7 @@ public final class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
     public static final String FAQ_UNSUPPORTED_TOKEN = "unsupported-token";
+    public static final String FAQ_FASTSYNC = "fastsync-explained";
 
     /**
      * API Constants
@@ -153,13 +159,6 @@ public final class BRConstants {
     public static final String URL_BRD_HOST = "brd.com";
     public static final String WALLET_PAIR_PATH = "wallet-pair";
     public static final String WALLET_LINK_PATH = "link-wallet";
-
-
-    /**
-     * Font constants
-     */
-    public static final String TYPEFACE_PATH_CIRCULARPRO_BOLD = "fonts/CircularPro-Bold.otf";
-    public static final String TYPEFACE_PATH_CIRCULARPRO_BOOK = "fonts/CircularPro-Book.otf";
 
 
     public static final String STRING_RESOURCES_FILENAME = "string";
@@ -211,7 +210,7 @@ public final class BRConstants {
     public static final String IS_ERROR = "isError";
     public static final String TOPICS = "topics";
     public static final String DATA = "data";
-    public static final String DATE = "date";
+    public static final String DATE = "Date";
     public static final String TRANSACTION_HASH = "transactionHash";
     public static final String CHECKOUT = "checkout";
     public static final String GET = "GET";
@@ -219,7 +218,6 @@ public final class BRConstants {
     public static final String HEADER_WWW_AUTHENTICATE = "www-authenticate";
     public static final String NAME = "name";
     public static final String TOKEN = "token";
-    public static final String FEE_PER_KB = "fee_per_kb";
     public static final String STAGING = "staging";
     public static final String STAGE = "stage";
     public static final String CURRENCY_ERC20 = "erc20";
@@ -227,14 +225,6 @@ public final class BRConstants {
     public static final String CURRENCY = "currency";
     public static final String UTF_8 = "UTF-8";
     public static final String USD = "USD";
-
-    // Number of confirmations required to consider a transaction completed.
-    public static final int CONFIRMED_BLOCKS_NUMBER = 6;
-
-    /**
-     * Commonly used regular expressions.
-     */
-    public static final String SPACE_REGEX = "\\s";
 
     private BRConstants() {
     }

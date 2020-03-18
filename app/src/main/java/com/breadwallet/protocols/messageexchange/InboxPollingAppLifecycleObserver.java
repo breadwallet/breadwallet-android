@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  * <p/>
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 10/13/18.
+ * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 10/13/18.
  * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +25,7 @@
 
 package com.breadwallet.protocols.messageexchange;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;

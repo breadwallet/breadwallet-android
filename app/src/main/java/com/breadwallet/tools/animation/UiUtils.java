@@ -1,6 +1,5 @@
 package com.breadwallet.tools.animation;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
@@ -13,9 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -23,36 +20,23 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.app.util.UserMetricsUtil;
-import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.LoginActivity;
-import com.breadwallet.ui.browser.PlatformBrowserActivity;
-import com.breadwallet.ui.wallet.WalletActivity;
-import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.fragments.FragmentReceive;
-import com.breadwallet.presenter.fragments.FragmentRequestAmount;
-import com.breadwallet.presenter.fragments.FragmentSend;
-import com.breadwallet.presenter.fragments.FragmentShowLegacyAddress;
-import com.breadwallet.presenter.fragments.FragmentSignal;
-import com.breadwallet.presenter.fragments.FragmentWebModal;
-import com.breadwallet.ui.wallet.FragmentTxDetails;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.legacy.presenter.activities.DisabledActivity;
+import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
+import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
+import com.breadwallet.legacy.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.legacy.wallet.WalletsMaster;
+import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.ui.MainActivity;
+import com.breadwallet.ui.browser.PlatformBrowserActivity;
+import com.breadwallet.ui.wallet.WalletController;
 import com.platform.HTTPServer;
 
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static com.breadwallet.presenter.fragments.FragmentReceive.EXTRA_RECEIVE;
 
 /**
  * BreadWallet
@@ -158,64 +142,10 @@ public class UiUtils {
         bundle.putString(FragmentWebModal.EXTRA_URL, url);
 
         fragmentSupport.setArguments(bundle);
-        fragmentActivity.getSupportFragmentManager().beginTransaction()
+        /*fragmentActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
-                .addToBackStack(FragmentSend.class.getName()).commit();
-
-    }
-
-
-    public static void showTransactionDetails(Activity app, TxUiHolder item) {
-
-        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.TAG);
-
-        if (txDetails != null && txDetails.isAdded()) {
-            Log.e(TAG, "showTransactionDetails: Already showing");
-            return;
-        }
-
-        txDetails = new FragmentTxDetails();
-        txDetails.setTransaction(item);
-        txDetails.show(app.getFragmentManager(), FragmentTxDetails.TAG);
-
-    }
-
-    public static void openScanner(Activity app) {
-        try {
-            if (app == null) {
-                return;
-            }
-
-            // Check if the camera permission is granted
-            if (ContextCompat.checkSelfPermission(app,
-                    Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                        Manifest.permission.CAMERA)) {
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
-                            app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(app,
-                            new String[]{Manifest.permission.CAMERA},
-                            BRConstants.CAMERA_REQUEST_ID);
-                }
-            } else {
-                // Permission is granted, open camera
-                Intent intent = new Intent(app, ScanQRActivity.class);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                .add(android.R.id.content, fragmentSupport, SendSheetController.class.getName())
+                .addToBackStack(SendSheetController.class.getName()).commit();*/
 
     }
 
@@ -239,70 +169,6 @@ public class UiUtils {
         return itemLayoutTransition;
     }
 
-    public static void showRequestFragment(FragmentActivity app) {
-        if (app == null) {
-            Log.e(TAG, "showRequestFragment: app is null");
-            return;
-        }
-
-        FragmentRequestAmount fragmentRequestAmount = (FragmentRequestAmount) app.getSupportFragmentManager().findFragmentByTag(FragmentRequestAmount.class.getName());
-        if (fragmentRequestAmount != null && fragmentRequestAmount.isAdded())
-            return;
-
-        fragmentRequestAmount = new FragmentRequestAmount();
-        Bundle bundle = new Bundle();
-        fragmentRequestAmount.setArguments(bundle);
-        app.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
-                .addToBackStack(FragmentRequestAmount.class.getName()).commit();
-
-    }
-
-    //isReceive tells the Animator that the Receive fragment is requested, not My Address
-    public static void showReceiveFragment(FragmentActivity app, boolean isReceive) {
-        if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
-            return;
-        }
-        FragmentReceive fragmentReceive = (FragmentReceive) app.getSupportFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
-        if (fragmentReceive != null && fragmentReceive.isAdded())
-            return;
-        fragmentReceive = new FragmentReceive();
-        Bundle args = new Bundle();
-        args.putBoolean(EXTRA_RECEIVE, isReceive);
-        fragmentReceive.setArguments(args);
-
-        app.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
-                .addToBackStack(FragmentReceive.class.getName()).commit();
-
-    }
-
-    public static void showLegacyAddressFragment(final FragmentActivity fragmentActivity) {
-        if (fragmentActivity != null) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    UserMetricsUtil.logSegwitEvent(fragmentActivity, UserMetricsUtil.VIEW_LEGACY_ADDRESS);
-                }
-            });
-            FragmentShowLegacyAddress showLegacyAddress = (FragmentShowLegacyAddress) fragmentActivity.getSupportFragmentManager()
-                    .findFragmentByTag(FragmentShowLegacyAddress.class.getName());
-            if (showLegacyAddress == null || !showLegacyAddress.isAdded()) {
-                showLegacyAddress = new FragmentShowLegacyAddress();
-
-                fragmentActivity.getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                        .add(android.R.id.content, showLegacyAddress, FragmentShowLegacyAddress.class.getName())
-                        .addToBackStack(FragmentShowLegacyAddress.class.getName()).commit();
-            }
-        } else {
-            Log.e(TAG, "showLegacyAddressFragment: fragmentActivity is null.");
-        }
-    }
-
     public static boolean isClickAllowed() {
         boolean allow = false;
         if (System.currentTimeMillis() - mLastClickTime > CLICK_PERIOD_ALLOWANCE) {
@@ -322,13 +188,13 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
+        Class toStart = auth ? MainActivity.class : WalletController.class;
 
         // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
-        if (toStart.equals(WalletActivity.class)) {
+        if (toStart.equals(WalletController.class)) {
 
             if (BRSharedPrefs.isNewWallet(from)) {
-                toStart = HomeActivity.class;
+                toStart = MainActivity.class;
             }
         }
 
@@ -382,7 +248,7 @@ public class UiUtils {
     }
 
     private static void startPlatformBrowser(Activity activity, String url, int enterAnimation,
-                                            int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
+                                             int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
         PlatformBrowserActivity.Companion.start(activity, url, returnEnterAnimation, returnExitAnimation);
         if (enterAnimation != 0 && exitAnimation != 0) {
             activity.overridePendingTransition(enterAnimation, exitAnimation);

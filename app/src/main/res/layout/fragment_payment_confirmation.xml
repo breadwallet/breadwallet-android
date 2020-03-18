@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="60dp"
-    android:background="@color/tertiary_background">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:layout_marginTop="60dp"
+                                                   android:background="@color/tertiary_background">
 
     <ImageView
         android:id="@+id/ico_icon"
@@ -18,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/ico_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ico_icon" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/ico_price_information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +67,7 @@
             android:layout_alignParentBottom="true">
 
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <com.breadwallet.legacy.presenter.customviews.BRButton
                 android:id="@+id/negative_button"
                 android:layout_width="200dp"
                 android:layout_height="@dimen/button_height"
@@ -81,7 +80,7 @@
                 app:buttonType="8"
                 app:isBreadButton="true" />
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <com.breadwallet.legacy.presenter.customviews.BRButton
                 android:id="@+id/positive_button"
                 android:layout_width="200dp"
                 android:layout_height="@dimen/button_height"
@@ -100,5 +99,5 @@
     </RelativeLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

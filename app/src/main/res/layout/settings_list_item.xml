@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout3"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:filterTouchesWhenObscured="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:fontFamily="@font/circular_pro_book"
         android:textColor="@color/white"
         android:textSize="@dimen/sub_header"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,15 +25,15 @@
         app:layout_constraintVertical_bias="0.0"
         tools:text="Display Currency" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
+        android:fontFamily="@font/circular_pro_medium"
         android:textColor="@color/total_assets_label_color"
         android:textSize="@dimen/sub_header"
         android:visibility="visible"
-        app:brdFont="@string/Font.CircularPro_Medium"
         app:layout_constraintBottom_toBottomOf="@+id/item_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/item_title"
@@ -48,12 +50,13 @@
         app:layout_constraintTop_toTopOf="@+id/item_title"
         tools:visibility="visible" />
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/item_sub_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="8dp"
+        android:fontFamily="@font/circular_pro_book"
         android:textColor="@color/white_60_percent_opaque"
         android:textSize="12sp"
         android:visibility="gone"
@@ -63,4 +66,4 @@
         app:layout_constraintTop_toBottomOf="@+id/item_title"
         tools:text="Fiat currency used to display transactions amounts."
         tools:visibility="visible" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

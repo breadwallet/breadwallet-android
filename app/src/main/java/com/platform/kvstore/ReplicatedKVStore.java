@@ -25,7 +25,8 @@ package com.platform.kvstore;
  * THE SOFTWARE.
  */
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -33,9 +34,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.app.ApplicationLifecycleObserver;
-import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.app.BreadApp;
+import com.breadwallet.crypto.Cipher;
+import com.breadwallet.crypto.Key;
+import com.breadwallet.logger.Logger;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
@@ -46,6 +49,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -69,15 +73,19 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     };
 
     private static byte[] mTempAuthKey;
+    private static ReplicatedKVStore instance;
+    private final PlatformSqliteHelper mDbHelper;
     private Context mContext;
     private SQLiteDatabase mDatabase;
     private boolean mSyncImmediately = false;
     private AtomicBoolean mSyncRunning = new AtomicBoolean(false);
     private KVStoreAdaptor mRemoteKvStore;
-    private final PlatformSqliteHelper mDbHelper;
 
-
-    private static ReplicatedKVStore instance;
+    private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
+        mContext = context;
+        this.mRemoteKvStore = remoteKvStore;
+        mDbHelper = PlatformSqliteHelper.getInstance(context);
+    }
 
     public static ReplicatedKVStore getInstance(Context context, KVStoreAdaptor remoteKvStore) {
         if (instance == null) {
@@ -86,11 +94,92 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         return instance;
     }
 
-    private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
-//        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        mContext = context;
-        this.mRemoteKvStore = remoteKvStore;
-        mDbHelper = PlatformSqliteHelper.getInstance(context);
+    /**
+     * encrypt some data using self.key
+     */
+    public static byte[] encrypt(byte[] data, Context app) {
+        if (data == null) {
+            Log.e(TAG, "encrypt: data is null");
+            return null;
+        }
+        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) {
+            Log.e(TAG, "encrypt: app is null");
+            return null;
+        }
+        if (mTempAuthKey == null) cacheKeyIfNeeded(app);
+        if (Utils.isNullOrEmpty(mTempAuthKey)) {
+            Log.e(TAG, "encrypt: authKey is empty: " + (mTempAuthKey == null ? null : mTempAuthKey.length));
+            return null;
+        }
+
+        final Key key = Key.createFromPrivateKeyString(mTempAuthKey).orNull();
+
+        if (key == null) {
+            Logger.Companion.error("Failed to create key from bytes.");
+            return null;
+        }
+
+        final byte[] nonce = CryptoHelper.generateRandomNonce();
+        if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
+            Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
+            return null;
+        }
+
+        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, new byte[0]);
+        byte[] encryptedData = cipher.encrypt(data).orNull();
+        if (Utils.isNullOrEmpty(encryptedData)) {
+            Log.e(TAG, "encrypt: encryptNative failed: " + (encryptedData == null ? null : encryptedData.length));
+            return null;
+        }
+        //result is nonce + encryptedData
+        byte[] result = new byte[nonce.length + encryptedData.length];
+        System.arraycopy(nonce, 0, result, 0, nonce.length);
+        System.arraycopy(encryptedData, 0, result, nonce.length, encryptedData.length);
+        return result;
+    }
+
+    /**
+     * decrypt some data using key
+     */
+    public static byte[] decrypt(byte[] data, Context app) {
+        if (data == null || data.length <= 12) {
+            Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
+            return null;
+        }
+        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) return null;
+        if (mTempAuthKey == null)
+            cacheKeyIfNeeded(app);
+
+        final Key key = Key.createFromPrivateKeyString(mTempAuthKey).orNull();
+        if (key == null) {
+            return null;
+        }
+
+        final byte[] nonce = Arrays.copyOfRange(data, 0, 12);
+        byte[] cipherText = Arrays.copyOfRange(data, 12, data.length);
+        final byte[] ad = new byte[0];
+        final Cipher cipher = Cipher.createForChaCha20Poly1305(key, nonce, ad);
+
+        // Fix for encryption issue in < 4.0 builds
+        byte[] migratedText = com.breadwallet.crypto.System.migrateBRCoreKeyCiphertext(
+                key,
+                nonce,
+                ad,
+                cipherText
+        ).orNull();
+        if (migratedText != null) cipherText = migratedText;
+
+        return cipher.decrypt(cipherText).orNull();
+    }
+
+    private static void cacheKeyIfNeeded(Context context) {
+        if (Utils.isNullOrEmpty(mTempAuthKey)) {
+            mTempAuthKey = BRKeyStore.getAuthKey(context);
+            if (mTempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(instance);
+        }
     }
 
     private SQLiteDatabase getWritable() {
@@ -486,7 +575,6 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
 
         long recorderRemoteVersion = remoteVersion(key);
         if (err != CompletionObject.RemoteKVStoreError.notFound && remoteVersion > 0 && recorderRemoteVersion == remoteVersion) {
-            Log.d(TAG, "_syncKey: Remote version of key: " + key + " is the same as the one we have");
             return true;
         }
 
@@ -603,7 +691,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     /**
      * Sync all kvs to and from the remote kv store adaptor
      */
-    public boolean syncAllKeys() {
+    public boolean syncAllKeys(List<String> syncOrder) {
         // update all kvs locally and on the remote server, replacing missing kvs
         //
         // 1. get a list of all kvs from the server
@@ -634,6 +722,8 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
                 if (!remoteKeys.contains(kv.key)) // server is missing a key that we have
                     allKvs.add(new KVItem(0, 0, kv.key, null, 0, 0));
             }
+
+            Collections.sort(allKvs, new OrderedKeyComparator(syncOrder));
 
             Log.i(TAG, String.format("Syncing %d kvs", allKvs.size()));
             int failures = 0;
@@ -816,6 +906,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     private synchronized CompletionObject _delete(String key, long localVersion) {
         if (localVersion == 0)
             return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+
         long newVer = 0;
         long time = System.currentTimeMillis();
         Cursor cursor = null;
@@ -856,68 +947,6 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             }
         }
         return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
-    }
-
-
-    /**
-     * encrypt some data using self.key
-     */
-    public static byte[] encrypt(byte[] data, Context app) {
-        if (data == null) {
-            Log.e(TAG, "encrypt: data is null");
-            return null;
-        }
-        if (app == null) app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "encrypt: app is null");
-            return null;
-        }
-        if (mTempAuthKey == null) cacheKeyIfNeeded(app);
-        if (Utils.isNullOrEmpty(mTempAuthKey)) {
-            Log.e(TAG, "encrypt: authKey is empty: " + (mTempAuthKey == null ? null : mTempAuthKey.length));
-            return null;
-        }
-        BRCoreKey key = new BRCoreKey(mTempAuthKey);
-        byte[] nonce = CryptoHelper.generateRandomNonce();
-        if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
-            Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
-            return null;
-        }
-        byte[] encryptedData = key.encryptNative(data, nonce);
-        if (Utils.isNullOrEmpty(encryptedData)) {
-            Log.e(TAG, "encrypt: encryptNative failed: " + (encryptedData == null ? null : encryptedData.length));
-            return null;
-        }
-        //result is nonce + encryptedData
-        byte[] result = new byte[nonce.length + encryptedData.length];
-        System.arraycopy(nonce, 0, result, 0, nonce.length);
-        System.arraycopy(encryptedData, 0, result, nonce.length, encryptedData.length);
-        return result;
-    }
-
-    /**
-     * decrypt some data using key
-     */
-    public static byte[] decrypt(byte[] data, Context app) {
-        if (data == null || data.length <= 12) {
-            Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
-            return null;
-        }
-        if (app == null) app = BreadApp.getBreadContext();
-        if (app == null) return null;
-        if (mTempAuthKey == null)
-            cacheKeyIfNeeded(app);
-        BRCoreKey key = new BRCoreKey(mTempAuthKey);
-        //12 bytes is the nonce
-        return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
-    }
-
-    private static void cacheKeyIfNeeded(Context context) {
-        if (Utils.isNullOrEmpty(mTempAuthKey)) {
-            mTempAuthKey = BRKeyStore.getAuthKey(context);
-            if (mTempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(instance);
-        }
     }
 
     /**

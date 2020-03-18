@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  * <p/>
- * Created by Pablo Budelli on <pablo.budelli@breadwallet.com> 7/11/19.
+ * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 7/11/19.
  * Copyright (c) 2019 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +29,7 @@ import android.util.Log
 import com.breadwallet.BuildConfig
 import com.breadwallet.tools.util.BRConstants
 import com.platform.APIClient
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONException
@@ -87,7 +87,7 @@ object NotificationsSettingsClientImpl : NotificationsSettingsClient {
             data.put(KEY_DATA_BUNDLE_ID, context.packageName)
             payload.put(KEY_DATA, data)
 
-            val json = MediaType.parse(BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+            val json = BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8.toMediaTypeOrNull()
 
             val requestBody = RequestBody.create(json, payload.toString())
 
