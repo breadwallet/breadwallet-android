@@ -27,8 +27,6 @@ package com.breadwallet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.WindowManager
-import android.widget.Toast
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
@@ -41,7 +39,6 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -89,6 +86,7 @@ class MainActivity : BRActivity() {
     private lateinit var router: Router
 
     private var walletLockJob: Job? = null
+    private var locked: Boolean = false
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
@@ -158,6 +156,10 @@ class MainActivity : BRActivity() {
         super.onResume()
         walletLockJob?.cancel()
         walletLockJob = null
+        if (locked) {
+            locked = false
+            lockApp()
+        }
 
         // If we come back to the activity after launching with
         // an invalid device state, check the state again.
@@ -176,9 +178,11 @@ class MainActivity : BRActivity() {
 
     override fun onPause() {
         super.onPause()
-        walletLockJob = GlobalScope.launch(Main) {
-            delay(LOCK_TIMEOUT)
-            lockApp()
+        if (BreadApp.hasWallet()) {
+            walletLockJob = GlobalScope.launch(Main) {
+                delay(LOCK_TIMEOUT)
+                locked = true
+            }
         }
     }
 
@@ -292,11 +296,9 @@ class MainActivity : BRActivity() {
             .popChangeHandler(FadeChangeHandler())
             .pushChangeHandler(FadeChangeHandler())
 
-        with(router) {
-            when (backstack.lastOrNull()?.controller()) {
-                is LoginController -> replaceTopController(transaction)
-                else -> pushController(transaction)
-            }
+        when (router.backstack.lastOrNull()?.controller()) {
+            is LoginController -> router.replaceTopController(transaction)
+            else -> router.pushController(transaction)
         }
     }
 }
