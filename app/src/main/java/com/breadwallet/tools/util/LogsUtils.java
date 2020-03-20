@@ -112,7 +112,7 @@ public class LogsUtils {
                 Network network = ethWallet.getWalletManager().getNetwork();
                 Address coreAddress = Address.create(storedAddress, network).orNull();
 
-                if (coreAddress != null && ethWallet.getTarget() != coreAddress) {
+                if (coreAddress != null && !ethWallet.getTarget().toString().equalsIgnoreCase(coreAddress.toString())) {
                     String walletId = null;
                     try {
                         walletId = BreadApp.Companion.generateWalletId(storedAddress);
