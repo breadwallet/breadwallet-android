@@ -30,12 +30,10 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
-import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -43,14 +41,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Date
 
 class OnBoardingHandler(
     coroutineJob: Job,
     private val breadApp: BreadApp,
     private val breadBox: BreadBox,
-    private val keyStore: KeyStore,
-    private val metadataProvider: AccountMetaDataProvider,
+    private val accountManager: BRAccountManager,
     private val outputProvider: () -> Consumer<E>,
     private val routerProvider: () -> Router
 ) : Connection<F>, CoroutineScope {
@@ -82,30 +78,14 @@ class OnBoardingHandler(
     private suspend fun createWallet() {
         val phrase = generatePhrase() ?: return
 
-        // Save and load the phrase to ensure everything works
-        if (!putPhrase(phrase)) return
-        val storedPhrase = loadPhrase() ?: return
-
-        // Create and store account and wallet-info
-        val uids = BRSharedPrefs.getDeviceId()
-        val creationDate = Date()
-
-        val account = Account.createFromPhrase(storedPhrase, creationDate, uids)
-
-        // Create signing keys
-        val words = Key.getDefaultWordList()
-
-        val apiKey = createApiAuthKey(phrase, words) ?: return
-
+        var account: Account
         try {
-            setupWallet(account, apiKey, creationDate)
+            account = accountManager.createAccount(phrase)
         } catch (e: Exception) {
             logError("Error storing wallet data.", e)
             outputProvider().accept(E.SetupError.StoreWalletFailed)
+            return
         }
-
-        // Note: Ignore write failures
-        createAccountMetaData(creationDate)
 
         try {
             breadBox.open(account)
@@ -133,67 +113,6 @@ class OnBoardingHandler(
                 logError("Failed to generate phrase.", e)
                 outputProvider().accept(E.SetupError.PhraseCreationFailed)
                 null
-            }
-        }
-    }
-
-    private suspend fun putPhrase(phrase: ByteArray): Boolean {
-        return withContext(Dispatchers.Main) {
-            try {
-                keyStore.putPhrase(phrase)
-                true
-            } catch (e: Exception) {
-                logError("Failed to store phrase.", e)
-                outputProvider().accept(E.SetupError.PhraseStoreFailed)
-                false
-            }
-        }
-    }
-
-    private suspend fun loadPhrase(): ByteArray? {
-        return withContext(Dispatchers.Main) {
-            try {
-                keyStore.getPhrase()
-            } catch (e: Exception) {
-                logError("Failed to load phrase.", e)
-                outputProvider().accept(E.SetupError.PhraseLoadFailed)
-                null
-            }
-        }
-    }
-
-    private suspend fun createApiAuthKey(phrase: ByteArray, words: List<String>): Key? {
-        return withContext(Dispatchers.Default) {
-            Key.createForBIP32ApiAuth(phrase, words).run {
-                when {
-                    isPresent -> get()
-                    else -> {
-                        logError("Failed to create api auth key from phrase.")
-                        outputProvider().accept(E.SetupError.ApiKeyCreationFailed)
-                        null
-                    }
-                }
-            }
-        }
-    }
-
-    /** Stores [account], [apiKey], and [creationDate] in [KeyStore]. */
-    private suspend fun setupWallet(account: Account, apiKey: Key, creationDate: Date) {
-        keyStore.putAccount(account)
-        keyStore.putAuthKey(apiKey.encodeAsPrivate())
-        keyStore.putWalletCreationTime(creationDate.time)
-    }
-
-    private suspend fun createAccountMetaData(creationDate: Date): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                metadataProvider.create(creationDate)
-                true
-            } catch (e: Exception) {
-                // Note: If we fail to set WalletInfo, let the whole
-                // operation be considered a success.
-                logError("Failed to store WalletInfoData", e)
-                false
             }
         }
     }

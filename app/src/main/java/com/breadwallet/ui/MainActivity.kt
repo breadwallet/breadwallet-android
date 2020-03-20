@@ -27,8 +27,6 @@ package com.breadwallet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.WindowManager
-import android.widget.Toast
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
@@ -41,9 +39,6 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -92,7 +87,7 @@ class MainActivity : BRActivity() {
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
-        get() = (application as BreadApp).isDeviceStateValid
+        get() = (application as BreadApp).isDeviceStateValid()
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,7 +108,8 @@ class MainActivity : BRActivity() {
         }
 
         // Allow launching with a phrase to recover automatically
-        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
+        val hasWallet = accountManager.isAccountInitialized()
+        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !hasWallet) {
             val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
             if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
                 val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
@@ -125,9 +121,9 @@ class MainActivity : BRActivity() {
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
             val rootController = when {
-                !BreadApp.hasWallet() && BreadApp.isMigrationRequired -> MigrateController()
-                BreadApp.hasWallet() -> {
-                    if (BRKeyStore.getPinCode(this).isNotBlank()) {
+                accountManager.isMigrationRequired() -> MigrateController()
+                hasWallet -> {
+                    if (accountManager.hasPinCode()) {
                         val intentUrl = processIntentData(intent)
                         LoginController(intentUrl)
                     } else {
@@ -185,7 +181,7 @@ class MainActivity : BRActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
-        KeyStore.onActivityResult(requestCode, resultCode)
+        accountManager.onActivityResult(requestCode, resultCode)
     }
 
     override fun onBackPressed() {
@@ -279,9 +275,8 @@ class MainActivity : BRActivity() {
     }
 
     private fun lockApp() {
-        val hasPin = BRKeyStore.getPinCode(this).isNotEmpty()
         val controller = when {
-            hasPin -> LoginController(showHome = false)
+            accountManager.hasPinCode() -> LoginController(showHome = false)
             else -> InputPinController(
                 onComplete = OnCompleteAction.GO_HOME,
                 skipWriteDown = true

@@ -117,14 +117,12 @@ object RecoveryKey {
         data class OnTextPasted(@Redacted val text: String) : E()
 
         object OnPhraseInvalid : E()
-        object OnPhraseSaved : E()
         object OnPhraseSaveFailed : E()
 
         object OnPinCleared : E()
         object OnPinSet : E()
         object OnPinSetCancelled : E()
-
-        object OnShowPhraseGranted : E()
+        
         object OnShowPhraseFailed : E()
         object OnRecoveryComplete : E()
         object OnFaqClicked : E()

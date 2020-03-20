@@ -24,8 +24,6 @@
  */
 package com.breadwallet.legacy.presenter.activities.util
 
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
@@ -43,18 +41,17 @@ import com.breadwallet.tools.manager.BRSharedPrefs.putAppBackgroundedFromHome
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenHeight
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenWidth
 import com.breadwallet.tools.qrcode.QRUtils
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.PostAuth
-import com.breadwallet.tools.security.isWalletDisabled
-import com.breadwallet.tools.threads.executor.BRExecutor
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.recovery.RecoveryKeyActivity
 import kotlinx.coroutines.Dispatchers.Main
+import com.breadwallet.tools.security.isWalletDisabled
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.kodein.di.erased.instance
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val TAG = "BRActivity"
@@ -65,6 +62,10 @@ abstract class BRActivity : AppCompatActivity() {
     private var walletLockJob: Job? = null
 
     private var locked = false
+
+    protected val accountManager: BRAccountManager by lazy {
+        BreadApp.getKodeinInstance().instance<BRAccountManager>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,30 +141,9 @@ abstract class BRActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            BRConstants.PAY_REQUEST_CODE -> {
-                (applicationContext as BreadApp).setDelayServerShutdown(false, requestCode)
-                if (resultCode == Activity.RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                        .execute { PostAuth.getInstance().onPublishTxAuth(this@BRActivity, null, true, null) }
-                }
-            }
-            BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                    .execute { PostAuth.getInstance().onPaymentProtocolRequest(this@BRActivity, true, null) }
-            }
-        }
-    }
-
     private fun init() { //show wallet locked if it is and we're not in an illegal activity.
         if (this !is RecoveryKeyActivity) {
-            if (isWalletDisabled(this)) {
+            if (accountManager.isWalletDisabled()) {
                 showWalletDisabled()
             }
         }
@@ -182,9 +162,9 @@ abstract class BRActivity : AppCompatActivity() {
     }
 
     private fun lockApp() {
-        if (this !is DisabledActivity && this !is MainActivity) {
-            if (BRKeyStore.getPinCode(this).isNotEmpty()) {
-                UiUtils.startBreadActivity(this, true)
+        if (this@BRActivity !is DisabledActivity && this@BRActivity !is MainActivity) {
+            if (accountManager.hasPinCode()) {
+                UiUtils.startBreadActivity(this@BRActivity, true)
             }
         }
     }

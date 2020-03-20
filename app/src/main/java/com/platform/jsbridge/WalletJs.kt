@@ -52,7 +52,7 @@ import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.platform.ConfirmTransactionMessage
@@ -75,7 +75,7 @@ class WalletJs(
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
-    private val keyStore: KeyStore
+    private val accountManager: BRAccountManager
 ) {
     companion object {
         const val NATIVE_NAME = "WalletJs_Native"
@@ -362,7 +362,7 @@ class WalletJs(
             )
             is TransactionResultMessage.TransactionConfirmed -> {
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (ex: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", ex)
                     return null

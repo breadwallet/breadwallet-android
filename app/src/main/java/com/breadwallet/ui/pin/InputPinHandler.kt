@@ -24,8 +24,7 @@
  */
 package com.breadwallet.ui.pin
 
-import android.content.Context
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
 import com.spotify.mobius.Connection
@@ -38,7 +37,9 @@ import kotlinx.coroutines.launch
 
 class InputPinHandler(
     private val output: Consumer<E>,
-    private val context: Context,
+    private val accountManager: BRAccountManager,
+    private val retainedScope: CoroutineScope,
+    private val retainedProducer: () -> Consumer<E>,
     private val errorShake: () -> Unit,
     private val showPinFailed: () -> Unit
 ) : Connection<F>, CoroutineScope {
@@ -47,9 +48,9 @@ class InputPinHandler(
 
     override fun accept(effect: F) {
         when (effect) {
-            is F.SetupPin -> setupPin(effect)
+            is F.SetupPin -> retainedScope.launch { setupPin(effect) }
             is F.ErrorShake -> launch(Dispatchers.Main) { errorShake() }
-            is F.CheckIfPinExists -> checkIfPinExists()
+            is F.CheckIfPinExists -> launch { checkIfPinExists() }
         }
     }
 
@@ -57,18 +58,19 @@ class InputPinHandler(
         coroutineContext.cancel()
     }
 
-    private fun setupPin(effect: F.SetupPin) {
-        if (BRKeyStore.putPinCode(effect.pin, context)) {
-            output.accept(E.OnPinSaved)
-        } else {
-            launch(Dispatchers.Main) { showPinFailed.invoke() }
-            output.accept(E.OnPinSaveFailed)
+    private suspend fun setupPin(effect: F.SetupPin) {
+        try {
+            accountManager.configurePinCode(effect.pin)
+            retainedProducer().accept(E.OnPinSaved)
+        } catch (e: Exception) {
+            retainedScope.launch(Dispatchers.Main) { showPinFailed.invoke() }
+            retainedProducer().accept(E.OnPinSaveFailed)
         }
     }
 
     private fun checkIfPinExists() {
         output.accept(
-            E.OnPinCheck(BRKeyStore.getPinCode(context).isNotEmpty())
+            E.OnPinCheck(accountManager.hasPinCode())
         )
     }
 }

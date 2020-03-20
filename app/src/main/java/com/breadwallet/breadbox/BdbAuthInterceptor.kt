@@ -24,7 +24,6 @@
  */
 package com.breadwallet.breadbox
 
-import android.content.Context
 import android.util.Base64
 import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.Key
@@ -34,7 +33,7 @@ import com.breadwallet.tools.crypto.CryptoHelper.sha256
 import com.breadwallet.tools.crypto.CryptoHelper.signBasicDer
 import com.breadwallet.tools.crypto.CryptoHelper.signJose
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -47,17 +46,15 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.nio.charset.Charset
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 private const val JWT_EXP_DAYS = 7L
 private const val MAX_TOKEN_RETRIES = 3
-private const val JWT_EXP_PADDING_MS = 10_000L
 
 class BdbAuthInterceptor(
-    private val context: Context,
-    private val httpClient: OkHttpClient
+    private val httpClient: OkHttpClient,
+    private val accountManager: BRAccountManager
 ) : Interceptor {
 
     private val mutex = Mutex()
@@ -69,7 +66,7 @@ class BdbAuthInterceptor(
         .jwtEncode()
 
     private val authKeyBytes by lazy {
-        checkNotNull(BRKeyStore.getAuthKey(context)) {
+        checkNotNull(accountManager.getAuthKey()) {
             "BdbAuthInterceptor created before API Auth Key was set."
         }
     }
@@ -79,12 +76,6 @@ class BdbAuthInterceptor(
             "Failed to create Key from Auth Key Bytes"
         }
     }
-
-    @Volatile
-    private var jwtString: String? = BRKeyStore.getBdbJwt(context)?.toString(Charset.forName("UTF-8"))
-
-    @Volatile
-    private var jwtExpiration: Long = BRKeyStore.getBdbJwtExp(context)
 
     private val tokenRequestSignature by lazy {
         val signingData = checkNotNull(sha256(BuildConfig.BDB_CLIENT_TOKEN.toByteArray()))
@@ -103,23 +94,13 @@ class BdbAuthInterceptor(
         }
 
         val tokenString = runBlocking {
-            if (jwtString == null) createAndSetJwt()
-
-            if ((jwtExpiration - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
-                // Expired, cleanup and create new token
-                jwtString = null
-                jwtExpiration = 0
+            if (accountManager.getBdbJwt() == null) {
                 createAndSetJwt()
             }
-
             // Fallback to client token if needed, try creating a token later
-            if (jwtString == null) {
-                BuildConfig.BDB_CLIENT_TOKEN
-            } else {
-                jwtString
-            }
+            accountManager.getBdbJwt() ?: BuildConfig.BDB_CLIENT_TOKEN
         }
-
+        
         return chain.request()
             .newBuilder()
             .addHeader("Authorization", "Bearer $tokenString")
@@ -135,16 +116,13 @@ class BdbAuthInterceptor(
             return
         }
         if (newJwt != null) {
-            jwtString = newJwt
-            jwtExpiration = expiration
-            BRKeyStore.putBdbJwt(newJwt.toByteArray(), context)
-            BRKeyStore.putBdbJwtExp(expiration, context)
+            accountManager.putBdbJwt(newJwt, expiration)
         }
     }
 
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
-        if (jwtString != null) return@withLock null to 0
+        if (accountManager.getBdbJwt() != null) return@withLock null to 0
 
         val (token, clientId) = requestToken() ?: return@withLock null to 0
 

@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.widget.Toast;
+
 import androidx.core.content.FileProvider;
+
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
@@ -16,7 +18,9 @@ import com.breadwallet.crypto.System;
 import com.breadwallet.crypto.Wallet;
 import com.breadwallet.legacy.presenter.customviews.BRToast;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.BRAccountManager;
+import com.breadwallet.tools.security.CryptoAccountManager;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.breadwallet.util.TrackAddressMismatchKt.pubKeyToEthAddress;
+import static org.kodein.di.TypesKt.TT;
 
 /**
  * BreadWallet
@@ -107,22 +112,26 @@ public class LogsUtils {
                 }
             }
 
-            String storedAddress = pubKeyToEthAddress(BRKeyStore.getEthPublicKey(context));
-            if (storedAddress != null) {
-                Network network = ethWallet.getWalletManager().getNetwork();
-                Address coreAddress = Address.create(storedAddress, network).orNull();
+            CryptoAccountManager accountManager = (CryptoAccountManager) BreadApp.getKodeinInstance().Instance(TT(BRAccountManager.class), null);
+            if (accountManager != null) {
+                String storedAddress = pubKeyToEthAddress(accountManager.getEthPublicKey());
+                if (storedAddress != null) {
+                    Network network = ethWallet.getWalletManager().getNetwork();
+                    Address coreAddress = Address.create(storedAddress, network).orNull();
 
-                if (coreAddress != null && ethWallet.getTarget() != coreAddress) {
-                    String walletId = null;
-                    try {
-                        walletId = BreadApp.Companion.generateWalletId(storedAddress);
-                    } catch (Exception error) {
-                        error.printStackTrace();
+                    if (coreAddress != null && ethWallet.getTarget() != coreAddress) {
+                        String walletId = null;
+                        try {
+                            walletId = BreadApp.Companion.generateWalletId(storedAddress);
+                        } catch (Exception error) {
+                            error.printStackTrace();
+                        }
+                        stringBuilder.append("Address: " + storedAddress + "\n");
+                        stringBuilder.append("Id: " + walletId + "\n");
                     }
-                    stringBuilder.append("Address: " + storedAddress + "\n");
-                    stringBuilder.append("Id: " + walletId + "\n");
                 }
             }
+
         }
 
         return stringBuilder.toString();

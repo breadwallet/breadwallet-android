@@ -79,6 +79,8 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
             InputPinHandler(
                 output,
                 direct.instance(),
+                viewCreatedScope,
+                { eventConsumer },
                 { SpringAnimator.failShakeAnimation(applicationContext, pin_digits) },
                 { toastLong(R.string.UpdatePin_setPinError) }
             )

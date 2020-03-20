@@ -27,26 +27,35 @@ package com.platform.tools
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import android.util.Log
+import com.breadwallet.app.BreadApp
+import com.breadwallet.logger.logError
 
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.platform.APIClient
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.erased.instance
 
-object TokenHolder {
+object TokenHolder : KodeinAware {
     private val TAG = TokenHolder::class.java.simpleName
     private var mApiToken: String? = null
     private var mOldApiToken: String? = null
+    override val kodein by closestKodein {
+        BreadApp.getBreadContext()
+    }
+    private val accountManager: BRAccountManager by instance()
 
     @Synchronized
     fun retrieveToken(app: Context): String? {
         //If token is not present
         if (mApiToken.isNullOrBlank()) {
-            //Check KeyStore
-            val tokenBytes = BRKeyStore.getToken(app) ?: byteArrayOf()
-            //Not in the KeyStore, update from server.
-            if (tokenBytes.isNotEmpty()) {
+            //Check BRAccountManager
+            val token = accountManager.getToken()
+            //Not in the BRAccountManager, update from server.
+            if (token.isNullOrEmpty()) {
                 fetchNewToken(app)
             } else {
-                mApiToken = String(tokenBytes)
+                mApiToken = token
             }
         }
         return mApiToken
@@ -65,8 +74,9 @@ object TokenHolder {
     @Synchronized
     fun fetchNewToken(app: Context) {
         mApiToken = APIClient.getInstance(app).token
+        logError("fetchNewToken: $mApiToken")
         if (!mApiToken.isNullOrEmpty()) {
-            BRKeyStore.putToken(mApiToken!!.toByteArray(), app)
+            accountManager.putToken(mApiToken!!)
         }
     }
 
