@@ -30,10 +30,7 @@ import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.crypto.Account
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.login.LoginController
 import kotlinx.coroutines.Dispatchers
@@ -41,38 +38,36 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
-import java.util.Date
 
 class MigrateController(
     args: Bundle? = null
 ) : BaseController(args) {
 
-    private val keyStore by instance<KeyStore>()
-
     override val layoutId: Int = R.layout.controller_login
+
+    private val accountManager: BRAccountManager by instance()
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         controllerScope.launch {
             val phrase = try {
-                checkNotNull(keyStore.getPhrase())
+                checkNotNull(accountManager.getPhrase())
             } catch (e: UserNotAuthenticatedException) {
                 null
             }
             withContext(Dispatchers.Main) {
-                phrase?.apply(::migrateAccount) ?: activity?.finish()
+                if (phrase != null) {
+                    migrateAccount()
+                } else {
+                    activity?.finish()
+                }
             }
         }
     }
 
-    private fun migrateAccount(phrase: ByteArray) {
-        val timestamp = Date(BRKeyStore.getWalletCreationTime(applicationContext))
-        val account = Account.createFromPhrase(phrase, timestamp, BRSharedPrefs.getDeviceId())
-        BRKeyStore.putAccount(account, applicationContext)
-        BRKeyStore.deleteMasterPublicKey(applicationContext)
-
+    private suspend fun migrateAccount() {
+        accountManager.migrateAccount()
         (applicationContext as BreadApp).startWithInitializedWallet(direct.instance(), true)
-
         router.replaceTopController(RouterTransaction.with(LoginController()))
     }
 }

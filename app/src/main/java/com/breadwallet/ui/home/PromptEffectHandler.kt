@@ -25,9 +25,8 @@
 package com.breadwallet.ui.home
 
 import android.content.Context
-import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
@@ -39,10 +38,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class PromptEffectHandler(
     private val output: Consumer<E>,
-    private val context: Context
+    private val context: Context,
+    private val accountManager: BRAccountManager
 ) : Connection<F>, CoroutineScope {
 
     companion object {
@@ -53,7 +54,7 @@ class PromptEffectHandler(
 
     override fun accept(effect: F) {
         when (effect) {
-            F.LoadPrompt -> loadPrompt()
+            F.LoadPrompt -> launch { loadPrompt() }
             F.StartRescan -> rescan()
             is F.DismissPrompt -> dismissPrompt(effect)
             is F.SaveEmail -> saveEmail(effect)
@@ -87,7 +88,7 @@ class PromptEffectHandler(
                 && Utils.isFingerprintAvailable(context)
                 && !BRSharedPrefs.getPromptDismissed(context, PROMPT_DISMISSED_FINGERPRINT))
             PromptItem.PAPER_KEY -> !BRSharedPrefs.getPhraseWroteDown(context)
-            PromptItem.UPGRADE_PIN -> BRKeyStore.getPinCode(context).length != PinLayout.MAX_PIN_DIGITS
+            PromptItem.UPGRADE_PIN -> accountManager.pinCodeNeedsUpgrade()
             PromptItem.RECOMMEND_RESCAN -> false // BRSharedPrefs.getScanRecommended(iso = "BTC")
         }
     }

@@ -49,7 +49,7 @@ import com.breadwallet.logger.logWarning
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
@@ -104,7 +104,7 @@ object SendSheetHandler {
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>,
         breadBox: BreadBox,
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         apiClient: APIClient,
         ratesRepository: RatesRepository,
         navEffectHandler: NavEffectTransformer,
@@ -115,10 +115,24 @@ object SendSheetHandler {
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
         addTransformer<F.Nav>(navEffectHandler)
-        addTransformer(handleSendTransaction(breadBox, keyStore, retainedScope, outputProducer))
+        addTransformer(
+            handleSendTransaction(
+                breadBox,
+                accountManager,
+                retainedScope,
+                outputProducer
+            )
+        )
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
-        addTransformer(handleContinueWithPayment(keyStore, breadBox, retainedScope, outputProducer))
+        addTransformer(
+            handleContinueWithPayment(
+                accountManager,
+                breadBox,
+                retainedScope,
+                outputProducer
+            )
+        )
         addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
         addFunction(handleGetTransferFields(breadBox))
@@ -314,7 +328,7 @@ object SendSheetHandler {
 
     private fun handleSendTransaction(
         breadBox: BreadBox,
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
     ) = flowTransformer<F.SendTransaction, E> { effects ->
@@ -343,13 +357,14 @@ object SendSheetHandler {
                 }
 
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed
                 }
 
-                val newTransfer = wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
+                val newTransfer =
+                    wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
                 checkNotNull(newTransfer) { "Failed to create transfer." }
 
                 wallet.walletManager.submit(newTransfer, phrase)
@@ -431,7 +446,7 @@ object SendSheetHandler {
     }
 
     private fun handleContinueWithPayment(
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         breadBox: BreadBox,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
@@ -443,7 +458,7 @@ object SendSheetHandler {
                 checkNotNull(transfer) { "Failed to create transfer." }
 
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed

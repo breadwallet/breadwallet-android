@@ -1,8 +1,10 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 10/25/19.
- * Copyright (c) 2019 breadwallet LLC
+ *
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 3/18/20.
+ * Copyright (c) 2020 breadwallet LLC
+ *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -11,8 +13,10 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,24 +28,8 @@
  */
 package com.breadwallet.tools.security
 
-import android.content.Context
-import com.breadwallet.app.BreadApp
-import com.breadwallet.tools.util.Utils
-import kotlinx.coroutines.runBlocking
-import org.kodein.di.erased.instance
-
-fun BRAccountManager.isWalletDisabled() = when (getAccountState()) {
-    is AccountState.Disabled -> true
-    else -> false
+enum class KeyStoreStatus {
+    VALID,
+    INVALID_WIPE,
+    INVALID_UNINSTALL
 }
-
-fun BRAccountManager.disabledUntil() = when (val state = getAccountState()) {
-    is AccountState.Disabled -> state.until
-    else -> -1
-}
-
-fun isFingerPrintAvailableAndSetup(context: Context): Boolean {
-    return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context)
-}
-
-

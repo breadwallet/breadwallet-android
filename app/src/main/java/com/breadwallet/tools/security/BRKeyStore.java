@@ -35,7 +35,9 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
+
 import androidx.fragment.app.FragmentActivity;
+
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -98,27 +100,36 @@ import static org.kodein.di.TypesKt.TT;
 
 // TODO Remove logic from setters and getters.
 public final class BRKeyStore {
-    private BRKeyStore() {
-    }
-
+    public static final String PHRASE_ALIAS = "phrase";
+    public static final String PUB_KEY_ALIAS = "pubKey";
+    public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
+    public static final String PASS_CODE_ALIAS = "passCode";
+    public static final String FAIL_COUNT_ALIAS = "failCount";
+    public static final String SPEND_LIMIT_ALIAS = "spendlimit";
+    public static final String TOTAL_LIMIT_ALIAS = "totallimit";
+    public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
+    public static final String AUTH_KEY_ALIAS = "authKey";
+    public static final String ACCOUNT_ALIAS = "account";
+    public static final String TOKEN_ALIAS = "token";
+    public static final String PASS_TIME_ALIAS = "passTime";
+    public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
+    public static final String BDB_JWT_ALIAS = "bdbJwt";
+    public static final String BDB_JWT_EXP_ALIAS = "bdbJwtExp";
+    public static final int AUTH_DURATION_SEC = 300;
+    public static final Map<String, AliasObject> ALIAS_OBJECT_MAP;
     private static final String TAG = BRKeyStore.class.getName();
-
     private static final String KEY_STORE_PREFS_NAME = "keyStorePrefs";
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     private static final String MANUFACTURER_GOOGLE = "Google";
-
     // Old encryption parameters
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
-
     // New encryption parameters
     // Recommended way to encrypt in android.
     private static final String NEW_CIPHER_ALGORITHM = "AES/GCM/NoPadding";
     private static final String NEW_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE;
     private static final String NEW_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM;
-
     private static final String START_SPANNABLE_SYMBOL = "[";
     private static final String END_SPANNABLE_SYMBOL = "]";
-
     // Iv names
     private static final String PHRASE_IV = "ivphrase";
     private static final String PUB_KEY_IV = "ivpubkey";
@@ -135,23 +146,6 @@ public final class BRKeyStore {
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
     private static final String BDB_JWT_IV = "ivbdbjwt";
     private static final String BDB_JWT_EXP_IV = "ivbdbjwtexp";
-
-    public static final String PHRASE_ALIAS = "phrase";
-    public static final String PUB_KEY_ALIAS = "pubKey";
-    public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
-    public static final String PASS_CODE_ALIAS = "passCode";
-    public static final String FAIL_COUNT_ALIAS = "failCount";
-    public static final String SPEND_LIMIT_ALIAS = "spendlimit";
-    public static final String TOTAL_LIMIT_ALIAS = "totallimit";
-    public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
-    public static final String AUTH_KEY_ALIAS = "authKey";
-    public static final String ACCOUNT_ALIAS = "account";
-    public static final String TOKEN_ALIAS = "token";
-    public static final String PASS_TIME_ALIAS = "passTime";
-    public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
-    public static final String BDB_JWT_ALIAS = "bdbJwt";
-    public static final String BDB_JWT_EXP_ALIAS = "bdbJwtExp";
-
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
@@ -167,20 +161,9 @@ public final class BRKeyStore {
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
     private static final String BDB_JWT_FILENAME = "my_bdb_jwt";
     private static final String BDB_JWT_EXP_FILENAME = "my_bdb_exp_jwt";
-    public static final int AUTH_DURATION_SEC = 300;
     private static final int GMC_TAG_LENGTH = 128;
-
-    private static boolean bugMessageShowing;
-
-    public static final Map<String, AliasObject> ALIAS_OBJECT_MAP;
-
     private static final ReentrantLock LOCK = new ReentrantLock();
-
-    public enum ValidityStatus {
-        VALID,
-        INVALID_WIPE,
-        INVALID_UNINSTALL;
-    }
+    private static boolean bugMessageShowing;
 
     // Storing all the Keystore data into a map.
     // TODO Wrong/old implementation, needs refactoring.
@@ -204,6 +187,9 @@ public final class BRKeyStore {
         ALIAS_OBJECT_MAP.put(BDB_JWT_EXP_ALIAS, new AliasObject(BDB_JWT_EXP_ALIAS, BDB_JWT_EXP_FILENAME, BDB_JWT_EXP_IV));
     }
 
+    private BRKeyStore() {
+    }
+
     /**
      * Returns a value based on if Android key store is valid. We test if the paper key encryption key can no longer be
      * used because it has been permanently invalidated which indicates if the Android key store is invalidated. If the
@@ -215,9 +201,9 @@ public final class BRKeyStore {
      * <p>
      * See {@link KeyPermanentlyInvalidatedException} for further details.
      *
-     * @return A {@link ValidityStatus} based on the current status of the Android key store.
+     * @return A {@link KeyStoreStatus} based on the current status of the Android key store.
      */
-    public static ValidityStatus getValidityStatus() {
+    public static KeyStoreStatus getValidityStatus() {
         try {
             // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -244,11 +230,11 @@ public final class BRKeyStore {
                     || (!isGoogleDevice && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)) {
                 Log.e(TAG, "The key store has been invalidated. Uninstall required. Manufacturer: "
                         + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
-                return ValidityStatus.INVALID_UNINSTALL;
+                return KeyStoreStatus.INVALID_UNINSTALL;
             } else {
                 Log.e(TAG, "The key store has been invalidated. Wipe required. Manufacturer: "
                         + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
-                return ValidityStatus.INVALID_WIPE;
+                return KeyStoreStatus.INVALID_WIPE;
             }
         } catch (GeneralSecurityException | IOException e) {
             // We can safely ignore these exceptions, because we are only concerned with
@@ -256,7 +242,7 @@ public final class BRKeyStore {
             Log.e(TAG, "Error while checking if key store is still valid. Ignoring. ", e);
         }
 
-        return ValidityStatus.VALID;
+        return KeyStoreStatus.VALID;
     }
 
     /**
@@ -558,26 +544,12 @@ public final class BRKeyStore {
         return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
     }
 
-    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(PUB_KEY_ALIAS);
-        try {
-            return masterPubKey != null && masterPubKey.length != 0
-                    && setData(context, masterPubKey, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public static void deletePhrase(Context context) {
+        deleteKey(PHRASE_ALIAS, context);
     }
 
     public static void deleteMasterPublicKey(Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(PUB_KEY_ALIAS);
-        try {
-            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
-            keyStore.load(null);
-            removeAliasAndDatas(keyStore, obj.mAlias, context);
-        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException e) {
-            e.printStackTrace();
-        }
+        deleteKey(PUB_KEY_ALIAS, context);
     }
 
     public static byte[] getMasterPublicKey(final Context context) {
@@ -590,16 +562,6 @@ public final class BRKeyStore {
         return null;
     }
 
-    public static boolean putEthPublicKey(byte[] masterPubKey, Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(ETH_PUBKEY_ALIAS);
-        try {
-            return masterPubKey != null && masterPubKey.length != 0 && setData(context, masterPubKey, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public static byte[] getEthPublicKey(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(ETH_PUBKEY_ALIAS);
         try {
@@ -608,16 +570,6 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean putAccount(final Account account, final Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
-        try {
-            return account != null && setData(context, account.serialize(), obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            Logger.Companion.error("Failed to store Account.", e);
-        }
-        return false;
     }
 
     public static Account getAccount(final Context context) {
@@ -634,16 +586,6 @@ public final class BRKeyStore {
         return null;
     }
 
-    public static boolean putAuthKey(byte[] authKey, Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(AUTH_KEY_ALIAS);
-        try {
-            return authKey != null && authKey.length != 0 && setData(context, authKey, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public static byte[] getAuthKey(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(AUTH_KEY_ALIAS);
         try {
@@ -652,16 +594,6 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean putToken(byte[] token, Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(TOKEN_ALIAS);
-        try {
-            return token != null && token.length != 0 && setData(context, token, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static byte[] getToken(final Context context) {
@@ -674,16 +606,6 @@ public final class BRKeyStore {
         return null;
     }
 
-    public static boolean putBdbJwt(final byte[] jwt, final Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
-        try {
-            return jwt != null && jwt.length != 0 && setData(context, jwt, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public static byte[] getBdbJwt(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_ALIAS);
         try {
@@ -692,17 +614,6 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean putBdbJwtExp(final long exp, final Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(BDB_JWT_EXP_ALIAS);
-        byte[] expBytes = TypesConverter.long2byteArray(exp);
-        try {
-            return expBytes.length != 0 && setData(context, expBytes, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static long getBdbJwtExp(final Context context) {
@@ -852,17 +763,6 @@ public final class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean putLastPinUsedTime(long time, Context context) {
-        AliasObject obj = ALIAS_OBJECT_MAP.get(PASS_TIME_ALIAS);
-        byte[] bytesToStore = TypesConverter.long2byteArray(time);
-        try {
-            return bytesToStore.length != 0 && setData(context, bytesToStore, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public static long getLastPinUsedTime(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(PASS_TIME_ALIAS);
         byte[] result = null;
@@ -875,14 +775,26 @@ public final class BRKeyStore {
     }
 
     public static synchronized boolean resetWalletKeyStore(Context context) {
+        return wipeKeyStore(true, context);
+    }
+
+    public static synchronized boolean wipeAfterMigration(Context context) {
+        return wipeKeyStore(false, context);
+    }
+
+    public static synchronized boolean wipeKeyStore(Boolean deletePhrase, Context context) {
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
+            String phraseAlias = ALIAS_OBJECT_MAP.get(PHRASE_ALIAS).mAlias;
             int count = 0;
             if (keyStore.aliases() != null) {
-                while (keyStore.aliases().hasMoreElements()) {
-                    String alias = keyStore.aliases().nextElement();
+                for (AliasObject aliasObject : ALIAS_OBJECT_MAP.values()) {
+                    String alias = aliasObject.mAlias;
+                    if (!keyStore.containsAlias(alias) || (!deletePhrase && alias.equalsIgnoreCase(phraseAlias))) {
+                        continue;
+                    }
                     removeAliasAndDatas(keyStore, alias, context);
                     destroyEncryptedData(context, alias);
                     count++;
@@ -900,6 +812,17 @@ public final class BRKeyStore {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private static void deleteKey(String key, Context context) {
+        AliasObject obj = ALIAS_OBJECT_MAP.get(key);
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            removeAliasAndDatas(keyStore, obj.mAlias, context);
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException e) {
+            e.printStackTrace();
+        }
     }
 
     private static synchronized void removeAliasAndDatas(KeyStore keyStore, String alias, Context context) {

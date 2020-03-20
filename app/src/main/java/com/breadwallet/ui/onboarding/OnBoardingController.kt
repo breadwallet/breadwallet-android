@@ -74,7 +74,6 @@ class OnBoardingController(
             applicationContext as BreadApp,
             direct.instance(),
             direct.instance(),
-            direct.instance(),
             { eventConsumer },
             { router }
         )

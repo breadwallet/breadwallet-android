@@ -237,6 +237,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$ax_constraintlayout"
     implementation "androidx.gridlayout:gridlayout:$ax_gridlayout"
     implementation "androidx.recyclerview:recyclerview:$ax_recyclerview"
+    implementation "androidx.security:security-crypto:$ax_securitycrypto"
     implementation "androidx.legacy:legacy-support-v13:$ax_legacyV13"
     testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
     testImplementation "androidx.test:runner:$ax_test_runner"

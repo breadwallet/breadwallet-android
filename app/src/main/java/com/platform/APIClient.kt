@@ -53,7 +53,7 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRCompressor
 import com.breadwallet.tools.util.BRConstants
@@ -92,12 +92,12 @@ import org.kodein.di.erased.instance
 
 private const val UNAUTHED_HTTP_STATUS = 401
 
-class APIClient(private var context: Context) {
+class APIClient(private var context: Context, private val accountManager: BRAccountManager) {
 
     private var authKey: Key? = null
         get() {
             if (field == null) {
-                val key = BRKeyStore.getAuthKey(context) ?: byteArrayOf()
+                val key = accountManager.getAuthKey() ?: byteArrayOf()
                 if (key.isNotEmpty()) {
                     field = Key.createFromPrivateKeyString(key).orNull()
                 }
