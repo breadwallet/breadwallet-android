@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 
 import com.breadwallet.R;
@@ -53,14 +54,10 @@ import timber.log.Timber;
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
-    private static int ANIMATION_DURATION = 30;
+    private static final int ANIMATION_DURATION = 30;
     private Bitmap shadow;
     private Rect shadowRect;
     private RectF bRect;
-    private int width;
-    private int height;
-    private int modifiedWidth;
-    private int modifiedHeight;
     private Paint bPaint;
     private Paint bPaintStroke;
     private int type = 2;
@@ -93,30 +90,28 @@ public class BRButton extends Button {
     private void init(Context ctx, AttributeSet attrs) {
         shadow = BitmapFactory.decodeResource(getResources(), R.drawable.shadow);
         bPaint = new Paint();
+        bPaint.setAntiAlias(true);
         bPaintStroke = new Paint();
+        bPaintStroke.setAntiAlias(true);
         shadowRect = new Rect(0, 0, 100, 100);
         bRect = new RectF(0, 0, 100, 100);
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
         String customFont = a.getString(R.styleable.BRButton_customBFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "BarlowSemiCondensed-Medium.ttf" : customFont);
-        float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
-        //check attributes you need, for example all paddings
-        int[] attributes = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
-        //then obtain typed array
-        TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
-        //You can check if attribute exists (in this example checking paddingRight)
+        int px16 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
 
         isBreadButton = a.getBoolean(R.styleable.BRButton_isBreadButton, false);
-        int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
-        int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
-        int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
-        int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
+
+        int[] attributes = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
+        TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
+
+        int paddingLeft = arr.getDimensionPixelOffset(0, px16);
+        int paddingTop = arr.getDimensionPixelOffset(1, 0);
+        int paddingRight = arr.getDimensionPixelOffset(2, px16);
+        int paddingBottom = arr.getDimensionPixelOffset(3, 0) + (isBreadButton ? px16 : 0);
 
         int type = a.getInteger(R.styleable.BRButton_buttonType, 0);
         setType(type);
-
-        bPaint.setAntiAlias(true);
-        bPaintStroke.setAntiAlias(true);
 
         if (isBreadButton) {
             setBackground(getContext().getDrawable(R.drawable.shadow_trans));
@@ -145,20 +140,13 @@ public class BRButton extends Button {
                     getParent().requestDisallowInterceptTouchEvent(false);
                 }
                 if (type != 3)
-                    press(ANIMATION_DURATION);
+                    onTouch(true, ANIMATION_DURATION);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                unPress(ANIMATION_DURATION);
+                onTouch(false, ANIMATION_DURATION);
             }
         }
 
         return super.onTouchEvent(event);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        width = w;
-        height = h;
     }
 
     private void correctTextSizeIfNeeded() {
@@ -180,74 +168,56 @@ public class BRButton extends Button {
     @Override
     protected void onDraw(Canvas canvas) {
         if (isBreadButton) {
+            final int width = getWidth();
+            final int height = getHeight();
             shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
-            modifiedWidth = width - 10;
-            modifiedHeight = height - height / 4 - 5;
+            int modifiedWidth = width - 10;
+            int modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
             canvas.drawBitmap(shadow, null, shadowRect, null);
             canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
-            if (type == 2 || type == 3)
+            if (type == 2 || type == 3 || type == 5) {
                 canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
+            }
         }
         super.onDraw(canvas);
     }
 
     public void setType(int type) {
-        if (type == 3) press(1);
+        if (type == 3) onTouch(true, 1);
         this.type = type;
 
         if (type == 1) { //blue
             bPaint.setColor(getContext().getColor(R.color.litecoin_litewallet_blue));
             setTextColor(getContext().getColor(R.color.white));
         } else if (type == 2) { //gray stroke
-            bPaintStroke.setColor(getContext().getColor(R.color.extra_light_gray));
-            bPaintStroke.setStyle(Paint.Style.STROKE);
-            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
             setTextColor(getContext().getColor(R.color.light_gray));
-            bPaint.setColor(getContext().getColor(R.color.button_secondary));
-            bPaint.setStyle(Paint.Style.FILL);
+            setOutline(R.color.litecoin_litewallet_blue, R.color.button_secondary);
         } else if (type == 3) { //blue strokeww
-            bPaintStroke.setColor(getContext().getColor(R.color.litecoin_litewallet_blue));
-            bPaintStroke.setStyle(Paint.Style.STROKE);
-            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
             setTextColor(getContext().getColor(R.color.litecoin_litewallet_blue));
-            bPaint.setColor(getContext().getColor(R.color.button_secondary));
-            bPaint.setStyle(Paint.Style.FILL);
+            setOutline(R.color.litecoin_litewallet_blue, R.color.button_secondary);
+        } else if (type == 4) { //white stroke
+            setOutline(R.color.white, R.color.button_secondary);
+        } else if (type == 5) {
+            setOutline(R.color.white, R.color.litecoin_litewallet_blue);
         }
         invalidate();
     }
 
-    private void press(int duration) {
-        ScaleAnimation scaleAnim = new ScaleAnimation(
-                1f, 0.96f,
-                1f, 0.96f,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 1f);
-        scaleAnim.setDuration(duration);
-        scaleAnim.setRepeatCount(0);
-        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-        scaleAnim.setFillAfter(true);
-        scaleAnim.setFillBefore(true);
-        scaleAnim.setFillEnabled(true);
-
-        ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_UNPRESSED, SHADOW_PRESSED);
-        shadowAnim.setDuration(duration);
-        shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                shadowOffSet = (float) animation.getAnimatedValue();
-                invalidate();
-            }
-        });
-
-        startAnimation(scaleAnim);
-        shadowAnim.start();
+    private void setOutline(@ColorRes int strokeColor, @ColorRes int color) {
+        bPaintStroke.setColor(getContext().getColor(strokeColor));
+        bPaintStroke.setStyle(Paint.Style.STROKE);
+        bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+        bPaint.setColor(getContext().getColor(color));
+        bPaint.setStyle(Paint.Style.FILL);
     }
 
-    private void unPress(int duration) {
+    private void onTouch(boolean pressed, int duration) {
+        float from = pressed ? 1f : 0.96f;
+        float to = pressed ? 0.96f : 1f;
         ScaleAnimation scaleAnim = new ScaleAnimation(
-                0.96f, 1f,
-                0.96f, 1f,
+                from, to,
+                from, to,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 1f);
         scaleAnim.setDuration(duration);
@@ -257,7 +227,11 @@ public class BRButton extends Button {
         scaleAnim.setFillBefore(true);
         scaleAnim.setFillEnabled(true);
 
-        ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_PRESSED, SHADOW_UNPRESSED);
+        float[] values = new float[]{SHADOW_UNPRESSED, SHADOW_PRESSED};
+        if (!pressed) {
+            values = new float[]{SHADOW_PRESSED, SHADOW_UNPRESSED};
+        }
+        ValueAnimator shadowAnim = ValueAnimator.ofFloat(values);
         shadowAnim.setDuration(duration);
         shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
