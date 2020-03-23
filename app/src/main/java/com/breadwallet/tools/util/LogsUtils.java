@@ -108,7 +108,7 @@ public class LogsUtils {
             }
 
             String storedAddress = pubKeyToEthAddress(BRKeyStore.getEthPublicKey(context));
-            if (storedAddress != null) {
+            if (ethWallet != null && storedAddress != null) {
                 Network network = ethWallet.getWalletManager().getNetwork();
                 Address coreAddress = Address.create(storedAddress, network).orNull();
 
