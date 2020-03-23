@@ -304,7 +304,7 @@ public class APIClient {
             throw new NetworkOnMainThreadException();
         }
         boolean isTestVersion = BREAD_POINT.contains("staging");
-        boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
+        boolean isTestNet = BuildConfig.LITECOIN_TESTNET;
         String lang = getCurrentLocale(ctx);
         Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Litecoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
         if (needsAuth) {
