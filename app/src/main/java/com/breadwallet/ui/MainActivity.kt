@@ -81,7 +81,6 @@ class MainActivity : BRActivity() {
     private var routerNavHandler: RouterNavigationEffectHandler? = null
 
     private var walletLockJob: Job? = null
-    private var locked: Boolean = false
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
@@ -135,8 +134,6 @@ class MainActivity : BRActivity() {
                     .popChangeHandler(FadeChangeHandler())
                     .pushChangeHandler(FadeChangeHandler())
             )
-        } else {
-            lockApp()
         }
 
         if (BuildConfig.DEBUG) {
@@ -152,13 +149,6 @@ class MainActivity : BRActivity() {
 
     override fun onResume() {
         super.onResume()
-        walletLockJob?.cancel()
-        walletLockJob = null
-        if (locked) {
-            locked = false
-            lockApp()
-        }
-
         // If we come back to the activity after launching with
         // an invalid device state, check the state again.
         // If the state is valid, recreate the activity otherwise
@@ -174,13 +164,17 @@ class MainActivity : BRActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (BreadApp.hasWallet()) {
-            walletLockJob = GlobalScope.launch(Main) {
-                delay(LOCK_TIMEOUT)
-                locked = true
-            }
+    override fun onStart() {
+        super.onStart()
+        walletLockJob?.cancel()
+        walletLockJob = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        walletLockJob = GlobalScope.launch(Main) {
+            delay(LOCK_TIMEOUT)
+            lockApp()
         }
     }
 
@@ -209,7 +203,7 @@ class MainActivity : BRActivity() {
         if (data.isNotBlank() && BreadApp.hasWallet()) {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
-            val isAuthenticated = !isTopLogin && hasRoot && !locked
+            val isAuthenticated = !isTopLogin && hasRoot
             routerNavHandler?.goToDeepLink(NavigationEffect.GoToDeepLink(data, isAuthenticated))
         }
     }
