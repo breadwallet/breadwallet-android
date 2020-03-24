@@ -59,8 +59,6 @@ import kotlinx.coroutines.launch
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val TAG = "BRActivity"
 
-private const val LOCKED_STATE = "BRActivity.LOCKED_STATE"
-
 @Suppress("TooManyFunctions")
 abstract class BRActivity : AppCompatActivity() {
 
@@ -71,8 +69,6 @@ abstract class BRActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         saveScreenSizesIfNeeded()
-
-        locked = savedInstanceState?.getBoolean(LOCKED_STATE, locked) ?: locked
     }
 
     override fun onDestroy() {
@@ -163,16 +159,6 @@ abstract class BRActivity : AppCompatActivity() {
                     .execute { PostAuth.getInstance().onPaymentProtocolRequest(this@BRActivity, true, null) }
             }
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(LOCKED_STATE, locked)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        locked = savedInstanceState.getBoolean(LOCKED_STATE, locked)
     }
 
     private fun init() { //show wallet locked if it is and we're not in an illegal activity.

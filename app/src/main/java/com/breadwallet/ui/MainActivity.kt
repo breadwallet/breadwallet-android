@@ -60,7 +60,6 @@ private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
-private const val LOCKED_STATE = "MainActivity.LOCKED_STATE"
 
 /**
  * The main user entrypoint into the app.
@@ -91,7 +90,6 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        locked = savedInstanceState?.getBoolean(LOCKED_STATE, locked) ?: locked
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
@@ -137,6 +135,8 @@ class MainActivity : BRActivity() {
                     .popChangeHandler(FadeChangeHandler())
                     .pushChangeHandler(FadeChangeHandler())
             )
+        } else {
+            lockApp()
         }
 
         if (BuildConfig.DEBUG) {
@@ -182,16 +182,6 @@ class MainActivity : BRActivity() {
                 locked = true
             }
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(LOCKED_STATE, locked)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        locked = savedInstanceState.getBoolean(LOCKED_STATE, locked)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
