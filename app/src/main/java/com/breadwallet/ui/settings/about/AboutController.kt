@@ -38,6 +38,8 @@ import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
 import kotlinx.android.synthetic.main.controller_about.*
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 import java.util.Locale
 
 private const val VERSION_CLICK_COUNT_FOR_BACKDOOR = 5
@@ -67,7 +69,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
             versionClickedCount++
             if (versionClickedCount >= VERSION_CLICK_COUNT_FOR_BACKDOOR) {
                 versionClickedCount = 0
-                LogsUtils.shareLogs(activity)
+                LogsUtils.shareLogs(checkNotNull(activity), direct.instance(), direct.instance())
             }
         }
 

@@ -54,6 +54,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 
@@ -77,7 +79,8 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                LogsUtils.shareLogs(activity)
+                val d = (context.applicationContext as BreadApp).kodein.direct
+                LogsUtils.shareLogs(activity, d.instance(), d.instance())
             }
             F.ShowApiServerDialog -> launch(Dispatchers.Main) {
                 showApiServerDialog(BreadApp.host)
