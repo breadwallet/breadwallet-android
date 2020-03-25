@@ -39,6 +39,8 @@ import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.bch
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.platform.APIClient
@@ -152,11 +154,11 @@ class SettingsScreenHandler(
             SettingsSection.SECURITY -> securitySettings()
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "btc")
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, btc)
                 btcOptions
             }
             SettingsSection.BCH_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "bch")
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, bch)
                 bchOptions
             }
         }
@@ -341,7 +343,7 @@ class SettingsScreenHandler(
         ).apply {
             launch {
                 val modeMap = metaDataManager.walletModes().first()
-                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode("BTC")?.currencyId ?: ""
+                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode(btc)?.currencyId ?: ""
                 if (modeMap[btcCurrencyId] != WalletManagerMode.API_ONLY) {
                     add(
                         SettingsItem(

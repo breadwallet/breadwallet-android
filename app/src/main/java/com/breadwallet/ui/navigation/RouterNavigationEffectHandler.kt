@@ -42,6 +42,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
@@ -82,9 +83,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-
-private const val BITCOIN_CURRENCY_CODE = "BTC"
-private const val BITCOIN_CASH_CURRENCY_CODE = "BCH"
+import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
@@ -146,7 +145,7 @@ class RouterNavigationEffectHandler(
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-            BITCOIN_CURRENCY_CODE
+            btc.toUpperCase(Locale.ROOT)
         )
         val webTransaction =
             WebController(url).asTransaction(

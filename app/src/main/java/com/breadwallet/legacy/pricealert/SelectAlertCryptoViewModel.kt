@@ -30,10 +30,6 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.ext.map
 import com.breadwallet.ext.mutableLiveData
 import com.breadwallet.ext.switchMap
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletTokenManager
 import com.breadwallet.model.TokenItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +39,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import java.util.Locale
 import com.breadwallet.crypto.Wallet as CryptoWallet
 
 class SelectAlertCryptoViewModel(
@@ -109,48 +106,12 @@ class SelectAlertCryptoViewModel(
      */
     private fun List<CryptoWallet>.mapToTokenItem() =
         map { wallet ->
-            when (wallet.currency.code) {
-                WalletBitcoinManager.BITCOIN_CURRENCY_CODE ->
-                    TokenItem(
-                        null,
-                        WalletBitcoinManager.BITCOIN_CURRENCY_CODE,
-                        WalletBitcoinManager.NAME,
-                        null,
-                        true
-                    )
-                WalletBchManager.BITCASH_CURRENCY_CODE ->
-                    TokenItem(
-                        null,
-                        WalletBchManager.BITCASH_CURRENCY_CODE,
-                        WalletBchManager.NAME,
-                        null,
-                        true
-                    )
-                WalletEthManager.ETH_CURRENCY_CODE ->
-                    TokenItem(
-                        null,
-                        WalletEthManager.ETH_CURRENCY_CODE,
-                        WalletEthManager.NAME,
-                        null,
-                        true
-                    )
-                WalletTokenManager.BRD_CURRENCY_CODE ->
-                    TokenItem(
-                        null,
-                        WalletTokenManager.BRD_CURRENCY_CODE,
-                        WalletTokenManager.BRD_CURRENCY_CODE,
-                        null,
-                        true
-                    )
-                else -> {
-                    TokenItem(
-                        wallet.target.toString(),
-                        wallet.currency.code,
-                        wallet.name,
-                        null,
-                        true
-                    )
-                }
-            }
+            TokenItem(
+                address = wallet.target.toString(),
+                symbol = wallet.currency.code.toUpperCase(Locale.ROOT),
+                name = wallet.currency.name,
+                image = null,
+                isSupported = true
+            )
         }
 }

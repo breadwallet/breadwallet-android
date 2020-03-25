@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.tools.util.bch
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
@@ -105,8 +107,8 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.SHARE_ANONYMOUS_DATA -> F.GoToShareData
                     SettingsOption.NOTIFICATIONS -> F.GoToNotificationsSettings
                     SettingsOption.REDEEM_PRIVATE_KEY -> F.GoToImportWallet
-                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> F.GoToSyncBlockchain("btc")
-                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> F.GoToSyncBlockchain("bch")
+                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> F.GoToSyncBlockchain(btc)
+                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> F.GoToSyncBlockchain(bch)
                     SettingsOption.ENABLE_SEG_WIT -> F.GoToEnableSegWit
                     SettingsOption.VIEW_LEGACY_ADDRESS -> F.GoToLegacyAddress
                     SettingsOption.BTC_NODES -> F.GoToNodeSelector
@@ -121,7 +123,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.WEB_PLAT_BUNDLE -> F.ShowPlatformBundleDialog
                     SettingsOption.TOKEN_BUNDLE -> F.ShowTokenBundleDialog
                     SettingsOption.NATIVE_API_EXPLORER -> F.GoToNativeApiExplorer
-                    SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
+                    SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync(btc)
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                 }

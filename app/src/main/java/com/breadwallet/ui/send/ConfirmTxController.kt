@@ -33,6 +33,7 @@ import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.tools.util.eth
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
@@ -145,7 +146,7 @@ class ConfirmTxController(
         to_address.text = targetAddress
         amount_value.text = fiatAmountString
 
-        val isErc20 = !currencyCode.equals("eth", true) && feeCode.equals("eth", true)
+        val isErc20 = !currencyCode.equals(eth, true) && feeCode.equals(eth, true)
 
         val processingTime = res.getString(
             when {

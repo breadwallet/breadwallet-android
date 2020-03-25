@@ -29,9 +29,9 @@ import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.getPeerOrNull
 import com.breadwallet.ext.bindConsumerIn
-import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
 import com.spotify.mobius.Connection
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class NodeSelectorHandler(
     private val output: Consumer<E>,
@@ -55,7 +56,7 @@ class NodeSelectorHandler(
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     init {
-        breadBox.wallet(BITCOIN_CURRENCY_CODE)
+        breadBox.wallet(btc)
             .map { it.walletManager.state }
             .distinctUntilChanged()
             .map { E.OnConnectionStateUpdated(it) }
@@ -76,7 +77,7 @@ class NodeSelectorHandler(
     }
 
     private fun loadConnectionInfo() {
-        val node = BRSharedPrefs.getTrustNode(iso = BITCOIN_CURRENCY_CODE)
+        val node = BRSharedPrefs.getTrustNode(iso = btc.toUpperCase(Locale.ROOT))
         val event = if (node.isNullOrBlank()) {
             E.OnConnectionInfoLoaded(NodeSelector.Mode.AUTOMATIC)
         } else {
@@ -87,11 +88,11 @@ class NodeSelectorHandler(
 
     private fun setToAutomatic() {
         BRSharedPrefs.putTrustNode(
-            iso = BITCOIN_CURRENCY_CODE,
+            iso = btc.toUpperCase(Locale.ROOT),
             trustNode = ""
         )
         launch {
-            val walletManager = breadBox.wallet(BITCOIN_CURRENCY_CODE).first().walletManager
+            val walletManager = breadBox.wallet(btc).first().walletManager
             walletManager.connect(null)
         }
         output.accept(E.OnConnectionInfoLoaded(NodeSelector.Mode.AUTOMATIC))
@@ -99,12 +100,12 @@ class NodeSelectorHandler(
 
     private fun setToManual(effect: F.SetCustomNode) {
         BRSharedPrefs.putTrustNode(
-            iso = BITCOIN_CURRENCY_CODE,
+            iso = btc.toUpperCase(Locale.ROOT),
             trustNode = effect.node
         )
         launch {
             val wallet = breadBox
-                .wallet(BITCOIN_CURRENCY_CODE)
+                .wallet(btc)
                 .first()
             val system = checkNotNull(breadBox.getSystemUnsafe())
             val network = system.networks.find { it.containsCurrency(wallet.currencyId) }

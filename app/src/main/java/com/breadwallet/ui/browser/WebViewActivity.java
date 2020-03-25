@@ -38,7 +38,6 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.activities.util.BRActivity;
 import com.breadwallet.legacy.presenter.customviews.BaseTextView;
-import com.breadwallet.legacy.wallet.WalletsMaster;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
@@ -179,8 +178,7 @@ public abstract class WebViewActivity extends BRActivity {
                 mBottomToolbar.setVisibility(View.INVISIBLE);
             }
             if (url.endsWith(BUY_PATH)) {
-                url = String.format(URL_FORMAT, url, CURRENCY, WalletsMaster.getInstance().getCurrentWallet(this).getCurrencyCode().toLowerCase());
-
+                url = String.format(URL_FORMAT, url, CURRENCY, BRSharedPrefs.getCurrentWalletCurrencyCode());
             }
 
             if (url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))) {

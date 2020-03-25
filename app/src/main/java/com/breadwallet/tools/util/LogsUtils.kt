@@ -34,6 +34,7 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp.Companion.generateWalletId
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.isEthereum
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.errors.TransferSubmitPosixError
@@ -153,7 +154,7 @@ object LogsUtils {
             if (accountManager is CryptoAccountManager) {
                 val ethWallet = system.wallets
                     .firstOrNull { wallet ->
-                        wallet.currency.code.equals("eth", true)
+                        wallet.currency.isEthereum()
                     }
                 val storedAddress = accountManager.getEthPublicKey().pubKeyToEthAddress()
                 if (storedAddress != null && ethWallet != null) {
