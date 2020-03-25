@@ -33,9 +33,9 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.qrcode.QRUtils
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.segwit.LegacyAddress.E
 import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.util.CryptoUriParser
@@ -62,7 +62,7 @@ class LegacyAddressHandler(
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     init {
-        breadBox.wallet(BITCOIN_CURRENCY_CODE)
+        breadBox.wallet(btc)
             .map { wallet ->
                 wallet.getTargetForScheme(AddressScheme.BTC_LEGACY)
             }
@@ -70,7 +70,7 @@ class LegacyAddressHandler(
             .map { E.OnAddressUpdated(it.toString(), it.toSanitizedString()) }
             .bindConsumerIn(output, this)
 
-        breadBox.wallet(BITCOIN_CURRENCY_CODE)
+        breadBox.wallet(btc)
             .map { it.currency.name }
             .distinctUntilChanged()
             .map { E.OnWalletNameUpdated(it) }
@@ -93,7 +93,7 @@ class LegacyAddressHandler(
                         val cryptoRequest = CryptoRequest.Builder()
                             .setAddress(effect.address)
                             .build()
-                        val cryptoUri = cryptoUriParser.createUrl(BITCOIN_CURRENCY_CODE, cryptoRequest)
+                        val cryptoUri = cryptoUriParser.createUrl(btc, cryptoRequest)
                         QRUtils.sendShareIntent(
                             context,
                             cryptoUri.toString(),

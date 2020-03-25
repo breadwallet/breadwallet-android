@@ -33,6 +33,7 @@ import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.eth
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
@@ -394,7 +395,7 @@ object SendSheet {
 
             object GoToScan : Nav(NavigationEffect.GoToQrScan)
             object CloseSheet : Nav(NavigationEffect.GoBack)
-            object GoToEthWallet : Nav(NavigationEffect.GoToWallet("eth"))
+            object GoToEthWallet : Nav(NavigationEffect.GoToWallet(eth))
             object GoToTransactionComplete : Nav(NavigationEffect.GoToTransactionComplete)
         }
 

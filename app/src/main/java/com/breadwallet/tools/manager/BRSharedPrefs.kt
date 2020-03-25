@@ -30,13 +30,13 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.model.FeeOption
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.btc
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -278,11 +278,8 @@ object BRSharedPrefs {
         brdPrefs.edit { putBoolean(feature, enabled) }
 
     @JvmStatic
-    fun getCurrentWalletCurrencyCode(context: Context? = null): String =
-        brdPrefs.getString(
-            CURRENT_WALLET_CURRENCY_CODE,
-            WalletBitcoinManager.BITCOIN_CURRENCY_CODE
-        )!!
+    fun getCurrentWalletCurrencyCode(): String =
+        brdPrefs.getString(CURRENT_WALLET_CURRENCY_CODE, btc.toUpperCase(Locale.ROOT))!!
 
     @JvmStatic
     fun putCurrentWalletCurrencyCode(context: Context? = null, currencyCode: String) =

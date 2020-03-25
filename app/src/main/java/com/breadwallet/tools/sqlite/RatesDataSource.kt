@@ -29,8 +29,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
-import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Utils
@@ -128,9 +128,16 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'"
             )
             cursor.moveToFirst()
+            val breadBox = BreadApp.getBreadBox()
+            val system = breadBox.getSystemUnsafe()
             while (!cursor.isAfterLast) {
                 val curEntity = cursorToCurrency(cursor)
-                if (!WalletsMaster.getInstance().isIsoCrypto(app, curEntity.code)) currencies.add(curEntity)
+                val isCrypto = system?.wallets?.none {
+                    it.currency.code.equals(curEntity.code, true)
+                } ?: true
+                if (!isCrypto) {
+                    currencies.add(curEntity)
+                }
                 cursor.moveToNext()
             }
             // make sure to close the cursor

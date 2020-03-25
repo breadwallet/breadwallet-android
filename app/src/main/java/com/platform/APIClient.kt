@@ -43,7 +43,6 @@ import androidx.annotation.VisibleForTesting
 import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Key
-import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
@@ -482,18 +481,6 @@ class APIClient(private var context: Context, private val accountManager: BRAcco
             ExperimentsRepositoryImpl.refreshExperiments(context)
             val endTime = System.currentTimeMillis()
             logDebug("updateFeatureFlag: DONE in " + (endTime - startTime) + "ms")
-            itemFinished()
-        }
-
-        //update fee
-        BRExecutor.getInstance().forBackgroundTasks().execute {
-            val startTime = System.currentTimeMillis()
-            val wallets = ArrayList(WalletsMaster.getInstance().getAllWallets(context))
-            for (w in wallets) {
-                w.updateFee(context)
-            }
-            val endTime = System.currentTimeMillis()
-            logDebug("update fee: DONE in " + (endTime - startTime) + "ms")
             itemFinished()
         }
     }

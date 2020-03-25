@@ -27,17 +27,15 @@ package com.breadwallet.repository
 import android.content.Context
 import android.util.Log
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
+import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.sqlite.RatesDataSource
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.wallet.Interval
 import com.platform.network.service.CurrencyHistoricalDataClient.getHistoricalData
 import java.math.BigDecimal
-import java.util.ArrayList
-import java.util.LinkedHashSet
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
@@ -116,10 +114,9 @@ class RatesRepository private constructor(private val mContext: Context) {
         fiatCode: String
     ): BigDecimal? {
         //fiat rate for btc
-        val btcRate = getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, fiatCode)
+        val btcRate = getCurrencyByCode(btc, fiatCode)
         //Btc rate for the given crypto
-        val cryptoBtcRate =
-            getCurrencyByCode(cryptoCode, WalletBitcoinManager.BITCOIN_CURRENCY_CODE)
+        val cryptoBtcRate = getCurrencyByCode(cryptoCode, btc)
         if (btcRate == null) {
             Log.e(TAG, "getFiatForBch: No $fiatCode rates for BTC")
             return null
@@ -209,14 +206,8 @@ class RatesRepository private constructor(private val mContext: Context) {
     @get:Synchronized
     val allCurrencyCodesPossible: List<String>
         get() {
-            val currencyCodes = LinkedHashSet<String>()
-            for ((symbol) in BRConstants.DEFAULT_WALLETS) {
-                currencyCodes.add(symbol)
-            }
-            for (tokenItem in TokenUtil.getTokenItems(mContext)) {
-                currencyCodes.add(tokenItem.exchangeRateCurrencyCode)
-            }
-            return ArrayList(currencyCodes)
+            return TokenUtil.getTokenItems(mContext)
+                .map(TokenItem::exchangeRateCurrencyCode)
         }
 
     companion object {

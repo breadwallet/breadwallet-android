@@ -27,7 +27,6 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -35,62 +34,32 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
-
-import androidx.fragment.app.FragmentActivity;
-
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
 import com.breadwallet.crypto.Account;
-import com.breadwallet.legacy.presenter.customviews.BRDialogView;
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.logger.Logger;
-import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.platform.entities.WalletInfoData;
 import com.platform.interfaces.AccountMetaDataProvider;
 
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
 
 import static org.kodein.di.TypesKt.TT;
 
@@ -527,19 +496,11 @@ public final class BRKeyStore {
     }
 
     public static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
         AliasObject obj = ALIAS_OBJECT_MAP.get(PHRASE_ALIAS);
         return !(strToStore == null || strToStore.length == 0) && setData(context, strToStore, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode, true);
     }
 
     public static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.mAuthLoopBugHappened) {
-            showLoopBugMessage(context);
-            throw new UserNotAuthenticatedException();
-        }
         AliasObject obj = ALIAS_OBJECT_MAP.get(PHRASE_ALIAS);
         return getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, requestCode);
     }
@@ -916,61 +877,6 @@ public final class BRKeyStore {
             }
         }
         return bytes;
-    }
-
-    /**
-     * Show a dialog to the user explaining the loop bug.
-     *
-     * @param context The context
-     */
-    private static void showLoopBugMessage(final Context context) {
-        if (!bugMessageShowing) {
-            bugMessageShowing = true;
-            Log.e(TAG, "showLoopBugMessage: ");
-            String mess = context.getString(R.string.ErrorMessages_loopingLockScreen_android);
-
-            int startIndex = mess.indexOf(START_SPANNABLE_SYMBOL) - 1;
-            int endIndex = mess.indexOf(END_SPANNABLE_SYMBOL) - 1;
-            SpannableString spannableMessage = new SpannableString(mess.replace(START_SPANNABLE_SYMBOL, "")
-                    .replace(END_SPANNABLE_SYMBOL, ""));
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(View textView) {
-                    Log.e(TAG, "onClick: clicked on span!");
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.hideDialog();
-                            BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(context);
-                            UiUtils.showSupportFragment((FragmentActivity) context, BRConstants.FAQ_LOOP_BUG, wm);
-                        }
-                    });
-                }
-
-                @Override
-                public void updateDrawState(TextPaint ds) {
-                    super.updateDrawState(ds);
-                    ds.setUnderlineText(false);
-                }
-            };
-            spannableMessage.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            BRDialog.showCustomDialog(context, context.getString(R.string.JailbreakWarnings_title),
-                    spannableMessage, context.getString(R.string.AccessibilityLabels_close), null,
-                    new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            if (context instanceof Activity) {
-                                ((Activity) context).finish();
-                            }
-                        }
-                    }, null, new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            bugMessageShowing = false;
-                        }
-                    }, 0);
-        }
-
     }
 
     public static class AliasObject {

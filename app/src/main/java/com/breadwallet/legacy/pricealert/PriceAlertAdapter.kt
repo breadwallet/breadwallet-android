@@ -74,7 +74,8 @@ class PriceAlertAdapter(
                 .setScale(2, RoundingMode.HALF_EVEN)
                 .toString()
         val formattedValue by lazy {
-            CurrencyUtils.getFormattedAmount(context, toCurrencyCode, value.toBigDecimal())
+            ""
+            // TODO: CurrencyUtils.getFormattedAmount(context, toCurrencyCode, value.toBigDecimal())
         }
         return when {
             isPriceTargetType() -> when (direction) {

@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
 import com.breadwallet.legacy.presenter.activities.util.BRActivity;
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRAccountManager;
@@ -56,9 +54,7 @@ public class DisabledActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance().getCurrentWallet(DisabledActivity.this);
-                UiUtils.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
+                // TODO: Show support page BRConstants.FAQ_WALLET_DISABLE
             }
         });
 

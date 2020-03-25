@@ -3,11 +3,8 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.util.WalletDisplayUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -46,13 +43,6 @@ public class CurrencyUtils {
     private static final String POUND = "GBP";
     private static final String EURO = "EUR";
 
-    @Deprecated
-    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
-        // TODO: Once 40~ callers have been migrated to getFormattedCryptoAmount or getFormattedFiatAmount, delete this
-        //Use default (wallet's maxDecimal places)
-        return getFormattedAmount(app, iso, amount, -1);
-    }
-
     /**
      * @param app                       - the Context
      * @param iso                       - the iso for the currency we want to format the amount for
@@ -73,31 +63,29 @@ public class CurrencyUtils {
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
-        if (wallet != null) {
-            amount = wallet.getCryptoForSmallestCrypto(app, amount);
-            decimalFormatSymbols.setCurrencySymbol("");
+        /* TODO getCryptoForSmallestCrypto
+        amount = wallet.getCryptoForSmallestCrypto(app, amount);
+        decimalFormatSymbols.setCurrencySymbol("");
+        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        currencyFormat.setMaximumFractionDigits(maxDecimalPlacesForCrypto == -1 ? wallet.getMaxDecimalPlaces(app) : maxDecimalPlacesForCrypto);
+        currencyFormat.setMinimumFractionDigits(0);
+        return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
+         */
+        try {
+            Currency currency = Currency.getInstance(iso);
+            String symbol = currency.getSymbol();
+            decimalFormatSymbols.setCurrencySymbol(symbol);
             currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-            currencyFormat.setMaximumFractionDigits(maxDecimalPlacesForCrypto == -1 ? wallet.getMaxDecimalPlaces(app) : maxDecimalPlacesForCrypto);
-            currencyFormat.setMinimumFractionDigits(0);
-            return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
-        } else {
-            try {
-                Currency currency = Currency.getInstance(iso);
-                String symbol = currency.getSymbol();
-                decimalFormatSymbols.setCurrencySymbol(symbol);
-                currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-                currencyFormat.setNegativePrefix("-" + symbol);
-                currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-                currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Currency not found for " + iso, e);
-                BRReportsManager.reportBug(new IllegalArgumentException("Illegal currency code: " + iso));
-            }
-            return currencyFormat.format(amount);
+            currencyFormat.setNegativePrefix("-" + symbol);
+            currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+            currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Currency not found for " + iso, e);
+            BRReportsManager.reportBug(new IllegalArgumentException("Illegal currency code: " + iso));
         }
+        return currencyFormat.format(amount);
     }
 
     /**
@@ -128,37 +116,8 @@ public class CurrencyUtils {
         return currencyFormat.format(amount);
     }
 
-    public static String getSymbolByIso(Context app, String iso) {
-        String symbol;
-        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
-        if (wallet != null) {
-            symbol = wallet.getSymbol(app);
-        } else {
-            Currency currency;
-            try {
-                currency = Currency.getInstance(iso);
-            } catch (IllegalArgumentException e) {
-                currency = Currency.getInstance(Locale.getDefault());
-            }
-            symbol = currency.getSymbol();
-        }
-        return Utils.isNullOrEmpty(symbol) ? iso : symbol;
-    }
-
-    public static int getMaxDecimalPlaces(Context app, String iso) {
-        BaseWalletManager wallet = WalletsMaster.getInstance().getWalletByIso(app, iso);
-        if (wallet == null) {
-            Currency currency = Currency.getInstance(iso);
-            return currency.getDefaultFractionDigits();
-        } else {
-            return wallet.getMaxDecimalPlaces(app);
-        }
-
-    }
-
     public static boolean isBuyNotificationNeeded(Context context) {
         String fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso(context);
         return KRONE.equalsIgnoreCase(fiatCurrencyCode) || POUND.equalsIgnoreCase(fiatCurrencyCode) || EURO.equalsIgnoreCase(fiatCurrencyCode);
     }
-
 }

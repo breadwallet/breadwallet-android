@@ -55,6 +55,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.btc
 import com.platform.ConfirmTransactionMessage
 import com.platform.PlatformTransactionBus
 import com.platform.TransactionResultMessage
@@ -118,7 +119,7 @@ class WalletJs(
     @JavascriptInterface
     fun info() = nativePromiseFactory.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
-        val btcWallet = system.wallets.first { it.currency.code.equals("btc", true) }
+        val btcWallet = system.wallets.first { it.currency.isBitcoin() }
 
         val preferredCode = BRSharedPrefs.getPreferredFiatIso(context)
         val fiatCurrency = Currency.getInstance(preferredCode)
