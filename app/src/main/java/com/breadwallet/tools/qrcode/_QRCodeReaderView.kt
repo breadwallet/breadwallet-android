@@ -25,13 +25,11 @@
 package com.breadwallet.tools.qrcode
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
-
 
 private const val AUTO_FOCUS_PERIOD_MS = 500L
 
@@ -44,7 +42,6 @@ private const val AUTO_FOCUS_PERIOD_MS = 500L
  * of [AUTO_FOCUS_PERIOD_MS] is used and the back camera
  * is selected.
  */
-@UseExperimental(ExperimentalCoroutinesApi::class)
 fun QRCodeReaderView.scannedText(
     handleCamera: Boolean = false,
     configureView: QRCodeReaderView.() -> Unit = {

@@ -26,15 +26,12 @@ package com.platform
 
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ui.send.TransferField
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import java.math.BigDecimal
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object PlatformTransactionBus {
     private val messageChannel = BroadcastChannel<TransactionMessage>(BUFFERED)
 

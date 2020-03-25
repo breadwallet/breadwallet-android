@@ -53,8 +53,6 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -69,7 +67,6 @@ import com.breadwallet.crypto.Wallet as CryptoWallet
 
 private const val DATA_THROTTLE_MS = 500L
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenHandler(
     private val output: Consumer<E>,
     private val context: Context,

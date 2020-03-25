@@ -60,8 +60,8 @@ import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.tools.manager.updateRatesForCurrencies
-import com.breadwallet.tools.security.CryptoAccountManager
 import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.CryptoAccountManager
 import com.breadwallet.tools.security.KeyStoreStatus
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.threads.executor.BRExecutor
@@ -81,7 +81,6 @@ import com.platform.interfaces.WalletProvider
 import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -93,7 +92,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.kodein.di.DKodein
@@ -110,7 +108,6 @@ import java.io.UnsupportedEncodingException
 import java.util.Locale
 import java.util.regex.Pattern
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware {
 

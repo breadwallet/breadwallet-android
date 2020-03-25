@@ -34,8 +34,6 @@ import com.breadwallet.ui.addwallets.AddWallets.M
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
 import kotlinx.android.synthetic.main.controller_add_wallets.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -46,7 +44,6 @@ import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class AddWalletsController : BaseMobiusController<M, E, F>() {
 
     override val layoutId: Int = R.layout.controller_add_wallets

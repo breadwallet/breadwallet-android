@@ -37,7 +37,6 @@ import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.btc
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
@@ -48,7 +47,6 @@ import java.util.UUID
 
 // Suppress warnings about context usage, it remains to support legacy coe.
 @Suppress("UNUSED_PARAMETER")
-@UseExperimental(ExperimentalCoroutinesApi::class)
 object BRSharedPrefs {
     val TAG: String = BRSharedPrefs::class.java.name
 
@@ -65,6 +63,7 @@ object BRSharedPrefs {
     private const val PAPER_KEY_WRITTEN_DOWN = "phraseWritten"
     private const val PREFER_STANDARD_FEE = "favorStandardFee"
     private const val FEE_PREFERENCE = "feePreference"
+
     @VisibleForTesting
     const val RECEIVE_ADDRESS = "receive_address"
     private const val FEE_RATE = "feeRate"

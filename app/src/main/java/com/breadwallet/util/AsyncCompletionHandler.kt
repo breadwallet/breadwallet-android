@@ -25,16 +25,13 @@
 package com.breadwallet.util
 
 import com.breadwallet.crypto.utility.CompletionHandler
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
-import java.lang.Exception
 
 suspend fun <R, E : Exception> asyncApiCall(
     body: CompletionHandler<R, E>.() -> Unit
 ): R = AsyncCompletionHandler<R, E>().apply(body).await()
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class AsyncCompletionHandler<R, E : Exception> : CompletionHandler<R, E> {
 
     private val resultChannel = Channel<R>(RENDEZVOUS)

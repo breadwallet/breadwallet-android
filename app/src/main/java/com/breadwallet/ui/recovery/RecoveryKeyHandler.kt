@@ -39,15 +39,12 @@ import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.text.Normalizer
 import java.util.Locale
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class RecoveryKeyHandler(
     private val output: Consumer<E>,
     private val breadBox: BreadBox,
