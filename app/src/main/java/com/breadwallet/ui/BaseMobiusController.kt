@@ -41,17 +41,16 @@ import com.spotify.mobius.Update
 import com.spotify.mobius.android.AndroidLogger
 import com.spotify.mobius.android.MobiusAndroid
 import com.spotify.mobius.disposables.Disposable
+import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.DispatcherWorkRunner
 import drewcarlson.mobius.flow.FlowMobius
 import drewcarlson.mobius.flow.FlowTransformer
 import drewcarlson.mobius.flow.flowConnectable
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.transform
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -67,7 +66,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.provider
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 abstract class BaseMobiusController<M, E, F>(
     args: Bundle? = null
@@ -91,10 +89,13 @@ abstract class BaseMobiusController<M, E, F>(
 
     /** The default model used to construct [loopController]. */
     abstract val defaultModel: M
+
     /** The update function used to construct [loopFactory]. */
     abstract val update: Update<M, E, F>
+
     /** The init function used to construct [loopFactory]. */
     open val init: Init<M, F> = Init { First.first(it) }
+
     /** The effect handler used to construct [loopFactory]. */
     open val effectHandler: Connectable<F, E>? = null
 

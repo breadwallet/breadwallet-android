@@ -36,13 +36,11 @@ import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
-import com.platform.entities.TxMetaData
 import com.platform.entities.TokenListMetaData
+import com.platform.entities.TxMetaData
 import com.platform.entities.TxMetaDataEmpty
 import com.platform.entities.TxMetaDataValue
 import com.platform.entities.WalletInfoData
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -55,7 +53,6 @@ import org.json.JSONObject
 import java.util.Date
 
 @Suppress("TooManyFunctions")
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class MetaDataManager(
     private val storeProvider: KVStoreProvider
 ) : WalletProvider, AccountMetaDataProvider {

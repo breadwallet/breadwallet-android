@@ -57,8 +57,6 @@ import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -81,7 +79,6 @@ import java.util.concurrent.Executors
 private const val DEFAULT_THROTTLE_MS = 100L
 private const val AGGRESSIVE_THROTTLE_MS = 300L
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions")
 internal class CoreBreadBox(
     private val storageFile: File,

@@ -40,7 +40,6 @@ import com.breadwallet.ui.importwallet.Import.M
 import com.breadwallet.ui.importwallet.Import.M.LoadingState
 import com.breadwallet.ui.scanner.ScannerController
 import kotlinx.android.synthetic.main.controller_import_wallet.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -60,7 +59,6 @@ private const val CONFIRM_IMPORT_DIALOG = "confirm_import"
 private const val IMPORT_SUCCESS_DIALOG = "import_success"
 
 @Suppress("TooManyFunctions")
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class ImportController(
     args: Bundle? = null
 ) : BaseMobiusController<M, E, F>(args),

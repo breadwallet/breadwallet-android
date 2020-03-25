@@ -35,7 +35,6 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -43,7 +42,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import java.math.BigDecimal
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class BreadBoxEffectHandler(
     private val output: Consumer<BreadBoxEvent>,
     private val currencyCode: String,

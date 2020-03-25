@@ -72,8 +72,6 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -94,7 +92,6 @@ private const val RATE_UPDATE_MS = 60_000L
 
 private const val XRP_DESTINATION_TAG = "DestinationTag"
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object SendSheetHandler {
 
     @Suppress("LongParameterList")

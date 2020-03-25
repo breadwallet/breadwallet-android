@@ -35,8 +35,6 @@ import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -44,7 +42,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TxDetailsHandler(
     private val output: Consumer<E>,
     private val context: Context
