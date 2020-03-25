@@ -6,7 +6,7 @@ variables:
   SIGNING_PASSWORD: qwerty
   SIGNING_ALIAS: key0
   SIGNING_ALIAS_PASSWORD: qwerty
-  NATIVE_REVIEW_URL: https://breadwallet.gitlab.io/-/native-wallet-review/-/jobs/352606597/artifacts/build/distributions/index.html
+  NATIVE_REVIEW_URL: https://breadwallet.gitlab.io/-/native-wallet-review/-/jobs/484039874/artifacts/build/distributions/index.html
 
 cache:
   key: ${CI_PROJECT_ID}-2
