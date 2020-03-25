@@ -46,6 +46,7 @@ import com.breadwallet.crypto.events.wallet.WalletTransferSubmittedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
+import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncRecommendedEvent
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
@@ -393,6 +394,10 @@ internal class CoreBreadBox(
                         )
                     )
                 }
+            }
+            is WalletManagerSyncRecommendedEvent -> {
+                logDebug("Syncing '${manager.currency.code}' to ${event.depth}")
+                manager.syncToDepth(event.depth)
             }
         }
     }
