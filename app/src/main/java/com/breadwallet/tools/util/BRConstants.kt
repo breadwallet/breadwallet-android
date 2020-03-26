@@ -38,11 +38,6 @@ object BRConstants {
     const val FALSE = "false"
 
     /**
-     * Native library name
-     */
-    const val NATIVE_LIB_NAME = "core"
-
-    /**
      * Permissions
      */
     const val CAMERA_REQUEST_ID = 34
