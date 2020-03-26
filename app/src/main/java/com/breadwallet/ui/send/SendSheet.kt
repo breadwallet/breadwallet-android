@@ -237,7 +237,7 @@ object SendSheet {
                 val hasRate = fiatPricePerUnit > BigDecimal.ZERO
                 val hasFiatAmount = newFiatAmount > BigDecimal.ZERO
                 newAmount = if (hasRate && hasFiatAmount) {
-                    newFiatAmount.setScale(fiatPricePerUnit.scale())
+                    newFiatAmount.setScale(MAX_DIGITS)
                         .divide(fiatPricePerUnit, BRConstants.ROUNDING_MODE)
                 } else {
                     amount
@@ -494,12 +494,14 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         memo = message,
         transferFields = when {
             destinationTag != null ->
-                listOf(TransferField(
-                    key = TransferField.DESTINATION_TAG,
-                    required = false,
-                    invalid = false,
-                    value = destinationTag
-                ))
+                listOf(
+                    TransferField(
+                        key = TransferField.DESTINATION_TAG,
+                        required = false,
+                        invalid = false,
+                        value = destinationTag
+                    )
+                )
             else -> emptyList()
         }
     )
@@ -514,12 +516,14 @@ fun CryptoRequest.asSendSheetModel(fiatCode: String) =
         targetAddress = if (hasAddress()) getAddress(false) else "",
         transferFields = when {
             destinationTag != null ->
-                listOf(TransferField(
-                    key = TransferField.DESTINATION_TAG,
-                    required = false,
-                    invalid = false,
-                    value = destinationTag
-                ))
+                listOf(
+                    TransferField(
+                        key = TransferField.DESTINATION_TAG,
+                        required = false,
+                        invalid = false,
+                        value = destinationTag
+                    )
+                )
             else -> emptyList()
         }
     )
