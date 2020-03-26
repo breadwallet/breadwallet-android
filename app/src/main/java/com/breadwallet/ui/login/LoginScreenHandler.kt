@@ -77,7 +77,6 @@ class LoginScreenHandler(
     private fun loadLoginPreferences() {
         output.accept(
             E.OnLoginPreferencesLoaded(
-                BRSharedPrefs.wasAppBackgroundedFromHome(),
                 BRSharedPrefs.getCurrentWalletCurrencyCode()
             )
         )

@@ -173,11 +173,6 @@ public class PinFragment extends Fragment implements PinLayout.PinLayoutListener
 
     @Override
     public void onPinLocked() {
-        if (getActivity() instanceof BRActivity) {
-            ((BRActivity)getActivity()).showWalletDisabled();
-        } else {
-            throw new IllegalStateException("PinFragment must be hosted by BRActivity");
-        }
     }
 
 }

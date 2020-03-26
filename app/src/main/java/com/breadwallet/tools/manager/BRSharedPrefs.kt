@@ -92,7 +92,6 @@ object BRSharedPrefs {
     private const val NEW_WALLET = "newWallet"
     private const val PROMPT_PREFIX = "prompt_"
     private const val TRUST_NODE_PREFIX = "trustNode_"
-    private const val APP_BACKGROUNDED_FROM_HOME = "appBackgroundedFromHome"
     private const val DEBUG_HOST = "debug_host"
     private const val DEBUG_SERVER_BUNDLE = "debug_server_bundle"
     private const val DEBUG_WEB_PLATFORM_URL = "debug_web_platform_url"
@@ -420,14 +419,6 @@ object BRSharedPrefs {
     @JvmStatic
     fun putTrustNode(context: Context? = null, iso: String, trustNode: String) =
         brdPrefs.edit { putString(TRUST_NODE_PREFIX + iso.toUpperCase(), trustNode) }
-
-    @JvmStatic
-    fun wasAppBackgroundedFromHome(context: Context? = null): Boolean =
-        brdPrefs.getBoolean(APP_BACKGROUNDED_FROM_HOME, true)
-
-    @JvmStatic
-    fun putAppBackgroundedFromHome(context: Context? = null, fromHome: Boolean) =
-        brdPrefs.edit { putBoolean(APP_BACKGROUNDED_FROM_HOME, fromHome) }
 
     @JvmStatic
     fun putFCMRegistrationToken(context: Context? = null, token: String) =

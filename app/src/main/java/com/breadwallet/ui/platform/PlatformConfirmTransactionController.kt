@@ -133,9 +133,8 @@ class PlatformConfirmTransactionController(
         router.popController(this@PlatformConfirmTransactionController)
     }
 
-    override fun onAuthenticationFailed(): Boolean {
+    override fun onAuthenticationFailed() {
         handleNotAuthenticated()
-        return true
     }
 
     override fun onAuthenticationCancelled() {
