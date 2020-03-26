@@ -37,15 +37,22 @@ import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.pow
 
 const val PIN_LENGTH = 6
@@ -64,6 +71,7 @@ interface BRAccountManager {
     fun isMigrationRequired(): Boolean
     fun getKeyStoreStatus(): KeyStoreStatus
     fun getAccountState(): AccountState
+    fun accountStateChanges(): Flow<AccountState>
 
     suspend fun getPhrase(): ByteArray?
     fun getAccount(): Account?
@@ -74,6 +82,8 @@ interface BRAccountManager {
     fun verifyPinCode(pinCode: String): Boolean
     fun hasPinCode(): Boolean
     fun pinCodeNeedsUpgrade(): Boolean
+
+    fun lockAccount()
 
     fun getToken(): String?
     fun putToken(token: String)
@@ -113,7 +123,9 @@ class CryptoAccountManager(
     private val mutex = Mutex()
 
     private val resultChannel = Channel<Int>()
+    private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
+    private val locked = AtomicBoolean(false)
     private var token: String? = null
     private var jwt: String? = null
     private var jwtExp: Long? = null
@@ -190,11 +202,20 @@ class CryptoAccountManager(
         if (getAccount() == null) return AccountState.Uninitialized
         val failCount = getFailCount()
         val disabledUntil = disabledUntil(failCount, getFailTimestamp())
-        if (failCount >= MAX_UNLOCK_ATTEMPTS && disabledUntil > BRSharedPrefs.getSecureTime()) {
-            return AccountState.Disabled(disabledUntil)
+        return if (failCount >= MAX_UNLOCK_ATTEMPTS && disabledUntil > BRSharedPrefs.getSecureTime()) {
+            AccountState.Disabled(disabledUntil)
+        } else if (locked.get()) {
+            AccountState.Locked
+        } else {
+            AccountState.Enabled
         }
-        return AccountState.Enabled
     }
+
+    override fun accountStateChanges(): Flow<AccountState> =
+        stateChangeChannel.asFlow()
+            .onStart { emit(Unit) }
+            .map { getAccountState() }
+            .distinctUntilChanged()
 
     override suspend fun getPhrase(): ByteArray? =
         executeWithAuth { BRKeyStore.getPhrase(context, GET_PHRASE_RC) }
@@ -224,17 +245,21 @@ class CryptoAccountManager(
         check(phrase.contentEquals(storedPhrase)) { "Phrase does not match." }
         putPinCode("")
         putFailCount(0)
+        locked.set(false)
     }
 
     override fun verifyPinCode(pinCode: String) =
         if (pinCode == getPinCode()) {
             putFailCount(0)
+            locked.set(false)
+            stateChangeChannel.offer(Unit)
             true
         } else {
             val failCount = getFailCount()
             putFailCount(failCount + 1)
             if (failCount >= MAX_UNLOCK_ATTEMPTS) {
                 putFailTimestamp(System.currentTimeMillis())
+                stateChangeChannel.offer(Unit)
             }
             false
         }
@@ -243,6 +268,11 @@ class CryptoAccountManager(
 
     override fun pinCodeNeedsUpgrade() =
         getPinCode().let { it.isNotBlank() && it.length != PIN_LENGTH }
+
+    override fun lockAccount() {
+        locked.set(true)
+        stateChangeChannel.offer(Unit)
+    }
 
     @Synchronized
     override fun getToken() = token ?: store.getString(KEY_TOKEN, null)
@@ -297,7 +327,7 @@ class CryptoAccountManager(
                     creationDate,
                     BRSharedPrefs.getDeviceId()
                 )
-                
+
                 checkNotNull(account) { "Failed to create Account." }
 
                 val apiKey = apiKey ?: Key.createForBIP32ApiAuth(
@@ -318,6 +348,8 @@ class CryptoAccountManager(
                     )
                 ) { "Invalid wallet." }
 
+                locked.set(false)
+                stateChangeChannel.offer(Unit)
                 logInfo("Account created.")
                 account
             } catch (e: Exception) {

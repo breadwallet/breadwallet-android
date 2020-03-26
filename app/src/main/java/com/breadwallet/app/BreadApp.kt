@@ -271,7 +271,7 @@ class BreadApp : Application(), KodeinAware {
 
         // TODO: Refactor so this does not store the current activity like this.
         @JvmStatic
-        fun setBreadContext(app: Activity) {
+        fun setBreadContext(app: Activity?) {
             mCurrentActivity = app
         }
 

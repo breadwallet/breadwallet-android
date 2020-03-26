@@ -89,7 +89,7 @@ class HomeController(
             Connectable { output ->
                 HomeScreenHandler(
                     output,
-                    activity as BRActivity,
+                    activity!!,
                     direct.instance(),
                     direct.instance(),
                     direct.instance()

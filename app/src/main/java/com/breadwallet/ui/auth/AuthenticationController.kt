@@ -61,12 +61,8 @@ class AuthenticationController(
 
         /**
          * Called when the user exhausts all authentication attempts.
-         *
-         * Return true if the failure was consumed to prevent the
-         * application from locking itself. The default is false
-         * and this return value may be removed in the future.
          */
-        fun onAuthenticationFailed(): Boolean = false
+        fun onAuthenticationFailed() = Unit
 
         /** Called when the user cancels the authentication request. */
         fun onAuthenticationCancelled() = Unit
@@ -137,11 +133,7 @@ class AuthenticationController(
                     }
 
                     override fun onPinLocked() {
-                        if (listener?.onAuthenticationFailed() == false) {
-                            // TODO: This feels hidden in here, we should move this somewhere
-                            //  more explicit that wont complicate testing
-                            (activity as? BRActivity)?.showWalletDisabled()
-                        }
+                        listener?.onAuthenticationFailed()
                         router.popCurrentController()
                     }
                 })
