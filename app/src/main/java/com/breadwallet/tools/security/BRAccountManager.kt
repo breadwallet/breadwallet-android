@@ -28,6 +28,7 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
+import androidx.core.content.edit
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
@@ -157,8 +158,8 @@ class CryptoAccountManager(
 
         checkNotNull(apiKey) { "Failed to generate Api Key." }
 
-        store.write { e ->
-            e.putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
+        store.edit {
+            putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
         }
         val creationDate = recoverCreationDate()
         return initAccount(phrase, creationDate, apiKey)
@@ -300,9 +301,9 @@ class CryptoAccountManager(
     override fun getToken() = token ?: store.getString(KEY_TOKEN, null)
 
     @Synchronized
-    override fun putToken(tokenVal: String) {
-        store.write { e -> e.putString(KEY_TOKEN, tokenVal) }
-        token = tokenVal
+    override fun putToken(token: String) {
+        store.edit { putString(KEY_TOKEN, token) }
+        this.token = token
     }
 
     @Synchronized
@@ -314,13 +315,13 @@ class CryptoAccountManager(
         }
 
     @Synchronized
-    override fun putBdbJwt(jwtVal: String, expVal: Long) {
-        store.write { e ->
-            e.putString(KEY_BDB_JWT, jwtVal)
-            e.putLong(KEY_BDB_JWT_EXP, expVal)
+    override fun putBdbJwt(jwt: String, exp: Long) {
+        store.edit {
+            putString(KEY_BDB_JWT, jwt)
+            putLong(KEY_BDB_JWT_EXP, exp)
         }
-        jwt = jwtVal
-        jwtExp = expVal
+        this.jwt = jwt
+        this.jwtExp = exp
     }
 
     @Synchronized
@@ -352,20 +353,20 @@ class CryptoAccountManager(
 
                 checkNotNull(account) { "Failed to create Account." }
 
-                val apiKey = apiKey ?: Key.createForBIP32ApiAuth(
+                val apiAuthKey = apiKey ?: Key.createForBIP32ApiAuth(
                     phrase,
                     Key.getDefaultWordList()
                 ).orNull()
 
-                checkNotNull(apiKey) { "Failed to create Api Key." }
+                checkNotNull(apiAuthKey) { "Failed to create Api Key." }
 
-                writeAccount(account, apiKey, creationDate)
+                writeAccount(account, apiAuthKey, creationDate)
 
                 check(
                     validateAccount(
                         storedPhrase,
                         account,
-                        apiKey,
+                        apiAuthKey,
                         creationDate.time
                     )
                 ) { "Invalid wallet." }
@@ -383,7 +384,7 @@ class CryptoAccountManager(
     private fun getPinCode() = store.getString(KEY_PIN_CODE, "") ?: ""
 
     private fun putEthPublicKey(ethPubKey: ByteArray) =
-        store.write { e -> e.putBytes(KEY_ETH_PUB_KEY, ethPubKey) }
+        store.edit { putBytes(KEY_ETH_PUB_KEY, ethPubKey) }
 
     private fun getWalletCreationTime() = store.getLong(KEY_CREATION_TIME, 0L)
 
@@ -394,17 +395,17 @@ class CryptoAccountManager(
     }
 
     private fun putPinCode(pinCode: String) {
-        store.write { e -> e.putString(KEY_PIN_CODE, pinCode) }
+        store.edit { putString(KEY_PIN_CODE, pinCode) }
     }
 
     private fun getFailCount() = store.getInt(KEY_FAIL_COUNT, 0)
 
-    private fun putFailCount(count: Int) = store.write { e -> e.putInt(KEY_FAIL_COUNT, count) }
+    private fun putFailCount(count: Int) = store.edit { putInt(KEY_FAIL_COUNT, count) }
 
     private fun getFailTimestamp(): Long = store.getLong(KEY_FAIL_TIMESTAMP, 0)
 
     private fun putFailTimestamp(timestamp: Long) =
-        store.write { e -> e.putLong(KEY_FAIL_TIMESTAMP, timestamp) }
+        store.edit { putLong(KEY_FAIL_TIMESTAMP, timestamp) }
 
     private fun startDisabledTimer(failTimestamp: Long) {
         if (failTimestamp > 0) {
@@ -490,10 +491,10 @@ class CryptoAccountManager(
         apiKey: Key,
         creationDate: Date
     ) {
-        store.write { e ->
-            e.putBytes(KEY_ACCOUNT, account.serialize())
-            e.putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
-            e.putLong(KEY_CREATION_TIME, creationDate.time)
+        store.edit {
+            putBytes(KEY_ACCOUNT, account.serialize())
+            putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
+            putLong(KEY_CREATION_TIME, creationDate.time)
         }
     }
 
@@ -511,18 +512,12 @@ class CryptoAccountManager(
 
     private fun wipeAccount() {
         BRKeyStore.deletePhrase(context)
-        store.write { e ->
-            e.putString(KEY_ACCOUNT, null)
-            e.putString(KEY_AUTH_KEY, null)
-            e.putLong(KEY_CREATION_TIME, 0)
+        store.edit {
+            putString(KEY_ACCOUNT, null)
+            putString(KEY_AUTH_KEY, null)
+            putLong(KEY_CREATION_TIME, 0)
         }
     }
-}
-
-fun SharedPreferences.write(action: (SharedPreferences.Editor) -> Unit) {
-    edit().apply {
-        action(this)
-    }.apply()
 }
 
 fun SharedPreferences.getBytes(key: String, defaultValue: ByteArray?): ByteArray? {
