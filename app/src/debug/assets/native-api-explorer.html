@@ -16,10 +16,10 @@
         </p>
         <p>
             <label for="amount">Amount</label>
-            <input id="amount" type="text" value="100000"/>
+            <input id="amount" type="text" value="1"/>
         </p>
         <p>
-            <button onclick="submitTransaction()">Submit</button>
+            <button onclick="submitTransaction(); return false;">Submit</button>
         </p>
         <p>
             <span id="txOutput"></span>
@@ -63,14 +63,16 @@
         let toAddress = document.getElementById("toAddress").value;
         let currencyCode = document.getElementById("currencyCode").value;
         let amount = document.getElementById("amount").value;
+        let amountStr = JSON.stringify({ "numerator" : amount, "denominator": "1" });
 
-        WalletJs.transaction(toAddress, "", amount, currencyCode)
+        WalletJs.transaction(toAddress, "", amountStr, currencyCode)
             .then((transaction) => {
                 txOutput.innerText = `Hash: ${transaction.hash}\n Transmitted: ${transaction.transmitted}`;
             })
             .catch((error) => {
                 txOutput.innerText = error;
             })
+
     }
 
 </script>
