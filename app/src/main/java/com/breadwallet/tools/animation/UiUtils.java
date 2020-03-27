@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.legacy.presenter.activities.DisabledActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.ui.MainActivity;
 import com.breadwallet.ui.browser.PlatformBrowserActivity;
@@ -137,14 +136,6 @@ public class UiUtils {
     public static void openRewardsWebView(Activity activity) {
         startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
                 R.anim.empty_300, R.anim.fade_up, R.anim.exit_to_right);
-    }
-
-    public static void showWalletDisabled(Activity app) {
-        Intent intent = new Intent(app, DisabledActivity.class);
-        app.startActivity(intent);
-        app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-        Log.e(TAG, "showWalletDisabled: " + app.getClass().getName());
-
     }
 
     public static boolean isLast(Activity app) {

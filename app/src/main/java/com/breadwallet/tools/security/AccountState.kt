@@ -29,7 +29,9 @@
 package com.breadwallet.tools.security
 
 sealed class AccountState {
-    data class Disabled(val until: Long) : AccountState()
+    data class Disabled(
+        val seconds: Int
+    ) : AccountState()
     object Enabled : AccountState()
     object Locked : AccountState()
     object Uninitialized : AccountState()

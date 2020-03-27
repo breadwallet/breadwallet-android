@@ -37,12 +37,10 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.presenter.activities.DisabledActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.animation.BRDialog
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.AccountState
 import com.breadwallet.tools.security.BRAccountManager
@@ -51,6 +49,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.tools.util.asLink
+import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
@@ -103,11 +102,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     private lateinit var router: Router
 
-    private val resumedJob = SupervisorJob()
-    private val resumedScope = CoroutineScope(Default + resumedJob)
-
-    private val pausedJob = SupervisorJob()
-    private val pausedScope = CoroutineScope(Default + pausedJob)
+    private val resumedScope = CoroutineScope(Default + SupervisorJob())
+    private val pausedScope = CoroutineScope(Default + SupervisorJob())
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
@@ -148,15 +144,16 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (!router.hasRootController()) {
             val rootController = when {
                 accountManager.isMigrationRequired() -> MigrateController()
-                hasWallet -> {
-                    if (accountManager.hasPinCode()) {
+                else -> when (accountManager.getAccountState()) {
+                    is AccountState.Disabled -> DisabledController()
+                    is AccountState.Uninitialized -> IntroController()
+                    else -> if (accountManager.hasPinCode()) {
                         val intentUrl = processIntentData(intent)
                         LoginController(intentUrl)
                     } else {
                         InputPinController(OnCompleteAction.GO_HOME)
                     }
                 }
-                else -> IntroController()
             }
             router.setRoot(
                 RouterTransaction.with(rootController)
@@ -180,7 +177,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onResume() {
         super.onResume()
         BreadApp.setBreadContext(this)
-        pausedJob.cancelChildren()
+        pausedScope.coroutineContext.cancelChildren()
 
         accountManager.accountStateChanges()
             .map { processAccountState(it) }
@@ -205,7 +202,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onPause() {
         super.onPause()
         BreadApp.setBreadContext(null)
-        resumedJob.cancelChildren()
+        resumedScope.coroutineContext.cancelChildren()
         pausedScope.launch {
             delay(LOCK_TIMEOUT)
             accountManager.lockAccount()
@@ -312,23 +309,45 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (accountManager.isAccountInitialized() && router.hasRootController()) {
             when (accountState) {
                 AccountState.Locked -> lockApp()
-                is AccountState.Disabled -> UiUtils.showWalletDisabled(this)
+                is AccountState.Disabled -> disableApp()
             }
         }
     }
 
+    private fun isBackstackDisabled() = router.backstack
+        .map(RouterTransaction::controller)
+        .filterIsInstance<DisabledController>()
+        .any()
+
+    private fun isBackstackLocked() =
+        router.backstack.lastOrNull()?.controller()?.let { controller ->
+            controller is LoginController || controller is InputPinController
+        } ?: false
+
+    private fun disableApp() {
+        if (isBackstackDisabled()) return
+
+        logDebug("Disabling backstack.")
+        router.pushController(
+            RouterTransaction.with(DisabledController())
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+        )
+    }
+
     private fun lockApp() {
-        if (router.backstack.lastOrNull()?.controller() is LoginController) {
-            return
-        }
+        if (isBackstackDisabled() || isBackstackLocked()) return
 
         val controller = when {
-            accountManager.hasPinCode() -> LoginController(showHome = false)
+            accountManager.hasPinCode() ->
+                LoginController(showHome = router.backstackSize == 0)
             else -> InputPinController(
                 onComplete = OnCompleteAction.GO_HOME,
                 skipWriteDown = BRSharedPrefs.getPhraseWroteDown()
             )
         }
+
+        logDebug("Locking with controller=$controller")
 
         router.pushController(
             RouterTransaction.with(controller)
