@@ -37,6 +37,7 @@ import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Delete
 import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.ui.send.SendSheet.M
+import com.breadwallet.util.isEthereum
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -173,8 +174,16 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         val isBalanceTooLow = model.isTotalCostOverBalance
         val isAmountBlank = model.rawAmount.isBlank() || model.amount.isZero()
         val isTargetBlank = model.targetAddress.isBlank()
+        val isFeeWalletBalanceToLow = when {
+            model.currencyCode.equals(model.feeCurrencyCode, true) -> false
+            else -> model.fiatNetworkFee > model.feeCurrencyBalance
+        }
 
-        if (isBalanceTooLow || isAmountBlank || isTargetBlank) {
+        if (isBalanceTooLow || isAmountBlank || isTargetBlank || isFeeWalletBalanceToLow) {
+            val effects = mutableSetOf<F>()
+            if (isFeeWalletBalanceToLow && model.feeCurrencyCode.isEthereum()) {
+                effects.add(F.ShowEthTooLowForTokenFee(model.feeCurrencyCode, model.networkFee))
+            }
             return next(
                 model.copy(
                     amountInputError = when {
@@ -186,7 +195,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                         isTargetBlank -> M.InputError.Empty
                         else -> null
                     }
-                )
+                ),
+                effects
             )
         }
         return when {
