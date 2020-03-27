@@ -61,7 +61,7 @@ object WalletScreen {
         val isSyncing: Boolean = false,
         val hasInternet: Boolean = true,
         val priceChartInterval: Interval = Interval.ONE_YEAR,
-        val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
+        @Redacted val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
         val selectedPriceDataPoint: PriceDataPoint? = null,
         val priceChange: PriceChange? = null
     ) {

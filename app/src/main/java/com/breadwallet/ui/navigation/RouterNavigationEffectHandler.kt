@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.navigation
 
-import android.content.Intent
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -35,15 +34,14 @@ import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
-import com.breadwallet.ui.settings.analytics.ShareDataController
+import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.tools.util.btc
-import com.breadwallet.ui.MainActivity
-import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
@@ -60,6 +58,8 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.about.AboutController
+import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
@@ -218,16 +218,17 @@ class RouterNavigationEffectHandler(
         val link = effect.url.asLink()
         if (link == null) {
             logError("Failed to parse url, ${effect.url}")
-            router.replaceTopController(HomeController().asTransaction())
+            showLaunchScreen(effect.authenticated)
             return
         }
-        if (router.backstack.lastOrNull()?.controller() is LoginController) {
+        val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
+        if (isTopLogin && effect.authenticated) {
             router.popCurrentController()
         }
         when (link) {
             is Link.CryptoRequestUrl -> {
                 val sendController = SendSheetController(link).asTransaction()
-                router.pushWithStackIfEmpty(sendController) {
+                router.pushWithStackIfEmpty(sendController, effect.authenticated) {
                     listOf(
                         HomeController().asTransaction(),
                         WalletController(link.currencyCode).asTransaction(
@@ -240,7 +241,7 @@ class RouterNavigationEffectHandler(
             }
             is Link.BreadUrl.ScanQR -> {
                 val controller = ScannerController().asTransaction()
-                router.pushWithStackIfEmpty(controller) {
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(
                         HomeController().asTransaction(),
                         controller
@@ -249,19 +250,71 @@ class RouterNavigationEffectHandler(
             }
             is Link.ImportWallet -> {
                 val controller = ImportController().asTransaction()
-                router.pushWithStackIfEmpty(controller) {
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(
                         HomeController().asTransaction(),
                         controller
                     )
                 }
             }
-            else -> {
-                Intent(router.activity, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .putExtra(MainActivity.EXTRA_DATA, effect.url)
-                    .run(router.activity!!::startActivity)
+            is Link.PlatformUrl -> {
+                val controller = WebController(link.url).asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
             }
+            is Link.PlatformDebugUrl -> {
+                val context = router.activity!!.applicationContext
+                if (!link.webBundleUrl.isNullOrBlank()) {
+                    ServerBundlesHelper.setWebPlatformDebugURL(context, link.webBundleUrl)
+                } else if (!link.webBundle.isNullOrBlank()) {
+                    ServerBundlesHelper.setDebugBundle(
+                        context,
+                        ServerBundlesHelper.Type.WEB,
+                        link.webBundle
+                    )
+                }
+
+                showLaunchScreen(effect.authenticated)
+            }
+            Link.BreadUrl.ScanQR -> {
+                val controller = ScannerController().asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.WalletPairUrl -> {
+                val context = router.activity!!.applicationContext
+                MessageExchangeService.enqueueWork(
+                    context, MessageExchangeService.createIntent(
+                        context,
+                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
+                        link.pairingMetaData
+                    )
+                )
+                showLaunchScreen(effect.authenticated)
+            }
+            else -> {
+                logError("Failed to route deeplink, going Home.")
+                showLaunchScreen(effect.authenticated)
+            }
+        }
+    }
+
+    private fun showLaunchScreen(isAuthenticated: Boolean) {
+        if (!router.hasRootController()) {
+            val root = if (isAuthenticated) {
+                HomeController()
+            } else {
+                LoginController(showHome = true)
+            }
+            router.setRoot(root.asTransaction())
         }
     }
 
@@ -493,12 +546,21 @@ class RouterNavigationEffectHandler(
 
     private inline fun Router.pushWithStackIfEmpty(
         topTransaction: RouterTransaction,
+        isAuthenticated: Boolean,
         createStack: () -> List<RouterTransaction>
     ) {
         if (backstackSize <= 1) {
-            setBackstack(createStack(), FadeChangeHandler())
+            val stack = if (isAuthenticated) {
+                createStack()
+            } else {
+                createStack() + LoginController(showHome = false).asTransaction()
+            }
+            setBackstack(stack, FadeChangeHandler())
         } else {
             pushController(topTransaction)
+            if (!isAuthenticated) {
+                pushController(LoginController(showHome = false).asTransaction())
+            }
         }
     }
 }

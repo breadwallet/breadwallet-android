@@ -104,7 +104,7 @@ class HomeController(
                         NavigationEffect.GoToInAppMessage(effect.inAppMessage)
                     F.GoToBuy -> NavigationEffect.GoToBuy
                     F.GoToTrade -> NavigationEffect.GoToTrade
-                    is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url)
+                    is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url, true)
                     F.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
                     F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
                         OnCompleteAction.GO_HOME

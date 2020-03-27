@@ -76,7 +76,7 @@ suspend fun BreadApp.trackAddressMismatch(breadBox: BreadBox) {
         return
     }
 
-    if (coreAddressOld != ethWallet.target) {
+    if (!coreAddressOld.toString().equals(ethWallet.target.toString(), true)) {
         val oldEthAddress = coreAddressOld.toString()
         val bdb by instance<BlockchainDb>()
         val metaDataManager by instance<AccountMetaDataProvider>()
