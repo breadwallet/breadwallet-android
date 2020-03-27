@@ -30,7 +30,6 @@ import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
@@ -39,28 +38,22 @@ import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
-import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.AccountState
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.tools.util.Link
-import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.Utils
-import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.disabled.DisabledController
-import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import com.breadwallet.ui.scanner.ScannerController
-import com.breadwallet.ui.send.SendSheetController
-import com.breadwallet.ui.web.WebController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -101,6 +94,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private val accountManager by instance<BRAccountManager>()
 
     private lateinit var router: Router
+    // NOTE: Used only to centralize deep link navigation handling.
+    private var routerNavHandler: RouterNavigationEffectHandler? = null
 
     private val resumedScope = CoroutineScope(Default + SupervisorJob())
     private val pausedScope = CoroutineScope(Default + SupervisorJob())
@@ -115,6 +110,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
+            routerNavHandler = RouterNavigationEffectHandler(router)
         })
 
         if (!isDeviceStateValid) {
@@ -231,24 +227,11 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         intent ?: return
 
         val data = processIntentData(intent) ?: ""
-        if (data.isNotBlank()) {
-            val hasNoRoot = !router.hasRootController()
-            val topIsLogin = router.backstack.lastOrNull()?.controller() is LoginController
-            val controller = if (hasNoRoot || !topIsLogin) {
-                LoginController(data)
-            } else {
-                data.asLink()?.run(this::handleLink)
-            } ?: return
-
-            val transaction = RouterTransaction.with(controller)
-                .pushChangeHandler(FadeChangeHandler())
-                .popChangeHandler(FadeChangeHandler())
-
-            if (topIsLogin) {
-                router.replaceTopController(transaction)
-            } else {
-                router.pushController(transaction)
-            }
+        if (data.isNotBlank() && accountManager.isAccountInitialized()) {
+            val hasRoot = router.hasRootController()
+            val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
+            val isAuthenticated = !isTopLogin && hasRoot
+            routerNavHandler?.goToDeepLink(NavigationEffect.GoToDeepLink(data, isAuthenticated))
         }
     }
 
@@ -266,43 +249,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         return if (data.isNullOrBlank()) {
             intent.dataString
         } else data
-    }
-
-    @Suppress("ComplexMethod")
-    private fun handleLink(link: Link): Controller? {
-        return when (link) {
-            is Link.ImportWallet -> ImportController(
-                link.privateKey,
-                link.passwordProtected
-            )
-            is Link.CryptoRequestUrl -> SendSheetController(link)
-            is Link.WalletPairUrl -> {
-                MessageExchangeService.enqueueWork(
-                    applicationContext, MessageExchangeService.createIntent(
-                        applicationContext,
-                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
-                        link.pairingMetaData
-                    )
-                )
-                null
-            }
-            is Link.PlatformUrl -> WebController(link.url)
-            is Link.PlatformDebugUrl -> {
-                if (!link.webBundleUrl.isNullOrBlank()) {
-                    ServerBundlesHelper.setWebPlatformDebugURL(this, link.webBundleUrl)
-                } else if (!link.webBundle.isNullOrBlank()) {
-                    ServerBundlesHelper.setDebugBundle(
-                        this,
-                        ServerBundlesHelper.Type.WEB,
-                        link.webBundle
-                    )
-                }
-                null
-            }
-            is Link.BreadUrl.ScanQR -> ScannerController()
-            is Link.BreadUrl.Address -> null
-            is Link.BreadUrl.AddressList -> null
-        }
     }
 
     private fun processAccountState(accountState: AccountState) {
