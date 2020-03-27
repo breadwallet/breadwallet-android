@@ -36,7 +36,6 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
 import com.breadwallet.ui.settings.analytics.ShareDataController
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
@@ -49,6 +48,7 @@ import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
+import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
@@ -280,12 +280,12 @@ class RouterNavigationEffectHandler(
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
         val transaction = RouterTransaction.with(
-            InputPinController(
-                onComplete = effect.onComplete,
-                pinUpdate = !effect.onboarding,
-                skipWriteDown = effect.skipWriteDownKey
-            )
-        ).pushChangeHandler(HorizontalChangeHandler())
+                InputPinController(
+                    onComplete = effect.onComplete,
+                    pinUpdate = !effect.onboarding,
+                    skipWriteDown = effect.skipWriteDownKey
+                )
+            ).pushChangeHandler(HorizontalChangeHandler())
             .popChangeHandler(HorizontalChangeHandler())
         if (effect.onboarding) {
             router.setBackstack(listOf(transaction), HorizontalChangeHandler())
@@ -322,7 +322,11 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToDisabledScreen() {
-        UiUtils.showWalletDisabled(checkNotNull(router.activity))
+        router.pushController(
+            RouterTransaction.with(DisabledController())
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+        )
     }
 
     override fun goToQrScan() {

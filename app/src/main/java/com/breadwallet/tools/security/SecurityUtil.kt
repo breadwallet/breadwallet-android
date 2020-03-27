@@ -25,20 +25,7 @@
 package com.breadwallet.tools.security
 
 import android.content.Context
-import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.util.Utils
-import kotlinx.coroutines.runBlocking
-import org.kodein.di.erased.instance
-
-fun BRAccountManager.isWalletDisabled() = when (getAccountState()) {
-    is AccountState.Disabled -> true
-    else -> false
-}
-
-fun BRAccountManager.disabledUntil() = when (val state = getAccountState()) {
-    is AccountState.Disabled -> state.until
-    else -> -1
-}
 
 fun isFingerPrintAvailableAndSetup(context: Context): Boolean {
     return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context)

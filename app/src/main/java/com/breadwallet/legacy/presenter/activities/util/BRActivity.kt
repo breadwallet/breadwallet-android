@@ -32,7 +32,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.app.BreadApp.Companion.setBreadContext
-import com.breadwallet.legacy.presenter.activities.DisabledActivity
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs.getScreenHeight
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenHeight
@@ -40,7 +39,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs.putScreenWidth
 import com.breadwallet.tools.security.AccountState.Disabled
 import com.breadwallet.tools.security.AccountState.Locked
 import com.breadwallet.tools.security.BRAccountManager
-import com.breadwallet.ui.recovery.RecoveryKeyActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -66,11 +64,8 @@ abstract class BRActivity : AppCompatActivity() {
         BreadApp.getKodeinInstance().instance<BRAccountManager>()
     }
 
-    private val resumedJob = SupervisorJob()
-    private val resumedScope = CoroutineScope(Default + resumedJob)
-
-    private val pausedJob = SupervisorJob()
-    private val pausedScope = CoroutineScope(Default + pausedJob)
+    private val resumedScope = CoroutineScope(Default + SupervisorJob())
+    private val pausedScope = CoroutineScope(Default + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,17 +81,12 @@ abstract class BRActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        pausedJob.cancelChildren()
+        pausedScope.coroutineContext.cancelChildren()
 
         accountManager.accountStateChanges()
             .filter { it is Disabled || it is Locked }
             .take(1)
-            .onEach {
-                when (this) {
-                    !is DisabledActivity,
-                    !is RecoveryKeyActivity -> finish()
-                }
-            }
+            .onEach { finish() }
             .flowOn(Main)
             .launchIn(resumedScope)
 
@@ -105,7 +95,7 @@ abstract class BRActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        resumedJob.cancelChildren()
+        resumedScope.coroutineContext.cancelChildren()
 
         setBreadContext(null)
 

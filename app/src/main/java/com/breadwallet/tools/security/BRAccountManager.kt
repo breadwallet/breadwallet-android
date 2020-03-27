@@ -37,6 +37,8 @@ import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
@@ -45,14 +47,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.pow
 
 const val PIN_LENGTH = 6
@@ -71,7 +76,7 @@ interface BRAccountManager {
     fun isMigrationRequired(): Boolean
     fun getKeyStoreStatus(): KeyStoreStatus
     fun getAccountState(): AccountState
-    fun accountStateChanges(): Flow<AccountState>
+    fun accountStateChanges(disabledUpdates: Boolean = false): Flow<AccountState>
 
     suspend fun getPhrase(): ByteArray?
     fun getAccount(): Account?
@@ -126,9 +131,14 @@ class CryptoAccountManager(
     private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
     private val locked = AtomicBoolean(false)
+    private val disabledSeconds = AtomicInteger(0)
     private var token: String? = null
     private var jwt: String? = null
     private var jwtExp: Long? = null
+
+    init {
+        startDisabledTimer(getFailTimestamp())
+    }
 
     override suspend fun createAccount(phrase: ByteArray): Account {
         val creationDate = Date()
@@ -200,22 +210,30 @@ class CryptoAccountManager(
 
     override fun getAccountState(): AccountState {
         if (getAccount() == null) return AccountState.Uninitialized
-        val failCount = getFailCount()
-        val disabledUntil = disabledUntil(failCount, getFailTimestamp())
-        return if (failCount >= MAX_UNLOCK_ATTEMPTS && disabledUntil > BRSharedPrefs.getSecureTime()) {
-            AccountState.Disabled(disabledUntil)
-        } else if (locked.get()) {
-            AccountState.Locked
-        } else {
-            AccountState.Enabled
+        return when {
+            disabledSeconds.get() > 0 -> {
+                AccountState.Disabled(disabledSeconds.get())
+            }
+            locked.get() -> AccountState.Locked
+            else -> AccountState.Enabled
         }
     }
 
-    override fun accountStateChanges(): Flow<AccountState> =
+    override fun accountStateChanges(disabledUpdates: Boolean): Flow<AccountState> =
         stateChangeChannel.asFlow()
             .onStart { emit(Unit) }
             .map { getAccountState() }
+            .transformLatest { state ->
+                if (state is AccountState.Disabled && disabledUpdates) {
+                    emit(state)
+                    while (disabledSeconds.get() > 0) {
+                        delay(1000)
+                        emit(state.copy(seconds = disabledSeconds.get()))
+                    }
+                } else emit(state)
+            }
             .distinctUntilChanged()
+            .flowOn(Default)
 
     override suspend fun getPhrase(): ByteArray? =
         executeWithAuth { BRKeyStore.getPhrase(context, GET_PHRASE_RC) }
@@ -251,6 +269,8 @@ class CryptoAccountManager(
     override fun verifyPinCode(pinCode: String) =
         if (pinCode == getPinCode()) {
             putFailCount(0)
+            putFailTimestamp(0)
+            disabledSeconds.set(0)
             locked.set(false)
             stateChangeChannel.offer(Unit)
             true
@@ -258,7 +278,9 @@ class CryptoAccountManager(
             val failCount = getFailCount()
             putFailCount(failCount + 1)
             if (failCount >= MAX_UNLOCK_ATTEMPTS) {
-                putFailTimestamp(System.currentTimeMillis())
+                BRSharedPrefs.getSecureTime()
+                    .also(::putFailTimestamp)
+                    .also(::startDisabledTimer)
                 stateChangeChannel.offer(Unit)
             }
             false
@@ -383,6 +405,30 @@ class CryptoAccountManager(
 
     private fun putFailTimestamp(timestamp: Long) =
         store.write { e -> e.putLong(KEY_FAIL_TIMESTAMP, timestamp) }
+
+    private fun startDisabledTimer(failTimestamp: Long) {
+        if (failTimestamp > 0) {
+            GlobalScope.launch {
+                val secureTime = BRSharedPrefs.getSecureTime()
+                val disableUntil = disabledUntil(getFailCount(), failTimestamp)
+                val delaySeconds = ((disableUntil - secureTime) / 1000).toInt()
+
+                if (delaySeconds <= 0) {
+                    return@launch
+                }
+
+                disabledSeconds.set(delaySeconds)
+                while (disabledSeconds.get() > 0) {
+                    delay(1000)
+                    disabledSeconds.getAndDecrement()
+                }
+
+                putFailTimestamp(0)
+                disabledSeconds.set(0)
+                stateChangeChannel.offer(Unit)
+            }
+        }
+    }
 
     /**
      * Invokes [action], catching [UserNotAuthenticatedException].
