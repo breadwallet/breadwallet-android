@@ -161,6 +161,10 @@ object ReceiveUpdate : Update<M, E, F>, ReceiveScreenUpdateSpec {
     }
 
     override fun onToggleCurrencyClicked(model: M): Next<M, F> {
+        if (model.fiatPricePerUnit == BigDecimal.ZERO) {
+            return noChange()
+        }
+
         val isAmountCrypto = !model.isAmountCrypto
         if (model.rawAmount.isBlank()) {
             return next(model.copy(isAmountCrypto = isAmountCrypto))

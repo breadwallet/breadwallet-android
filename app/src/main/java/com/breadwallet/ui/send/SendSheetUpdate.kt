@@ -238,6 +238,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     }
 
     override fun onToggleCurrencyClicked(model: M): Next<M, F> {
+        if (model.fiatPricePerUnit == BigDecimal.ZERO) {
+            return noChange()
+        }
+
         val isAmountCrypto = !model.isAmountCrypto
         val newModel = model.copy(
             isAmountCrypto = isAmountCrypto,

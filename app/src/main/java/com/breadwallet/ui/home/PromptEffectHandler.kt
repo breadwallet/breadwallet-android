@@ -26,7 +26,6 @@ package com.breadwallet.ui.home
 
 import android.content.Context
 import com.breadwallet.legacy.presenter.customviews.PinLayout
-import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -89,11 +88,7 @@ class PromptEffectHandler(
                 && !BRSharedPrefs.getPromptDismissed(context, PROMPT_DISMISSED_FINGERPRINT))
             PromptItem.PAPER_KEY -> !BRSharedPrefs.getPhraseWroteDown(context)
             PromptItem.UPGRADE_PIN -> BRKeyStore.getPinCode(context).length != PinLayout.MAX_PIN_DIGITS
-            PromptItem.RECOMMEND_RESCAN -> {
-                BRSharedPrefs.getScanRecommended(
-                    context, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
-                )
-            }
+            PromptItem.RECOMMEND_RESCAN -> false // BRSharedPrefs.getScanRecommended(iso = "BTC")
         }
     }
 

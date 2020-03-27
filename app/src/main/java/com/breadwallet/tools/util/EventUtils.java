@@ -30,7 +30,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
-import com.crashlytics.android.Crashlytics;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.platform.APIClient;
 
 import org.apache.commons.io.IOUtils;
@@ -206,7 +206,7 @@ public final class EventUtils {
         pushEvent(eventName, null);
     }
 
-    public static void saveEvents(Context context) {
+    public static synchronized void saveEvents(Context context) {
         JSONArray eventsJsonArray = new JSONArray();
         if (context != null) {
             for (Event event : mEvents) {
@@ -360,7 +360,7 @@ public final class EventUtils {
             return IOUtils.toString(inputStream);
         } catch (IOException e) {
             Log.e(TAG, "readFile: Error in Reading: " + directory + "/" + fileName, e);
-            Crashlytics.logException(e);
+            BRReportsManager.reportBug(e);
             return null;
         }
     }

@@ -8,10 +8,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
-
-if (file('fabric.properties').exists()) {
-    apply plugin: 'io.fabric'
-}
+apply plugin: 'com.google.firebase.appdistribution'
+apply plugin: 'com.google.firebase.crashlytics'
 
 redactedPlugin {
     replacementString = '***'
@@ -28,9 +26,9 @@ android {
     buildToolsVersion = '29.0.3'
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
-        brdProductVersion = 1    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
+        brdProductVersion = 2    // Minor version. Usually affected by product. Maximum value: 99
+        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 9       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -40,7 +38,6 @@ android {
 
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
-        fabricEnable = file('fabric.properties').exists()
     }
     defaultConfig {
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
@@ -51,7 +48,6 @@ android {
         versionCode brdVersionCode
         versionName "$brdMarketingVersion.$brdProductVersion.$brdEngineeringVersion"
         buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
-        buildConfigField "boolean", "FABRIC_ENABLE", "$fabricEnable"
 
         multiDexEnabled true
 
@@ -115,6 +111,10 @@ android {
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
+            firebaseAppDistribution {
+                releaseNotes = getChangelog()
+                groups = "android-testers"
+            }
         }
         debug {
             applicationIdSuffix '.debug'
@@ -158,6 +158,14 @@ android {
     }
 }
 
+static def getChangelog() {
+    def cmdGetLastTag = "git describe --tags --abbrev=-0"
+    def tag = cmdGetLastTag.execute().text.trim()
+    def cmdLine = "git log $tag..HEAD --oneline --no-merges"
+    def changelog = cmdLine.execute().text
+    return changelog
+}
+
 task downloadBundles {
     doLast {
         def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
@@ -181,16 +189,6 @@ task downloadBundles {
             println("Downloading: ${fileUrl} into ${resFolder}")
             new File("${resFolder}${bundleName.replace("-", "_")}.tar").withOutputStream { out ->
                 new URL(fileUrl).withInputStream { from -> out << from }
-            }
-        }
-    }
-}
-
-tasks.whenTaskAdded {
-    if (it.name.startsWith('assemble') && it.name.endsWith('Release')) {
-        it.doFirst {
-            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
-                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
             }
         }
     }
@@ -251,7 +249,7 @@ dependencies {
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
-    implementation "com.google.firebase:firebase-core:$firebase_core"
+    implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
@@ -307,9 +305,7 @@ dependencies {
 
     // Debugging/Monitoring
     debugImplementation "com.github.anrwatchdog:anrwatchdog:$anr_watchdog_version"
-    implementation("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
-        transitive = true
-    }
+    implementation "com.google.firebase:firebase-crashlytics:$firebase_crashlytics_version"
 
     compileOnly "io.sweers.redacted:redacted-compiler-plugin-annotation:$redacted_version"
 

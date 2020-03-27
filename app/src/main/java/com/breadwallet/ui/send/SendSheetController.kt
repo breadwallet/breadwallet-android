@@ -95,14 +95,6 @@ class SendSheetController(args: Bundle? = null) :
         bundleOf(CURRENCY_CODE to currencyCode)
     )
 
-    /** A [SendSheetController] to fulfill the provided [CryptoRequest]. */
-    constructor(cryptoRequest: CryptoRequest) : this(
-        bundleOf(
-            CURRENCY_CODE to cryptoRequest.currencyCode,
-            CRYPTO_REQUEST to cryptoRequest
-        )
-    )
-
     /** A [SendSheetController] to fulfill the provided [Link.CryptoRequestUrl]. */
     constructor(link: Link.CryptoRequestUrl) : this(
         bundleOf(
@@ -138,6 +130,7 @@ class SendSheetController(args: Bundle? = null) :
             breadBox = direct.instance(),
             keyStore = direct.instance(),
             apiClient = direct.instance(),
+            ratesRepository = direct.instance(),
             navEffectHandler = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())

@@ -76,14 +76,19 @@ object CurrencyHistoricalDataClient {
     private enum class Limit(val value: Int, val keepValue: Int) {
         // The number of minutes in a 24 period, keep every 8th value
         PAST_DAY(1440, 8),
+
         // the number of hours in the week, keep every value
         PAST_WEEK(168, 0),
+
         // the number days in a month, we use 30 for simplicity, keep all values
         PAST_MONTH(30, 0),
+
         // the number of days in 3 months, 90 for simplicity, keep all values
         PAST_3_MONTHS(90, 0),
+
         // the number of days in a year, keep every 2nd value
         PAST_YEAR(365, 2),
+
         // the number of days in 3 years, keep every 5th value
         PAST_3_YEARS(1095, 5),
     }
@@ -119,11 +124,9 @@ object CurrencyHistoricalDataClient {
     ): Map<String, PriceChange> {
         val requestUrl =
             String.format(PRICE_VARIATION_URL, currencies.joinToString(","), toCurrency)
-        val request = Request.Builder()
-            .url(requestUrl)
-            .get()
-            .build()
+        val request = Request.Builder().url(requestUrl).get().build()
         val response = APIClient.getInstance(context).sendRequest(request, false)
+
         return if (response.isSuccessful) {
             Log.d(TAG, response.bodyText)
             parsePriceChangeResponse(response.bodyText, currencies, toCurrency)
@@ -140,11 +143,13 @@ object CurrencyHistoricalDataClient {
         history: History,
         limit: Limit
     ): List<PriceDataPoint> {
+        val fromCurrencyUpper = fromCurrency.toUpperCase(Locale.ROOT)
+        val toCurrencyUpper = toCurrency.toUpperCase(Locale.ROOT)
         val requestUrl = String.format(
             HISTORICAL_DATA_URL,
             history.value,
-            fromCurrency.toUpperCase(),
-            toCurrency,
+            fromCurrencyUpper,
+            toCurrencyUpper,
             limit.value
         )
 

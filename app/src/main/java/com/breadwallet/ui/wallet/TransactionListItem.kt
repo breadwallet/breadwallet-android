@@ -121,6 +121,7 @@ class TransactionListItem(
         private fun showTransactionProgress(progress: Int) {
             val context = containerView.context
             tx_failed_button.visibility = View.GONE
+            tx_amount.visibility = View.VISIBLE
             if (progress < PROGRESS_FULL) {
                 tx_progress.visibility = View.VISIBLE
                 tx_date.visibility = View.GONE
@@ -177,6 +178,8 @@ class TransactionListItem(
                         .format(tx.toAddress)
                 tx_description.ellipsize = TextUtils.TruncateAt.END
                 tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
+            } else {
+                tx_amount.visibility = View.GONE
             }
         }
     }

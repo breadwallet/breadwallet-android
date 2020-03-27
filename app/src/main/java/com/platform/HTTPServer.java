@@ -8,12 +8,12 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.app.BreadApp;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.browser.WebViewActivity;
-import com.crashlytics.android.Crashlytics;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -32,8 +32,6 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-import static org.kodein.di.TypesKt.TT;
-
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Random;
@@ -41,6 +39,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.kodein.di.TypesKt.TT;
 
 
 /**
@@ -207,7 +207,7 @@ public class HTTPServer extends AbstractLifeCycle {
             mServer.dump(System.err);
         } catch (IOException e) {
             Log.e(TAG, "Server dump failed", e);
-            Crashlytics.logException(e);
+            BRReportsManager.reportBug(e);
         }
 
         HandlerCollection handlerCollection = new HandlerCollection();
@@ -238,7 +238,7 @@ public class HTTPServer extends AbstractLifeCycle {
             mInstance.start();
         } catch (Exception e) {
             Log.e(TAG, "startServer: Error starting the local server.", e);
-            Crashlytics.logException(e);
+            BRReportsManager.reportBug(e);
         }
     }
 
@@ -247,7 +247,7 @@ public class HTTPServer extends AbstractLifeCycle {
             mInstance.stop();
         } catch (Exception e) {
             Log.e(TAG, "stopServer: Error stopping the local server.", e);
-            Crashlytics.logException(e);
+            BRReportsManager.reportBug(e);
         }
     }
 
@@ -279,7 +279,7 @@ public class HTTPServer extends AbstractLifeCycle {
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "doStop: Error stopping the local server.", e);
-                        Crashlytics.logException(e);
+                        BRReportsManager.reportBug(e);
                     }
                 }
             });
@@ -312,7 +312,7 @@ public class HTTPServer extends AbstractLifeCycle {
             return true;
         } catch (Exception e) {
             Log.e(TAG, "doStart: Error starting the local server. Trying again on new port.", e);
-            Crashlytics.logException(e);
+            BRReportsManager.reportBug(e);
             BRSharedPrefs.putHttpServerPort(mContext, 0);
             return false;
         }

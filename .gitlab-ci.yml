@@ -82,9 +82,9 @@ release:test:
 release:build-deploy:
   stage: build
   script:
-    - ./gradlew --console=plain assembleRelease -PIGNORE_FABRIC_KEYS_MISSING
-    - fastlane appetizeUpload flavor:brd build_type:release flags:"-PIGNORE_FABRIC_KEYS_MISSING"
-    - fastlane appetizeUpload flavor:brdTestnet build_type:release flags:"-PIGNORE_FABRIC_KEYS_MISSING"
+    - ./gradlew --console=plain assembleRelease appDistributionUploadBrdRelease
+    - fastlane appetizeUpload flavor:brd build_type:release
+    - fastlane appetizeUpload flavor:brdTestnet build_type:release
   only:
     - develop
     - master

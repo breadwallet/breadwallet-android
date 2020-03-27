@@ -69,7 +69,6 @@ import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.trackAddressMismatch
 import com.breadwallet.util.usermetrics.UserMetricsUtil
-import com.crashlytics.android.Crashlytics
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.interfaces.AccountMetaDataProvider
@@ -77,7 +76,6 @@ import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
 import com.platform.tools.KVStoreManager
-import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -423,14 +421,6 @@ class BreadApp : Application(), KodeinAware {
         mInstance = this
 
         BRSharedPrefs.provideContext(this)
-
-        if (BuildConfig.FABRIC_ENABLE) {
-            val fabric = Fabric.Builder(this)
-                .kits(Crashlytics.Builder().build())
-                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
-                .build()
-            Fabric.with(fabric)
-        }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
