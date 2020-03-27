@@ -29,7 +29,9 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
+import com.breadwallet.util.isRipple
 import com.platform.HTTPServer
+import java.util.Locale
 
 /** Returns the full support URL for the articleId and currencyCode. */
 fun NavigationEffect.GoToFaq.asSupportUrl() = buildString {
@@ -45,8 +47,9 @@ fun NavigationEffect.GoToFaq.asSupportUrl() = buildString {
                 currencyCode.isBitcoin()
                 || currencyCode.isEthereum()
                 || currencyCode.isBitcoinCash()
+                || currencyCode.isRipple()
             ) {
-                currencyCode.toLowerCase()
+                currencyCode.toLowerCase(Locale.ROOT)
             } else {
                 BRConstants.CURRENCY_ERC20
             }
