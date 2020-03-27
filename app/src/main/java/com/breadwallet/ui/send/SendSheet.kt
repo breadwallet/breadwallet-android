@@ -109,6 +109,7 @@ object SendSheet {
 
         /** The currency code used for paying transaction fee. */
         val feeCurrencyCode: CurrencyCode = currencyCode,
+        val feeCurrencyBalance: BigDecimal = BigDecimal.ZERO,
 
         /** True when the user is confirming the transaction details. */
         val isConfirmingTx: Boolean = false,
@@ -295,7 +296,8 @@ object SendSheet {
 
         data class OnBalanceUpdated(
             val balance: BigDecimal,
-            val fiatBalance: BigDecimal
+            val fiatBalance: BigDecimal,
+            val feeCurrencyBalance: BigDecimal
         ) : E()
 
         object OnNetworkFeeError : E()
@@ -421,7 +423,8 @@ object SendSheet {
         ) : F()
 
         data class LoadBalance(
-            val currencyCode: CurrencyCode
+            val currencyCode: CurrencyCode,
+            val feeCurrencyCode: CurrencyCode
         ) : F()
 
         data class LoadExchangeRate(

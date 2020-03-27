@@ -200,7 +200,14 @@ object SendSheetHandler {
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
             val balanceBig = (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
             val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance, rates)
-            E.OnBalanceUpdated(balanceBig, fiatBig)
+            val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
+                balanceBig
+            } else {
+                val feeWallet = breadBox.wallet(effect.currencyCode).first()
+                val feeBalanceMin = feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
+                (feeWallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
+            }
+            E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyBalance)
         }
     }
 
@@ -237,7 +244,6 @@ object SendSheetHandler {
         router: Router
     ) = { effect: F.ShowEthTooLowForTokenFee ->
         val res = checkNotNull(router.activity).resources
-        // TODO: Handle user acceptance
         val controller = AlertDialogController(
             dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
             title = res.getString(R.string.Send_insufficientGasTitle),
@@ -246,6 +252,7 @@ object SendSheetHandler {
             positiveText = res.getString(R.string.Button_continueAction),
             negativeText = res.getString(R.string.Button_cancel)
         )
+        controller.targetController = router.backstack.last().controller()
         router.pushController(RouterTransaction.with(controller))
     }
 
