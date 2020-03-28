@@ -25,6 +25,30 @@
             <span id="txOutput"></span>
         </p>
     </fieldset>
+    <fieldset>
+        <p>
+            <label for="enableWalletCurrencyCode">Currency Code</label>
+            <input id="enableWalletCurrencyCode" type="text" value="eth"/>
+        </p>
+        <p>
+            <button onclick="enableWallet(); return false;">Enable wallet</button>
+        </p>
+        <p>
+            <span id="enableWalletOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="listAll">List all</label>
+            <input id="listAll" type="checkbox" checked/>
+        </p>
+        <p>
+            <button onclick="listCurrencies(); return false;">Get currencies</button>
+        </p>
+        <p>
+            <span id="currenciesOutput"></span>
+        </p>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -74,6 +98,32 @@
             })
 
     }
+
+    function enableWallet() {
+        let enableWalletOutput = document.getElementById("enableWalletOutput");
+        let currencyCode = document.getElementById("enableWalletCurrencyCode").value;
+        WalletJs.enableCurrency(currencyCode)
+            .then((result) => {
+                enableWalletOutput.innerText = `Wallet added ${result.currency}`;
+            })
+            .catch((error) => {
+                enableWalletOutput.innerText = error;
+            })
+    }
+
+    function listCurrencies() {
+        let currenciesOutput = document.getElementById("currenciesOutput");
+        let listAll = document.getElementById("listAll").checked;
+
+        WalletJs.currencies(listAll)
+            .then((result) => {
+                currenciesOutput.innerText = `${result.currencies.length} currencies retrieved`;
+            })
+            .catch((error) => {
+                currenciesOutput.innerText = error;
+            })
+    }
+
 
 </script>
 </body>
