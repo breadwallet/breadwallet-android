@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">您最近一次在 %1$s 寫下了您的紙本金鑰</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">使用比特幣最安全、最有保障的方式。</string>
+  <string name="StartViewController.message">使用萊特幣最安全、最有保障的方式。</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">正在連線</string>
   <!-- Syncing view header text -->

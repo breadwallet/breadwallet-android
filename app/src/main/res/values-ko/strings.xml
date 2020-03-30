@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">%1$s에 마지막으로 페이퍼 키를 작성하셨습니다.</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">라이트코인을 사용하는 가장 안정되고 안전한 방법.</string>
+  <string name="StartViewController.message">Litecoin을 사용하는 가장 안정되고 안전한 방법.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">연결 중</string>
   <!-- Syncing view header text -->

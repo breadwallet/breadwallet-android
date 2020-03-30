@@ -192,7 +192,7 @@ public class BRButton extends Button {
             setTextColor(getContext().getColor(R.color.white));
         } else if (type == 2) { //gray stroke
             setTextColor(getContext().getColor(R.color.light_gray));
-            setOutline(R.color.litecoin_litewallet_blue, R.color.button_secondary);
+            setOutline(R.color.extra_light_gray, R.color.button_secondary);
         } else if (type == 3) { //blue strokeww
             setTextColor(getContext().getColor(R.color.litecoin_litewallet_blue));
             setOutline(R.color.litecoin_litewallet_blue, R.color.button_secondary);

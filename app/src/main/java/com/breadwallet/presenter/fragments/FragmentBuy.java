@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -25,7 +24,6 @@ import androidx.cardview.widget.CardView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 
@@ -133,41 +131,9 @@ public class FragmentBuy extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-//        final ViewTreeObserver observer = signalLayout.getViewTreeObserver();
-//        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                observer.removeGlobalOnLayoutListener(this);
-//                BRAnimator.animateBackgroundDim(backgroundLayout, false);
-//                BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
-//                    @Override
-//                    public void onAnimationEnd() {
-//                    }
-//                });
-//            }
-//        });
-
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         BRAnimator.animateBackgroundDim(backgroundLayout, true);
-//        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
-//            @Override
-//            public void onAnimationEnd() {
-//                if (getActivity() != null) {
-//                    try {
-//                        getActivity().getFragmentManager().popBackStack();
-//                    } catch (Exception ignored) {
-//
-//                    }
-//                }
-//            }
-//        });
     }
 
     private class BRWebChromeClient extends WebChromeClient {

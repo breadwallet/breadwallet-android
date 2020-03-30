@@ -73,7 +73,7 @@ public class BRSender {
             public void run() {
                 try {
                     if (sending) {
-                        FirebaseCrashlytics.getInstance().recordException(new NullPointerException("sendTransaction returned because already sending.."));
+                        Timber.e(new NullPointerException("sendTransaction returned because already sending.."));
                         return;
                     }
                     sending = true;
@@ -97,13 +97,13 @@ public class BRSender {
                         long time = BRSharedPrefs.getFeeTime(app);
                         if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
                             Timber.d("sendTransaction: fee out of date even after fetching...");
-                            throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app), now);
+                            throw new FeeOutOfDate(time, now);
                         }
                     }
                     if (!timedOut)
                         tryPay(app, request);
                     else
-                        FirebaseCrashlytics.getInstance().recordException(new NullPointerException("did not send, timedOut!"));
+                        Timber.e(new NullPointerException("did not send, timedOut!"));
                     return; //return so no error is shown
                 } catch (InsufficientFundsException ignored) {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
@@ -123,7 +123,7 @@ public class BRSender {
                     return;
                 } catch (FeeOutOfDate ex) {
                     //Fee is out of date, show not connected error
-                    FirebaseCrashlytics.getInstance().recordException(ex);
+                    Timber.e(ex);
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {

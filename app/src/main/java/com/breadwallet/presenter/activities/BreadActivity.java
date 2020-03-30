@@ -450,8 +450,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (observer.isAlive())
+                if (observer.isAlive()) {
                     observer.removeOnGlobalLayoutListener(this);
+                }
                 if (uiIsDone) return;
                 uiIsDone = true;
                 setPriceTags(BRSharedPrefs.getPreferredLTC(BreadActivity.this), false);

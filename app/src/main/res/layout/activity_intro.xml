@@ -8,8 +8,21 @@
     android:background="@color/litecoin_litewallet_blue"
     android:orientation="vertical">
 
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/About.appVersion"
+        android:textColor="@color/white_30_alpha"
+        android:textSize="@dimen/sub_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="v1.19.0" />
+
     <ImageView
-        android:id="@+id/BRText"
+        android:id="@+id/logoImgV"
         android:layout_width="128dp"
         android:layout_height="64dp"
         android:layout_marginLeft="8dp"
@@ -21,19 +34,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/version_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/About.appVersion"
-        android:textColor="@color/white_trans"
-        android:textSize="@dimen/sub_header"
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="50dp"
+        android:gravity="center"
+        android:text="@string/StartViewController.message"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BRText"
-        tools:layout_editor_absoluteY="196dp" />
+        app:layout_constraintTop_toBottomOf="@id/logoImgV" />
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_new_wallet"
@@ -71,19 +84,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-    <View
-        android:id="@+id/splash_screen"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/litecoin_litewallet_green"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
