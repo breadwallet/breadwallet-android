@@ -46,6 +46,7 @@ import com.breadwallet.ui.web.WebController
 import kotlinx.android.synthetic.main.controller_intro.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
@@ -101,12 +102,13 @@ class IntroController : BaseController() {
 
     private fun startAnimations() {
         viewAttachScope.launch(Dispatchers.IO) {
-            val tokens = TokenUtil.getTokenItems(activity)
+            val tokens = TokenUtil.getTokenItems(applicationContext)
             tokens.shuffle()
             val icons = mutableListOf<String>()
             while (icons.size < ICONS_TO_SHOW) {
+                if (!isActive) return@launch
                 val token = tokens[icons.size]
-                val iconPath = TokenUtil.getTokenIconPath(activity, token.symbol, false)
+                val iconPath = TokenUtil.getTokenIconPath(applicationContext, token.symbol, false)
                 if (iconPath.isNotBlank()) {
                     icons.add(iconPath)
                 }
