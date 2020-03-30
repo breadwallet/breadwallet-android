@@ -53,13 +53,14 @@ import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.logger.logDebug
+import com.breadwallet.crypto.errors.LimitEstimationError
+import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.tools.util.btc
 import com.platform.ConfirmTransactionMessage
 import com.platform.PlatformTransactionBus
 import com.platform.TransactionResultMessage
@@ -73,6 +74,9 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class WalletJs(
     private val nativePromiseFactory: NativePromiseFactory,
@@ -189,7 +193,10 @@ class WalletJs(
         val currenciesJSON = JSONArray()
         wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
-            val currencyCode = wallet?.currency?.code?.toUpperCase() ?: TokenUtil.getTokenItemForCurrencyId(currencyId)?.symbol
+            val currencyCode =
+                wallet?.currency?.code?.toUpperCase() ?: TokenUtil.getTokenItemForCurrencyId(
+                    currencyId
+                )?.symbol
 
             if (currencyCode.isNullOrBlank()) return@forEach
 
@@ -336,6 +343,49 @@ class WalletJs(
 
         JSONObject().apply {
             put(KEY_CURRENCY, currencyCode)
+        }
+    }
+
+    @JavascriptInterface
+    fun maxlimit(
+        toAddress: String,
+        currency: String
+    ) = nativePromiseFactory.create {
+        val system = checkNotNull(breadBox.getSystemUnsafe())
+        val wallet = system.wallets.first { it.currency.code.equals(currency, true) }
+        val address = checkNotNull(wallet.addressFor(toAddress))
+
+        suspendCoroutine { continuation ->
+            val handler = object : CompletionHandler<Amount, LimitEstimationError> {
+                override fun handleData(limitMaxAmount: Amount?) {
+                    if (limitMaxAmount == null) {
+                        continuation.resumeWithException(Exception("Limit Estimation is null"))
+                        return
+                    }
+                    val numerator = limitMaxAmount.convert(wallet.baseUnit).orNull()
+                        ?.toStringWithBase(BASE_10, "") ?: "0"
+                    val denominator = Amount.create("1", false, wallet.baseUnit).orNull()
+                        ?.toStringWithBase(BASE_10, "")
+                        ?: Amount.create(0, wallet.baseUnit).toStringWithBase(BASE_10, "")
+
+                    continuation.resume(JSONObject().apply {
+                        put(KEY_NUMERATOR, numerator)
+                        put(KEY_DENOMINATOR, denominator)
+                    })
+                }
+
+                override fun handleError(error: LimitEstimationError?) {
+                    continuation.resumeWithException(
+                        error ?: Exception("Unknown Limit Estimation Error")
+                    )
+                }
+            }
+
+            wallet.estimateLimitMaximum(
+                address,
+                wallet.feeForSpeed(TransferSpeed.PRIORITY),
+                handler
+            )
         }
     }
 

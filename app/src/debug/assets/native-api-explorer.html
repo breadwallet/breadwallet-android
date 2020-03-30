@@ -8,7 +8,7 @@
     <fieldset>
         <p>
             <label for="toAddress">To Address</label>
-            <input id="toAddress" type="text" value="n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF"/>
+            <input id="toAddress" type="text" value="1ALcVQ2ip7Pkx8bwh8vwUvQy8JdzEE6t49"/>
         </p>
         <p>
             <label for="currencyCode">Currency Code</label>
@@ -40,13 +40,29 @@
     <fieldset>
         <p>
             <label for="listAll">List all</label>
-            <input id="listAll" type="checkbox" checked/>
+            <input checked checked id="listAll" type="checkbox"/>
         </p>
         <p>
             <button onclick="listCurrencies(); return false;">Get currencies</button>
         </p>
         <p>
             <span id="currenciesOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="maxlimitToAddress">To Address</label>
+            <input id="maxlimitToAddress" type="text" value="1ALcVQ2ip7Pkx8bwh8vwUvQy8JdzEE6t49"/>
+        </p>
+        <p>
+            <label for="maxlimitCurrencyCode">Currency Code</label>
+            <input id="maxlimitCurrencyCode" type="text" value="btc"/>
+        </p>
+        <p>
+            <button onclick="maxlimit(); return false;">Get maxlimit</button>
+        </p>
+        <p>
+            <span id="maxlimitOutput"></span>
         </p>
     </fieldset>
 </form>
@@ -123,6 +139,27 @@
                 currenciesOutput.innerText = error;
             })
     }
+
+    function maxlimit() {
+        let maxlimitOutput = document.getElementById("maxlimitOutput");
+        maxlimitOutput.innerText = "";
+
+        let toAddress = document.getElementById("maxlimitToAddress").value;
+        let currencyCode = document.getElementById("maxlimitCurrencyCode").value;
+
+        WalletJs.maxlimit(toAddress, currencyCode)
+            .then((limit) => {
+                let num = parseFloat(limit.numerator)
+                let den = parseFloat(limit.denominator)
+                let maxlimit = num/den
+
+                maxlimitOutput.innerText = `maxlimit: ${maxlimit}\n`;
+            })
+            .catch((error) => {
+                maxlimitOutput.innerText = error;
+            })
+    }
+
 
 
 </script>
