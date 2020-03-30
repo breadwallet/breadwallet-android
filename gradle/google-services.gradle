@@ -1,0 +1,18 @@
+ext {
+    useGoogleServices = rootProject.file("google-services").exists()
+}
+
+if (ext.useGoogleServices) {
+    if (!file("google-services.json").exists()) {
+        afterEvaluate {
+            copy {
+                from rootProject.file("google-services/google-services.json")
+                into projectDir
+            }
+        }
+    }
+
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.appdistribution'
+    apply plugin: 'com.google.firebase.crashlytics'
+}

@@ -8,8 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
-apply plugin: 'com.google.firebase.appdistribution'
-apply plugin: 'com.google.firebase.crashlytics'
+apply from: file("../gradle/google-services.gradle")
 
 redactedPlugin {
     replacementString = '***'
@@ -112,9 +111,11 @@ android {
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
-            firebaseAppDistribution {
-                releaseNotes = getChangelog()
-                groups = "android-testers"
+            if (useGoogleServices) {
+                firebaseAppDistribution {
+                    releaseNotes = getChangelog()
+                    groups = "android-testers"
+                }
             }
         }
         debug {
@@ -318,5 +319,3 @@ dependencies {
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
 }
-
-apply plugin: 'com.google.gms.google-services'
