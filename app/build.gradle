@@ -54,6 +54,7 @@ android {
         missingDimensionStrategy 'network', 'onMainnet'
 
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
+        buildConfigField "Boolean", "USE_REMOTE_CONFIG", useGoogleServices.toString()
     }
     signingConfigs {
         FakeSigningConfig {
@@ -125,7 +126,11 @@ android {
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
-
+            if (useGoogleServices) {
+                firebaseAppDistribution {
+                    releaseNotes = getChangelog()
+                }
+            }
         }
 
     }
@@ -166,9 +171,20 @@ android {
 }
 
 static def getChangelog() {
-    def cmdGetLastTag = "git describe --tags --abbrev=-0"
-    def tag = cmdGetLastTag.execute().text.trim()
-    def cmdLine = "git log $tag..HEAD --oneline --no-merges"
+    def cmdGetCurrentTag = "git describe --tags --abbrev=-0"
+    def currentTag = System.getenv("CI_COMMIT_TAG")
+    def previousTag = cmdGetCurrentTag.execute().text.trim()
+
+    if (currentTag == null || currentTag == "") {
+        currentTag = "HEAD"
+    } else if (currentTag == previousTag) {
+        def cmdGetPreviousTagRevision = "git rev-list --tags --skip=1 --max-count=1"
+        def previousTagRevision = cmdGetPreviousTagRevision.execute().text.trim()
+        def cmdGetPreviousTag = "git describe --abbrev=0 --tags $previousTagRevision"
+        previousTag = cmdGetPreviousTag.execute().text.trim()
+    }
+
+    def cmdLine = "git log $previousTag..$currentTag --no-merges --pretty=format:%s"
     def changelog = cmdLine.execute().text
     return changelog
 }
@@ -257,6 +273,7 @@ dependencies {
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
+    implementation "com.google.firebase:firebase-config-ktx:$firebase_config_version"
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
     implementation "com.google.guava:guava:$guava_version"
