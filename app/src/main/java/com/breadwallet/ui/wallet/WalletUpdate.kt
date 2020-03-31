@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.breadbox.WalletState
 import com.breadwallet.ext.replaceAt
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.wallet.WalletScreen.E
@@ -528,6 +529,21 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         next(
             model.copy(selectedPriceDataPoint = event.priceDataPoint)
         )
+
+    override fun onWalletStateUpdated(model: M, event: E.OnWalletStateUpdated): Next<M, F> =
+        when (event.walletState) {
+            WalletState.Error -> next<M, F>(
+                model.copy(state = event.walletState),
+                setOf(F.ShowCreateAccountErrorDialog)
+            )
+            else -> next<M, F>(model.copy(state = event.walletState))
+        }
+
+    override fun onCreateAccountClicked(model: M): Next<M, F> =
+        dispatch(effects(F.ShowCreateAccountDialog)) // TODO: disable button
+
+    override fun onCreateAccountConfirmationClicked(model: M): Next<M, F> =
+        dispatch(effects(F.CreateAccount(model.currencyCode)))
 }
 
 /**

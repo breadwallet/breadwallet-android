@@ -111,9 +111,7 @@ class HomeScreenUpdateTests {
         val updatedWallet = walletToAdd.copy(
             balance = BigDecimal.valueOf(1),
             fiatBalance = BigDecimal.valueOf(1000),
-            fiatPricePerUnit = BigDecimal.valueOf(1000),
-            priceChange = PriceChange(0.1, 10.0),
-            isInitialized = true
+            state = Wallet.State.READY
         )
 
 
@@ -125,9 +123,7 @@ class HomeScreenUpdateTests {
                 E.OnWalletBalanceUpdated(
                     updatedWallet.currencyCode,
                     updatedWallet.balance,
-                    updatedWallet.fiatBalance,
-                    updatedWallet.fiatPricePerUnit,
-                    updatedWallet.priceChange!!
+                    updatedWallet.fiatBalance
                 )
             )
             .then(
@@ -145,7 +141,11 @@ class HomeScreenUpdateTests {
 
         val progress = 0.15f
         val expectedWallet =
-            WALLET_BITCOIN.copy(syncProgress = progress, isSyncing = true, isInitialized = true)
+            WALLET_BITCOIN.copy(
+                syncProgress = progress,
+                isSyncing = true,
+                state = Wallet.State.READY
+            )
         wallets[expectedWallet.currencyCode] = expectedWallet
 
         spec.given(initState)
@@ -184,7 +184,7 @@ class HomeScreenUpdateTests {
     @Test
     fun walletClick() {
         val initState = M.createDefault()
-            .copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy()))
+            .copy(wallets = mutableMapOf(WALLET_BITCOIN.currencyCode to WALLET_BITCOIN.copy(state = Wallet.State.LOADING)))
 
         spec.given(initState)
             .`when`(
@@ -196,7 +196,7 @@ class HomeScreenUpdateTests {
                 )
             )
 
-        val initializedWallet = WALLET_BITCOIN.copy(isInitialized = true)
+        val initializedWallet = WALLET_BITCOIN.copy(state = Wallet.State.READY)
         val updatedState =
             initState.copy(wallets = mutableMapOf(initializedWallet.currencyCode to initializedWallet))
         val expectedEffect = F.GoToWallet(WALLET_BITCOIN.currencyCode)

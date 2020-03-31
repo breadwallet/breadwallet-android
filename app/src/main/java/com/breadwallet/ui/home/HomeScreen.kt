@@ -72,7 +72,11 @@ object HomeScreen {
         data class OnWalletBalanceUpdated(
             val currencyCode: String,
             val balance: BigDecimal,
-            val fiatBalance: BigDecimal,
+            val fiatBalance: BigDecimal
+        ) : E()
+
+        data class OnUnitPriceChanged(
+            val currencyCode: String,
             val fiatPricePerUnit: BigDecimal,
             val priceChange: PriceChange? = null
         ) : E()
@@ -158,8 +162,12 @@ data class Wallet(
     val syncingThroughMillis: Long = 0L,
     val isSyncing: Boolean = false,
     val priceChange: PriceChange? = null,
-    val isInitialized: Boolean = false
+    val state: State = State.READY
 ) {
+    enum class State {
+        READY, LOADING, UNINITIALIZED
+    }
+
     val hasSyncTime: Boolean = syncingThroughMillis != 0L
 
     val hasPricePerUnit: Boolean = fiatPricePerUnit != BigDecimal.ZERO

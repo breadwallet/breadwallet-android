@@ -59,7 +59,7 @@ class KVStoreManager(
 
     companion object {
         private const val SYNC_KEY_NUM_RETRY = 3
-        private const val SYNC_KEY_TIMEOUT_MS = 3000L
+        private const val SYNC_KEY_TIMEOUT_MS = 15_000L
         private val mutex = Mutex()
     }
 
@@ -93,14 +93,14 @@ class KVStoreManager(
         try {
             // TODO: ReplicatedKVStore swallows exceptions, so retry logic is moot
             // At some point, need to reconsider the interface between these two layers
-            netRetry(SYNC_KEY_NUM_RETRY, SYNC_KEY_TIMEOUT_MS) {
-                withContext(Dispatchers.IO) {
-                    mutex.withLock {
+            withContext(Dispatchers.IO) {
+                mutex.withLock {
+                    netRetry(SYNC_KEY_NUM_RETRY, SYNC_KEY_TIMEOUT_MS) {
                         getReplicatedKvStore(context).syncKey(key)
                     }
                 }
-                value = get(key)?.also { keyChannelMap.getSafe(key).offer(it) }
             }
+            value = get(key)?.also { keyChannelMap.getSafe(key).offer(it) }
         } catch (ex: Exception) {
             logError("Sync exception for key: $key", ex)
         }

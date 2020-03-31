@@ -26,8 +26,7 @@ allprojects {
         exclusiveContent {
             forRepository {
                 maven {
-                    // TODO: When core is released use: /brd/walletkit-java
-                    url 'https://dl.bintray.com/brcore/core'
+                    url 'https://dl.bintray.com/brd/walletkit-java'
                 }
             }
             filter {

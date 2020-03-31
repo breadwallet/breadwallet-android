@@ -35,7 +35,7 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -76,7 +76,7 @@ class SettingsScreenHandler(
     private val showPlatformBundleDialog: (String) -> Unit,
     private val showTokenBundleDialog: (String) -> Unit,
     private val metaDataManager: AccountMetaDataProvider,
-    private val accountManager: BRAccountManager
+    private val userManager: BrdUserManager
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -147,7 +147,7 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> retainedScope.launch {
-                val phrase = checkNotNull(accountManager.getPhrase()).toString(UTF_8)
+                val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
                 output.accept(E.ShowPhrase(phrase.split(" ")))
             }
         }

@@ -56,33 +56,45 @@ object AddWalletsHandler {
         acctMetaDataProvider: AccountMetaDataProvider,
         navEffectHandler: NavEffectTransformer
     ) = subtypeEffectHandler<F, E> {
-        addTransformer(searchTokens(breadBox, context))
+        addTransformer(searchTokens(breadBox, context, acctMetaDataProvider))
         addConsumer(addWallet(breadBox, acctMetaDataProvider))
         addConsumer(removeWallet(acctMetaDataProvider))
         addTransformer<F.GoBack>(navEffectHandler)
     }
 
-    private fun searchTokens(breadBox: BreadBox, context: Context) =
+    fun List<String>.toTokenItems(): List<TokenItem> {
+        return this.mapNotNull {
+            TokenUtil.getTokenItemForCurrencyId(it)
+        }
+    }
+
+    private fun searchTokens(
+        breadBox: BreadBox,
+        context: Context,
+        acctMetaDataProvider: AccountMetaDataProvider
+    ) =
         flowTransformer<F.SearchTokens, E> { effects ->
             effects
                 .flatMapLatest { effect ->
-                    breadBox.wallets().map { wallets ->
-                        wallets to effect.query
+                    acctMetaDataProvider.enabledWallets().map { enabledWallets ->
+                        enabledWallets to effect.query
                     }
                 }
                 .mapLatest { (trackedWallets, query) ->
+                    // val trackedTokenItems = trackedWallets.toTokenItems()
+                    val availableWallets = breadBox.wallets().first()
                     TokenUtil.getTokenItems(context)
                         .filter { token ->
-                            (token.isSupported || trackedWallets.any { it.currencyId == token.currencyId })
+                            (token.isSupported || trackedWallets.any { it == token.currencyId })
                         }
                         .applyFilter(query)
                         .map { tokenItem ->
                             val currencyId = tokenItem.currencyId ?: ""
                             tokenItem.asToken(
-                                enabled = trackedWallets.containsCurrency(currencyId),
+                                enabled = trackedWallets.contains(currencyId),
                                 removable = isRemovable(
-                                    trackedWallets.findByCurrencyId(currencyId),
-                                    trackedWallets
+                                    availableWallets.findByCurrencyId(currencyId),
+                                    availableWallets
                                 )
                             )
                         }
@@ -127,9 +139,7 @@ object AddWalletsHandler {
      * it's not a [Wallet] another enabled [Wallet] depends on.
      */
     private fun isRemovable(wallet: Wallet?, trackedWallets: List<Wallet>) =
-        wallet != null &&
-            trackedWallets.size > 1 &&
-            !walletIsNeeded(wallet, trackedWallets)
+        trackedWallets.size > 1 && (wallet?.let { !walletIsNeeded(it, trackedWallets) } ?: true)
 
     private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<Wallet>) =
         wallet.currency.isNative() &&

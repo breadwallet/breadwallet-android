@@ -31,6 +31,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.util.Preconditions;
+
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.model.TokenItem;

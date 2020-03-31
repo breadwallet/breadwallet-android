@@ -37,8 +37,8 @@ import android.util.Log
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.AccountState
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserState
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
@@ -83,10 +83,14 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         fun initialize(context: Context) {
             val firebaseToken = BRSharedPrefs.getFCMRegistrationToken(context)
             if (!firebaseToken.isNullOrBlank() && BRSharedPrefs.getShowNotification(context)) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, firebaseToken) }
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+                    NotificationsSettingsClientImpl.registerToken(
+                        context,
+                        firebaseToken
+                    )
+                }
             }
         }
-
     }
 
     /**
@@ -117,9 +121,9 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         BRSharedPrefs.putFCMRegistrationToken(this, token)
         BreadApp.applicationScope.launch {
             val kodein by closestKodein(applicationContext)
-            val accountManager = kodein.direct.instance<BRAccountManager>()
-            accountManager.accountStateChanges()
-                .filter { it !is AccountState.Uninitialized }
+            val userManager = kodein.direct.instance<BrdUserManager>()
+            userManager.stateChanges()
+                .filter { it !is BrdUserState.Uninitialized }
                 .first()
             updateFcmRegistrationToken(applicationContext, token)
         }
@@ -157,7 +161,11 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private fun setupChannels(notificationManager: NotificationManager) {
-        val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.PushNotifications_title), NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationChannel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            getString(R.string.PushNotifications_title),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
         notificationChannel.description = getString(R.string.PushNotifications_body)
         notificationManager.createNotificationChannel(notificationChannel)
     }
@@ -171,21 +179,24 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
     private fun updateFcmRegistrationToken(context: Context, token: String) {
         if (BRSharedPrefs.getShowNotification(context)) {
             Log.d(TAG, "updating FCM token: $token")
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute { NotificationsSettingsClientImpl.registerToken(context, token) }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks()
+                .execute { NotificationsSettingsClientImpl.registerToken(context, token) }
         }
     }
 
     private fun buildNotification(remoteMessage: RemoteMessage): Pair<Int, Notification> {
         return when {
             remoteMessage.notification != null -> buildFirebaseNotification(remoteMessage)
-            remoteMessage.data.containsKey(MP_NOTIFICATION_MESSAGE) -> buildMixpanelNotification(remoteMessage)
+            remoteMessage.data.containsKey(MP_NOTIFICATION_MESSAGE) -> buildMixpanelNotification(
+                remoteMessage
+            )
             else -> buildSecureCheckoutNotification(remoteMessage)
         }
     }
 
-
     private fun buildFirebaseNotification(remoteMessage: RemoteMessage): Pair<Int, Notification> {
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder =
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.brd_logo_gradient)
                 .setContentTitle(remoteMessage.notification?.title.orEmpty())
                 .setContentText(remoteMessage.notification?.body.orEmpty())
@@ -197,11 +208,14 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun buildMixpanelNotification(remoteMessage: RemoteMessage): Pair<Int, Notification> {
         val notificationBody = remoteMessage.data[MP_NOTIFICATION_MESSAGE]
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder =
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.brd_logo_gradient)
                 .setContentText(notificationBody)
-                .setStyle(NotificationCompat.BigTextStyle()
-                        .bigText(notificationBody))
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(notificationBody)
+                )
                 .setContentIntent(getHomePendingIntent())
                 .setAutoCancel(true)
                 .setContentIntent(getMixpanelPendingIntent(remoteMessage))
@@ -209,7 +223,8 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun buildSecureCheckoutNotification(remoteMessage: RemoteMessage): Pair<Int, Notification> {
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder =
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.brd_logo_gradient)
                 .setContentTitle(remoteMessage.data[NOTIFICATION_TITLE])
                 .setContentText(remoteMessage.data[NOTIFICATION_BODY])
@@ -222,28 +237,31 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         val url = getMixpanelDeepLink(remoteMessage.data)
         val campaignId = remoteMessage.data[MP_CAMPAIGN_ID]
 
-        return PendingIntent.getActivity(applicationContext, 0,
-                Intent(applicationContext, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    if (!url.isNullOrEmpty()) {
-                        putExtra(MainActivity.EXTRA_DATA, url)
-                    }
-                    putExtra(MainActivity.EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID, campaignId)
-                }, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(
+            applicationContext, 0,
+            Intent(applicationContext, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                if (!url.isNullOrEmpty()) {
+                    putExtra(MainActivity.EXTRA_DATA, url)
+                }
+                putExtra(MainActivity.EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID, campaignId)
+            }, PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     private fun getHomePendingIntent(): PendingIntent =
-            PendingIntent.getActivity(applicationContext, 0,
-                    Intent(applicationContext, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }, 0)
+        PendingIntent.getActivity(
+            applicationContext, 0,
+            Intent(applicationContext, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }, 0
+        )
 
     private fun getMixpanelDeepLink(messageData: Map<String, String>): String? =
-            if (messageData.containsKey(MP_NOTIFICATION_BRD_EXTRAS)) {
-                val json = JSONObject(messageData[MP_NOTIFICATION_BRD_EXTRAS])
-                json.getStringOrNull(MP_NOTIFICATION_URL)
-            } else {
-                null
-            }
-
+        if (messageData.containsKey(MP_NOTIFICATION_BRD_EXTRAS)) {
+            val json = JSONObject(messageData[MP_NOTIFICATION_BRD_EXTRAS])
+            json.getStringOrNull(MP_NOTIFICATION_URL)
+        } else {
+            null
+        }
 }

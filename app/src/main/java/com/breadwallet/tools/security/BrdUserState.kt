@@ -1,8 +1,10 @@
 /**
  * BreadWallet
  *
- * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 7/26/19.
- * Copyright (c) 2019 breadwallet LLC
+ *
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 3/11/20.
+ * Copyright (c) 2020 breadwallet LLC
+ *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -11,8 +13,10 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,31 +26,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.wallet
+package com.breadwallet.tools.security
 
-import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.ui.wallet.WalletScreen.F
-import com.spotify.mobius.Effects.effects
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
+sealed class BrdUserState {
+    data class Disabled(
+        val seconds: Int
+    ) : BrdUserState()
 
-val WalletInit = Init<WalletScreen.M, F> { model ->
-    val effects = effects(
-        F.LoadWalletState(model.currencyCode),
-        F.LoadWalletBalance(model.currencyCode),
-        F.LoadFiatPricePerUnit(model.currencyCode),
-        F.LoadCryptoPreferred,
-        F.LoadCurrencyName(model.currencyCode),
-        F.LoadSyncState(model.currencyCode),
-        F.LoadChartInterval(model.priceChartInterval, model.currencyCode),
-        F.TrackEvent(
-            String.format(
-                EventUtils.EVENT_WALLET_APPEARED,
-                model.currencyCode
-            )
-        ),
-        F.LoadIsTokenSupported(model.currencyCode),
-        F.LoadTransactions(model.currencyCode)
-    )
-    first(model, effects)
+    object Enabled : BrdUserState()
+    object Locked : BrdUserState()
+    object Uninitialized : BrdUserState()
 }

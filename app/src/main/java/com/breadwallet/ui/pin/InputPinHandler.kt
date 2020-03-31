@@ -24,7 +24,7 @@
  */
 package com.breadwallet.ui.pin
 
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
 import com.breadwallet.util.errorHandler
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 
 class InputPinHandler(
     private val output: Consumer<E>,
-    private val accountManager: BRAccountManager,
+    private val userManager: BrdUserManager,
     private val retainedScope: CoroutineScope,
     private val retainedProducer: () -> Consumer<E>,
     private val errorShake: () -> Unit,
@@ -61,7 +61,7 @@ class InputPinHandler(
 
     private suspend fun setupPin(effect: F.SetupPin) {
         try {
-            accountManager.configurePinCode(effect.pin)
+            userManager.configurePinCode(effect.pin)
             retainedProducer().accept(E.OnPinSaved)
         } catch (e: Exception) {
             retainedScope.launch(Dispatchers.Main) { showPinFailed.invoke() }
@@ -71,7 +71,7 @@ class InputPinHandler(
 
     private fun checkIfPinExists() {
         output.accept(
-            E.OnPinCheck(accountManager.hasPinCode())
+            E.OnPinCheck(userManager.hasPinCode())
         )
     }
 }

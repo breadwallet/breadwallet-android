@@ -36,9 +36,9 @@ import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs.getScreenHeight
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenHeight
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenWidth
-import com.breadwallet.tools.security.AccountState.Disabled
-import com.breadwallet.tools.security.AccountState.Locked
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserState.Disabled
+import com.breadwallet.tools.security.BrdUserState.Locked
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -58,8 +58,8 @@ private const val TAG = "BRActivity"
 @Suppress("TooManyFunctions")
 abstract class BRActivity : AppCompatActivity() {
 
-    protected val accountManager: BRAccountManager by lazy {
-        BreadApp.getKodeinInstance().instance<BRAccountManager>()
+    protected val userManager: BrdUserManager by lazy {
+        BreadApp.getKodeinInstance().instance<BrdUserManager>()
     }
 
     private val resumedScope = CoroutineScope(
@@ -80,7 +80,7 @@ abstract class BRActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        accountManager.accountStateChanges()
+        userManager.stateChanges()
             .filter { it is Disabled || it is Locked }
             .take(1)
             .onEach { finish() }

@@ -59,7 +59,7 @@ import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.send.TransferField
@@ -88,7 +88,7 @@ class WalletJs(
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
-    private val accountManager: BRAccountManager
+    private val userManager: BrdUserManager
 ) : JsApi {
     companion object {
         private const val KEY_BTC_DENOMINATION_DIGITS = "btc_denomination_digits"
@@ -504,7 +504,7 @@ class WalletJs(
             )
             is TransactionResultMessage.TransactionConfirmed -> {
                 val phrase = try {
-                    checkNotNull(accountManager.getPhrase())
+                    checkNotNull(userManager.getPhrase())
                 } catch (ex: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", ex)
                     return null

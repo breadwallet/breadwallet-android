@@ -128,7 +128,7 @@ class SendSheetController(args: Bundle? = null) :
             viewCreatedScope,
             { eventConsumer },
             breadBox = direct.instance(),
-            accountManager = direct.instance(),
+            userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
             navEffectHandler = direct.instance(),
@@ -173,6 +173,9 @@ class SendSheetController(args: Bundle? = null) :
             textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
+            },
+            textInputHederaMemo.textChanges().map {
+                E.TransferFieldUpdate.Value(TransferField.HEDERA_MEMO, it)
             },
             buttonFaq.clicks().map { E.OnFaqClicked },
             buttonScan.clicks().map { E.OnScanClicked },
@@ -402,7 +405,6 @@ class SendSheetController(args: Bundle? = null) :
         ifChanged(M::destinationTag) {
             if (destinationTag != null) {
                 groupDestinationTag.isVisible = true
-                inputLayoutDestinationTag.isErrorEnabled = destinationTag.invalid
                 inputLayoutDestinationTag.error = if (destinationTag.invalid) {
                     res.getString(R.string.Send_destinationTag_required_error)
                 } else null
@@ -417,6 +419,17 @@ class SendSheetController(args: Bundle? = null) :
                     textInputDestinationTag.text.isNullOrBlank()
                 ) {
                     textInputDestinationTag.setText(currentModel.destinationTag?.value)
+                }
+            }
+        }
+
+        ifChanged(M::hederaMemo) {
+            if (hederaMemo != null) {
+                groupHederaMemo.isVisible = true
+                if (!hederaMemo.value.isNullOrBlank() &&
+                    textInputHederaMemo.text.isNullOrBlank()
+                ) {
+                    textInputHederaMemo.setText(currentModel.hederaMemo?.value)
                 }
             }
         }

@@ -34,10 +34,9 @@ import com.breadwallet.tools.crypto.CryptoHelper.sha256
 import com.breadwallet.tools.crypto.CryptoHelper.signBasicDer
 import com.breadwallet.tools.crypto.CryptoHelper.signJose
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -66,7 +65,7 @@ private const val BDB_TOKEN_KEY = "BDB_TOKEN"
 
 class BdbAuthInterceptor(
     private val httpClient: OkHttpClient,
-    private val accountManager: BRAccountManager
+    private val userManager: BrdUserManager
 ) : Interceptor {
 
     private val mutex = Mutex()
@@ -89,7 +88,7 @@ class BdbAuthInterceptor(
     }
 
     private val authKeyBytes by lazy {
-        checkNotNull(accountManager.getAuthKey()) {
+        checkNotNull(userManager.getAuthKey()) {
             "BdbAuthInterceptor created before API Auth Key was set."
         }
     }
@@ -117,11 +116,11 @@ class BdbAuthInterceptor(
         }
 
         val tokenString = runBlocking {
-            if (accountManager.getBdbJwt() == null) {
+            if (userManager.getBdbJwt() == null) {
                 createAndSetJwt()
             }
             // Fallback to client token if needed, try creating a token later
-            accountManager.getBdbJwt() ?: clientToken
+            userManager.getBdbJwt() ?: clientToken
         }
 
         return chain.request()
@@ -139,13 +138,13 @@ class BdbAuthInterceptor(
             return
         }
         if (newJwt != null) {
-            accountManager.putBdbJwt(newJwt, expiration)
+            userManager.putBdbJwt(newJwt, expiration)
         }
     }
 
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
-        if (accountManager.getBdbJwt() != null) return@withLock null to 0
+        if (userManager.getBdbJwt() != null) return@withLock null to 0
 
         val (token, clientId) = requestToken() ?: return@withLock null to 0
 
