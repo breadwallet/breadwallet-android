@@ -17,7 +17,6 @@ redactedPlugin {
 detekt {
     toolVersion = "1.0.1"
     input = files("src/main/java", "src/test/java")
-    baseline = file("detekt-baseline.xml")
 }
 
 android {
