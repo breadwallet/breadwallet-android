@@ -114,7 +114,7 @@ android {
             if (useGoogleServices) {
                 firebaseAppDistribution {
                     releaseNotes = getChangelog()
-                    groups = "android-testers"
+                    groups = "android-team"
                 }
             }
         }
