@@ -1,12 +1,15 @@
+def hasAppServicesJson = file("google-services.json").exists()
+def submoduleServicesJson = rootProject.file("google-services/google-services.json")
+
 ext {
-    useGoogleServices = rootProject.file("google-services").exists()
+    useGoogleServices = submoduleServicesJson.exists() || hasAppServicesJson
 }
 
 if (ext.useGoogleServices) {
-    if (!file("google-services.json").exists()) {
+    if (!hasAppServicesJson) {
         afterEvaluate {
             copy {
-                from rootProject.file("google-services/google-services.json")
+                from submoduleServicesJson
                 into projectDir
             }
         }
