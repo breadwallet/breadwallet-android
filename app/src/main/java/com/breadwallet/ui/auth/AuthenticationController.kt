@@ -34,6 +34,7 @@ import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.tools.security.FingerprintUiHelper
@@ -91,7 +92,15 @@ class AuthenticationController(
         overridePushHandler(DialogChangeHandler())
     }
 
-    private val mode = Mode.valueOf(arg(KEY_MODE))
+    private val mode by lazy {
+        val context = BreadApp.getBreadContext().applicationContext
+        val fingerprintManager = context.getSystemService<FingerprintManager>()
+        if (fingerprintManager == null) {
+            Mode.PIN_REQUIRED
+        } else {
+            Mode.valueOf(arg(KEY_MODE))
+        }
+    }
 
     override val layoutId: Int =
         when (mode) {
@@ -121,8 +130,7 @@ class AuthenticationController(
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
-        when (if (fingerprintManager == null) Mode.PIN_REQUIRED else mode) {
+        when (mode) {
             Mode.PIN_REQUIRED -> {
                 pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
                     override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
@@ -139,6 +147,7 @@ class AuthenticationController(
                 })
             }
             Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
+                val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
                 val fingerprintUiHelperBuilder =
                     FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
                 val callback = object : FingerprintUiHelper.Callback {
