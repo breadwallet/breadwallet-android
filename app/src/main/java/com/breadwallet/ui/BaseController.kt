@@ -30,6 +30,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.bluelinelabs.conductor.Controller
+import com.breadwallet.util.errorHandler
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.*
 import kotlinx.coroutines.CoroutineScope
@@ -48,9 +49,15 @@ abstract class BaseController(
     args: Bundle? = null
 ) : Controller(args), KodeinAware, LayoutContainer {
 
-    protected val controllerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    protected val viewAttachScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    protected val viewCreatedScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    protected val controllerScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Default + errorHandler("controllerScope")
+    )
+    protected val viewAttachScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Default + errorHandler("viewAttachScope")
+    )
+    protected val viewCreatedScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Default + errorHandler("viewCreatedScope")
+    )
 
     /** Provides the root Application Kodein instance. */
     override val kodein by closestKodein {

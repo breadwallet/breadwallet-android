@@ -39,6 +39,7 @@ import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.segwit.LegacyAddress.E
 import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.util.CryptoUriParser
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +58,7 @@ class LegacyAddressHandler(
     private val showAddressCopiedAnimation: () -> Unit
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
         breadBox.wallet(btc)

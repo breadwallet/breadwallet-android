@@ -54,6 +54,7 @@ import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -97,8 +98,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     // NOTE: Used only to centralize deep link navigation handling.
     private var routerNavHandler: RouterNavigationEffectHandler? = null
 
-    private val resumedScope = CoroutineScope(Default + SupervisorJob())
-    private val pausedScope = CoroutineScope(Default + SupervisorJob())
+    private val resumedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("resumedScope")
+    )
+    private val pausedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("pausedScope")
+    )
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean

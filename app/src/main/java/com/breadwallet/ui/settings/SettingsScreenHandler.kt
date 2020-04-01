@@ -43,6 +43,7 @@ import com.breadwallet.tools.util.bch
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
+import com.breadwallet.util.errorHandler
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.buildSignedRequest
@@ -73,7 +74,7 @@ class SettingsScreenHandler(
     private val metaDataManager: AccountMetaDataProvider
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     @Suppress("ComplexMethod")
     override fun accept(value: F) {

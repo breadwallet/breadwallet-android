@@ -34,6 +34,7 @@ import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +52,7 @@ class OnBoardingHandler(
     private val routerProvider: () -> Router
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = coroutineJob + Dispatchers.Default
+    override val coroutineContext = coroutineJob + Dispatchers.Default + errorHandler()
 
     override fun accept(effect: F) {
         when (effect) {

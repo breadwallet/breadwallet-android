@@ -35,11 +35,11 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.util.errorHandler
 import com.platform.entities.TxMetaDataValue
 import com.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -71,10 +71,7 @@ class MetaDataEffectHandler(
     }
 
     override val coroutineContext =
-        SupervisorJob() + Dispatchers.Default +
-            CoroutineExceptionHandler { _, throwable ->
-                logError("Error in coroutine", throwable)
-            }
+        SupervisorJob() + Dispatchers.Default + errorHandler()
 
     private val commentUpdateChannel = Channel<CommentUpdateElem>()
     private val loadMetaDataChannel = Channel<List<MetaDataElem>>()

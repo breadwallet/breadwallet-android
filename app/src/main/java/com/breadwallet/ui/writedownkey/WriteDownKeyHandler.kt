@@ -26,6 +26,7 @@ package com.breadwallet.ui.writedownkey
 
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.ui.writedownkey.WriteDownKey.E
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +42,7 @@ class WriteDownKeyHandler(
     private val showBrdAuthPrompt: () -> Unit
 ) : Connection<WriteDownKey.F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(value: WriteDownKey.F) {
         when (value) {

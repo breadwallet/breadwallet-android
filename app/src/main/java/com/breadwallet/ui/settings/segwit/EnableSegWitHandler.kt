@@ -30,6 +30,7 @@ import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.settings.segwit.EnableSegWit.E
 import com.breadwallet.ui.settings.segwit.EnableSegWit.F
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.spotify.mobius.Connection
@@ -47,7 +48,7 @@ class EnableSegWitHandler(
     private val breadBox: BreadBox
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(value: F) {
         when (value) {

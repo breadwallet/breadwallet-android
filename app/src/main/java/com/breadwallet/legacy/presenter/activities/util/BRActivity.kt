@@ -39,6 +39,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs.putScreenWidth
 import com.breadwallet.tools.security.AccountState.Disabled
 import com.breadwallet.tools.security.AccountState.Locked
 import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -64,8 +65,12 @@ abstract class BRActivity : AppCompatActivity() {
         BreadApp.getKodeinInstance().instance<BRAccountManager>()
     }
 
-    private val resumedScope = CoroutineScope(Default + SupervisorJob())
-    private val pausedScope = CoroutineScope(Default + SupervisorJob())
+    private val resumedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("resumedScope")
+    )
+    private val pausedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("pausedScope")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

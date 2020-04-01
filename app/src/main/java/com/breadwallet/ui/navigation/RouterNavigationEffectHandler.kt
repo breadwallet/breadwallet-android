@@ -74,6 +74,7 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
@@ -91,7 +92,7 @@ class RouterNavigationEffectHandler(
 ) : Connection<NavigationEffect>,
     NavigationEffectHandlerSpec {
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + errorHandler())
 
     override fun accept(value: NavigationEffect) {
         scope.launch { patch(value) }

@@ -45,6 +45,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.util.errorHandler
 import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
@@ -77,7 +78,7 @@ class HomeScreenHandler(
     CoroutineScope,
     RatesDataSource.OnDataChanged {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
         RatesDataSource.getInstance(context).addOnDataChangedListener(this)
