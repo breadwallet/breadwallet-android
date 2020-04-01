@@ -47,6 +47,7 @@ import java.util.Locale
 
 class RecoveryKeyHandler(
     private val output: Consumer<E>,
+    private val breadApp: BreadApp,
     private val breadBox: BreadBox,
     private val accountManager: BRAccountManager,
     private val retainedScope: CoroutineScope,
@@ -131,17 +132,15 @@ class RecoveryKeyHandler(
 
         retainedScope.launch(Dispatchers.Main) {
             try {
-                val account = accountManager.recoverAccount(phraseBytes)
+                accountManager.recoverAccount(phraseBytes)
                 BRSharedPrefs.putPhraseWroteDown(check = true)
-                breadBox.open(account)
+                breadApp.startWithInitializedWallet(breadBox, false)
             } catch (e: Exception) {
                 logError("Error opening BreadBox", e)
                 // TODO: Define initialization error
                 retainedProducer().accept(E.OnPhraseInvalid)
                 return@launch
             }
-
-            (context.applicationContext as BreadApp).startWithInitializedWallet(breadBox, false)
 
             retainedProducer().accept(E.OnRecoveryComplete)
         }

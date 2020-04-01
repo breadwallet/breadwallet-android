@@ -167,31 +167,6 @@ class BreadApp : Application(), KodeinAware {
         }
 
         /**
-         * Initializes the application state.
-         */
-        fun initialize() {
-            // Things that should be done only if the wallet exists.
-            val isAccountInitialized = mInstance.accountManager.isAccountInitialized()
-            if (isAccountInitialized) {
-                // Initialize the wallet id (also called rewards id).
-                initializeWalletId()
-
-                // Initialize the Firebase Messaging Service.
-                BRDFirebaseMessagingService.initialize(mInstance)
-            } else {
-                // extract the bundles from the resources to be ready when the wallet is initialized
-                applicationScope.launch {
-                    ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
-                }
-
-                // Initialize TokenUtil to load our tokens.json file from res/raw
-                applicationScope.launch(Dispatchers.Default) {
-                    TokenUtil.initialize(mInstance, false)
-                }
-            }
-        }
-
-        /**
          * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
          */
         private fun initializeWalletId() {
@@ -376,6 +351,7 @@ class BreadApp : Application(), KodeinAware {
     private var mServerShutdownRunnable: Runnable? = null
 
     private val accountManager: BRAccountManager by instance()
+    private val apiClient: APIClient by instance()
 
     /**
      * Returns true if the device state is valid. The device state is considered valid, if the device password
@@ -431,7 +407,16 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        initialize()
+        if (!accountManager.isAccountInitialized()) {
+            // extract the bundles from the resources to be ready when the wallet is initialized
+            applicationScope.launch {
+                ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
+            }
+
+            applicationScope.launch(Dispatchers.Default) {
+                TokenUtil.initialize(mInstance, false)
+            }
+        }
 
         registerReceiver(
             InternetManager.getInstance(),
@@ -505,7 +490,9 @@ class BreadApp : Application(), KodeinAware {
     }
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
+        val context = mInstance.applicationContext
         BreadBoxCloseWorker.cancelEnqueuedWork()
+        incrementAppForegroundedCounter()
 
         if (!breadBox.isOpen) {
             val account = checkNotNull(accountManager.getAccount()) {
@@ -515,25 +502,20 @@ class BreadApp : Application(), KodeinAware {
             breadBox.open(account)
         }
 
-        getAccountMetaDataProvider()
-            .recoverAll(migrate)
-            .launchIn(startedScope)
-
+        initializeWalletId()
+        BRDFirebaseMessagingService.initialize(context)
         HTTPServer.getInstance().startServer(this)
-
-        APIClient.getInstance(this).updatePlatform()
-
+        apiClient.updatePlatform()
         applicationScope.launch {
-            UserMetricsUtil.makeUserMetricsRequest(mInstance)
+            UserMetricsUtil.makeUserMetricsRequest(context)
         }
-        incrementAppForegroundedCounter()
 
-        initialize()
-
-        getAccountMetaDataProvider()
-            .enabledWallets()
-            .updateRatesForCurrencies(this)
-            .launchIn(startedScope)
+        getAccountMetaDataProvider().run {
+            recoverAll(migrate).launchIn(startedScope)
+            enabledWallets()
+                .updateRatesForCurrencies(context)
+                .launchIn(startedScope)
+        }
 
         applicationScope.launch {
             trackAddressMismatch(breadBox)

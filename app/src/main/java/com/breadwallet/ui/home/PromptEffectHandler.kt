@@ -88,7 +88,7 @@ class PromptEffectHandler(
             PromptItem.FINGER_PRINT -> (!BRSharedPrefs.unlockWithFingerprint
                 && Utils.isFingerprintAvailable(context)
                 && !BRSharedPrefs.getPromptDismissed(context, PROMPT_DISMISSED_FINGERPRINT))
-            PromptItem.PAPER_KEY -> !BRSharedPrefs.getPhraseWroteDown(context)
+            PromptItem.PAPER_KEY -> !BRSharedPrefs.getPhraseWroteDown()
             PromptItem.UPGRADE_PIN -> accountManager.pinCodeNeedsUpgrade()
             PromptItem.RECOMMEND_RESCAN -> false // BRSharedPrefs.getScanRecommended(iso = "BTC")
         }
