@@ -54,6 +54,7 @@ import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -95,6 +96,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private val accountManager by instance<BRAccountManager>()
 
     private lateinit var router: Router
+    private var trackingListener: ControllerTrackingListener? = null
+
     // NOTE: Used only to centralize deep link navigation handling.
     private var routerNavHandler: RouterNavigationEffectHandler? = null
 
@@ -117,6 +120,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             router = Conductor.attachRouter(this, view, savedInstanceState)
             routerNavHandler = RouterNavigationEffectHandler(router)
         })
+
+        trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
         if (!isDeviceStateValid) {
             // In this case, isDeviceStateValid displays a dialog (activity)
@@ -170,6 +175,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
+        trackingListener?.run(router::removeChangeListener)
+        trackingListener = null
         (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
         pausedScope.cancel()
         resumedScope.cancel()
