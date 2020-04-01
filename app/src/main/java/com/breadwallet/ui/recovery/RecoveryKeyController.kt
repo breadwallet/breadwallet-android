@@ -39,6 +39,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.mobius.CompositeEffectHandler
@@ -94,6 +95,7 @@ class RecoveryKeyController(
             val resources = resources!!
             RecoveryKeyHandler(
                 output,
+                applicationContext as BreadApp,
                 direct.instance(),
                 direct.instance(),
                 viewCreatedScope,

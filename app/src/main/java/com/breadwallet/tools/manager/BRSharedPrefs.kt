@@ -111,7 +111,6 @@ object BRSharedPrefs {
      * Call when Application is initialized to setup [brdPrefs].
      * This removes the need for a context parameter.
      */
-    @JvmStatic
     fun provideContext(context: Context) {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
@@ -138,12 +137,10 @@ object BRSharedPrefs {
             putString(CURRENT_CURRENCY, default)
         }
 
-    @JvmStatic
-    fun getPhraseWroteDown(context: Context? = null): Boolean =
+    fun getPhraseWroteDown(): Boolean =
         brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
 
-    @JvmStatic
-    fun putPhraseWroteDown(context: Context? = null, check: Boolean) =
+    fun putPhraseWroteDown(check: Boolean) =
         brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
 
     @JvmStatic

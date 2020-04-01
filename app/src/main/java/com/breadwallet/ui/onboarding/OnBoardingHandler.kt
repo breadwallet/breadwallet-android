@@ -79,9 +79,8 @@ class OnBoardingHandler(
     private suspend fun createWallet() {
         val phrase = generatePhrase() ?: return
 
-        var account: Account
         try {
-            account = accountManager.createAccount(phrase)
+            accountManager.createAccount(phrase)
         } catch (e: Exception) {
             logError("Error storing wallet data.", e)
             outputProvider().accept(E.SetupError.StoreWalletFailed)
@@ -89,8 +88,6 @@ class OnBoardingHandler(
         }
 
         try {
-            breadBox.open(account)
-
             breadApp.startWithInitializedWallet(breadBox, false)
 
             outputProvider().accept(E.OnWalletCreated)
