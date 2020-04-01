@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -50,7 +51,7 @@ class PromptEffectHandler(
         private const val PROMPT_DISMISSED_FINGERPRINT = "fingerprint"
     }
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(effect: F) {
         when (effect) {

@@ -34,6 +34,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +54,7 @@ class NodeSelectorHandler(
 ) : Connection<F>,
     CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
         breadBox.wallet(btc)

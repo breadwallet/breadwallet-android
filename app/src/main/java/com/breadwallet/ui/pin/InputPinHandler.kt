@@ -27,6 +27,7 @@ package com.breadwallet.ui.pin
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,7 @@ class InputPinHandler(
     private val showPinFailed: () -> Unit
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(effect: F) {
         when (effect) {

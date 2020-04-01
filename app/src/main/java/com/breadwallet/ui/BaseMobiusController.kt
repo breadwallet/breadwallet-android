@@ -32,6 +32,7 @@ import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.EventSource
 import com.spotify.mobius.First
@@ -85,7 +86,9 @@ abstract class BaseMobiusController<M, E, F>(
         }
     }
 
-    protected val uiBindScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    protected val uiBindScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main + errorHandler("uiBindScope")
+    )
 
     /** The default model used to construct [loopController]. */
     abstract val defaultModel: M
@@ -173,7 +176,7 @@ abstract class BaseMobiusController<M, E, F>(
                     eventChannel.offer(event)
                 })
 
-                val scope = CoroutineScope(Dispatchers.Main)
+                val scope = CoroutineScope(Dispatchers.Main + errorHandler("modelConsumer"))
                 modelFlow
                     .onStart {
                         view ?: return@onStart

@@ -64,11 +64,11 @@ import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.security.CryptoAccountManager
 import com.breadwallet.tools.security.KeyStoreStatus
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
-import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.CryptoUriParser
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.trackAddressMismatch
 import com.breadwallet.util.usermetrics.UserMetricsUtil
@@ -92,7 +92,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
@@ -132,14 +131,18 @@ class BreadApp : Application(), KodeinAware {
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var mInstance: BreadApp
+
         @SuppressLint("StaticFieldLeak")
         private var mCurrentActivity: Activity? = null
 
         /** [CoroutineScope] matching the lifetime of the application. */
-        val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val applicationScope = CoroutineScope(
+            SupervisorJob() + Dispatchers.Default + errorHandler("applicationScope")
+        )
 
-        private val startedScopeJob = SupervisorJob()
-        private val startedScope = CoroutineScope(startedScopeJob + Dispatchers.Default)
+        private val startedScope = CoroutineScope(
+            SupervisorJob() + Dispatchers.Default + errorHandler("startedScope")
+        )
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
         fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
@@ -166,11 +169,9 @@ class BreadApp : Application(), KodeinAware {
         /**
          * Initializes the application state.
          */
-        @JvmStatic
-        suspend fun initialize() {
+        fun initialize() {
             // Things that should be done only if the wallet exists.
-            val isAccountInitialized =
-                withContext(Dispatchers.IO) { mInstance.accountManager.isAccountInitialized() }
+            val isAccountInitialized = mInstance.accountManager.isAccountInitialized()
             if (isAccountInitialized) {
                 // Initialize the wallet id (also called rewards id).
                 initializeWalletId()
@@ -179,8 +180,9 @@ class BreadApp : Application(), KodeinAware {
                 BRDFirebaseMessagingService.initialize(mInstance)
             } else {
                 // extract the bundles from the resources to be ready when the wallet is initialized
-                BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                    .execute { ServerBundlesHelper.extractBundlesIfNeeded(mInstance) }
+                applicationScope.launch {
+                    ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
+                }
 
                 // Initialize TokenUtil to load our tokens.json file from res/raw
                 applicationScope.launch(Dispatchers.Default) {
@@ -429,7 +431,7 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        applicationScope.launch { initialize() }
+        initialize()
 
         registerReceiver(
             InternetManager.getInstance(),
@@ -448,18 +450,16 @@ class BreadApp : Application(), KodeinAware {
     private fun handleOnStart() {
         setDelayServerShutdown(false, -1)
 
-        startedScope.launch {
-            val breadBox = getBreadBox()
-            if (isDeviceStateValid() && accountManager.isAccountInitialized()) {
-                startWithInitializedWallet(breadBox)
-            }
+        val breadBox = getBreadBox()
+        if (isDeviceStateValid() && accountManager.isAccountInitialized()) {
+            startWithInitializedWallet(breadBox)
         }
     }
 
     private fun handleOnStop() {
         if (accountManager.isAccountInitialized()) {
             BreadBoxCloseWorker.enqueueWork()
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+            applicationScope.launch {
                 EventUtils.saveEvents(this@BreadApp)
                 EventUtils.pushToServer(this@BreadApp)
             }
@@ -486,7 +486,7 @@ class BreadApp : Application(), KodeinAware {
                 )
             }
         }
-        startedScopeJob.cancelChildren()
+        startedScope.coroutineContext.cancelChildren()
     }
 
     private fun handleOnDestroy() {
@@ -508,13 +508,11 @@ class BreadApp : Application(), KodeinAware {
         BreadBoxCloseWorker.cancelEnqueuedWork()
 
         if (!breadBox.isOpen) {
-            startedScope.launch {
-                val account = checkNotNull(accountManager.getAccount()) {
-                    "Wallet is initialized but Account is null"
-                }
-
-                breadBox.open(account)
+            val account = checkNotNull(accountManager.getAccount()) {
+                "Wallet is initialized but Account is null"
             }
+
+            breadBox.open(account)
         }
 
         getAccountMetaDataProvider()
@@ -525,11 +523,12 @@ class BreadApp : Application(), KodeinAware {
 
         APIClient.getInstance(this).updatePlatform()
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks()
-            .execute { UserMetricsUtil.makeUserMetricsRequest(mInstance) }
+        applicationScope.launch {
+            UserMetricsUtil.makeUserMetricsRequest(mInstance)
+        }
         incrementAppForegroundedCounter()
 
-        startedScope.launch { initialize() }
+        initialize()
 
         getAccountMetaDataProvider()
             .enabledWallets()

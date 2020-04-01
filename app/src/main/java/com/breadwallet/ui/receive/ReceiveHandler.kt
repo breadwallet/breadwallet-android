@@ -42,6 +42,7 @@ import com.breadwallet.ui.receive.ReceiveScreen.E
 import com.breadwallet.ui.receive.ReceiveScreen.F
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBitcoin
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
@@ -73,7 +74,7 @@ class ReceiveHandler(
     private val controller: Controller
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     private val resetCopiedChannel = Channel<Unit>(BUFFERED)
 

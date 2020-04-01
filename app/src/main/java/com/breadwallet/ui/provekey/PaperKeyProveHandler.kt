@@ -27,6 +27,7 @@ package com.breadwallet.ui.provekey
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.provekey.PaperKeyProve.E
 import com.breadwallet.ui.provekey.PaperKeyProve.F
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +43,7 @@ class PaperKeyProveHandler(
     private val showBrdSignal: () -> Unit
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(value: F) {
         when (value) {
