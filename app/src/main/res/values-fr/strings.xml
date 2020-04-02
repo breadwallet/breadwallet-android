@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Commencez à investir dès aujourd\'hui avec seulement 50 $ !</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Bienvenue dans votre nouveau portefeuille international !</string>
+    <string name="OnboardingPageOne.title">Bienvenue dans votre nouveau portefeuille d\'actifs numériques!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">Investissez et diversifiez facilement et en toute sécurité avec BRD.</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">Impossible de créer une transaction.</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">Mémo</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">Étiquette de destination (facultatif)</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">Étiquette de destination (obligatoire)</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Le champ d\'entrée est vide.</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">Total</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">Identifiant de transaction</string>
+    <string name="TransactionDetails.txHashHeader">Transaction ID</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">Reçu à cette adresse</string>
     <!-- (this transaction was) Sent to this address: -->

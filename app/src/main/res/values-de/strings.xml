@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Beginnen Sie noch heute mit einer Einlage von nur US$ 50!</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Herzlich willkommen bei Ihrer neuen globalen Wallet!</string>
+    <string name="OnboardingPageOne.title">Willkommen in Ihrer neuen digitalen Geldbörse!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">Einfach und sicher - Mit BRD investieren und Investitionen diversifizieren</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">Transaktion konnte nicht erstellen werden.</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">Vermerk</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">Ziel-Tag (optional)</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">Ziel-Tag (erforderlich)</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Pasteboard ist leer.</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">Gesamt</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">Bitcoin-Transaktions-ID</string>
+    <string name="TransactionDetails.txHashHeader">Transaktions-ID</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">An dieser Adresse empfangen</string>
     <!-- (this transaction was) Sent to this address: -->
