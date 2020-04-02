@@ -43,7 +43,7 @@
 
         <ImageView
             android:id="@+id/notification_image"
-            android:layout_width="0dp"
+            android:layout_width="170dp"
             android:layout_height="0dp"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"

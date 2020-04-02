@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:350203949267:android:48e8b2c1837bbe44",
         "android_client_info": {
-          "package_name": "com.breadwallet.debug"
+          "package_name": "just.cash.debug"
         }
       },
       "oauth_client": [
@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:350203949267:android:10a0c5e2af5ceaf5",
         "android_client_info": {
-          "package_name": "com.breadwallet.testnet.debug"
+          "package_name": "just.cash.testnet.debug"
         }
       },
       "oauth_client": [
