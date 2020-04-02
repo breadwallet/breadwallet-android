@@ -51,6 +51,7 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.onboarding.IntroController
+import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
@@ -278,9 +279,14 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         .any()
 
     private fun isBackstackLocked() =
-        router.backstack.lastOrNull()?.controller()?.let { controller ->
-            controller is LoginController || controller is InputPinController
-        } ?: false
+        router.backstack.lastOrNull()?.controller()
+            ?.let {
+                // Backstack is locked or requires a pin
+                it is LoginController || it is InputPinController ||
+                    // Backstack is initialization flow
+                    it is OnBoardingController || it is RecoveryKeyController ||
+                    it is MigrateController
+            } ?: false
 
     private fun disableApp() {
         if (isBackstackDisabled()) return
