@@ -24,6 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <RelativeLayout
+            android:layout_marginTop="10dp"
             android:id="@+id/logo_subtitle_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/brd_logo"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="-16dp"
+                android:layout_marginTop="7dp"
                 android:text="@string/LinkWallet.logoFooter"
                 android:textColor="?attr/link_wallet_subtitle_text_color"
                 android:textSize="20sp"
