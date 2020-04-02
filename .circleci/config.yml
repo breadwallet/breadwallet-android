@@ -74,6 +74,12 @@ jobs:
           command: |
             ./gradlew --console=plain detekt
 
+      #gradle build
+      - run:
+          name: gradle test
+          command: |
+            ./gradlew  --console=plain testBrdDebugUnitTest testBrdTestnetDebugUnitTest
+
       # save cache
       - save_cache:
           paths:
@@ -91,10 +97,10 @@ jobs:
             mkdir -p ~/atrifact
             ls -l ./app/build
             cp -r ./app/build/reports ~/atrifact;
-            cp -r ./app/build/outputs/apk/production/release ~/atrifact;
+            cp -r ./app/build/test-results ~/atrifact;
           when: always
       - store_test_results:
-          path: ./app/build/reports
+          path: ./app/build/test-results
       - store_artifacts:
           path: ~/atrifact
 
