@@ -8,8 +8,8 @@
 
     <View
         android:id="@+id/logo_view"
-        android:layout_width="96dp"
-        android:layout_height="32dp"
+        android:layout_width="150dp"
+        android:layout_height="93dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="128dp"
         android:layout_marginEnd="16dp"
