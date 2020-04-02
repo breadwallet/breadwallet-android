@@ -6,7 +6,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/android:api-29-ndk
 
     working_directory: ~/repo
 
@@ -31,36 +31,6 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
 
-      #Download SDK
-      - run:
-          name: Download SDK
-          command: |
-            mkdir -p $ANDROID_HOME
-            if [ ! -f "~/.android/$SDK_FILENAME" ]; then
-                curl -sSO https://dl.google.com/android/repository/$SDK_FILENAME
-                mkdir -p ~/.android
-                cp $SDK_FILENAME ~/.android/$SDK_FILENAME
-
-            else
-             echo "SDK Already present"
-            fi
-            unzip -qq ~/.android/$SDK_FILENAME -d $ANDROID_HOME
-
-      #Check SDK
-      - run:
-          name: check SDK
-          command: |
-            ls -la $ANDROID_HOME
-            ls -la $ANDROID_HOME/tools
-
-      #accept SDK
-      - run:
-          name: Accept SDK
-          command: |
-            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "tools" "platform-tools"
-            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;29.0.2"
-            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-29"
-            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
       #Refresh gradle
       - run:
@@ -84,8 +54,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-            - ~/opt
-            - ~/.android
+  
           key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
 
 
