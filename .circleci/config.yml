@@ -1,13 +1,107 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+# Java Gradle CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: drewcarlson/docker-android
-# Orchestrate or schedule a set of jobs
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      SDK_FILENAME: sdk-tools-linux-4333796.zip
+      ANDROID_HOME: ~/opt
+
+
+    steps:
+      - checkout
+
+      #Check init
+      - run:
+          name: check init
+          command: |
+            echo $PWD
+            ls -la .
+
+      # Download and cache dependencies gradle
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+      #Download SDK
+      - run:
+          name: Download SDK
+          command: |
+            mkdir -p $ANDROID_HOME
+            if [ ! -f "~/.android/$SDK_FILENAME" ]; then
+                curl -sSO https://dl.google.com/android/repository/$SDK_FILENAME
+                mkdir -p ~/.android
+                cp $SDK_FILENAME ~/.android/$SDK_FILENAME
+
+            else
+             echo "SDK Already present"
+            fi
+            unzip -qq ~/.android/$SDK_FILENAME -d $ANDROID_HOME
+
+      #Check SDK
+      - run:
+          name: check SDK
+          command: |
+            ls -la $ANDROID_HOME
+            ls -la $ANDROID_HOME/tools
+
+      #accept SDK
+      - run:
+          name: Accept SDK
+          command: |
+            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "tools" "platform-tools"
+            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;29.0.2"
+            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-29"
+            echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
+      #Refresh gradle
+      - run:
+          name: Refresh gradle
+          command: |
+            ./gradlew   dependencies
+
+      #gradle build
+      - run:
+          name: gradle detekt
+          command: |
+            ./gradlew --console=plain detekt
+
+      # save cache
+      - save_cache:
+          paths:
+            - ~/.gradle
+            - ~/opt
+            - ~/.android
+          key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+
+      # save tests!
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/atrifact
+            ls -l ./app/build
+            cp -r ./app/build/reports ~/atrifact;
+            cp -r ./app/build/outputs/apk/production/release ~/atrifact;
+          when: always
+      - store_test_results:
+          path: ./app/build/reports
+      - store_artifacts:
+          path: ~/atrifact
+
+
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2
+  commit:
     jobs:
-      - welcome/run
+      - build
