@@ -13,7 +13,7 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       SDK_FILENAME: sdk-tools-linux-4333796.zip
-      ANDROID_HOME: ~/opt
+      ANDROID_HOME: /opt/android/sdk
 
 
     steps:
@@ -25,7 +25,7 @@ jobs:
           command: |
             echo $PWD
             ls -la .
-
+            ls -la $ANDROID_HOME
       # Download and cache dependencies gradle
       - restore_cache:
           keys:
@@ -54,7 +54,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-  
+
           key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
 
 
