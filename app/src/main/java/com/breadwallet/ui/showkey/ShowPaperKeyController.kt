@@ -65,11 +65,17 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
 
     constructor(
         phrase: List<String>,
-        onComplete: OnCompleteAction
-    ) : this(bundleOf(EXTRA_PHRASE to phrase, EXTRA_ON_COMPLETE to onComplete.name))
+        onComplete: OnCompleteAction? = null
+    ) : this(
+        bundleOf(
+            EXTRA_PHRASE to phrase,
+            EXTRA_ON_COMPLETE to onComplete?.name
+        )
+    )
 
     private val phrase: List<String> = arg(EXTRA_PHRASE)
-    private val onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE))
+    private val onComplete = argOptional<String>(EXTRA_ON_COMPLETE)
+        ?.run(OnCompleteAction::valueOf)
 
     override val layoutId = R.layout.controller_paper_key
     override val defaultModel = M.createDefault(phrase, onComplete)
@@ -79,6 +85,7 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
             when (effect) {
                 F.GoToBuy -> NavigationEffect.GoToBuy
                 F.GoToHome -> NavigationEffect.GoToHome
+                F.GoBack -> NavigationEffect.GoBack
                 is F.GoToPaperKeyProve -> NavigationEffect.GoToPaperKeyProve(
                     effect.phrase,
                     effect.onComplete

@@ -35,6 +35,7 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -59,11 +60,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
+    private val retainedScope: CoroutineScope,
     private val context: Context,
     private val activity: Activity,
     private val experimentsRepository: ExperimentsRepository,
@@ -71,7 +74,8 @@ class SettingsScreenHandler(
     private val showPlatformDebugUrlDialog: (String) -> Unit,
     private val showPlatformBundleDialog: (String) -> Unit,
     private val showTokenBundleDialog: (String) -> Unit,
-    private val metaDataManager: AccountMetaDataProvider
+    private val metaDataManager: AccountMetaDataProvider,
+    private val accountManager: BRAccountManager
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -140,6 +144,10 @@ class SettingsScreenHandler(
             F.WipeNoPrompt -> {
                 activity.getSystemService(ActivityManager::class.java)
                     ?.clearApplicationUserData()
+            }
+            F.GetPaperKey -> retainedScope.launch {
+                val phrase = checkNotNull(accountManager.getPhrase()).toString(UTF_8)
+                output.accept(E.ShowPhrase(phrase.split(" ")))
             }
         }
     }
