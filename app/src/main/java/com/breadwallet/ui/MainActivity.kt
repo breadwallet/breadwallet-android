@@ -44,6 +44,7 @@ import com.breadwallet.tools.security.AccountState
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
@@ -283,6 +284,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             ?.let {
                 // Backstack is locked or requires a pin
                 it is LoginController || it is InputPinController ||
+                    it is AuthenticationController ||
                     // Backstack is initialization flow
                     it is OnBoardingController || it is RecoveryKeyController ||
                     it is MigrateController
