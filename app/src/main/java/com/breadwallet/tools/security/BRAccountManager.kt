@@ -264,14 +264,16 @@ class CryptoAccountManager(
         check(phrase.contentEquals(storedPhrase)) { "Phrase does not match." }
         putPinCode("")
         putFailCount(0)
+        putFailTimestamp(0)
+        disabledSeconds.set(0)
         locked.set(false)
+        stateChangeChannel.offer(Unit)
     }
 
     override fun verifyPinCode(pinCode: String) =
         if (pinCode == getPinCode()) {
             putFailCount(0)
             putFailTimestamp(0)
-            disabledSeconds.set(0)
             locked.set(false)
             stateChangeChannel.offer(Unit)
             true
@@ -293,8 +295,9 @@ class CryptoAccountManager(
         getPinCode().let { it.isNotBlank() && it.length != PIN_LENGTH }
 
     override fun lockAccount() {
-        locked.set(true)
-        stateChangeChannel.offer(Unit)
+        if (!locked.getAndSet(true)) {
+            stateChangeChannel.offer(Unit)
+        }
     }
 
     @Synchronized

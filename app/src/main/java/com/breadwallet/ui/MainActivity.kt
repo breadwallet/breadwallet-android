@@ -64,16 +64,12 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.erased.instance
-
-private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
@@ -105,9 +101,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
-    )
-    private val pausedScope = CoroutineScope(
-        Default + SupervisorJob() + errorHandler("pausedScope")
     )
 
     private var launchedWithInvalidState = false
@@ -180,14 +173,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         trackingListener?.run(router::removeChangeListener)
         trackingListener = null
         (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
-        pausedScope.cancel()
         resumedScope.cancel()
     }
 
     override fun onResume() {
         super.onResume()
         BreadApp.setBreadContext(this)
-        pausedScope.coroutineContext.cancelChildren()
 
         accountManager.accountStateChanges()
             .map { processAccountState(it) }
@@ -213,10 +204,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         super.onPause()
         BreadApp.setBreadContext(null)
         resumedScope.coroutineContext.cancelChildren()
-        pausedScope.launch {
-            delay(LOCK_TIMEOUT)
-            accountManager.lockAccount()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
