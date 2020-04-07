@@ -62,8 +62,9 @@ sealed class NavigationEffect {
     object GoToQrScan : NavigationEffect()
 
     data class GoToDeepLink(
-        val url: String,
-        val authenticated: Boolean
+        val url: String? = null,
+        val authenticated: Boolean,
+        val link: Link? = null
     ) : NavigationEffect()
     data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
@@ -84,6 +85,7 @@ sealed class NavigationEffect {
     ) : NavigationEffect()
 
     object GoToLogin : NavigationEffect()
+    object GoToAuthentication : NavigationEffect()
     object GoToHome : NavigationEffect()
     object GoToBuy : NavigationEffect()
     object GoToTrade : NavigationEffect()
@@ -98,7 +100,7 @@ sealed class NavigationEffect {
 
     data class GoToPaperKey(
         @Redacted val phrase: List<String>,
-        val onComplete: OnCompleteAction
+        val onComplete: OnCompleteAction?
     ) : NavigationEffect()
 
     data class GoToPaperKeyProve(

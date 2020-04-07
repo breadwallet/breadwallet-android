@@ -193,10 +193,9 @@ class WalletJs(
         val currenciesJSON = JSONArray()
         wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
+            val tokenItem = TokenUtil.getTokenItemForCurrencyId(currencyId)
             val currencyCode =
-                wallet?.currency?.code?.toUpperCase() ?: TokenUtil.getTokenItemForCurrencyId(
-                    currencyId
-                )?.symbol
+                wallet?.currency?.code?.toUpperCase() ?: tokenItem?.symbol
 
             if (currencyCode.isNullOrBlank()) return@forEach
 
@@ -204,7 +203,7 @@ class WalletJs(
                 try {
                     put(KEY_ID, currencyCode)
                     put(KEY_TICKER, currencyCode)
-                    put(KEY_NAME, wallet?.name ?: currencyCode)
+                    put(KEY_NAME, tokenItem?.name ?: wallet?.name)
 
                     val colors = JSONArray().apply {
                         put(TokenUtil.getTokenStartColor(currencyCode, context))

@@ -78,11 +78,18 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun onWalletsUpdated(model: M): Next<M, F> =
         dispatch(setOf(F.GoToHomeScreen))
 
-    override fun onTransactionScanned(
+    override fun onAuthenticated(model: M): Next<M, F> =
+        dispatch(setOf(F.GetPaperKey))
+
+    override fun onLinkScanned(
         model: M,
-        event: E.OnTransactionScanned
+        event: E.OnLinkScanned
     ): Next<M, F> =
-        dispatch(setOf(F.GoToSend(event.cryptoRequestUrl)))
+        dispatch(setOf(F.GoToLink(event.link)))
+
+    override fun showPhrase(model: M, event: E.ShowPhrase): Next<M, F> {
+        return dispatch(setOf(F.GoToPaperKey(event.phrase)))
+    }
 
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
@@ -113,7 +120,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.VIEW_LEGACY_ADDRESS -> F.GoToLegacyAddress
                     SettingsOption.BTC_NODES -> F.GoToNodeSelector
                     SettingsOption.FINGERPRINT_AUTH -> F.GoToFingerprintAuth
-                    SettingsOption.PAPER_KEY -> F.GoToPaperKey
+                    SettingsOption.PAPER_KEY -> F.GoToAuthentication
                     SettingsOption.UPDATE_PIN -> F.GoToUpdatePin
                     SettingsOption.WIPE -> F.GoToWipeWallet
                     SettingsOption.ONBOARDING_FLOW -> F.GoToOnboarding

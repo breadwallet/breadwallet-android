@@ -25,6 +25,7 @@
 package com.platform.entities
 
 import com.platform.util.getDoubleOrDefault
+import com.platform.util.getDoubleOrDefaultSafe
 import com.platform.util.getIntOrDefault
 import com.platform.util.getStringOrNull
 import org.json.JSONObject
@@ -38,7 +39,7 @@ data class TxMetaDataValue(
     val exchangeCurrency: String? = null,
     val exchangeRate: Double = 0.toDouble(),
     val blockHeight: Int = 0,
-    val fee: String? = null,
+    val fee: Double = 0.toDouble(),
     val txSize: Int = 0,
     val creationTime: Int = 0,
     val classVersion: Int = 3
@@ -62,7 +63,7 @@ data class TxMetaDataValue(
                 classVersion = getIntOrDefault(CLASS_VERSION),
                 blockHeight = getIntOrDefault(BLOCK_HEIGHT),
                 exchangeRate = getDoubleOrDefault(EXCHANGE_RATE),
-                fee = getStringOrNull(FEE_RATE),
+                fee = getDoubleOrDefaultSafe(FEE_RATE),
                 txSize = getIntOrDefault(TX_SIZE),
                 creationTime = getIntOrDefault(CREATION_TIME)
             )

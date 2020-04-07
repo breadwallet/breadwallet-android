@@ -44,3 +44,10 @@ fun JSONObject.getLongOrDefault(name: String, default: Long = 0) =
 fun JSONObject.getDoubleOrDefault(name: String, default: Double = 0.0) =
     if (has(name)) getDouble(name) else default
 
+/** Returns the value mapped by name or [default] if it doesn't exist or is malformed. */
+fun JSONObject.getDoubleOrDefaultSafe(name: String, default: Double = 0.0) =
+    try {
+        getDoubleOrDefault(name, default)
+    } catch (e: Exception) {
+        default
+    }

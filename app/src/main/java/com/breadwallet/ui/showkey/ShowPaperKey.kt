@@ -31,13 +31,13 @@ import io.sweers.redacted.annotation.Redacted
 object ShowPaperKey {
     data class M(
         @Redacted val phrase: List<String>,
-        val onComplete: OnCompleteAction,
+        val onComplete: OnCompleteAction?,
         val currentWord: Int = 0
     ) {
         companion object {
             fun createDefault(
                 phrase: List<String>,
-                onComplete: OnCompleteAction
+                onComplete: OnCompleteAction?
             ) = M(phrase, onComplete)
         }
     }
@@ -60,6 +60,7 @@ object ShowPaperKey {
 
         object GoToHome : F()
         object GoToBuy : F()
+        object GoBack : F()
         data class GoToPaperKeyProve(
             @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction

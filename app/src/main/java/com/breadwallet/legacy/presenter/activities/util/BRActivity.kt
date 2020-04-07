@@ -46,16 +46,13 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.launch
 import org.kodein.di.erased.instance
 
-private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val TAG = "BRActivity"
 
 @Suppress("TooManyFunctions")
@@ -68,9 +65,6 @@ abstract class BRActivity : AppCompatActivity() {
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
     )
-    private val pausedScope = CoroutineScope(
-        Default + SupervisorJob() + errorHandler("pausedScope")
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,14 +73,12 @@ abstract class BRActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        pausedScope.cancel()
         resumedScope.cancel()
         (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
     }
 
     override fun onResume() {
         super.onResume()
-        pausedScope.coroutineContext.cancelChildren()
 
         accountManager.accountStateChanges()
             .filter { it is Disabled || it is Locked }
@@ -103,11 +95,6 @@ abstract class BRActivity : AppCompatActivity() {
         resumedScope.coroutineContext.cancelChildren()
 
         setBreadContext(null)
-
-        pausedScope.launch {
-            delay(LOCK_TIMEOUT)
-            accountManager.lockAccount()
-        }
     }
 
     private fun saveScreenSizesIfNeeded() {

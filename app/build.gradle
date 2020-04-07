@@ -59,7 +59,7 @@ android {
         FakeSigningConfig {
             keyAlias 'key0'
             keyPassword 'qwerty'
-            storeFile file('../FakeSigningKey')
+            storeFile rootProject.file('FakeSigningKey')
             storePassword 'qwerty'
         }
     }
@@ -77,7 +77,6 @@ android {
             dimension "mode"
             resValue "string", "app_name", "BRD"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
-            signingConfig signingConfigs.FakeSigningConfig
             // Uncomment to fake sign a mainnet release build for testing.
             missingDimensionStrategy 'network', 'onMainnet'
         }
@@ -86,7 +85,6 @@ android {
             dimension "mode"
             resValue "string", "app_name", "BRD Testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
-            signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
         }
     }
@@ -107,6 +105,7 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.FakeSigningConfig
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher"]
             debuggable = false
             minifyEnabled = false
@@ -119,6 +118,7 @@ android {
             }
         }
         debug {
+            signingConfig signingConfigs.FakeSigningConfig
             applicationIdSuffix '.debug'
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher_grayscale"]
             debuggable = true
