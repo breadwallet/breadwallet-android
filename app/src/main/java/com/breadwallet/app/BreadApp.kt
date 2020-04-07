@@ -82,9 +82,11 @@ import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -106,6 +108,8 @@ import java.io.File
 import java.io.UnsupportedEncodingException
 import java.util.Locale
 import java.util.regex.Pattern
+
+private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware {
@@ -350,6 +354,8 @@ class BreadApp : Application(), KodeinAware {
     private var mServerShutdownHandler: Handler? = null
     private var mServerShutdownRunnable: Runnable? = null
 
+    private var accountLockJob: Job? = null
+
     private val accountManager: BRAccountManager by instance()
     private val apiClient: APIClient by instance()
 
@@ -433,6 +439,7 @@ class BreadApp : Application(), KodeinAware {
      * Even if the wallet is not initialized, we may need tell the user to enable the password.
      */
     private fun handleOnStart() {
+        accountLockJob?.cancel()
         setDelayServerShutdown(false, -1)
 
         val breadBox = getBreadBox()
@@ -443,6 +450,10 @@ class BreadApp : Application(), KodeinAware {
 
     private fun handleOnStop() {
         if (accountManager.isAccountInitialized()) {
+            accountLockJob = applicationScope.launch {
+                delay(LOCK_TIMEOUT)
+                accountManager.lockAccount()
+            }
             BreadBoxCloseWorker.enqueueWork()
             applicationScope.launch {
                 EventUtils.saveEvents(this@BreadApp)
