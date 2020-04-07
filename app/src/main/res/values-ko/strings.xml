@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">50달러 소액부터 오늘 투자를 시작해 보세요!</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">새로운 글로벌 월렛에 오신 것을 환영합니다!</string>
+    <string name="OnboardingPageOne.title">새로운 디지털 자산 지갑에 오신 것을 환영합니다!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">BRD와 함께 쉽고 안전하게 투자하고 다양하게 분산시키세요.</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">전송할 수 없습니다.</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">메모</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">대상 태그 (선택 사항)</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">대상 태그 (필수)</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">클립보드가 비어 있습니다</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">합계</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
+    <string name="TransactionDetails.txHashHeader">트랜잭션 세부 정보</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">이 주소에서 받음</string>
     <!-- (this transaction was) Sent to this address: -->

@@ -43,6 +43,8 @@ import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
@@ -216,7 +218,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
-        val link = effect.url.asLink()
+        val link = effect.url?.asLink() ?: effect.link
         if (link == null) {
             logError("Failed to parse url, ${effect.url}")
             showLaunchScreen(effect.authenticated)
@@ -360,6 +362,20 @@ class RouterNavigationEffectHandler(
                 .popChangeHandler(FadeChangeHandler())
                 .pushChangeHandler(FadeChangeHandler())
         )
+    }
+
+    override fun goToAuthentication() {
+        val res = checkNotNull(router.activity).resources
+        val controller = AuthenticationController(
+            Mode.PIN_REQUIRED,
+            title = res.getString(R.string.VerifyPin_title),
+            message = res.getString(R.string.VerifyPin_continueBody)
+        )
+        val listener = router.backstack.lastOrNull()?.controller()
+        if (listener is AuthenticationController.Listener) {
+            controller.targetController = listener
+        }
+        router.pushController(RouterTransaction.with(controller))
     }
 
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {

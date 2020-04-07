@@ -38,17 +38,27 @@ object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.
         event: ShowPaperKey.E
     ): Next<ShowPaperKey.M, ShowPaperKey.F> = patch(model, event)
 
-    override fun onNextClicked(model: ShowPaperKey.M)
-        : Next<ShowPaperKey.M, ShowPaperKey.F> {
+    override fun onNextClicked(
+        model: ShowPaperKey.M
+    ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         return if (model.currentWord == model.phrase.size - 1) {
-            dispatch(setOf(ShowPaperKey.F.GoToPaperKeyProve(model.phrase, model.onComplete)))
+            dispatch(
+                setOf(
+                    if (model.onComplete == null) {
+                        ShowPaperKey.F.GoBack
+                    } else {
+                        ShowPaperKey.F.GoToPaperKeyProve(model.phrase, model.onComplete)
+                    }
+                )
+            )
         } else {
             next(model.copy(currentWord = model.currentWord + 1))
         }
     }
 
-    override fun onPreviousClicked(model: ShowPaperKey.M)
-        : Next<ShowPaperKey.M, ShowPaperKey.F> {
+    override fun onPreviousClicked(
+        model: ShowPaperKey.M
+    ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         check(model.currentWord > 0)
         return next(model.copy(currentWord = model.currentWord - 1))
     }
@@ -60,11 +70,13 @@ object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.
         return next(model.copy(currentWord = event.position))
     }
 
-    override fun onCloseClicked(model: ShowPaperKey.M)
-        : Next<ShowPaperKey.M, ShowPaperKey.F> {
+    override fun onCloseClicked(
+        model: ShowPaperKey.M
+    ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         val effect = when (model.onComplete) {
             OnCompleteAction.GO_HOME -> ShowPaperKey.F.GoToHome
             OnCompleteAction.GO_TO_BUY -> ShowPaperKey.F.GoToBuy
+            null -> ShowPaperKey.F.GoBack
         }
         return dispatch(setOf(effect))
     }

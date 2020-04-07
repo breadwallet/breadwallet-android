@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Начинайте инвестировать уже сегодня всего с 50 долларами США!</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Добро пожаловать в ваш новый глобальный кошелек!</string>
+    <string name="OnboardingPageOne.title">Добро пожаловать в ваш новый кошелек цифровых активов!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">Инвестируйте и диверсифицируйте c BRD, просто и безопасно.</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">Не удалось создать транзакцию.</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">Записка</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">Тег назначения (необязательно)</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">Метка назначения (обязательно)</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Буфер обмена пуст</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">Всего</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">ID биткоин-транзакции</string>
+    <string name="TransactionDetails.txHashHeader">Детали транзакции</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">Получено на адрес:</string>
     <!-- (this transaction was) Sent to this address: -->

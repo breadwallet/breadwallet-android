@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.auth
 
-import android.app.Activity
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
 import android.view.View
@@ -35,7 +34,6 @@ import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.tools.security.FingerprintUiHelper
 import com.breadwallet.ui.BaseController

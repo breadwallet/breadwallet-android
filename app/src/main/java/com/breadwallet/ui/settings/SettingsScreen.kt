@@ -46,16 +46,17 @@ object SettingsScreen {
     )
     sealed class E {
 
-        data class OnTransactionScanned(
-            val cryptoRequestUrl: Link.CryptoRequestUrl
-        ) : E()
+        data class OnLinkScanned(val link: Link) : E()
         data class OnOptionClicked(val option: SettingsOption) : E()
 
         data class OnOptionsLoaded(@Redacted val options: List<SettingsItem>) : E()
 
         object OnBackClicked : E()
         object OnCloseClicked : E()
+        
+        object OnAuthenticated : E()
 
+        data class ShowPhrase(@Redacted val phrase: List<String>) : E()
         data class SetApiServer(val host: String) : E()
         data class SetPlatformDebugUrl(val url: String) : E()
         data class SetPlatformBundle(val bundle: String) : E()
@@ -87,7 +88,6 @@ object SettingsScreen {
         object GoToLegacyAddress : F()
         object GoToFingerprintAuth : F()
         object GoToUpdatePin : F()
-        object GoToPaperKey : F()
         object GoToWipeWallet : F()
         object GoToOnboarding : F()
         object GoToNativeApiExplorer : F()
@@ -99,6 +99,11 @@ object SettingsScreen {
         object ResetDefaultCurrencies : F()
         object GoToHomeScreen : F()
         object WipeNoPrompt : F()
+        object GoToAuthentication : F()
+        object GetPaperKey : F()
+        data class GoToPaperKey(
+            @Redacted val phrase: List<String>
+        ) : F()
 
         data class GoToFastSync(
             val currencyCode: CurrencyCode
@@ -109,9 +114,6 @@ object SettingsScreen {
         data class SetPlatformBundle(val bundle: String) : F()
         data class SetTokenBundle(val bundle: String) : F()
 
-        data class GoToSend(
-            val cryptoRequestUrl: Link.CryptoRequestUrl,
-            val currencyCode: String = cryptoRequestUrl.currencyCode
-        ) : F()
+        data class GoToLink(val link: Link) : F()
     }
 }

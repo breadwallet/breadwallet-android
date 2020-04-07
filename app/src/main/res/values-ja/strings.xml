@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">最低50ドルから,今すぐ投資を始めましょう！</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">新しいグローバルウォレットにようこそ！</string>
+    <string name="OnboardingPageOne.title">新しいデジタルアセットウォレットへようこそ！</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">BRDで容易に安全に投資して多様化しましょう。</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">トランザクションの作成ができませんでした。</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">メモ</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">宛先タグ（オプション）</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">宛先タグ（必須）</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">ペーストボードが空です</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">トータル</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">ビットコイン トランザクションID</string>
+    <string name="TransactionDetails.txHashHeader">取引詳細</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">このアドレスで受け取りました</string>
     <!-- (this transaction was) Sent to this address: -->
