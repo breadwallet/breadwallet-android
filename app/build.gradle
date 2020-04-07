@@ -78,7 +78,7 @@ android {
     flavorDimensions "mode"
     productFlavors {
         brd {
-            applicationId = "just.cash"
+            applicationId = "cash.just"
             dimension "mode"
             resValue "string", "app_name", "BRD"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -86,7 +86,7 @@ android {
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            applicationId = "just.cash.testnet"
+            applicationId = "cash.just.testnet"
             dimension "mode"
             resValue "string", "app_name", "BRD Testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
