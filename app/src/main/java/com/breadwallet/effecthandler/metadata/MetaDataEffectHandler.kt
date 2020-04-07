@@ -183,7 +183,7 @@ class MetaDataEffectHandler(
             transaction.wallet.currency.code
         ) // TODO: this pref not being updated anymore
         val size = transaction.getSize()?.toInt() ?: 0
-        val fee = transaction.fee.toBigDecimal().toPlainString()
+        val fee = transaction.fee.toBigDecimal().toDouble()
         val creationTime =
             (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS).toInt()
 
