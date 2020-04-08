@@ -278,8 +278,8 @@ class CryptoAccountManager(
             stateChangeChannel.offer(Unit)
             true
         } else {
-            val failCount = getFailCount()
-            putFailCount(failCount + 1)
+            val failCount = getFailCount() + 1
+            putFailCount(failCount)
             if (failCount >= MAX_UNLOCK_ATTEMPTS) {
                 BRSharedPrefs.getSecureTime()
                     .also(::putFailTimestamp)
