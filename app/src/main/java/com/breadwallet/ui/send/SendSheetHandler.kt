@@ -203,9 +203,9 @@ object SendSheetHandler {
             val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
                 balanceBig
             } else {
-                val feeWallet = breadBox.wallet(effect.currencyCode).first()
+                val feeWallet = breadBox.wallet(effect.feeCurrencyCode).first()
                 val feeBalanceMin = feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
-                (feeWallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
+                (feeWallet.balance.toBigDecimal() - feeBalanceMin).coerceAtLeast(BigDecimal.ZERO)
             }
             E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyBalance)
         }
