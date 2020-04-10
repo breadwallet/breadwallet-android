@@ -1,24 +1,19 @@
-package com.breadwallet.legacy.presenter.entities;
-
-import java.io.Serializable;
-
-
 /**
  * BreadWallet
- * <p/>
+ *
  * Created by Mihail Gutan <mihail@breadwallet.com> on 8/18/15.
  * Copyright (c) 2016 breadwallet LLC
- * <p/>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,25 +22,22 @@ import java.io.Serializable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.legacy.presenter.entities
 
-public class CurrencyEntity implements Serializable {
+import java.io.Serializable
 
-    //Change this after modifying the class
-    private static final long serialVersionUID = 7526472295622776147L;
+data class CurrencyEntity(
+    /** this currency code (USD, RUB) */
+    var code: String,
+    /** this currency name (Dollar) */
+    var name: String,
+    var rate: Float,
+    /** this wallet's iso (BTC, BCH) */
+    var iso: String
+) : Serializable {
 
-    public static final String TAG = CurrencyEntity.class.getName();
-    public String code;//this currency code (USD, RUB)
-    public String name;//this currency name (Dollar)
-    public float rate;
-    public String iso;//this wallet's iso (BTC, BCH)
-
-    public CurrencyEntity(String code, String name, float rate, String iso) {
-        this.code = code;
-        this.name = name;
-        this.rate = rate;
-        this.iso = iso;
-    }
-
-    public CurrencyEntity() {
+    companion object {
+        const val serialVersionUID = 7526472295622776147L
+        val TAG = CurrencyEntity::class.java.name
     }
 }

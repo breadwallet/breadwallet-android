@@ -123,7 +123,6 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.NATIVE_API_EXPLORER -> F.GoToNativeApiExplorer
                     SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
-                    SettingsOption.TOGGLE_SECURE_MODE -> F.ToggleSecureMode
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                 }
             )

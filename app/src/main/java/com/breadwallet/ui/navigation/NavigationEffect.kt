@@ -61,7 +61,10 @@ sealed class NavigationEffect {
     object GoToReview : NavigationEffect()
     object GoToQrScan : NavigationEffect()
 
-    data class GoToDeepLink(val url: String) : NavigationEffect()
+    data class GoToDeepLink(
+        val url: String,
+        val authenticated: Boolean
+    ) : NavigationEffect()
     data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
     data class GoToFaq(

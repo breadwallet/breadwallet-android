@@ -106,11 +106,12 @@ object SendSheetHandler {
         breadBox: BreadBox,
         keyStore: KeyStore,
         apiClient: APIClient,
+        ratesRepository: RatesRepository,
         navEffectHandler: NavEffectTransformer,
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
-        addTransformer(pollExchangeRate(context, breadBox))
-        addTransformer(handleLoadBalance(context, breadBox))
+        addTransformer(pollExchangeRate(breadBox, ratesRepository))
+        addTransformer(handleLoadBalance(context, breadBox, ratesRepository))
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
         addTransformer<F.Nav>(navEffectHandler)
@@ -180,13 +181,14 @@ object SendSheetHandler {
 
     private fun handleLoadBalance(
         context: Context,
-        breadBox: BreadBox
+        breadBox: BreadBox,
+        rates: RatesRepository
     ) = flowTransformer<F.LoadBalance, E> { effects ->
         effects.map { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
             val balanceBig = (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
-            val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance)
+            val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance, rates)
             E.OnBalanceUpdated(balanceBig, fiatBig)
         }
     }
@@ -237,23 +239,27 @@ object SendSheetHandler {
     }
 
     private fun pollExchangeRate(
-        context: Context,
-        breadBox: BreadBox
+        breadBox: BreadBox,
+        rates: RatesRepository
     ) = flowTransformer<F.LoadExchangeRate, E> { effects ->
         effects.transformLatest { effect ->
-            val rates = RatesRepository.getInstance(context)
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val feeCurrencyCode = wallet.unitForFee.currency.code
             while (true) {
-                val fiatRate =
-                    rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
+                val fiatRate = rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
                 val fiatFeeRate = when {
                     !effect.currencyCode.equals(feeCurrencyCode, false) ->
                         rates.getFiatForCrypto(BigDecimal.ONE, feeCurrencyCode, effect.fiatCode)
                     else -> fiatRate
                 }
 
-                emit(E.OnExchangeRateUpdated(fiatRate, fiatFeeRate, feeCurrencyCode))
+                emit(
+                    E.OnExchangeRateUpdated(
+                        fiatPricePerUnit = fiatRate ?: BigDecimal.ZERO,
+                        fiatPricePerFeeUnit = fiatFeeRate ?: BigDecimal.ZERO,
+                        feeCurrencyCode = feeCurrencyCode
+                    )
+                )
 
                 // TODO: Display out of date, invalid (0) rate, etc.
                 delay(RATE_UPDATE_MS)
@@ -324,7 +330,6 @@ object SendSheetHandler {
                     return@mapLatest E.OnAddressValidated(effect.address, false)
                 }
 
-
                 val attributes = wallet.getTransferAttributesFor(address)
                 attributes.forEach { attribute ->
                     fields.find { it.key == attribute.key }
@@ -385,13 +390,13 @@ object SendSheetHandler {
     private fun getBalanceInFiat(
         context: Context,
         balanceBig: BigDecimal,
-        balanceAmt: Amount
-    ) = RatesRepository.getInstance(context)
-        .getFiatForCrypto(
-            balanceBig,
-            balanceAmt.currency.code,
-            BRSharedPrefs.getPreferredFiatIso(context)
-        ) ?: BigDecimal.ZERO
+        balanceAmt: Amount,
+        rates: RatesRepository
+    ) = rates.getFiatForCrypto(
+        balanceBig,
+        balanceAmt.currency.code,
+        BRSharedPrefs.getPreferredFiatIso(context)
+    ) ?: BigDecimal.ZERO
 
     private fun handleLoadCryptoRequestData(
         breadBox: BreadBox,

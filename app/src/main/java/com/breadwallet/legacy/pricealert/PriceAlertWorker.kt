@@ -44,12 +44,10 @@ import androidx.work.WorkerParameters
 import com.breadwallet.R
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.PriceAlertRepository
-import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRApiManager
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.filterLeft
 import com.breadwallet.tools.util.mapLeft
-import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -246,10 +244,11 @@ class PriceAlertWorker(
      */
     private fun List<PriceAlert>.mapToCurrentPrice(): List<Pair<PriceAlert, Float>> =
             map { alert ->
-                alert to RatesRepository.getInstance(applicationContext)
+                /*alert to RatesRepository.getInstance(applicationContext)
                         .getFiatForCrypto(BigDecimal.ONE, alert.forCurrencyCode, alert.toCurrencyCode)
                         .setScale(2, RoundingMode.HALF_EVEN)
-                        .toFloat()
+                        .toFloat()*/
+                TODO("Not implemented")
             }
 
     private fun getFormattedAmount(iso: String, amount: Float): String =

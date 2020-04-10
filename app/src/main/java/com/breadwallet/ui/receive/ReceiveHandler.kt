@@ -69,6 +69,7 @@ class ReceiveHandler(
     private val fiatCode: String,
     private val breadBox: BreadBox,
     private val cryptoUriParser: CryptoUriParser,
+    private val ratesRepository: RatesRepository,
     private val controller: Controller
 ) : Connection<F>, CoroutineScope {
 
@@ -110,11 +111,9 @@ class ReceiveHandler(
 
         launch {
             while (isActive) {
-                val rates = RatesRepository.getInstance(controller.applicationContext)
-                val fiatRate =
-                    rates.getFiatForCrypto(BigDecimal.ONE, currencyCode, fiatCode)
+                val fiatRate = ratesRepository.getFiatForCrypto(BigDecimal.ONE, currencyCode, fiatCode)
 
-                output.accept(E.OnExchangeRateUpdated(fiatRate))
+                output.accept(E.OnExchangeRateUpdated(fiatRate ?: BigDecimal.ZERO))
 
                 // TODO: Display out of date, invalid (0) rate, etc.
                 delay(RATE_UPDATE_MS)

@@ -130,7 +130,9 @@ class WebController(
         }
 
         HTTPServer.setOnCloseListener {
-            router.popCurrentController()
+            if (router.backstack.lastOrNull()?.controller() is WebController) {
+                router.popCurrentController()
+            }
             HTTPServer.setOnCloseListener(null)
         }
 

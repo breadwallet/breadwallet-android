@@ -407,25 +407,7 @@ public class WalletEthManager extends BaseEthereumWalletManager {
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
-            return amount;
-        }
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        if (ent != null) {
-            //passed in a custom CurrencyEntity
-            //get crypto amount
-            BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
-            //multiply by fiat rate
-            return cryptoAmount.multiply(new BigDecimal(ent.rate));
-        }
-        //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(ONE_ETH, SCALE, BRConstants.ROUNDING_MODE);
-
-        BigDecimal fiatData = RatesRepository.getInstance(app).getFiatForCrypto(cryptoAmount, getCurrencyCode(), iso);
-        if (fiatData == null) {
-            return null;
-        }
-        return fiatData;
+        return null;
     }
 
     @Override
@@ -459,20 +441,7 @@ public class WalletEthManager extends BaseEthereumWalletManager {
     //pass in a fiat amount and return the specified amount in ETH
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
-        //fiat rate for btc
-        CurrencyEntity btcRate = RatesRepository.getInstance(app).getCurrencyByCode(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
-        //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesRepository.getInstance(app).getCurrencyByCode(getCurrencyCode(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        if (btcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
-            return null;
-        }
-        if (ethBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
-            return null;
-        }
-
-        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), SCALE, BRConstants.ROUNDING_MODE);
+        return null;
     }
 
     protected void getEtherBalance(final long walletIdentifier, final String address, final int requestIdentifier) {

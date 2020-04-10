@@ -35,6 +35,7 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
@@ -130,12 +131,6 @@ class SettingsScreenHandler(
                 metaDataManager.resetDefaultWallets()
                 output.accept(E.OnWalletsUpdated)
             }
-            F.ToggleSecureMode -> {
-                launch(Dispatchers.Main) {
-                    BRSharedPrefs.secureScreenMode = !BRSharedPrefs.secureScreenMode
-                    activity.recreate()
-                }
-            }
             F.WipeNoPrompt -> {
                 activity.getSystemService(ActivityManager::class.java)
                     ?.clearApplicationUserData()
@@ -151,7 +146,7 @@ class SettingsScreenHandler(
         val items: List<SettingsItem> = when (section) {
             SettingsSection.HOME -> getHomeOptions()
             SettingsSection.PREFERENCES -> preferences
-            SettingsSection.SECURITY -> securitySettings
+            SettingsSection.SECURITY -> securitySettings()
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> {
                 BRSharedPrefs.putCurrentWalletCurrencyCode(context, "btc")
@@ -252,24 +247,31 @@ class SettingsScreenHandler(
         )
     )
 
-    private val securitySettings = listOf(
-        SettingsItem(
-            context.getString(R.string.TouchIdSettings_switchLabel_android),
-            SettingsOption.FINGERPRINT_AUTH
-        ),
-        SettingsItem(
-            context.getString(R.string.UpdatePin_updateTitle),
-            SettingsOption.UPDATE_PIN
-        ),
-        SettingsItem(
-            context.getString(R.string.SecurityCenter_paperKeyTitle),
-            SettingsOption.PAPER_KEY
-        ),
-        SettingsItem(
-            context.getString(R.string.Settings_wipe_android),
-            SettingsOption.WIPE
+    private fun securitySettings(): List<SettingsItem> {
+        val items = mutableListOf(
+            SettingsItem(
+                context.getString(R.string.UpdatePin_updateTitle),
+                SettingsOption.UPDATE_PIN
+            ),
+            SettingsItem(
+                context.getString(R.string.SecurityCenter_paperKeyTitle),
+                SettingsOption.PAPER_KEY
+            ),
+            SettingsItem(
+                context.getString(R.string.Settings_wipe_android),
+                SettingsOption.WIPE
+            )
         )
-    )
+        if (isFingerPrintAvailableAndSetup(context)) {
+            items.add(
+                0, SettingsItem(
+                    context.getString(R.string.TouchIdSettings_switchLabel_android),
+                    SettingsOption.FINGERPRINT_AUTH
+                )
+            )
+        }
+        return items.toList()
+    }
 
     private fun getDeveloperOptions(): List<SettingsItem> {
         val currentWebPlatformDebugURL = ServerBundlesHelper.getWebPlatformDebugURL(context)
@@ -311,10 +313,6 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Native API Explorer",
                 SettingsOption.NATIVE_API_EXPLORER
-            ),
-            SettingsItem(
-                "Secure Mode: ${BRSharedPrefs.secureScreenMode}",
-                SettingsOption.TOGGLE_SECURE_MODE
             ),
             SettingsItem(
                 "Wipe Wallet (no prompt)",

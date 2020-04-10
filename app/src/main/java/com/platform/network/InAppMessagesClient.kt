@@ -27,7 +27,7 @@ package com.platform.network
 import android.content.Context
 import android.util.Log
 import com.breadwallet.model.InAppMessage
-import com.crashlytics.android.Crashlytics
+import com.breadwallet.tools.manager.BRReportsManager
 import com.platform.APIClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -80,7 +80,7 @@ object InAppMessagesClient {
                 List(jsonArray.length()) { parseMessage(jsonArray.getJSONObject(it)) }
             } catch (e: JSONException) {
                 Log.e(TAG, "Failed to parse the notification", e)
-                Crashlytics.logException(e)
+                BRReportsManager.reportBug(e)
                 emptyList()
             }
 
