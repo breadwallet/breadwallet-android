@@ -133,6 +133,15 @@ object LogsUtils {
                 appendln()
             }
 
+            system.wallets.forEach { wallet ->
+                val count = wallet.transfers.count { transfer ->
+                    transfer.state.type == TransferState.Type.SUBMITTED
+                }
+                if (count > 0) {
+                    appendln("Submitted ${wallet.currency.code} transfers: $count")
+                }
+            }
+
             system.wallets
                 .flatMap { wallet ->
                     wallet.transfers.filter { transfer ->
