@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">BRD</string>
+    <string name="About.appName.android">Coinsquare</string>
     <!-- About screen blog label -->
     <string name="About.blog">部落格</string>
     <!-- About screen footer -->
-    <string name="About.footer">由全球 BRD 團隊製作。版本 %1$s構建%2$s</string>
+    <string name="About.footer">由全球 Coinsquare 團隊製作。版本 %1$s構建%2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">隱私政策</string>
     <!-- About screen reddit label -->
@@ -17,7 +17,7 @@
     <!-- About screen twitter label -->
     <string name="About.twitter">Twitter</string>
     <!-- About screen wallet ID label -->
-    <string name="About.walletID">BRD 獎勵 ID</string>
+    <string name="About.walletID">Coinsquare 獎勵 ID</string>
     <!-- Close modal button accessibility label -->
     <string name="AccessibilityLabels.close">關閉</string>
     <!-- Support center accessibiliy label -->
@@ -31,7 +31,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">正在載入電子錢包</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">我的 BRD</string>
+    <string name="AccountHeader.defaultWalletName">我的 Coinsquare</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">您似乎在使用第三方鍵盤，這可能會記錄您按下的鍵並竊取您的「紙鑰」。請切換至預設的 Android 鍵盤以獲得額外的保護。</string>
     <!-- Error alert title -->
@@ -39,11 +39,11 @@
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@breadwallet.com</string>
     <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">您的 BRD 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
+    <string name="Alert.keystore.invalidated.android">您的 Coinsquare 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">無法繼續執行動作，因為您的螢幕鎖定設置有變動（例如，密碼關閉、指紋變動）。基於安全考量，Android 已永久關鎖您的密鑰庫。因此，必須透過解除安裝來消除您的 BRD 應用程式資料。\n\n別擔心，您的資金仍然安全！ 重新安裝應用程式，並使用紙密鑰來復原您的錢包。</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">無法繼續執行動作，因為您的螢幕鎖定設置有變動（例如，密碼關閉、指紋變動）。基於安全考量，Android 已永久關鎖您的密鑰庫。因此，必須透過解除安裝來消除您的 Coinsquare 應用程式資料。\n\n別擔心，您的資金仍然安全！ 重新安裝應用程式，並使用紙密鑰來復原您的錢包。</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">無法繼續執行動作，因為您的螢幕鎖定設置有變動（例如，密碼關閉、指紋變動）。基於安全考量，Android 已永久關鎖您的密鑰庫。因此，您的 BRD 應用程式資料必須消除。\n\n別擔心，您的資金仍然安全！使用紙密鑰來復原您的錢包。</string>
+    <string name="Alert.keystore.invalidated.wipe.android">無法繼續執行動作，因為您的螢幕鎖定設置有變動（例如，密碼關閉、指紋變動）。基於安全考量，Android 已永久關鎖您的密鑰庫。因此，您的 Coinsquare 應用程式資料必須消除。\n\n別擔心，您的資金仍然安全！使用紙密鑰來復原您的錢包。</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android 金鑰儲存區錯誤</string>
     <!-- No internet alert message -->
@@ -73,11 +73,11 @@
     <!-- Fingerprint was recognized by the scanner -->
     <string name="Alerts.touchIdSucceeded.android">已辨識指紋</string>
     <!-- Tell the user where they can enable permissions to access device storage. -->
-    <string name="Android.allowFileSystemAccess">請在您的裝置啟用儲存權限：[設定] &gt; [應用程式] &gt; [BRD] &gt; [權限]。</string>
+    <string name="Android.allowFileSystemAccess">請在您的裝置啟用儲存權限：[設定] &gt; [應用程式] &gt; [Coinsquare] &gt; [權限]。</string>
     <!-- The "home" screen is the name of the top level menu for the app. -->
     <string name="Android.BCH.welcome.message">任何在您錢包裡的 BCH 都可透過主畫面存取。</string>
     <!-- Warning about using apps that can alter the screen -->
-    <string name="Android.screenAlteringMessage">除非停用螢幕改變應用程式（例如 Twilight），否則 BRD 無法正常運作。</string>
+    <string name="Android.screenAlteringMessage">除非停用螢幕改變應用程式（例如 Twilight），否則 Coinsquare 無法正常運作。</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">偵測到螢幕改變應用程式</string>
     <!-- JSON Serialization error message -->
@@ -225,7 +225,7 @@
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">無法使用電子郵件</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">由於您安卓系統版本中的錯誤，因此 BRD 無法取得認證。[請點擊此瞭解更多資訊。]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">由於您安卓系統版本中的錯誤，因此 Coinsquare 無法取得認證。[請點擊此瞭解更多資訊。]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">本裝置並非設定來傳送訊息。</string>
     <!-- Messaging unavailable alert title -->
@@ -234,14 +234,14 @@
     <string name="ErrorMessages.touchIdFailed.android">指紋無法識別。請再試一次。</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">您可由 %1$s 自訂 Face ID 消費上限。</string>
-    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
-    <string name="FaceIDSettings.explanatoryText">使用Face ID解鎖您的BRD應用並匯款。</string>
+    <!-- Text describing the purpose of the Face ID settings in the Coinsquare app. -->
+    <string name="FaceIDSettings.explanatoryText">使用Face ID解鎖您的Coinsquare應用並匯款。</string>
     <!-- Face Id screen label -->
-    <string name="FaceIDSettings.label">刷臉解鎖您的 BRD 並在設定的限制內撥款。</string>
+    <string name="FaceIDSettings.label">刷臉解鎖您的 Coinsquare 並在設定的限制內撥款。</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
     <string name="FaceIDSettings.linkText">Face ID 消費上限畫面</string>
-    <!-- Setting to turn on Face ID for BRD -->
-    <string name="FaceIDSettings.switchLabel">開放 BRD 使用 Face ID</string>
+    <!-- Setting to turn on Face ID for Coinsquare -->
+    <string name="FaceIDSettings.switchLabel">開放 Coinsquare 使用 Face ID</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">Face ID</string>
     <!-- Text label for a toggle that enables Face ID for sending money. -->
@@ -250,8 +250,8 @@
     <string name="FaceIDSettings.unavailableAlertMessage">您尚未在此設備上設定 Face ID。現在就至設定-&gt;Face ID＆密碼來設置。</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">尚未設置 Face ID</string>
-    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
-    <string name="FaceIDSettings.unlockTitleText">啟用Face ID解鎖BRD</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the Coinsquare app. -->
+    <string name="FaceIDSettings.unlockTitleText">啟用Face ID解鎖Coinsquare</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">Face ID 消費上限</string>
     <!-- Economy fee -->
@@ -282,8 +282,8 @@
     <string name="FingerprintSettings.sendMoney">使用指紋匯款</string>
     <!-- Fingerprint authentication settings sceen title -->
     <string name="FingerprintSettings.title">指紋</string>
-    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
-    <string name="FingerprintSettings.unlockApp">使用指紋解鎖BRD</string>
+    <!-- Switch label to enable fingerprint authentication to unlock Coinsquare app -->
+    <string name="FingerprintSettings.unlockApp">使用指紋解鎖Coinsquare</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">管理</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -319,13 +319,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">私密金鑰</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">私密金鑰通常以 QR 碼形式印在紙上，作為離線儲存資金使用。利用單一交易兌換私密金鑰下所控制的所有資金匯入您的 BRD。</string>
+    <string name="Import.message">私密金鑰通常以 QR 碼形式印在紙上，作為離線儲存資金使用。利用單一交易兌換私密金鑰下所控制的所有資金匯入您的 Coinsquare。</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">此私密金鑰受密碼保護。</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">密碼</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">您的 BRD 錢包</string>
+    <string name="Import.rightCaption">您的 Coinsquare 錢包</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">掃描私密金鑰</string>
     <!-- Import wallet success alert title -->
@@ -345,9 +345,9 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">略過</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 BRD 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
+    <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Coinsquare 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 BRD 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 BRD。</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Coinsquare 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Coinsquare。</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">警告</string>
     <!-- Wipe wallet button -->
@@ -369,7 +369,7 @@
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">定位服務已停用。</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">BRD 沒有存取定位服務的權限。</string>
+    <string name="LocationPlugin.notAuthorized">Coinsquare 沒有存取定位服務的權限。</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">您在 %1$s 建立了電子錢包</string>
     <!-- Manage wallet description text -->
@@ -447,13 +447,13 @@
     <!-- Onboarding screen Page 1 title -->
     <string name="OnboardingPageOne.title">歡迎來到您全新的全球錢包！</string>
     <!-- Onboarding screen Page 3 subtitle -->
-    <string name="OnboardingPageThree.subtitle">使用 BRD 進行多元分散投資,既輕鬆又安全。</string>
+    <string name="OnboardingPageThree.subtitle">使用 Coinsquare 進行多元分散投資,既輕鬆又安全。</string>
     <!-- Onboarding screen Page 3 title -->
     <string name="OnboardingPageThree.title">購買及交易比特幣,代幣及其他數位貨幣。</string>
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">我們擁有價值超過 60 億美元受到保護的資產。</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">加入全球數百萬信賴 BRD 的人潮。</string>
+    <string name="OnboardingPageTwo.title">加入全球數百萬信賴 Coinsquare 的人潮。</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">匯出%1$s來購買%2$s</string>
     <!-- Payment confirmation view title -->
@@ -511,7 +511,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">交易被拒</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">和我們分享您的匿名資料來協助改善 BRD</string>
+    <string name="Prompts.ShareData.body">和我們分享您的匿名資料來協助改善 Coinsquare</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">分享匿名資料</string>
     <!-- Enable touch ID prompt body -->
@@ -525,7 +525,7 @@
     <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
     <string name="Prompts.TouchId.usePin.android">密碼</string>
     <!-- Upgrade PIN prompt body. -->
-    <string name="Prompts.UpgradePin.body">BRD 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
+    <string name="Prompts.UpgradePin.body">Coinsquare 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">升級 PIN 碼</string>
     <!-- Body text for the push notifications prompt. -->
@@ -533,11 +533,11 @@
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">已停用通知功能</string>
     <!-- Body text when push notifications are disabled. -->
-    <string name="PushNotifications.disabledBody">開通推送消息通知功能，接收 BRD 特別優惠和最新資訊。</string>
+    <string name="PushNotifications.disabledBody">開通推送消息通知功能，接收 Coinsquare 特別優惠和最新資訊。</string>
     <!-- Body text when push notifications are enabled. -->
-    <string name="PushNotifications.enabledBody">您將接收 BRD 特別優惠和最新資訊。</string>
-    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
-    <string name="PushNotifications.enableInstructions">您好像關閉了推送通知功能。請前往“設置”，開通接收 BRD 推送功能。</string>
+    <string name="PushNotifications.enabledBody">您將接收 Coinsquare 特別優惠和最新資訊。</string>
+    <!-- Instructions to enable push notifications for Coinsquare in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">您好像關閉了推送通知功能。請前往“設置”，開通接收 Coinsquare 推送功能。</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">接收推送</string>
     <!-- Push notifications are off label -->
@@ -553,9 +553,9 @@
     <!-- Google play review prompt, revivew button -->
     <string name="RateAppPrompt.Button.Dismiss.Android">不用了，謝謝</string>
     <!-- Google play review prompt, dismiss button -->
-    <string name="RateAppPrompt.Button.RateApp.Android">評價 BRD</string>
+    <string name="RateAppPrompt.Button.RateApp.Android">評價 Coinsquare</string>
     <!-- Google play review prompt title -->
-    <string name="RateAppPrompt.Title.Android">評價 BRD</string>
+    <string name="RateAppPrompt.Title.Android">評價 Coinsquare</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">已複製至剪貼簿。</string>
     <!-- Share via email button label -->
@@ -577,7 +577,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">輸入紙本金鑰</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">以您的紙本金鑰復原您的 BRD</string>
+    <string name="RecoverWallet.intro">以您的紙本金鑰復原您的 Coinsquare</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">紙本金鑰</string>
     <!-- Previous button accessibility label -->
@@ -636,14 +636,14 @@
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">請記得寫下這些字詞；如果忘了,請滑動返回。</string>
     <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
     <string name="RecoveryKeyFlow.resetPINInstruction">請輸入復原金鑰,以便重設 PIN 碼。</string>
-    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <!-- Assures the user that Coinsquare will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">儘管放心購買與交易,你的資金經由商業界最高層級的安全性和隱私權所保護。</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
-    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">請將金鑰儲存在安全的位置,因為金鑰是你復原錢包的唯一途徑；BRD 並不會保留副本。</string>
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">請將金鑰儲存在安全的位置,因為金鑰是你復原錢包的唯一途徑；Coinsquare 並不會保留副本。</string>
     <!-- Title for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successHeading">恭喜！你已經完成復原金鑰設定了。</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successSubheading">你已經設定完畢,可以透過 BRD 錢包存放,交易和購買加密貨幣了。</string>
+    <string name="RecoveryKeyFlow.successSubheading">你已經設定完畢,可以透過 Coinsquare 錢包存放,交易和購買加密貨幣了。</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWallet">取消這個裝置與錢包的連結。</string>
     <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
@@ -677,7 +677,7 @@
     <!-- extimated time -->
     <string name="ReScan.body1">20-45 分鐘</string>
     <!-- Syncing explanation -->
-    <string name="ReScan.body2">如果交易在比特幣網上已經顯示為完成，但沒有出現在您的 BRD 上。</string>
+    <string name="ReScan.body2">如果交易在比特幣網上已經顯示為完成，但沒有出現在您的 Coinsquare 上。</string>
     <!-- Syncing explanation -->
     <string name="ReScan.body3">你不斷收到「交易被拒」的錯誤。</string>
     <!-- Start Sync button label -->
@@ -693,7 +693,7 @@
     <!-- Rewards view expanded body. -->
     <string name="RewardsView.expandedBody">了解如何節省交易費用，解鎖未來的財富。</string>
     <!-- Rewards view expanded title. -->
-    <string name="RewardsView.expandedTitle">我們為您介紹BRD Rewards。</string>
+    <string name="RewardsView.expandedTitle">我們為您介紹Coinsquare Rewards。</string>
     <!-- Rewards view title -->
     <string name="RewardsView.normalTitle">獎勵</string>
     <!-- Scan bitcoin address camera flash toggle -->
@@ -718,11 +718,11 @@
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">紙本金鑰</string>
     <!-- PIN button description -->
-    <string name="SecurityCenter.pinDescription">保護您的 BRD，防範未經授權的使用者。</string>
+    <string name="SecurityCenter.pinDescription">保護您的 Coinsquare，防範未經授權的使用者。</string>
     <!-- PIN button title -->
     <string name="SecurityCenter.pinTitle">6 位數 PIN 碼</string>
     <!-- Touch ID button description -->
-    <string name="SecurityCenter.touchIdDescription">輕鬆解鎖您的 BRD，並在設定好的限額內寄送款項。</string>
+    <string name="SecurityCenter.touchIdDescription">輕鬆解鎖您的 Coinsquare，並在設定好的限額內寄送款項。</string>
     <!-- Touch ID button title -->
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
@@ -744,13 +744,13 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">餘額：%1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「BRD」 &gt; 「權限」允許相機存取</string>
+    <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「Coinsquare」 &gt; 「權限」允許相機存取</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">BRD 尚未獲准存取相機</string>
+    <string name="Send.cameraUnavailabeTitle.android">Coinsquare 尚未獲准存取相機</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">請至「設定」允許存取相機。</string>
     <!-- Camera not allowed alert title -->
-    <string name="Send.cameraUnavailableTitle">BRD 未獲得存取相機的權限</string>
+    <string name="Send.cameraUnavailableTitle">Coinsquare 未獲得存取相機的權限</string>
     <!-- Warning when sending to self. -->
     <string name="Send.containsAddress">目的地為您自己的地址。您不能寄送給自己。</string>
     <!-- Could not create transaction alert title -->
@@ -834,7 +834,7 @@
     <!-- Enable segwit. -->
     <string name="Settings.EnableSegwit">啟用 Segwit</string>
     <!-- Are you enjoying bread alert message body -->
-    <string name="Settings.enjoying">您喜歡 BRD 嗎？</string>
+    <string name="Settings.enjoying">您喜歡 Coinsquare 嗎？</string>
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Face ID 消費上限</string>
     <!-- Redeem the funds stored on this private key. -->
@@ -876,7 +876,7 @@
     <!-- Wipe/delete your wallet from the current device. -->
     <string name="Settings.wipe.android">取消這個裝置與錢包的連結。</string>
     <!-- Share data view body -->
-    <string name="ShareData.body">請跟我們分享您的匿名資料，以協助我們改善 BRD。其中不會包含財務資訊。我們尊重您的財務隱私。</string>
+    <string name="ShareData.body">請跟我們分享您的匿名資料，以協助我們改善 Coinsquare。其中不會包含財務資訊。我們尊重您的財務隱私。</string>
     <!-- Share data header -->
     <string name="ShareData.header">分享資料？</string>
     <!-- Share data switch label. -->
@@ -884,9 +884,9 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">再寫一次紙本金鑰</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n BRD 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
+    <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n Coinsquare 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">如果您的手機遺失,遭竊,損壞或升級,您的紙上金鑰是恢復比特幣錢包 (BRD) 的唯一方法。\n\n如果變更裝置上的安全設定,也需要提供紙上金鑰。\n\n我們將向您展示一張單詞列表,寫在一張紙上並妥善保管。</string>
+    <string name="StartPaperPhrase.Body.Android">如果您的手機遺失,遭竊,損壞或升級,您的紙上金鑰是恢復比特幣錢包 (Coinsquare) 的唯一方法。\n\n如果變更裝置上的安全設定,也需要提供紙上金鑰。\n\n我們將向您展示一張單詞列表,寫在一張紙上並妥善保管。</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">寫下紙本金鑰</string>
     <!-- Argument is date; date should be on a new line -->
@@ -939,16 +939,16 @@
     <string name="TouchIdSettings.disabledWarning.body.android">您尚未啟用此裝置上的指紋驗證。前往「設定」 -&gt; 「安全性」來設定指紋驗證。</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">指紋驗證並未啟用</string>
-    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
-    <string name="TouchIdSettings.explanatoryText">使用Touch ID解鎖您的BRD應用並匯款。</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the Coinsquare app. -->
+    <string name="TouchIdSettings.explanatoryText">使用Touch ID解鎖您的Coinsquare應用並匯款。</string>
     <!-- Touch Id screen label -->
-    <string name="TouchIdSettings.label">以您的指紋解鎖 BRD，並在設定好的限額內寄送款項。</string>
+    <string name="TouchIdSettings.label">以您的指紋解鎖 Coinsquare，並在設定好的限額內寄送款項。</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
     <string name="TouchIdSettings.linkText">Touch ID 支出限額畫面</string>
     <!-- Spending Limit: b100,000 ($100) -->
     <string name="TouchIdSettings.spendingLimit">花費上限：%1$s（%2$s）</string>
     <!-- Touch id switch label. -->
-    <string name="TouchIdSettings.switchLabel">為 BRD 啟用 Touch ID</string>
+    <string name="TouchIdSettings.switchLabel">為 Coinsquare 啟用 Touch ID</string>
     <!-- Enable fingerprint for this wallet called Bread -->
     <string name="TouchIdSettings.switchLabel.android">指紋驗證</string>
     <!-- Touch ID settings view title -->
@@ -961,8 +961,8 @@
     <string name="TouchIdSettings.unavailableAlertMessage">您尚未在此裝置設定 Touch ID。請立刻至「設定」-&gt;「 Touch ID 與密碼」進行設定。</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">未設定 Touch ID</string>
-    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
-    <string name="TouchIdSettings.unlockTitleText">啟用Touch ID解鎖BRD</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the Coinsquare app. -->
+    <string name="TouchIdSettings.unlockTitleText">啟用Touch ID解鎖Coinsquare</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">總是要求密碼</string>
     <!-- Touch ID spending limit screen body -->
@@ -1003,7 +1003,7 @@
     <string name="Transaction.sentTo">寄送至 %1$s</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">開始餘額：%1$s</string>
-    <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+    <!-- e.g. "[The money you paid was a] Fee for token transfer: Coinsquare" (Coinsquare is the token that was transfered) -->
     <string name="Transaction.tokenTransfer">代幣傳送費用：%1$s</string>
     <!-- Waiting to be confirmed string -->
     <string name="Transaction.waiting">正在等待確認。部分商家要求確認完成交易。預估時間：1-2 小時。</string>
@@ -1117,7 +1117,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">觸控感測器</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">解鎖您的 BRD。</string>
+    <string name="UnlockScreen.touchIdPrompt">解鎖您的 Coinsquare。</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">請解除鎖定您的 Android 裝置來繼續。</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -1127,7 +1127,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">請記住此 PIN 碼。如果忘記，會無法存取您的比特幣。</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">您的 PIN 碼會用於解鎖 BRD 及送出款項。</string>
+    <string name="UpdatePin.createInstruction">您的 PIN 碼會用於解鎖 Coinsquare 及送出款項。</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">設定 PIN 碼</string>
     <!-- Update PIN title -->
@@ -1178,7 +1178,7 @@
     <!-- Wallet connection settings view title -->
     <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">開啟 BRDiPhone 應用程式以設定您的錢包。</string>
+    <string name="Watch.noWalletWarning">開啟 CoinsquareiPhone 應用程式以設定您的錢包。</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">駁回</string>
     <!-- Webview loading error message -->
@@ -1186,9 +1186,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">正在更新……</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet 已經改名爲 BRD，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
+    <string name="Welcome.body">Breadwallet 已經改名爲 Coinsquare，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">歡迎使用 BRD！</string>
+    <string name="Welcome.title">歡迎使用 Coinsquare！</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">確定要刪除此錢包嗎？</string>
     <!-- Wipe wallet alert title -->
@@ -1202,7 +1202,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">自此裝置移除您錢包的連結。一旦移除此錢包的連結，您可在此裝置上啟用新錢包或恢復其他不同錢包。</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">您將再也無法從這項裝置存取目前的 BRD 錢包。餘額會留在片段上。</string>
+    <string name="WipeWallet.startWarning">您將再也無法從這項裝置存取目前的 Coinsquare 錢包。餘額會留在片段上。</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">移除錢包連結</string>
     <!-- Wipe wallet button title -->

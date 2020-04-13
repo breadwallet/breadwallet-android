@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">BRD</string>
+    <string name="About.appName.android">Coinsquare</string>
     <!-- About screen blog label -->
     <string name="About.blog">Blog</string>
     <!-- About screen footer -->
-    <string name="About.footer">Realizzato dal Global team BRD. Versione %1$s Build %2$s</string>
+    <string name="About.footer">Realizzato dal Global team Coinsquare. Versione %1$s Build %2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">Informativa sulla Privacy</string>
     <!-- About screen reddit label -->
@@ -17,7 +17,7 @@
     <!-- About screen twitter label -->
     <string name="About.twitter">Twitter</string>
     <!-- About screen wallet ID label -->
-    <string name="About.walletID">ID premio BRD</string>
+    <string name="About.walletID">ID premio Coinsquare</string>
     <!-- Close modal button accessibility label -->
     <string name="AccessibilityLabels.close">Chiudi</string>
     <!-- Support center accessibiliy label -->
@@ -31,7 +31,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Caricamento Portafoglio</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">Il Mio BRD</string>
+    <string name="AccountHeader.defaultWalletName">Il Mio Coinsquare</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">Sembra che tu stia utilizzando una tastiera di terze parti, essa può registrare ciò che scrivi e rubare la tua Paper Key. Per favore, utilizza la tastiera Android di default per maggiore protezione.</string>
     <!-- Error alert title -->
@@ -39,11 +39,11 @@
     <!-- Keystore error -->
     <string name="Alert.keystore.generic.android">C’è un problema con il KeyStore del tuo sistema operativo Android, per favore, contatta support@breadwallet.com</string>
     <!-- KeyStore error, keys are invalidated -->
-    <string name="Alert.keystore.invalidated.android">I tuoi dati criptati di BRD sono stati recentemente  invalidati  perché la schermata di blocco del tuo Android era disabilitata.</string>
+    <string name="Alert.keystore.invalidated.android">I tuoi dati criptati di Coinsquare sono stati recentemente  invalidati  perché la schermata di blocco del tuo Android era disabilitata.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">Non possiamo procedere perché le impostazioni del blocco schermo sono state modificate (ad es. la password è stata disabilitata, le impronte digitali sono state modificate). Per ragioni di sicurezza, Android ha bloccato in modo permanente il tuo keystore. Pertanto, i dati dell\'app BRD devono essere cancellati attraverso la disinstallazione.\n\nNon preoccuparti, i tuoi fondi sono ancora al sicuro! Reinstalla l\'app e recupera il tuo portafoglio utilizzando la paper key.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">Non possiamo procedere perché le impostazioni del blocco schermo sono state modificate (ad es. la password è stata disabilitata, le impronte digitali sono state modificate). Per ragioni di sicurezza, Android ha bloccato in modo permanente il tuo keystore. Pertanto, i dati dell\'app Coinsquare devono essere cancellati attraverso la disinstallazione.\n\nNon preoccuparti, i tuoi fondi sono ancora al sicuro! Reinstalla l\'app e recupera il tuo portafoglio utilizzando la paper key.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">Non possiamo procedere perché le impostazioni del blocco schermo sono state modificate (ad es. la password è stata disabilitata, le impronte digitali sono state modificate). Per ragioni di sicurezza, Android ha bloccato in modo permanente il tuo keystore. Dunque, i dati dell\'app BRD devono essere cancellati.\n\nNon preoccuparti, i tuoi fondi sono ancora al sicuro! Recupera il tuo portafoglio usando la tua paper key.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">Non possiamo procedere perché le impostazioni del blocco schermo sono state modificate (ad es. la password è stata disabilitata, le impronte digitali sono state modificate). Per ragioni di sicurezza, Android ha bloccato in modo permanente il tuo keystore. Dunque, i dati dell\'app Coinsquare devono essere cancellati.\n\nNon preoccuparti, i tuoi fondi sono ancora al sicuro! Recupera il tuo portafoglio usando la tua paper key.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Errore KeyStore Android</string>
     <!-- No internet alert message -->
@@ -73,11 +73,11 @@
     <!-- Fingerprint was recognized by the scanner -->
     <string name="Alerts.touchIdSucceeded.android">Impronta digitale riconosciuta</string>
     <!-- Tell the user where they can enable permissions to access device storage. -->
-    <string name="Android.allowFileSystemAccess">Abilita le autorizzazioni per l\'archiviazione nelle impostazioni del dispositivo: \"Impostazioni\"&gt; \"App\"&gt; \"BRD\"&gt; \"Autorizzazioni\".</string>
+    <string name="Android.allowFileSystemAccess">Abilita le autorizzazioni per l\'archiviazione nelle impostazioni del dispositivo: \"Impostazioni\"&gt; \"App\"&gt; \"Coinsquare\"&gt; \"Autorizzazioni\".</string>
     <!-- The "home" screen is the name of the top level menu for the app. -->
     <string name="Android.BCH.welcome.message">Puoi accedere a qualsiasi BCH nel tuo wallet dalla schermata Home.</string>
     <!-- Warning about using apps that can alter the screen -->
-    <string name="Android.screenAlteringMessage">BRD non funzionerà correttamente a meno che le app che alterano lo schermo (come Twilight) siano disabilitate.</string>
+    <string name="Android.screenAlteringMessage">Coinsquare non funzionerà correttamente a meno che le app che alterano lo schermo (come Twilight) siano disabilitate.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">App che altera lo schermo rilevata</string>
     <!-- JSON Serialization error message -->
@@ -225,7 +225,7 @@
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">E-mail Non Disponibile</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">BRD non può essere autenticato a causa di un bug nella tua versione di Android. [Tocca qui per maggiori informazioni.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">Coinsquare non può essere autenticato a causa di un bug nella tua versione di Android. [Tocca qui per maggiori informazioni.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">Questo dispositivo non è configurato per inviare messaggi.</string>
     <!-- Messaging unavailable alert title -->
@@ -234,14 +234,14 @@
     <string name="ErrorMessages.touchIdFailed.android">Impronta non riconosciuta. Per favore, prova di nuovo.</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">Puoi personalizzare il tuo limite di spesa Face ID dal %1$s.</string>
-    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
-    <string name="FaceIDSettings.explanatoryText">Utilizza Face ID per sbloccare l\'app BRD e inviare denaro.</string>
+    <!-- Text describing the purpose of the Face ID settings in the Coinsquare app. -->
+    <string name="FaceIDSettings.explanatoryText">Utilizza Face ID per sbloccare l\'app Coinsquare e inviare denaro.</string>
     <!-- Face Id screen label -->
-    <string name="FaceIDSettings.label">Usa il tuo viso per sbloccare i tuoi BRD e inviare denaro fino a un limite impostato.</string>
+    <string name="FaceIDSettings.label">Usa il tuo viso per sbloccare i tuoi Coinsquare e inviare denaro fino a un limite impostato.</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
     <string name="FaceIDSettings.linkText">Schermata limite di spesa Face ID</string>
-    <!-- Setting to turn on Face ID for BRD -->
-    <string name="FaceIDSettings.switchLabel">Abilita Face ID per BRD</string>
+    <!-- Setting to turn on Face ID for Coinsquare -->
+    <string name="FaceIDSettings.switchLabel">Abilita Face ID per Coinsquare</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">Face ID</string>
     <!-- Text label for a toggle that enables Face ID for sending money. -->
@@ -250,8 +250,8 @@
     <string name="FaceIDSettings.unavailableAlertMessage">Non hai impostato Face ID su questo dispositivo. Vai su Impostazioni-&gt;Face ID e codice per impostarlo ora.</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">Face ID non impostato</string>
-    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
-    <string name="FaceIDSettings.unlockTitleText">Abilita Face ID per sbloccare BRD</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the Coinsquare app. -->
+    <string name="FaceIDSettings.unlockTitleText">Abilita Face ID per sbloccare Coinsquare</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">Limite di spesa Face ID</string>
     <!-- Economy fee -->
@@ -277,13 +277,13 @@
     <!-- Label for the Android file chooser when we need to prompt the user to select an image file. -->
     <string name="FileChooser.selectImageSource.android">Seleziona sorgente immagine</string>
     <!-- Fingerprint authentication settings screen description -->
-    <string name="FingerprintSettings.description">Utilizzare l\'impronta digitale per sbloccare l\'applicazione BRD e inviare le transazioni.</string>
+    <string name="FingerprintSettings.description">Utilizzare l\'impronta digitale per sbloccare l\'applicazione Coinsquare e inviare le transazioni.</string>
     <!-- Switch label to enable fingerprint authentication to send money -->
     <string name="FingerprintSettings.sendMoney">Utilizzare l\'impronta digitale per inviare denaro</string>
     <!-- Fingerprint authentication settings sceen title -->
     <string name="FingerprintSettings.title">Impronta digitale</string>
-    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
-    <string name="FingerprintSettings.unlockApp">Utilizzare l\'impronta digitale per sbloccare BRD</string>
+    <!-- Switch label to enable fingerprint authentication to unlock Coinsquare app -->
+    <string name="FingerprintSettings.unlockApp">Utilizzare l\'impronta digitale per sbloccare Coinsquare</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">Amministratore</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -319,13 +319,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">Portafoglio da importare</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">L\'importazione del portafoglio trasferisce tutti i fondi dal tuo portafoglio al tuo portafoglio BRD utilizzando una singola transizione.</string>
+    <string name="Import.message">L\'importazione del portafoglio trasferisce tutti i fondi dal tuo portafoglio al tuo portafoglio Coinsquare utilizzando una singola transizione.</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">Questa chiave privata è protetta da password.</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">password</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">Il Tuo Portafoglio BRD</string>
+    <string name="Import.rightCaption">Il Tuo Portafoglio Coinsquare</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">Acquisisci Chiave Privata</string>
     <!-- Import wallet success alert title -->
@@ -345,9 +345,9 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">Ignora</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di BRD e rubarti i bitcoin! Cancella immediatamente questo portafoglio ed effettua il ripristino su un dispositivo sicuro.</string>
+    <string name="JailbreakWarnings.messageWithBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Coinsquare e rubarti i bitcoin! Cancella immediatamente questo portafoglio ed effettua il ripristino su un dispositivo sicuro.</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di BRD e rubarti i bitcoin. Utilizza BRD solamente su un dispositivo senza jailbreak.</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Coinsquare e rubarti i bitcoin. Utilizza Coinsquare solamente su un dispositivo senza jailbreak.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">ATTENZIONE</string>
     <!-- Wipe wallet button -->
@@ -369,7 +369,7 @@
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">I servizi di localizzazione sono disabilitati.</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">BRD non dispone dell\'autorizzazione per accedere ai servizi di localizzazione.</string>
+    <string name="LocationPlugin.notAuthorized">Coinsquare non dispone dell\'autorizzazione per accedere ai servizi di localizzazione.</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">Hai creato il tuo portafoglio il %1$s</string>
     <!-- Manage wallet description text -->
@@ -447,13 +447,13 @@
     <!-- Onboarding screen Page 1 title -->
     <string name="OnboardingPageOne.title">Benvenuto nel tuo nuovo portafoglio globale!</string>
     <!-- Onboarding screen Page 3 subtitle -->
-    <string name="OnboardingPageThree.subtitle">Investi e diversifica con BRD, facilmente ed in maniera sicura.</string>
+    <string name="OnboardingPageThree.subtitle">Investi e diversifica con Coinsquare, facilmente ed in maniera sicura.</string>
     <!-- Onboarding screen Page 3 title -->
     <string name="OnboardingPageThree.title">Acquista e scambia bitcoin, token e altre valute digitali.</string>
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">Abbiamo un patrimonio di oltre $ 6 miliardi sotto protezione.</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">Unisciti a milioni di persone che in tutto il mondo si fidano di BRD.</string>
+    <string name="OnboardingPageTwo.title">Unisciti a milioni di persone che in tutto il mondo si fidano di Coinsquare.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Invia %1$s per acquistare %2$s</string>
     <!-- Payment confirmation view title -->
@@ -511,7 +511,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">Transazione Rifiutata</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">Aiutaci a migliorare BRD condividendo i tuoi dati anonimi con noi </string>
+    <string name="Prompts.ShareData.body">Aiutaci a migliorare Coinsquare condividendo i tuoi dati anonimi con noi </string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">Condividi dati anonimi</string>
     <!-- Enable touch ID prompt body -->
@@ -525,7 +525,7 @@
     <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
     <string name="Prompts.TouchId.usePin.android">PIN</string>
     <!-- Upgrade PIN prompt body. -->
-    <string name="Prompts.UpgradePin.body">BRD è stato aggiornato per l\'utilizzo di un PIN a 6 cifre. Tocca qui per aggiornare.</string>
+    <string name="Prompts.UpgradePin.body">Coinsquare è stato aggiornato per l\'utilizzo di un PIN a 6 cifre. Tocca qui per aggiornare.</string>
     <!-- Upgrade PIN prompt title. -->
     <string name="Prompts.UpgradePin.title">Aggiorna il PIN</string>
     <!-- Body text for the push notifications prompt. -->
@@ -533,11 +533,11 @@
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">Notifiche Disabilitate</string>
     <!-- Body text when push notifications are disabled. -->
-    <string name="PushNotifications.disabledBody">Attiva le notifiche per ricevere offerte speciali e aggiornamenti da BRD.</string>
+    <string name="PushNotifications.disabledBody">Attiva le notifiche per ricevere offerte speciali e aggiornamenti da Coinsquare.</string>
     <!-- Body text when push notifications are enabled. -->
-    <string name="PushNotifications.enabledBody">Stai ricevendo offerte speciali e aggiornamenti da BRD.</string>
-    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
-    <string name="PushNotifications.enableInstructions">Sembra che le notifiche siano disattivate. Accedi alle Impostazioni per abilitare le notifiche da BRD.</string>
+    <string name="PushNotifications.enabledBody">Stai ricevendo offerte speciali e aggiornamenti da Coinsquare.</string>
+    <!-- Instructions to enable push notifications for Coinsquare in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">Sembra che le notifiche siano disattivate. Accedi alle Impostazioni per abilitare le notifiche da Coinsquare.</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">Ricevi notifiche push</string>
     <!-- Push notifications are off label -->
@@ -553,9 +553,9 @@
     <!-- Google play review prompt, revivew button -->
     <string name="RateAppPrompt.Button.Dismiss.Android">No Grazie</string>
     <!-- Google play review prompt, dismiss button -->
-    <string name="RateAppPrompt.Button.RateApp.Android">Valutare BRD</string>
+    <string name="RateAppPrompt.Button.RateApp.Android">Valutare Coinsquare</string>
     <!-- Google play review prompt title -->
-    <string name="RateAppPrompt.Title.Android">Valutare BRD</string>
+    <string name="RateAppPrompt.Title.Android">Valutare Coinsquare</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">Copiato negli appunti.</string>
     <!-- Share via email button label -->
@@ -577,7 +577,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Inserisci la tua Paper Key</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recupera il tuo BRD con la tua Paper Key</string>
+    <string name="RecoverWallet.intro">Recupera il tuo Coinsquare con la tua Paper Key</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">La Paper Key inserita non è valida. Si prega di controllare ogni parola due volte e riprovare.</string>
     <!-- Previous button accessibility label -->
@@ -636,14 +636,14 @@
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Ricorda di annotare queste parole. Torna indietro se ti sei dimenticato.</string>
     <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
     <string name="RecoveryKeyFlow.resetPINInstruction">Per favore inserisci la tua chiave di recupero per resettare il tuo PIN.</string>
-    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <!-- Assures the user that Coinsquare will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Compra e fai affari sapendo che i tuoi fondi sono protetti dalla migliore sicurezza e privacy sul mercato.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
-    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Conserva la tua chiave in un luogo sicuro. Questa è l\'unica maniera per recuperare il tuo portafoglio. BRD non ne mantiene una copia.</string>
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Conserva la tua chiave in un luogo sicuro. Questa è l\'unica maniera per recuperare il tuo portafoglio. Coinsquare non ne mantiene una copia.</string>
     <!-- Title for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successHeading">Congratulazioni! Hai completato l\'impostazione della tua chiave di recupero.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successSubheading">Sei pronto per depositare, commerciare e comprare criptovaluta dal tua portafoglio BRD.</string>
+    <string name="RecoveryKeyFlow.successSubheading">Sei pronto per depositare, commerciare e comprare criptovaluta dal tua portafoglio Coinsquare.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWallet">Scollega il tuo portafoglio da questo dispositivo.</string>
     <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
@@ -677,7 +677,7 @@
     <!-- extimated time -->
     <string name="ReScan.body1">20-45 minuti</string>
     <!-- Syncing explanation -->
-    <string name="ReScan.body2">Se una transazione figura come completata sulla rete, ma non sul tuo BRD.</string>
+    <string name="ReScan.body2">Se una transazione figura come completata sulla rete, ma non sul tuo Coinsquare.</string>
     <!-- Syncing explanation -->
     <string name="ReScan.body3">Hai ricevuto ripetutamente un errore che dice che la transazione è stata rifiutata.</string>
     <!-- Start Sync button label -->
@@ -693,7 +693,7 @@
     <!-- Rewards view expanded body. -->
     <string name="RewardsView.expandedBody">Impara come puoi risparmiare sulle tue commissioni di trading e sbloccare futuri benefici.</string>
     <!-- Rewards view expanded title. -->
-    <string name="RewardsView.expandedTitle">Presentazione dei benefici BRD.</string>
+    <string name="RewardsView.expandedTitle">Presentazione dei benefici Coinsquare.</string>
     <!-- Rewards view title -->
     <string name="RewardsView.normalTitle">Benefici</string>
     <!-- Scan bitcoin address camera flash toggle -->
@@ -718,11 +718,11 @@
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Paper Key</string>
     <!-- PIN button description -->
-    <string name="SecurityCenter.pinDescription">Protegge il tuo BRD dagli utenti non autorizzati.</string>
+    <string name="SecurityCenter.pinDescription">Protegge il tuo Coinsquare dagli utenti non autorizzati.</string>
     <!-- PIN button title -->
     <string name="SecurityCenter.pinTitle">PIN a 6 cifre</string>
     <!-- Touch ID button description -->
-    <string name="SecurityCenter.touchIdDescription">Sblocca comodamente il tuo BRD e invia denaro fino a un limite impostato.</string>
+    <string name="SecurityCenter.touchIdDescription">Sblocca comodamente il tuo Coinsquare e invia denaro fino a un limite impostato.</string>
     <!-- Touch ID button title -->
     <string name="SecurityCenter.touchIdTitle">Touch ID</string>
     <!-- Security center fingerprint authentication button -->
@@ -744,13 +744,13 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Saldo: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">Consenti l’accesso alla fotocamera in “Impostazioni” &gt; “Apps” &gt; “BRD” &gt; “Permessi”</string>
+    <string name="Send.cameraUnavailabeMessage.android">Consenti l’accesso alla fotocamera in “Impostazioni” &gt; “Apps” &gt; “Coinsquare” &gt; “Permessi”</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">BRD non è autorizzato ad accedere alla fotocamera</string>
+    <string name="Send.cameraUnavailabeTitle.android">Coinsquare non è autorizzato ad accedere alla fotocamera</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">Vai su Impostazioni per consentire l\'accesso alla fotocamera.</string>
     <!-- Camera not allowed alert title -->
-    <string name="Send.cameraUnavailableTitle">BRD non è autorizzato ad accedere alla fotocamera</string>
+    <string name="Send.cameraUnavailableTitle">Coinsquare non è autorizzato ad accedere alla fotocamera</string>
     <!-- Warning when sending to self. -->
     <string name="Send.containsAddress">La destinazione corrisponde al tuo indirizzo. Non puoi inviare a te stesso.</string>
     <!-- Could not create transaction alert title -->
@@ -834,7 +834,7 @@
     <!-- Enable segwit. -->
     <string name="Settings.EnableSegwit">Abilita SegWit</string>
     <!-- Are you enjoying bread alert message body -->
-    <string name="Settings.enjoying">Ti piace BRD?</string>
+    <string name="Settings.enjoying">Ti piace Coinsquare?</string>
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Limite di spesa Face ID</string>
     <!-- Redeem the funds stored on this private key. -->
@@ -876,7 +876,7 @@
     <!-- Wipe/delete your wallet from the current device. -->
     <string name="Settings.wipe.android">Scollega il tuo portafoglio da questo dispositivo.</string>
     <!-- Share data view body -->
-    <string name="ShareData.body">Aiuta a migliorare BRD condividendo con noi i tuoi dati anonimi. Ciò non include alcuna informazione finanziaria. Rispettiamo la tua privacy finanziaria.</string>
+    <string name="ShareData.body">Aiuta a migliorare Coinsquare condividendo con noi i tuoi dati anonimi. Ciò non include alcuna informazione finanziaria. Rispettiamo la tua privacy finanziaria.</string>
     <!-- Share data header -->
     <string name="ShareData.header">Condividi Dati?</string>
     <!-- Share data switch label. -->
@@ -884,9 +884,9 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">Annota di nuovo la Paper Key</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">La tua Paper Key è l\'unico modo per ripristinare il tuo BRD, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.\n\nTi mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
+    <string name="StartPaperPhrase.body">La tua Paper Key è l\'unico modo per ripristinare il tuo Coinsquare, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.\n\nTi mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">La chiave di sicurezza è il solo modo per ripristinare il tuo BRD se il tuo telefono viene perso, rubato, rotto, o aggiornato.\n\nLa tua chiave di sicurezza è richiesta anche se cambi le impostazioni di sicurezza del dispositivo.\n\nTi mostreremo una lista di parole da scrivere su un pezzo di carta e tenere al sicuro.</string>
+    <string name="StartPaperPhrase.Body.Android">La chiave di sicurezza è il solo modo per ripristinare il tuo Coinsquare se il tuo telefono viene perso, rubato, rotto, o aggiornato.\n\nLa tua chiave di sicurezza è richiesta anche se cambi le impostazioni di sicurezza del dispositivo.\n\nTi mostreremo una lista di parole da scrivere su un pezzo di carta e tenere al sicuro.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Annota la Paper Key</string>
     <!-- Argument is date; date should be on a new line -->
@@ -939,16 +939,16 @@
     <string name="TouchIdSettings.disabledWarning.body.android">Non hai abilitato l’autenticazione tramite impronta digitale su questo dispositivo. Vai su Impostazioni -&gt; Sicurezza per impostarla.</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">Autenticazione Impronta non abilitata</string>
-    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
-    <string name="TouchIdSettings.explanatoryText">Utilizza Touch ID per sbloccare l\'app BRD e inviare denaro.</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the Coinsquare app. -->
+    <string name="TouchIdSettings.explanatoryText">Utilizza Touch ID per sbloccare l\'app Coinsquare e inviare denaro.</string>
     <!-- Touch Id screen label -->
-    <string name="TouchIdSettings.label">Utilizza l\'impronta digitale per sbloccare il tuo BRD e inviare denaro fino a un limite impostato.</string>
+    <string name="TouchIdSettings.label">Utilizza l\'impronta digitale per sbloccare il tuo Coinsquare e inviare denaro fino a un limite impostato.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
     <string name="TouchIdSettings.linkText">Schermata limite di spesa con Touch ID</string>
     <!-- Spending Limit: b100,000 ($100) -->
     <string name="TouchIdSettings.spendingLimit">Limite di spesa: %1$s (%2$s)</string>
     <!-- Touch id switch label. -->
-    <string name="TouchIdSettings.switchLabel">Abilita Touch ID per BRD</string>
+    <string name="TouchIdSettings.switchLabel">Abilita Touch ID per Coinsquare</string>
     <!-- Enable fingerprint for this wallet called Bread -->
     <string name="TouchIdSettings.switchLabel.android">Abilita l’Autenticazione con Impronta Digitale</string>
     <!-- Touch ID settings view title -->
@@ -961,8 +961,8 @@
     <string name="TouchIdSettings.unavailableAlertMessage">Non hai impostato Touch ID su questo dispositivo. Vai su Impostazioni -&gt; Touch ID e Codice per impostarlo ora.</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">Touch ID Non Impostato</string>
-    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
-    <string name="TouchIdSettings.unlockTitleText">Abilita Touch ID per sbloccare BRD</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the Coinsquare app. -->
+    <string name="TouchIdSettings.unlockTitleText">Abilita Touch ID per sbloccare Coinsquare</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">Richiede sempre una password</string>
     <!-- Touch ID spending limit screen body -->
@@ -1003,7 +1003,7 @@
     <string name="Transaction.sentTo">invio effettuato a %1$s</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">Saldo iniziale: %1$s</string>
-    <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+    <!-- e.g. "[The money you paid was a] Fee for token transfer: Coinsquare" (Coinsquare is the token that was transfered) -->
     <string name="Transaction.tokenTransfer">Commissione per il trasferimento del gettone: %1$s</string>
     <!-- Waiting to be confirmed string -->
     <string name="Transaction.waiting">In attesa di conferma. Alcuni commercianti richiedono la conferma per completare una transazione. Tempo stimato: 1-2 ore.</string>
@@ -1117,7 +1117,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">Sensore Touch</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">Sblocca il tuo BRD.</string>
+    <string name="UnlockScreen.touchIdPrompt">Sblocca il tuo Coinsquare.</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">Per favore, sblocca il tuo dispositivo Android per continuare.</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -1127,7 +1127,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">Ricorda questo PIN. Se lo dimentichi, non sarai in grado di accedere al tuo bitcoin.</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">Il PIN verrà utilizzato per sbloccare il tuo BRD e inviare denaro.</string>
+    <string name="UpdatePin.createInstruction">Il PIN verrà utilizzato per sbloccare il tuo Coinsquare e inviare denaro.</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">Imposta PIN</string>
     <!-- Update PIN title -->
@@ -1178,7 +1178,7 @@
     <!-- Wallet connection settings view title -->
     <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">Apri l\'app BRD per iPhone per impostare tuo il portafoglio.</string>
+    <string name="Watch.noWalletWarning">Apri l\'app Coinsquare per iPhone per impostare tuo il portafoglio.</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">Ignora</string>
     <!-- Webview loading error message -->
@@ -1186,9 +1186,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">In aggiornamento…</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet ha cambiato il suo nome in BRD e ha un look nuovissimo nonché alcune nuove funzionalità.\n\nSe hai bisogno di aiuto, cerca il (?) a destra in alto sulla maggior parte delle schermate.</string>
+    <string name="Welcome.body">Breadwallet ha cambiato il suo nome in Coinsquare e ha un look nuovissimo nonché alcune nuove funzionalità.\n\nSe hai bisogno di aiuto, cerca il (?) a destra in alto sulla maggior parte delle schermate.</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">Ti diamo il benvenuto su BRD!</string>
+    <string name="Welcome.title">Ti diamo il benvenuto su Coinsquare!</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">Sicuro di voler eliminare questo portafoglio?</string>
     <!-- Wipe wallet alert title -->
