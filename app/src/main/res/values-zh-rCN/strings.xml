@@ -822,7 +822,7 @@
     <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
     <string name="Settings.atmMapMenuItemSubtitle">仅在美国提供</string>
     <!-- ATM map menu item title -->
-    <string name="Settings.atmMapMenuItemTitle">加密ATM地图</string>
+    <string name="Settings.atmMapMenuItemTitle">加密CoinsquareATM地图</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">显示币种</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
