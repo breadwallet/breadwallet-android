@@ -98,7 +98,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.REWARDS -> F.GoToBrdRewards
                     SettingsOption.ABOUT -> F.GoToAbout
                     SettingsOption.ATM_FINDER -> F.SendAtmFinderRequest
-                    SettingsOption.ATM_WITHDRAWAL -> F.SendAtmFinderRequest
+                    SettingsOption.ATM_WITHDRAWAL -> F.ATMWithdrawalRequest
                     SettingsOption.DEVELOPER_OPTIONS -> F.GoToSection(SettingsSection.DEVELOPER_OPTION)
                     SettingsOption.CURRENCY -> F.GoToDisplayCurrency
                     SettingsOption.BTC_MENU -> F.GoToSection(SettingsSection.BTC_SETTINGS)
