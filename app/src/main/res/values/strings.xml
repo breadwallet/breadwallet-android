@@ -823,6 +823,7 @@
     <string name="Settings.atmMapMenuItemSubtitle">Available in the USA only</string>
     <!-- ATM map menu item title -->
     <string name="Settings.atmMapMenuItemTitle">Crypto ATM Map</string>
+    <string name="Settings.coinsquareAtmMapMenuItemTitle">ATM Cash Withdrawal</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Display Currency</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->

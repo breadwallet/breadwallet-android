@@ -74,6 +74,7 @@ object SettingsScreen {
         object GoToGooglePlay : F()
         object GoToAbout : F()
         object SendAtmFinderRequest : F()
+        object ATMWithdrawalRequest : F()
         object GoToDisplayCurrency : F()
         object GoToNotificationsSettings : F()
         object GoToShareData : F()
