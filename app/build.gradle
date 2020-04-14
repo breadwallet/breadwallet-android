@@ -188,11 +188,11 @@ task downloadBundles {
 
 tasks.whenTaskAdded {
     if (it.name.startsWith('assemble') && it.name.endsWith('Release')) {
-        it.doFirst {
-            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
-                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
-            }
-        }
+//        it.doFirst {
+//            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
+//                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
+//            }
+//        }
     }
 }
 
