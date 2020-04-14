@@ -34,14 +34,20 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
+import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
+import com.platform.APIClient
+import com.platform.HTTPServer
+import com.platform.buildSignedRequest
 import com.platform.interfaces.AccountMetaDataProvider
+import com.platform.middlewares.plugins.LinkPlugin
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -72,6 +78,7 @@ class SettingsScreenHandler(
         when (value) {
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
+            F.ATMWithdrawalRequest -> sendATMWithdrawalRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
                 LogsUtils.shareLogs(activity)
             }
@@ -165,8 +172,8 @@ class SettingsScreenHandler(
     private fun getHomeOptions(): List<SettingsItem> {
         return mutableListOf(
             SettingsItem(
-                context.getString(R.string.Settings_atmMapMenuItemTitle),
-                SettingsOption.ATM_FINDER,
+                context.getString(R.string.Settings_coinsquareAtmMapMenuItemTitle),
+                SettingsOption.ATM_WITHDRAWAL,
                 R.drawable.ic_atm_finder
             ),
             SettingsItem(
@@ -205,16 +212,16 @@ class SettingsScreenHandler(
                 R.drawable.ic_about
             )
         ).apply {
-            // if (experimentsRepository.isExperimentActive(Experiments.ATM_MAP)) {
-            //     add(
-            //         SettingsItem(
-            //             context.getString(R.string.Settings_atmMapMenuItemTitle),
-            //             SettingsOption.ATM_FINDER,
-            //             R.drawable.ic_atm_finder,
-            //             subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
-            //         )
-            //     )
-            // }
+            if (experimentsRepository.isExperimentActive(Experiments.ATM_MAP)) {
+                add(
+                    SettingsItem(
+                        context.getString(R.string.Settings_atmMapMenuItemTitle),
+                        SettingsOption.ATM_FINDER,
+                        R.drawable.ic_atm_finder,
+                        subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
+                    )
+                )
+            }
             if (BuildConfig.DEBUG) {
                 add(
                     SettingsItem(
@@ -379,20 +386,23 @@ class SettingsScreenHandler(
     )
 
     private fun sendAtmFinderRequest() {
-        // val mapExperiment = ExperimentsRepositoryImpl.experiments[Experiments.ATM_MAP.key]
-        // val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
-        // val url = HTTPServer.getPlatformUrl(LinkPlugin.BROWSER_PATH)
-        // val request = buildSignedRequest(
-        //     url,
-        //     mapPath,
-        //     "POST",
-        //     LinkPlugin.BROWSER_PATH
-        // )
-        // APIClient.getInstance(context).sendRequest(request, false)
+        val mapExperiment = ExperimentsRepositoryImpl.experiments[Experiments.ATM_MAP.key]
+        val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
+        val url = HTTPServer.getPlatformUrl(LinkPlugin.BROWSER_PATH)
+        val request = buildSignedRequest(
+            url,
+            mapPath,
+            "POST",
+            LinkPlugin.BROWSER_PATH
+        )
+        APIClient.getInstance(context).sendRequest(request, false)
+    }
+
+    private fun sendATMWithdrawalRequest() {
         val url = "https://secure.just.cash/wac/map"
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(context, intent, null)
     }
 }

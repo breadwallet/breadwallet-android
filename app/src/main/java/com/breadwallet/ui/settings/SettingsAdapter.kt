@@ -70,7 +70,7 @@ class SettingsAdapter(
             subHeader.isGone = item.subHeader.isBlank()
             subHeader.text = item.subHeader
 
-            if (item.option == SettingsOption.ATM_FINDER) {
+            if (item.option == SettingsOption.ATM_WITHDRAWAL) {
                 rootView.setBackgroundColor(Color.BLACK)
             }
         }

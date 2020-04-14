@@ -34,6 +34,7 @@ enum class SettingsOption {
     REWARDS,
     ABOUT,
     ATM_FINDER,
+    ATM_WITHDRAWAL,
     DEVELOPER_OPTIONS,
     // PREFERENCES
     CURRENCY,
