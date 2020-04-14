@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings
 
+import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -60,7 +61,7 @@ class SettingsAdapter(
         private val icon: ImageButton get() = itemView.setting_icon
         private val addon: TextView get() = itemView.item_addon
         private val subHeader: TextView get() = itemView.item_sub_header
-
+        private val rootView:View = view
         fun bindView(item: SettingsItem) {
             title.text = item.title
             icon.isVisible = item.iconResId != null
@@ -68,6 +69,10 @@ class SettingsAdapter(
             addon.text = item.addOn
             subHeader.isGone = item.subHeader.isBlank()
             subHeader.text = item.subHeader
+
+            if (item.option == SettingsOption.ATM_FINDER) {
+                rootView.setBackgroundColor(Color.BLACK)
+            }
         }
     }
 }
