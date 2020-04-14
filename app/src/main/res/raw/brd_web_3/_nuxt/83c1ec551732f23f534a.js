@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[44],{997:function(e,n,t){"use strict";t.r(n);t(33);var i={created:function(){this.$router.replace("/exchange/trade")},render:function(e){return e("div")}},o=t(3),r=Object(o.a)(i,void 0,void 0,!1,null,null,null);r.options.__file="index.vue";n.default=r.exports}}]);
-//# sourceMappingURL=83c1ec551732f23f534a.js.map
