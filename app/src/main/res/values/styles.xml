@@ -55,7 +55,7 @@
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
-        <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
+        <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
         <item name="faq_button_primary_color">@drawable/faq_question_white</item>
         <item name="faq_button_secondary_color">@drawable/ic_faq_button_dark</item>
         <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>

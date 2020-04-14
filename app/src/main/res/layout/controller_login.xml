@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:drawableLeft="@drawable/ic_qrcode"
+        android:drawableStart="@drawable/ic_qrcode"
         android:drawablePadding="5dp"
         android:text="@string/Send.scanLabel"
         android:textColor="@color/logo_gradient_start"
