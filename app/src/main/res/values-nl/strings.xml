@@ -822,7 +822,7 @@
     <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
     <string name="Settings.atmMapMenuItemSubtitle">Alleen beschikbaar in de VS</string>
     <!-- ATM map menu item title -->
-    <string name="Settings.atmMapMenuItemTitle">Crypto Coinsquare ATM-kaart</string>
+    <string name="Settings.atmMapMenuItemTitle">Crypto ATM-kaart</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Toon valuta</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->

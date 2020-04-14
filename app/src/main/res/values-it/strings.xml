@@ -822,7 +822,7 @@
     <!-- ATM map menu item title explaining that it's a feature only available in the USA -->
     <string name="Settings.atmMapMenuItemSubtitle">Disponibile solo negli Stati Uniti</string>
     <!-- ATM map menu item title -->
-    <string name="Settings.atmMapMenuItemTitle">Mappa ATM Crypto Coinsquare</string>
+    <string name="Settings.atmMapMenuItemTitle">Mappa ATM Crypto</string>
     <!-- i.e. the currency which will be displayed -->
     <string name="Settings.currency">Visualizza valuta</string>
     <!-- e.g. "USD Settings" (settings for how USD is handled) -->
