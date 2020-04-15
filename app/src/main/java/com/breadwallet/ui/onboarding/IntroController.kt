@@ -45,8 +45,9 @@ import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.web.WebController
 import kotlinx.android.synthetic.main.controller_intro.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
@@ -102,20 +103,15 @@ class IntroController : BaseController() {
 
     private fun startAnimations() {
         viewAttachScope.launch(Dispatchers.IO) {
-            val tokens = TokenUtil.getTokenItems(applicationContext)
-            tokens.shuffle()
-            val icons = mutableListOf<String>()
-            while (icons.size < ICONS_TO_SHOW) {
-                if (!isActive) return@launch
-                val token = tokens[icons.size]
-                val iconPath = TokenUtil.getTokenIconPath(applicationContext, token.symbol, false)
-                if (iconPath.isNotBlank()) {
-                    icons.add(iconPath)
+            val icons = TokenUtil.getTokenItems(applicationContext)
+                .shuffled()
+                .take(ICONS_TO_SHOW)
+                .map { token ->
+                    TokenUtil.getTokenIconPath(applicationContext, token.symbol, false)
                 }
-            }
-            launch(Dispatchers.Main) {
-                loadViewsAndAnimate(icons)
-            }
+                .filter { it.isNotBlank() }
+
+            Main { loadViewsAndAnimate(icons) }
         }
     }
 
@@ -175,14 +171,14 @@ class IntroController : BaseController() {
         for (i in 0..length) {
             animateIcon(icons[i])
         }
-        viewAttachScope.launch(Dispatchers.Main) {
+        viewAttachScope.launch(Main) {
             delay(ANIMATION_MAX_DELAY)
             loadViewsAndAnimate(iconsPath)
         }
     }
 
     private fun animateIcon(icon: View) {
-        viewAttachScope.launch(Dispatchers.Main) {
+        viewAttachScope.launch(Main) {
             delay(Random.nextLong(0, ANIMATION_MAX_DELAY))
             icon.visibility = View.VISIBLE
 
