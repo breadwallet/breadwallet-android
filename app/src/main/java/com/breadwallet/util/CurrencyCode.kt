@@ -34,7 +34,5 @@ fun CurrencyCode.isBitcoin(): Boolean = equals(btc, true)
 fun CurrencyCode.isBitcoinCash(): Boolean = equals(bch, true)
 fun CurrencyCode.isEthereum(): Boolean = equals(eth, true)
 fun CurrencyCode.isBrd(): Boolean = equals("brd", true)
-fun CurrencyCode.isDai(): Boolean = equals("dai", true)
-fun CurrencyCode.isTusd(): Boolean = equals("tusd", true)
 fun CurrencyCode.isRipple(): Boolean = equals("xrp", true)
 
