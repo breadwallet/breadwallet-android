@@ -44,6 +44,7 @@ import com.breadwallet.ui.provekey.PaperKeyProve.E
 import com.breadwallet.ui.provekey.PaperKeyProve.F
 import com.breadwallet.ui.provekey.PaperKeyProve.M
 import com.breadwallet.util.DefaultTextWatcher
+import com.breadwallet.util.normalize
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
@@ -105,13 +106,13 @@ class PaperKeyProveController(args: Bundle) :
         submit_btn.setOnClickListener { output.accept(E.OnSubmitClicked) }
         first_word.addTextChangedListener(object : DefaultTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
-                val word = s?.toString().orEmpty()
+                val word = s?.toString().orEmpty().normalize()
                 output.accept(E.OnFirstWordChanged(word))
             }
         })
         second_word.addTextChangedListener(object : DefaultTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
-                val word = s?.toString().orEmpty()
+                val word = s?.toString().orEmpty().normalize()
                 output.accept(E.OnSecondWordChanged(word))
             }
         })

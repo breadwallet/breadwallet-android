@@ -35,6 +35,7 @@ import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
+import com.breadwallet.util.asNormalizedString
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -42,8 +43,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.text.Normalizer
-import java.util.Locale
 
 class RecoveryKeyHandler(
     private val output: Consumer<E>,
@@ -89,7 +88,7 @@ class RecoveryKeyHandler(
     }
 
     private suspend fun resetPin(effect: F.ResetPin) {
-        val phrase = normalizePhrase(effect.phrase)
+        val phrase = effect.phrase.asNormalizedString()
         retainedProducer().accept(
             try {
                 accountManager.clearPinCode(phrase.toByteArray())
@@ -101,7 +100,7 @@ class RecoveryKeyHandler(
     }
 
     private suspend fun unlink(effect: F.Unlink) {
-        val phrase = normalizePhrase(effect.phrase)
+        val phrase = effect.phrase.asNormalizedString()
 
         val storedPhrase = try {
             accountManager.getPhrase() ?: throw IllegalStateException("null phrase")
@@ -120,9 +119,7 @@ class RecoveryKeyHandler(
     }
 
     private suspend fun recoverWallet(effect: F.RecoverWallet) {
-        val context = BreadApp.getBreadContext()
-
-        val phraseBytes = normalizePhrase(effect.phrase).toByteArray()
+        val phraseBytes = effect.phrase.asNormalizedString().toByteArray()
         val words = findWordsForPhrase(phraseBytes)
         if (words == null) {
             logInfo("Phrase validation failed.")
@@ -153,28 +150,15 @@ class RecoveryKeyHandler(
      */
     private fun findWordsForPhrase(phraseBytes: ByteArray): List<String>? {
         val context = BreadApp.getBreadContext()
-        val allLocales = Locale.getAvailableLocales().asSequence()
-
-        return (sequenceOf(Locale.getDefault()) + allLocales)
-            .map(Locale::getLanguage)
-            .map { it to Bip39Reader.getBip39Words(context, it) }
-            .firstOrNull { (language, words) ->
-                Account.validatePhrase(phraseBytes, words)
-                    .also { matched ->
-                        if (matched) {
-                            BRSharedPrefs.recoveryKeyLanguage = language
-                            Key.setDefaultWordList(words)
-                        }
-                    }
-            }?.second
+        return Bip39Reader.SupportedLanguage.values()
+            .asSequence()
+            .mapNotNull { l ->
+                val words = Bip39Reader.getBip39Words(context, l.toString())
+                if (Account.validatePhrase(phraseBytes, words)) {
+                    BRSharedPrefs.recoveryKeyLanguage = l.toString()
+                    Key.setDefaultWordList(words)
+                    words
+                } else null
+            }.firstOrNull()
     }
-
-    private fun normalizePhrase(phrase: List<String>) =
-        Normalizer.normalize(
-            phrase.joinToString(" ")
-                .replace("　", " ")
-                .replace("\n", " ")
-                .trim()
-                .replace(" +".toRegex(), " "), Normalizer.Form.NFKD
-        )
 }
