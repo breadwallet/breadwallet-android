@@ -67,6 +67,14 @@
     </fieldset>
     <fieldset>
         <p>
+            <button onclick="requestLocation(); return false;">Request Location</button>
+        </p>
+        <p>
+            <span id="locationOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
             <button onclick="takePicture(); return false;">Take Picture</button>
         </p>
         <p>
@@ -178,6 +186,16 @@
             .catch((error) => {
                 pictureMessage.innerText = error
                 pictureOutput.removeAttribute('src');
+            })
+    }
+
+    function requestLocation() {
+        LocationJs.getLocation()
+            .then((data) => {
+                locationOutput.innerText = JSON.stringify(data)
+            })
+            .catch((error) => {
+                locationOutput.innerText = error
             })
     }
 

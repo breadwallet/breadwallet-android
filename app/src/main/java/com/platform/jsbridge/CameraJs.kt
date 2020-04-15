@@ -31,10 +31,7 @@ import kotlinx.coroutines.flow.first
 class CameraJs(
     private val promise: NativePromiseFactory,
     private val imageRequestFlow: Flow<String?>
-) {
-    companion object {
-        const val NATIVE_NAME = "CameraJs_Native"
-    }
+) : JsApi {
 
     @JavascriptInterface
     fun takePicture() = promise.createForString {
