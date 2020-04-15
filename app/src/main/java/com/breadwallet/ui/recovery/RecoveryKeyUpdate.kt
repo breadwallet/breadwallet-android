@@ -129,10 +129,6 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
         return dispatch(setOf(F.SetPinForRecovery))
     }
 
-    override fun onPhraseSaved(model: M): Next<M, F> {
-        return dispatch(setOf(F.RecoverWallet(model.phrase)))
-    }
-
     override fun onPhraseSaveFailed(model: M): Next<M, F> {
         return next(model.copy(isLoading = false))
     }
@@ -188,18 +184,6 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
                 }
             }
         }
-    }
-
-    override fun onShowPhraseGranted(model: M): Next<M, F> {
-        return dispatch(
-            setOf(
-                when (model.mode) {
-                    RecoveryKey.Mode.WIPE -> F.Unlink(model.phrase)
-                    RecoveryKey.Mode.RESET_PIN -> F.ResetPin(model.phrase)
-                    else -> error("Unexpected mode")
-                }
-            )
-        )
     }
 
     override fun onShowPhraseFailed(model: M): Next<M, F> {

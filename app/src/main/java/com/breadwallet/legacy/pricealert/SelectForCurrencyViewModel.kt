@@ -24,16 +24,12 @@
  */
 package com.breadwallet.legacy.pricealert
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import android.content.Context
 import com.breadwallet.app.BreadApp
 import com.breadwallet.ext.mutableLiveData
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
-import com.breadwallet.legacy.wallet.WalletsMaster
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
-import com.breadwallet.repository.RatesRepository
-import com.breadwallet.tools.threads.executor.BRExecutor
 
 class SelectForCurrencyViewModel : ViewModel() {
 
@@ -56,6 +52,7 @@ class SelectForCurrencyViewModel : ViewModel() {
     fun getCurrencies(): LiveData<List<CurrencyEntity>> = availableCurrencies
 
     private fun loadCurrencies() {
+        /* TODO: not implemented
         val ratesRepository = RatesRepository.getInstance(context)
         val walletsMaster = WalletsMaster.getInstance()
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
@@ -64,5 +61,6 @@ class SelectForCurrencyViewModel : ViewModel() {
                 .filter { !walletsMaster.isIsoCrypto(context, it.code) }
                 .apply(availableCurrencies::postValue)
         }
+         */
     }
 }

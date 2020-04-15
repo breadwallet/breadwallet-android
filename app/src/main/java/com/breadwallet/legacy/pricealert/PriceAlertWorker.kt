@@ -251,6 +251,6 @@ class PriceAlertWorker(
                 TODO("Not implemented")
             }
 
-    private fun getFormattedAmount(iso: String, amount: Float): String =
-            CurrencyUtils.getFormattedAmount(applicationContext, iso, amount.toBigDecimal())
+    private fun getFormattedAmount(iso: String, amount: Float): String = ""
+            // TODO : CurrencyUtils.getFormattedAmount(applicationContext, iso, amount.toBigDecimal())
 }

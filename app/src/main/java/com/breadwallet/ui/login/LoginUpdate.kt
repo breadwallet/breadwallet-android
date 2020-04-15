@@ -83,10 +83,5 @@ object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
         model: M,
         event: E.OnLoginPreferencesLoaded
     ): Next<M, F> =
-        next(
-            model.copy(
-                showHomeScreen = event.showHomeScreen,
-                currentCurrencyCode = event.currentCurrencyCode
-            )
-        )
+        next(model.copy(currentCurrencyCode = event.currentCurrencyCode))
 }

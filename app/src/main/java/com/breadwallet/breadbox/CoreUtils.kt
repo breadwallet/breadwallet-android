@@ -166,11 +166,11 @@ suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis 
     }
 
 private const val ECONOMY_FEE_HOURS = 10L
-private const val REGULAR_FEE_HOURS = 1L
+private const val REGULAR_FEE_MINUTES = 40L
 
 enum class TransferSpeed(val targetTime: Long) {
     ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
-    REGULAR(TimeUnit.HOURS.toMillis(REGULAR_FEE_HOURS)),
+    REGULAR(TimeUnit.MINUTES.toMillis(REGULAR_FEE_MINUTES)),
     PRIORITY(0L);
 }
 

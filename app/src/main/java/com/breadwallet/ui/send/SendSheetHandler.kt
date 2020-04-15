@@ -49,7 +49,7 @@ import com.breadwallet.logger.logWarning
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
@@ -72,8 +72,6 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -94,7 +92,6 @@ private const val RATE_UPDATE_MS = 60_000L
 
 private const val XRP_DESTINATION_TAG = "DestinationTag"
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object SendSheetHandler {
 
     @Suppress("LongParameterList")
@@ -104,7 +101,7 @@ object SendSheetHandler {
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>,
         breadBox: BreadBox,
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         apiClient: APIClient,
         ratesRepository: RatesRepository,
         navEffectHandler: NavEffectTransformer,
@@ -115,10 +112,24 @@ object SendSheetHandler {
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
         addTransformer<F.Nav>(navEffectHandler)
-        addTransformer(handleSendTransaction(breadBox, keyStore, retainedScope, outputProducer))
+        addTransformer(
+            handleSendTransaction(
+                breadBox,
+                accountManager,
+                retainedScope,
+                outputProducer
+            )
+        )
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
-        addTransformer(handleContinueWithPayment(keyStore, breadBox, retainedScope, outputProducer))
+        addTransformer(
+            handleContinueWithPayment(
+                accountManager,
+                breadBox,
+                retainedScope,
+                outputProducer
+            )
+        )
         addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
         addFunction(handleGetTransferFields(breadBox))
@@ -189,7 +200,14 @@ object SendSheetHandler {
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
             val balanceBig = (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
             val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance, rates)
-            E.OnBalanceUpdated(balanceBig, fiatBig)
+            val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
+                balanceBig
+            } else {
+                val feeWallet = breadBox.wallet(effect.feeCurrencyCode).first()
+                val feeBalanceMin = feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
+                (feeWallet.balance.toBigDecimal() - feeBalanceMin).coerceAtLeast(BigDecimal.ZERO)
+            }
+            E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyBalance)
         }
     }
 
@@ -226,7 +244,6 @@ object SendSheetHandler {
         router: Router
     ) = { effect: F.ShowEthTooLowForTokenFee ->
         val res = checkNotNull(router.activity).resources
-        // TODO: Handle user acceptance
         val controller = AlertDialogController(
             dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
             title = res.getString(R.string.Send_insufficientGasTitle),
@@ -235,6 +252,7 @@ object SendSheetHandler {
             positiveText = res.getString(R.string.Button_continueAction),
             negativeText = res.getString(R.string.Button_cancel)
         )
+        controller.targetController = router.backstack.last().controller()
         router.pushController(RouterTransaction.with(controller))
     }
 
@@ -314,7 +332,7 @@ object SendSheetHandler {
 
     private fun handleSendTransaction(
         breadBox: BreadBox,
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
     ) = flowTransformer<F.SendTransaction, E> { effects ->
@@ -343,13 +361,14 @@ object SendSheetHandler {
                 }
 
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed
                 }
 
-                val newTransfer = wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
+                val newTransfer =
+                    wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
                 checkNotNull(newTransfer) { "Failed to create transfer." }
 
                 wallet.walletManager.submit(newTransfer, phrase)
@@ -431,7 +450,7 @@ object SendSheetHandler {
     }
 
     private fun handleContinueWithPayment(
-        keyStore: KeyStore,
+        accountManager: BRAccountManager,
         breadBox: BreadBox,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
@@ -443,7 +462,7 @@ object SendSheetHandler {
                 checkNotNull(transfer) { "Failed to create transfer." }
 
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed

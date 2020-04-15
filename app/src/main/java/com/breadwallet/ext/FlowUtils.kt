@@ -30,14 +30,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** Dispatch each item emitted by this flow to [consumer], launching in [scope]. */
 fun <T> Flow<T>.bindConsumerIn(consumer: Consumer<T>, scope: CoroutineScope) =
@@ -51,9 +49,9 @@ fun <T> Flow<T>.bindConsumerIn(consumer: Consumer<T>, scope: CoroutineScope) =
         }
         .launchIn(scope)
 
-fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> = flow {
+fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> {
     var lastEmissionMs = 0L
-    collect { value ->
+    return transform { value ->
         val currentMs = System.currentTimeMillis()
         if (currentMs - lastEmissionMs > windowDuration) {
             lastEmissionMs = currentMs
@@ -62,25 +60,22 @@ fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> = flow {
     }
 }
 
-fun <T> Flow<T>.throttleLatest(windowDuration: Long): Flow<T> = channelFlow {
-    val isActive = AtomicBoolean(false)
-    val latest = AtomicReference<T>()
-    val emissions = AtomicInteger(0)
-    collect { value ->
-        if (!isActive.get()) {
-            isActive.set(true)
-
-            offer(value)
+fun <T> Flow<T>.throttleLatest(windowDuration: Long): Flow<T> {
+    val mutex = Mutex()
+    var latest: T? = null
+    return transformLatest { value ->
+        if (mutex.isLocked) {
+            latest = value
+        } else {
+            emit(value)
+        }
+    }.transform { value ->
+        mutex.withLock {
+            emit(value)
             delay(windowDuration)
 
-            if (emissions.get() > 1) {
-                offer(latest.get())
-            }
-
-            isActive.set(false)
-            emissions.set(0)
+            latest?.let { emit(it) }
+            latest = null
         }
-        latest.set(value)
-        emissions.incrementAndGet()
     }
 }

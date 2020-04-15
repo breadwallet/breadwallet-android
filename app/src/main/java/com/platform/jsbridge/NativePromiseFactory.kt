@@ -26,6 +26,7 @@ package com.platform.jsbridge
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -39,7 +40,7 @@ import kotlin.random.nextInt
 class NativePromiseFactory(webView: WebView) {
 
     private var webView: WebView? = webView
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob() + errorHandler())
     private val binderMap = ConcurrentHashMap<String, NativePromiseJs>()
 
     fun create(executor: suspend () -> JSONObject?) =

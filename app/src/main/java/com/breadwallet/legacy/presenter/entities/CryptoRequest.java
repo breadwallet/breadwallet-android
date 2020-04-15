@@ -1,14 +1,6 @@
 package com.breadwallet.legacy.presenter.entities;
 
-
-import android.content.Context;
-import android.util.Log;
-
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.legacy.wallet.entities.GenericTransactionMetaData;
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.tools.util.Utils;
 
 import java.io.Serializable;
@@ -41,7 +33,7 @@ import java.math.BigDecimal;
 
 public class CryptoRequest implements Serializable {
     public static final String TAG = CryptoRequest.class.getName();
-    private String mCurrencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE; //make it default
+    private String mCurrencyCode; //make it default
     private String mAddress;
     private String mScheme;
     private String mRUrl;// "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched
@@ -74,51 +66,6 @@ public class CryptoRequest implements Serializable {
 
     public boolean hasAddress() {
         return !Utils.isNullOrEmpty(mAddress);
-    }
-
-    public boolean isSmallerThanMin(Context app, BaseWalletManager walletManager) {
-        BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-        BigDecimal absAmt = mAmount.abs();
-        Log.e(TAG, "isSmallerThanMin: " + absAmt);
-        return minAmount != null && absAmt.compareTo(minAmount) < 0 && mGenericTransactionMetaData == null;
-    }
-
-    public boolean isLargerThanBalance(BaseWalletManager walletManager) {
-        return mAmount.abs().compareTo(walletManager.getBalance()) > 0
-                && mAmount.abs().compareTo(BigDecimal.ZERO) > 0;
-    }
-
-    //not enough money for a tx + fee
-    public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
-        BigDecimal balance = walletManager.getBalance();
-
-        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
-
-        if (isErc20) {
-            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
-            return mAmount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app.getApplicationContext()).getBalance()) > 0;
-        } else {
-            BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
-            BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
-            return mAmount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) > 0;
-        }
-    }
-
-    //the fee needs adjustments (amount + fee > balance but possible to adjust the amount to create a tx)
-    public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
-        BigDecimal balance = walletManager.getBalance();
-
-        boolean isErc20 = WalletsMaster.getInstance().isCurrencyCodeErc20(app, walletManager.getCurrencyCode());
-
-        if (isErc20) {
-            return false; //never need adjustment for ERC20s (fee is in ETH)
-        } else {
-            BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-            BigDecimal feeForTx = walletManager.getEstimatedFee(mAmount, null);
-            BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
-            return mAmount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) < 0;
-        }
     }
 
     public GenericTransactionMetaData getGenericTransactionMetaData() {

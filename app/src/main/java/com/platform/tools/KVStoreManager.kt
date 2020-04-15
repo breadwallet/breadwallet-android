@@ -50,7 +50,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions", "TooGenericExceptionCaught")
 class KVStoreManager(
     private val context: Context

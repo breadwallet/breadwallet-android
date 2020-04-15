@@ -136,9 +136,6 @@ object OnBoardingUpdate : Update<M, E, F>, OnBoardingUpdateSpec {
         //  single message to replicate previous behavior.
         val error = when (event) {
             SetupError.PhraseCreationFailed,
-            SetupError.PhraseStoreFailed,
-            SetupError.PhraseLoadFailed,
-            SetupError.ApiKeyCreationFailed,
             SetupError.StoreWalletFailed,
             SetupError.CryptoSystemBootError ->
                 "Failed to generate wallet, please try again."

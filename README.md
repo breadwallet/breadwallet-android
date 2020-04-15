@@ -41,11 +41,7 @@ Simplicity is breadwallet's core design principle. A simple backup phrase is all
 The [Blockset client token](https://blockset.com/docs/v1/tools/authentication) can be set in [gradle.properties](gradle.properties) or by using `-PBDB_CLIENT_TOKEN="<client token>"`.
 A default token is available for testing.
 
-### Fabric
+### Firebase
 
-In case you want to use fabric, create a file called fabric.properties under /app with your keys like this:
-```
-apiSecret=[YOUR_API_SECRET]
-apiKey=[YOUR_API_KEY]
-```
-For signed builds the flag IGNORE_FABRIC_KEYS_MISSING is required if fabric.properties doesn't exist.
+To enable Firebase services like Crashlytics, add the `google-services.json` file into the `app` directory.
+Without this file, runtime Firebase dependencies are still used but do not start and the Google Services gradle plugin is disabled so builds will succeed.

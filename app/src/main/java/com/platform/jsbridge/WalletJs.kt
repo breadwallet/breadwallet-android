@@ -33,12 +33,15 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.baseUnit
+import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.feeForSpeed
+import com.breadwallet.breadbox.findCurrency
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.isBitcoin
+import com.breadwallet.breadbox.isNative
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.Address
@@ -49,10 +52,13 @@ import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.errors.FeeEstimationError
+import com.breadwallet.logger.logDebug
+import com.breadwallet.crypto.errors.LimitEstimationError
+import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.platform.ConfirmTransactionMessage
@@ -68,6 +74,9 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class WalletJs(
     private val nativePromiseFactory: NativePromiseFactory,
@@ -75,7 +84,7 @@ class WalletJs(
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
-    private val keyStore: KeyStore
+    private val accountManager: BRAccountManager
 ) {
     companion object {
         const val NATIVE_NAME = "WalletJs_Native"
@@ -107,6 +116,7 @@ class WalletJs(
         private const val ERR_ESTIMATE_FEE = "estimate_fee"
         private const val ERR_INSUFFICIENT_BALANCE = "insufficient_balance"
         private const val ERR_SEND_TXN = "send_txn"
+        private const val ERR_CURRENCY_NOT_SUPPORTED = "currency_not_supported"
 
         private const val DOLLAR_IN_CENTS = 100
         private const val BASE_10 = 10
@@ -118,7 +128,7 @@ class WalletJs(
     @JavascriptInterface
     fun info() = nativePromiseFactory.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
-        val btcWallet = system.wallets.first { it.currency.code.equals("btc", true) }
+        val btcWallet = system.wallets.first { it.currency.isBitcoin() }
 
         val preferredCode = BRSharedPrefs.getPreferredFiatIso(context)
         val fiatCurrency = Currency.getInstance(preferredCode)
@@ -169,21 +179,31 @@ class WalletJs(
 
     @Suppress("LongMethod", "ComplexMethod")
     @JavascriptInterface
-    fun currencies() = nativePromiseFactory.create {
+    @JvmOverloads
+    fun currencies(
+        listAll: Boolean = false
+    ) = nativePromiseFactory.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
-        val enabledWallets = checkNotNull(metaDataProvider.getEnabledWalletsUnsafe())
+        val wallets = if (listAll) {
+            TokenUtil.getTokenItems(context).filter { it.isSupported }.map { it.currencyId }
+        } else {
+            checkNotNull(metaDataProvider.getEnabledWalletsUnsafe())
+        }
 
         val currenciesJSON = JSONArray()
-        enabledWallets.forEach { currencyId ->
+        wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
-                ?: return@forEach
+            val tokenItem = TokenUtil.getTokenItemForCurrencyId(currencyId)
+            val currencyCode =
+                wallet?.currency?.code?.toUpperCase() ?: tokenItem?.symbol
+
+            if (currencyCode.isNullOrBlank()) return@forEach
 
             val json = JSONObject().apply {
-                val currencyCode = wallet.currency.code.toUpperCase()
                 try {
                     put(KEY_ID, currencyCode)
                     put(KEY_TICKER, currencyCode)
-                    put(KEY_NAME, wallet.name)
+                    put(KEY_NAME, tokenItem?.name ?: wallet?.name)
 
                     val colors = JSONArray().apply {
                         put(TokenUtil.getTokenStartColor(currencyCode, context))
@@ -191,51 +211,54 @@ class WalletJs(
                     }
                     put(KEY_COLORS, colors)
 
-                    val balance = JSONObject().apply {
-                        val numerator = wallet.balance.toStringWithBase(BASE_10, "")
-                        val denominator =
-                            Amount.create(
-                                "1",
-                                false,
-                                wallet.defaultUnit
-                            ).orNull()?.toStringWithBase(BASE_10, "") ?: Amount.create(
-                                0,
-                                wallet.baseUnit
-                            )
-                        put(KEY_CURRENCY, currencyCode)
-                        put(KEY_NUMERATOR, numerator)
-                        put(KEY_DENOMINATOR, denominator)
+                    // Add balance info if wallet is available
+                    if (wallet != null) {
+                        val balance = JSONObject().apply {
+                            val numerator = wallet.balance.toStringWithBase(BASE_10, "")
+                            val denominator =
+                                Amount.create(
+                                    "1",
+                                    false,
+                                    wallet.defaultUnit
+                                ).orNull()?.toStringWithBase(BASE_10, "") ?: Amount.create(
+                                    0,
+                                    wallet.baseUnit
+                                )
+                            put(KEY_CURRENCY, currencyCode)
+                            put(KEY_NUMERATOR, numerator)
+                            put(KEY_DENOMINATOR, denominator)
+                        }
+
+                        val fiatCurrency = BRSharedPrefs.getPreferredFiatIso()
+
+                        val fiatBalance = JSONObject().apply {
+                            val fiatAmount = ratesRepository.getFiatForCrypto(
+                                wallet.balance.toBigDecimal(),
+                                currencyCode,
+                                fiatCurrency
+                            )?.multiply(BigDecimal(DOLLAR_IN_CENTS)) ?: BigDecimal.ZERO
+                            put(KEY_CURRENCY, fiatCurrency)
+                            put(KEY_NUMERATOR, fiatAmount.toPlainString())
+                            put(KEY_DENOMINATOR, DOLLAR_IN_CENTS.toString())
+                        }
+
+                        val exchange = JSONObject().apply {
+                            val fiatPerUnit = ratesRepository.getFiatForCrypto(
+                                BigDecimal.ONE,
+                                currencyCode,
+                                fiatCurrency
+                            )?.multiply(BigDecimal(DOLLAR_IN_CENTS)) ?: BigDecimal.ZERO
+                            put(KEY_CURRENCY, fiatCurrency)
+                            put(KEY_NUMERATOR, fiatPerUnit.toPlainString())
+                            put(KEY_DENOMINATOR, DOLLAR_IN_CENTS.toString())
+                        }
+
+                        put(KEY_BALANCE, balance)
+                        put(KEY_FIAT_BALANCE, fiatBalance)
+                        put(KEY_EXCHANGE, exchange)
                     }
-
-                    val fiatCurrency = BRSharedPrefs.getPreferredFiatIso()
-
-                    val fiatBalance = JSONObject().apply {
-                        val fiatAmount = ratesRepository.getFiatForCrypto(
-                            wallet.balance.toBigDecimal(),
-                            currencyCode,
-                            fiatCurrency
-                        )?.multiply(BigDecimal(DOLLAR_IN_CENTS)) ?: BigDecimal.ZERO
-                        put(KEY_CURRENCY, fiatCurrency)
-                        put(KEY_NUMERATOR, fiatAmount.toPlainString())
-                        put(KEY_DENOMINATOR, DOLLAR_IN_CENTS.toString())
-                    }
-
-                    val exchange = JSONObject().apply {
-                        val fiatPerUnit = ratesRepository.getFiatForCrypto(
-                            BigDecimal.ONE,
-                            currencyCode,
-                            fiatCurrency
-                        )?.multiply(BigDecimal(DOLLAR_IN_CENTS)) ?: BigDecimal.ZERO
-                        put(KEY_CURRENCY, fiatCurrency)
-                        put(KEY_NUMERATOR, fiatPerUnit.toPlainString())
-                        put(KEY_DENOMINATOR, DOLLAR_IN_CENTS.toString())
-                    }
-
-                    put(KEY_BALANCE, balance)
-                    put(KEY_FIAT_BALANCE, fiatBalance)
-                    put(KEY_EXCHANGE, exchange)
                 } catch (ex: JSONException) {
-                    logError("Failed to load currency data: ${wallet.currency.code}")
+                    logError("Failed to load currency data: $currencyCode")
                 }
             }
             currenciesJSON.put(json)
@@ -292,6 +315,76 @@ class WalletJs(
         JSONObject().apply {
             put(KEY_HASH, transaction.hashString())
             put(KEY_TRANSMITTED, true)
+        }
+    }
+
+    @JavascriptInterface
+    fun enableCurrency(
+        currencyCode: String
+    ) = nativePromiseFactory.create {
+        val system = checkNotNull(breadBox.system().first())
+        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode).currencyId.orEmpty()
+        check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
+
+        val network = system.networks.find { it.containsCurrency(currencyId) }
+        when (network?.findCurrency(currencyId)?.isNative()) {
+            null -> logError("No network or currency found for $currencyId.")
+            false -> {
+                val trackedWallets = breadBox.wallets().first()
+                if (!trackedWallets.containsCurrency(network.currency.uids)) {
+                    logDebug("Adding native wallet ${network.currency.uids} for $currencyId.")
+                    metaDataProvider.enableWallet(network.currency.uids)
+                }
+            }
+        }
+
+        metaDataProvider.enableWallet(currencyId)
+
+        JSONObject().apply {
+            put(KEY_CURRENCY, currencyCode)
+        }
+    }
+
+    @JavascriptInterface
+    fun maxlimit(
+        toAddress: String,
+        currency: String
+    ) = nativePromiseFactory.create {
+        val system = checkNotNull(breadBox.getSystemUnsafe())
+        val wallet = system.wallets.first { it.currency.code.equals(currency, true) }
+        val address = checkNotNull(wallet.addressFor(toAddress))
+
+        suspendCoroutine { continuation ->
+            val handler = object : CompletionHandler<Amount, LimitEstimationError> {
+                override fun handleData(limitMaxAmount: Amount?) {
+                    if (limitMaxAmount == null) {
+                        continuation.resumeWithException(Exception("Limit Estimation is null"))
+                        return
+                    }
+                    val numerator = limitMaxAmount.convert(wallet.baseUnit).orNull()
+                        ?.toStringWithBase(BASE_10, "") ?: "0"
+                    val denominator = Amount.create("1", false, wallet.baseUnit).orNull()
+                        ?.toStringWithBase(BASE_10, "")
+                        ?: Amount.create(0, wallet.baseUnit).toStringWithBase(BASE_10, "")
+
+                    continuation.resume(JSONObject().apply {
+                        put(KEY_NUMERATOR, numerator)
+                        put(KEY_DENOMINATOR, denominator)
+                    })
+                }
+
+                override fun handleError(error: LimitEstimationError?) {
+                    continuation.resumeWithException(
+                        error ?: Exception("Unknown Limit Estimation Error")
+                    )
+                }
+            }
+
+            wallet.estimateLimitMaximum(
+                address,
+                wallet.feeForSpeed(TransferSpeed.PRIORITY),
+                handler
+            )
         }
     }
 
@@ -362,7 +455,7 @@ class WalletJs(
             )
             is TransactionResultMessage.TransactionConfirmed -> {
                 val phrase = try {
-                    checkNotNull(keyStore.getPhrase())
+                    checkNotNull(accountManager.getPhrase())
                 } catch (ex: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", ex)
                     return null

@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Börja investera idag med så lite som $50!</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Välkommen till din nya globala plånbok!</string>
+    <string name="OnboardingPageOne.title">Välkommen till din nya digitala plånbok!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">Investera och bredda dig med BRD, lätt och tryggt.</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">Kunde inte skapa transaktion.</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">Memo</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">Destinationstagg (valfritt)</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">Destinationstagg (obligatoriskt)</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Urklipp är tomt</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">Totalt</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">Bitcoin transaktions-ID</string>
+    <string name="TransactionDetails.txHashHeader">Transaktions ID</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">Togs emot på den här adressen</string>
     <!-- (this transaction was) Sent to this address: -->

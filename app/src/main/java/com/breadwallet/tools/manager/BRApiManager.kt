@@ -29,13 +29,13 @@ import android.os.NetworkOnMainThreadException
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
-import com.breadwallet.legacy.wallet.wallets.ethereum.WalletEthManager
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs.getPreferredFiatIso
 import com.breadwallet.tools.manager.BRSharedPrefs.putSecureTime
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.btc
+import com.breadwallet.tools.util.eth
 import com.platform.APIClient
 import com.platform.APIClient.Companion.getBaseURL
 import com.platform.network.service.CurrencyHistoricalDataClient.fetch24HrsChange
@@ -84,7 +84,7 @@ class BRApiManager private constructor() {
                             name = tmpObj.getString(NAME),
                             code = code,
                             rate = tmpObj.getString(RATE).toFloat(),
-                            iso = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+                            iso = btc.toUpperCase(Locale.ROOT)
                         ).run(set::add)
                     } catch (e: JSONException) {
                         Log.e(TAG, "updateFiatRates: ", e)
@@ -148,7 +148,7 @@ class BRApiManager private constructor() {
         }
         currencyCodeListChunks.add(chunkStringBuilder.toString())
         for (currencyCodeChunk in currencyCodeListChunks) {
-            fetchCryptoRates(context, currencyCodeChunk, "btc")
+            fetchCryptoRates(context, currencyCodeChunk, btc)
         }
     }
 
@@ -230,8 +230,7 @@ class BRApiManager private constructor() {
         @WorkerThread
         private fun fetchFiatRates(app: Context): JSONArray? {
             //Fetch the BTC-Fiat rates
-            val url =
-                getBaseURL() + CURRENCY_QUERY_STRING + WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+            val url = getBaseURL() + CURRENCY_QUERY_STRING + btc.toUpperCase(Locale.ROOT)
             val jsonString = urlGET(app, url)
             var jsonArray: JSONArray? = null
             if (jsonString == null) {
@@ -268,12 +267,12 @@ class BRApiManager private constructor() {
                     if (tokenDataJsonObject.has(CONTRACT_INITIAL_VALUE)) {
                         val priceInEth =
                             tokenDataJsonObject.getString(CONTRACT_INITIAL_VALUE)
-                                .replace(WalletEthManager.ETH_CURRENCY_CODE, "")
+                                .replace(eth.toUpperCase(Locale.ROOT), "")
                                 .trim()
                         val name = tokenDataJsonObject.getString(BRConstants.NAME)
                         val code = tokenDataJsonObject.getString(BRConstants.CODE)
                         val ethCurrencyEntity = CurrencyEntity(
-                            code = WalletEthManager.ETH_CURRENCY_CODE,
+                            code = eth.toUpperCase(Locale.ROOT),
                             name = name,
                             rate = priceInEth.toFloat(),
                             iso = code
@@ -297,17 +296,14 @@ class BRApiManager private constructor() {
                 return null
             }
             val ethBtcExchangeRate = RatesRepository.getInstance(context)
-                .getCurrencyByCode(
-                    WalletEthManager.ETH_CURRENCY_CODE,
-                    WalletBitcoinManager.BITCOIN_CURRENCY_CODE
-                )
+                .getCurrencyByCode(eth, btc)
             if (ethBtcExchangeRate == null) {
                 Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null")
                 return null
             }
             val newRate = (currencyEntity.rate * ethBtcExchangeRate.rate).toBigDecimal().toFloat()
             return CurrencyEntity(
-                WalletBitcoinManager.BITCOIN_CURRENCY_CODE,
+                btc.toUpperCase(Locale.ROOT),
                 currencyEntity.name,
                 newRate,
                 currencyEntity.iso

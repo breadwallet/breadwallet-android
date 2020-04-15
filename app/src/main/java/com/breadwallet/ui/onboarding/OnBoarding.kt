@@ -64,10 +64,6 @@ object OnBoarding {
 
         sealed class SetupError : E() {
             object PhraseCreationFailed : SetupError()
-            object PhraseStoreFailed : SetupError()
-            object PhraseLoadFailed : SetupError()
-
-            object ApiKeyCreationFailed : SetupError()
 
             object StoreWalletFailed : SetupError()
 

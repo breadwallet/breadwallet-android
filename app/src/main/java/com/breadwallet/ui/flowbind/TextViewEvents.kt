@@ -28,14 +28,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 fun TextView.editorActions(): Flow<Int> =
     callbackFlow {
         setOnEditorActionListener { _, actionId, _ ->
@@ -44,7 +42,6 @@ fun TextView.editorActions(): Flow<Int> =
         awaitClose { setOnEditorActionListener(null) }
     }.flowOn(Dispatchers.Main)
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 fun TextView.textChanges(debounceMs: Long = 100L): Flow<String> =
     callbackFlow<String> {
         val listener = object : TextWatcher {

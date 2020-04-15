@@ -33,6 +33,7 @@ import com.breadwallet.ext.isZero
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.eth
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.util.CurrencyCode
@@ -108,6 +109,7 @@ object SendSheet {
 
         /** The currency code used for paying transaction fee. */
         val feeCurrencyCode: CurrencyCode = currencyCode,
+        val feeCurrencyBalance: BigDecimal = BigDecimal.ZERO,
 
         /** True when the user is confirming the transaction details. */
         val isConfirmingTx: Boolean = false,
@@ -154,12 +156,14 @@ object SendSheet {
             object FailedToEstimateFee : InputError()
         }
 
+        val isFeeNative: Boolean = currencyCode.equals(feeCurrencyCode, true)
+
         /** True when the user can select the [TransferSpeed], currently only BTC. */
         val showFeeSelect: Boolean = currencyCode.isBitcoin()
 
         /** The total cost of this transaction in [currencyCode]. */
         val totalCost: BigDecimal = when {
-            currencyCode == feeCurrencyCode -> amount + networkFee
+            isFeeNative -> amount + networkFee
             else -> amount
         }
 
@@ -227,8 +231,7 @@ object SendSheet {
                     fiatAmount
                 }
                 isTotalCostOverBalance = when {
-                    currencyCode == feeCurrencyCode ->
-                        newAmount + networkFee > balance
+                    isFeeNative -> newAmount + networkFee > balance
                     else -> newAmount > balance
                 }
             } else {
@@ -236,12 +239,15 @@ object SendSheet {
                 val hasRate = fiatPricePerUnit > BigDecimal.ZERO
                 val hasFiatAmount = newFiatAmount > BigDecimal.ZERO
                 newAmount = if (hasRate && hasFiatAmount) {
-                    newFiatAmount.setScale(fiatPricePerUnit.scale())
+                    newFiatAmount.setScale(MAX_DIGITS)
                         .divide(fiatPricePerUnit, BRConstants.ROUNDING_MODE)
                 } else {
                     amount
                 }
-                isTotalCostOverBalance = newFiatAmount + fiatNetworkFee > fiatBalance
+                isTotalCostOverBalance = when {
+                    isFeeNative -> newFiatAmount + fiatNetworkFee > fiatBalance
+                    else -> newFiatAmount > fiatBalance
+                }
             }
 
             return copy(
@@ -294,7 +300,8 @@ object SendSheet {
 
         data class OnBalanceUpdated(
             val balance: BigDecimal,
-            val fiatBalance: BigDecimal
+            val fiatBalance: BigDecimal,
+            val feeCurrencyBalance: BigDecimal
         ) : E()
 
         object OnNetworkFeeError : E()
@@ -394,7 +401,7 @@ object SendSheet {
 
             object GoToScan : Nav(NavigationEffect.GoToQrScan)
             object CloseSheet : Nav(NavigationEffect.GoBack)
-            object GoToEthWallet : Nav(NavigationEffect.GoToWallet("eth"))
+            object GoToEthWallet : Nav(NavigationEffect.GoToWallet(eth))
             object GoToTransactionComplete : Nav(NavigationEffect.GoToTransactionComplete)
         }
 
@@ -420,7 +427,8 @@ object SendSheet {
         ) : F()
 
         data class LoadBalance(
-            val currencyCode: CurrencyCode
+            val currencyCode: CurrencyCode,
+            val feeCurrencyCode: CurrencyCode
         ) : F()
 
         data class LoadExchangeRate(
@@ -493,12 +501,14 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         memo = message,
         transferFields = when {
             destinationTag != null ->
-                listOf(TransferField(
-                    key = TransferField.DESTINATION_TAG,
-                    required = false,
-                    invalid = false,
-                    value = destinationTag
-                ))
+                listOf(
+                    TransferField(
+                        key = TransferField.DESTINATION_TAG,
+                        required = false,
+                        invalid = false,
+                        value = destinationTag
+                    )
+                )
             else -> emptyList()
         }
     )
@@ -513,12 +523,14 @@ fun CryptoRequest.asSendSheetModel(fiatCode: String) =
         targetAddress = if (hasAddress()) getAddress(false) else "",
         transferFields = when {
             destinationTag != null ->
-                listOf(TransferField(
-                    key = TransferField.DESTINATION_TAG,
-                    required = false,
-                    invalid = false,
-                    value = destinationTag
-                ))
+                listOf(
+                    TransferField(
+                        key = TransferField.DESTINATION_TAG,
+                        required = false,
+                        invalid = false,
+                        value = destinationTag
+                    )
+                )
             else -> emptyList()
         }
     )

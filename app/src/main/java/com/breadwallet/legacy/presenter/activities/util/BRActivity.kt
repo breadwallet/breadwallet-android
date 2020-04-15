@@ -24,9 +24,6 @@
  */
 package com.breadwallet.legacy.presenter.activities.util
 
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
@@ -35,36 +32,39 @@ import androidx.appcompat.app.AppCompatActivity
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.app.BreadApp.Companion.setBreadContext
-import com.breadwallet.legacy.presenter.activities.DisabledActivity
 import com.breadwallet.tools.animation.BRDialog
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs.getScreenHeight
-import com.breadwallet.tools.manager.BRSharedPrefs.putAppBackgroundedFromHome
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenHeight
 import com.breadwallet.tools.manager.BRSharedPrefs.putScreenWidth
-import com.breadwallet.tools.qrcode.QRUtils
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.PostAuth
-import com.breadwallet.tools.security.isWalletDisabled
-import com.breadwallet.tools.threads.executor.BRExecutor
-import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.MainActivity
-import com.breadwallet.ui.recovery.RecoveryKeyActivity
+import com.breadwallet.tools.security.AccountState.Disabled
+import com.breadwallet.tools.security.AccountState.Locked
+import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.util.errorHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import org.kodein.di.erased.instance
 
-private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val TAG = "BRActivity"
 
 @Suppress("TooManyFunctions")
 abstract class BRActivity : AppCompatActivity() {
 
-    private var walletLockJob: Job? = null
+    protected val accountManager: BRAccountManager by lazy {
+        BreadApp.getKodeinInstance().instance<BRAccountManager>()
+    }
 
-    private var locked = false
+    private val resumedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("resumedScope")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,100 +73,28 @@ abstract class BRActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        walletLockJob?.cancel()
+        resumedScope.cancel()
         (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        walletLockJob?.cancel()
-        walletLockJob = null
-        if (locked) {
-            lockApp()
-            locked = false
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (this !is MainActivity) {
-            walletLockJob = GlobalScope.launch(Main) {
-                delay(LOCK_TIMEOUT)
-                locked = true
-            }
-        }
-        if (this is MainActivity) putAppBackgroundedFromHome(this, true)
     }
 
     override fun onResume() {
         super.onResume()
-        init()
-    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            BRConstants.CAMERA_REQUEST_ID -> {
-                // Received permission result for camera permission.
-                Log.i(
-                    TAG,
-                    "Received response for CAMERA_REQUEST_ID permission request."
-                )
-                // Check if the only required permission has been granted.
-                if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Remove this logic
-                } else {
-                    Log.i(TAG, "CAMERA permission was NOT granted.")
-                    BRDialog.showSimpleDialog(
-                        this,
-                        getString(R.string.Send_cameraUnavailabeTitle_android),
-                        getString(R.string.Send_cameraUnavailabeMessage_android)
-                    )
-                }
-            }
-            // Check if the only required permission has been granted.
-            QRUtils.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_ID ->
-                if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Write storage permission has been granted, preview can be displayed.
-                    Log.i(TAG, "WRITE permission has now been granted.")
-                    // No longer supported, handle this result in the controller: QRUtils.share(this);
-                }
-        }
-    }
+        accountManager.accountStateChanges()
+            .filter { it is Disabled || it is Locked }
+            .take(1)
+            .onEach { finish() }
+            .flowOn(Main)
+            .launchIn(resumedScope)
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            BRConstants.PAY_REQUEST_CODE -> {
-                (applicationContext as BreadApp).setDelayServerShutdown(false, requestCode)
-                if (resultCode == Activity.RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                        .execute { PostAuth.getInstance().onPublishTxAuth(this@BRActivity, null, true, null) }
-                }
-            }
-            BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks()
-                    .execute { PostAuth.getInstance().onPaymentProtocolRequest(this@BRActivity, true, null) }
-            }
-        }
-    }
-
-    private fun init() { //show wallet locked if it is and we're not in an illegal activity.
-        if (this !is RecoveryKeyActivity) {
-            if (isWalletDisabled(this)) {
-                showWalletDisabled()
-            }
-        }
         setBreadContext(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        resumedScope.coroutineContext.cancelChildren()
+
+        setBreadContext(null)
     }
 
     private fun saveScreenSizesIfNeeded() {
@@ -177,23 +105,6 @@ abstract class BRActivity : AppCompatActivity() {
             display.getSize(size)
             putScreenHeight(this, size.y)
             putScreenWidth(this, size.x)
-        }
-    }
-
-    private fun lockApp() {
-        if (this !is DisabledActivity && this !is MainActivity) {
-            if (BRKeyStore.getPinCode(this).isNotEmpty()) {
-                UiUtils.startBreadActivity(this, true)
-            }
-        }
-    }
-
-    /**
-     * Start DisabledActivity.
-     */
-    fun showWalletDisabled() {
-        if (this !is DisabledActivity) {
-            UiUtils.showWalletDisabled(this)
         }
     }
 

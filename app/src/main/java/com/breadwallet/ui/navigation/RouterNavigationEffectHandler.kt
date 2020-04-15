@@ -35,17 +35,20 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
-import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
+import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
@@ -73,6 +76,7 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
+import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
@@ -82,8 +86,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-
-private const val BITCOIN_CURRENCY_CODE = "BTC"
+import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
@@ -91,7 +94,7 @@ class RouterNavigationEffectHandler(
 ) : Connection<NavigationEffect>,
     NavigationEffectHandlerSpec {
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + errorHandler())
 
     override fun accept(value: NavigationEffect) {
         scope.launch { patch(value) }
@@ -145,7 +148,7 @@ class RouterNavigationEffectHandler(
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-            BITCOIN_CURRENCY_CODE
+            btc.toUpperCase(Locale.ROOT)
         )
         val webTransaction =
             WebController(url).asTransaction(
@@ -215,7 +218,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
-        val link = effect.url.asLink()
+        val link = effect.url?.asLink() ?: effect.link
         if (link == null) {
             logError("Failed to parse url, ${effect.url}")
             showLaunchScreen(effect.authenticated)
@@ -361,6 +364,20 @@ class RouterNavigationEffectHandler(
         )
     }
 
+    override fun goToAuthentication() {
+        val res = checkNotNull(router.activity).resources
+        val controller = AuthenticationController(
+            Mode.PIN_REQUIRED,
+            title = res.getString(R.string.VerifyPin_title),
+            message = res.getString(R.string.VerifyPin_continueBody)
+        )
+        val listener = router.backstack.lastOrNull()?.controller()
+        if (listener is AuthenticationController.Listener) {
+            controller.targetController = listener
+        }
+        router.pushController(RouterTransaction.with(controller))
+    }
+
     override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
         val res = checkNotNull(router.activity).resources
         router.pushController(
@@ -375,7 +392,11 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToDisabledScreen() {
-        UiUtils.showWalletDisabled(checkNotNull(router.activity))
+        router.pushController(
+            RouterTransaction.with(DisabledController())
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+        )
     }
 
     override fun goToQrScan() {

@@ -1,21 +1,19 @@
-package com.breadwallet.legacy.wallet.exceptions;
-
 /**
  * BreadWallet
- * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 1/30/18.
- * Copyright (c) 2018 breadwallet LLC
- * <p/>
+ *
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 3/31/20.
+ * Copyright (c) 2020 breadwallet LLC
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,10 +22,34 @@ package com.breadwallet.legacy.wallet.exceptions;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SpendingNotAllowed extends Exception {
+package com.breadwallet.util
 
-    public SpendingNotAllowed() {
-        super("spending is not allowed at the moment");
+import android.app.Activity
+import android.view.ViewGroup
+import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.ControllerChangeHandler
+import com.google.firebase.analytics.FirebaseAnalytics
+
+class ControllerTrackingListener(
+    private val activity: Activity
+) : ControllerChangeHandler.ControllerChangeListener {
+    override fun onChangeCompleted(
+        to: Controller?,
+        from: Controller?,
+        isPush: Boolean,
+        container: ViewGroup,
+        handler: ControllerChangeHandler
+    ) {
+        val screenName = to?.run { this::class.simpleName?.removeSuffix("Controller") }
+        FirebaseAnalytics.getInstance(activity.applicationContext)
+            .setCurrentScreen(activity, screenName, null)
     }
 
+    override fun onChangeStarted(
+        to: Controller?,
+        from: Controller?,
+        isPush: Boolean,
+        container: ViewGroup,
+        handler: ControllerChangeHandler
+    ) = Unit
 }

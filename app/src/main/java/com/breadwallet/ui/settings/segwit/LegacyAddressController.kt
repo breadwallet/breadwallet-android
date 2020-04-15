@@ -30,11 +30,11 @@ import android.text.format.DateUtils
 import android.view.View
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.qrcode.QRUtils
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -114,7 +114,7 @@ class LegacyAddressController(
             val request = CryptoRequest.Builder()
                 .setAddress(receiveAddress)
                 .build()
-            val uri = cryptoUriParser.createUrl(BITCOIN_CURRENCY_CODE, request)
+            val uri = cryptoUriParser.createUrl(btc, request)
             if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
                 error("failed to generate qr image for address")
             }

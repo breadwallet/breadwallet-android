@@ -30,6 +30,7 @@ import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.login.LoginScreen.E
 import com.breadwallet.ui.login.LoginScreen.F
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,7 @@ class LoginScreenHandler(
     private val showFingerprintPrompt: () -> Unit
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(value: F) {
         when (value) {
@@ -77,7 +78,6 @@ class LoginScreenHandler(
     private fun loadLoginPreferences() {
         output.accept(
             E.OnLoginPreferencesLoaded(
-                BRSharedPrefs.wasAppBackgroundedFromHome(),
                 BRSharedPrefs.getCurrentWalletCurrencyCode()
             )
         )

@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings
 
+import com.breadwallet.tools.util.bch
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
@@ -76,11 +78,18 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun onWalletsUpdated(model: M): Next<M, F> =
         dispatch(setOf(F.GoToHomeScreen))
 
-    override fun onTransactionScanned(
+    override fun onAuthenticated(model: M): Next<M, F> =
+        dispatch(setOf(F.GetPaperKey))
+
+    override fun onLinkScanned(
         model: M,
-        event: E.OnTransactionScanned
+        event: E.OnLinkScanned
     ): Next<M, F> =
-        dispatch(setOf(F.GoToSend(event.cryptoRequestUrl)))
+        dispatch(setOf(F.GoToLink(event.link)))
+
+    override fun showPhrase(model: M, event: E.ShowPhrase): Next<M, F> {
+        return dispatch(setOf(F.GoToPaperKey(event.phrase)))
+    }
 
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
@@ -105,13 +114,13 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.SHARE_ANONYMOUS_DATA -> F.GoToShareData
                     SettingsOption.NOTIFICATIONS -> F.GoToNotificationsSettings
                     SettingsOption.REDEEM_PRIVATE_KEY -> F.GoToImportWallet
-                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> F.GoToSyncBlockchain("btc")
-                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> F.GoToSyncBlockchain("bch")
+                    SettingsOption.SYNC_BLOCKCHAIN_BTC -> F.GoToSyncBlockchain(btc)
+                    SettingsOption.SYNC_BLOCKCHAIN_BCH -> F.GoToSyncBlockchain(bch)
                     SettingsOption.ENABLE_SEG_WIT -> F.GoToEnableSegWit
                     SettingsOption.VIEW_LEGACY_ADDRESS -> F.GoToLegacyAddress
                     SettingsOption.BTC_NODES -> F.GoToNodeSelector
                     SettingsOption.FINGERPRINT_AUTH -> F.GoToFingerprintAuth
-                    SettingsOption.PAPER_KEY -> F.GoToPaperKey
+                    SettingsOption.PAPER_KEY -> F.GoToAuthentication
                     SettingsOption.UPDATE_PIN -> F.GoToUpdatePin
                     SettingsOption.WIPE -> F.GoToWipeWallet
                     SettingsOption.ONBOARDING_FLOW -> F.GoToOnboarding
@@ -121,7 +130,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.WEB_PLAT_BUNDLE -> F.ShowPlatformBundleDialog
                     SettingsOption.TOKEN_BUNDLE -> F.ShowTokenBundleDialog
                     SettingsOption.NATIVE_API_EXPLORER -> F.GoToNativeApiExplorer
-                    SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync("btc")
+                    SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync(btc)
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                 }

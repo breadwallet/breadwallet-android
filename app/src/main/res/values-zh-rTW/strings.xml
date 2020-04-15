@@ -445,7 +445,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">只需 50 美元,便可在今日立即展開投資！</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">歡迎來到您全新的全球錢包！</string>
+    <string name="OnboardingPageOne.title">歡迎使用您的新數字資產錢包！</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">使用 BRD 進行多元分散投資,既輕鬆又安全。</string>
     <!-- Onboarding screen Page 3 title -->
@@ -757,6 +757,10 @@
     <string name="Send.creatTransactionError">無法建立交易。</string>
     <!-- Description for sending money label -->
     <string name="Send.descriptionLabel">備註</string>
+    <!-- Optional Destination Tag label -->
+    <string name="Send.destinationTag_optional">目標標記（可選）</string>
+    <!-- Required Destination Tag label -->
+    <string name="Send.destinationTag_required">目標標記（必填）</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">剪貼板是空的</string>
     <!-- "(you) can't send (to your)self" -->
@@ -1099,7 +1103,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.totalHeader">總計</string>
     <!-- Transaction ID header -->
-    <string name="TransactionDetails.txHashHeader">比特幣交易識別碼</string>
+    <string name="TransactionDetails.txHashHeader">交易詳情</string>
     <!-- (this transaction was) Received at this address: -->
     <string name="TransactionDirection.address">已於此地址接收</string>
     <!-- (this transaction was) Sent to this address: -->

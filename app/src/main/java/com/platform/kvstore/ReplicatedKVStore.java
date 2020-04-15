@@ -40,7 +40,7 @@ import com.breadwallet.crypto.Cipher;
 import com.breadwallet.crypto.Key;
 import com.breadwallet.logger.Logger;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.BRAccountManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -56,6 +56,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
+import static org.kodein.di.TypesKt.TT;
 
 public class ReplicatedKVStore implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = ReplicatedKVStore.class.getName();
@@ -176,7 +177,8 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
 
     private static void cacheKeyIfNeeded(Context context) {
         if (Utils.isNullOrEmpty(mTempAuthKey)) {
-            mTempAuthKey = BRKeyStore.getAuthKey(context);
+            BRAccountManager mAccountManager = BreadApp.getKodeinInstance().Instance(TT(BRAccountManager.class), null);
+            mTempAuthKey = mAccountManager.getAuthKey();
             if (mTempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
             ApplicationLifecycleObserver.addApplicationLifecycleListener(instance);
         }

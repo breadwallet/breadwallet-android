@@ -24,11 +24,9 @@
  */
 package com.breadwallet.ui.recovery
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.util.TypedValue
@@ -41,9 +39,9 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.customviews.BREdit
-import com.breadwallet.logger.logError
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.BRDialog
@@ -84,13 +82,6 @@ class RecoveryKeyController(
     private var launchPhrase: String? = null
     private val mode = arg("mode", RecoveryKey.Mode.RECOVER.name)
 
-    init {
-        // TODO: This request code is used in RecoveryKey.FHandler without calling
-        //  Controller.startActivityForResult so we must register our interest manually.
-        registerForActivityResult(BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE)
-        registerForActivityResult(BRConstants.SHOW_PHRASE_REQUEST_CODE)
-    }
-
     override val layoutId: Int = R.layout.controller_recovery_key
 
     override val defaultModel
@@ -102,41 +93,49 @@ class RecoveryKeyController(
     override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
             val resources = resources!!
-            RecoveryKeyHandler(output, direct.instance(), direct.instance(), {
-                // unlink
-                BRDialog.showCustomDialog(
-                    activity!!,
-                    resources.getString(R.string.WipeWallet_alertTitle),
-                    resources.getString(R.string.WipeWallet_alertMessage),
-                    resources.getString(R.string.WipeWallet_wipe),
-                    resources.getString(R.string.Button_cancel),
-                    {
-                        it.context
-                            .getSystemService(ActivityManager::class.java)
-                            .clearApplicationUserData()
-                    },
-                    { brDialogView -> brDialogView.dismissWithAnimation() },
-                    { eventConsumer.accept(E.OnPhraseSaveFailed) },
-                    0
-                )
-            }, {
-                // error dialog
-                BRDialog.showCustomDialog(
-                    activity!!,
-                    "",
-                    resources.getString(R.string.RecoverWallet_invalid),
-                    resources.getString(R.string.AccessibilityLabels_close),
-                    null,
-                    BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                    null,
-                    DialogInterface.OnDismissListener {
-                        eventConsumer.accept(E.OnPhraseSaveFailed)
-                    },
-                    0
-                )
-            }, {
-                SpringAnimator.failShakeAnimation(applicationContext, view)
-            })
+            RecoveryKeyHandler(
+                output,
+                applicationContext as BreadApp,
+                direct.instance(),
+                direct.instance(),
+                viewCreatedScope,
+                { eventConsumer }, {
+                    // unlink
+                    BRDialog.showCustomDialog(
+                        activity!!,
+                        resources.getString(R.string.WipeWallet_alertTitle),
+                        resources.getString(R.string.WipeWallet_alertMessage),
+                        resources.getString(R.string.WipeWallet_wipe),
+                        resources.getString(R.string.Button_cancel),
+                        {
+                            it.context
+                                .getSystemService(ActivityManager::class.java)
+                                .clearApplicationUserData()
+                        },
+                        { brDialogView -> brDialogView.dismissWithAnimation() },
+                        { eventConsumer.accept(E.OnPhraseSaveFailed) },
+                        0
+                    )
+                },
+                {
+                    // error dialog
+                    BRDialog.showCustomDialog(
+                        activity!!,
+                        "",
+                        resources.getString(R.string.RecoverWallet_invalid),
+                        resources.getString(R.string.AccessibilityLabels_close),
+                        null,
+                        BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+                        null,
+                        DialogInterface.OnDismissListener {
+                            eventConsumer.accept(E.OnPhraseSaveFailed)
+                        },
+                        0
+                    )
+                },
+                {
+                    SpringAnimator.failShakeAnimation(applicationContext, view)
+                })
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
@@ -298,33 +297,5 @@ class RecoveryKeyController(
         }
     }.also(input::addTextChangedListener)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE ->
-                eventConsumer.accept(handlePutPhraseResult(resultCode))
-            BRConstants.SHOW_PHRASE_REQUEST_CODE ->
-                eventConsumer.accept(handleShowPhraseResult(resultCode))
-            else ->
-                logError(
-                    "Registered for onActivityResult of $requestCode but was unhandled.",
-                    resultCode,
-                    data
-                )
-        }
-    }
-
     override fun handleBack(): Boolean = currentModel.isLoading
-
-    private fun handlePutPhraseResult(resultCode: Int): E =
-        when (resultCode) {
-            Activity.RESULT_OK -> E.OnPhraseSaved
-            else -> E.OnPhraseSaveFailed
-        }
-
-    private fun handleShowPhraseResult(resultCode: Int): E =
-        when (resultCode) {
-            Activity.RESULT_OK -> E.OnShowPhraseGranted
-            else -> E.OnShowPhraseFailed
-        }
 }

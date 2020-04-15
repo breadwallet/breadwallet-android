@@ -52,7 +52,6 @@ import drewcarlson.mobius.flow.transform
 import kotlinx.android.synthetic.main.controller_fast_sync.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -68,7 +67,6 @@ import java.util.Locale
 
 private const val CURRENCY_CODE = "currency_code"
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class FastSyncController(
     args: Bundle
 ) : BaseMobiusController<M, E, F>(args),

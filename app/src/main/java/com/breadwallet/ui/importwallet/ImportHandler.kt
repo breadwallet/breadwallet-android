@@ -35,7 +35,6 @@ import com.breadwallet.util.isBitcoinCash
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
@@ -74,7 +73,6 @@ object ImportHandler {
             wallet.currency.code.run { isBitcoin() || isBitcoinCash() }
         }
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
     private fun handleValidateKey(
         breadBox: BreadBox
     ) = flowTransformer<Import.F.ValidateKey, Import.E> { effects ->
@@ -101,7 +99,6 @@ object ImportHandler {
         }
     }
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
     private fun handleEstimateImport(
         breadBox: BreadBox,
         walletImporter: WalletImporter
@@ -147,7 +144,6 @@ object ImportHandler {
         }
     }
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
     private fun handleSubmitTransfer(
         walletImporter: WalletImporter
     ): suspend (Import.F.SubmitImport) -> Import.E = { submitTransfer ->
