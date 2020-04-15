@@ -156,12 +156,14 @@ object SendSheet {
             object FailedToEstimateFee : InputError()
         }
 
+        val isFeeNative: Boolean = currencyCode.equals(feeCurrencyCode, true)
+
         /** True when the user can select the [TransferSpeed], currently only BTC. */
         val showFeeSelect: Boolean = currencyCode.isBitcoin()
 
         /** The total cost of this transaction in [currencyCode]. */
         val totalCost: BigDecimal = when {
-            currencyCode == feeCurrencyCode -> amount + networkFee
+            isFeeNative -> amount + networkFee
             else -> amount
         }
 
@@ -229,8 +231,7 @@ object SendSheet {
                     fiatAmount
                 }
                 isTotalCostOverBalance = when {
-                    currencyCode == feeCurrencyCode ->
-                        newAmount + networkFee > balance
+                    isFeeNative -> newAmount + networkFee > balance
                     else -> newAmount > balance
                 }
             } else {
@@ -243,7 +244,10 @@ object SendSheet {
                 } else {
                     amount
                 }
-                isTotalCostOverBalance = newFiatAmount + fiatNetworkFee > fiatBalance
+                isTotalCostOverBalance = when {
+                    isFeeNative -> newFiatAmount + fiatNetworkFee > fiatBalance
+                    else -> newFiatAmount > fiatBalance
+                }
             }
 
             return copy(
