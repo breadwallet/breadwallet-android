@@ -28,6 +28,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -39,6 +40,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
@@ -53,10 +55,10 @@ import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.CameraJs
+import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.jsbridge.WalletJs
-import com.platform.middlewares.plugins.GeoLocationPlugin
 import kotlinx.android.synthetic.main.fragment_support.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -93,6 +95,9 @@ class WebController(
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
+        private val LOCATION_PERMISSIONS = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
     }
 
     init {
@@ -111,6 +116,18 @@ class WebController(
     private val imageRequestFlow = cameraResultChannel.asFlow()
         .take(1)
         .onStart { pushCameraController() }
+        .flowOn(Main)
+
+    private val locationPermissionChannel = BroadcastChannel<Boolean>(BUFFERED)
+    private val locationPermissionFlow = locationPermissionChannel.asFlow()
+        .take(1)
+        .onStart {
+            if (hasPermissions(LOCATION_PERMISSIONS)) {
+                emit(true)
+            } else {
+                requestPermissions(LOCATION_PERMISSIONS, BRConstants.GEO_REQUEST_ID)
+            }
+        }
         .flowOn(Main)
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -144,10 +161,9 @@ class WebController(
             url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))
         nativePromiseFactory = NativePromiseFactory(web_view)
         if (isPlatformUrl || url.startsWith("file:///")) {
-            val availableApis = NativeApisJs.from(
-                WalletJs.NATIVE_NAME,
-                CameraJs.NATIVE_NAME
-            )
+            val locationManager = applicationContext!!.getSystemService<LocationManager>()
+            val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
+            val locationJs = LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
             val walletJs = WalletJs(
                 nativePromiseFactory,
                 direct.instance(),
@@ -156,12 +172,11 @@ class WebController(
                 direct.instance(),
                 direct.instance()
             )
+            val nativeApis = NativeApisJs.with(cameraJs, locationJs, walletJs)
 
-            val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
-            web_view.addJavascriptInterface(cameraJs, CameraJs.NATIVE_NAME)
-            web_view.addJavascriptInterface(walletJs, WalletJs.NATIVE_NAME)
+            nativeApis.attachToWebView(web_view)
+
             web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
-            web_view.addJavascriptInterface(availableApis, NativeApisJs.JS_NAME)
         }
 
         web_view.webViewClient = object : WebViewClient() {
@@ -225,9 +240,9 @@ class WebController(
             BRConstants.GEO_REQUEST_ID -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     logInfo("Geo permission GRANTED")
-                    GeoLocationPlugin.handleGeoPermission(true)
+                    locationPermissionChannel.offer(true)
                 } else {
-                    GeoLocationPlugin.handleGeoPermission(false)
+                    locationPermissionChannel.offer(false)
                 }
             }
         }
@@ -283,9 +298,11 @@ class WebController(
 
     private fun pushCameraController() {
         if (hasPermissions(CAMERA_PERMISSIONS)) {
-            router.pushController(RouterTransaction.with(CameraController())
-                .pushChangeHandler(FadeChangeHandler())
-                .popChangeHandler(FadeChangeHandler()))
+            router.pushController(
+                RouterTransaction.with(CameraController())
+                    .pushChangeHandler(FadeChangeHandler())
+                    .popChangeHandler(FadeChangeHandler())
+            )
         } else {
             requestPermissions(CAMERA_PERMISSIONS, GET_CAMERA_PERMISSIONS_REQUEST_CODE)
         }

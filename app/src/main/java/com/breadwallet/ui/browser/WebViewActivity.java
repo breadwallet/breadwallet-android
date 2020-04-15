@@ -42,7 +42,6 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.platform.middlewares.plugins.GeoLocationPlugin;
 
 import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONException;
@@ -497,9 +496,7 @@ public abstract class WebViewActivity extends BRActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission is granted
                     Log.d(TAG, "Geo permission GRANTED");
-                    GeoLocationPlugin.handleGeoPermission(true);
                 } else {
-                    GeoLocationPlugin.handleGeoPermission(false);
                 }
                 break;
             }

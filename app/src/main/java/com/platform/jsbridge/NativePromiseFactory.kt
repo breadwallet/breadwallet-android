@@ -84,9 +84,10 @@ class NativePromiseFactory(webView: WebView) {
             private val LOWER_CHAR_RANGE = 97..122
 
             private val DEFAULT_VALUE_WRITER = { value: Any? ->
-                if (value == null) "null" else {
-                    check(value is String || value is JSONObject)
-                    "\"$value\""
+                if (value == null) "null" else when (value) {
+                    is String -> "\"$value\""
+                    is JSONObject -> value.toString()
+                    else -> "null"
                 }
             }
         }
