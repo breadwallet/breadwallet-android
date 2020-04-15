@@ -56,6 +56,7 @@ import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.CameraJs
 import com.platform.jsbridge.LocationJs
+import com.platform.jsbridge.KVStoreJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.jsbridge.WalletJs
@@ -163,7 +164,12 @@ class WebController(
         if (isPlatformUrl || url.startsWith("file:///")) {
             val locationManager = applicationContext!!.getSystemService<LocationManager>()
             val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
-            val locationJs = LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
+            val locationJs =
+                LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
+            val kvStoreJs = KVStoreJs(
+                nativePromiseFactory,
+                direct.instance()
+            )
             val walletJs = WalletJs(
                 nativePromiseFactory,
                 direct.instance(),
@@ -172,10 +178,9 @@ class WebController(
                 direct.instance(),
                 direct.instance()
             )
-            val nativeApis = NativeApisJs.with(cameraJs, locationJs, walletJs)
+            val nativeApis = NativeApisJs.with(cameraJs, locationJs, kvStoreJs, walletJs)
 
             nativeApis.attachToWebView(web_view)
-
             web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
         }
 
