@@ -65,6 +65,15 @@
             <span id="maxlimitOutput"></span>
         </p>
     </fieldset>
+    <fieldset>
+        <p>
+            <button onclick="takePicture(); return false;">Take Picture</button>
+        </p>
+        <p>
+            <span id="pictureMessage"></span>
+            <img id="pictureOutput" style="height: 100%; width: 100%; object-fit: contain">
+        </p>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -160,7 +169,17 @@
             })
     }
 
-
+    function takePicture() {
+        CameraJs.takePicture()
+            .then((path) => {
+                pictureMessage.innerText = ""
+                pictureOutput.src = `file://${path}`;
+            })
+            .catch((error) => {
+                pictureMessage.innerText = error
+                pictureOutput.removeAttribute('src');
+            })
+    }
 
 </script>
 </body>
