@@ -82,6 +82,18 @@
             <img id="pictureOutput" style="height: 100%; width: 100%; object-fit: contain">
         </p>
     </fieldset>
+    <fieldset>
+        <p>
+            <label for="kvKey">KVStore Key</label>
+            <input id="kvKey" type="text" value="vuex-exchange"/>
+        </p>
+        <p>
+            <button onclick="kvGet(); return false;">Get</button>
+        </p>
+        <p>
+            <span id="kvGetOutput"></span>
+        </p>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -189,6 +201,23 @@
             })
     }
 
+    function kvGet() {
+        let kvGetOutput = document.getElementById("kvGetOutput");
+        kvGetOutput.innerText = ""
+
+        let key = document.getElementById("kvKey").value
+
+        KVStoreJs.get(key)
+            .then((result) => {
+                let output =
+                kvGetOutput.innerText = JSON.stringify(result)
+            })
+            .catch((error) => {
+                kvGetOutput.innerText = error
+            })
+
+    }
+
     function requestLocation() {
         LocationJs.getLocation()
             .then((data) => {
@@ -198,6 +227,7 @@
                 locationOutput.innerText = error
             })
     }
+
 
 </script>
 </body>
