@@ -26,11 +26,15 @@ package com.breadwallet.ui.web
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.ApplicationInfo
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.JsResult
@@ -40,13 +44,15 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
+import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.logger.logInfo
-import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
@@ -55,8 +61,8 @@ import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.CameraJs
-import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.KVStoreJs
+import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.jsbridge.WalletJs
@@ -65,18 +71,24 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.io.File
+import java.util.UUID
 
 private const val ARG_URL = "WebController.URL"
 private const val CLOSE_URL = "_close"
+private const val FILE_SUFFIX = ".jpg"
 
 @Suppress("TooManyFunctions")
 class WebController(
@@ -89,9 +101,6 @@ class WebController(
     )
 
     companion object {
-        private const val CHOOSE_IMAGE_REQUEST_CODE = 1
-        private const val GET_CAMERA_PERMISSIONS_REQUEST_CODE = 2
-
         private val CAMERA_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -104,8 +113,7 @@ class WebController(
     init {
         retainViewMode = RetainViewMode.RETAIN_DETACH
 
-        registerForActivityResult(CHOOSE_IMAGE_REQUEST_CODE)
-        registerForActivityResult(GET_CAMERA_PERMISSIONS_REQUEST_CODE)
+        registerForActivityResult(BRConstants.REQUEST_IMAGE_RC)
     }
 
     override val layoutId = R.layout.fragment_support
@@ -113,15 +121,31 @@ class WebController(
     private var mOnCloseUrl: String? = null
     private lateinit var nativePromiseFactory: NativePromiseFactory
 
-    private val cameraResultChannel = BroadcastChannel<String?>(BUFFERED)
-    private val imageRequestFlow = cameraResultChannel.asFlow()
+    private val fileSelectChannel = BroadcastChannel<Uri?>(BUFFERED)
+    private val cameraPermissionChannel = BroadcastChannel<Boolean>(BUFFERED)
+    private val cameraPermissionFlow = cameraPermissionChannel.asFlow()
+        .onStart {
+            val pm = checkNotNull(applicationContext).packageManager
+            when {
+                !pm.hasSystemFeature(PackageManager.FEATURE_CAMERA) -> emit(false)
+                hasPermissions(CAMERA_PERMISSIONS) -> emit(true)
+                else -> requestPermissions(CAMERA_PERMISSIONS, BRConstants.CAMERA_PERMISSIONS_RC)
+            }
+        }
         .take(1)
-        .onStart { pushCameraController() }
+        .flowOn(Main)
+    private val cameraResultChannel = BroadcastChannel<String?>(BUFFERED)
+    private val imageRequestFlow = cameraPermissionFlow
+        .flatMapLatest { hasPermissions ->
+            if (hasPermissions) {
+                pushCameraController()
+                cameraResultChannel.asFlow().take(1)
+            } else flowOf(null)
+        }
         .flowOn(Main)
 
     private val locationPermissionChannel = BroadcastChannel<Boolean>(BUFFERED)
     private val locationPermissionFlow = locationPermissionChannel.asFlow()
-        .take(1)
         .onStart {
             if (hasPermissions(LOCATION_PERMISSIONS)) {
                 emit(true)
@@ -129,6 +153,7 @@ class WebController(
                 requestPermissions(LOCATION_PERMISSIONS, BRConstants.GEO_REQUEST_ID)
             }
         }
+        .take(1)
         .flowOn(Main)
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -139,11 +164,7 @@ class WebController(
         val theme = checkNotNull(activity).theme
         web_view.setBackgroundColor(res.getColor(R.color.platform_webview_bg, theme))
 
-        signal_layout.setOnTouchListener(SlideDetector(router, view))
-
-        if (activity!!.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
         HTTPServer.setOnCloseListener {
             if (router.backstack.lastOrNull()?.controller() is WebController) {
@@ -235,22 +256,19 @@ class WebController(
     ) {
         logInfo("onRequestPermissionResult: requestCode: $requestCode")
         when (requestCode) {
-            GET_CAMERA_PERMISSIONS_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    pushCameraController()
-                } else {
-                    cameraResultChannel.offer(null)
-                }
+            BRConstants.CAMERA_PERMISSIONS_RC -> {
+                cameraPermissionChannel.offer(grantResults.firstOrNull() == PERMISSION_GRANTED)
             }
             BRConstants.GEO_REQUEST_ID -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    logInfo("Geo permission GRANTED")
-                    locationPermissionChannel.offer(true)
-                } else {
-                    locationPermissionChannel.offer(false)
-                }
+                locationPermissionChannel.offer(grantResults.firstOrNull() == PERMISSION_GRANTED)
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val uri = data?.getParcelableExtra(MediaStore.EXTRA_OUTPUT) ?: data?.dataString?.toUri()
+        fileSelectChannel.offer(uri)
     }
 
     override fun onCameraSuccess(file: File) {
@@ -288,13 +306,34 @@ class WebController(
             fileChooserParams: FileChooserParams
         ): Boolean {
             logInfo("onShowFileChooser")
-            return false
+            controllerScope.launch(Main) {
+                val context = checkNotNull(applicationContext)
+                val cameraGranted = cameraPermissionFlow.first()
+                val (intent, file) = createChooserIntent(context, cameraGranted)
+
+                val selectedFile = if (intent == null) {
+                    // No available apps, use internal camera if possible.
+                    if (cameraGranted) {
+                        imageRequestFlow.first()?.toUri()
+                    } else null
+                } else {
+                    startActivityForResult(intent, BRConstants.REQUEST_IMAGE_RC)
+                    fileSelectChannel.asFlow().first()
+                }
+                val result = when {
+                    selectedFile != null -> arrayOf(selectedFile)
+                    file != null && file.length() > 0 -> arrayOf(file.toUri())
+                    else -> emptyArray()
+                }
+                filePath.onReceiveValue(result)
+            }
+            return true
         }
     }
 
     private fun hasPermissions(permissions: Array<String>): Boolean {
         for (permission in permissions) {
-            if (checkSelfPermission(activity!!, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(activity!!, permission) != PERMISSION_GRANTED) {
                 return false
             }
         }
@@ -309,7 +348,55 @@ class WebController(
                     .popChangeHandler(FadeChangeHandler())
             )
         } else {
-            requestPermissions(CAMERA_PERMISSIONS, GET_CAMERA_PERMISSIONS_REQUEST_CODE)
+            requestPermissions(CAMERA_PERMISSIONS, BRConstants.CAMERA_PERMISSIONS_RC)
+        }
+    }
+
+    private fun createTempImageFile(context: Context) = createTempFile(
+        UUID.randomUUID().toString(),
+        FILE_SUFFIX,
+        context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    )
+
+    private fun createChooserIntent(
+        context: Context,
+        cameraGranted: Boolean
+    ): Pair<Intent?, File?> {
+        val res = checkNotNull(resources)
+        val pm = context.packageManager
+
+        val intents = mutableListOf<Intent>()
+        val file: File?
+        if (cameraGranted) {
+            file = createTempImageFile(context)
+            val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file)
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                if (resolveActivity(pm) != null) {
+                    intents.add(this)
+                }
+            }
+        } else {
+            file = null
+        }
+
+        Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            if (resolveActivity(pm) != null) {
+                intents.add(this)
+            }
+        }
+
+        return if (intents.isEmpty()) {
+            null to null
+        } else {
+            val title = res.getString(R.string.FileChooser_selectImageSource_android)
+            Intent(Intent.ACTION_CHOOSER).apply {
+                putExtra(Intent.EXTRA_INTENT, intents.last())
+                putExtra(Intent.EXTRA_TITLE, title)
+                putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.dropLast(1).toTypedArray())
+            } to file
         }
     }
 }
