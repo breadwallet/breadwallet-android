@@ -76,6 +76,7 @@
     <fieldset>
         <p>
             <button onclick="takePicture(); return false;">Take Picture</button>
+            <input type="file" id="fileInput" name="Choose Picture" onchange="processFiles();" />
         </p>
         <p>
             <span id="pictureMessage"></span>
@@ -228,7 +229,27 @@
             })
     }
 
+    function processFiles() {
+        if (fileInput.files && fileInput.files[0]) {
+            let reader = new FileReader()
 
+            reader.onload = function (e) {
+                pictureMessage.innerText = ""
+                pictureOutput.src = e.target.result
+            }
+
+            reader.onerror = function (e) {
+                reader.abort()
+                pictureMessage.innerText = "Failed to read chosen image."
+                pictureOutput.src = e.target.result
+            }
+
+            reader.readAsDataURL(fileInput.files[0])
+        } else {
+            pictureMessage.innerText = "No image chosen."
+            pictureOutput.removeAttribute('src');
+        }
+    }
 </script>
 </body>
 </html>
