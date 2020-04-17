@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.3 (4013001)]
 ### Fixed
 - (CI) fixing some issues shown in detekt `Ruleset: complexity` 
+- AppIcon changed to Coinsquare.
 
 ## [4.1.2 (4012001)] - 2020-04-17
 ### Changed
