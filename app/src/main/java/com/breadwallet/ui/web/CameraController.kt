@@ -9,9 +9,10 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.view.isVisible
 import com.breadwallet.R
-import com.breadwallet.tools.threads.executor.MainThreadExecutor
 import com.breadwallet.ui.BaseController
 import kotlinx.android.synthetic.main.controller_camera.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 import java.io.File
 import java.util.UUID
 
@@ -24,7 +25,7 @@ class CameraController(
         fun onCameraClosed()
     }
 
-    private val executor = MainThreadExecutor()
+    private val executor = Dispatchers.Main.asExecutor()
 
     override val layoutId = R.layout.controller_camera
 

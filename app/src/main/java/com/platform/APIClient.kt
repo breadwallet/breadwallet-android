@@ -83,6 +83,7 @@ import com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8
 import com.breadwallet.tools.util.BRConstants.FALSE
 import com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT
 import com.breadwallet.tools.util.BRConstants.TRUE
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -462,7 +463,7 @@ class APIClient(private var context: Context, private val accountManager: BRAcco
         mIsPlatformUpdating = true
 
         //update Bundle
-        BRExecutor.getInstance().forBackgroundTasks().execute {
+        BreadApp.applicationScope.launch {
             val startTime = System.currentTimeMillis()
             ServerBundlesHelper.updateBundles(context)
             val endTime = System.currentTimeMillis()
@@ -476,7 +477,7 @@ class APIClient(private var context: Context, private val accountManager: BRAcco
         }
 
         //update feature flags
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+        BreadApp.applicationScope.launch {
             val startTime = System.currentTimeMillis()
             ExperimentsRepositoryImpl.refreshExperiments(context)
             val endTime = System.currentTimeMillis()
