@@ -38,6 +38,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.JsResult
+import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -300,13 +301,28 @@ class WebController(
             logInfo("onCloseWindow: ")
         }
 
+        override fun onPermissionRequest(request: PermissionRequest) {
+            if (request.resources.contains(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) {
+                viewCreatedScope.launch(Main) {
+                    val hasCameraPermission = cameraPermissionFlow.first()
+                    if (hasCameraPermission) {
+                        request.grant(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+                    } else {
+                        request.deny()
+                    }
+                }
+            } else {
+                request.deny()
+            }
+        }
+
         override fun onShowFileChooser(
             webView: WebView,
             filePath: ValueCallback<Array<Uri>>,
             fileChooserParams: FileChooserParams
         ): Boolean {
             logInfo("onShowFileChooser")
-            controllerScope.launch(Main) {
+            viewCreatedScope.launch(Main) {
                 val context = checkNotNull(applicationContext)
                 val cameraGranted = cameraPermissionFlow.first()
                 val (intent, file) = createChooserIntent(context, cameraGranted)
