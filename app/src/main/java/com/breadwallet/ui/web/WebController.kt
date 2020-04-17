@@ -200,7 +200,11 @@ class WebController(
                 direct.instance(),
                 direct.instance()
             )
-            val nativeApis = NativeApisJs.with(cameraJs, locationJs, kvStoreJs, walletJs)
+            val nativeApis = if (BuildConfig.DEBUG) {
+                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, walletJs)
+            } else {
+                NativeApisJs.with(walletJs)
+            }
 
             nativeApis.attachToWebView(web_view)
             web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
