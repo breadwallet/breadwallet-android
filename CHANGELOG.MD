@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [4.1.2 (4012001)] - 2020-04-14
+### Fixed
+- (CI) fixing some issues shown in detekt `Ruleset: complexity` 
+
+## [4.1.2 (4012001)] - 2020-04-17
 ### Changed
 - Changed the link to WAC from map to the home page.
 - Changed all strings that contains BRD to Coinsquare.
