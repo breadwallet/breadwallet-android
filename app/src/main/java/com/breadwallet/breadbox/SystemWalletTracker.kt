@@ -170,6 +170,12 @@ class SystemWalletTracker(
             is SystemNetworkAddedEvent -> {
                 val network = event.network
 
+                // TODO: Remove with hedera implementation
+                if (network.currency.uids.equals("hedera-mainnet:__native__", true)) {
+                    logDebug("Skipping Hedera network.")
+                    return
+                }
+
                 logDebug("Network '${network.name}' added.")
 
                 // TODO(DROID-1658): Restore migration

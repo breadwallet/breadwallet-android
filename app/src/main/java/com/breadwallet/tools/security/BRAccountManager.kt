@@ -171,7 +171,7 @@ class CryptoAccountManager(
         try {
             val creationDate = Date(BRKeyStore.getWalletCreationTime(context))
             val account =
-                Account.createFromPhrase(phrase, creationDate, BRSharedPrefs.getDeviceId())
+                Account.createFromPhrase(phrase, creationDate, BRSharedPrefs.getDeviceId()).get()
             val apiKey = Key.createForBIP32ApiAuth(
                 phrase,
                 Key.getDefaultWordList()
@@ -352,7 +352,7 @@ class CryptoAccountManager(
                     storedPhrase,
                     creationDate,
                     BRSharedPrefs.getDeviceId()
-                )
+                ).get()
 
                 checkNotNull(account) { "Failed to create Account." }
 
