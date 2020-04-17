@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 - Add a badge for testnet app icon.
  
-## [Unreleased]
+## [4.1.3 (4013001)]
 ### Fixed
 - (CI) fixing some issues shown in detekt `Ruleset: complexity` 
 

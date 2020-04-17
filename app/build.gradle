@@ -29,7 +29,7 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 1    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdEngineeringVersion = 3 // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 0       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
@@ -78,17 +78,20 @@ android {
     flavorDimensions "mode"
     productFlavors {
         brd {
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
             applicationId = "cash.just"
+
             dimension "mode"
-            resValue "string", "app_name", "BRD"
+            resValue "string", "app_name", "Coinsquare"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
             signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
             applicationId = "cash.just.testnet"
             dimension "mode"
-            resValue "string", "app_name", "BRD Testnet"
+            resValue "string", "app_name", "Coinsquare Testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
@@ -111,14 +114,12 @@ android {
     }
     buildTypes {
         release {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher"]
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
         }
         debug {
             applicationIdSuffix '.debug'
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher_grayscale"]
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
