@@ -369,15 +369,19 @@ object SendSheetHandler {
 
                 val newTransfer =
                     wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
-                checkNotNull(newTransfer) { "Failed to create transfer." }
 
-                wallet.walletManager.submit(newTransfer, phrase)
+                if (newTransfer == null) {
+                    logError("Failed to create transfer.")
+                    E.OnSendFailed
+                } else {
+                    wallet.walletManager.submit(newTransfer, phrase)
 
-                val hash = newTransfer.hashString()
+                    val hash = newTransfer.hashString()
 
-                breadBox.walletTransfer(effect.currencyCode, hash)
-                    .mapToSendEvent()
-                    .first()
+                    breadBox.walletTransfer(effect.currencyCode, hash)
+                        .mapToSendEvent()
+                        .first()
+                }
             }
             // outputProducer]must return a valid [Consumer] that
             // can accept events even if the original loop has been
