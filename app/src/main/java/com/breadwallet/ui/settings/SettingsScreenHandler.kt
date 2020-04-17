@@ -399,7 +399,7 @@ class SettingsScreenHandler(
     }
 
     private fun sendATMWithdrawalRequest() {
-        val url = "https://secure.just.cash/wac/map"
+        val url = "https://secure.just.cash/wac/"
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## [4.1.2 (4012001)] - 2020-04-14
 ### Changed
+- Changed the link to WAC from map to the home page.
 - Changed all strings that contains BRD to Coinsquare.
 - Changed the theme of the app, primary, secondary and tertiary to different blacks.
 - Changed the colors of the pin screen to white and black.
