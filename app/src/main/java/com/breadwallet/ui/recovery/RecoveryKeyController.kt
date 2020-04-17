@@ -144,8 +144,8 @@ class RecoveryKeyController(
         BRDialog.showCustomDialog(
             activity!!,
             "",
-            resources.getString(R.string.RecoverWallet_invalid),
-            resources.getString(R.string.AccessibilityLabels_close),
+            resources!!.getString(R.string.RecoverWallet_invalid),
+            resources!!.getString(R.string.AccessibilityLabels_close),
             null,
             BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
             null,
