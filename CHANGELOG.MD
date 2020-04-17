@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.0.2] - 2020-04-14
+## [4.1.2 (4012001)] - 2020-04-14
 ### Changed
 - Changed all strings that contains BRD to Coinsquare.
 - Changed the theme of the app, primary, secondary and tertiary to different blacks.
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Adding a link to the WAC map in a new menu item.
 
-## [0.0.1] - 2020-04-07
+## [4.1.1 (4011003)] - 2020-04-07
 ### Added
 - Created the first signed builds with coinsquare certificate keys.
 - Coinsquare vector images svg and vector drawable.
