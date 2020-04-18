@@ -53,7 +53,7 @@ object SettingsScreen {
 
         object OnBackClicked : E()
         object OnCloseClicked : E()
-        
+
         object OnAuthenticated : E()
 
         data class ShowPhrase(@Redacted val phrase: List<String>) : E()
@@ -62,6 +62,8 @@ object SettingsScreen {
         data class SetPlatformBundle(val bundle: String) : E()
         data class SetTokenBundle(val bundle: String) : E()
         object OnWalletsUpdated : E()
+
+        data class OnATMMapClicked(val url: String, val mapJson: String) : E()
     }
 
     sealed class F {
@@ -115,5 +117,7 @@ object SettingsScreen {
         data class SetTokenBundle(val bundle: String) : F()
 
         data class GoToLink(val link: Link) : F()
+
+        data class GoToATMMap(val url: String, val mapJson: String) : F()
     }
 }
