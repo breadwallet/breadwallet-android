@@ -329,7 +329,6 @@ class BreadApp : Application(), KodeinAware {
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
-                    .addInterceptor(BdbLoggingInterceptor)
                     .addInterceptor(authInterceptor)
                     .build()
             )
