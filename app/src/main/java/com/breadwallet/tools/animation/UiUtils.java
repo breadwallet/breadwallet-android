@@ -16,12 +16,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
-import com.breadwallet.R;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.ui.MainActivity;
-import com.breadwallet.ui.browser.PlatformBrowserActivity;
 import com.breadwallet.ui.wallet.WalletController;
-import com.platform.HTTPServer;
 
 import java.util.List;
 
@@ -53,10 +50,10 @@ import static android.content.Context.ACTIVITY_SERVICE;
  */
 
 public class UiUtils {
-    private static final String TAG = UiUtils.class.getName();
     public static final int CLICK_PERIOD_ALLOWANCE = 300;
     public static final String ARTICLE_QUERY_STRING = "/article?slug=";
     public static final String CURRENCY_QUERY_STRING = "&currency=";
+    private static final String TAG = UiUtils.class.getName();
     private static long mLastClickTime = 0;
     private static boolean mSupportIsShowing;
 
@@ -127,17 +124,6 @@ public class UiUtils {
         window.setStatusBarColor(app.getColor(color));
     }
 
-    /**
-     * Opens WebView with platform formatted rewards url.
-     * Reuse this method in Preferences.
-     *
-     * @param activity The Activity.
-     */
-    public static void openRewardsWebView(Activity activity) {
-        startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
-                R.anim.empty_300, R.anim.fade_up, R.anim.exit_to_right);
-    }
-
     public static boolean isLast(Activity app) {
         ActivityManager mngr = (ActivityManager) app.getSystemService(ACTIVITY_SERVICE);
 
@@ -148,18 +134,6 @@ public class UiUtils {
             return true;
         }
         return false;
-    }
-
-    public static void startPlatformBrowser(Activity activity, String url) {
-        startPlatformBrowser(activity, url, R.anim.enter_from_bottom, R.anim.fade_down, 0, 0);
-    }
-
-    private static void startPlatformBrowser(Activity activity, String url, int enterAnimation,
-                                             int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
-        PlatformBrowserActivity.Companion.start(activity, url, returnEnterAnimation, returnExitAnimation);
-        if (enterAnimation != 0 && exitAnimation != 0) {
-            activity.overridePendingTransition(enterAnimation, exitAnimation);
-        }
     }
 
     public static boolean isMainThread() {

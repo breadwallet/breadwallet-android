@@ -32,7 +32,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * Provides native methods for use in platform-content pages in [WebViewActivity].
+ * Provides native methods for use in platform-content pages.
  */
 object BrdNativeJs {
 
@@ -56,11 +56,11 @@ object BrdNativeJs {
 
     @JavascriptInterface
     fun sign(
-            method: String,
-            contentDigest: String,
-            contentType: String,
-            date: String,
-            url: String
+        method: String,
+        contentDigest: String,
+        contentType: String,
+        date: String,
+        url: String
     ): String = mac.run {
         reset()
         val signingContent = method + contentDigest + contentType + date + url

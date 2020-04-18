@@ -1,19 +1,18 @@
 package com.platform.middlewares.plugins;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.browser.BrdBrowserActivity;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
+import com.platform.LinkBus;
+import com.platform.LinkRequestMessage;
 import com.platform.interfaces.Plugin;
 
 import org.eclipse.jetty.http.HttpStatus;
@@ -125,11 +124,9 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
-                    //TODO: Migrate to WebController
-                    BrdBrowserActivity.Companion.startWithUrl(app, getUri.toString());
-                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    Log.e(TAG, "linkPluginLink: url: " + getUri.toString());
+                    LinkBus.INSTANCE.sendMessage(new LinkRequestMessage(getUri.toString(), null));
                     APIClient.BRResponse resp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
-
                     return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                 case BRConstants.POST:
                     // opens a browser with a customized request object
@@ -186,12 +183,9 @@ public class LinkPlugin implements Plugin {
                     }
 
                     hasBrowser = true;
-                    //TODO: Migrate to WebController
-                    BrdBrowserActivity.Companion.startJson(app, json);
-                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    LinkBus.INSTANCE.sendMessage(new LinkRequestMessage(postUrl, json.toString()));
                     APIClient.BRResponse brResp = new APIClient.BRResponse(null, HttpStatus.NO_CONTENT_204);
                     return BRHTTPHelper.handleSuccess(brResp, baseRequest, response);
-
             }
         }
         return false;
