@@ -72,8 +72,6 @@ object AddWalletsHandler {
                 }
                 .mapLatest { (trackedWallets, query) ->
                     TokenUtil.getTokenItems(context)
-                        // TODO: Remove with hedera implementation
-                        .filter { it.currencyId != "hedera-mainnet:__native__"  }
                         .filter { token ->
                             (token.isSupported || trackedWallets.any { it.currencyId == token.currencyId })
                         }
