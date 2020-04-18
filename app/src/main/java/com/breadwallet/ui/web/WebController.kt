@@ -49,10 +49,12 @@ import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
@@ -60,6 +62,8 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.browser.BrdNativeJs
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.platform.HTTPServer
+import com.platform.LinkBus
+import com.platform.LinkResultMessage
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.CameraJs
 import com.platform.jsbridge.KVStoreJs
@@ -67,6 +71,8 @@ import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.jsbridge.WalletJs
+import com.platform.middlewares.plugins.LinkPlugin
+import com.platform.util.getStringOrNull
 import kotlinx.android.synthetic.main.fragment_support.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -82,12 +88,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.io.File
 import java.util.UUID
+import java.util.Locale
 
 private const val ARG_URL = "WebController.URL"
+private const val ARG_JSON_REQUEST = "WebController.JSON_REQUEST"
 private const val CLOSE_URL = "_close"
 private const val FILE_SUFFIX = ".jpg"
 
@@ -97,8 +106,11 @@ class WebController(
 ) : BaseController(args),
     CameraController.Listener {
 
-    constructor(url: String) : this(
-        bundleOf(ARG_URL to url)
+    constructor(url: String, jsonRequest: String? = null) : this(
+        bundleOf(
+            ARG_URL to url,
+            ARG_JSON_REQUEST to jsonRequest
+        )
     )
 
     companion object {
@@ -180,10 +192,13 @@ class WebController(
         }
 
         val url: String = arg(ARG_URL)
+        val jsonRequest: String? = argOptional(ARG_JSON_REQUEST)
+
         val isPlatformUrl =
             url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))
+
         nativePromiseFactory = NativePromiseFactory(web_view)
-        if (isPlatformUrl || url.startsWith("file:///")) {
+        if ((isPlatformUrl || url.startsWith("file:///"))) {
             val locationManager = applicationContext!!.getSystemService<LocationManager>()
             val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
             val locationJs =
@@ -219,19 +234,78 @@ class WebController(
 
                 if (mOnCloseUrl != null && trimmedUrl.equals(mOnCloseUrl, true)) {
                     router.popController(this@WebController)
+                    LinkPlugin.hasBrowser = false
                     mOnCloseUrl = null
                 } else if (trimmedUrl.contains(CLOSE_URL)) {
                     router.popController(this@WebController)
+                    LinkPlugin.hasBrowser = false
                 } else if (trimmedUrl.startsWith("file://")) {
                     view.loadUrl(trimmedUrl)
+                } else {
+                    // Simplex || Wyre links 
+                    return false
                 }
                 return true
             }
         }
-        web_view.webChromeClient = BRWebChromeClient()
-        web_view.loadUrl(url)
 
-        handlePlatformMessages().launchIn(viewCreatedScope)
+        web_view.webChromeClient = BRWebChromeClient()
+
+        if (jsonRequest.isNullOrEmpty()) {
+            web_view.loadUrl(url)
+            handlePlatformMessages().launchIn(viewCreatedScope)
+        } else {
+            try {
+                handleJsonRequest(jsonRequest)
+                LinkBus.sendMessage(LinkResultMessage.LinkSuccess)
+            } catch (e: Exception) {
+                logError("Handling json request failed", e)
+                router.popController(this@WebController)
+                LinkBus.sendMessage(LinkResultMessage.LinkFailure(e))
+            }
+        }
+        handleLinkMessages().launchIn(viewCreatedScope)
+    }
+
+    private fun handleJsonRequest(jsonRequest: String) {
+        val request = JSONObject(jsonRequest)
+        val url = request.getString(BRConstants.URL)
+
+        if (url != null && url.contains(BRConstants.CHECKOUT)) {
+            // TODO: attachKeyboardListeners?
+            toolbar.isVisible = true
+            toolbar_bottom.isVisible = true
+
+            webview_back_arrow.setOnClickListener { handleBack() }
+            webview_forward_arrow.setOnClickListener { if (web_view.canGoForward()) web_view.goForward() }
+            reload.setOnClickListener { handleJsonRequest(jsonRequest) }
+        }
+
+        val method = request.getString(BRConstants.METHOD)
+        val body = request.getStringOrNull(BRConstants.BODY)
+        val headers = request.getStringOrNull(BRConstants.HEADERS)
+        mOnCloseUrl = request.getString(BRConstants.CLOSE_ON)
+
+        val httpHeaders = mutableMapOf<String, String>()
+
+        if (!headers.isNullOrEmpty()) {
+            val headersJSON = JSONObject(headers)
+            headersJSON.keys().forEach {
+                httpHeaders[it] = headersJSON.getString(it)
+            }
+        }
+
+        when (method.toUpperCase(Locale.ROOT)) {
+            "GET" -> {
+                if (httpHeaders.isNotEmpty()) {
+                    web_view.loadUrl(url, httpHeaders)
+                } else {
+                    web_view.loadUrl(url)
+                }
+            }
+            "POST" -> web_view.postUrl(url, body?.toByteArray())
+            else -> IllegalStateException("Unexpected method: $method")
+        }
     }
 
     override fun handleBack() = when {
@@ -250,6 +324,13 @@ class WebController(
     private fun handlePlatformMessages() = PlatformTransactionBus.requests().onEach {
         withContext(Main) {
             val transaction = RouterTransaction.with(PlatformConfirmTransactionController(it))
+            router.pushController(transaction)
+        }
+    }
+
+    private fun handleLinkMessages() = LinkBus.requests().onEach {
+        withContext(Main) {
+            val transaction = RouterTransaction.with(WebController(it.url, it.jsonRequest))
             router.pushController(transaction)
         }
     }
@@ -302,6 +383,7 @@ class WebController(
 
         override fun onCloseWindow(window: WebView) {
             super.onCloseWindow(window)
+            LinkPlugin.hasBrowser = false
             logInfo("onCloseWindow: ")
         }
 

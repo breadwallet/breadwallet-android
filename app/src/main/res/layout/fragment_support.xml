@@ -1,19 +1,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/background_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="bottom"
-              android:filterTouchesWhenObscured="true"
-              android:isScrollContainer="false">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:filterTouchesWhenObscured="true"
+    android:isScrollContainer="false">
 
-    <androidx.cardview.widget.CardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/signal_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
         android:animateLayoutChanges="true"
         android:clickable="true"
         android:isScrollContainer="false"
@@ -22,16 +20,108 @@
 
         <WebView
             android:id="@+id/web_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
-            android:filterTouchesWhenObscured="true">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:filterTouchesWhenObscured="true"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         </WebView>
 
-    </androidx.cardview.widget.CardView>
+        <Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/web_view_toolbar"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/web_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                    android:id="@+id/webview_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="@font/circular_pro_bold"
+                    android:text="Simplex Checkout"
+                    android:textColor="@color/black" />
+
+
+                <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/circular_pro_bold"
+                    android:paddingEnd="8dp"
+                    android:text="@string/AccessibilityLabels.close"
+                    android:textColor="@color/button_primary_normal" />
+
+            </RelativeLayout>
+
+        </Toolbar>
+
+        <Toolbar
+            android:id="@+id/toolbar_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/web_view_toolbar"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/web_view">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:id="@+id/webview_back_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_webview_left_inactive" />
+
+
+                <ImageButton
+                    android:id="@+id/webview_forward_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="50dp"
+                    android:layout_toRightOf="@id/webview_back_arrow"
+                    android:background="@drawable/ic_webview_right_inactive" />
+
+
+                <ImageButton
+                    android:id="@+id/reload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/ic_reload_blue" />
+
+            </RelativeLayout>
+
+        </Toolbar>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
