@@ -336,12 +336,12 @@ class RouterNavigationEffectHandler(
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
         val transaction = RouterTransaction.with(
-                InputPinController(
-                    onComplete = effect.onComplete,
-                    pinUpdate = !effect.onboarding,
-                    skipWriteDown = effect.skipWriteDownKey
-                )
-            ).pushChangeHandler(HorizontalChangeHandler())
+            InputPinController(
+                onComplete = effect.onComplete,
+                pinUpdate = !effect.onboarding,
+                skipWriteDown = effect.skipWriteDownKey
+            )
+        ).pushChangeHandler(HorizontalChangeHandler())
             .popChangeHandler(HorizontalChangeHandler())
         if (effect.onboarding) {
             router.setBackstack(listOf(transaction), HorizontalChangeHandler())
@@ -559,6 +559,15 @@ class RouterNavigationEffectHandler(
     override fun goToNativeApiExplorer() {
         val url = "file:///android_asset/native-api-explorer.html"
         router.pushController(RouterTransaction.with(WebController(url)))
+    }
+
+    override fun goToATMMap(effect: NavigationEffect.GoToATMMap) {
+        router.pushController(
+            WebController(effect.url, effect.mapJson).asTransaction(
+                VerticalChangeHandler(),
+                VerticalChangeHandler()
+            )
+        )
     }
 
     private inline fun Router.pushWithStackIfEmpty(

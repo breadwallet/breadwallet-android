@@ -66,6 +66,7 @@ sealed class NavigationEffect {
         val authenticated: Boolean,
         val link: Link? = null
     ) : NavigationEffect()
+
     data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
     data class GoToWallet(val currencyCode: String) : NavigationEffect()
     data class GoToFaq(
@@ -126,7 +127,13 @@ sealed class NavigationEffect {
     data class GoToSyncBlockchain(
         val currencyCode: String
     ) : NavigationEffect()
+
     data class GoToFastSync(
         val currencyCode: String
+    ) : NavigationEffect()
+
+    data class GoToATMMap(
+        val url: String,
+        val mapJson: String
     ) : NavigationEffect()
 }
