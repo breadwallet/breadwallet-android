@@ -29,8 +29,17 @@ jobs:
       # Download and cache dependencies gradle
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+            - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
 
+
+      #Check init
+      - run:
+          name: check init Key
+          command: |
+            mkdir /home/circleci/key
+            echo $keystore > /home/circleci/key/base64
+            base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
+            ls -la /home/circleci/key
 
       #Refresh gradle
       - run:
@@ -44,18 +53,32 @@ jobs:
           command: |
             ./gradlew --console=plain detekt
 
+
+
       #gradle build
       - run:
-          name: gradle test
+          name: gradle testBrdReleaseUnitTest
           command: |
-            ./gradlew  --console=plain testBrdDebugUnitTest testBrdTestnetDebugUnitTest
+            ./gradlew  --console=plain testBrdReleaseUnitTest
+
+      #gradle build
+      - run:
+          name: gradle testBrdTestnetReleaseUnitTest
+          command: |
+            ./gradlew  --console=plain  testBrdTestnetReleaseUnitTest
+
+      #gradle build
+      - run:
+          name: gradle assembleRelease
+          command: |
+            ./gradlew --console=plain bundleRelease -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$store_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$key_password
 
       # save cache
       - save_cache:
           paths:
             - ~/.gradle
 
-          key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
 
 
 
@@ -67,6 +90,7 @@ jobs:
             ls -l ./app/build
             cp -r ./app/build/reports ~/atrifact;
             cp -r ./app/build/test-results ~/atrifact;
+            cp -r ./app/build/outputs ~/atrifact;
           when: always
       - store_test_results:
           path: ./app/build/test-results
