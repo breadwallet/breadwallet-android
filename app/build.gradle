@@ -257,6 +257,7 @@ dependencies {
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     // Square
     implementation "com.squareup.picasso:picasso:$picasso_version"

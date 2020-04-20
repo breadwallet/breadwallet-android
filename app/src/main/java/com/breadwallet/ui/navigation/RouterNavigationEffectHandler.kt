@@ -140,6 +140,32 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
+    override fun goToMap() {
+        val url = String.format(
+            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+            BITCOIN_CURRENCY_CODE
+        )
+        val mapController =
+            MapController(url).asTransaction(
+                VerticalChangeHandler(),
+                VerticalChangeHandler()
+            )
+
+        when (router.backstack.lastOrNull()?.controller()) {
+            is HomeController -> router.pushController(webTransaction)
+            else -> {
+                router.setBackstack(
+                    listOf(
+                        HomeController().asTransaction(),
+                        mapController
+                    ),
+                    VerticalChangeHandler()
+                )
+            }
+        }
+    }
+
     override fun goToBuy() {
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
