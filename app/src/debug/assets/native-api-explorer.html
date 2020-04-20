@@ -76,7 +76,7 @@
     <fieldset>
         <p>
             <button onclick="takePicture(); return false;">Take Picture</button>
-            <input type="file" id="fileInput" name="Choose Picture" onchange="processFiles();" />
+            <input id="fileInput" name="Choose Picture" onchange="processFiles();" type="file"/>
         </p>
         <p>
             <span id="pictureMessage"></span>
@@ -93,6 +93,19 @@
         </p>
         <p>
             <span id="kvGetOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="linkUrl">Url</label>
+            <input id="linkUrl" type="text" value=""/>
+        </p>
+        <p>
+            <label for="linkJson">Json Request</label>
+            <input id="linkJson" type="text" value=""/>
+        </p>
+        <p>
+            <button onclick="openUrl(); return false;">Open in new Browser</button>
         </p>
     </fieldset>
 </form>
@@ -250,6 +263,16 @@
             pictureOutput.removeAttribute('src');
         }
     }
+
+    function openUrl() {
+        let url = document.getElementById("linkUrl").value
+        let json = document.getElementById("linkJson").value
+        if (json === "") json = null
+
+        LinkJs.openUrl(url, json)
+            .then((result) => {})
+    }
+
 </script>
 </body>
 </html>
