@@ -170,7 +170,7 @@ class CryptoAccountManager(
 
     override suspend fun migrateAccount() = mutex.withLock {
         // Migrate fields required for Account
-        val phrase = checkNotNull(getPhrase()) { "Migration failed, no phrase found." }
+        val phrase = getPhrase() ?: return@withLock false
         try {
             val creationDate = Date(BRKeyStore.getWalletCreationTime(context))
             val account =
