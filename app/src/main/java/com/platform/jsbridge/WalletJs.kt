@@ -141,6 +141,7 @@ class WalletJs(
         }
     }
 
+    @JvmOverloads
     @JavascriptInterface
     fun event(
         name: String,
