@@ -108,6 +108,30 @@
             <button onclick="openUrl(); return false;">Open in new Browser</button>
         </p>
     </fieldset>
+    <fieldset>
+        <p>
+            <label for="apiPath">API Path</label>
+            <input id="apiPath" type="text" value="/currencies"/>
+        </p>
+        <p>
+            <input type="radio" id="get" name="method" value="GET" checked/>
+            <label for="get">GET</label>
+            <input type="radio" id="post" name="method" value="POST"/>
+            <label for="post">POST</label>
+            <input type="radio" id="put" name="method" value="PUT"/>
+            <label for="put">PUT</label>
+            <input type="radio" id="delete" name="method" value="DELETE"/>
+            <label for="delete">DELETE</label>
+        </p>
+        <p>
+            <textarea id="apiBody" style="width: 100%;overflow-y: scroll;height: 75px;"
+                      placeholder="{ /* JSON request body */ }"></textarea>
+        </p>
+        <p>
+            <button onclick="submitApiRequest(); return false;">Submit Request</button>
+        </p>
+        <textarea id="apiOutput" style="width: 100%;overflow-y: scroll;height: 300px;"></textarea>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -119,6 +143,13 @@
             for (let [key, value] of Object.entries(window[nativeObjectName])) {
                 window[objectName][key] = function() {
                     let primaryArgs = arguments
+                    for (var i = 0; i < primaryArgs.length; i++) {
+                      let arg = primaryArgs[i]
+                      if (arg && arg.constructor === Object.constructor) {
+                          primaryArgs[i] = JSON.stringify(arg)
+                      }
+                    }
+
                     return new Promise(function(resolve, reject) {
                         let promiseBinder = value.apply(window[nativeObjectName], primaryArgs)
                         let callbackName = promiseBinder.getJsName()
@@ -223,8 +254,7 @@
 
         KVStoreJs.get(key)
             .then((result) => {
-                let output =
-                kvGetOutput.innerText = JSON.stringify(result)
+                kvGetOutput.innerText = jsonString(result)
             })
             .catch((error) => {
                 kvGetOutput.innerText = error
@@ -235,7 +265,7 @@
     function requestLocation() {
         LocationJs.getLocation()
             .then((data) => {
-                locationOutput.innerText = JSON.stringify(data)
+                locationOutput.innerText = jsonString(data)
             })
             .catch((error) => {
                 locationOutput.innerText = error
@@ -267,11 +297,49 @@
     function openUrl() {
         let url = document.getElementById("linkUrl").value
         let json = document.getElementById("linkJson").value
-        if (json === "") json = null
+        if (json === "") {
+            json = null
+        } else {
+            json = JSON.parse(json)
+        }
 
         LinkJs.openUrl(url, json)
             .then((result) => {})
     }
+
+    function submitApiRequest() {
+         let path = apiPath.value
+         let body = apiBody.value
+         let method = document.querySelector('input[name="method"]:checked').value
+
+         if (body === "") {
+             body = null
+         } else {
+             body = JSON.parse(body)
+         }
+
+         apiOutput.value = `Loading '${path}'...`
+
+         // The following named methods are available.
+         // BrdApiJs.get(path, [authenticated=true])
+         // BrdApiJs.post(path, body, [authenticated=true])
+         // BrdApiJs.put(path, body, [authenticated=true])
+         // BrdApiJs.delete(path, [authenticated=true])
+
+         // Or provide the method as a string.
+         BrdApiJs.request(method, path, body, true /* optional */)
+            .then((data) => {
+                apiOutput.value = jsonString(data)
+            })
+            .catch((error) => {
+                apiOutput.value = error
+            })
+    }
+
+    function jsonString(string) {
+        return JSON.stringify(string, undefined, 4)
+    }
+
 
 </script>
 </body>

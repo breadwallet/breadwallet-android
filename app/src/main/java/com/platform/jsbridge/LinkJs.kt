@@ -37,6 +37,7 @@ class LinkJs(
         const val KEY_URL = "url"
     }
 
+    @JvmOverloads
     @JavascriptInterface
     fun openUrl(
         url: String,

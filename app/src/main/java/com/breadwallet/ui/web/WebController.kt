@@ -65,6 +65,7 @@ import com.platform.HTTPServer
 import com.platform.LinkBus
 import com.platform.LinkResultMessage
 import com.platform.PlatformTransactionBus
+import com.platform.jsbridge.BrdApiJs
 import com.platform.jsbridge.CameraJs
 import com.platform.jsbridge.KVStoreJs
 import com.platform.jsbridge.LinkJs
@@ -174,9 +175,6 @@ class WebController(
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-        val res = checkNotNull(resources)
-        val theme = checkNotNull(activity).theme
-        web_view.setBackgroundColor(res.getColor(R.color.platform_webview_bg, theme))
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
@@ -200,7 +198,9 @@ class WebController(
 
         nativePromiseFactory = NativePromiseFactory(web_view)
         if ((isPlatformUrl || url.startsWith("file:///"))) {
+            web_view.setBackgroundResource(R.color.platform_webview_bg)
             val locationManager = applicationContext!!.getSystemService<LocationManager>()
+            val brdApiJs = BrdApiJs(nativePromiseFactory, direct.instance())
             val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
             val locationJs =
                 LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
@@ -218,7 +218,7 @@ class WebController(
                 direct.instance()
             )
             val nativeApis = if (BuildConfig.DEBUG) {
-                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, linkJs, walletJs)
+                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, linkJs, walletJs, brdApiJs)
             } else {
                 NativeApisJs.with(walletJs)
             }
