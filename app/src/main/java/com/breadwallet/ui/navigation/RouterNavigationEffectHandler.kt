@@ -141,7 +141,7 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    fun  () {
+    fun goToMap () {
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
@@ -168,6 +168,8 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToBuy() {
+            goToMap()
+        return
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),

@@ -41,7 +41,12 @@ android {
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
         fabricEnable = file('fabric.properties').exists()
+
+        def props = new Properties()
+        file("secret.properties").withInputStream { props.load(it) }
+        googleMapKey = props.getProperty("google_map_key")
     }
+
     defaultConfig {
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
@@ -59,7 +64,9 @@ android {
         missingDimensionStrategy 'network', 'onMainnet'
 
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
+        resValue "string", "google_map_key", "$googleMapKey"
     }
+
     signingConfigs {
         FakeSigningConfig {
             keyAlias 'key0'
@@ -74,13 +81,13 @@ android {
     packagingOptions {
         pickFirst 'protobuf.meta'
     }
+
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
     productFlavors {
         brd {
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
             applicationId = "cash.just"
-
             dimension "mode"
             resValue "string", "app_name", "Coinsquare"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -97,6 +104,7 @@ android {
             missingDimensionStrategy 'network', 'onTestnet'
         }
     }
+
     lintOptions {
         lintConfig file("lint.xml")
         // set to true to turn off analysis progress reporting by lint
@@ -187,6 +195,13 @@ task downloadBundles {
     }
 }
 
+task printProps {
+    doFirst {
+        println applicationName
+        println projectName
+    }
+}
+
 tasks.whenTaskAdded {
     if (it.name.startsWith('assemble') && it.name.endsWith('Release')) {
 //        it.doFirst {
@@ -257,6 +272,7 @@ dependencies {
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     // Square
     implementation "com.squareup.picasso:picasso:$picasso_version"
