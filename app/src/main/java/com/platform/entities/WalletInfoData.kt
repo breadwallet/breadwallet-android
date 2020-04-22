@@ -1,7 +1,10 @@
 package com.platform.entities
 
+import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logError
+import com.breadwallet.tools.util.btcId
+import com.breadwallet.tools.util.btcTestnetId
 import com.platform.util.getIntOrDefault
 import com.platform.util.getLongOrDefault
 import com.platform.util.getStringOrNull
@@ -36,9 +39,17 @@ data class WalletInfoData(
     val classVersion: Int = DEFAULT_CLASS_VERSION,
     val creationDate: Long = DEFAULT_CREATION_DATE,
     val name: String? = null,
-    val connectionModes: Map<String, WalletManagerMode> = emptyMap()
+    val connectionModes: Map<String, WalletManagerMode> = defaultModes
 ) {
     companion object {
+        private val defaultModes = mapOf(
+            when {
+                BuildConfig.BITCOIN_TESTNET ->
+                    btcTestnetId to WalletManagerMode.API_ONLY
+                else -> btcId to WalletManagerMode.API_ONLY
+            }
+        )
+
         private const val NAME = "name"
         private const val CLASS_VERSION = "classVersion"
         private const val CREATION_DATE = "creationDate"
