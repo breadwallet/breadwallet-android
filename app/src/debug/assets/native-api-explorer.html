@@ -19,6 +19,11 @@
             <input id="amount" type="text" value="1"/>
         </p>
         <p>
+            <label for="transferAttributes">Transfer Attributes</label>
+            <br/>
+            <textarea id="transferAttributes" style="width:100%;height:100px;">[ ]</textarea>
+        </p>
+        <p>
             <button onclick="submitTransaction(); return false;">Submit</button>
         </p>
         <p>
@@ -40,7 +45,7 @@
     <fieldset>
         <p>
             <label for="listAll">List all</label>
-            <input checked checked id="listAll" type="checkbox"/>
+            <input checked id="listAll" type="checkbox"/>
         </p>
         <p>
             <button onclick="listCurrencies(); return false;">Get currencies</button>
@@ -170,6 +175,19 @@
 
     injectPromiseHooks()
 
+    let updateTransferAttrs = () => {
+        WalletJs.transferAttrsFor(currencyCode.value, toAddress.value)
+            .then((result) => {
+                transferAttributes.value = JSON.stringify(result, null, 4)
+            })
+            .catch((error) => {
+                transferAttributes.value = `{ /* ${error} */ }`
+            })
+    }
+
+    toAddress.onkeyup = updateTransferAttrs
+    currencyCode.onkeyup = updateTransferAttrs
+
     function submitTransaction() {
         let txOutput = document.getElementById("txOutput");
         txOutput.innerText = "";
@@ -178,8 +196,9 @@
         let currencyCode = document.getElementById("currencyCode").value;
         let amount = document.getElementById("amount").value;
         let amountStr = JSON.stringify({ "numerator" : amount, "denominator": "1" });
+        let transferAttrs = transferAttributes.value
 
-        WalletJs.transaction(toAddress, "", amountStr, currencyCode)
+        WalletJs.transaction(toAddress, "", amountStr, currencyCode, transferAttrs)
             .then((transaction) => {
                 txOutput.innerText = `Hash: ${transaction.hash}\n Transmitted: ${transaction.transmitted}`;
             })

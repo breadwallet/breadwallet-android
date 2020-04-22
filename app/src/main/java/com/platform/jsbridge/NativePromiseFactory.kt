@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
@@ -50,6 +51,11 @@ class NativePromiseFactory(webView: WebView) {
     }
 
     fun create(executor: suspend () -> JSONObject?) =
+        NativePromiseJs(scope, executor, evaluateJs).also { promise ->
+            binderMap[promise.jsName] = promise
+        }
+
+    fun createForArray(executor: suspend () -> JSONArray?) =
         NativePromiseJs(scope, executor, evaluateJs).also { promise ->
             binderMap[promise.jsName] = promise
         }
@@ -87,6 +93,7 @@ class NativePromiseFactory(webView: WebView) {
                 if (value == null) "null" else when (value) {
                     is String -> "\"$value\""
                     is JSONObject -> value.toString()
+                    is JSONArray -> value.toString()
                     else -> "null"
                 }
             }

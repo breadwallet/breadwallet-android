@@ -48,6 +48,7 @@ import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.TransferAttribute
 import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
@@ -61,11 +62,13 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.ui.send.TransferField
 import com.platform.ConfirmTransactionMessage
 import com.platform.PlatformTransactionBus
 import com.platform.TransactionResultMessage
 import com.platform.entities.TxMetaDataValue
 import com.platform.interfaces.AccountMetaDataProvider
+import com.platform.util.getStringOrNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transform
@@ -74,12 +77,13 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Currency
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class WalletJs(
-    private val nativePromiseFactory: NativePromiseFactory,
+    private val promise: NativePromiseFactory,
     private val context: Context,
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
@@ -124,7 +128,7 @@ class WalletJs(
     }
 
     @JavascriptInterface
-    fun info() = nativePromiseFactory.create {
+    fun info() = promise.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val btcWallet = system.wallets.first { it.currency.isBitcoin() }
 
@@ -146,7 +150,7 @@ class WalletJs(
     fun event(
         name: String,
         attributes: String? = null
-    ) = nativePromiseFactory.create {
+    ) = promise.create {
         if (attributes != null) {
             val json = JSONObject(attributes)
             val attr = mutableMapOf<String, String>()
@@ -163,7 +167,7 @@ class WalletJs(
     @JavascriptInterface
     fun addresses(
         currencyCodeQ: String
-    ) = nativePromiseFactory.create {
+    ) = promise.create {
         var (currencyCode, format) = parseCurrencyCodeQuery(currencyCodeQ)
 
         val system = checkNotNull(breadBox.getSystemUnsafe())
@@ -181,7 +185,7 @@ class WalletJs(
     @JvmOverloads
     fun currencies(
         listAll: Boolean = false
-    ) = nativePromiseFactory.create {
+    ) = promise.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val wallets = if (listAll) {
             TokenUtil.getTokenItems(context).filter { it.isSupported }.map { it.currencyId }
@@ -268,19 +272,55 @@ class WalletJs(
     }
 
     @JavascriptInterface
+    fun transferAttrsFor(currency: String, addressString: String) = promise.createForArray {
+        val wallet = breadBox.wallet(currency).first()
+        val address = wallet.addressFor(addressString)
+        val attrs = address?.run(wallet::getTransferAttributesFor) ?: wallet.transferAttributes
+        val jsonAttrs = attrs.map { attr ->
+            JSONObject().apply {
+                put("key", attr.key)
+                put("required", attr.isRequired)
+                put("value", attr.value.orNull())
+            }
+        }
+        JSONArray(jsonAttrs)
+    }
+
+    @JvmOverloads
+    @JavascriptInterface
     fun transaction(
         toAddress: String,
         description: String,
         amountStr: String,
-        currency: String
-    ) = nativePromiseFactory.create {
+        currency: String,
+        transferAttrsString: String = "[]"
+    ) = promise.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val wallet = system.wallets.first { it.currency.code.equals(currency, true) }
         val amountJSON = JSONObject(amountStr)
         val numerator = amountJSON.getString(KEY_NUMERATOR).toDouble()
         val denominator = amountJSON.getString(KEY_DENOMINATOR).toDouble()
         val amount = Amount.create((numerator / denominator), wallet.unit)
-        val address = checkNotNull(wallet.addressFor(toAddress))
+        val address = checkNotNull(wallet.addressFor(toAddress)) {
+            "Invalid address ($toAddress)"
+        }
+        val transferAttrs = wallet.getTransferAttributesFor(address)
+        val transferAttrsInput = JSONArray(transferAttrsString).run {
+            List(length(), ::getJSONObject)
+        }
+
+        transferAttrs.forEach { attribute ->
+            val key = attribute.key.toLowerCase(Locale.ROOT)
+            val attrJson = transferAttrsInput.firstOrNull { attr ->
+                attr.getStringOrNull("key").equals(key, true)
+            }
+            attribute.setValue(attrJson?.getStringOrNull("value"))
+
+            val error = wallet.validateTransferAttribute(attribute).orNull()
+            require(error == null) {
+                "Invalid attribute key=${attribute.key} value=${attribute.value.orNull()} error=${error?.name}"
+            }
+        }
 
         val feeBasis =
             checkNotNull(estimateFee(wallet, address, amount)) { ERR_ESTIMATE_FEE }
@@ -302,7 +342,8 @@ class WalletJs(
                     address,
                     amount,
                     totalCost,
-                    feeBasis
+                    feeBasis,
+                    transferAttrs
                 )
             ) { ERR_SEND_TXN }
 
@@ -320,7 +361,7 @@ class WalletJs(
     @JavascriptInterface
     fun enableCurrency(
         currencyCode: String
-    ) = nativePromiseFactory.create {
+    ) = promise.create {
         val system = checkNotNull(breadBox.system().first())
         val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode).currencyId.orEmpty()
         check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
@@ -348,7 +389,7 @@ class WalletJs(
     fun maxlimit(
         toAddress: String,
         currency: String
-    ) = nativePromiseFactory.create {
+    ) = promise.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val wallet = system.wallets.first { it.currency.code.equals(currency, true) }
         val address = checkNotNull(wallet.addressFor(toAddress))
@@ -412,7 +453,8 @@ class WalletJs(
         address: Address,
         amount: Amount,
         totalCost: BigDecimal,
-        feeBasis: TransferFeeBasis
+        feeBasis: TransferFeeBasis,
+        transferAttributes: Set<TransferAttribute>
     ): Transfer? {
         val fiatCode = BRSharedPrefs.getPreferredFiatIso(context)
         val fiatAmount = ratesRepository.getFiatForCrypto(
@@ -431,6 +473,14 @@ class WalletJs(
             fiatCode
         ) ?: BigDecimal.ZERO
 
+        val transferFields = transferAttributes.map { attribute ->
+            TransferField(
+                attribute.key,
+                attribute.isRequired,
+                false,
+                attribute.value.orNull()
+            )
+        }
         val result = PlatformTransactionBus.results().onStart {
             PlatformTransactionBus.sendMessage(
                 ConfirmTransactionMessage(
@@ -443,7 +493,7 @@ class WalletJs(
                     fiatAmount,
                     fiatTotalCost,
                     fiatNetworkFee,
-                    emptyList()
+                    transferFields
                 )
             )
         }.first()
@@ -460,7 +510,8 @@ class WalletJs(
                     return null
                 }
 
-                val newTransfer = wallet.createTransfer(address, amount, feeBasis, null).orNull()
+                val newTransfer =
+                    wallet.createTransfer(address, amount, feeBasis, transferAttributes).orNull()
                 if (newTransfer == null) {
                     logError("Failed to create transfer.")
                     return null
