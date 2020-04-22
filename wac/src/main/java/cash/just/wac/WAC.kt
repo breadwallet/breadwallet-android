@@ -9,7 +9,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 object WAC {
     private val retrofit: WacAPI = Retrofit.Builder()
-            .baseUrl("https://secure.just.cash/atm/wac/")
+            .baseUrl("https://secure.just.cash/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build().create(WacAPI::class.java)
 
@@ -17,7 +17,7 @@ object WAC {
         return retrofit.login()
     }
 
-    fun getAtmList(): Call<ATMListResponse> {
-        return retrofit.atmList()
+    fun getAtmList(sessionKey:String): Call<ATMListResponse> {
+        return retrofit.atmList(sessionKey)
     }
 }
