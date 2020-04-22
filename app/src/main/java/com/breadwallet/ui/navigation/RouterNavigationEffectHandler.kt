@@ -49,6 +49,7 @@ import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
+import com.breadwallet.ui.map.MapController
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -140,7 +141,7 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    override fun goToMap() {
+    fun  () {
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
@@ -153,7 +154,7 @@ class RouterNavigationEffectHandler(
             )
 
         when (router.backstack.lastOrNull()?.controller()) {
-            is HomeController -> router.pushController(webTransaction)
+            is HomeController -> router.pushController(mapController)
             else -> {
                 router.setBackstack(
                     listOf(

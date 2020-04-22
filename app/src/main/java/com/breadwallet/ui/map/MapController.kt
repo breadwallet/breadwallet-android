@@ -29,7 +29,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -40,9 +39,8 @@ import android.webkit.ConsoleMessage
 import android.webkit.JsResult
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
@@ -51,26 +49,24 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
-import com.breadwallet.tools.animation.SlideDetector
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
-import com.breadwallet.ui.browser.BrdNativeJs
-import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
-import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
-import com.platform.jsbridge.WalletJs
 import com.platform.middlewares.plugins.GeoLocationPlugin
-import kotlinx.android.synthetic.main.fragment_support.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -114,6 +110,9 @@ class MapController(
     private var mCameraImageFileUri: Uri? = null
     private lateinit var nativePromiseFactory: NativePromiseFactory
 
+    val SYDNEY = LatLng(-33.862, 151.21)
+    val ZOOM_LEVEL = 13f
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -123,9 +122,9 @@ class MapController(
             HTTPServer.setOnCloseListener(null)
         }
 
-        val mapFragment : SupportMapFragment? =
-            supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
-        mapFragment?.getMapAsync(object:OnMapReadyCallback(){
+        val fragmentManager = (view.context as AppCompatActivity ).supportFragmentManager
+        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        fragment.getMapAsync(object: OnMapReadyCallback {
             /**
              * This is where we can add markers or lines, add listeners or move the camera. In this case,
              * we just move the camera to Sydney and add a marker in Sydney.
@@ -139,16 +138,7 @@ class MapController(
             }
         })
 
-
         handlePlatformMessages().launchIn(viewCreatedScope)
-    }
-
-    override fun handleBack() = when {
-        web_view.canGoBack() -> {
-            web_view.goBack()
-            true
-        }
-        else -> super.handleBack()
     }
 
     override fun onDestroyView(view: View) {
@@ -178,6 +168,7 @@ class MapController(
         return true
     }
 
+    @SuppressLint("UnsupportedChromeOsCameraSystemFeature")
     private fun getImageFileChooserIntent(hasCameraPermissions: Boolean): Intent {
         val intents = mutableListOf<Intent>()
         val packageManager = activity!!.packageManager
