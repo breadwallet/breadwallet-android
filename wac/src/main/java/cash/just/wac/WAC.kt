@@ -44,7 +44,7 @@ object WAC {
         return retrofit.getAtmListByLocation(latitude, longitude, sessionKey)
     }
 
-    fun checkCodeStatus(code:String): Call<CashCodeResponse> {
+    fun checkCodeStatus(code:String): Call<CodeStatusResponse> {
         return retrofit.checkCodeStatus(code, sessionKey)
     }
 

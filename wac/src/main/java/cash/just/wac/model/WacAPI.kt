@@ -20,9 +20,9 @@ interface WacAPI {
         @Query("sessionKey") sessionKey:String): Call<ATMListResponse>
 
     @GET("/atm/wac/pcode/{pcode}")
-    fun checkCodeStatus(@Path(value="pcode", encoded=true) code:String, @Query("sessionKey") sessionKey:String): Call<CashCodeResponse>
+    fun checkCodeStatus(@Path(value="pcode", encoded=true) code:String, @Query("sessionKey") sessionKey:String): Call<CodeStatusResponse>
 
-    @POST("/atm/wac/pcode/")
+    @POST("/atm/wac/pcode")
     fun createCode(
         @Query("sessionKey") sessionKey:String,
         @Query(value="atm_id", encoded=true) atmId:String,
