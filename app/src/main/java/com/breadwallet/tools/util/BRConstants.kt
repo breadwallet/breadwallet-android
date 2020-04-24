@@ -30,9 +30,6 @@ const val btc = "btc"
 const val eth = "eth"
 const val bch = "bch"
 
-const val btcId = "bitcoin-mainnet:__native__"
-const val btcTestnetId = "bitcoin-testnet:__native__"
-
 object BRConstants {
     /**
      * Boolean values as Strings.
