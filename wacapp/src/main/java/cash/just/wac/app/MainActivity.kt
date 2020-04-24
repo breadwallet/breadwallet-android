@@ -2,8 +2,10 @@ package cash.just.wac.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
-import cash.just.wac.WAC
+import cash.just.wac.Wac
+import cash.just.wac.WacSDK
 import cash.just.wac.model.ATMListResponse
 import cash.just.wac.model.CashCodeResponse
 import cash.just.wac.model.CodeStatusResponse
@@ -18,10 +20,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        afterLoginPanel.visibility = View.GONE
+
         loginButton.setOnClickListener {
-            WAC.login(object:WAC.WACLogin {
+            WacSDK.login(object: Wac.OnLoginListener {
                 override fun onLogin(sessionKey: String) {
                     session.setText(sessionKey)
+                    afterLoginPanel.visibility = View.VISIBLE
                 }
 
                 override fun onError(errorMessage: String?) {
@@ -32,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         getAtmList.setOnClickListener {
             list.text.clear()
-            WAC.getAtmList().enqueue(object: retrofit2.Callback<ATMListResponse> {
+            WacSDK.getAtmList().enqueue(object: retrofit2.Callback<ATMListResponse> {
                 override fun onFailure(call: Call<ATMListResponse>, t: Throwable) {
                     Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
                 }
@@ -45,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         getAtmListByLatitude.setOnClickListener {
             list.text.clear()
-            WAC.getAtmListByLocation(lat.text.toString(), lon.text.toString())
+            WacSDK.getAtmListByLocation(lat.text.toString(), lon.text.toString())
                 .enqueue(object: retrofit2.Callback<ATMListResponse> {
                     override fun onFailure(call: Call<ATMListResponse>, t: Throwable) {
                         Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
@@ -58,11 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         checkCode.setOnClickListener {
-            WAC.checkCodeStatus(code.text.toString()).enqueue(object: retrofit2.Callback<CodeStatusResponse> {
-                override fun onFailure(call: Call<CodeStatusResponse>, t: Throwable) {
-                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
-                }
-
+            WacSDK.checkCodeStatus(code.text.toString()).enqueue(object: retrofit2.Callback<CodeStatusResponse> {
                 override fun onResponse(call: Call<CodeStatusResponse>, response: Response<CodeStatusResponse>) {
                     if (response.isSuccessful
                         && response.body() != null
@@ -75,11 +76,15 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(applicationContext, response.code().toString(), Toast.LENGTH_LONG).show()
                     }
                 }
+
+                override fun onFailure(call: Call<CodeStatusResponse>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
+                }
             })
         }
 
         sendVerificationCode.setOnClickListener {
-            WAC.setVerificationCode(
+            WacSDK.sendVerificationCode(
                 firstName.text.toString(),
                 lastName.text.toString(),
                 phoneNumber.text.toString(),
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         createCode.setOnClickListener {
-            WAC.createCode(
+            WacSDK.createCode(
                 atmId.text.toString(),
                 amount.text.toString(),
                 verificationCode.text.toString()).enqueue(object: retrofit2.Callback<CashCodeResponse> {
