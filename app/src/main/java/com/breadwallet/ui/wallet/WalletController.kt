@@ -24,13 +24,10 @@
  */
 package com.breadwallet.ui.wallet
 
-import android.animation.Animator
 import android.animation.AnimatorInflater
-import android.animation.AnimatorListenerAdapter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.transition.TransitionManager
 import android.util.TypedValue
 import android.view.View
@@ -68,12 +65,12 @@ import com.breadwallet.util.WalletDisplayUtils
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericFastAdapter
 import com.mikepenz.fastadapter.adapters.GenericModelAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.adapters.ModelAdapter
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.view_delisted_token.*
-import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
@@ -84,15 +81,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 private const val EXTRA_CURRENCY_CODE = "currency_code"
-private const val SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm"
 private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
 private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, yyyy"
-private const val SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f
 private const val MARKET_CHART_ANIMATION_DURATION = 500L
 private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
 
@@ -124,6 +118,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
 
     private var fastAdapter: GenericFastAdapter? = null
     private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
+    private var syncAdapter: ItemAdapter<SyncingItem>? = null
     private var mPriceDataAdapter = SparkAdapter()
     private val mIntervalButtons: List<BaseTextView>
         get() = listOf<BaseTextView>(
@@ -156,7 +151,8 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         }
 
         txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
-        fastAdapter = FastAdapter.with(listOf(txAdapter!!))
+        syncAdapter = ItemAdapter()
+        fastAdapter = FastAdapter.with(listOf(syncAdapter!!, txAdapter!!))
         checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
             when (item) {
                 is TransactionListItem ->
@@ -290,8 +286,9 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         layoutManager: LinearLayoutManager,
         output: SendChannel<E>
     ) {
-        val firstIndex = layoutManager.findFirstVisibleItemPosition()
-        val lastIndex = layoutManager.findLastVisibleItemPosition()
+        val syncItemCount = syncAdapter!!.adapterItemCount
+        val firstIndex = layoutManager.findFirstVisibleItemPosition() - syncItemCount
+        val lastIndex = layoutManager.findLastVisibleItemPosition() - syncItemCount
         if (firstIndex != RecyclerView.NO_POSITION) {
             output.offer(
                 E.OnVisibleTransactionsChanged(
@@ -386,35 +383,21 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         ifChanged(
             M::syncProgress,
             M::isSyncing,
-            M::hasSyncTime
+            M::syncingThroughMillis
         ) {
+            val syncAdapter = syncAdapter!!
             if (isSyncing) {
-                progress_layout.isVisible = true
-                progress_layout.alpha = 1f
-                val syncingText = resources.getString(R.string.SyncingView_syncing)
-                val syncingPercentText = NumberFormat.getPercentInstance().format(syncProgress)
-                syncing_label.text = "%s %s".format(syncingText, syncingPercentText)
+                val item = syncAdapter.adapterItems.firstOrNull() ?: SyncingItem()
+                item.syncProgress = syncProgress
+                item.syncThroughMillis = syncingThroughMillis
 
-                if (hasSyncTime) {
-                    val syncedThroughDate = syncingThroughMillis
-                        .run(SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT)::format)
-                    sync_status_label.text =
-                        resources.getString(R.string.SyncingView_syncedThrough)
-                            .format(syncedThroughDate)
+                if (syncAdapter.adapterItemCount == 0) {
+                    syncAdapter.setNewList(listOf(item))
+                } else {
+                    fastAdapter?.notifyAdapterDataSetChanged()
                 }
             } else {
-                progress_layout.animate()
-                    .translationY((-progress_layout.height).toFloat())
-                    .alpha(SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA)
-                    .setDuration(DateUtils.SECOND_IN_MILLIS)
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            super.onAnimationEnd(animation)
-                            if (view == null) return
-                            progress_layout.visibility = View.GONE
-                            progress_layout.alpha = 1f
-                        }
-                    })
+                syncAdapter.setNewList(emptyList())
             }
         }
 

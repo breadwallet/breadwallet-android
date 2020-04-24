@@ -181,11 +181,6 @@
                         android:layout_weight="1"
                         android:visibility="gone" />
 
-                    <include
-                        layout="@layout/wallet_sync_progress_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
                 </LinearLayout>
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout

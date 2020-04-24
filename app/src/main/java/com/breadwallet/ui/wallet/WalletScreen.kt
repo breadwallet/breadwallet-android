@@ -71,9 +71,6 @@ object WalletScreen {
                 M(currencyCode = currencyCode)
         }
 
-        val hasSyncTime: Boolean
-            get() = syncingThroughMillis != 0L
-
         val isFilterApplied: Boolean
             get() = filterQuery.isNotBlank() ||
                 filterSent || filterReceived ||
