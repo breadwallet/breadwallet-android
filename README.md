@@ -1,23 +1,27 @@
-LoafWallet for Android
+Litewallet for Android
 ----------------------------------
 
-![download](/images/icon-google-play.png)(https://play.google.com/store/apps/details?id=com.loafwallet)
+![Google Play Store](/images/icon-google-play.png)
+
+[Download](https://play.google.com/store/apps/details?id=com.Litewallet)
 
 ### The easy and secure Litecoin wallet
 
-LoafWallet is the best way to get started with Litecoin. Our simple, streamlined design is easy for beginners, yet powerful enough for experienced users. This is a port of the LoafWallet for iOS app which can be found here: https://github.com/litecoin-foundation/loafwallet-ios
+Litewallet is the best way to get started with Litecoin. Our simple, streamliåned design is easy for beginners, yet powerful enough for experienced users. 
+
+iOS Users can visit the iOS version of the code here: [Litewallet iOS](https://github.com/litecoin-foundation/Litewallet-ios) 
 
 ##### Completely decentralized
 
-Unlike other iOS Litecoin wallets, **LoafWallet** is a standalone Litecoin client. It connects directly to the Litecoin network using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, and doesn't rely on servers that can be hacked or disabled. Even if LoafWallet is removed from the App Store, the app will continue to function, allowing users to access their money at any time.
+Unlike other iOS Litecoin wallets, **Litewallet** is a standalone Litecoin client. It connects directly to the Litecoin network using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, and doesn't rely on servers that can be hacked or disabled. Even if Litewallet is removed from the App Store, the app will continue to function, allowing users to access their valuable Litecoin at any time.
 
 ##### Cutting-edge security
 
-**LoafWallet** utilizes AES hardware encryption, app sandboxing, and the latest iOS security features to protect users from malware, browser security holes, and even physical theft. Private keys are stored only in the secure enclave of the user's phone, inaccessible to anyone other than the user.
+**Litewallet** utilizes AES hardware encryption, app sandboxing, and the latest iOS security features to protect users from malware, browser security holes, and even physical theft. Private keys are stored only in the secure enclave of the user's phone, inaccessible to anyone other than the user.
 
-##### Desgined with new users in mind
+##### Designed with new users in mind
 
-Simplicity and ease-of-use is **LoafWallet**'s core design principle. A simple recovery phrase (which we call a paper key) is all that is needed to restore the user's wallet if they ever lose or replace their device. **LoafWallet** is [deterministic](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), which means the user's balance and transaction history can be recovered just from the paper key.
+Simplicity and ease-of-use is **Litewallet**'s core design principle. A simple recovery phrase (which we call a paper key) is all that is needed to restore the user's wallet if they ever lose or replace their device. **Litewallet** is [deterministic](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), which means the user's balance and transaction history can be recovered just from the paper key.
 
 ###### Features:
 
@@ -28,7 +32,7 @@ Simplicity and ease-of-use is **LoafWallet**'s core design principle. A simple r
 - import [password protected](https://github.com/bitcoin/bips/blob/master/bip-0038.mediawiki) paper wallets
 - ["payment protocol"](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki) payee identity certification
 
-### Building & Developing LoafWallet for Android:
+### Building & Developing Litewallet for Android:
 
 1. Download and install Java 7 or up
 2. Download and install the latest Android studio
