@@ -9,7 +9,7 @@ Litewallet for Android
 
 Litewallet is the best way to get started with Litecoin. Our simple, streamliåned design is easy for beginners, yet powerful enough for experienced users. 
 
-iOS Users can visit the iOS version of the code here: [Litewallet iOS](https://github.com/litecoin-foundation/Litewallet-ios) 
+iOS Users can visit the iOS version of the code here: [Litewallet iOS](https://github.com/litecoin-foundation/loafwallet-ios) 
 
 ##### Completely decentralized
 
