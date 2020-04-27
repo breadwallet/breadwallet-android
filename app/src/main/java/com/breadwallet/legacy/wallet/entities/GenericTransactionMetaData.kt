@@ -24,6 +24,7 @@
  */
 package com.breadwallet.legacy.wallet.entities
 
+import java.io.Serializable
 
 data class GenericTransactionMetaData(
     val targetAddress: String,
@@ -33,4 +34,4 @@ data class GenericTransactionMetaData(
     val gasPriceUnit: Unit,
     val gasLimit: Long = 0,
     val data: String
-)
+) : Serializable
