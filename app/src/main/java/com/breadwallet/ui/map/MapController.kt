@@ -28,6 +28,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -40,6 +42,8 @@ import android.webkit.JsResult
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -62,7 +66,7 @@ import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.middlewares.plugins.GeoLocationPlugin
-import kotlinx.android.synthetic.main.fragment_map.*
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -113,6 +117,15 @@ class MapController(
     val SYDNEY = LatLng(-33.862, 151.21)
     val ZOOM_LEVEL = 13f
 
+    @Nullable
+    fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
+        while (context is ContextWrapper) {
+            if (context is AppCompatActivity) return context
+            return context.baseContext as AppCompatActivity
+        }
+        return null //we failed miserably
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -122,9 +135,10 @@ class MapController(
             HTTPServer.setOnCloseListener(null)
         }
 
-        val fragmentManager = (view.context as AppCompatActivity ).supportFragmentManager
+        val fragmentManager = getActivityFromContext(view.context)!!.supportFragmentManager
         val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         fragment.getMapAsync(object: OnMapReadyCallback {
+
             /**
              * This is where we can add markers or lines, add listeners or move the camera. In this case,
              * we just move the camera to Sydney and add a marker in Sydney.
