@@ -1,1 +1,3 @@
 include ':app'
+include ':wac'
+include ':wacapp'
