@@ -20,11 +20,34 @@
         android:orientation="vertical"
         android:padding="0dp">
 
-        <fragment
-            android:id="@+id/mapFragment"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/login"
+                android:text="Login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/fetchAtms"
+                android:text="fetchAtms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <fragment
+                android:id="@+id/mapFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 

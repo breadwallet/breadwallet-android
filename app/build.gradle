@@ -331,6 +331,8 @@ dependencies {
     compileOnly "io.sweers.redacted:redacted-compiler-plugin-annotation:$redacted_version"
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
+
+    implementation project(":wac")
 }
 
 apply plugin: 'com.google.gms.google-services'

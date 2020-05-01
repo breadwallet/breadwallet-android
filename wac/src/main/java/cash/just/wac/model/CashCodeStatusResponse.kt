@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 import java.lang.IllegalArgumentException
 
 @JsonClass(generateAdapter = true)
-data class CodeStatusResponse(
+data class CashCodeStatusResponse(
     @field:Json(name = "result") val result: String,
     @field:Json(name = "error") val error: WacError?,
     @field:Json(name = "data") val data: CodeStatusItems?

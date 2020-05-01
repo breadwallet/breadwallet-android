@@ -32,6 +32,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -42,12 +46,17 @@ import android.webkit.JsResult
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import cash.just.wac.Wac
+import cash.just.wac.WacSDK
+import cash.just.wac.model.AtmListResponse
+import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
@@ -56,28 +65,33 @@ import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.LatLngBounds.Builder
 import com.google.android.gms.maps.model.MarkerOptions
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.jsbridge.NativePromiseFactory
 import com.platform.middlewares.plugins.GeoLocationPlugin
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
 private const val ARG_URL = "WebController.URL"
-private const val CLOSE_URL = "_close"
 
 @Suppress("TooManyFunctions")
 class MapController(
@@ -116,6 +130,8 @@ class MapController(
 
     val SYDNEY = LatLng(-33.862, 151.21)
     val ZOOM_LEVEL = 13f
+    private lateinit var map:GoogleMap
+    private lateinit var atms:List<AtmMachine>
 
     @Nullable
     fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
@@ -145,14 +161,85 @@ class MapController(
              */
             override fun onMapReady(googleMap: GoogleMap?) {
                 googleMap ?: return
-                with(googleMap) {
-                    moveCamera(CameraUpdateFactory.newLatLngZoom(SYDNEY, ZOOM_LEVEL))
-                    addMarker(MarkerOptions().position(SYDNEY))
-                }
+                map = googleMap
+
+                map.uiSettings.isMapToolbarEnabled = false
+                map.uiSettings.isMyLocationButtonEnabled = true
+                map.uiSettings.isZoomControlsEnabled = true
+                map.uiSettings.isZoomGesturesEnabled = true
             }
         })
 
+        view.findViewById<View>(R.id.login).setOnClickListener {
+            WacSDK.createSession(object: Wac.SessionCallback {
+                override fun onSessionCreated(sessionKey: String) {
+                    Toast.makeText(applicationContext, "Login successfully!", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError(errorMessage: String?) {
+                    Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+        view.findViewById<View>(R.id.fetchAtms).setOnClickListener {
+            WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
+                override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
+                    val builder = Builder()
+                    response.body()!!.data.items.forEach { atm ->
+                        val marker = gerMarker(atm)
+                        map.addMarker(marker)
+                        builder.include(marker.position)
+                        val bounds: LatLngBounds = builder.build()
+
+                        val padding = 0 // offset from edges of the map in pixels
+                        val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                        map.animateCamera(cameraUpdate)
+                    }
+                }
+
+                override fun onFailure(call: Call<AtmListResponse>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
         handlePlatformMessages().launchIn(viewCreatedScope)
+    }
+
+    private fun gerMarker(atm:AtmMachine):MarkerOptions {
+        val marker = LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
+        val bitmapDesc = bitmapDescriptorFromVector(applicationContext!!, R.drawable.ic_icon_cs)
+
+        return MarkerOptions()
+            .position(marker)
+            .title("Atm")
+            .snippet(atm.addressDesc)
+            .icon(bitmapDesc)
+    }
+
+    private fun bitmapDescriptorFromVector(
+        context: Context,
+        vectorResId: Int
+    ): BitmapDescriptor? {
+        val vectorDrawable: Drawable = ContextCompat.getDrawable(context, vectorResId)!!
+        vectorDrawable.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+        val bitmap: Bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.BLACK)
+        vectorDrawable.draw(canvas)
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
     override fun onDestroyView(view: View) {

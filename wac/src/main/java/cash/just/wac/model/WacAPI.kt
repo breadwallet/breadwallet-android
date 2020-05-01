@@ -11,16 +11,16 @@ interface WacAPI {
     fun login(): Call<LoginResponse>
 
     @GET("/atm/wac/atm/list")
-    fun getAtmList(@Query("sessionKey") sessionKey:String): Call<ATMListResponse>
+    fun getAtmList(@Query("sessionKey") sessionKey:String): Call<AtmListResponse>
 
     @GET("/atm/wac/atm/near/latlon/{lat}/{lon}")
     fun getAtmListByLocation(
         @Path(value="lat", encoded=true) lat:String,
         @Path(value="lon", encoded=true) lon:String,
-        @Query("sessionKey") sessionKey:String): Call<ATMListResponse>
+        @Query("sessionKey") sessionKey:String): Call<AtmListResponse>
 
     @GET("/atm/wac/pcode/{pcode}")
-    fun checkCodeStatus(@Path(value="pcode", encoded=true) code:String, @Query("sessionKey") sessionKey:String): Call<CodeStatusResponse>
+    fun checkCodeStatus(@Path(value="pcode", encoded=true) code:String, @Query("sessionKey") sessionKey:String): Call<CashCodeStatusResponse>
 
     @POST("/atm/wac/pcode")
     fun createCode(
@@ -36,5 +36,5 @@ interface WacAPI {
         @Query(value="last_name", encoded=true) lastName:String,
         @Query(value="phone_number", encoded=true) phoneNumber:String?,
         @Query(value="email", encoded=true) email:String?
-    ): Call<SendCodeResponse>
+    ): Call<SendVerificationCodeResponse>
 }
