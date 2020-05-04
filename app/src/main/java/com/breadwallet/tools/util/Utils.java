@@ -224,4 +224,17 @@ public class Utils {
         return result.reverse().toString();
     }
 
+    public static String join(String[] array, CharSequence separator) {
+        if (array.length == 0) {
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < array.length - 1; i++) {
+            stringBuilder.append(array[i]);
+            stringBuilder.append(separator);
+        }
+        stringBuilder.append(array[array.length - 1]);
+        return stringBuilder.toString();
+    }
+
 }
