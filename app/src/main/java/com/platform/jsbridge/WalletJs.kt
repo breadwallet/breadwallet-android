@@ -314,7 +314,7 @@ class WalletJs(
         return null
     }
 
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "ReturnCount")
     private suspend fun sendTransaction(
         wallet: Wallet,
         address: Address,

@@ -10,8 +10,6 @@ data class AtmListResponse(
     @field:Json(name = "data") val data: AtmItems
 )
 
-
-
 @JsonClass(generateAdapter = true)
 data class AtmItems(@field:Json(name = "items") val items: List<AtmMachine>)
 

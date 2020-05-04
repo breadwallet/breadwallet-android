@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.map
+package com.breadwallet.ui.atm
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -126,15 +126,13 @@ class MapController(
 
     private var mFilePathCallback: ValueCallback<Array<Uri>>? = null
     private var mCameraImageFileUri: Uri? = null
-    private lateinit var nativePromiseFactory: NativePromiseFactory
+    // private lateinit var nativePromiseFactory: NativePromiseFactory
 
-    val SYDNEY = LatLng(-33.862, 151.21)
-    val ZOOM_LEVEL = 13f
     private lateinit var map:GoogleMap
-    private lateinit var atms:List<AtmMachine>
+    // private lateinit var atms:List<AtmMachine>
 
-    @Nullable
-    fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
+    @SuppressLint("ReturnCount")
+    private fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
         while (context is ContextWrapper) {
             if (context is AppCompatActivity) return context
             return context.baseContext as AppCompatActivity
@@ -207,15 +205,23 @@ class MapController(
         handlePlatformMessages().launchIn(viewCreatedScope)
     }
 
-    private fun gerMarker(atm:AtmMachine):MarkerOptions {
+    private fun gerMarker(atm : AtmMachine):MarkerOptions {
         val marker = LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
-        val bitmapDesc = bitmapDescriptorFromVector(applicationContext!!, R.drawable.ic_icon_cs)
+        val bitmapDesc = bitmapDescriptorFromVector(applicationContext!!, R.drawable.ic_icon_cs_square_padding)
 
         return MarkerOptions()
             .position(marker)
             .title("Atm")
-            .snippet(atm.addressDesc)
+            .snippet(getDetails(atm))
             .icon(bitmapDesc)
+    }
+
+    private fun getDetails(atm : AtmMachine) : String {
+        return if (atm.addressDesc.contains(atm.city)) {
+            atm.addressDesc
+        } else {
+            atm.addressDesc + " " + atm.city
+        }
     }
 
     private fun bitmapDescriptorFromVector(
@@ -244,7 +250,7 @@ class MapController(
 
     override fun onDestroyView(view: View) {
         super.onDestroyView(view)
-        nativePromiseFactory.dispose()
+        // nativePromiseFactory?.dispose()
     }
 
     private fun handlePlatformMessages() = PlatformTransactionBus.requests().onEach {

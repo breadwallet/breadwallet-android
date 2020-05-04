@@ -49,7 +49,7 @@ import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.map.MapController
+import com.breadwallet.ui.atm.MapController
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -168,31 +168,29 @@ class RouterNavigationEffectHandler(
 
     override fun goToBuy() {
             goToMap()
-        return
-
-        val url = String.format(
-            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-            BITCOIN_CURRENCY_CODE
-        )
-        val webTransaction =
-            WebController(url).asTransaction(
-                VerticalChangeHandler(),
-                VerticalChangeHandler()
-            )
-
-        when (router.backstack.lastOrNull()?.controller()) {
-            is HomeController -> router.pushController(webTransaction)
-            else -> {
-                router.setBackstack(
-                    listOf(
-                        HomeController().asTransaction(),
-                        webTransaction
-                    ),
-                    VerticalChangeHandler()
-                )
-            }
-        }
+        // val url = String.format(
+        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+        //     BITCOIN_CURRENCY_CODE
+        // )
+        // val webTransaction =
+        //     WebController(url).asTransaction(
+        //         VerticalChangeHandler(),
+        //         VerticalChangeHandler()
+        //     )
+        //
+        // when (router.backstack.lastOrNull()?.controller()) {
+        //     is HomeController -> router.pushController(webTransaction)
+        //     else -> {
+        //         router.setBackstack(
+        //             listOf(
+        //                 HomeController().asTransaction(),
+        //                 webTransaction
+        //             ),
+        //             VerticalChangeHandler()
+        //         )
+        //     }
+        // }
     }
 
     override fun goToTrade() {
