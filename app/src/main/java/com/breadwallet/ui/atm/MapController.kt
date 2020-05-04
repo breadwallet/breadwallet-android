@@ -78,7 +78,6 @@ import com.google.android.gms.maps.model.LatLngBounds.Builder
 import com.google.android.gms.maps.model.MarkerOptions
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
-import com.platform.jsbridge.NativePromiseFactory
 import com.platform.middlewares.plugins.GeoLocationPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn

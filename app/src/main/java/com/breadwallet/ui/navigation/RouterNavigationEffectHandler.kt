@@ -25,6 +25,7 @@
 package com.breadwallet.ui.navigation
 
 import android.content.Intent
+import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -49,7 +50,7 @@ import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.atm.MapController
+import com.breadwallet.ui.atm.RequestCashCodeController
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -147,7 +148,10 @@ class RouterNavigationEffectHandler(
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
             BITCOIN_CURRENCY_CODE
         )
-        val mapTransaction = MapController(url).asTransaction(
+        val atmMachine = AtmMachine("234", "sadf", "sdf",
+            "asdf", "asdf", "asdf", "asdf", "sdf",
+            "Asdf", "asdf", "Asdf", "asdf", "asdf")
+        val mapTransaction = RequestCashCodeController(atmMachine).asTransaction(
                 VerticalChangeHandler(),
                 VerticalChangeHandler()
             )

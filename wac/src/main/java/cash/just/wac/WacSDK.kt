@@ -13,6 +13,10 @@ object WacSDK : Wac {
         wacImpl.createSession(listener)
     }
 
+    override fun isSessionCreated(): Boolean {
+       return wacImpl.isSessionCreated()
+    }
+
     override fun getAtmList(): Call<AtmListResponse> {
         return wacImpl.getAtmList()
     }

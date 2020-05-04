@@ -7,6 +7,7 @@ import cash.just.wac.model.LoginResponse
 import cash.just.wac.model.SendVerificationCodeResponse
 import cash.just.wac.model.WacAPI
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -19,7 +20,7 @@ class WacImpl:Wac {
         .build().create(WacAPI::class.java)
 
     override fun createSession(listener: Wac.SessionCallback) {
-        retrofit.login().enqueue(object: retrofit2.Callback<LoginResponse> {
+        retrofit.login().enqueue(object: Callback<LoginResponse> {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 listener.onError(t.message)
             }
@@ -29,6 +30,10 @@ class WacImpl:Wac {
                 listener.onSessionCreated(sessionKey)
             }
         })
+    }
+
+    override fun isSessionCreated() : Boolean {
+        return this::sessionKey.isInitialized
     }
 
     override fun getAtmList(): Call<AtmListResponse> {

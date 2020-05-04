@@ -14,7 +14,7 @@ interface Wac {
     }
 
     fun createSession(listener:SessionCallback)
-
+    fun isSessionCreated(): Boolean
     fun getAtmList(): Call<AtmListResponse>
     fun getAtmListByLocation(latitude:String, longitude:String): Call<AtmListResponse>
     fun checkCashCodeStatus(code:String): Call<CashCodeStatusResponse>

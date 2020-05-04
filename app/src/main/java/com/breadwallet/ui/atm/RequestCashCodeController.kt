@@ -28,14 +28,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -47,16 +41,12 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
-import cash.just.wac.Wac
 import cash.just.wac.WacSDK
-import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
+import cash.just.wac.model.SendVerificationCodeResponse
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
@@ -65,20 +55,8 @@ import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
-import com.google.android.gms.maps.CameraUpdate
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.LatLngBounds.Builder
-import com.google.android.gms.maps.model.MarkerOptions
 import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
-import com.platform.jsbridge.NativePromiseFactory
 import com.platform.middlewares.plugins.GeoLocationPlugin
 import kotlinx.android.synthetic.main.fragment_request_cash_code.*
 import kotlinx.coroutines.Dispatchers
@@ -92,18 +70,19 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-private const val ARG_URL = "WebController.URL"
+
 
 @Suppress("TooManyFunctions")
 class RequestCashCodeController(
     args: Bundle
 ) : BaseController(args) {
 
-    constructor(url: String) : this(
-        bundleOf(ARG_URL to url)
+    constructor(atm: AtmMachine) : this(
+        bundleOf(atmMachine to atm)
     )
 
     companion object {
+        private const val atmMachine = "RequestCashCodeController.Atm"
         private const val CHOOSE_IMAGE_REQUEST_CODE = 1
         private const val GET_CAMERA_PERMISSIONS_REQUEST_CODE = 2
         private const val DATE_FORMAT = "yyyyMMdd_HHmmss"
@@ -128,8 +107,11 @@ class RequestCashCodeController(
     private var mFilePathCallback: ValueCallback<Array<Uri>>? = null
     private var mCameraImageFileUri: Uri? = null
 
-    private lateinit var map:GoogleMap
-    // private lateinit var atms:List<AtmMachine>
+    private enum class VerificationState {
+        PHONE,
+        EMAIL
+    }
+    private var currentVerificationMode: VerificationState = VerificationState.PHONE
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
@@ -141,89 +123,46 @@ class RequestCashCodeController(
         }
 
         noPhoneButton.setOnClickListener {
-            phoneNumber.visibility = View.GONE
-            email.visibility = View.VISIBLE
-            noPhoneButton.text = "Phone Number"
-        }
-
-        view.findViewById<View>(R.id.login).setOnClickListener {
-            WacSDK.createSession(object: Wac.SessionCallback {
-                override fun onSessionCreated(sessionKey: String) {
-                    Toast.makeText(applicationContext, "Login successfully!", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onError(errorMessage: String?) {
-                    Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-
-        view.findViewById<View>(R.id.fetchAtms).setOnClickListener {
-            WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
-                override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
-                    val builder = Builder()
-                    response.body()!!.data.items.forEach { atm ->
-                        val marker = gerMarker(atm)
-                        map.addMarker(marker)
-                        builder.include(marker.position)
-                        val bounds: LatLngBounds = builder.build()
-
-                        val padding = 0 // offset from edges of the map in pixels
-                        val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
-                        map.animateCamera(cameraUpdate)
-                    }
-                }
-
-                override fun onFailure(call: Call<AtmListResponse>, t: Throwable) {
-                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_SHORT).show()
-                }
-            })
+            toggleVerification()
         }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
-    }
 
-    private fun gerMarker(atm : AtmMachine):MarkerOptions {
-        val marker = LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
-        val bitmapDesc = bitmapDescriptorFromVector(applicationContext!!, R.drawable.ic_icon_cs_square_padding)
+        getAtmCode.setOnClickListener {
+            if (WacSDK.isSessionCreated()) {
+                WacSDK.sendVerificationCode(
+                    firstName.editText.toString(),
+                    lastName.editText.toString(),
+                    email.editText.toString(),
+                    phoneNumber.editText.toString()
+                ).enqueue(object: retrofit2.Callback<SendVerificationCodeResponse> {
+                    override fun onResponse(
+                        call: Call<SendVerificationCodeResponse>,
+                        response: Response<SendVerificationCodeResponse>
+                    ) {
+                        Toast.makeText(view.context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
+                    }
 
-        return MarkerOptions()
-            .position(marker)
-            .title("Atm")
-            .snippet(getDetails(atm))
-            .icon(bitmapDesc)
-    }
-
-    private fun getDetails(atm : AtmMachine) : String {
-        return if (atm.addressDesc.contains(atm.city)) {
-            atm.addressDesc
-        } else {
-            atm.addressDesc + " " + atm.city
+                    override fun onFailure(call: Call<SendVerificationCodeResponse>, t: Throwable) {
+                        Toast.makeText(view.context, t.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
         }
     }
 
-    private fun bitmapDescriptorFromVector(
-        context: Context,
-        vectorResId: Int
-    ): BitmapDescriptor? {
-        val vectorDrawable: Drawable = ContextCompat.getDrawable(context, vectorResId)!!
-        vectorDrawable.setBounds(
-            0,
-            0,
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight
-        )
-        val bitmap: Bitmap = Bitmap.createBitmap(
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-
-        val canvas = Canvas(bitmap)
-        canvas.drawColor(Color.BLACK)
-        vectorDrawable.draw(canvas)
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    private fun toggleVerification() {
+        if (currentVerificationMode == VerificationState.PHONE) {
+            phoneNumber.visibility = View.GONE
+            email.visibility = View.VISIBLE
+            noPhoneButton.text = "Phone Number"
+            currentVerificationMode = VerificationState.EMAIL
+        } else {
+            phoneNumber.visibility = View.VISIBLE
+            email.visibility = View.GONE
+            noPhoneButton.text = "No Phone?"
+            currentVerificationMode = VerificationState.PHONE
+        }
     }
 
     override fun onDestroyView(view: View) {
