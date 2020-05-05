@@ -52,7 +52,6 @@ import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
 import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.atm.RequestCashCodeController
 import com.breadwallet.ui.notification.InAppNotificationActivity
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -61,6 +60,7 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.SettingsScreen
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
@@ -369,6 +369,14 @@ class RouterNavigationEffectHandler(
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
         router.pushController(
             RouterTransaction.with(WriteDownKeyController(effect.onComplete, effect.requestAuth))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
+
+    override fun goToAtmMap() {
+        router.pushController(
+            RouterTransaction.with(MapController(Bundle.EMPTY))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler())
         )

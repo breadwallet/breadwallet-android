@@ -207,10 +207,11 @@ class HomeController(
 
         ifChanged(M::hasInternet) {
             buy_text_view.setText(
-                when {
-                    showBuyAndSell -> R.string.HomeScreen_buyAndSell
-                    else -> R.string.HomeScreen_buy
-                }
+                // when {
+                    // showBuyAndSell -> R.string.HomeScreen_buyAndSell
+                    // else -> R.string.HomeScreen_buy
+                // }
+                R.string.HomeScreen_cashOut
             )
         }
     }

@@ -171,11 +171,11 @@ class SettingsScreenHandler(
 
     private fun getHomeOptions(): List<SettingsItem> {
         return mutableListOf(
-            SettingsItem(
-                context.getString(R.string.Settings_coinsquareAtmMapMenuItemTitle),
-                SettingsOption.ATM_WITHDRAWAL,
-                R.drawable.ic_atm_finder
-            ),
+            // SettingsItem(
+            //     context.getString(R.string.Settings_coinsquareAtmMapMenuItemTitle),
+            //     SettingsOption.ATM_WITHDRAWAL,
+            //     R.drawable.ic_atm_finder
+            // ),
             SettingsItem(
                 context.getString(R.string.MenuButton_scan),
                 SettingsOption.SCAN_QR,
@@ -213,14 +213,14 @@ class SettingsScreenHandler(
             )
         ).apply {
             if (experimentsRepository.isExperimentActive(Experiments.ATM_MAP)) {
-                add(
-                    SettingsItem(
-                        context.getString(R.string.Settings_atmMapMenuItemTitle),
-                        SettingsOption.ATM_FINDER,
-                        R.drawable.ic_atm_finder,
-                        subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
-                    )
-                )
+                // add(
+                //     SettingsItem(
+                //         context.getString(R.string.Settings_atmMapMenuItemTitle),
+                //         SettingsOption.ATM_FINDER,
+                //         R.drawable.ic_atm_finder,
+                //         subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
+                //     )
+                // )
             }
             if (BuildConfig.DEBUG) {
                 add(
