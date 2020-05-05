@@ -25,6 +25,7 @@
 package com.breadwallet.tools.security
 
 import android.app.Activity
+import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
@@ -39,6 +40,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -52,6 +54,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -167,7 +170,7 @@ class CryptoAccountManager(
 
     override suspend fun migrateAccount() = mutex.withLock {
         // Migrate fields required for Account
-        val phrase = checkNotNull(getPhrase()) { "Migration failed, no phrase found." }
+        val phrase = getPhrase() ?: return@withLock false
         try {
             val creationDate = Date(BRKeyStore.getWalletCreationTime(context))
             val account =
@@ -237,7 +240,7 @@ class CryptoAccountManager(
             .flowOn(Default)
 
     override suspend fun getPhrase(): ByteArray? =
-        executeWithAuth { BRKeyStore.getPhrase(context, GET_PHRASE_RC) }
+        executeWithAuth { BRKeyStore.getPhrase(it, GET_PHRASE_RC) }
 
     override fun getAccount(): Account? =
         store.getBytes(KEY_ACCOUNT, null)?.run {
@@ -341,9 +344,9 @@ class CryptoAccountManager(
             check(getPhrase() == null) { "Phrase already exists." }
 
             try {
-                val storedPhrase = executeWithAuth {
-                    BRKeyStore.putPhrase(phrase, context, PUT_PHRASE_RC)
-                    BRKeyStore.getPhrase(context, GET_PHRASE_RC)
+                val storedPhrase = executeWithAuth { ctx ->
+                    BRKeyStore.putPhrase(phrase, ctx, PUT_PHRASE_RC)
+                    BRKeyStore.getPhrase(ctx, GET_PHRASE_RC)
                 }
 
                 checkNotNull(storedPhrase) { "Phrase failed to persist." }
@@ -437,22 +440,23 @@ class CryptoAccountManager(
     /**
      * Invokes [action], catching [UserNotAuthenticatedException].
      * If authentication is required, it will be attempted and upon
-     * success will invoke [action] again.
-     *
-     * If authentication fails the original [UserNotAuthenticatedException]
-     * will be thrown.
+     * success will invoke [action] again. If authentication fails,
+     * null is returned.
      */
-    private suspend fun <T> executeWithAuth(action: () -> T): T {
-        return withContext(Dispatchers.Main) {
-            try {
-                action()
-            } catch (e: UserNotAuthenticatedException) {
-                logInfo("Attempting authentication")
+    private suspend fun <T> executeWithAuth(action: (context: Context) -> T): T {
+        val activity = getActivity()
+        return try {
+            Main {
+                runCatching { action(activity) }
+            }.getOrThrow()
+        } catch (e: UserNotAuthenticatedException) {
+            logInfo("Attempting authentication")
 
-                when (resultChannel.receive()) {
-                    Activity.RESULT_OK -> action()
-                    else -> throw e
-                }
+            when (resultChannel.receive()) {
+                Activity.RESULT_OK -> Main {
+                    runCatching { action(activity) }
+                }.getOrThrow()
+                else -> throw e
             }
         }
     }
@@ -520,6 +524,11 @@ class CryptoAccountManager(
             putString(KEY_AUTH_KEY, null)
             putLong(KEY_CREATION_TIME, 0)
         }
+    }
+
+    private suspend fun getActivity(): Activity {
+        while (context !is Activity) delay(1_000)
+        return context as Activity
     }
 }
 

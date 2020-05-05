@@ -91,6 +91,9 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
         return dispatch(setOf(F.GoToPaperKey(event.phrase)))
     }
 
+    override fun onATMMapClicked(model: M, event: E.OnATMMapClicked): Next<M, F> =
+        dispatch(setOf(F.GoToATMMap(event.url, event.mapJson)))
+
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: M,

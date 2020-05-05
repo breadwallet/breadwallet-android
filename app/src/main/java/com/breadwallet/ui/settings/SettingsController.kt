@@ -123,7 +123,11 @@ class SettingsController(
                 F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
                 is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 F.GoToHomeScreen -> NavigationEffect.GoToHome
-                is F.GoToLink -> NavigationEffect.GoToDeepLink(link = effect.link, authenticated = true)
+                is F.GoToLink -> NavigationEffect.GoToDeepLink(
+                    link = effect.link,
+                    authenticated = true
+                )
+                is F.GoToATMMap -> NavigationEffect.GoToATMMap(effect.url, effect.mapJson)
                 else -> null
             }
         })
