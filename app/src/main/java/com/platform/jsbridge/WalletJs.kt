@@ -85,10 +85,8 @@ class WalletJs(
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
     private val accountManager: BRAccountManager
-) {
+) : JsApi {
     companion object {
-        const val NATIVE_NAME = "WalletJs_Native"
-
         private const val KEY_BTC_DENOMINATION_DIGITS = "btc_denomination_digits"
         private const val KEY_LOCAL_CURRENCY_CODE = "local_currency_code"
         private const val KEY_LOCAL_CURRENCY_PRECISION = "local_currency_precision"

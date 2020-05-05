@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 3/26/20.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 4/14/20.
  * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,24 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.app
+package com.platform.jsbridge
 
-import com.breadwallet.tools.manager.BRReportsManager
-import okhttp3.Interceptor
-import okhttp3.Response
+import android.webkit.JavascriptInterface
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
-object BdbLoggingInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val response = chain.proceed(request)
-        response.body?.apply {
-            val bytes = contentLength()
-            if (bytes > 50_000_000L) {
-                BRReportsManager.reportBug(
-                    Exception("Large response body ($bytes) for '${request.url}'")
-                )
-            }
+class CameraJs(
+    private val promise: NativePromiseFactory,
+    private val imageRequestFlow: Flow<String?>
+) : JsApi {
+
+    @JavascriptInterface
+    fun takePicture() = promise.createForString {
+        val url = imageRequestFlow.first()
+        check(!url.isNullOrBlank()) {
+            "Picture request cancelled."
         }
-        return response
+        url
     }
 }

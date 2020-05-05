@@ -1,6 +1,5 @@
 package com.platform;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.ui.browser.WebViewActivity;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -29,8 +27,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.eclipse.jetty.websocket.server.WebSocketHandler;
-import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -127,8 +123,6 @@ public class HTTPServer extends AbstractLifeCycle {
                 BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
                     if (mOnCloseListener != null) {
                         mOnCloseListener.onClose();
-                    } else if (context instanceof WebViewActivity) {
-                        ((Activity) context).onBackPressed();
                     }
                 });
                 APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
@@ -212,16 +206,8 @@ public class HTTPServer extends AbstractLifeCycle {
 
         HandlerCollection handlerCollection = new HandlerCollection();
 
-        WebSocketHandler wsHandler = new WebSocketHandler() {
-            @Override
-            public void configure(WebSocketServletFactory factory) {
-                factory.register(BRGeoWebSocketHandler.class);
-            }
-        };
-
         ServerHandler serverHandler = new ServerHandler();
         handlerCollection.addHandler(serverHandler);
-        handlerCollection.addHandler(wsHandler);
 
         mServer.setHandler(handlerCollection);
 

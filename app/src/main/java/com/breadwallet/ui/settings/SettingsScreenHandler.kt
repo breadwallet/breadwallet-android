@@ -58,6 +58,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import kotlin.text.Charsets.UTF_8
@@ -391,13 +392,9 @@ class SettingsScreenHandler(
     private fun sendAtmFinderRequest() {
         val mapExperiment = ExperimentsRepositoryImpl.experiments[Experiments.ATM_MAP.key]
         val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
-        val url = HTTPServer.getPlatformUrl(LinkPlugin.BROWSER_PATH)
-        val request = buildSignedRequest(
-            url,
-            mapPath,
-            "POST",
-            LinkPlugin.BROWSER_PATH
-        )
-        APIClient.getInstance(context).sendRequest(request, false)
+        val mapJsonObj = JSONObject(mapPath)
+        val url = mapJsonObj.getString("url")
+        
+        output.accept(E.OnATMMapClicked(url, mapPath))
     }
 }

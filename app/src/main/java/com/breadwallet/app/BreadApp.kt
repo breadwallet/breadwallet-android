@@ -329,7 +329,6 @@ class BreadApp : Application(), KodeinAware {
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
-                    .addInterceptor(BdbLoggingInterceptor)
                     .addInterceptor(authInterceptor)
                     .build()
             )
@@ -497,7 +496,6 @@ class BreadApp : Application(), KodeinAware {
         }
 
         getBreadBox().apply { if (isOpen) close() }
-        applicationScope.cancel()
     }
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {

@@ -42,7 +42,7 @@ object BRConstants {
      */
     const val CAMERA_REQUEST_ID = 34
     const val GEO_REQUEST_ID = 35
-    const val CAMERA_REQUEST_GLIDERA_ID = 36
+    const val CAMERA_PERMISSIONS_RC = 36
 
     /**
      * Request codes for auth
@@ -60,7 +60,7 @@ object BRConstants {
      * Request codes for take picture
      */
     const val SCANNER_REQUEST = 201
-    const val REQUEST_IMAGE_CAPTURE = 203
+    const val REQUEST_IMAGE_RC = 203
 
     /**
      * Currency units

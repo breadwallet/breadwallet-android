@@ -35,6 +35,7 @@ import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.btc
 import kotlinx.coroutines.channels.awaitClose
@@ -665,13 +666,17 @@ object BRSharedPrefs {
     var recoveryKeyLanguage: String
         get() = brdPrefs.getString(LANGUAGE, Locale.getDefault().language)!!
         set(value) {
-            val isLanguageValid = (sequenceOf(Locale.getDefault()) + Locale.getAvailableLocales())
-                .map { it.language }
-                .contains(value)
+            val isLanguageValid = Bip39Reader.SupportedLanguage.values().any { lang ->
+                lang.toString() == value
+            }
 
-            require(isLanguageValid) { "language must be a valid Locale.getLanguage() string." }
-
-            brdPrefs.edit { putString(LANGUAGE, value) }
+            brdPrefs.edit {
+                if (isLanguageValid) {
+                    putString(LANGUAGE, value)
+                } else {
+                    putString(LANGUAGE, Bip39Reader.SupportedLanguage.EN.toString())
+                }
+            }
         }
 
     /** Preference to unlock the app using the fingerprint sensor */

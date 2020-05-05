@@ -25,8 +25,8 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 2    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 3 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 11       // Build version. Increase for each new build. Maximum value: 999
+        brdEngineeringVersion = 4 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 5       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -219,25 +219,13 @@ task downloadBundles {
 protobuf {
     protoc {
         // You still need protoc like in the non-Android case
-        artifact = 'com.google.protobuf:protoc:3.0.0'
-
+        artifact = 'com.google.protobuf:protoc:3.11.4'
     }
-    plugins {
-        javalite {
-            // The codegen for lite comes as a separate artifact
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
 
-        }
-    }
     generateProtoTasks {
         all().each { task ->
             task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
-            }
-            task.plugins {
-                javalite {}
+                java { option 'lite' }
             }
         }
     }
@@ -261,6 +249,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$ax_recyclerview"
     implementation "androidx.security:security-crypto:$ax_securitycrypto"
     implementation "androidx.legacy:legacy-support-v13:$ax_legacyV13"
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_view_version"
     testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
     testImplementation "androidx.test:runner:$ax_test_runner"
     testImplementation "androidx.test:rules:$ax_test_rules"
@@ -272,11 +264,13 @@ dependencies {
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
-    implementation "com.google.firebase:firebase-config-ktx:$firebase_config_version"
+    implementation("com.google.firebase:firebase-config-ktx:$firebase_config_version") {
+        exclude group: "com.google.protobuf", module: "protobuf-lite"
+    }
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
     implementation "com.google.guava:guava:$guava_version"
-    implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
+    implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
 
     // Square
