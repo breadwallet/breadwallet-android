@@ -25,6 +25,7 @@
 package com.breadwallet.ui.navigation
 
 import android.content.Intent
+import android.os.Bundle
 import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
@@ -44,6 +45,7 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
+import com.breadwallet.ui.atm.MapController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
@@ -151,11 +153,15 @@ class RouterNavigationEffectHandler(
         val atmMachine = AtmMachine("234", "sadf", "sdf",
             "asdf", "asdf", "asdf", "asdf", "sdf",
             "Asdf", "asdf", "Asdf", "asdf", "asdf")
-        val mapTransaction = RequestCashCodeController(atmMachine).asTransaction(
+        // val mapTransaction = RequestCashCodeController(atmMachine).asTransaction(
+        //         VerticalChangeHandler(),
+        //         VerticalChangeHandler()
+        //     )
+
+        val mapTransaction = MapController(Bundle.EMPTY).asTransaction(
                 VerticalChangeHandler(),
                 VerticalChangeHandler()
             )
-
         when (router.backstack.lastOrNull()?.controller()) {
             is HomeController -> router.pushController(mapTransaction)
             else -> {

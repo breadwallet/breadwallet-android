@@ -32,10 +32,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -48,16 +44,15 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
 import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.logger.logError
@@ -70,15 +65,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.LatLngBounds.Builder
-import com.google.android.gms.maps.model.MarkerOptions
-import com.platform.HTTPServer
 import com.platform.PlatformTransactionBus
 import com.platform.middlewares.plugins.GeoLocationPlugin
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -90,16 +81,10 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-private const val ARG_URL = "WebController.URL"
-
 @Suppress("TooManyFunctions")
 class MapController(
     args: Bundle
 ) : BaseController(args) {
-
-    constructor(url: String) : this(
-        bundleOf(ARG_URL to url)
-    )
 
     companion object {
         private const val CHOOSE_IMAGE_REQUEST_CODE = 1
@@ -125,10 +110,8 @@ class MapController(
 
     private var mFilePathCallback: ValueCallback<Array<Uri>>? = null
     private var mCameraImageFileUri: Uri? = null
-    // private lateinit var nativePromiseFactory: NativePromiseFactory
 
     private lateinit var map:GoogleMap
-    // private lateinit var atms:List<AtmMachine>
 
     @SuppressLint("ReturnCount")
     private fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
@@ -143,31 +126,9 @@ class MapController(
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-        HTTPServer.setOnCloseListener {
-            router.popCurrentController()
-            HTTPServer.setOnCloseListener(null)
-        }
+        prepareMap(view.context)
 
-        val fragmentManager = getActivityFromContext(view.context)!!.supportFragmentManager
-        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        fragment.getMapAsync(object: OnMapReadyCallback {
-
-            /**
-             * This is where we can add markers or lines, add listeners or move the camera. In this case,
-             * we just move the camera to Sydney and add a marker in Sydney.
-             */
-            override fun onMapReady(googleMap: GoogleMap?) {
-                googleMap ?: return
-                map = googleMap
-
-                map.uiSettings.isMapToolbarEnabled = false
-                map.uiSettings.isMyLocationButtonEnabled = true
-                map.uiSettings.isZoomControlsEnabled = true
-                map.uiSettings.isZoomGesturesEnabled = true
-            }
-        })
-
-        view.findViewById<View>(R.id.login).setOnClickListener {
+        login.setOnClickListener {
             WacSDK.createSession(object: Wac.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     Toast.makeText(applicationContext, "Login successfully!", Toast.LENGTH_SHORT).show()
@@ -179,14 +140,16 @@ class MapController(
             })
         }
 
-        view.findViewById<View>(R.id.fetchAtms).setOnClickListener {
+        fetchAtms.setOnClickListener {
             WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
                 override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
                     val builder = Builder()
                     response.body()!!.data.items.forEach { atm ->
-                        val marker = gerMarker(atm)
-                        map.addMarker(marker)
-                        builder.include(marker.position)
+                        val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
+
+                        val marker = map.addMarker(markerOpt)
+                        marker.tag = atm
+                        builder.include(markerOpt.position)
                         val bounds: LatLngBounds = builder.build()
 
                         val padding = 0 // offset from edges of the map in pixels
@@ -204,53 +167,45 @@ class MapController(
         handlePlatformMessages().launchIn(viewCreatedScope)
     }
 
-    private fun gerMarker(atm : AtmMachine):MarkerOptions {
-        val marker = LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
-        val bitmapDesc = bitmapDescriptorFromVector(applicationContext!!, R.drawable.ic_icon_cs_square_padding)
+    private fun prepareMap(context : Context) {
+        val fragmentManager = getActivityFromContext(context)!!.supportFragmentManager
+        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        fragment.getMapAsync(object: OnMapReadyCallback {
 
-        return MarkerOptions()
-            .position(marker)
-            .title("Atm")
-            .snippet(getDetails(atm))
-            .icon(bitmapDesc)
+            /**
+             * This is where we can add markers or lines, add listeners or move the camera. In this case,
+             * we just move the camera to Sydney and add a marker in Sydney.
+             */
+            override fun onMapReady(googleMap: GoogleMap?) {
+                googleMap ?: return
+                map = googleMap
+
+                map.uiSettings.isMapToolbarEnabled = false
+                map.uiSettings.isMyLocationButtonEnabled = true
+                map.uiSettings.isZoomControlsEnabled = true
+                map.uiSettings.isZoomGesturesEnabled = true
+
+                map.setOnMarkerClickListener {
+                    false
+                }
+
+                map.setOnInfoWindowClickListener { atm ->
+                    moveToVerification(atm.tag as AtmMachine)
+                }
+            }
+        })
     }
 
-    private fun getDetails(atm : AtmMachine) : String {
-        return if (atm.addressDesc.contains(atm.city)) {
-            atm.addressDesc
-        } else {
-            atm.addressDesc + " " + atm.city
-        }
+    private fun moveToVerification(atm:AtmMachine) {
+        val controller = RequestCashCodeController(atm)
+        val transaction = RouterTransaction.with(controller)
+            .popChangeHandler(FadeChangeHandler())
+            .pushChangeHandler(FadeChangeHandler())
+
+        router.pushController(transaction)
     }
 
-    private fun bitmapDescriptorFromVector(
-        context: Context,
-        vectorResId: Int
-    ): BitmapDescriptor? {
-        val vectorDrawable: Drawable = ContextCompat.getDrawable(context, vectorResId)!!
-        vectorDrawable.setBounds(
-            0,
-            0,
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight
-        )
-        val bitmap: Bitmap = Bitmap.createBitmap(
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
 
-        val canvas = Canvas(bitmap)
-        canvas.drawColor(Color.BLACK)
-        vectorDrawable.draw(canvas)
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
-
-    override fun onDestroyView(view: View) {
-        super.onDestroyView(view)
-        // nativePromiseFactory?.dispose()
-    }
 
     private fun handlePlatformMessages() = PlatformTransactionBus.requests().onEach {
         withContext(Dispatchers.Main) {

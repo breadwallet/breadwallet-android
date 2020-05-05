@@ -1,18 +1,24 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/background_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="bottom"
-              android:filterTouchesWhenObscured="true"
-              android:isScrollContainer="false">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:filterTouchesWhenObscured="true"
+    android:isScrollContainer="false">
+
+    <fragment
+        android:id="@+id/smallMapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/signal_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="150dp"
         app:cardCornerRadius="8dp"
         android:animateLayoutChanges="true"
         android:clickable="true"
@@ -27,16 +33,22 @@
             android:padding="15dp">
 
             <TextView
+                android:gravity="center"
                 android:id="@+id/atmTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="Atm title"
+                tools:text="Atm title"
                 android:textColor="@color/black"
                 android:textSize="25dp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fetchAtms"
+             <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/verificationGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Amount to withdraw"
@@ -44,17 +56,17 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content" />
+             </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
+             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/phoneNumber"
+                    android:layout_marginTop="10dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -63,14 +75,15 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white" />
+                        android:inputType="phone"
+                        android:layout_height="wrap_content" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/email"
                     android:layout_width="0dp"
+                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Email"
@@ -79,7 +92,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white" />
+                        android:inputType="textEmailAddress"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,10 +103,10 @@
                     android:layout_gravity="center_vertical"
                     android:text="No Phone?" />
 
-            </LinearLayout>
+             </LinearLayout>
 
-
-            <LinearLayout
+             <LinearLayout
+                android:layout_marginTop="7dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -108,8 +121,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white" />
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -122,20 +134,57 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white" />
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+             </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/getAtmCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="10dp"
+                    android:text="Get ATM code" />
             </LinearLayout>
+        <LinearLayout
+            android:id="@+id/confirmGroup"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/confirmationMessage"
+                android:layout_marginTop="7dp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/black"
+                tools:text="We've sent a confirmation token..."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/token"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                app:helperText="Check your email for the confirmation token we sent you. It may take a couple of minutes."
+                android:hint="Enter token">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/getAtmCode"
+                android:id="@+id/confirmAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:layout_marginTop="10dp"
-                android:text="Get ATM code" />
+                android:text="Confirm" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
+    </androidx.cardview.widget.CardView>
 </FrameLayout>
