@@ -243,6 +243,51 @@
                         android:visibility="gone"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layoutHederaMemo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                            android:id="@+id/hedera_memo_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginBottom="14dp"
+                            android:text="@string/TransactionDetails.hederaMemo"
+                            android:textColor="@color/settings_chevron_right"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                            android:id="@+id/hedera_memo_value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="16dp"
+                            android:ellipsize="middle"
+                            android:gravity="end"
+                            android:singleLine="true"
+                            android:textColor="?attr/secondary_text_color"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/hedera_memo_label"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toEndOf="@+id/hedera_memo_label"
+                            app:layout_constraintTop_toTopOf="@+id/hedera_memo_label"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/hedera_memo_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@color/light_gray"
+                        android:visibility="gone"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/gas_price_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">

@@ -53,13 +53,16 @@ import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -76,7 +79,9 @@ object WalletScreenHandler {
         context: Context,
         breadBox: BreadBox,
         navEffectHandler: NavEffectTransformer,
-        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
+        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
+        showCreateAccountDialog: () -> Unit,
+        showCreateAccountErrorDialog: () -> Unit
     ) = subtypeEffectHandler<F, E> {
         addTransformer<F.Nav>(navEffectHandler)
         addTransformer(handleCheckReviewPrompt(context))
@@ -86,6 +91,8 @@ object WalletScreenHandler {
         addTransformer(handleLoadTransactions(breadBox))
         addTransformer(handleLoadCurrencyName(breadBox))
         addTransformer(handleLoadSyncState(breadBox))
+        addTransformer(handleWalletState(breadBox))
+        addConsumer(handleCreateAccount(breadBox))
 
         addTransformer(handleLoadTransactionMetaData(metadataEffectHandler))
         addTransformer(handleLoadTransactionMetaDataSingle(metadataEffectHandler))
@@ -104,6 +111,8 @@ object WalletScreenHandler {
         addFunctionSync<F.LoadCryptoPreferred>(Default) {
             E.OnIsCryptoPreferredLoaded(BRSharedPrefs.isCryptoPreferred())
         }
+        addActionSync<F.ShowCreateAccountDialog>(Main, showCreateAccountDialog)
+        addActionSync<F.ShowCreateAccountErrorDialog>(Main, showCreateAccountErrorDialog)
     }
 
     private fun handleUpdateCryptoPreferred(
@@ -168,11 +177,11 @@ object WalletScreenHandler {
             .mapLatest { effect ->
                 val exchangeRate: BigDecimal? = ratesRepository.getFiatForCrypto(
                     BigDecimal.ONE,
-                    effect.currencyId,
+                    effect.currencyCode,
                     BRSharedPrefs.getPreferredFiatIso(context)
                 )
                 val fiatPricePerUnit = exchangeRate?.formatFiatForUi(fiatIso).orEmpty()
-                val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyId)
+                val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyCode)
                 E.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange)
             }
     }
@@ -193,8 +202,8 @@ object WalletScreenHandler {
     ) = flowTransformer<F.LoadTransactions, E> { effects ->
         effects
             .flatMapLatest { effect ->
-                breadBox.walletTransfers(effect.currencyId).combine(
-                    breadBox.wallet(effect.currencyId)
+                breadBox.walletTransfers(effect.currencyCode).combine(
+                    breadBox.wallet(effect.currencyCode)
                         .mapLatest { it.walletManager.network.height }
                         .distinctUntilChanged()
                 )
@@ -214,7 +223,7 @@ object WalletScreenHandler {
         flowTransformer<F.LoadWalletBalance, E> { effects ->
             effects
                 .flatMapLatest { effect ->
-                    breadBox.wallet(effect.currencyId)
+                    breadBox.wallet(effect.currencyCode)
                         .map { it.balance }
                         .distinctUntilChanged()
                 }
@@ -229,10 +238,9 @@ object WalletScreenHandler {
     private fun handleLoadCurrencyName(breadBox: BreadBox) =
         flowTransformer<F.LoadCurrencyName, E> { effects ->
             effects
-                .flatMapLatest { effect ->
-                    breadBox.wallet(effect.currencyId)
-                        .map { it.currency.name }
-                        .distinctUntilChanged()
+                .map { effect ->
+                    TokenUtil.getTokenItemByCurrencyCode(effect.currencyCode)?.name ?:
+                        breadBox.wallet(effect.currencyCode).first().currency.name
                 }
                 .map { E.OnCurrencyNameUpdated(it) }
         }
@@ -256,7 +264,7 @@ object WalletScreenHandler {
         metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = flowTransformer<F.LoadTransactionMetaData, E> { effects ->
         effects
-            .map { MetaDataEffect.LoadTransactionMetaData(it.currencyId, it.transactionHashes) }
+            .map { MetaDataEffect.LoadTransactionMetaData(it.currencyCode, it.transactionHashes) }
             .transform(metadataEffectHandler)
             .filterIsInstance<MetaDataEvent.OnTransactionMetaDataUpdated>()
             .map { event ->
@@ -273,7 +281,7 @@ object WalletScreenHandler {
         effects
             .map {
                 MetaDataEffect.LoadTransactionMetaDataSingle(
-                    it.currencyId,
+                    it.currencyCode,
                     it.transactionHashes
                 )
             }
@@ -292,6 +300,20 @@ object WalletScreenHandler {
                 removeOnDataChangedListener(listener)
             }
         }
+
+    private fun handleWalletState(breadBox: BreadBox) =
+        flowTransformer<F.LoadWalletState, E> { effects ->
+            effects
+                .flatMapLatest {
+                    breadBox.walletState(it.currencyCode)
+                }
+                .mapLatest {
+                    E.OnWalletStateUpdated(it)
+                }
+        }
+
+    private fun handleCreateAccount(breadBox: BreadBox): suspend (F.CreateAccount) -> Unit =
+        { breadBox.initializeWallet(it.currencyCode) }
 }
 
 private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {

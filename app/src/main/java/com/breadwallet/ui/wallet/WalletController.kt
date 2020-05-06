@@ -40,6 +40,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
+import com.breadwallet.breadbox.WalletState
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
@@ -51,6 +52,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.asSupportUrl
@@ -84,6 +86,7 @@ import org.kodein.di.erased.instance
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val DIALOG_CREATE_ACCOUNT = "create_account_dialog"
 private const val EXTRA_CURRENCY_CODE = "currency_code"
 private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
 private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, yyyy"
@@ -93,7 +96,8 @@ private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
 /**
  * TODO: Remaining work: Make review prompt a controller.
  */
-open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
+open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
+    AlertDialogController.Listener {
 
     constructor(currencyCode: String) : this(
         bundleOf(EXTRA_CURRENCY_CODE to currencyCode)
@@ -113,8 +117,29 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
             direct.instance(),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
+            },
+            { // Show create account dialog
+                val act = checkNotNull(activity)
+                val controller = AlertDialogController(
+                    dialogId = DIALOG_CREATE_ACCOUNT,
+                    title = act.getString(R.string.AccountCreation_title),
+                    message = act.getString(R.string.AccountCreation_body),
+                    positiveText = act.getString(R.string.AccountCreation_create),
+                    negativeText = act.getString(R.string.AccountCreation_notNow)
+                )
+                controller.targetController = this
+                router.pushController(RouterTransaction.with(controller))
             }
-        )
+        ) {
+            val act = checkNotNull(activity)
+            val controller = AlertDialogController(
+                title = act.getString(R.string.AccountCreation_title),
+                message = act.getString(R.string.AccountCreation_error),
+                positiveText = act.getString(R.string.AccessibilityLabels_close)
+            )
+            controller.targetController = this
+            router.pushController(RouterTransaction.with(controller))
+        }
 
     private var fastAdapter: GenericFastAdapter? = null
     private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
@@ -195,6 +220,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         return merge(
             send_button.clicks().map { E.OnSendClicked },
             receive_button.clicks().map { E.OnReceiveClicked },
+            buttonCreateAccount.clicks().map { E.OnCreateAccountClicked },
             search_icon.clicks().map { E.OnSearchClicked },
             back_icon.clicks().map { E.OnBackClicked },
             bindTxList(),
@@ -400,6 +426,26 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
                 syncAdapter.setNewList(emptyList())
             }
         }
+        ifChanged(M::state) {
+            when (state) {
+                WalletState.Initialized -> {
+                    layout_send_receive.isVisible = true
+                    layoutCreateAccount.isVisible = false
+                }
+                WalletState.Error, WalletState.Loading -> {
+                    layout_send_receive.isVisible = false
+                    layoutCreateAccount.isVisible = true
+                    buttonCreateAccount.isVisible = false
+                    progressCreateAccount.isVisible = true
+                }
+                WalletState.WaitingOnAction -> {
+                    layout_send_receive.isVisible = false
+                    layoutCreateAccount.isVisible = true
+                    buttonCreateAccount.isVisible = true
+                    progressCreateAccount.isVisible = false
+                }
+            }
+        }
 
         /* TODO: Make review prompt a controller
         // Show Review Prompt Dialog
@@ -483,6 +529,12 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         }
     }
 
+    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+        if (dialogId == DIALOG_CREATE_ACCOUNT) {
+            eventConsumer.accept(E.OnCreateAccountConfirmationClicked)
+        }
+    }
+
     /**
      * This token is no longer supported by the BRD app, notify the user.
      */
@@ -499,17 +551,25 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args) 
         val currentTheme = UiUtils.getThemeId(activity)
 
         if (currentTheme == R.style.AppTheme_Dark) {
-            send_button.setColor(resources.getColor(R.color.wallet_footer_button_color_dark))
-            receive_button.setColor(resources.getColor(R.color.wallet_footer_button_color_dark))
-            sell_button.setColor(resources.getColor(R.color.wallet_footer_button_color_dark))
+            val buttonColor = resources.getColor(R.color.wallet_footer_button_color_dark)
+            send_button.setColor(buttonColor)
+            receive_button.setColor(buttonColor)
+            sell_button.setColor(buttonColor)
+            buttonCreateAccount.setColor(buttonColor)
+            progressCreateAccount.indeterminateDrawable.setTint(buttonColor)
 
             if (endColor != null) {
-                bottom_toolbar_layout1.setBackgroundColor(Color.parseColor(endColor))
+                val color = Color.parseColor(endColor)
+                layoutCreateAccount.setBackgroundColor(color)
+                layout_send_receive.setBackgroundColor(color)
             }
         } else if (endColor != null) {
-            send_button.setColor(Color.parseColor(endColor))
-            receive_button.setColor(Color.parseColor(endColor))
-            sell_button.setColor(Color.parseColor(endColor))
+            Color.parseColor(endColor).let {
+                send_button.setColor(Color.parseColor(endColor))
+                receive_button.setColor(Color.parseColor(endColor))
+                sell_button.setColor(Color.parseColor(endColor))
+                buttonCreateAccount.setColor(Color.parseColor(endColor))
+            }
         }
 
         if (endColor != null) {

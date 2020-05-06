@@ -262,7 +262,7 @@
             android:textSize="@dimen/paragraph"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/destination_tag_value"
+            app:layout_constraintTop_toBottomOf="@+id/hedera_memo_value"
             tools:text="Processing time: This transaction is predicted to complete in 10-30 minutes"/>
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -306,6 +306,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/destination_tag_label"/>
 
+        <TextView
+            android:id="@+id/hedera_memo_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/light_gray"
+            android:textSize="@dimen/paragraph"
+            android:fontFamily="@font/circular_pro_book"
+            android:text="@string/Confirmation.hederaMemo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/destination_tag_value"/>
+
+        <TextView
+            android:id="@+id/hedera_memo_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="4dp"
+            tools:text="Hedera memo text is displayed here."
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/paragraph"
+            android:fontFamily="@font/circular_pro_book"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hedera_memo_label"/>
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/groupDestinationTag"
             android:visibility="gone"
@@ -313,6 +339,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="destination_tag_value,destination_tag_label"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupHederaMemo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:constraint_referenced_ids="hedera_memo_label,hedera_memo_value"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

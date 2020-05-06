@@ -29,6 +29,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
+import com.breadwallet.util.isHedera
 import com.breadwallet.util.isRipple
 import com.platform.HTTPServer
 import java.util.Locale
@@ -48,6 +49,7 @@ fun NavigationEffect.GoToFaq.asSupportUrl() = buildString {
                 || currencyCode.isEthereum()
                 || currencyCode.isBitcoinCash()
                 || currencyCode.isRipple()
+                || currencyCode.isHedera()
             ) {
                 currencyCode.toLowerCase(Locale.ROOT)
             } else {

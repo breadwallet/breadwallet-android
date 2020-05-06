@@ -52,8 +52,7 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
-import com.breadwallet.tools.threads.executor.BRExecutor
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRCompressor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -65,7 +64,6 @@ import org.json.JSONObject
 
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Date
 import java.util.HashMap
 import java.util.Locale
@@ -92,12 +90,12 @@ import org.kodein.di.erased.instance
 
 private const val UNAUTHED_HTTP_STATUS = 401
 
-class APIClient(private var context: Context, private val accountManager: BRAccountManager) {
+class APIClient(private var context: Context, private val userManager: BrdUserManager) {
 
     private var authKey: Key? = null
         get() {
             if (field == null) {
-                val key = accountManager.getAuthKey() ?: byteArrayOf()
+                val key = userManager.getAuthKey() ?: byteArrayOf()
                 if (key.isNotEmpty()) {
                     field = Key.createFromPrivateKeyString(key).orNull()
                 }
@@ -564,6 +562,7 @@ class APIClient(private var context: Context, private val accountManager: BRAcco
         private const val PROTO = "https"
         private const val HTTPS_SCHEME = "https://"
         private const val GMT = "GMT"
+
         @VisibleForTesting
         const val BREAD = "bread"
         private const val NETWORK_ERROR_CODE = 599
@@ -574,11 +573,14 @@ class APIClient(private var context: Context, private val accountManager: BRAcco
 
         // convenience getter for the API endpoint
         private val BASE_URL = HTTPS_SCHEME + BreadApp.host
+
         //Fee per kb url
         private const val FEE_PER_KB_URL = "/v1/fee-per-kb"
+
         //token path
         private const val TOKEN_PATH = "/token"
         private const val TOKEN = "token"
+
         //me path
         private const val ME = "/me"
 

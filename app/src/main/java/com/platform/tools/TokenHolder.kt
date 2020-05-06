@@ -30,7 +30,7 @@ import android.util.Log
 import com.breadwallet.app.BreadApp
 import com.breadwallet.logger.logError
 
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.platform.APIClient
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -43,15 +43,15 @@ object TokenHolder : KodeinAware {
     override val kodein by closestKodein {
         BreadApp.getBreadContext()
     }
-    private val accountManager: BRAccountManager by instance()
+    private val userManager: BrdUserManager by instance()
 
     @Synchronized
     fun retrieveToken(app: Context): String? {
         //If token is not present
         if (mApiToken.isNullOrBlank()) {
-            //Check BRAccountManager
-            val token = accountManager.getToken()
-            //Not in the BRAccountManager, update from server.
+            //Check BrdUserManager
+            val token = userManager.getToken()
+            //Not in the BrdUserManager, update from server.
             if (token.isNullOrEmpty()) {
                 fetchNewToken(app)
             } else {
@@ -76,7 +76,7 @@ object TokenHolder : KodeinAware {
         mApiToken = APIClient.getInstance(app).token
         logError("fetchNewToken: $mApiToken")
         if (!mApiToken.isNullOrEmpty()) {
-            accountManager.putToken(mApiToken!!)
+            userManager.putToken(mApiToken!!)
         }
     }
 

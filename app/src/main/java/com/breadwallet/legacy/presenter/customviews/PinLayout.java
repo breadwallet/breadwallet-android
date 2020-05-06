@@ -14,9 +14,9 @@ import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.tools.security.AccountState;
-import com.breadwallet.tools.security.BRAccountManager;
-import com.breadwallet.tools.security.BRAccountManagerKt;
+import com.breadwallet.tools.security.BrdUserState;
+import com.breadwallet.tools.security.BrdUserManager;
+import com.breadwallet.tools.security.BrdUserManagerKt;
 import com.breadwallet.tools.util.EventUtils;
 
 import java.util.ArrayList;
@@ -59,11 +59,11 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     private BRKeyboard mKeyboard;
     private int mBaseResourceID;
     private StringBuilder mPinStringBuilder = new StringBuilder();
-    private int mPinLimit = BRAccountManagerKt.PIN_LENGTH;
+    private int mPinLimit = BrdUserManagerKt.PIN_LENGTH;
     private PinLayoutListener mOnPinInsertedListener;
     private boolean mIsPinUpdating;
     private int mPinDotBackground;
-    private BRAccountManager mAccountManager = BreadApp.getKodeinInstance().Instance(TT(BRAccountManager.class), null);
+    private BrdUserManager mUserManager = BreadApp.getKodeinInstance().Instance(TT(BrdUserManager.class), null);
 
     public PinLayout(Context context) {
         super(context);
@@ -100,7 +100,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         mPinDigitViewsAll.addAll(mPinDigitViews);
         setPinDigitViewResourceId(mBaseResourceID);
 
-        useNewDigitLimit(!mAccountManager.pinCodeNeedsUpgrade());
+        useNewDigitLimit(!mUserManager.pinCodeNeedsUpgrade());
 
         TypedValue pinDotColorValue = new TypedValue();
         getContext().getTheme().resolveAttribute(R.attr.pin_dot_filled_background, pinDotColorValue, true);
@@ -112,7 +112,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         View first = mPinDigitViewsAll.get(FIRST_INDEX);
         View last = mPinDigitViewsAll.get(SIXTH_INDEX);
         if (useNewLimit) {
-            mPinLimit = BRAccountManagerKt.PIN_LENGTH;
+            mPinLimit = BrdUserManagerKt.PIN_LENGTH;
             first.setVisibility(View.VISIBLE);
             last.setVisibility(View.VISIBLE);
             if (!mPinDigitViews.contains(first)) {
@@ -122,7 +122,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                 mPinDigitViews.add(last);
             }
         } else {
-            mPinLimit = BRAccountManagerKt.LEGACY_PIN_LENGTH;
+            mPinLimit = BrdUserManagerKt.LEGACY_PIN_LENGTH;
             first.setVisibility(View.GONE);
             last.setVisibility(View.GONE);
             if (mPinDigitViews.contains(first)) {
@@ -150,7 +150,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                 @Override
                 public void run() {
                     String pin = mPinStringBuilder.toString();
-                    if (mAccountManager.hasPinCode() && mAccountManager.verifyPinCode(pin)) {
+                    if (mUserManager.hasPinCode() && mUserManager.verifyPinCode(pin)) {
                         mOnPinInsertedListener.onPinInserted(pin, true);
                         useNewDigitLimit(true);
                     } else {
@@ -222,7 +222,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     }
 
     private void authFailed() {
-        if (mAccountManager.getAccountState() instanceof AccountState.Disabled) {
+        if (mUserManager.getState() instanceof BrdUserState.Disabled) {
             EventUtils.pushEvent(EventUtils.EVENT_LOGIN_LOCKED);
             mOnPinInsertedListener.onPinLocked();
         }

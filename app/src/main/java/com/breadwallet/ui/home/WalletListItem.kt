@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.wallet_list_item.*
 import java.io.File
 import java.math.BigDecimal
 import java.text.NumberFormat
+import java.util.Locale
 
 class WalletListItem(
     wallet: Wallet
@@ -67,7 +68,7 @@ class WalletListItem(
             }
 
             val isSyncing = wallet.isSyncing
-            val isInitialized = wallet.isInitialized
+            val isLoading = wallet.state == Wallet.State.LOADING
             // Set wallet fields
             wallet_name.text = wallet.currencyName
             wallet_trade_price.text = exchangeRate
@@ -81,8 +82,8 @@ class WalletListItem(
                 )
             )
             wallet_balance_currency.text = cryptoBalance
-            wallet_balance_currency.isGone = isSyncing || !isInitialized
-            sync_progress.isVisible = isSyncing || !isInitialized
+            wallet_balance_currency.isGone = isSyncing || isLoading
+            sync_progress.isVisible = isSyncing || isLoading
             syncing_label.isVisible = isSyncing
             if (isSyncing) {
                 val syncProgress = wallet.syncProgress
@@ -105,7 +106,8 @@ class WalletListItem(
 
             // Get icon for currency
             val tokenIconPath =
-                TokenUtil.getTokenIconPath(context, currencyCode.toUpperCase(), false)
+                TokenUtil.getTokenIconPath(
+                    context, currencyCode.toUpperCase(Locale.ROOT), false)
 
             if (!Utils.isNullOrEmpty(tokenIconPath)) {
                 val iconFile = File(tokenIconPath)
@@ -116,7 +118,7 @@ class WalletListItem(
                 // If no icon is present, then use the capital first letter of the token currency code instead.
                 icon_letter.visibility = View.VISIBLE
                 currency_icon_white.visibility = View.GONE
-                icon_letter.text = currencyCode.substring(0, 1).toUpperCase()
+                icon_letter.text = currencyCode.substring(0, 1).toUpperCase(Locale.ROOT)
             }
 
             val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, context)

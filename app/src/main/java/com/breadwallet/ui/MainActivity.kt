@@ -36,12 +36,14 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.legacy.view.dialog.DialogActivity
+import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.AccountState
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserState
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.auth.AuthenticationController
@@ -59,6 +61,7 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
@@ -67,6 +70,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.erased.instance
@@ -91,7 +95,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
 
-    private val accountManager by instance<BRAccountManager>()
+    private val userManager by instance<BrdUserManager>()
 
     private lateinit var router: Router
     private var trackingListener: ControllerTrackingListener? = null
@@ -128,43 +132,53 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             return
         }
 
-        accountManager.lockAccount()
-
-        // Allow launching with a phrase to recover automatically
-        val hasWallet = accountManager.isAccountInitialized()
-        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !hasWallet) {
-            val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
-            if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
-                val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
-                router.setRoot(RouterTransaction.with(controller))
-                return
+        BreadApp.applicationScope.launch(Dispatchers.Main) {
+            if (userManager.isAccountInvalidated()) {
+                DialogActivity.startDialogActivity(
+                    this@MainActivity,
+                    DialogType.KEY_STORE_INVALID_WIPE
+                )
+                return@launch
             }
-        }
 
-        // The app is launched, no screen to be restored
-        if (!router.hasRootController()) {
-            val rootController = when {
-                accountManager.isMigrationRequired() -> MigrateController()
-                else -> when (accountManager.getAccountState()) {
-                    is AccountState.Disabled -> DisabledController()
-                    is AccountState.Uninitialized -> IntroController()
-                    else -> if (accountManager.hasPinCode()) {
-                        val intentUrl = processIntentData(intent)
-                        LoginController(intentUrl)
-                    } else {
-                        InputPinController(OnCompleteAction.GO_HOME)
-                    }
+            userManager.lock()
+
+            // Allow launching with a phrase to recover automatically
+            val hasWallet = userManager.isInitialized()
+            if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !hasWallet) {
+                val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
+                if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
+                    val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
+                    router.setRoot(RouterTransaction.with(controller))
+                    return@launch
                 }
             }
-            router.setRoot(
-                RouterTransaction.with(rootController)
-                    .popChangeHandler(FadeChangeHandler())
-                    .pushChangeHandler(FadeChangeHandler())
-            )
-        }
 
-        if (BuildConfig.DEBUG) {
-            Utils.printPhoneSpecs(this)
+            // The app is launched, no screen to be restored
+            if (!router.hasRootController()) {
+                val rootController = when {
+                    userManager.isMigrationRequired() -> MigrateController()
+                    else -> when (userManager.getState()) {
+                        is BrdUserState.Disabled -> DisabledController()
+                        is BrdUserState.Uninitialized -> IntroController()
+                        else -> if (userManager.hasPinCode()) {
+                            val intentUrl = processIntentData(intent)
+                            LoginController(intentUrl)
+                        } else {
+                            InputPinController(OnCompleteAction.GO_HOME)
+                        }
+                    }
+                }
+                router.setRoot(
+                    RouterTransaction.with(rootController)
+                        .popChangeHandler(FadeChangeHandler())
+                        .pushChangeHandler(FadeChangeHandler())
+                )
+            }
+
+            if (BuildConfig.DEBUG) {
+                Utils.printPhoneSpecs(this@MainActivity)
+            }
         }
     }
 
@@ -180,8 +194,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         super.onResume()
         BreadApp.setBreadContext(this)
 
-        accountManager.accountStateChanges()
-            .map { processAccountState(it) }
+        userManager.stateChanges()
+            .map { processUserState(it) }
             .flowOn(Main)
             .launchIn(resumedScope)
 
@@ -209,7 +223,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
-        accountManager.onActivityResult(requestCode, resultCode)
+        userManager.onActivityResult(requestCode, resultCode)
     }
 
     override fun onBackPressed() {
@@ -228,7 +242,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         intent ?: return
 
         val data = processIntentData(intent) ?: ""
-        if (data.isNotBlank() && accountManager.isAccountInitialized()) {
+        if (data.isNotBlank() && userManager.isInitialized()) {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
@@ -252,11 +266,11 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         } else data
     }
 
-    private fun processAccountState(accountState: AccountState) {
-        if (accountManager.isAccountInitialized() && router.hasRootController()) {
-            when (accountState) {
-                AccountState.Locked -> lockApp()
-                is AccountState.Disabled -> disableApp()
+    private fun processUserState(userState: BrdUserState) {
+        if (userManager.isInitialized() && router.hasRootController()) {
+            when (userState) {
+                BrdUserState.Locked -> lockApp()
+                is BrdUserState.Disabled -> disableApp()
             }
         }
     }
@@ -292,7 +306,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (isBackstackDisabled() || isBackstackLocked()) return
 
         val controller = when {
-            accountManager.hasPinCode() ->
+            userManager.hasPinCode() ->
                 LoginController(showHome = router.backstackSize == 0)
             else -> InputPinController(
                 onComplete = OnCompleteAction.GO_HOME,

@@ -187,7 +187,7 @@
                     android:id="@+id/transaction_list_coordinator_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@+id/bottom_toolbar_layout1"
+                    android:layout_above="@+id/layout_send_receive"
                     android:layout_below="@id/list_headers">
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -204,16 +204,54 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <LinearLayout
-            android:id="@+id/bottom_toolbar_layout1"
+        <FrameLayout
+            android:id="@+id/layoutCreateAccount"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
+            android:background="@color/extra_light_blue_background">
+
+            <com.breadwallet.legacy.presenter.customviews.BRButton
+                android:id="@+id/buttonCreateAccount"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/bread_margin"
+                android:layout_marginEnd="@dimen/bread_margin"
+                android:layout_gravity="center"
+                android:background="@color/currency_buttons_color"
+                android:fontFamily="@font/circular_pro_bold"
+                android:text="@string/AccountCreation.create"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_text_size"
+                app:buttonType="4"
+                app:hasShadow="false"
+                android:visibility="visible"
+                app:isBreadButton="true" />
+
+            <ProgressBar
+                android:id="@+id/progressCreateAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_send_receive"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
             android:background="@color/extra_light_blue_background"
+            android:layout_gravity="bottom"
             android:elevation="0dp"
             android:orientation="horizontal"
-            android:weightSum="3">
+            android:weightSum="3"
+            tools:visibility="visible"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <com.breadwallet.legacy.presenter.customviews.BRButton
@@ -227,10 +265,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1.5"
                 android:background="@color/currency_buttons_color"
+                android:fontFamily="@font/circular_pro_bold"
                 android:text="@string/Button.send"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
-                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />
@@ -246,10 +284,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1.5"
                 android:background="@color/currency_buttons_color"
+                android:fontFamily="@font/circular_pro_bold"
                 android:text="@string/Button.receive"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
-                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />
@@ -264,12 +302,12 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="0"
                 android:background="@color/currency_buttons_color"
+                android:fontFamily="@font/circular_pro_bold"
                 android:paddingTop="3dp"
                 android:text="Sell"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
                 android:visibility="gone"
-                android:fontFamily="@font/circular_pro_bold"
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true" />

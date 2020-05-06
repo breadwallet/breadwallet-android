@@ -28,7 +28,6 @@ import android.content.Context
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.TokenUtil
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -40,7 +39,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
-import kotlinx.coroutines.invoke
 import java.util.Locale
 
 /** Delay between each data request. */
@@ -51,11 +49,8 @@ fun Flow<List<String>>.updateRatesForCurrencies(
     context: Context
 ): Flow<Unit> =
     onStart {
-        // Read the initial token list from disk
-        IO { TokenUtil.getTokenItems(context) }
-        // Initial sync of btc-fiat rates
-        BRApiManager.getInstance()
-            .updateFiatRates(context)
+        // Initial sync of rate data
+        BRApiManager.getInstance().updateRatesSync(context)
         emitAll(callbackFlow {
             // Fetch an updated token list from the server
             TokenUtil.fetchTokensFromServer(context)
@@ -65,15 +60,8 @@ fun Flow<List<String>>.updateRatesForCurrencies(
             close()
         })
     }
+        .map { codes -> codes.map { it.toUpperCase(Locale.ROOT) } }
         .filter { it.isNotEmpty() }
-        // Currency APIs expect uppercase currency codes
-        .map { currencyIds ->
-            currencyIds.mapNotNull { id ->
-                TokenUtil.getTokenItemForCurrencyId(id)
-                    ?.symbol
-                    ?.toUpperCase(Locale.ROOT)
-            }
-        }
         .distinctUntilChanged { old, new ->
             old.size == new.size && old.containsAll(new)
         }
@@ -93,8 +81,8 @@ fun Flow<List<String>>.updateRatesForCurrencies(
             logDebug("Updating currency and rate data", codes)
             BRApiManager.getInstance().apply {
                 updateFiatRates(context)
-                IO { updateCryptoData(context, codes) }
-                IO { fetchPriceChanges(context, codes) }
+                updateCryptoData(context, codes)
+                fetchPriceChanges(context, codes)
             }
             Unit
         }
