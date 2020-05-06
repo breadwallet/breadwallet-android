@@ -315,7 +315,10 @@ class WebController(
             web_view.goBack()
             true
         }
-        else -> super.handleBack()
+        else -> {
+            LinkPlugin.hasBrowser = false
+            super.handleBack()
+        }
     }
 
     override fun onDestroyView(view: View) {
