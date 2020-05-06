@@ -26,12 +26,9 @@ package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.ContextWrapper
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmListResponse
@@ -44,8 +41,6 @@ import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.LatLngBounds.Builder
 import com.platform.PlatformTransactionBus
@@ -63,22 +58,15 @@ class MapController(
 
     override val layoutId = R.layout.fragment_map
 
-    private lateinit var map:GoogleMap
-
-    @SuppressLint("ReturnCount")
-    private fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
-        while (context is ContextWrapper) {
-            if (context is AppCompatActivity) return context
-            return context.baseContext as AppCompatActivity
-        }
-        return null //we failed miserably
-    }
+    private var map:GoogleMap? = null
+    private var atmList: List<AtmMachine> = ArrayList()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
         prepareMap(view.context)
+
         if (!WacSDK.isSessionCreated()) {
             WacSDK.createSession(object: Wac.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
@@ -99,18 +87,11 @@ class MapController(
     private fun fetchAtms(){
         WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
             override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
-                val builder = Builder()
-                response.body()!!.data.items.forEach { atm ->
-                    val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
-
-                    val marker = map.addMarker(markerOpt)
-                    marker.tag = atm
-                    builder.include(markerOpt.position)
-                    val bounds: LatLngBounds = builder.build()
-
-                    val padding = 0 // offset from edges of the map in pixels
-                    val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
-                    map.animateCamera(cameraUpdate)
+                map?.let {
+                    response.body()?.let { response ->
+                        atmList = response.data.items
+                        addAtmMarkers(it, atmList)
+                    }
                 }
             }
 
@@ -119,33 +100,47 @@ class MapController(
             }
         })
     }
+
+    private fun addAtmMarkers(map:GoogleMap, list:List<AtmMachine>) {
+        val builder = Builder()
+        list.forEach { atm ->
+            val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
+
+            val marker = map.addMarker(markerOpt)
+            marker.tag = atm
+            builder.include(markerOpt.position)
+            val bounds: LatLngBounds = builder.build()
+
+            val padding = 0 // offset from edges of the map in pixels
+            val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+            map.animateCamera(cameraUpdate)
+        }
+    }
+
     private fun prepareMap(context : Context) {
-        val fragmentManager = getActivityFromContext(context)!!.supportFragmentManager
-        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        fragment.getMapAsync(object: OnMapReadyCallback {
+        AtmMapHelper.addMapFragment(context, R.id.mapFragment, "ATMS_MAP")
+            .getMapAsync { googleMap ->
+                googleMap?.let {
+                    map = it
 
-            /**
-             * This is where we can add markers or lines, add listeners or move the camera. In this case,
-             * we just move the camera to Sydney and add a marker in Sydney.
-             */
-            override fun onMapReady(googleMap: GoogleMap?) {
-                googleMap ?: return
-                map = googleMap
+                    it.uiSettings.isMapToolbarEnabled = false
+                    it.uiSettings.isMyLocationButtonEnabled = true
+                    it.uiSettings.isZoomControlsEnabled = true
+                    it.uiSettings.isZoomGesturesEnabled = true
 
-                map.uiSettings.isMapToolbarEnabled = false
-                map.uiSettings.isMyLocationButtonEnabled = true
-                map.uiSettings.isZoomControlsEnabled = true
-                map.uiSettings.isZoomGesturesEnabled = true
+                    it.setOnMarkerClickListener {
+                        false
+                    }
 
-                map.setOnMarkerClickListener {
-                    false
-                }
+                    it.setOnInfoWindowClickListener { atm ->
+                        moveToVerification(atm.tag as AtmMachine)
+                    }
 
-                map.setOnInfoWindowClickListener { atm ->
-                    moveToVerification(atm.tag as AtmMachine)
+                    if (atmList.isNotEmpty()) {
+                       addAtmMarkers(it, atmList)
+                    }
                 }
             }
-        })
     }
 
     private fun moveToVerification(atm:AtmMachine) {

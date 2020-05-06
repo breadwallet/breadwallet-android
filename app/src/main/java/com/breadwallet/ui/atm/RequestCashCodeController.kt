@@ -26,19 +26,16 @@ package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.ContextWrapper
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmMachine
 import cash.just.wac.model.CashCodeResponse
 import cash.just.wac.model.SendVerificationCodeResponse
-import cash.just.wac.model.WacErrorResponse
+import cash.just.wac.model.parseError
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
@@ -50,8 +47,6 @@ import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.common.reflect.TypeToken
-import com.google.gson.Gson
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.fragment_request_cash_code.*
 import kotlinx.coroutines.Dispatchers
@@ -186,19 +181,16 @@ class RequestCashCodeController(
                             confirmGroup.visibility = View.VISIBLE
 
                         } else {
-                           //TODO move this logic to the WAC library
-                           val errorBody = response.errorBody()
-                           errorBody?.let {
-                               val type = object : TypeToken<WacErrorResponse>() {}.type
-                               val error : WacErrorResponse = Gson().fromJson(it.charStream(), type)
-                               error.error?.server_message?.let { message ->
-                                   Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
-                                   return
-                               }
-                           }
+
+                            val errorBody = response.errorBody()
+                            errorBody?.let {
+                                it.parseError().error.server_message.let { message ->
+                                    Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
+                                    return
+                                }
+                            }
                             Toast.makeText(view.context, "error " + response.code(), Toast.LENGTH_SHORT).show()
                         }
-
                     }
 
                     override fun onFailure(
@@ -211,17 +203,9 @@ class RequestCashCodeController(
             }
     }
 
-    @SuppressLint("ReturnCount")
-    private fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
-        while (context is ContextWrapper) {
-            if (context is AppCompatActivity) return context
-            return context.baseContext as AppCompatActivity
-        }
-        return null //we failed miserably
-    }
 
     private fun prepareMap(context : Context, atm:AtmMachine) {
-        val fragment = hideMap(context)
+        val fragment = createAndHideMap(context)
         fragment.getMapAsync(object: OnMapReadyCallback {
             override fun onMapReady(googleMap: GoogleMap?) {
                 googleMap ?: return
@@ -240,20 +224,19 @@ class RequestCashCodeController(
     }
 
 
-    private fun showMap(context:Context): SupportMapFragment {
-        val fragmentManager = getActivityFromContext(context)!!.supportFragmentManager
-        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.smallMapFragment) as SupportMapFragment
-
-        fragmentManager.beginTransaction()
-            .show(fragment)
-            .commit()
-
-        return fragment
+    private fun showMap(context:Context) {
+        val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
+        val fragment = fragmentManager.findFragmentByTag("SMALL_MAP")
+        fragment?.let{
+            fragmentManager.beginTransaction()
+                .show(fragment)
+                .commit()
+        }
     }
 
-    private fun hideMap(context:Context): SupportMapFragment {
-        val fragmentManager = getActivityFromContext(context)!!.supportFragmentManager
-        val fragment : SupportMapFragment = fragmentManager.findFragmentById(R.id.smallMapFragment) as SupportMapFragment
+    private fun createAndHideMap(context:Context): SupportMapFragment {
+        val fragment = AtmMapHelper.addMapFragment(context, R.id.smallMapFragment, "SMALL_MAP")
+        val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
         fragmentManager.beginTransaction()
             .hide(fragment)
             .commit()
