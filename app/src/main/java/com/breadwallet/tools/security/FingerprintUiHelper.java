@@ -44,10 +44,12 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     private Runnable mResetErrorTextRunnable = new Runnable() {
         @Override
         public void run() {
-            mErrorTextView.setTextColor(
-                    mErrorTextView.getResources().getColor(R.color.hint_color, null));
-            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
-            mIcon.setImageResource(R.drawable.ic_fp_40px);
+            if (!mSelfCancelled) {
+                mErrorTextView.setTextColor(
+                        mErrorTextView.getResources().getColor(R.color.hint_color, null));
+                mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
+                mIcon.setImageResource(R.drawable.ic_fp_40px);
+            }
         }
     };
 
@@ -111,7 +113,9 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
             mIcon.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onError();
+                    if (!mSelfCancelled) {
+                        mCallback.onError();
+                    }
                 }
             }, ERROR_TIMEOUT_MILLIS);
         }
@@ -137,7 +141,9 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mIcon.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mCallback.onAuthenticated();
+                if (!mSelfCancelled) {
+                    mCallback.onAuthenticated();
+                }
             }
         }, SUCCESS_DELAY_MILLIS);
     }

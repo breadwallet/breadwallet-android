@@ -106,7 +106,6 @@ import org.kodein.di.erased.on
 import org.kodein.di.erased.singleton
 import java.io.File
 import java.io.UnsupportedEncodingException
-import java.util.Date
 import java.util.Locale
 import java.util.regex.Pattern
 
@@ -119,10 +118,6 @@ class BreadApp : Application(), KodeinAware {
         private val TAG = BreadApp::class.java.name
 
         init {
-            // Avoid an Android 8 platform bug when formatting date strings.
-            // See https://issuetracker.google.com/issues/110848122#comment17
-            runCatching { Date().toString() }
-
             CryptoApi.initialize(CryptoApiProvider.getInstance())
         }
 
