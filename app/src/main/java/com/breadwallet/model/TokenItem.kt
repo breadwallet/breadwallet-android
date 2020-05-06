@@ -30,9 +30,10 @@ data class TokenItem(
     val name: String,
     var image: String?,
     val isSupported: Boolean,
+    val currencyId: String,
+    val type: String = "",
     val startColor: String? = null,
     val endColor: String? = null,
-    val currencyId: String? = null,
     val cryptocompareAlias: String? = null
 ) {
 

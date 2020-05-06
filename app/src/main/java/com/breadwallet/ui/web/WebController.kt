@@ -188,6 +188,7 @@ class WebController(
         web_view.settings.apply {
             domStorageEnabled = true
             javaScriptEnabled = true
+            mediaPlaybackRequiresUserGesture = false
         }
 
         val url: String = arg(ARG_URL)
@@ -311,7 +312,7 @@ class WebController(
     }
 
     override fun handleBack() = when {
-        web_view.canGoBack() -> {
+        web_view?.canGoBack() == true -> {
             web_view.goBack()
             true
         }

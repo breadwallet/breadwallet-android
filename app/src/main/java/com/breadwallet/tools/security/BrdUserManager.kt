@@ -97,6 +97,7 @@ interface BrdUserManager {
     fun pinCodeNeedsUpgrade(): Boolean
 
     fun lock()
+    fun unlock()
 
     fun getToken(): String?
     fun putToken(token: String)
@@ -340,6 +341,12 @@ class CryptoUserManager(
 
     override fun lock() {
         if (!locked.getAndSet(true)) {
+            stateChangeChannel.offer(Unit)
+        }
+    }
+
+    override fun unlock() {
+        if (locked.getAndSet(false)) {
             stateChangeChannel.offer(Unit)
         }
     }

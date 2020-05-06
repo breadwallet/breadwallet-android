@@ -75,7 +75,6 @@
             android:id="@+id/toolbar_bottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
             android:background="@color/web_view_toolbar"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -111,7 +111,8 @@ class SelectAlertCryptoViewModel(
                 symbol = wallet.currency.code.toUpperCase(Locale.ROOT),
                 name = wallet.currency.name,
                 image = null,
-                isSupported = true
+                isSupported = true,
+                currencyId = wallet.currency.uids
             )
         }
 }
