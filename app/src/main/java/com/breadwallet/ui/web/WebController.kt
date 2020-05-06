@@ -188,6 +188,7 @@ class WebController(
         web_view.settings.apply {
             domStorageEnabled = true
             javaScriptEnabled = true
+            mediaPlaybackRequiresUserGesture = false
         }
 
         val url: String = arg(ARG_URL)
