@@ -1,45 +1,29 @@
-/**
- * BreadWallet
- *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 11/6/19.
- * Copyright (c) 2019 breadwallet LLC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmMachine
 import cash.just.wac.model.CashCodeResponse
+import cash.just.wac.model.CashCodeStatusResponse
+import cash.just.wac.model.CashStatus
 import cash.just.wac.model.SendVerificationCodeResponse
 import cash.just.wac.model.parseError
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
+import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
+import com.breadwallet.ui.send.SendSheetController
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -56,6 +40,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.BigDecimal
 
 @Suppress("TooManyFunctions")
 class RequestCashCodeController(
@@ -68,6 +53,7 @@ class RequestCashCodeController(
 
     companion object {
         private const val atmMachine = "RequestCashCodeController.Atm"
+        private const val MAP_FRAGMENT_TAG = "MAP_FRAGMENT_TAG"
     }
 
     override val layoutId = R.layout.fragment_request_cash_code
@@ -96,18 +82,7 @@ class RequestCashCodeController(
         prepareMap(view.context, atm)
 
         atmTitle.text = atm.addressDesc
-        amount.helperText = "Min ${atm.min}$ max ${atm.max}$"
-        atmTitle.setOnClickListener {
-            WacSDK.createSession(object: Wac.SessionCallback {
-                override fun onSessionCreated(sessionKey: String) {
-                    Toast.makeText(view.context, "session created", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onError(errorMessage: String?) {
-                    Toast.makeText(view.context, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
+        amount.helperText = "Min ${atm.min}$ max ${atm.max}$, multiple of ${atm.bills.toFloat().toInt()}$ bills"
 
         getAtmCode.setOnClickListener {
             if (!WacSDK.isSessionCreated()) {
@@ -125,35 +100,14 @@ class RequestCashCodeController(
                 return@setOnClickListener
             }
 
-            WacSDK.sendVerificationCode(
-                getName()!!,
-                getSurname()!!,
-                getEmail(),
-                getPhone()
-            ).enqueue(object: Callback<SendVerificationCodeResponse> {
-                override fun onResponse(
-                    call: Call<SendVerificationCodeResponse>,
-                    response: Response<SendVerificationCodeResponse>
-                ) {
-                    if (response.code() == 200) {
-                        Toast.makeText(view.context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
-                        if (getEmail() != null) {
-                            confirmationMessage.text = "We've sent a confirmation token to your email."
-                        } else {
-                            confirmationMessage.text = "We've sent a confirmation token to your phone by SMS."
-                        }
-                        verificationGroup.visibility = View.GONE
-                        confirmGroup.visibility = View.VISIBLE
+            val amount = getAmount()!!.toFloat().toInt()
+            val bills = atm.bills.toFloat().toInt()
+            if (amount.rem(bills) != 0) {
+                Toast.makeText(view.context, "Amount must be multiple of ${atm.bills}$", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                    } else {
-                        Toast.makeText(view.context, "error" + response.code(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<SendVerificationCodeResponse>, t: Throwable) {
-                    Toast.makeText(view.context, t.message, Toast.LENGTH_SHORT).show()
-                }
-            })
+            requestVerificationCode(view.context)
         }
 
         confirmAction.setOnClickListener {
@@ -161,49 +115,119 @@ class RequestCashCodeController(
                 Toast.makeText(view.context, "invalid session", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             if (getToken().isNullOrEmpty()) {
                 Toast.makeText(view.context, "Token is empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            WacSDK.createCashCode(atm.atmId, getAmount()!!, getToken()!!)
-                .enqueue(object: Callback<CashCodeResponse> {
-                    override fun onResponse(
-                        call: Call<CashCodeResponse>,
-                        response: Response<CashCodeResponse>
-                    ) {
-
-                        if (response.code() == 200) {
-                            val code = response.body()!!.data.items[0].secureCode
-                            Toast.makeText(view.context, "code created", Toast.LENGTH_SHORT).show()
-                            AtmSharedPreferencesManager.setWithdrawalRequest(view.context, code)
-                            verificationGroup.visibility = View.GONE
-                            confirmGroup.visibility = View.VISIBLE
-
-                        } else {
-
-                            val errorBody = response.errorBody()
-                            errorBody?.let {
-                                it.parseError().error.server_message.let { message ->
-                                    Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
-                                    return
-                                }
-                            }
-                            Toast.makeText(view.context, "error " + response.code(), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<CashCodeResponse>,
-                        t: Throwable
-                    ) {
-                        Toast.makeText(view.context, t.message, Toast.LENGTH_SHORT).show()
-                    }
-                })
-            }
+            hideKeyboard(view.context, token.editText!!)
+            createCashCode(view.context, atm)
+        }
     }
 
+    private fun requestVerificationCode(context: Context){
+        WacSDK.sendVerificationCode(
+            getName()!!,
+            getSurname()!!,
+            getPhone(),
+            getEmail()
+        ).enqueue(object: Callback<SendVerificationCodeResponse> {
+            override fun onResponse(
+                call: Call<SendVerificationCodeResponse>,
+                response: Response<SendVerificationCodeResponse>
+            ) {
+                if (response.code() == 200) {
+                    Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
+                    if (getEmail() != null) {
+                        confirmationMessage.text = "We've sent a confirmation token to your email."
+                    } else {
+                        confirmationMessage.text = "We've sent a confirmation token to your phone by SMS."
+                    }
+                    verificationGroup.visibility = View.GONE
+                    confirmGroup.visibility = View.VISIBLE
 
+                } else {
+                    Toast.makeText(context, "error" + response.code(), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<SendVerificationCodeResponse>, t: Throwable) {
+                Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun hideKeyboard(context: Context, editText: EditText){
+        val imm: InputMethodManager? =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.hideSoftInputFromWindow(editText.windowToken, 0)
+    }
+
+    private fun createCashCode(context: Context, atm: AtmMachine){
+
+        WacSDK.createCashCode(atm.atmId, getAmount()!!, getToken()!!)
+            .enqueue(object: Callback<CashCodeResponse> {
+                override fun onResponse(
+                    call: Call<CashCodeResponse>,
+                    response: Response<CashCodeResponse>
+                ) {
+                    if (response.code() == 200) {
+                        val code = response.body()!!.data.items[0].secureCode
+                        proceedWithCashCode(context, code)
+                    } else {
+
+                        val errorBody = response.errorBody()
+                        errorBody?.let {
+                            it.parseError().error.server_message.let { message ->
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                return
+                            }
+                        }
+                        Toast.makeText(context, "error " + response.code(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<CashCodeResponse>,
+                    t: Throwable
+                ) {
+                    Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun proceedWithCashCode(context: Context, code:String) {
+        AtmSharedPreferencesManager.setWithdrawalRequest(context, code)
+
+        WacSDK.checkCashCodeStatus(code).enqueue(object: Callback<CashCodeStatusResponse> {
+            override fun onResponse(
+                call: Call<CashCodeStatusResponse>,
+                response: Response<CashCodeStatusResponse>
+            ) {
+                val cashStatus = response.body()!!.data!!.items[0]
+                showDialog(context, code, cashStatus)
+            }
+
+            override fun onFailure(call: Call<CashCodeStatusResponse>, t: Throwable) {
+                Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun showDialog(context:Context, code:String, cashStatus: CashStatus){
+        BRDialog.showCustomDialog(
+            context, "Withdrawal requested",
+            "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
+            "Send", "Details", { dialog ->
+                goToSend(cashStatus.btc_amount, cashStatus.address)
+                dialog.dismissWithAnimation()
+            },
+            { dialog ->
+                goToDetails(context, code)
+                dialog.dismissWithAnimation()
+            }, null)
+    }
     private fun prepareMap(context : Context, atm:AtmMachine) {
         val fragment = createAndHideMap(context)
         fragment.getMapAsync(object: OnMapReadyCallback {
@@ -223,10 +247,24 @@ class RequestCashCodeController(
         })
     }
 
+    private fun goToDetails(context:Context, code:String){
+        Toast.makeText(context, "goToDetails $code", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun goToSend(btc:String, address:String) {
+        val builder = CryptoRequest.Builder()
+        builder.address = address
+        builder.amount = btc.toFloat().toBigDecimal()
+        builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+        val request = builder.build()
+        router.pushController(RouterTransaction.with(SendSheetController(
+            request //make it default
+        )))
+    }
 
     private fun showMap(context:Context) {
         val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
-        val fragment = fragmentManager.findFragmentByTag("SMALL_MAP")
+        val fragment = fragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG)
         fragment?.let{
             fragmentManager.beginTransaction()
                 .show(fragment)
@@ -235,7 +273,7 @@ class RequestCashCodeController(
     }
 
     private fun createAndHideMap(context:Context): SupportMapFragment {
-        val fragment = AtmMapHelper.addMapFragment(context, R.id.smallMapFragment, "SMALL_MAP")
+        val fragment = AtmMapHelper.addMapFragment(context, R.id.smallMapFragment, MAP_FRAGMENT_TAG)
         val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
         fragmentManager.beginTransaction()
             .hide(fragment)

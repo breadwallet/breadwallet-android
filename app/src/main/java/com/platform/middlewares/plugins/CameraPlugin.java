@@ -130,7 +130,7 @@ public class CameraPlugin implements Plugin {
                                     public void onClick(BRDialogView brDialogView) {
                                         brDialogView.dismiss();
                                     }
-                                }, null, null, 0);
+                                }, null, null);
                     } else {
                         // No explanation needed, we can request the permission.
                         ActivityCompat.requestPermissions(((Activity) app),
