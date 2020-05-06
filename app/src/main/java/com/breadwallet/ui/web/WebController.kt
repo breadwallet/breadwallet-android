@@ -312,7 +312,7 @@ class WebController(
     }
 
     override fun handleBack() = when {
-        web_view.canGoBack() -> {
+        web_view?.canGoBack() == true -> {
             web_view.goBack()
             true
         }
