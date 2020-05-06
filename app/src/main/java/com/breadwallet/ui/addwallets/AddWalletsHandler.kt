@@ -81,15 +81,19 @@ object AddWalletsHandler {
                     }
                 }
                 .mapLatest { (trackedWallets, query) ->
-                    // val trackedTokenItems = trackedWallets.toTokenItems()
-                    val availableWallets = breadBox.wallets().first()
+                    val system = breadBox.system().first()
+                    val networks = system.networks
+                    val availableWallets = system.wallets
                     TokenUtil.getTokenItems(context)
                         .filter { token ->
-                            (token.isSupported || trackedWallets.any { it == token.currencyId })
+                            val hasNetwork = networks.any { it.containsCurrency(token.currencyId) }
+                            val isErc20 = token.type == "erc20"
+                            val isAlreadyAdded = trackedWallets.any { it == token.currencyId }
+                            isAlreadyAdded || (token.isSupported && (isErc20 || hasNetwork))
                         }
                         .applyFilter(query)
                         .map { tokenItem ->
-                            val currencyId = tokenItem.currencyId ?: ""
+                            val currencyId = tokenItem.currencyId
                             tokenItem.asToken(
                                 enabled = trackedWallets.contains(currencyId),
                                 removable = isRemovable(
