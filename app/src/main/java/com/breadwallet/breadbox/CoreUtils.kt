@@ -279,22 +279,16 @@ fun Network.containsCurrencyCode(currencyCode: String) =
 
 /** Returns the [Currency] code if the [Transfer] is a ETH fee transfer, blank otherwise. */
 fun Transfer.feeForToken(): String {
-    val issuerCode = findIssuerCurrency()
+    val targetAddress = target.orNull()?.toSanitizedString() ?: return ""
+    val issuerCode = wallet.walletManager.network.currencies.find { networkCurrency ->
+        networkCurrency.issuer.or("").equals(targetAddress, true)
+    }
     return when {
         !wallet.walletManager.currency.isEthereum() -> ""
         issuerCode == null || issuerCode.isEthereum() -> ""
         else -> issuerCode.code
     }
 }
-
-/** Returns the [Currency] for the issuer matching the target address, null otherwise. */
-fun Transfer.findIssuerCurrency() =
-    wallet.walletManager.network.currencies.find { networkCurrency ->
-        networkCurrency
-            .issuer
-            .or("")
-            .equals(target.get().toSanitizedString(), true)
-    }
 
 fun WalletManagerState.isTracked() =
     type == WalletManagerState.Type.CONNECTED ||
