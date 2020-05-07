@@ -2,13 +2,14 @@ package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmMachine
 import cash.just.wac.model.CashCodeResponse
@@ -40,7 +41,6 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.math.BigDecimal
 
 @Suppress("TooManyFunctions")
 class RequestCashCodeController(
@@ -63,6 +63,7 @@ class RequestCashCodeController(
         EMAIL
     }
     private var currentVerificationMode: VerificationState = VerificationState.PHONE
+    private var coinCount = 0
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
@@ -85,6 +86,8 @@ class RequestCashCodeController(
         amount.helperText = "Min ${atm.min}$ max ${atm.max}$, multiple of ${atm.bills.toFloat().toInt()}$ bills"
 
         getAtmCode.setOnClickListener {
+            // dropView.startAnimation()
+
             if (!WacSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "Invalid session", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -111,6 +114,8 @@ class RequestCashCodeController(
         }
 
         confirmAction.setOnClickListener {
+
+
             if (!WacSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "invalid session", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -123,6 +128,25 @@ class RequestCashCodeController(
 
             hideKeyboard(view.context, token.editText!!)
             createCashCode(view.context, atm)
+        }
+
+        dropView.setDrawables(R.drawable.bitcoin, R.drawable.bitcoin)
+    }
+
+    private fun playCoinSound() {
+        val mediaPlayer = MediaPlayer.create(applicationContext, R.raw.smw_coin)
+        mediaPlayer.start()
+
+        coinCount++
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp?.let{
+                it.reset()
+                it.release()
+            }
+        }
+
+        if (coinCount == 3) {
+            dropView.startAnimation()
         }
     }
 
@@ -228,6 +252,7 @@ class RequestCashCodeController(
                 dialog.dismissWithAnimation()
             }, null)
     }
+
     private fun prepareMap(context : Context, atm:AtmMachine) {
         val fragment = createAndHideMap(context)
         fragment.getMapAsync(object: OnMapReadyCallback {
@@ -242,7 +267,13 @@ class RequestCashCodeController(
                 showMap(context)
                 googleMap.setOnMapLoadedCallback(OnMapLoadedCallback {
                     addMarkerAndMoveCamera(context, googleMap, atm)
+                    coinCount = 0
+                    dropView.stopAnimation()
                 })
+
+                googleMap.setOnInfoWindowClickListener {
+                    playCoinSound()
+                }
             }
         })
     }
@@ -289,7 +320,7 @@ class RequestCashCodeController(
 
         val cameraPosition: CameraPosition = CameraPosition.Builder()
             .target(markerOpt.position)
-            .zoom(13f)
+            .zoom(15f)
             .build()
 
         val cameraUpdate: CameraUpdate = CameraUpdateFactory

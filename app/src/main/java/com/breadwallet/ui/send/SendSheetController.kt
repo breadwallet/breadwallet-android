@@ -117,7 +117,10 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     private val currencyCode = arg<String>(CURRENCY_CODE)
-    private val cryptoRequest = arg<CryptoRequest>(CRYPTO_REQUEST)
+    private val cryptoRequest =
+        arg<CryptoRequest>(CRYPTO_REQUEST,
+            CryptoRequest.Builder().setCurrencyCode(CURRENCY_CODE).build())
+
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
@@ -429,9 +432,9 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        if (cryptoRequest != null) {
-            textInputAddress.setText(cryptoRequest.address)
-            textInputAmount.setText(cryptoRequest.amount.toString())
+        textInputAddress.setText(cryptoRequest.address)
+        cryptoRequest.amount?.let { amount ->
+            textInputAmount.setText(amount.toString())
         }
     }
 

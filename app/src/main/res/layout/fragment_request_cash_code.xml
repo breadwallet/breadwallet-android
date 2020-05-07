@@ -13,6 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="260dp"/>
 
+    <com.breadwallet.ui.atm.DropAnimationView
+        app:minSize="30dp"
+        app:maxSize="50dp"
+        app:rate="100"
+        app:xAnimate="true"
+        app:yAnimate="true"
+        app:rotationAnimate="true"
+        android:id="@+id/dropView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -96,7 +107,10 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:padding="10dp"
                     android:id="@+id/noPhoneButton"
+                    android:background="?attr/colorControlActivated"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -139,7 +153,10 @@
              </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:padding="10dp"
                     android:id="@+id/getAtmCode"
+                    android:background="?attr/colorControlActivated"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -176,10 +193,13 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:background="?attr/colorControlActivated"
+                android:textColor="@color/white"
                 android:id="@+id/confirmAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:padding="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Confirm" />
         </LinearLayout>
