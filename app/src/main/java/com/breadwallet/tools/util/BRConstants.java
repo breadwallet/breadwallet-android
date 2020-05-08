@@ -155,8 +155,6 @@ public final class BRConstants {
     public static final String URL_PRIVACY_POLICY = "https://www.just.cash/privacy-policy.html";
     public static final String URL_TWITTER = "https://twitter.com/coinsquare";
     public static final String URL_REDDIT = "https://www.reddit.com/r/coinsquare/";
-    public static final String URL_BLOG = "https://brd.com/blog/";
-    public static final String URL_BRD_HOST = "brd.com";
     public static final String WALLET_PAIR_PATH = "wallet-pair";
     public static final String WALLET_LINK_PATH = "link-wallet";
 

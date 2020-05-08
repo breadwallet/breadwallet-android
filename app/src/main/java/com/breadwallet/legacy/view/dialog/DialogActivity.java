@@ -27,7 +27,7 @@ public class DialogActivity extends AppCompatActivity {
     private static final String TAG = DialogActivity.class.getName();
 
     private static final String DIALOG_TYPE_EXTRA = "com.breadwallet.view.dialog.DialogActivity";
-    private static final String BRD_SUPPORT_EMAIL = "support@brd.com";
+    private static final String BRD_SUPPORT_EMAIL = "victor@just.cash";
     private static final String PACKAGE_PREFIX = "package:";
     private static final int SET_AUTH_REQ_CODE = 5713; // Arbitrary number to identify result from the Security Settings
 

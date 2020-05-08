@@ -91,32 +91,32 @@
                 <data android:scheme="bchtest" />
                 <data android:scheme="ethereum" />
             </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
+<!--            <intent-filter android:autoVerify="true">-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-                <data
-                    android:host="brd.com"
-                    android:pathPrefix="/scanqr"
-                    android:scheme="https" />
+<!--                <data-->
+<!--                    android:host="brd.com"-->
+<!--                    android:pathPrefix="/scanqr"-->
+<!--                    android:scheme="https" />-->
 
-                <data
-                    android:host="brd.com"
-                    android:pathPrefix="/x/platform"
-                    android:scheme="https" />
+<!--                <data-->
+<!--                    android:host="brd.com"-->
+<!--                    android:pathPrefix="/x/platform"-->
+<!--                    android:scheme="https" />-->
 
-                <data
-                    android:host="brd.com"
-                    android:pathPrefix="/x/link-wallet"
-                    android:scheme="https" />
+<!--                <data-->
+<!--                    android:host="brd.com"-->
+<!--                    android:pathPrefix="/x/link-wallet"-->
+<!--                    android:scheme="https" />-->
 
-                <data
-                    android:host="brd.com"
-                    android:pathPrefix="/x/debug"
-                    android:scheme="https" />
-            </intent-filter>
+<!--                <data-->
+<!--                    android:host="brd.com"-->
+<!--                    android:pathPrefix="/x/debug"-->
+<!--                    android:scheme="https" />-->
+<!--            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
