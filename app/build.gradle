@@ -259,6 +259,9 @@ dependencies {
     testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
     testImplementation "androidx.test:runner:$ax_test_runner"
     testImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation  "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation  "tools.fastlane:screengrab:2.0.0"
+
     androidTestImplementation "androidx.work:work-testing:$ax_workmanager"
 
     // Test infrastructure
