@@ -77,9 +77,9 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
         twitter_share_button.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER)))
         }
-        blog_share_button.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG)))
-        }
+        // blog_share_button.setOnClickListener {
+        //     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG)))
+        // }
         policy_text.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY)))
         }

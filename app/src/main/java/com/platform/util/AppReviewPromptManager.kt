@@ -40,8 +40,8 @@ import com.breadwallet.ui.wallet.WalletTransaction
 object AppReviewPromptManager {
 
     private const val MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK = 10
-    private const val GOOGLE_PLAY_APP_URI = "market://details?id=com.breadwallet"
-    private const val GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet"
+    private const val GOOGLE_PLAY_APP_URI = "market://details?id=just.cash"
+    private const val GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=just.cash"
     private const val GOOGLE_PLAY_PACKAGE = "com.android.vending"
 
     /**
