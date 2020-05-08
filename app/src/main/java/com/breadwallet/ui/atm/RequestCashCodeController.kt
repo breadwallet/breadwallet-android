@@ -76,9 +76,9 @@ class RequestCashCodeController(
         verificationGroup.visibility = View.VISIBLE
         confirmGroup.visibility = View.GONE
 
-        noPhoneButton.setOnClickListener {
-            toggleVerification()
-        }
+        // noPhoneButton.setOnClickListener {
+        //     toggleVerification()
+        // }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
@@ -374,12 +374,12 @@ class RequestCashCodeController(
         if (currentVerificationMode == VerificationState.PHONE) {
             phoneNumber.visibility = View.GONE
             email.visibility = View.VISIBLE
-            noPhoneButton.text = "Phone Number"
+            // noPhoneButton.text = "Phone Number"
             currentVerificationMode = VerificationState.EMAIL
         } else {
             phoneNumber.visibility = View.VISIBLE
             email.visibility = View.GONE
-            noPhoneButton.text = "No Phone?"
+            // noPhoneButton.text = "No Phone?"
             currentVerificationMode = VerificationState.PHONE
         }
     }
