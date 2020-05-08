@@ -30,6 +30,16 @@
     <string name="Account.exchangeRate">%2$s 당 %1$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">지갑 로딩</string>
+    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.body">지갑에 HBAR을 저장하려는 경우에만 Hedera 계정을 만드십시오.</string>
+    <!-- Label for create Hedera account button -->
+    <string name="AccountCreation.create">계정 만들기</string>
+    <!-- Error message for Hedera account creation failure  -->
+    <string name="AccountCreation.error">계정 생성 중 오류가 발생했습니다. 나중에 다시 시도하세요.</string>
+    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.notNow">지금은 아님</string>
+    <!-- Title for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.title">계정 생성 확인</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">나의 BRD</string>
     <!-- Third party keyboard warning -->
@@ -180,6 +190,8 @@
     <string name="Confirmation.feeLabel">네트워크 수수료:</string>
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">네트워크 요금 (ETH):</string>
+    <!-- Label for Hedera Memo field on transaction confirmation screen -->
+    <string name="Confirmation.hederaMemo">헤 데라 메모</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">처리 시간: 이 거래는 %1$s에 완료될 것으로 예상됩니다.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -787,6 +799,8 @@
     <string name="Send.legacyAddressWarning">경고: 이것은 레거시 비트코인 주소입니다. 비트코인 캐시를 보내시겠습니까?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">요청 불러오는 중</string>
+    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <string name="Send.memoTag_optional">헤 데라 메모 (선택 사항)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">거래 수수료를 지급하기에 자금이 부족합니다</string>
     <!-- Empty address alert message -->
@@ -1050,6 +1064,8 @@
     <string name="TransactionDetails.gasLimitHeader">Gas Limit</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gas Price</string>
+    <!-- Label for Hedera Memo field on transaction details screen -->
+    <string name="TransactionDetails.hederaMemo">헤 데라 메모</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">세부 정보 숨기기</string>
     <!-- Label showing the transaction was started (initialized) -->

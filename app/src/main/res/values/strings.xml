@@ -1277,7 +1277,6 @@
     <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
 
-    <!-- TODO: HBAR translations required -->
     <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <string name="Send.memoTag_optional">Hedera Memo (Optional)</string>
@@ -1286,5 +1285,4 @@
     <string name="AccountCreation.title">Confirm Account Creation</string>
     <string name="AccountCreation.body">Only create a Hedera account if you intend on storing HBAR in your wallet.</string>
     <string name="AccountCreation.error">An error occurred during account creation. Please try again later.</string>
-
 </resources>
