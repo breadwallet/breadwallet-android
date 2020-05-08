@@ -85,10 +85,10 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
         }
 
         brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
-        brd_copy.setOnClickListener  {
-            BRClipboardManager.putClipboard(activity, brd_rewards_id.text.toString())
-            toast(R.string.Receive_copied)
-        }
+        // brd_copy.setOnClickListener  {
+        //     BRClipboardManager.putClipboard(activity, brd_rewards_id.text.toString())
+        //     toast(R.string.Receive_copied)
+        // }
     }
 
     override fun onAttach(view: View) {
