@@ -106,15 +106,15 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:padding="10dp"
-                    android:id="@+id/noPhoneButton"
-                    android:background="?attr/colorControlActivated"
-                    android:textColor="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="No Phone?" />
+<!--                <androidx.appcompat.widget.AppCompatButton-->
+<!--                    android:padding="10dp"-->
+<!--                    android:id="@+id/noPhoneButton"-->
+<!--                    android:background="?attr/colorControlActivated"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:text="No Phone?" />-->
 
              </LinearLayout>
 
@@ -155,12 +155,12 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:padding="10dp"
                     android:id="@+id/getAtmCode"
-                    android:background="?attr/colorControlActivated"
+                    android:background="@drawable/rounded_background"
                     android:textColor="@color/white"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="30dp"
                     android:text="Get ATM code" />
             </LinearLayout>
         <LinearLayout
@@ -193,14 +193,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:background="?attr/colorControlActivated"
+                android:background="@drawable/rounded_background"
                 android:textColor="@color/white"
                 android:id="@+id/confirmAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:padding="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:text="Confirm" />
         </LinearLayout>
       </LinearLayout>
