@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_back_arrow"
-        app:layout_constraintStart_toStartOf="@id/brd_rewards_id"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/title"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
@@ -26,30 +26,30 @@
 <!--        app:layout_constraintLeft_toLeftOf="@id/divider4"-->
 <!--        android:fontFamily="@font/circular_pro_book" />-->
 
-    <com.breadwallet.legacy.presenter.customviews.BaseTextView
-        android:id="@+id/brd_rewards_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@id/divider4"
-        app:layout_constraintTop_toBottomOf="@+id/brd_rewards"
-        android:fontFamily="@font/circular_pro_book" />
+<!--    <com.breadwallet.legacy.presenter.customviews.BaseTextView-->
+<!--        android:id="@+id/brd_rewards_id"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="48dp"-->
+<!--        android:textSize="16sp"-->
+<!--        app:layout_constraintLeft_toLeftOf="@id/divider4"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/brd_rewards"-->
+<!--        android:fontFamily="@font/circular_pro_book" />-->
 
-    <View
-        android:id="@+id/divider4"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="24dp"
-        android:background="@color/extra_light_gray"
-        app:layout_constraintBottom_toTopOf="@+id/textView24"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+<!--    <View-->
+<!--        android:id="@+id/divider4"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginLeft="16dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:layout_marginRight="16dp"-->
+<!--        android:layout_marginBottom="24dp"-->
+<!--        android:background="@color/extra_light_gray"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/textView24"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent" />-->
 
 <!--    <com.breadwallet.legacy.presenter.customviews.BaseTextView-->
 <!--        android:id="@+id/brd_copy"-->
@@ -169,17 +169,17 @@
         app:layout_constraintRight_toRightOf="@+id/view4"
         app:layout_constraintTop_toTopOf="@+id/textView22" />
 
-    <ImageView
-        android:id="@+id/blog_share_button"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:src="@drawable/ic_share"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintRight_toRightOf="@+id/view5"
-        app:layout_constraintTop_toTopOf="@+id/textView24" />
+<!--    <ImageView-->
+<!--        android:id="@+id/blog_share_button"-->
+<!--        android:layout_width="16dp"-->
+<!--        android:layout_height="16dp"-->
+<!--        android:layout_marginTop="0dp"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:layout_marginBottom="0dp"-->
+<!--        android:src="@drawable/ic_share"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/textView24"-->
+<!--        app:layout_constraintRight_toRightOf="@+id/view5"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/textView24" />-->
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/policy_text"

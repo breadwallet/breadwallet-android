@@ -31,8 +31,6 @@ import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
-import com.breadwallet.tools.manager.BRClipboardManager
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.ui.BaseController
@@ -84,7 +82,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY)))
         }
 
-        brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
+        // brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
         // brd_copy.setOnClickListener  {
         //     BRClipboardManager.putClipboard(activity, brd_rewards_id.text.toString())
         //     toast(R.string.Receive_copied)

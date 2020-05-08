@@ -223,12 +223,12 @@ class SettingsScreenHandler(
                 // )
             }
             if (BuildConfig.DEBUG) {
-                add(
-                    SettingsItem(
-                        DEVELOPER_OPTIONS_TITLE,
-                        SettingsOption.DEVELOPER_OPTIONS
-                    )
-                )
+                // add(
+                //     SettingsItem(
+                //         DEVELOPER_OPTIONS_TITLE,
+                //         SettingsOption.DEVELOPER_OPTIONS
+                //     )
+                // )
             }
         }
     }
