@@ -95,8 +95,8 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="333dp"
-        android:layout_height="200dp"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
@@ -104,7 +104,7 @@
         android:cropToPadding="true"
         android:focusable="false"
         android:scaleType="fitCenter"
-        android:src="@drawable/world_pin"
+        android:src="@drawable/bitcoin_wallet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

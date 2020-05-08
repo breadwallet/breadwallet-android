@@ -52,6 +52,8 @@ class RequestCashCodeController(
     )
 
     companion object {
+        private const val HTTP_OK_CODE = 200
+        private const val CLICKS_TO_START_ANIMATION = 3
         private const val atmMachine = "RequestCashCodeController.Atm"
         private const val MAP_FRAGMENT_TAG = "MAP_FRAGMENT_TAG"
     }
@@ -145,7 +147,7 @@ class RequestCashCodeController(
             }
         }
 
-        if (coinCount == 3) {
+        if (coinCount == CLICKS_TO_START_ANIMATION) {
             dropView.startAnimation()
         }
     }
@@ -161,7 +163,7 @@ class RequestCashCodeController(
                 call: Call<SendVerificationCodeResponse>,
                 response: Response<SendVerificationCodeResponse>
             ) {
-                if (response.code() == 200) {
+                if (response.code() == HTTP_OK_CODE) {
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null) {
                         confirmationMessage.text = "We've sent a confirmation token to your email."
@@ -196,7 +198,7 @@ class RequestCashCodeController(
                     call: Call<CashCodeResponse>,
                     response: Response<CashCodeResponse>
                 ) {
-                    if (response.code() == 200) {
+                    if (response.code() == HTTP_OK_CODE) {
                         val code = response.body()!!.data.items[0].secureCode
                         proceedWithCashCode(context, code)
                     } else {
@@ -329,12 +331,10 @@ class RequestCashCodeController(
     }
 
     private fun checkAmount(atm : AtmMachine): Boolean {
-        val amount = getAmount()?.toFloatOrNull()
+        val amount = getAmount()?.toFloatOrNull() ?: return false
         val min = atm.min.toFloatOrNull()
         val max = atm.min.toFloatOrNull()
-        if (amount == null) {
-           return false
-        } else if(min != null && max != null) {
+        if (min != null && max != null) {
             return (amount >= min && amount <= max)
         }
         return true

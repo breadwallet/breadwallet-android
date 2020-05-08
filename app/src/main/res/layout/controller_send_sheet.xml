@@ -372,14 +372,14 @@
                 <com.breadwallet.legacy.presenter.customviews.BRButton
                     android:id="@+id/buttonRegular"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_blue_square"
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
                     app:isBreadButton="false" />
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton

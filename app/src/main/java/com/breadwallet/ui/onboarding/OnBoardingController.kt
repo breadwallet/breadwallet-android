@@ -122,7 +122,7 @@ class OnBoardingController(
 
     override fun M.render() {
         ifChanged(M::page) { page ->
-            listOf(indicator1, indicator2, indicator3)
+            listOf(indicator1, indicator2)
                 .forEachIndexed { index, indicator ->
                     indicator.background = when (page) {
                         index + 1 -> activeIndicator
@@ -147,15 +147,17 @@ class OnBoardingController(
             if (!router.hasRootController()) {
                 val root = when (position) {
                     0 -> PageOneController()
-                    1 -> PageTwoController()
-                    2 -> PageThreeController()
+                    // disabling page 2
+                    // 1 -> PageTwoController()
+                    1 -> PageThreeController()
                     else -> error("Unknown position")
                 }
                 router.setRoot(RouterTransaction.with(root))
             }
         }
 
-        override fun getCount(): Int = 3
+        // override fun getCount(): Int = 3
+        override fun getCount(): Int = 2
     }
 
     override fun handleBack() = currentModel.isLoading
@@ -171,7 +173,8 @@ class PageOneController(args: Bundle? = null) : BaseController(args) {
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         primary_text.setText(R.string.OnboardingPageTwo_title)
-        secondary_text.setText("Join the crypto world with Coinsquare, our self-custodian wallet is fully compatible with any other wallet.")
+        secondary_text.setText("Join millions of people around the world who trust Coinsquare, " +
+            "our self custodian wallet is open source and fully compatible with any other wallet.")
     }
 }
 
@@ -183,7 +186,7 @@ class PageTwoController(args: Bundle? = null) : BaseController(args) {
         val theme = checkNotNull(activity).theme
         primary_text.setText("Buy BTC and withdraw $ in our American ATMs")
         secondary_text.setText("1000 ATM are already available and our network is keep growing ")
-        image_view.setImageDrawable(resources.getDrawable(R.drawable.atm_guy, theme))
+        // image_view.setImageDrawable(resources.getDrawable(R.drawable.atm_guy, theme))
     }
 }
 

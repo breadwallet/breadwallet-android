@@ -434,7 +434,13 @@ class SendSheetController(args: Bundle? = null) :
 
         textInputAddress.setText(cryptoRequest.address)
         cryptoRequest.amount?.let { amount ->
+            //This case is send from ATM flow
             textInputAmount.setText(amount.toString())
+            //Disabling the fee selection
+            buttonEconomy.isEnabled = false
+            buttonRegular.isSelected = true
+            buttonRegular.isEnabled = false
+            buttonPriority.isEnabled = false
         }
     }
 

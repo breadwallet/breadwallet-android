@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 - Add a badge for testnet app icon.
 
-## [Unreleased]
-- Add the check for amount ## [TODO]
+## [4.1.4-preview (4014002)]
+- Added new assets and messages for onboarding pages.
+- Fixed the verification code request email / phone.
+- Wired up the send controller to the last step of cash code.
 
 ## [4.1.4-preview (4014001)]
 ### Added

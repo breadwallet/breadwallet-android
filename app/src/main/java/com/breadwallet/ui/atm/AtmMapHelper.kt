@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.SupportMapFragment
 
 object AtmMapHelper {
-    @SuppressLint("ReturnCount")
+    @SuppressWarnings("ReturnCount")
     fun getActivityFromContext(@NonNull context: Context): AppCompatActivity? {
         while (context is ContextWrapper) {
             if (context is AppCompatActivity) return context

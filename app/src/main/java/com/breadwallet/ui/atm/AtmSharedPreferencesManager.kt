@@ -15,8 +15,8 @@ object AtmSharedPreferencesManager {
         )
     }
 
-    fun getWithdrawalRequests(context : Context) : MutableSet<String>? {
-       return getSharedPreferences(context).getStringSet(WITHDRAWAL_REQUESTS , HashSet<String>())
+    private fun getWithdrawalRequests(context : Context) : MutableSet<String>? {
+       return getSharedPreferences(context).getStringSet(WITHDRAWAL_REQUESTS, HashSet<String>())
     }
 
     fun setWithdrawalRequest(context: Context, value: String) {
