@@ -97,7 +97,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.SUBMIT_REVIEW -> F.GoToGooglePlay
                     SettingsOption.REWARDS -> F.GoToBrdRewards
                     SettingsOption.ABOUT -> F.GoToAbout
-                    SettingsOption.ATM_FINDER -> F.SendAtmFinderRequest
+                    SettingsOption.ATM_FINDER -> F.GoToAtmMap
                     SettingsOption.ATM_WITHDRAWAL -> F.ATMWithdrawalRequest
                     SettingsOption.DEVELOPER_OPTIONS -> F.GoToSection(SettingsSection.DEVELOPER_OPTION)
                     SettingsOption.CURRENCY -> F.GoToDisplayCurrency

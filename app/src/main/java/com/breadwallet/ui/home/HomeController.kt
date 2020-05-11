@@ -125,7 +125,9 @@ class HomeController(
 
     override fun bindView(output: Consumer<E>): Disposable {
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
-        trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
+        trade_layout.setOnClickListener {
+            // output.accept(E.OnTradeClicked)
+        }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
         val fastAdapter = checkNotNull(fastAdapter)
@@ -207,10 +209,11 @@ class HomeController(
 
         ifChanged(M::hasInternet) {
             buy_text_view.setText(
-                when {
-                    showBuyAndSell -> R.string.HomeScreen_buyAndSell
-                    else -> R.string.HomeScreen_buy
-                }
+                // when {
+                    // showBuyAndSell -> R.string.HomeScreen_buyAndSell
+                    // else -> R.string.HomeScreen_buy
+                // }
+                R.string.HomeScreen_cashOut
             )
         }
     }

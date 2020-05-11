@@ -5,7 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [TODO]
 - Add a badge for testnet app icon.
- 
+
+## [4.1.4-preview (4014002)]
+- Added new assets and messages for onboarding pages.
+- Fixed the verification code request email / phone.
+- Wired up the send controller to the last step of cash code.
+
+## [4.1.4-preview (4014001)]
+### Added
+- Added the mapController
+- Added the RequestCashCodeController
+- Displaying the list of ATMs in the map.
+- Adding the form to request code verification.
+- Adding the form to request secure code.
+- Adding the AtmSharedPreferencesManager to store the existing cash out request.
+
 ## [4.1.3 (4013001)]
 ### Fixed
 - (CI) fixing some issues shown in detekt `Ruleset: complexity` 

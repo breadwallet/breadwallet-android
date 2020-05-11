@@ -73,6 +73,7 @@ object SettingsScreen {
         object GoToBrdRewards : F()
         object GoToGooglePlay : F()
         object GoToAbout : F()
+        object GoToAtmMap : F()
         object SendAtmFinderRequest : F()
         object ATMWithdrawalRequest : F()
         object GoToDisplayCurrency : F()

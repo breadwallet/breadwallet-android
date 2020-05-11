@@ -231,7 +231,7 @@ public class SendManager {
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
                 }
-            }, null, null, 0);
+            }, null, null);
         } else {
             if (Utils.isNullOrEmpty(item.getAddress())) throw new RuntimeException("can't happen");
             BigDecimal fee = wm.getEstimatedFee(maxAmountDouble, item.getAddress());
@@ -242,7 +242,7 @@ public class SendManager {
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
                     }
-                }, null, null, 0);
+                }, null, null);
                 return;
             }
 
@@ -267,7 +267,7 @@ public class SendManager {
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
                         }
-                    }, null, 0);
+                    }, null);
         }
 
     }
@@ -302,7 +302,7 @@ public class SendManager {
                     bitcoinMinMessage,
                     ctx.getString(R.string.AccessibilityLabels_close),
                     null,
-                    brDialogView -> brDialogView.dismiss(), null, null, 0
+                    brDialogView -> brDialogView.dismiss(), null, null
             ));
             return;
         }
@@ -358,7 +358,7 @@ public class SendManager {
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismiss();
                             }
-                        }, null, null, 0);
+                        }, null, null);
 
                 return null;
             }
@@ -369,7 +369,7 @@ public class SendManager {
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismiss();
                             }
-                        }, null, null, 0);
+                        }, null, null);
                 return null;
             }
         }

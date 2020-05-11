@@ -11,7 +11,7 @@ data class CashCodeResponse(
 )
 
 @JsonClass(generateAdapter = true)
-data class SendCodeResponse(
+data class SendVerificationCodeResponse(
     @field:Json(name = "result") val result: String,
     @field:Json(name = "error") val error: WacError?,
     @field:Json(name = "data") val data: SendCodeItems

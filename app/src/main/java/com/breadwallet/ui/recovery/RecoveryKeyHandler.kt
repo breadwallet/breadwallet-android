@@ -151,6 +151,7 @@ class RecoveryKeyHandler(
         }
     }
 
+    @Suppress("LongMethod", "ReturnCount")
     private fun recoverWallet(effect: F.RecoverWallet) {
         val context = BreadApp.getBreadContext()
 

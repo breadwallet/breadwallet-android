@@ -116,8 +116,7 @@ class RecoveryKeyController(
                             .clearApplicationUserData()
                     },
                     { brDialogView -> brDialogView.dismissWithAnimation() },
-                    { eventConsumer.accept(E.OnPhraseSaveFailed) },
-                    0
+                    { eventConsumer.accept(E.OnPhraseSaveFailed) }
                 )
             }, {
                 showErrorDialog()
@@ -151,8 +150,7 @@ class RecoveryKeyController(
             null,
             DialogInterface.OnDismissListener {
                 eventConsumer.accept(E.OnPhraseSaveFailed)
-            },
-            0
+            }
         )
     }
 
@@ -192,8 +190,7 @@ class RecoveryKeyController(
                     brDialogView.dismissWithAnimation()
                 },
                 BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                null,
-                0
+                null
             )
         }
     }

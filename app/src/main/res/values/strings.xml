@@ -290,6 +290,8 @@
     <string name="HomeScreen.buy">Buy</string>
     <!-- home screen toolbar 'Buy & Sell' button -->
     <string name="HomeScreen.buyAndSell">Buy &amp; Sell</string>
+    <!-- home screen toolbar 'Buy & Sell' button -->
+    <string name="HomeScreen.cashOut">ATM Cash out</string>
     <!-- Menu button on the home screen toolbar -->
     <string name="HomeScreen.menu">Menu</string>
     <!-- This section lists the users wallets -->
@@ -445,7 +447,7 @@
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Start investing today with as little as $50!</string>
     <!-- Onboarding screen Page 1 title -->
-    <string name="OnboardingPageOne.title">Welcome to your new global wallet!</string>
+    <string name="OnboardingPageOne.title">Welcome to your ATM enabled virtual currency wallet!</string>
     <!-- Onboarding screen Page 3 subtitle -->
     <string name="OnboardingPageThree.subtitle">Invest and diversify with Coinsquare, easily and securely.</string>
     <!-- Onboarding screen Page 3 title -->
@@ -453,7 +455,7 @@
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">We have over $6 billion USD worth of assets under protection.</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">Join millions of people around the world who trust Coinsquare.</string>
+    <string name="OnboardingPageTwo.title">Sell your Bitcoin and Receive Cash at our U.S. ATMs</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">Send %1$s to purchase %2$s</string>
     <!-- Payment confirmation view title -->
@@ -577,7 +579,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Enter Paper Key</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recover your Coinsquare with your paper key.</string>
+    <string name="RecoverWallet.intro">Recover your Coinsquare wallet with your paper key.</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->

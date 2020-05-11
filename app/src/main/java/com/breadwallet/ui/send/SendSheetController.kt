@@ -117,6 +117,10 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     private val currencyCode = arg<String>(CURRENCY_CODE)
+    private val cryptoRequest =
+        arg<CryptoRequest>(CRYPTO_REQUEST,
+            CryptoRequest.Builder().setCurrencyCode(CURRENCY_CODE).build())
+
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
@@ -426,6 +430,17 @@ class SendSheetController(args: Bundle? = null) :
                     textInputDestinationTag.setText(currentModel.destinationTag?.value)
                 }
             }
+        }
+
+        textInputAddress.setText(cryptoRequest.address)
+        cryptoRequest.amount?.let { amount ->
+            //This case is send from ATM flow
+            textInputAmount.setText(amount.toString())
+            //Disabling the fee selection
+            buttonEconomy.isEnabled = false
+            buttonRegular.isSelected = true
+            buttonRegular.isEnabled = false
+            buttonPriority.isEnabled = false
         }
     }
 

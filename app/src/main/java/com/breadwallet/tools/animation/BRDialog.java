@@ -48,7 +48,7 @@ public class BRDialog {
     // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
     public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
-                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
+                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener) {
         final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
         if (activity.isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
@@ -105,13 +105,13 @@ public class BRDialog {
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismissWithAnimation();
             }
-        }, null, null, 0);
+        }, null, null);
     }
 
     //same but with a SpannableString as message to be able to click on a portion of the text with a listener
     public static void showCustomDialog(@NonNull final Context app, @NonNull final String title, @NonNull final SpannableString message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
-                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
+                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener) {
         if (((Activity) app).isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;

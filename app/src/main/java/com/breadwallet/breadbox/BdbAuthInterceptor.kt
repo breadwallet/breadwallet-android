@@ -24,6 +24,7 @@
  */
 package com.breadwallet.breadbox
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
 import com.breadwallet.BuildConfig
@@ -142,6 +143,7 @@ class BdbAuthInterceptor(
         }
     }
 
+    @SuppressLint("MagicNumber")
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
         if (jwtString != null) return@withLock null to 0
