@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.1 (4021001)]
 - Removing third page of onboarding.
 - Adding a new asset / text for onboarding page.
-- Disabling email verification and making phone the only method (Kal feedback to improve KYC process).
-- Fixed some issues provided by anasoid about having brd urls in about, 
+- Disabling email verification and making phone the only method (@kal feedback to improve KYC process).
+- Fixed some issues provided by @anasoid about having brd urls in about, 
 atmcoin/comm/issues/720
 atmcoin/comm/issues/721
 - Disabled buy, trade and reward features.
