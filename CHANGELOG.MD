@@ -19,8 +19,8 @@ atmcoin/comm/issues/724
 - Fixed the request where email and phone number where misplaced.
 - Improved the style of the buttons in request verification code (color and rounded buttons).
 - Adding the ability to navigate from cash code creation to the sendController.
-- Filled the information on send controller, address and BTC value.
-- Disabling the fee selection and adding the regular one.
+- Filled the information on send controller, address and BTC value for cash out flow.
+- Disabling the fee selection and adding the regular one for cash out flow.
 - An easter egg was dropped in the requestCodeController.
 
 ## [4.1.4-preview (4014002)]
