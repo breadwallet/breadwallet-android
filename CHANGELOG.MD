@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 - Add a badge for testnet app icon.
 
+## [4.2.1 (4021001)]
+- Removing third page of onboarding.
+- Adding a new asset / text for onboarding page.
+- Disabling email verification and making phone the only method (Kal feedback to improve KYC process).
+- Fixed some issues provided by anasoid about having brd urls in about, 
+atmcoin/comm/issues/720
+atmcoin/comm/issues/721
+- Disabled buy, trade and reward features.
+atmcoin/comm/issues/723
+atmcoin/comm/issues/724
+- Fixed the request where email and phone number where misplaced.
+- Improved the style of the buttons in request verification code (color and rounded buttons).
+- Adding the ability to navigate from cash code creation to the sendController.
+- Filled the information on send controller, address and BTC value.
+- Disabling the fee selection and adding the regular one.
+- An easter egg was dropped in the requestCodeController.
+
 ## [4.1.4-preview (4014002)]
 - Added new assets and messages for onboarding pages.
 - Fixed the verification code request email / phone.
