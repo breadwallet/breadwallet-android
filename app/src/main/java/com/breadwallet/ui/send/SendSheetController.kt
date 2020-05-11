@@ -415,8 +415,11 @@ class SendSheetController(args: Bundle? = null) :
                         else -> R.string.Send_destinationTag_optional
                     }
                 )
-                if (!destinationTag.value.isNullOrBlank() &&
-                    textInputDestinationTag.text.isNullOrBlank()
+
+                if ((destinationTag.value.isNullOrBlank() &&
+                    !textInputDestinationTag.text.isNullOrBlank()) ||
+                    (!destinationTag.value.isNullOrBlank() &&
+                        textInputDestinationTag.text.isNullOrBlank())
                 ) {
                     textInputDestinationTag.setText(currentModel.destinationTag?.value)
                 }
