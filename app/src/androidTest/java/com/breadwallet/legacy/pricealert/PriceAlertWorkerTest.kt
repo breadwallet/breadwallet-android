@@ -228,7 +228,7 @@ class PriceAlertWorkerTest {
 
     private fun advanceTestDriver() {
         val id = workManager.getCryptoPriceAlertWorkerInfo().id
-        WorkManagerTestInitHelper.getTestDriver().apply {
+        WorkManagerTestInitHelper.getTestDriver()?.apply {
             setPeriodDelayMet(id)
             setAllConstraintsMet(id)
         }
