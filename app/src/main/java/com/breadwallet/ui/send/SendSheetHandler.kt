@@ -58,6 +58,7 @@ import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.HEADER_BITPAY_PARTNER
 import com.breadwallet.util.HEADER_BITPAY_PARTNER_KEY
 import com.breadwallet.util.buildPaymentProtocolRequest
@@ -290,12 +291,13 @@ object SendSheetHandler {
         breadBox: BreadBox
     ) = flowTransformer<F.ValidateAddress, E> { effects ->
         effects.mapLatest { effect ->
-            val wallet = breadBox.wallet(effect.currencyCode).first()
-            val address = wallet.addressFor(effect.address)
-            val isValid = address != null && !wallet.containsAddress(address)
             E.OnAddressValidated(
                 address = effect.address,
-                isValid = isValid
+                isValid = validateTargetString(
+                    breadBox,
+                    effect.currencyCode,
+                    effect.address
+                ) is Target.ValidAddress
             )
         }
     }
@@ -308,24 +310,31 @@ object SendSheetHandler {
             BRClipboardManager.getClipboard(context)
         }
 
-        val cryptoRequest = (text.asLink() as? Link.CryptoRequestUrl)
-        val reqAddress = cryptoRequest?.address ?: text
-        val reqCurrencyCode = cryptoRequest?.currencyCode
+        when (val target = validateTargetString(breadBox, effect.currencyCode, text)) {
+            Target.NoAddress -> E.OnAddressPasted.NoAddress
+            Target.InvalidAddress -> E.OnAddressPasted.InvalidAddress
+            is Target.ValidAddress -> E.OnAddressPasted.ValidAddress(target.address)
+        }
+    }
 
-        when {
-            text.isNullOrBlank() -> E.OnAddressPasted.NoAddress
-            reqAddress.isNullOrBlank() -> E.OnAddressPasted.NoAddress
-            !reqCurrencyCode.isNullOrBlank() &&
-                reqCurrencyCode != effect.currencyCode &&
-                reqCurrencyCode != effect.feeCurrencyCode ->
-                E.OnAddressPasted.InvalidAddress
+    private suspend fun validateTargetString(
+        breadBox: BreadBox,
+        currencyCode: CurrencyCode,
+        target: String
+    ): Target {
+        val cryptoRequest = (target.asLink() as? Link.CryptoRequestUrl)
+        val reqAddress = cryptoRequest?.address ?: target
+
+        return when {
+            target.isNullOrBlank() -> Target.NoAddress
+            reqAddress.isNullOrBlank() -> Target.NoAddress
             else -> {
-                val wallet = breadBox.wallet(effect.currencyCode).first()
+                val wallet = breadBox.wallet(currencyCode).first()
                 val address = wallet.addressFor(reqAddress)
                 if (address == null || wallet.containsAddress(address)) {
-                    E.OnAddressPasted.InvalidAddress
+                    Target.InvalidAddress
                 } else {
-                    E.OnAddressPasted.ValidAddress(reqAddress)
+                    Target.ValidAddress(reqAddress)
                 }
             }
         }
@@ -579,3 +588,9 @@ private fun Flow<Transfer>.mapToSendEvent(): Flow<E> =
             TransferState.Type.SIGNED -> null
         }
     }
+
+sealed class Target {
+    data class ValidAddress(val address: String) : Target()
+    object InvalidAddress : Target()
+    object NoAddress : Target()
+}
