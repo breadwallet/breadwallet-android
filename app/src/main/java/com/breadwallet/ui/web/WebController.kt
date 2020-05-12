@@ -221,7 +221,7 @@ class WebController(
             val nativeApis = if (BuildConfig.DEBUG) {
                 NativeApisJs.with(cameraJs, locationJs, kvStoreJs, linkJs, walletJs, brdApiJs)
             } else {
-                NativeApisJs.with(walletJs)
+                NativeApisJs.with(walletJs, linkJs)
             }
 
             nativeApis.attachToWebView(web_view)
