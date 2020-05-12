@@ -426,6 +426,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         }
     }
 
+    override fun consumeEvent(model: M): Next<M, F> {
+        return noChange()
+    }
+
     override fun onAddressPasted(
         model: M,
         event: OnAddressPasted

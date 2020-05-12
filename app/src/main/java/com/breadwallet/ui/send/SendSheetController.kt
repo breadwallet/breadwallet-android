@@ -179,7 +179,13 @@ class SendSheetController(args: Bundle? = null) :
             textInputMemo.clicks().map { E.OnAmountEditDismissed },
             textInputMemo.textChanges().map { E.OnMemoChanged(it) },
             textInputAddress.bindFocusChanged(),
-            textInputAddress.clicks().map { E.OnAmountEditDismissed },
+            textInputAddress.clicks().map {
+                isAtmCashOutFlow()?.let {
+                    E.ConsumeEvent
+                }?:run {
+                    E.OnAmountEditDismissed
+                }
+            },
             textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
             textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
             textInputDestinationTag.textChanges().map {
@@ -191,7 +197,13 @@ class SendSheetController(args: Bundle? = null) :
             buttonClose.clicks().map { E.OnCloseClicked },
             buttonPaste.clicks().map { E.OnPasteClicked },
             layoutBackground.clicks().map { E.OnCloseClicked },
-            textInputAmount.clicks().map { E.OnAmountEditClicked },
+            textInputAmount.clicks().map {
+                isAtmCashOutFlow()?.let {
+                    E.ConsumeEvent
+                }?:run {
+                    E.OnAmountEditClicked
+                }
+            },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
@@ -282,7 +294,11 @@ class SendSheetController(args: Bundle? = null) :
         ) {
             val sendTitle = res.getString(R.string.Send_title)
             val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
-            labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+            isAtmCashOutFlow()?.let{
+                labelTitle.text = "%s %s to the ATM".format(sendTitle, upperCaseCurrencyCode)
+            }?:run {
+                labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+            }
             buttonCurrencySelect.text = when {
                 isAmountCrypto -> upperCaseCurrencyCode
                 else -> {
@@ -432,16 +448,23 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        textInputAddress.setText(cryptoRequest.address)
-        cryptoRequest.amount?.let { amount ->
-            //This case is send from ATM flow
-            textInputAmount.setText(amount.toString())
-            //Disabling the fee selection
+        isAtmCashOutFlow()?.amount?.let { it ->
+            textInputAddress.setText(cryptoRequest.address)
+            textInputAmount.setText(it.toString())
             buttonEconomy.isEnabled = false
             buttonRegular.isSelected = true
             buttonRegular.isEnabled = false
             buttonPriority.isEnabled = false
+
+            buttonPaste.visibility = View.GONE
+            buttonScan.visibility = View.GONE
+            buttonCurrencySelect.visibility = View.GONE
         }
+    }
+
+    // It returns CryptoRequest if it is atm cash out flow otherwise returns false
+    private fun isAtmCashOutFlow():CryptoRequest? {
+        return cryptoRequest
     }
 
     private fun showKeyboard(show: Boolean) {

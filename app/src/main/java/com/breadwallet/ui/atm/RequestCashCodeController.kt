@@ -100,7 +100,13 @@ class RequestCashCodeController(
             }
 
             if (checkAmount(atm)) {
-                Toast.makeText(view.context, "Amount not valid, it has to be between ${atm.min.toInt()} and ${atm.max.toInt()}.", Toast.LENGTH_LONG).show()
+                val min = atm.min.toFloatOrNull()?.toInt()
+                val max = atm.max.toFloatOrNull()?.toInt()
+                if (min == null || max == null) {
+                    Toast.makeText(view.context, "Amount not valid, it has to be between ${atm.min.toFloatOrNull()?.toInt()} and ${atm.max.toFloatOrNull()?.toInt()}.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(view.context, "Amount not valid", Toast.LENGTH_LONG).show()
+                }
                 return@setOnClickListener
             }
 
