@@ -340,6 +340,8 @@ object SendSheet {
             @Redacted val toAddress: String
         ) : E()
 
+        object OnTargetStringEntered : E()
+
         data class OnMemoChanged(@Redacted val memo: String) : E()
 
         sealed class ConfirmTx : E() {

@@ -39,7 +39,6 @@ import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.legacy.presenter.customviews.BRKeyboard
-import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
@@ -52,6 +51,7 @@ import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.focusChanges
 import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheet.E
@@ -146,6 +146,8 @@ class SendSheetController(args: Bundle? = null) :
 
         showKeyboard(false)
 
+        textInputAmount.showSoftInputOnFocus = false
+
         layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
         layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
     }
@@ -167,9 +169,15 @@ class SendSheetController(args: Bundle? = null) :
             textInputMemo.bindActionComplete(E.OnSendClicked),
             textInputMemo.clicks().map { E.OnAmountEditDismissed },
             textInputMemo.textChanges().map { E.OnMemoChanged(it) },
-            textInputAddress.bindFocusChanged(),
+            textInputAddress.focusChanges().map { hasFocus ->
+                if (hasFocus) {
+                    E.OnAmountEditDismissed
+                } else {
+                    Utils.hideKeyboard(activity)
+                    E.OnTargetStringEntered
+                }
+            },
             textInputAddress.clicks().map { E.OnAmountEditDismissed },
-            textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
             textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
@@ -184,6 +192,13 @@ class SendSheetController(args: Bundle? = null) :
             buttonPaste.clicks().map { E.OnPasteClicked },
             layoutBackground.clicks().map { E.OnCloseClicked },
             textInputAmount.clicks().map { E.OnAmountEditClicked },
+            textInputAmount.focusChanges().map { hasFocus ->
+                if (hasFocus) {
+                    E.OnAmountEditClicked
+                } else {
+                    E.OnAmountEditDismissed
+                }
+            },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },

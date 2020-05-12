@@ -442,6 +442,18 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         }
     }
 
+    override fun onTargetStringEntered(
+        model: M
+    ): Next<M, F> =
+        dispatch(
+            setOf(
+                F.ValidateAddress(
+                    model.currencyCode,
+                    model.targetAddress
+                )
+            )
+        )
+
     override fun onAddressPasted(
         model: M,
         event: OnAddressPasted
