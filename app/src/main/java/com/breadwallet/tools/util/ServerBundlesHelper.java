@@ -159,7 +159,8 @@ public final class ServerBundlesHelper {
     public static void setDebugBundle(final Context context, Type type, String bundle) {
         if (BuildConfig.DEBUG) {
             BRSharedPrefs.putDebugBundle(context, type, bundle);
-            BRExecutor.getInstance().forBackgroundTasks().execute(() -> updateBundles(context));
+            BRExecutor.getInstance().forLightWeightBackgroundTasks()
+                    .execute(() -> updateBundles(context));
         }
     }
 

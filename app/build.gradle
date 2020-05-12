@@ -8,8 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
-apply plugin: 'com.google.firebase.appdistribution'
-apply plugin: 'com.google.firebase.crashlytics'
+apply from: file("../gradle/google-services.gradle")
 
 redactedPlugin {
     replacementString = '***'
@@ -18,7 +17,6 @@ redactedPlugin {
 detekt {
     toolVersion = "1.0.1"
     input = files("src/main/java", "src/test/java")
-    baseline = file("detekt-baseline.xml")
 }
 
 android {
@@ -27,8 +25,8 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 2    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
+        brdEngineeringVersion = 4 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 5       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -55,12 +53,13 @@ android {
         missingDimensionStrategy 'network', 'onMainnet'
 
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
+        buildConfigField "Boolean", "USE_REMOTE_CONFIG", useGoogleServices.toString()
     }
     signingConfigs {
         FakeSigningConfig {
             keyAlias 'key0'
             keyPassword 'qwerty'
-            storeFile file('../FakeSigningKey')
+            storeFile rootProject.file('FakeSigningKey')
             storePassword 'qwerty'
         }
     }
@@ -78,7 +77,7 @@ android {
             dimension "mode"
             resValue "string", "app_name", "BRD"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
-            signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
+            // Uncomment to fake sign a mainnet release build for testing.
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
@@ -86,7 +85,6 @@ android {
             dimension "mode"
             resValue "string", "app_name", "BRD Testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
-            signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
         }
     }
@@ -107,23 +105,31 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.FakeSigningConfig
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher"]
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
-            firebaseAppDistribution {
-                releaseNotes = getChangelog()
-                groups = "android-testers"
+            if (useGoogleServices) {
+                firebaseAppDistribution {
+                    releaseNotes = getChangelog()
+                    groups = "android-team"
+                }
             }
         }
         debug {
+            signingConfig signingConfigs.FakeSigningConfig
             applicationIdSuffix '.debug'
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher_grayscale"]
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
-
+            if (useGoogleServices) {
+                firebaseAppDistribution {
+                    releaseNotes = getChangelog()
+                }
+            }
         }
 
     }
@@ -152,6 +158,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += [
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=kotlinx.coroutines.FlowPreview",
+                "-Xopt-in=kotlin.RequiresOptIn"
+        ]
     }
     androidExtensions {
         experimental = true
@@ -159,9 +170,20 @@ android {
 }
 
 static def getChangelog() {
-    def cmdGetLastTag = "git describe --tags --abbrev=-0"
-    def tag = cmdGetLastTag.execute().text.trim()
-    def cmdLine = "git log $tag..HEAD --oneline --no-merges"
+    def cmdGetCurrentTag = "git describe --tags --abbrev=-0"
+    def currentTag = System.getenv("CI_COMMIT_TAG")
+    def previousTag = cmdGetCurrentTag.execute().text.trim()
+
+    if (currentTag == null || currentTag == "") {
+        currentTag = "HEAD"
+    } else if (currentTag == previousTag) {
+        def cmdGetPreviousTagRevision = "git rev-list --tags --skip=1 --max-count=1"
+        def previousTagRevision = cmdGetPreviousTagRevision.execute().text.trim()
+        def cmdGetPreviousTag = "git describe --abbrev=0 --tags $previousTagRevision"
+        previousTag = cmdGetPreviousTag.execute().text.trim()
+    }
+
+    def cmdLine = "git log $previousTag..$currentTag --no-merges --pretty=format:%s"
     def changelog = cmdLine.execute().text
     return changelog
 }
@@ -197,25 +219,13 @@ task downloadBundles {
 protobuf {
     protoc {
         // You still need protoc like in the non-Android case
-        artifact = 'com.google.protobuf:protoc:3.0.0'
-
+        artifact = 'com.google.protobuf:protoc:3.11.4'
     }
-    plugins {
-        javalite {
-            // The codegen for lite comes as a separate artifact
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
 
-        }
-    }
     generateProtoTasks {
         all().each { task ->
             task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
-            }
-            task.plugins {
-                javalite {}
+                java { option 'lite' }
             }
         }
     }
@@ -237,7 +247,12 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$ax_constraintlayout"
     implementation "androidx.gridlayout:gridlayout:$ax_gridlayout"
     implementation "androidx.recyclerview:recyclerview:$ax_recyclerview"
+    implementation "androidx.security:security-crypto:$ax_securitycrypto"
     implementation "androidx.legacy:legacy-support-v13:$ax_legacyV13"
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_view_version"
     testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
     testImplementation "androidx.test:runner:$ax_test_runner"
     testImplementation "androidx.test:rules:$ax_test_rules"
@@ -249,10 +264,13 @@ dependencies {
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
+    implementation("com.google.firebase:firebase-config-ktx:$firebase_config_version") {
+        exclude group: "com.google.protobuf", module: "protobuf-lite"
+    }
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$firebase_messaging"
     implementation "com.google.guava:guava:$guava_version"
-    implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
+    implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
 
     // Square
@@ -277,6 +295,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
     // Mobius
@@ -311,5 +330,3 @@ dependencies {
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
 }
-
-apply plugin: 'com.google.gms.google-services'

@@ -27,36 +27,49 @@ package com.breadwallet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
+import androidx.appcompat.app.AppCompatActivity
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
+import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.animation.BRDialog
+import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.AccountState
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.onboarding.IntroController
+import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.util.ControllerTrackingListener
+import com.breadwallet.util.errorHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.erased.instance
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
@@ -68,7 +81,7 @@ private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
  * platform events into Mobius events.
  */
 @Suppress("TooManyFunctions")
-class MainActivity : BRActivity() {
+class MainActivity : AppCompatActivity(), KodeinAware {
 
     companion object {
         const val EXTRA_DATA = "com.breadwallet.ui.MainActivity.EXTRA_DATA"
@@ -76,15 +89,23 @@ class MainActivity : BRActivity() {
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
     }
 
+    override val kodein by closestKodein()
+
+    private val accountManager by instance<BRAccountManager>()
+
     private lateinit var router: Router
+    private var trackingListener: ControllerTrackingListener? = null
+
     // NOTE: Used only to centralize deep link navigation handling.
     private var routerNavHandler: RouterNavigationEffectHandler? = null
 
-    private var walletLockJob: Job? = null
+    private val resumedScope = CoroutineScope(
+        Default + SupervisorJob() + errorHandler("resumedScope")
+    )
 
     private var launchedWithInvalidState = false
     private val isDeviceStateValid: Boolean
-        get() = (application as BreadApp).isDeviceStateValid
+        get() = (application as BreadApp).isDeviceStateValid()
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +115,8 @@ class MainActivity : BRActivity() {
             router = Conductor.attachRouter(this, view, savedInstanceState)
             routerNavHandler = RouterNavigationEffectHandler(router)
         })
+
+        trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
         if (!isDeviceStateValid) {
             // In this case, isDeviceStateValid displays a dialog (activity)
@@ -105,8 +128,11 @@ class MainActivity : BRActivity() {
             return
         }
 
+        accountManager.lockAccount()
+
         // Allow launching with a phrase to recover automatically
-        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !BreadApp.hasWallet()) {
+        val hasWallet = accountManager.isAccountInitialized()
+        if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !hasWallet) {
             val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
             if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
                 val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
@@ -118,16 +144,17 @@ class MainActivity : BRActivity() {
         // The app is launched, no screen to be restored
         if (!router.hasRootController()) {
             val rootController = when {
-                !BreadApp.hasWallet() && BreadApp.isMigrationRequired -> MigrateController()
-                BreadApp.hasWallet() -> {
-                    if (BRKeyStore.getPinCode(this).isNotBlank()) {
+                accountManager.isMigrationRequired() -> MigrateController()
+                else -> when (accountManager.getAccountState()) {
+                    is AccountState.Disabled -> DisabledController()
+                    is AccountState.Uninitialized -> IntroController()
+                    else -> if (accountManager.hasPinCode()) {
                         val intentUrl = processIntentData(intent)
                         LoginController(intentUrl)
                     } else {
                         InputPinController(OnCompleteAction.GO_HOME)
                     }
                 }
-                else -> IntroController()
             }
             router.setRoot(
                 RouterTransaction.with(rootController)
@@ -143,12 +170,21 @@ class MainActivity : BRActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        walletLockJob?.cancel()
-        walletLockJob = null
+        trackingListener?.run(router::removeChangeListener)
+        trackingListener = null
+        (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
+        resumedScope.cancel()
     }
 
     override fun onResume() {
         super.onResume()
+        BreadApp.setBreadContext(this)
+
+        accountManager.accountStateChanges()
+            .map { processAccountState(it) }
+            .flowOn(Main)
+            .launchIn(resumedScope)
+
         // If we come back to the activity after launching with
         // an invalid device state, check the state again.
         // If the state is valid, recreate the activity otherwise
@@ -164,24 +200,16 @@ class MainActivity : BRActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        walletLockJob?.cancel()
-        walletLockJob = null
-    }
-
-    override fun onStop() {
-        super.onStop()
-        walletLockJob = GlobalScope.launch(Main) {
-            delay(LOCK_TIMEOUT)
-            lockApp()
-        }
+    override fun onPause() {
+        super.onPause()
+        BreadApp.setBreadContext(null)
+        resumedScope.coroutineContext.cancelChildren()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
-        KeyStore.onActivityResult(requestCode, resultCode)
+        accountManager.onActivityResult(requestCode, resultCode)
     }
 
     override fun onBackPressed() {
@@ -200,7 +228,7 @@ class MainActivity : BRActivity() {
         intent ?: return
 
         val data = processIntentData(intent) ?: ""
-        if (data.isNotBlank() && BreadApp.hasWallet()) {
+        if (data.isNotBlank() && accountManager.isAccountInitialized()) {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
@@ -224,23 +252,82 @@ class MainActivity : BRActivity() {
         } else data
     }
 
+    private fun processAccountState(accountState: AccountState) {
+        if (accountManager.isAccountInitialized() && router.hasRootController()) {
+            when (accountState) {
+                AccountState.Locked -> lockApp()
+                is AccountState.Disabled -> disableApp()
+            }
+        }
+    }
+
+    private fun isBackstackDisabled() = router.backstack
+        .map(RouterTransaction::controller)
+        .filterIsInstance<DisabledController>()
+        .any()
+
+    private fun isBackstackLocked() =
+        router.backstack.lastOrNull()?.controller()
+            ?.let {
+                // Backstack is locked or requires a pin
+                it is LoginController || it is InputPinController ||
+                    it is AuthenticationController ||
+                    // Backstack is initialization flow
+                    it is OnBoardingController || it is RecoveryKeyController ||
+                    it is MigrateController
+            } ?: false
+
+    private fun disableApp() {
+        if (isBackstackDisabled()) return
+
+        logDebug("Disabling backstack.")
+        router.pushController(
+            RouterTransaction.with(DisabledController())
+                .pushChangeHandler(FadeChangeHandler())
+                .popChangeHandler(FadeChangeHandler())
+        )
+    }
+
     private fun lockApp() {
-        val hasPin = BRKeyStore.getPinCode(this).isNotEmpty()
+        if (isBackstackDisabled() || isBackstackLocked()) return
+
         val controller = when {
-            hasPin -> LoginController(showHome = false)
+            accountManager.hasPinCode() ->
+                LoginController(showHome = router.backstackSize == 0)
             else -> InputPinController(
                 onComplete = OnCompleteAction.GO_HOME,
-                skipWriteDown = true
+                skipWriteDown = BRSharedPrefs.getPhraseWroteDown()
             )
         }
 
-        val transaction = RouterTransaction.with(controller)
-            .popChangeHandler(FadeChangeHandler())
-            .pushChangeHandler(FadeChangeHandler())
+        logDebug("Locking with controller=$controller")
 
-        when (router.backstack.lastOrNull()?.controller()) {
-            is LoginController -> router.replaceTopController(transaction)
-            else -> router.pushController(transaction)
+        router.pushController(
+            RouterTransaction.with(controller)
+                .popChangeHandler(FadeChangeHandler())
+                .pushChangeHandler(FadeChangeHandler())
+        )
+    }
+
+    /**
+     * Check if there is an overlay view over the screen, if an
+     * overlay view is found the event won't be dispatched and
+     * a dialog with a warning will be shown.
+     *
+     * @param event The touch screen event.
+     * @return boolean Return true if this event was consumed or if an overlay view was found.
+     */
+    private fun checkOverlayAndDispatchTouchEvent(event: MotionEvent): Boolean {
+        // Filter obscured touches by consuming them.
+        if (event.flags and MotionEvent.FLAG_WINDOW_IS_OBSCURED != 0) {
+            if (event.action == MotionEvent.ACTION_UP) {
+                BRDialog.showSimpleDialog(
+                    this, getString(R.string.Android_screenAlteringTitle),
+                    getString(R.string.Android_screenAlteringMessage)
+                )
+            }
+            return true
         }
+        return super.dispatchTouchEvent(event)
     }
 }

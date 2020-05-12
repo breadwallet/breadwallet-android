@@ -41,7 +41,6 @@ import com.breadwallet.ui.send.ConfirmTxController
 import com.platform.ConfirmTransactionMessage
 import com.platform.PlatformTransactionBus
 import com.platform.TransactionResultMessage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 private const val KEY_CURRENCY_CODE = "currency_code"
 private const val KEY_FIAT_CODE = "fiat_code"
@@ -54,7 +53,6 @@ private const val KEY_FIAT_TOTAL_COST = "fiat_total_cost"
 private const val KEY_NETWORK_FEE = "fiat_network_fee"
 private const val KEY_TRANSFER_FIELDS = "transfer_fields"
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class PlatformConfirmTransactionController(
     args: Bundle? = null
 ) : BaseController(args), AuthenticationController.Listener, ConfirmTxController.Listener {
@@ -135,9 +133,8 @@ class PlatformConfirmTransactionController(
         router.popController(this@PlatformConfirmTransactionController)
     }
 
-    override fun onAuthenticationFailed(): Boolean {
+    override fun onAuthenticationFailed() {
         handleNotAuthenticated()
-        return true
     }
 
     override fun onAuthenticationCancelled() {

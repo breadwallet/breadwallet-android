@@ -30,8 +30,6 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
 import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_display_currency.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -41,7 +39,6 @@ import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class DisplayCurrencyController :
     BaseMobiusController<DisplayCurrency.M, DisplayCurrency.E, DisplayCurrency.F>() {
 

@@ -11,13 +11,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.app.BreadApp;
-import com.breadwallet.crypto.Cipher;
-import com.breadwallet.crypto.Coder;
-import com.breadwallet.crypto.Key;
-import com.breadwallet.crypto.Signer;
+import com.breadwallet.crypto.*;
 import com.breadwallet.legacy.presenter.activities.ConfirmationActivity;
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
@@ -668,14 +663,14 @@ public final class MessageExchangeService extends JobIntentService {
     private ByteString processAccountRequest(byte[] decryptedMessage) throws InvalidProtocolBufferException {
         Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
         String currencyCode = request.getScope();
-        BaseWalletManager walletManager = WalletsMaster.getInstance().getWalletByIso(this, currencyCode);
 
         Protos.AccountResponse.Builder responseBuilder = Protos.AccountResponse.newBuilder();
-        if (walletManager == null) {
+        Wallet wallet = null; // TODO: get wallet for currency code
+        if (wallet == null) {
             responseBuilder.setStatus(Protos.Status.REJECTED)
                     .setError(Protos.Error.SCOPE_UNKNOWN);
         } else {
-            String address = walletManager.getAddress(this);
+            String address = wallet.getTarget().toString();
             if (address == null) {
                 responseBuilder.setStatus(Protos.Status.REJECTED)
                         .setError(Protos.Error.NO_ADDRESS_FOUND);

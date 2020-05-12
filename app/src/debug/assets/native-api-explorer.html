@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
 </head>
-<body>
+<body bgcolor="#FFFFFF">
 <form>
     <fieldset>
         <p>
             <label for="toAddress">To Address</label>
-            <input id="toAddress" type="text" value="n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF"/>
+            <input id="toAddress" type="text" value="1ALcVQ2ip7Pkx8bwh8vwUvQy8JdzEE6t49"/>
         </p>
         <p>
             <label for="currencyCode">Currency Code</label>
@@ -16,13 +16,83 @@
         </p>
         <p>
             <label for="amount">Amount</label>
-            <input id="amount" type="text" value="100000"/>
+            <input id="amount" type="text" value="1"/>
         </p>
         <p>
-            <button onclick="submitTransaction()">Submit</button>
+            <button onclick="submitTransaction(); return false;">Submit</button>
         </p>
         <p>
             <span id="txOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="enableWalletCurrencyCode">Currency Code</label>
+            <input id="enableWalletCurrencyCode" type="text" value="eth"/>
+        </p>
+        <p>
+            <button onclick="enableWallet(); return false;">Enable wallet</button>
+        </p>
+        <p>
+            <span id="enableWalletOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="listAll">List all</label>
+            <input checked checked id="listAll" type="checkbox"/>
+        </p>
+        <p>
+            <button onclick="listCurrencies(); return false;">Get currencies</button>
+        </p>
+        <p>
+            <span id="currenciesOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="maxlimitToAddress">To Address</label>
+            <input id="maxlimitToAddress" type="text" value="1ALcVQ2ip7Pkx8bwh8vwUvQy8JdzEE6t49"/>
+        </p>
+        <p>
+            <label for="maxlimitCurrencyCode">Currency Code</label>
+            <input id="maxlimitCurrencyCode" type="text" value="btc"/>
+        </p>
+        <p>
+            <button onclick="maxlimit(); return false;">Get maxlimit</button>
+        </p>
+        <p>
+            <span id="maxlimitOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <button onclick="requestLocation(); return false;">Request Location</button>
+        </p>
+        <p>
+            <span id="locationOutput"></span>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <button onclick="takePicture(); return false;">Take Picture</button>
+            <input type="file" id="fileInput" name="Choose Picture" onchange="processFiles();" />
+        </p>
+        <p>
+            <span id="pictureMessage"></span>
+            <img id="pictureOutput" style="height: 100%; width: 100%; object-fit: contain">
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="kvKey">KVStore Key</label>
+            <input id="kvKey" type="text" value="vuex-exchange"/>
+        </p>
+        <p>
+            <button onclick="kvGet(); return false;">Get</button>
+        </p>
+        <p>
+            <span id="kvGetOutput"></span>
         </p>
     </fieldset>
 </form>
@@ -63,16 +133,123 @@
         let toAddress = document.getElementById("toAddress").value;
         let currencyCode = document.getElementById("currencyCode").value;
         let amount = document.getElementById("amount").value;
+        let amountStr = JSON.stringify({ "numerator" : amount, "denominator": "1" });
 
-        WalletJs.transaction(toAddress, "", amount, currencyCode)
+        WalletJs.transaction(toAddress, "", amountStr, currencyCode)
             .then((transaction) => {
                 txOutput.innerText = `Hash: ${transaction.hash}\n Transmitted: ${transaction.transmitted}`;
             })
             .catch((error) => {
                 txOutput.innerText = error;
             })
+
     }
 
+    function enableWallet() {
+        let enableWalletOutput = document.getElementById("enableWalletOutput");
+        let currencyCode = document.getElementById("enableWalletCurrencyCode").value;
+        WalletJs.enableCurrency(currencyCode)
+            .then((result) => {
+                enableWalletOutput.innerText = `Wallet added ${result.currency}`;
+            })
+            .catch((error) => {
+                enableWalletOutput.innerText = error;
+            })
+    }
+
+    function listCurrencies() {
+        let currenciesOutput = document.getElementById("currenciesOutput");
+        let listAll = document.getElementById("listAll").checked;
+
+        WalletJs.currencies(listAll)
+            .then((result) => {
+                currenciesOutput.innerText = `${result.currencies.length} currencies retrieved`;
+            })
+            .catch((error) => {
+                currenciesOutput.innerText = error;
+            })
+    }
+
+    function maxlimit() {
+        let maxlimitOutput = document.getElementById("maxlimitOutput");
+        maxlimitOutput.innerText = "";
+
+        let toAddress = document.getElementById("maxlimitToAddress").value;
+        let currencyCode = document.getElementById("maxlimitCurrencyCode").value;
+
+        WalletJs.maxlimit(toAddress, currencyCode)
+            .then((limit) => {
+                let num = parseFloat(limit.numerator)
+                let den = parseFloat(limit.denominator)
+                let maxlimit = num/den
+
+                maxlimitOutput.innerText = `maxlimit: ${maxlimit}\n`;
+            })
+            .catch((error) => {
+                maxlimitOutput.innerText = error;
+            })
+    }
+
+    function takePicture() {
+        CameraJs.takePicture()
+            .then((path) => {
+                pictureMessage.innerText = ""
+                pictureOutput.src = `file://${path}`;
+            })
+            .catch((error) => {
+                pictureMessage.innerText = error
+                pictureOutput.removeAttribute('src');
+            })
+    }
+
+    function kvGet() {
+        let kvGetOutput = document.getElementById("kvGetOutput");
+        kvGetOutput.innerText = ""
+
+        let key = document.getElementById("kvKey").value
+
+        KVStoreJs.get(key)
+            .then((result) => {
+                let output =
+                kvGetOutput.innerText = JSON.stringify(result)
+            })
+            .catch((error) => {
+                kvGetOutput.innerText = error
+            })
+
+    }
+
+    function requestLocation() {
+        LocationJs.getLocation()
+            .then((data) => {
+                locationOutput.innerText = JSON.stringify(data)
+            })
+            .catch((error) => {
+                locationOutput.innerText = error
+            })
+    }
+
+    function processFiles() {
+        if (fileInput.files && fileInput.files[0]) {
+            let reader = new FileReader()
+
+            reader.onload = function (e) {
+                pictureMessage.innerText = ""
+                pictureOutput.src = e.target.result
+            }
+
+            reader.onerror = function (e) {
+                reader.abort()
+                pictureMessage.innerText = "Failed to read chosen image."
+                pictureOutput.src = e.target.result
+            }
+
+            reader.readAsDataURL(fileInput.files[0])
+        } else {
+            pictureMessage.innerText = "No image chosen."
+            pictureOutput.removeAttribute('src');
+        }
+    }
 </script>
 </body>
 </html>

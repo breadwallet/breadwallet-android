@@ -30,13 +30,11 @@ import com.breadwallet.repository.RatesRepository
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.util.CurrencyCode
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -44,7 +42,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TxDetailsHandler(
     private val output: Consumer<E>,
     private val context: Context
@@ -55,10 +52,7 @@ class TxDetailsHandler(
     }
 
     override val coroutineContext =
-        SupervisorJob() + Dispatchers.Default +
-            CoroutineExceptionHandler { _, throwable ->
-                logError("Error in coroutine", throwable)
-            }
+        SupervisorJob() + Dispatchers.Default + errorHandler()
 
     override fun accept(effect: F) {
         when (effect) {

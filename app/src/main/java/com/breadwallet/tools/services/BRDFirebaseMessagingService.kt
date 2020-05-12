@@ -35,7 +35,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
 import com.breadwallet.R
+import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.AccountState
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.MainActivity
@@ -43,7 +46,13 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.platform.network.NotificationsSettingsClientImpl
 import com.platform.util.getStringOrNull
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.kodein.di.android.closestKodein
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
 
 /**
  * This class is responsible for updating the Firebase registration token each time a new one is available,
@@ -106,7 +115,14 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         // Save token in shared preferences.
         Log.d(TAG, "onNewToken: token value: $token")
         BRSharedPrefs.putFCMRegistrationToken(this, token)
-        updateFcmRegistrationToken(this, token)
+        BreadApp.applicationScope.launch {
+            val kodein by closestKodein(applicationContext)
+            val accountManager = kodein.direct.instance<BRAccountManager>()
+            accountManager.accountStateChanges()
+                .filter { it !is AccountState.Uninitialized }
+                .first()
+            updateFcmRegistrationToken(applicationContext, token)
+        }
     }
 
     /**

@@ -30,12 +30,11 @@ import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -43,7 +42,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import java.math.BigDecimal
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class BreadBoxEffectHandler(
     private val output: Consumer<BreadBoxEvent>,
     private val currencyCode: String,
@@ -51,10 +49,7 @@ class BreadBoxEffectHandler(
 ) : Connection<BreadBoxEffect>, CoroutineScope {
 
     override val coroutineContext =
-        SupervisorJob() + Dispatchers.Default +
-            CoroutineExceptionHandler { _, throwable ->
-                logError("Error in coroutine", throwable)
-            }
+        SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
         // Currency name

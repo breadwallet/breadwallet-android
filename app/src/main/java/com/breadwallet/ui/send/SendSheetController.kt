@@ -128,7 +128,7 @@ class SendSheetController(args: Bundle? = null) :
             viewCreatedScope,
             { eventConsumer },
             breadBox = direct.instance(),
-            keyStore = direct.instance(),
+            accountManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
             navEffectHandler = direct.instance(),

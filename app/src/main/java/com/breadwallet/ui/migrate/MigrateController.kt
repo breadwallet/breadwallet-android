@@ -30,49 +30,71 @@ import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.crypto.Account
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
-import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.legacy.view.dialog.DialogActivity
+import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType.KEY_STORE_INVALID_WIPE
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.login.LoginController
-import kotlinx.coroutines.Dispatchers
+import com.breadwallet.ui.onboarding.IntroController
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
-import java.util.Date
 
 class MigrateController(
     args: Bundle? = null
 ) : BaseController(args) {
 
-    private val keyStore by instance<KeyStore>()
-
     override val layoutId: Int = R.layout.controller_login
 
-    override fun onCreateView(view: View) {
-        super.onCreateView(view)
-        controllerScope.launch {
-            val phrase = try {
-                checkNotNull(keyStore.getPhrase())
-            } catch (e: UserNotAuthenticatedException) {
-                null
-            }
-            withContext(Dispatchers.Main) {
-                phrase?.apply(::migrateAccount) ?: activity?.finish()
+    private val accountManager: BRAccountManager by instance()
+
+    private val mutex = Mutex()
+
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        BreadApp.applicationScope.launch(Main) {
+            mutex.withLock<Unit> {
+                if (accountManager.isMigrationRequired()) {
+                    try {
+                        migrateAccount()
+                    } catch (e: UserNotAuthenticatedException) {
+                        waitUntilAttached()
+                        activity?.finish()
+                    }
+                } else if (isAttached) {
+                    redirect()
+                }
             }
         }
     }
 
-    private fun migrateAccount(phrase: ByteArray) {
-        val timestamp = Date(BRKeyStore.getWalletCreationTime(applicationContext))
-        val account = Account.createFromPhrase(phrase, timestamp, BRSharedPrefs.getDeviceId())
-        BRKeyStore.putAccount(account, applicationContext)
-        BRKeyStore.deleteMasterPublicKey(applicationContext)
+    private fun redirect() {
+        val target = if (accountManager.isAccountInitialized()) {
+            LoginController()
+        } else {
+            IntroController()
+        }
+        router.replaceTopController(RouterTransaction.with(target))
+    }
 
-        (applicationContext as BreadApp).startWithInitializedWallet(direct.instance(), true)
+    private suspend fun migrateAccount() {
+        if (accountManager.migrateAccount()) {
+            val context = (BreadApp.getBreadContext().applicationContext as BreadApp)
+            context.startWithInitializedWallet(direct.instance(), true)
 
-        router.replaceTopController(RouterTransaction.with(LoginController()))
+            waitUntilAttached()
+            router.replaceTopController(RouterTransaction.with(LoginController()))
+        } else {
+            waitUntilAttached()
+            DialogActivity.startDialogActivity(activity, KEY_STORE_INVALID_WIPE)
+        }
+    }
+
+    private suspend fun waitUntilAttached() {
+        while (!isAttached) delay(1_000)
     }
 }

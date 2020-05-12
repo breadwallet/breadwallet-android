@@ -24,17 +24,24 @@
  */
 package com.breadwallet.breadbox
 
-import android.content.Context
 import android.util.Base64
 import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.Key
+import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.crypto.CryptoHelper.sha256
 import com.breadwallet.tools.crypto.CryptoHelper.signBasicDer
 import com.breadwallet.tools.crypto.CryptoHelper.signJose
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -47,17 +54,19 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.nio.charset.Charset
 import java.util.Date
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
 private const val JWT_EXP_DAYS = 7L
 private const val MAX_TOKEN_RETRIES = 3
-private const val JWT_EXP_PADDING_MS = 10_000L
+private const val FIREBASE_MAX_RETRIES = 5
+private const val FIREBASE_RETRY_DELAY = 1_000L
+private const val BDB_TOKEN_KEY = "BDB_TOKEN"
 
 class BdbAuthInterceptor(
-    private val context: Context,
-    private val httpClient: OkHttpClient
+    private val httpClient: OkHttpClient,
+    private val accountManager: BRAccountManager
 ) : Interceptor {
 
     private val mutex = Mutex()
@@ -68,8 +77,19 @@ class BdbAuthInterceptor(
         .toString()
         .jwtEncode()
 
+    private var clientToken: String
+
+    init {
+        if (BuildConfig.USE_REMOTE_CONFIG) {
+            clientToken = Firebase.remoteConfig.getString(BDB_TOKEN_KEY)
+            GlobalScope.launch { fetchClientToken() }
+        } else {
+            clientToken = BuildConfig.BDB_CLIENT_TOKEN
+        }
+    }
+
     private val authKeyBytes by lazy {
-        checkNotNull(BRKeyStore.getAuthKey(context)) {
+        checkNotNull(accountManager.getAuthKey()) {
             "BdbAuthInterceptor created before API Auth Key was set."
         }
     }
@@ -80,14 +100,8 @@ class BdbAuthInterceptor(
         }
     }
 
-    @Volatile
-    private var jwtString: String? = BRKeyStore.getBdbJwt(context)?.toString(Charset.forName("UTF-8"))
-
-    @Volatile
-    private var jwtExpiration: Long = BRKeyStore.getBdbJwtExp(context)
-
     private val tokenRequestSignature by lazy {
-        val signingData = checkNotNull(sha256(BuildConfig.BDB_CLIENT_TOKEN.toByteArray()))
+        val signingData = checkNotNull(sha256(clientToken.toByteArray()))
         signBasicDer(signingData, authKey).base64EncodedString()
     }
 
@@ -103,21 +117,11 @@ class BdbAuthInterceptor(
         }
 
         val tokenString = runBlocking {
-            if (jwtString == null) createAndSetJwt()
-
-            if ((jwtExpiration - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
-                // Expired, cleanup and create new token
-                jwtString = null
-                jwtExpiration = 0
+            if (accountManager.getBdbJwt() == null) {
                 createAndSetJwt()
             }
-
             // Fallback to client token if needed, try creating a token later
-            if (jwtString == null) {
-                BuildConfig.BDB_CLIENT_TOKEN
-            } else {
-                jwtString
-            }
+            accountManager.getBdbJwt() ?: clientToken
         }
 
         return chain.request()
@@ -135,16 +139,13 @@ class BdbAuthInterceptor(
             return
         }
         if (newJwt != null) {
-            jwtString = newJwt
-            jwtExpiration = expiration
-            BRKeyStore.putBdbJwt(newJwt.toByteArray(), context)
-            BRKeyStore.putBdbJwtExp(expiration, context)
+            accountManager.putBdbJwt(newJwt, expiration)
         }
     }
 
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
-        if (jwtString != null) return@withLock null to 0
+        if (accountManager.getBdbJwt() != null) return@withLock null to 0
 
         val (token, clientId) = requestToken() ?: return@withLock null to 0
 
@@ -172,7 +173,7 @@ class BdbAuthInterceptor(
 
     private fun requestToken(attempt: Int = 0): Pair<String, String>? {
         val request = Request.Builder()
-            .addHeader("Authorization", "Bearer ${BuildConfig.BDB_CLIENT_TOKEN}")
+            .addHeader("Authorization", "Bearer $clientToken")
             .url("https://api.blockset.com/users/token")
             .method(
                 "POST",
@@ -212,6 +213,37 @@ class BdbAuthInterceptor(
         return body?.run {
             getString("token") to getString("client_token")
         }
+    }
+
+    private suspend fun fetchClientToken() = mutex.withLock {
+        logDebug("Fetching client token from remote-config.")
+        val remoteConfig = Firebase.remoteConfig
+        var attempt = 1L
+        while (clientToken.isBlank()) {
+            val success = try {
+                Tasks.await(remoteConfig.fetchAndActivate())
+            } catch (e: ExecutionException) {
+                logError("Failed to fetch and activate remote-config data.", e)
+                false
+            }
+
+            when {
+                success -> {
+                    logDebug("remote-config synced successfully.")
+                    clientToken = remoteConfig.getString(BDB_TOKEN_KEY)
+                }
+                attempt - 1 >= FIREBASE_MAX_RETRIES -> {
+                    logDebug("Max remote-config attempts exhausted.")
+                    clientToken = BuildConfig.BDB_CLIENT_TOKEN
+                }
+                else -> {
+                    logDebug("Retrying remote-config sync.")
+                    delay(attempt * FIREBASE_RETRY_DELAY)
+                    attempt++
+                }
+            }
+        }
+        logDebug("Done fetching client token")
     }
 
     private fun String.jwtEncode() =

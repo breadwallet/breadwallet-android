@@ -42,7 +42,6 @@ import com.breadwallet.ui.MainActivity
 import kotlinx.android.synthetic.main.controller_scanner.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -53,7 +52,6 @@ import kotlinx.coroutines.flow.transformLatest
 
 private const val CAMERA_UI_UPDATE_MS = 100L
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
 class ScannerController(
     args: Bundle? = null
 ) : BaseController(args) {

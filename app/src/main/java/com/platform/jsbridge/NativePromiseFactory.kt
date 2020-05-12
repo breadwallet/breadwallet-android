@@ -26,6 +26,7 @@ package com.platform.jsbridge
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -39,15 +40,22 @@ import kotlin.random.nextInt
 class NativePromiseFactory(webView: WebView) {
 
     private var webView: WebView? = webView
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-    private val binderMap = ConcurrentHashMap<String, NativePromiseJs>()
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob() + errorHandler())
+    private val binderMap = ConcurrentHashMap<String, NativePromiseJs<*>>()
+
+    private val evaluateJs: (String) -> Unit = { js: String ->
+        scope.launch(Dispatchers.Main) {
+            webView.evaluateJavascript(js, null)
+        }
+    }
 
     fun create(executor: suspend () -> JSONObject?) =
-        NativePromiseJs(scope, executor) { js ->
-            scope.launch(Dispatchers.Main) {
-                checkNotNull(webView).evaluateJavascript(js, null)
-            }
-        }.also { promise ->
+        NativePromiseJs(scope, executor, evaluateJs).also { promise ->
+            binderMap[promise.jsName] = promise
+        }
+
+    fun createForString(executor: suspend () -> String) =
+        NativePromiseJs(scope, executor, evaluateJs).also { promise ->
             binderMap[promise.jsName] = promise
         }
 
@@ -63,16 +71,25 @@ class NativePromiseFactory(webView: WebView) {
      * JavaScript added by platform-content to provide the promise hooks.
      * See assets/native-api-explorer.html for the snippet.
      */
-    class NativePromiseJs(
+    class NativePromiseJs<V>(
         private val scope: CoroutineScope,
-        private val executor: suspend () -> JSONObject?,
-        private val evaluateJs: (js: String) -> Unit
+        private val executor: suspend () -> V?,
+        private val evaluateJs: (js: String) -> Unit,
+        private val valueWriter: ((V?) -> String) = DEFAULT_VALUE_WRITER
     ) {
 
         companion object {
             private const val CALLBACK_NAME_LENGTH = 6
             private val UPPER_CHAR_RANGE = 65..90
             private val LOWER_CHAR_RANGE = 97..122
+
+            private val DEFAULT_VALUE_WRITER = { value: Any? ->
+                if (value == null) "null" else when (value) {
+                    is String -> "\"$value\""
+                    is JSONObject -> value.toString()
+                    else -> "null"
+                }
+            }
         }
 
         private var fulfilled = false
@@ -90,11 +107,11 @@ class NativePromiseFactory(webView: WebView) {
             "cb_$suffix"
         }
 
-        private fun resolve(result: JSONObject? = null) = evaluateJs(
+        private fun resolve(result: V? = null) = evaluateJs(
             """
                 (function() {
                     let callback = window.brdCallbacks["$jsName"]
-                    callback.resolve.call(callback.scope, $result)
+                    callback.resolve.call(callback.scope, ${valueWriter(result)})
                     delete window.brdCallbacks["$jsName"]
                 })()
             """.trimIndent()

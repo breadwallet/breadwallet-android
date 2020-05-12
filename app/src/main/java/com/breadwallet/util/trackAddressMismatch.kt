@@ -35,8 +35,10 @@ import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
 import com.breadwallet.tools.crypto.CryptoHelper.keccak256
 import com.breadwallet.tools.crypto.CryptoHelper.sha256
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.CryptoAccountManager
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.eth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.flow.asFlow
@@ -64,8 +66,10 @@ fun ByteArray?.pubKeyToEthAddress(): String? = when {
 
 @Suppress("LongMethod", "ReturnCount")
 suspend fun BreadApp.trackAddressMismatch(breadBox: BreadBox) {
-    val oldAddressString = BRKeyStore.getEthPublicKey(this).pubKeyToEthAddress() ?: return
-    val ethWallet = breadBox.wallet("eth").first()
+    val accountManager by instance<BRAccountManager>()
+    val oldAddressString =
+        (accountManager as CryptoAccountManager).getEthPublicKey().pubKeyToEthAddress() ?: return
+    val ethWallet = breadBox.wallet(eth).first()
     val coreAddressOld = ethWallet.addressFor(oldAddressString)
     if (coreAddressOld == null) {
         logError("Failed to get core Address for old eth address.")

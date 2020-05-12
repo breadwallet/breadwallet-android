@@ -58,7 +58,6 @@ object LoginScreen {
         object OnUnlockAnimationEnd : E()
         data class OnFingerprintEnabled(val enabled: Boolean) : E()
         data class OnLoginPreferencesLoaded(
-            val showHomeScreen: Boolean,
             val currentCurrencyCode: String
         ) : E()
 

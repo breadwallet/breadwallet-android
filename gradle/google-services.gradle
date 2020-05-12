@@ -1,0 +1,21 @@
+def hasAppServicesJson = file("google-services.json").exists()
+def submoduleServicesJson = rootProject.file("google-services/google-services.json")
+
+ext {
+    useGoogleServices = submoduleServicesJson.exists() || hasAppServicesJson
+}
+
+if (ext.useGoogleServices) {
+    if (!hasAppServicesJson) {
+        afterEvaluate {
+            copy {
+                from submoduleServicesJson
+                into projectDir
+            }
+        }
+    }
+
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.appdistribution'
+    apply plugin: 'com.google.firebase.crashlytics'
+}

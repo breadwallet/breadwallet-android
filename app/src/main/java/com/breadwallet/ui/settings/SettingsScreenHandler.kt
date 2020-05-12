@@ -35,12 +35,16 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.bch
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
+import com.breadwallet.util.errorHandler
 import com.platform.APIClient
 import com.platform.HTTPServer
 import com.platform.buildSignedRequest
@@ -54,11 +58,16 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import org.kodein.di.direct
+import org.kodein.di.erased.instance
+import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
+    private val retainedScope: CoroutineScope,
     private val context: Context,
     private val activity: Activity,
     private val experimentsRepository: ExperimentsRepository,
@@ -66,10 +75,11 @@ class SettingsScreenHandler(
     private val showPlatformDebugUrlDialog: (String) -> Unit,
     private val showPlatformBundleDialog: (String) -> Unit,
     private val showTokenBundleDialog: (String) -> Unit,
-    private val metaDataManager: AccountMetaDataProvider
+    private val metaDataManager: AccountMetaDataProvider,
+    private val accountManager: BRAccountManager
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     @Suppress("ComplexMethod")
     override fun accept(value: F) {
@@ -77,7 +87,8 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                LogsUtils.shareLogs(activity)
+                val d = (context.applicationContext as BreadApp).kodein.direct
+                LogsUtils.shareLogs(activity, d.instance(), d.instance())
             }
             F.ShowApiServerDialog -> launch(Dispatchers.Main) {
                 showApiServerDialog(BreadApp.host)
@@ -135,6 +146,10 @@ class SettingsScreenHandler(
                 activity.getSystemService(ActivityManager::class.java)
                     ?.clearApplicationUserData()
             }
+            F.GetPaperKey -> retainedScope.launch {
+                val phrase = checkNotNull(accountManager.getPhrase()).toString(UTF_8)
+                output.accept(E.ShowPhrase(phrase.split(" ")))
+            }
         }
     }
 
@@ -149,11 +164,11 @@ class SettingsScreenHandler(
             SettingsSection.SECURITY -> securitySettings()
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "btc")
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, btc)
                 btcOptions
             }
             SettingsSection.BCH_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, "bch")
+                BRSharedPrefs.putCurrentWalletCurrencyCode(context, bch)
                 bchOptions
             }
         }
@@ -338,7 +353,7 @@ class SettingsScreenHandler(
         ).apply {
             launch {
                 val modeMap = metaDataManager.walletModes().first()
-                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode("BTC")?.currencyId ?: ""
+                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode(btc)?.currencyId ?: ""
                 if (modeMap[btcCurrencyId] != WalletManagerMode.API_ONLY) {
                     add(
                         SettingsItem(
@@ -377,13 +392,9 @@ class SettingsScreenHandler(
     private fun sendAtmFinderRequest() {
         val mapExperiment = ExperimentsRepositoryImpl.experiments[Experiments.ATM_MAP.key]
         val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
-        val url = HTTPServer.getPlatformUrl(LinkPlugin.BROWSER_PATH)
-        val request = buildSignedRequest(
-            url,
-            mapPath,
-            "POST",
-            LinkPlugin.BROWSER_PATH
-        )
-        APIClient.getInstance(context).sendRequest(request, false)
+        val mapJsonObj = JSONObject(mapPath)
+        val url = mapJsonObj.getString("url")
+        
+        output.accept(E.OnATMMapClicked(url, mapPath))
     }
 }

@@ -45,6 +45,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
+import com.breadwallet.util.errorHandler
 import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
 import com.spotify.mobius.Connection
@@ -53,8 +54,6 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -69,7 +68,6 @@ import com.breadwallet.crypto.Wallet as CryptoWallet
 
 private const val DATA_THROTTLE_MS = 500L
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeScreenHandler(
     private val output: Consumer<E>,
     private val context: Context,
@@ -80,7 +78,7 @@ class HomeScreenHandler(
     CoroutineScope,
     RatesDataSource.OnDataChanged {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
         RatesDataSource.getInstance(context).addOnDataChangedListener(this)

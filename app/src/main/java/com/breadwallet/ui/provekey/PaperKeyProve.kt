@@ -25,6 +25,7 @@
 package com.breadwallet.ui.provekey
 
 import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.util.normalize
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -60,8 +61,8 @@ object PaperKeyProve {
         /** Used to represent the state of the content of an input field */
         enum class WordState { EMPTY, INVALID, VALID }
 
-        val firstWord: String get() = phrase[firstWordIndex]
-        val secondWord: String get() = phrase[secondWordIndex]
+        val firstWord: String = phrase[firstWordIndex].normalize()
+        val secondWord: String = phrase[secondWordIndex].normalize()
     }
 
     @MobiusUpdateSpec(

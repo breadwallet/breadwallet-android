@@ -25,7 +25,6 @@
 package com.breadwallet.ui.settings
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -39,11 +38,9 @@ import com.breadwallet.R
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.util.Link
-import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.MainActivity
+import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
@@ -59,7 +56,8 @@ import org.kodein.di.erased.instance
 class SettingsController(
     args: Bundle? = null
 ) : BaseMobiusController<M, E, F>(args),
-    ScannerController.Listener {
+    ScannerController.Listener,
+    AuthenticationController.Listener {
 
     companion object {
         private const val EXT_SECTION = "section"
@@ -86,7 +84,8 @@ class SettingsController(
     override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
             SettingsScreenHandler(
-                output,
+                eventConsumer,
+                viewCreatedScope,
                 direct.instance(),
                 checkNotNull(activity),
                 direct.instance(),
@@ -94,6 +93,7 @@ class SettingsController(
                 ::showPlatformDebugUrlDialog,
                 ::showPlatformBundleDialog,
                 ::showTokenBundleDialog,
+                direct.instance(),
                 direct.instance()
             )
         },
@@ -108,7 +108,8 @@ class SettingsController(
                 F.GoToSupport -> NavigationEffect.GoToFaq("")
                 is F.GoToSection -> NavigationEffect.GoToMenu(effect.section)
                 F.GoBack -> NavigationEffect.GoBack
-                F.GoToPaperKey -> NavigationEffect.GoToWriteDownKey(OnCompleteAction.GO_HOME)
+                is F.GoToPaperKey -> NavigationEffect.GoToPaperKey(effect.phrase, null)
+                F.GoToAuthentication -> NavigationEffect.GoToAuthentication
                 F.GoToUpdatePin -> NavigationEffect.GoToSetPin()
                 F.GoToOnboarding -> NavigationEffect.GoToOnboarding
                 F.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
@@ -122,10 +123,11 @@ class SettingsController(
                 F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
                 is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
                 F.GoToHomeScreen -> NavigationEffect.GoToHome
-                is F.GoToSend -> NavigationEffect.GoToSend(
-                    effect.currencyCode,
-                    cryptoRequestUrl = effect.cryptoRequestUrl
+                is F.GoToLink -> NavigationEffect.GoToDeepLink(
+                    link = effect.link,
+                    authenticated = true
                 )
+                is F.GoToATMMap -> NavigationEffect.GoToATMMap(effect.url, effect.mapJson)
                 else -> null
             }
         })
@@ -172,19 +174,12 @@ class SettingsController(
         }
     }
 
-    override fun onLinkScanned(link: Link) = Unit
+    override fun onLinkScanned(link: Link) {
+        eventConsumer.accept(E.OnLinkScanned(link))
+    }
 
-    override fun onRawTextScanned(text: String) {
-        when (val link = text.asLink()) {
-            is Link.CryptoRequestUrl ->
-                eventConsumer.accept(E.OnTransactionScanned(link))
-            else -> {
-                Intent(applicationContext, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .putExtra(MainActivity.EXTRA_DATA, text)
-                    .run(this::startActivity)
-            }
-        }
+    override fun onAuthenticationSuccess() {
+        eventConsumer.accept(E.OnAuthenticated)
     }
 
     /** Developer options dialogs */

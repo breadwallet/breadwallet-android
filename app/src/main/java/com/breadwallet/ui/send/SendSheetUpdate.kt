@@ -37,6 +37,7 @@ import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Delete
 import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.ui.send.SendSheet.M
+import com.breadwallet.util.isEthereum
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -173,8 +174,17 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         val isBalanceTooLow = model.isTotalCostOverBalance
         val isAmountBlank = model.rawAmount.isBlank() || model.amount.isZero()
         val isTargetBlank = model.targetAddress.isBlank()
+        val isEthBalanceLow = when {
+            model.run { feeCurrencyCode.isEthereum() && !isFeeNative } ->
+                model.networkFee > model.feeCurrencyBalance
+            else -> false
+        }
 
-        if (isBalanceTooLow || isAmountBlank || isTargetBlank) {
+        if (isBalanceTooLow || isAmountBlank || isTargetBlank || isEthBalanceLow) {
+            val effects = mutableSetOf<F>()
+            if (isEthBalanceLow) {
+                effects.add(F.ShowEthTooLowForTokenFee(model.feeCurrencyCode, model.networkFee))
+            }
             return next(
                 model.copy(
                     amountInputError = when {
@@ -186,7 +196,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                         isTargetBlank -> M.InputError.Empty
                         else -> null
                     }
-                )
+                ),
+                effects
             )
         }
         return when {
@@ -282,6 +293,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             model.copy(
                 balance = event.balance,
                 fiatBalance = event.fiatBalance,
+                feeCurrencyBalance = event.feeCurrencyBalance,
                 isTotalCostOverBalance = isTotalCostOverBalance,
                 amountInputError = if (isTotalCostOverBalance) {
                     M.InputError.BalanceTooLow
@@ -304,7 +316,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         event: E.OnNetworkFeeUpdated
     ): Next<M, F> {
         val isTotalCostOverBalance = when {
-            model.currencyCode == model.feeCurrencyCode ->
+            model.isFeeNative ->
                 model.amount + event.networkFee > model.balance
             else -> model.amount > model.balance
         }
@@ -689,6 +701,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             fiatPricePerFeeUnit = model.fiatPricePerUnit,
             fiatPricePerUnit = model.fiatPricePerUnit,
             fiatBalance = model.fiatBalance,
+            feeCurrencyCode = model.feeCurrencyCode,
+            feeCurrencyBalance = model.feeCurrencyBalance,
             fiatAmount = if (link.amount != null && model.fiatPricePerUnit > BigDecimal.ZERO) {
                 (link.amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
             } else BigDecimal.ZERO

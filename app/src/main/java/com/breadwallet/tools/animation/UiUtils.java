@@ -7,32 +7,18 @@ import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.os.Looper;
-import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
-import com.breadwallet.R;
-import com.breadwallet.legacy.presenter.activities.DisabledActivity;
-import com.breadwallet.legacy.presenter.fragments.FragmentSignal;
-import com.breadwallet.legacy.presenter.fragments.FragmentWebModal;
-import com.breadwallet.legacy.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.legacy.wallet.WalletsMaster;
-import com.breadwallet.legacy.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.ui.MainActivity;
-import com.breadwallet.ui.browser.PlatformBrowserActivity;
 import com.breadwallet.ui.wallet.WalletController;
-import com.platform.HTTPServer;
 
 import java.util.List;
 
@@ -64,89 +50,15 @@ import static android.content.Context.ACTIVITY_SERVICE;
  */
 
 public class UiUtils {
-    private static final String TAG = UiUtils.class.getName();
     public static final int CLICK_PERIOD_ALLOWANCE = 300;
     public static final String ARTICLE_QUERY_STRING = "/article?slug=";
     public static final String CURRENCY_QUERY_STRING = "&currency=";
+    private static final String TAG = UiUtils.class.getName();
     private static long mLastClickTime = 0;
     private static boolean mSupportIsShowing;
 
-    public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
-        FragmentSignal mFragmentSignal = new FragmentSignal();
-        Bundle bundle = new Bundle();
-        bundle.putString(FragmentSignal.TITLE, title);
-        bundle.putString(FragmentSignal.ICON_DESCRIPTION, iconDescription);
-        mFragmentSignal.setCompletion(completion);
-        bundle.putInt(FragmentSignal.RES_ID, drawableId);
-        mFragmentSignal.setArguments(bundle);
-        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
-        transaction.add(android.R.id.content, mFragmentSignal, mFragmentSignal.getClass().getName());
-        transaction.addToBackStack(null);
-        if (!activity.isDestroyed()) {
-            transaction.commit();
-        }
-    }
-
     public static void setIsSupportFragmentShown(boolean isSupportFragmentShown) {
         mSupportIsShowing = isSupportFragmentShown;
-    }
-
-    public static void showSupportFragment(FragmentActivity fragmentActivity, String articleId, BaseWalletManager walletManager) {
-        if (mSupportIsShowing) {
-            return;
-        }
-        try {
-            mSupportIsShowing = true;
-            if (fragmentActivity == null) {
-                Log.e(TAG, "showSupportFragment: app is null");
-                return;
-            }
-
-            StringBuilder urlBuilder = new StringBuilder().append(HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT));
-            if (!Utils.isNullOrEmpty(articleId)) {
-                urlBuilder.append(ARTICLE_QUERY_STRING);
-                urlBuilder.append(articleId);
-
-                // If no wallet is provided, we don't need to pass the current code as a parameter.
-                String currencyQuery;
-                if (walletManager == null) {
-                    currencyQuery = "";
-                } else {
-                    String currencyCode = walletManager.getCurrencyCode();
-                    WalletsMaster walletsMaster = WalletsMaster.getInstance();
-                    if (walletsMaster.isCurrencyCodeErc20(fragmentActivity.getApplicationContext(), currencyCode)) {
-                        currencyCode = BRConstants.CURRENCY_ERC20;
-                    }
-                    currencyQuery = CURRENCY_QUERY_STRING + currencyCode;
-                }
-                urlBuilder.append(currencyQuery.toLowerCase());
-            }
-
-            showWebModal(fragmentActivity, urlBuilder.toString());
-        } finally {
-            mSupportIsShowing = false;
-        }
-
-    }
-
-    public static void showWebModal(FragmentActivity fragmentActivity, String url) {
-        FragmentWebModal fragmentSupport = (FragmentWebModal) fragmentActivity.getSupportFragmentManager()
-                .findFragmentByTag(FragmentWebModal.class.getName());
-        if (fragmentSupport != null && fragmentSupport.isAdded()) {
-            fragmentActivity.getFragmentManager().popBackStack();
-            return;
-        }
-        fragmentSupport = new FragmentWebModal();
-        Bundle bundle = new Bundle();
-        bundle.putString(FragmentWebModal.EXTRA_URL, url);
-
-        fragmentSupport.setArguments(bundle);
-        /*fragmentActivity.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentSupport, SendSheetController.class.getName())
-                .addToBackStack(SendSheetController.class.getName()).commit();*/
-
     }
 
     public static LayoutTransition getDefaultTransition() {
@@ -212,25 +124,6 @@ public class UiUtils {
         window.setStatusBarColor(app.getColor(color));
     }
 
-    /**
-     * Opens WebView with platform formatted rewards url.
-     * Reuse this method in Preferences.
-     *
-     * @param activity The Activity.
-     */
-    public static void openRewardsWebView(Activity activity) {
-        startPlatformBrowser(activity, HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS), R.anim.enter_from_right,
-                R.anim.empty_300, R.anim.fade_up, R.anim.exit_to_right);
-    }
-
-    public static void showWalletDisabled(Activity app) {
-        Intent intent = new Intent(app, DisabledActivity.class);
-        app.startActivity(intent);
-        app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-        Log.e(TAG, "showWalletDisabled: " + app.getClass().getName());
-
-    }
-
     public static boolean isLast(Activity app) {
         ActivityManager mngr = (ActivityManager) app.getSystemService(ACTIVITY_SERVICE);
 
@@ -241,18 +134,6 @@ public class UiUtils {
             return true;
         }
         return false;
-    }
-
-    public static void startPlatformBrowser(Activity activity, String url) {
-        startPlatformBrowser(activity, url, R.anim.enter_from_bottom, R.anim.fade_down, 0, 0);
-    }
-
-    private static void startPlatformBrowser(Activity activity, String url, int enterAnimation,
-                                             int exitAnimation, int returnEnterAnimation, int returnExitAnimation) {
-        PlatformBrowserActivity.Companion.start(activity, url, returnEnterAnimation, returnExitAnimation);
-        if (enterAnimation != 0 && exitAnimation != 0) {
-            activity.overridePendingTransition(enterAnimation, exitAnimation);
-        }
     }
 
     public static boolean isMainThread() {

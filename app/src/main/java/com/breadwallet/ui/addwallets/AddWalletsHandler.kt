@@ -43,14 +43,11 @@ import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 object AddWalletsHandler {
 
     fun create(

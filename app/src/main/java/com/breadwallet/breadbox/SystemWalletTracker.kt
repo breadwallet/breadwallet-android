@@ -26,6 +26,7 @@ package com.breadwallet.breadbox
 
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Network
+import com.breadwallet.crypto.NetworkPeer
 import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.Wallet
@@ -62,6 +63,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
 /**
@@ -78,7 +80,7 @@ class SystemWalletTracker(
     /**
      * On each emission of enabled wallets or change to a wallet connection mode,
      * connects any [WalletManager]s that are newly needed and registers for the new currencies,
-     * disconnects [WalletManager]s no longer needed, or restarts [WalletManager]s in new mode.
+     * or restarts [WalletManager]s in new mode.
      */
     fun monitorTrackedWallets() =
         walletProvider
@@ -89,7 +91,7 @@ class SystemWalletTracker(
                 val systemWallets = system.wallets
                 systemWallets.forEach { disconnectWalletManager(it, wallets) }
 
-                // Enable wallets by creating wallet managers and/or connecting as necessary
+                // Enable wallets by connecting and registering as necessary
                 wallets.forEach { enabledWallet ->
                     val systemWallet =
                         systemWallets.find { it.currencyId.equals(enabledWallet, true) }
@@ -97,9 +99,8 @@ class SystemWalletTracker(
                         .walletManagers
                         .find { it.networkContainsCurrency(enabledWallet) }
 
-                    when (walletManager) {
-                        null -> createWalletManager(system, enabledWallet, walletModeMap)
-                        else -> connectAndRegister(
+                    if (walletManager != null) {
+                        connectAndRegister(
                             walletManager,
                             enabledWallet,
                             walletModeMap
@@ -126,12 +127,7 @@ class SystemWalletTracker(
                         wallets.any { manager.networkContainsCurrency(it) }
                     }
                     .onEach {
-                        val address = BRSharedPrefs
-                            .getTrustNode(iso = manager.currency.code)
-                            .orEmpty()
-                        val networkPeer = manager
-                            .network
-                            .getPeerOrNull(address)
+                        val networkPeer = getNetworkPeer(manager)
                         manager.connect(networkPeer)
                     }
                     .launchIn(scope)
@@ -161,13 +157,13 @@ class SystemWalletTracker(
                         .launchIn(scope)
                 }
             }
+
         }
     }
 
     @Synchronized
     /**
-     * Creates a [WalletManager] if the newly added [Network] contains a currency that should
-     * be tracked.
+     * Creates the [WalletManager] for a newly added [Network]
      */
     override fun handleSystemEvent(systemEvt: System, event: SystemEvent) {
         when (event) {
@@ -181,24 +177,16 @@ class SystemWalletTracker(
                 //    migrateNetwork(systemEvt, event.network, event.network.currency.code)
                 //}
 
-                walletProvider
-                    .enabledWallets()
-                    .take(1)
-                    .filter { wallets ->
-                        network.isMainnet == isMainnet && wallets.any { network.containsCurrency(it) }
-                    }
-                    .onEach {
-                        logDebug("Creating wallet manager for network '${network.name}'.")
-                        val modeMap = walletProvider.walletModes().first()
-                        system
-                            .first()
-                            .createWalletManager(
-                                network,
-                                modeMap[network.currency.uids],
-                                emptySet()
-                            )
-                    }
-                    .launchIn(scope)
+                scope.launch {
+                    val modeMap = walletProvider.walletModes().first()
+                    system
+                        .first()
+                        .createWalletManager(
+                            network,
+                            modeMap[network.currency.uids],
+                            emptySet()
+                        )
+                }
             }
         }
     }
@@ -223,33 +211,6 @@ class SystemWalletTracker(
         network: Network,
         event: NetworkEvent
     ) = Unit
-
-    private fun createWalletManager(
-        system: System,
-        currencyId: String,
-        walletModeMap: Map<String, WalletManagerMode>
-    ) {
-        val network = system
-            .networks
-            .find {
-                it.containsCurrency(currencyId)
-            }
-        when (network) {
-            null -> logError("Network for $currencyId not found.")
-            else -> {
-                val currency = network.findCurrency(currencyId)
-                logDebug("Creating wallet manager for $currencyId.")
-                system.createWalletManager(
-                    network,
-                    walletModeMap[network.currency.uids],
-                    when (currency) {
-                        null -> emptySet()
-                        else -> setOf(currency)
-                    }
-                )
-            }
-        }
-    }
 
     /**
      * Disconnect [WalletManager] for [systemWallet], if connected and not needed for
@@ -279,12 +240,7 @@ class SystemWalletTracker(
             walletManager.currency.isBitcoinCash() -> WalletManagerMode.API_ONLY
             else -> walletModeMap[walletManager.network.currency.uids] ?: walletManager.mode
         }
-        val address = BRSharedPrefs
-            .getTrustNode(iso = walletManager.currency.code)
-            .orEmpty()
-        val networkPeer = walletManager
-            .network
-            .getPeerOrNull(address)
+        val networkPeer = getNetworkPeer(walletManager)
         if (!walletManager.state.isTracked()) {
             logDebug("Connecting Wallet Manager: ${walletManager.network}")
             walletManager.mode = mode
@@ -295,12 +251,23 @@ class SystemWalletTracker(
             walletManager.mode = mode
             walletManager.connect(networkPeer)
         }
+        // TODO: Once CORE-871 is fixed, calling registerWalletFor() here will be redundant, as
+        // we should get another WalletManagerChangedEvent after connecting above
         logDebug("Registering wallet for: $currencyId")
         walletManager.registerWalletFor(
             walletManager.findCurrency(
                 currencyId
             )
         )
+    }
+
+    private fun getNetworkPeer(manager: WalletManager): NetworkPeer? {
+        val address = BRSharedPrefs
+            .getTrustNode(iso = manager.currency.code)
+            .orEmpty()
+        return manager
+            .network
+            .getPeerOrNull(address)
     }
 
     private fun migrateNetwork(system: System, network: Network, currencyCode: String) {

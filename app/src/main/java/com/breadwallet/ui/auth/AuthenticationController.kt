@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.auth
 
-import android.app.Activity
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
 import android.view.View
@@ -34,7 +33,7 @@ import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
+import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.tools.security.FingerprintUiHelper
 import com.breadwallet.ui.BaseController
@@ -61,12 +60,8 @@ class AuthenticationController(
 
         /**
          * Called when the user exhausts all authentication attempts.
-         *
-         * Return true if the failure was consumed to prevent the
-         * application from locking itself. The default is false
-         * and this return value may be removed in the future.
          */
-        fun onAuthenticationFailed(): Boolean = false
+        fun onAuthenticationFailed() = Unit
 
         /** Called when the user cancels the authentication request. */
         fun onAuthenticationCancelled() = Unit
@@ -95,7 +90,15 @@ class AuthenticationController(
         overridePushHandler(DialogChangeHandler())
     }
 
-    private val mode = Mode.valueOf(arg(KEY_MODE))
+    private val mode by lazy {
+        val context = BreadApp.getBreadContext().applicationContext
+        val fingerprintManager = context.getSystemService<FingerprintManager>()
+        if (fingerprintManager == null) {
+            Mode.PIN_REQUIRED
+        } else {
+            Mode.valueOf(arg(KEY_MODE))
+        }
+    }
 
     override val layoutId: Int =
         when (mode) {
@@ -125,8 +128,7 @@ class AuthenticationController(
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
-        when (if (fingerprintManager == null) Mode.PIN_REQUIRED else mode) {
+        when (mode) {
             Mode.PIN_REQUIRED -> {
                 pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
                     override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
@@ -137,16 +139,13 @@ class AuthenticationController(
                     }
 
                     override fun onPinLocked() {
-                        if (listener?.onAuthenticationFailed() == false) {
-                            // TODO: This feels hidden in here, we should move this somewhere
-                            //  more explicit that wont complicate testing
-                            (activity as? BRActivity)?.showWalletDisabled()
-                        }
+                        listener?.onAuthenticationFailed()
                         router.popCurrentController()
                     }
                 })
             }
             Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
+                val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
                 val fingerprintUiHelperBuilder =
                     FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
                 val callback = object : FingerprintUiHelper.Callback {

@@ -46,18 +46,17 @@ import com.breadwallet.crypto.events.wallet.WalletTransferSubmittedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerChangedEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerEvent
 import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncProgressEvent
+import com.breadwallet.crypto.events.walletmanager.WalletManagerSyncRecommendedEvent
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.Bip39Reader
+import com.breadwallet.util.errorHandler
 import com.platform.interfaces.WalletProvider
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -80,7 +79,6 @@ import java.util.concurrent.Executors
 private const val DEFAULT_THROTTLE_MS = 100L
 private const val AGGRESSIVE_THROTTLE_MS = 300L
 
-@UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Suppress("TooManyFunctions")
 internal class CoreBreadBox(
     private val storageFile: File,
@@ -101,11 +99,8 @@ internal class CoreBreadBox(
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
 
     private val openScope = CoroutineScope(
-        SupervisorJob() +
-            Dispatchers.Default +
-            CoroutineExceptionHandler { _, throwable ->
-                logError("Error in coroutine", throwable)
-            })
+        SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
+    )
 
     private val systemChannel = BroadcastChannel<System>(BUFFERED)
     private val accountChannel = BroadcastChannel<Account>(BUFFERED)
@@ -393,6 +388,10 @@ internal class CoreBreadBox(
                         )
                     )
                 }
+            }
+            is WalletManagerSyncRecommendedEvent -> {
+                logDebug("Syncing '${manager.currency.code}' to ${event.depth}")
+                manager.syncToDepth(event.depth)
             }
         }
     }

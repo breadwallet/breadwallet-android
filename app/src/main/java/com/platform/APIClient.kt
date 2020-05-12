@@ -43,7 +43,6 @@ import androidx.annotation.VisibleForTesting
 import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Key
-import com.breadwallet.legacy.wallet.WalletsMaster
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
@@ -53,7 +52,7 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRKeyStore
+import com.breadwallet.tools.security.BRAccountManager
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRCompressor
 import com.breadwallet.tools.util.BRConstants
@@ -84,6 +83,7 @@ import com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8
 import com.breadwallet.tools.util.BRConstants.FALSE
 import com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT
 import com.breadwallet.tools.util.BRConstants.TRUE
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -92,12 +92,12 @@ import org.kodein.di.erased.instance
 
 private const val UNAUTHED_HTTP_STATUS = 401
 
-class APIClient(private var context: Context) {
+class APIClient(private var context: Context, private val accountManager: BRAccountManager) {
 
     private var authKey: Key? = null
         get() {
             if (field == null) {
-                val key = BRKeyStore.getAuthKey(context) ?: byteArrayOf()
+                val key = accountManager.getAuthKey() ?: byteArrayOf()
                 if (key.isNotEmpty()) {
                     field = Key.createFromPrivateKeyString(key).orNull()
                 }
@@ -463,7 +463,7 @@ class APIClient(private var context: Context) {
         mIsPlatformUpdating = true
 
         //update Bundle
-        BRExecutor.getInstance().forBackgroundTasks().execute {
+        BreadApp.applicationScope.launch {
             val startTime = System.currentTimeMillis()
             ServerBundlesHelper.updateBundles(context)
             val endTime = System.currentTimeMillis()
@@ -477,23 +477,11 @@ class APIClient(private var context: Context) {
         }
 
         //update feature flags
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
+        BreadApp.applicationScope.launch {
             val startTime = System.currentTimeMillis()
             ExperimentsRepositoryImpl.refreshExperiments(context)
             val endTime = System.currentTimeMillis()
             logDebug("updateFeatureFlag: DONE in " + (endTime - startTime) + "ms")
-            itemFinished()
-        }
-
-        //update fee
-        BRExecutor.getInstance().forBackgroundTasks().execute {
-            val startTime = System.currentTimeMillis()
-            val wallets = ArrayList(WalletsMaster.getInstance().getAllWallets(context))
-            for (w in wallets) {
-                w.updateFee(context)
-            }
-            val endTime = System.currentTimeMillis()
-            logDebug("update fee: DONE in " + (endTime - startTime) + "ms")
             itemFinished()
         }
     }

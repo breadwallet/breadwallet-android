@@ -30,14 +30,14 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.model.FeeOption
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.breadwallet.tools.util.btc
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
@@ -48,7 +48,6 @@ import java.util.UUID
 
 // Suppress warnings about context usage, it remains to support legacy coe.
 @Suppress("UNUSED_PARAMETER")
-@UseExperimental(ExperimentalCoroutinesApi::class)
 object BRSharedPrefs {
     val TAG: String = BRSharedPrefs::class.java.name
 
@@ -65,6 +64,7 @@ object BRSharedPrefs {
     private const val PAPER_KEY_WRITTEN_DOWN = "phraseWritten"
     private const val PREFER_STANDARD_FEE = "favorStandardFee"
     private const val FEE_PREFERENCE = "feePreference"
+
     @VisibleForTesting
     const val RECEIVE_ADDRESS = "receive_address"
     private const val FEE_RATE = "feeRate"
@@ -93,7 +93,6 @@ object BRSharedPrefs {
     private const val NEW_WALLET = "newWallet"
     private const val PROMPT_PREFIX = "prompt_"
     private const val TRUST_NODE_PREFIX = "trustNode_"
-    private const val APP_BACKGROUNDED_FROM_HOME = "appBackgroundedFromHome"
     private const val DEBUG_HOST = "debug_host"
     private const val DEBUG_SERVER_BUNDLE = "debug_server_bundle"
     private const val DEBUG_WEB_PLATFORM_URL = "debug_web_platform_url"
@@ -113,7 +112,6 @@ object BRSharedPrefs {
      * Call when Application is initialized to setup [brdPrefs].
      * This removes the need for a context parameter.
      */
-    @JvmStatic
     fun provideContext(context: Context) {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
@@ -140,12 +138,10 @@ object BRSharedPrefs {
             putString(CURRENT_CURRENCY, default)
         }
 
-    @JvmStatic
-    fun getPhraseWroteDown(context: Context? = null): Boolean =
+    fun getPhraseWroteDown(): Boolean =
         brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
 
-    @JvmStatic
-    fun putPhraseWroteDown(context: Context? = null, check: Boolean) =
+    fun putPhraseWroteDown(check: Boolean) =
         brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
 
     @JvmStatic
@@ -278,11 +274,8 @@ object BRSharedPrefs {
         brdPrefs.edit { putBoolean(feature, enabled) }
 
     @JvmStatic
-    fun getCurrentWalletCurrencyCode(context: Context? = null): String =
-        brdPrefs.getString(
-            CURRENT_WALLET_CURRENCY_CODE,
-            WalletBitcoinManager.BITCOIN_CURRENCY_CODE
-        )!!
+    fun getCurrentWalletCurrencyCode(): String =
+        brdPrefs.getString(CURRENT_WALLET_CURRENCY_CODE, btc.toUpperCase(Locale.ROOT))!!
 
     @JvmStatic
     fun putCurrentWalletCurrencyCode(context: Context? = null, currencyCode: String) =
@@ -424,14 +417,6 @@ object BRSharedPrefs {
     @JvmStatic
     fun putTrustNode(context: Context? = null, iso: String, trustNode: String) =
         brdPrefs.edit { putString(TRUST_NODE_PREFIX + iso.toUpperCase(), trustNode) }
-
-    @JvmStatic
-    fun wasAppBackgroundedFromHome(context: Context? = null): Boolean =
-        brdPrefs.getBoolean(APP_BACKGROUNDED_FROM_HOME, true)
-
-    @JvmStatic
-    fun putAppBackgroundedFromHome(context: Context? = null, fromHome: Boolean) =
-        brdPrefs.edit { putBoolean(APP_BACKGROUNDED_FROM_HOME, fromHome) }
 
     @JvmStatic
     fun putFCMRegistrationToken(context: Context? = null, token: String) =
@@ -681,13 +666,17 @@ object BRSharedPrefs {
     var recoveryKeyLanguage: String
         get() = brdPrefs.getString(LANGUAGE, Locale.getDefault().language)!!
         set(value) {
-            val isLanguageValid = (sequenceOf(Locale.getDefault()) + Locale.getAvailableLocales())
-                .map { it.language }
-                .contains(value)
+            val isLanguageValid = Bip39Reader.SupportedLanguage.values().any { lang ->
+                lang.toString() == value
+            }
 
-            require(isLanguageValid) { "language must be a valid Locale.getLanguage() string." }
-
-            brdPrefs.edit { putString(LANGUAGE, value) }
+            brdPrefs.edit {
+                if (isLanguageValid) {
+                    putString(LANGUAGE, value)
+                } else {
+                    putString(LANGUAGE, Bip39Reader.SupportedLanguage.EN.toString())
+                }
+            }
         }
 
     /** Preference to unlock the app using the fingerprint sensor */

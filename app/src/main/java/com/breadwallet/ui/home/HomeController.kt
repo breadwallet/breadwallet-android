@@ -89,14 +89,14 @@ class HomeController(
             Connectable { output ->
                 HomeScreenHandler(
                     output,
-                    activity as BRActivity,
+                    activity!!,
                     direct.instance(),
                     direct.instance(),
                     direct.instance()
                 )
             },
             Connectable { output ->
-                PromptEffectHandler(output, activity!!)
+                PromptEffectHandler(output, activity!!, direct.instance())
             },
             nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
                 when (effect) {
@@ -114,6 +114,7 @@ class HomeController(
                     is F.GoToAddWallet ->
                         NavigationEffect.GoToAddWallet
                     is F.GoToFingerprintSettings -> NavigationEffect.GoToFingerprintAuth
+                    is F.GoToUpgradePin -> NavigationEffect.GoToSetPin()
                     else -> null
                 }
             }

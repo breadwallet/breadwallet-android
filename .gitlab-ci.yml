@@ -1,12 +1,15 @@
 image: drewcarlson/docker-android
 
 variables:
-  GIT_SUBMODULE_STRATEGY: recursive
   SIGNING_KEY: /builds/breadwallet/breadwallet-android/FakeSigningKey
   SIGNING_PASSWORD: qwerty
   SIGNING_ALIAS: key0
   SIGNING_ALIAS_PASSWORD: qwerty
-  NATIVE_REVIEW_URL: https://breadwallet.gitlab.io/-/native-wallet-review/-/jobs/352606597/artifacts/build/distributions/index.html
+  NATIVE_REVIEW_URL: https://breadwallet.gitlab.io/-/native-wallet-review/-/jobs/484039874/artifacts/build/distributions/index.html
+
+before_script:
+  - git submodule sync
+  - git submodule update --init --force --remote
 
 cache:
   key: ${CI_PROJECT_ID}-2
@@ -38,28 +41,22 @@ debug:test:
     reports:
       junit: app/build/test-results/**/TEST-*.xml
 
-testnet:debug:build-deploy:
+debug:testnet:deploy-appetize:
   stage: build
   script:
     - fastlane appetizeUpload flavor:brdTestnet build_type:debug
   only:
-    - develop
-    - master
-    - /^release.*$/
     - merge_requests
   artifacts:
     expose_as: "Review Testnet"
     paths:
       - app/build/review-brdTestnet-debug.html
 
-mainnet:debug:build-deploy:
+debug:mainnet:deploy-appetize:
   stage: build
   script:
     - fastlane appetizeUpload flavor:brd build_type:debug
   only:
-    - develop
-    - master
-    - /^release.*$/
     - merge_requests
   artifacts:
     expose_as: "Review Mainnet"
@@ -79,18 +76,24 @@ release:test:
     reports:
       junit: app/build/test-results/**/TEST-*.xml
 
-release:build-deploy:
+release:deploy-firebase:
   stage: build
   script:
-    - ./gradlew --console=plain assembleRelease appDistributionUploadBrdRelease
-    - fastlane appetizeUpload flavor:brd build_type:release
-    - fastlane appetizeUpload flavor:brdTestnet build_type:release
-  only:
-    - develop
-    - master
-    - /^release.*$/
+    - ./gradlew --console=plain assembleRelease appDistributionUploadBrdRelease appDistributionUploadBrdTestnetRelease
+  rules:
+    - if: '$CI_COMMIT_TAG != null'
   artifacts:
     paths:
-      - app/build/outputs/apk/
-      - app/build/review-brd-release.html
-      - app/build/review-brdTestnet-release.html
+      - app/build/outputs/apk/brd/release/
+      - app/build/outputs/apk/brdTestnet/release/
+
+debug:deploy-firebase:
+  stage: build
+  script:
+    - ./gradlew --console=plain assembleDebug appDistributionUploadBrdDebug appDistributionUploadBrdTestnetDebug
+  rules:
+    - if: '$CI_COMMIT_TAG != null'
+  artifacts:
+    paths:
+      - app/build/outputs/apk/brd/debug/
+      - app/build/outputs/apk/brdTestnet/debug/

@@ -33,24 +33,23 @@ import com.breadwallet.breadbox.toSanitizedString
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.legacy.wallet.wallets.bitcoin.BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.qrcode.QRUtils
+import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.segwit.LegacyAddress.E
 import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.util.CryptoUriParser
+import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-@UseExperimental(FlowPreview::class)
 class LegacyAddressHandler(
     private val output: Consumer<E>,
     private val breadBox: BreadBox,
@@ -59,10 +58,10 @@ class LegacyAddressHandler(
     private val showAddressCopiedAnimation: () -> Unit
 ) : Connection<F>, CoroutineScope {
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
 
     init {
-        breadBox.wallet(BITCOIN_CURRENCY_CODE)
+        breadBox.wallet(btc)
             .map { wallet ->
                 wallet.getTargetForScheme(AddressScheme.BTC_LEGACY)
             }
@@ -70,7 +69,7 @@ class LegacyAddressHandler(
             .map { E.OnAddressUpdated(it.toString(), it.toSanitizedString()) }
             .bindConsumerIn(output, this)
 
-        breadBox.wallet(BITCOIN_CURRENCY_CODE)
+        breadBox.wallet(btc)
             .map { it.currency.name }
             .distinctUntilChanged()
             .map { E.OnWalletNameUpdated(it) }
@@ -93,7 +92,7 @@ class LegacyAddressHandler(
                         val cryptoRequest = CryptoRequest.Builder()
                             .setAddress(effect.address)
                             .build()
-                        val cryptoUri = cryptoUriParser.createUrl(BITCOIN_CURRENCY_CODE, cryptoRequest)
+                        val cryptoUri = cryptoUriParser.createUrl(btc, cryptoRequest)
                         QRUtils.sendShareIntent(
                             context,
                             cryptoUri.toString(),
