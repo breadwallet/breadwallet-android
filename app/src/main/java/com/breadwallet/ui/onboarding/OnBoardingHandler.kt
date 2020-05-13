@@ -95,8 +95,6 @@ class OnBoardingHandler(
         }
 
         try {
-            breadApp.startWithInitializedWallet(breadBox, false)
-
             outputProvider().accept(E.OnWalletCreated)
         } catch (e: IllegalStateException) {
             logError("Error initializing crypto system", e)

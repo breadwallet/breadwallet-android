@@ -61,6 +61,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.tools.manager.updateRatesForCurrencies
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.tools.security.KeyStoreStatus
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
@@ -84,7 +85,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -443,8 +443,15 @@ class BreadApp : Application(), KodeinAware {
         setDelayServerShutdown(false, -1)
 
         val breadBox = getBreadBox()
-        if (isDeviceStateValid() && userManager.isInitialized()) {
-            startWithInitializedWallet(breadBox)
+        if (isDeviceStateValid()) {
+            startedScope.launch {
+                userManager
+                    .stateChanges()
+                    .first { it is BrdUserState.Enabled }
+                if (!userManager.isMigrationRequired()) {
+                    startWithInitializedWallet(breadBox)
+                }
+            }
         }
     }
 
