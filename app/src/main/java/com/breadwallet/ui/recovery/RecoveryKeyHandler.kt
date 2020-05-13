@@ -140,7 +140,6 @@ class RecoveryKeyHandler(
                 }
 
                 BRSharedPrefs.putPhraseWroteDown(check = true)
-                breadApp.startWithInitializedWallet(breadBox, false)
             } catch (e: Exception) {
                 logError("Error opening BreadBox", e)
                 // TODO: Define initialization error
