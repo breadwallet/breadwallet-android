@@ -54,8 +54,6 @@ class AlertDialogController(
         private const val KEY_NEGATIVE_TEXT = "negative_text"
         private const val KEY_ICON_RES_ID = "icon_res_id"
         private const val KEY_SHOW_HELP = "show_help"
-
-        private val NOOP_LISTENER = object : Listener {}
     }
 
     constructor(
@@ -85,27 +83,23 @@ class AlertDialogController(
 
     override val layoutId = R.layout.controller_alert_dialog
 
-    private val listener: Listener
-        get() = targetController as? Listener
-            ?: NOOP_LISTENER
-
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val dialogId = arg<String>(KEY_DIALOG_ID)
         layoutBackground.setOnClickListener {
-            listener.onDismissed(dialogId, this)
+            findListener<Listener>()?.onDismissed(dialogId, this)
             router.popCurrentController()
         }
         pos_button.setOnClickListener {
-            listener.onPositiveClicked(dialogId, this)
+            findListener<Listener>()?.onPositiveClicked(dialogId, this)
             router.popCurrentController()
         }
         neg_button.setOnClickListener {
-            listener.onNegativeClicked(dialogId, this)
+            findListener<Listener>()?.onNegativeClicked(dialogId, this)
             router.popCurrentController()
         }
         help_icon.setOnClickListener {
-            listener.onHelpClicked(dialogId, this)
+            findListener<Listener>()?.onHelpClicked(dialogId, this)
         }
 
         help_icon.isVisible = arg(KEY_SHOW_HELP)
@@ -125,7 +119,7 @@ class AlertDialogController(
     }
 
     override fun handleBack(): Boolean {
-        listener.onDismissed(arg(KEY_DIALOG_ID), this)
+        findListener<Listener>()?.onDismissed(arg(KEY_DIALOG_ID), this)
         return super.handleBack()
     }
 }

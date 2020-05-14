@@ -27,45 +27,11 @@ package com.breadwallet.ui.provekey
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.provekey.PaperKeyProve.E
 import com.breadwallet.ui.provekey.PaperKeyProve.F
-import com.breadwallet.util.errorHandler
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class PaperKeyProveHandler(
-    private val output: Consumer<E>,
-    private val shakeFirstWord: () -> Unit,
-    private val shakeSecondWord: () -> Unit,
-    private val showBrdSignal: () -> Unit
-) : Connection<F>, CoroutineScope {
-
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    override fun accept(value: F) {
-        when (value) {
-            F.StoreWroteDownPhrase -> {
-                BRSharedPrefs.putPhraseWroteDown(check = true)
-                output.accept(E.OnWroteDownKeySaved)
-                launch(Dispatchers.Main) { showBrdSignal() }
-            }
-            is F.ShakeWords -> launch(Dispatchers.Main) { shakeWords(value) }
-        }
-    }
-
-    override fun dispose() {
-        coroutineContext.cancel()
-    }
-
-    private fun shakeWords(value: F.ShakeWords) {
-        if (value.first) {
-            shakeFirstWord()
-        }
-        if (value.second) {
-            shakeSecondWord()
-        }
+fun createPaperKeyProveHandler() = subtypeEffectHandler<F, E> {
+    addAction<F.StoreWroteDownPhrase> {
+        BRSharedPrefs.putPhraseWroteDown(true)
+        E.OnWroteDownKeySaved
     }
 }

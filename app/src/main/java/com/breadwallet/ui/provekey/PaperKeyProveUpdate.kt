@@ -88,10 +88,10 @@ object PaperKeyProveUpdate : Update<M, E, F>,
                 when (model.onComplete) {
                     OnCompleteAction.GO_TO_BUY -> F.GoToBuy
                     OnCompleteAction.GO_HOME -> F.GoToHome
-                }
+                } as F
             )
         )
 
     override fun onWroteDownKeySaved(model: M): Next<M, F> =
-        next(model.copy(showBreadSignal = true))
+        next(model.copy(showBreadSignal = true), setOf(F.ShowStoredSignal))
 }

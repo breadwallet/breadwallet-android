@@ -27,6 +27,8 @@ package com.breadwallet.ui.navigation
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.Link
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.settings.SettingsSection
 import drewcarlson.switchboard.MobiusHandlerSpec
 import io.sweers.redacted.annotation.Redacted
@@ -38,7 +40,7 @@ import io.sweers.redacted.annotation.Redacted
  *
  * @see com.breadwallet.ui.BaseMobiusController.handleNavEffects
  */
-interface NavEffectHolder {
+interface NavEffectHolder : ViewEffect {
     val navigationEffect: NavigationEffect
 }
 
@@ -80,13 +82,23 @@ sealed class NavigationEffect {
         val onComplete: OnCompleteAction = OnCompleteAction.GO_HOME
     ) : NavigationEffect()
 
-    data class GoToErrorDialog(
-        val title: String,
-        val message: String
+    data class GoToDialog(
+        val dialogId: String = "",
+        val title: String? = null,
+        val message: String? = null,
+        val titleResId: Int? = null,
+        val messageResId: Int? = null,
+        val messageArgs: List<Any> = emptyList(),
+        val positiveButtonResId: Int? = null,
+        val negativeButtonResId: Int? = null
     ) : NavigationEffect()
 
     object GoToLogin : NavigationEffect()
-    object GoToAuthentication : NavigationEffect()
+    data class GoToAuthentication(
+        val mode: Mode = Mode.PIN_REQUIRED,
+        val titleResId: Int? = null,
+        val messageResId: Int? = null
+    ) : NavigationEffect()
     object GoToHome : NavigationEffect()
     object GoToBuy : NavigationEffect()
     object GoToTrade : NavigationEffect()
@@ -135,5 +147,11 @@ sealed class NavigationEffect {
     data class GoToATMMap(
         val url: String,
         val mapJson: String
+    ) : NavigationEffect()
+
+    data class GoToSignal(
+        val titleResId: Int,
+        val messageResId: Int,
+        val iconResId: Int
     ) : NavigationEffect()
 }

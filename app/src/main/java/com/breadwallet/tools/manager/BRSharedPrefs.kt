@@ -274,14 +274,6 @@ object BRSharedPrefs {
         brdPrefs.edit { putBoolean(feature, enabled) }
 
     @JvmStatic
-    fun getCurrentWalletCurrencyCode(): String =
-        brdPrefs.getString(CURRENT_WALLET_CURRENCY_CODE, btc.toUpperCase(Locale.ROOT))!!
-
-    @JvmStatic
-    fun putCurrentWalletCurrencyCode(context: Context? = null, currencyCode: String) =
-        brdPrefs.edit { putString(CURRENT_WALLET_CURRENCY_CODE, currencyCode) }
-
-    @JvmStatic
     fun getWalletRewardId(context: Context? = null): String? =
         brdPrefs.getString(WALLET_REWARD_ID, null)
 

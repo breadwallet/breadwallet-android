@@ -31,14 +31,11 @@ import android.view.View
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.segwit.LegacyAddress.E
 import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.ui.settings.segwit.LegacyAddress.M
@@ -77,16 +74,7 @@ class LegacyAddressController(
                     this@LegacyAddressController,
                     ::showAddressCopied
                 )
-            },
-            nestedConnectable(
-                { direct.instance<RouterNavigationEffectHandler>() },
-                { effect ->
-                    when (effect) {
-                        F.GoBack -> NavigationEffect.GoBack
-                        else -> null
-                    }
-                }
-            )
+            }
         )
 
     override fun onCreateView(view: View) {

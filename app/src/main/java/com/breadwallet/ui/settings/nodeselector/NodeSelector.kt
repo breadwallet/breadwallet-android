@@ -25,6 +25,7 @@
 package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.ui.ViewEffect
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -64,7 +65,7 @@ object NodeSelector {
     }
 
     sealed class F {
-        object ShowNodeDialog : F()
+        object ShowNodeDialog : F(), ViewEffect
         object LoadConnectionInfo : F()
         object SetToAutomatic : F()
         data class SetCustomNode(@Redacted val node: String) : F()

@@ -323,6 +323,7 @@ dependencies {
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
 
     // Debugging/Monitoring
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     debugImplementation "com.github.anrwatchdog:anrwatchdog:$anr_watchdog_version"
     implementation "com.google.firebase:firebase-crashlytics:$firebase_crashlytics_version"
 

@@ -45,7 +45,6 @@ import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.models.TransactionState
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
 import com.platform.util.AppReviewPromptManager
@@ -53,9 +52,7 @@ import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
@@ -78,12 +75,8 @@ object WalletScreenHandler {
     fun createEffectHandler(
         context: Context,
         breadBox: BreadBox,
-        navEffectHandler: NavEffectTransformer,
-        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
-        showCreateAccountDialog: () -> Unit,
-        showCreateAccountErrorDialog: () -> Unit
+        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
-        addTransformer<F.Nav>(navEffectHandler)
         addTransformer(handleCheckReviewPrompt(context))
         addTransformer(handleLoadPricePerUnit(context))
 
@@ -111,8 +104,6 @@ object WalletScreenHandler {
         addFunctionSync<F.LoadCryptoPreferred>(Default) {
             E.OnIsCryptoPreferredLoaded(BRSharedPrefs.isCryptoPreferred())
         }
-        addActionSync<F.ShowCreateAccountDialog>(Main, showCreateAccountDialog)
-        addActionSync<F.ShowCreateAccountErrorDialog>(Main, showCreateAccountErrorDialog)
     }
 
     private fun handleUpdateCryptoPreferred(

@@ -40,7 +40,6 @@ import com.breadwallet.legacy.presenter.customviews.BRButton
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
@@ -48,10 +47,6 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
-import com.breadwallet.ui.settings.SettingsSection
 import com.breadwallet.util.isValidEmail
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericFastAdapter
@@ -88,34 +83,14 @@ class HomeController(
             Connectable { output ->
                 HomeScreenHandler(
                     output,
-                    activity!!,
+                    applicationContext!!,
                     direct.instance(),
                     direct.instance(),
                     direct.instance()
                 )
             },
             Connectable { output ->
-                PromptEffectHandler(output, activity!!, direct.instance())
-            },
-            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }) { effect ->
-                when (effect) {
-                    is F.GoToInappMessage ->
-                        NavigationEffect.GoToInAppMessage(effect.inAppMessage)
-                    F.GoToBuy -> NavigationEffect.GoToBuy
-                    F.GoToTrade -> NavigationEffect.GoToTrade
-                    is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url, true)
-                    F.GoToMenu -> NavigationEffect.GoToMenu(SettingsSection.HOME)
-                    F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(
-                        OnCompleteAction.GO_HOME
-                    )
-                    is F.GoToWallet ->
-                        NavigationEffect.GoToWallet(effect.currencyCode)
-                    is F.GoToAddWallet ->
-                        NavigationEffect.GoToAddWallet
-                    is F.GoToFingerprintSettings -> NavigationEffect.GoToFingerprintAuth
-                    is F.GoToUpgradePin -> NavigationEffect.GoToSetPin()
-                    else -> null
-                }
+                PromptEffectHandler(output, applicationContext!!, direct.instance())
             }
         )
 

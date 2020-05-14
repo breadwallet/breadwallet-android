@@ -27,51 +27,22 @@ package com.breadwallet.ui.pin
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
-import com.breadwallet.util.errorHandler
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class InputPinHandler(
-    private val output: Consumer<E>,
-    private val userManager: BrdUserManager,
-    private val retainedScope: CoroutineScope,
-    private val retainedProducer: () -> Consumer<E>,
-    private val errorShake: () -> Unit,
-    private val showPinFailed: () -> Unit
-) : Connection<F>, CoroutineScope {
-
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    override fun accept(effect: F) {
-        when (effect) {
-            is F.SetupPin -> retainedScope.launch { setupPin(effect) }
-            is F.ErrorShake -> launch(Dispatchers.Main) { errorShake() }
-            is F.CheckIfPinExists -> launch { checkIfPinExists() }
-        }
-    }
-
-    override fun dispose() {
-        coroutineContext.cancel()
-    }
-
-    private suspend fun setupPin(effect: F.SetupPin) {
+fun createInputPinHandler(
+    userManager: BrdUserManager
+) = subtypeEffectHandler<F, E> {
+    addFunction<F.SetupPin> { effect ->
         try {
             userManager.configurePinCode(effect.pin)
-            retainedProducer().accept(E.OnPinSaved)
+            E.OnPinSaved
         } catch (e: Exception) {
-            retainedScope.launch(Dispatchers.Main) { showPinFailed.invoke() }
-            retainedProducer().accept(E.OnPinSaveFailed)
+            E.OnPinSaveFailed
         }
     }
 
-    private fun checkIfPinExists() {
-        output.accept(
-            E.OnPinCheck(userManager.hasPinCode())
-        )
+    addFunction<F.CheckIfPinExists> {
+        E.OnPinCheck(userManager.hasPinCode())
     }
 }
+

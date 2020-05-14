@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.settings.fastsync
 
+import com.breadwallet.R
 import com.breadwallet.model.SyncMode
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavEffectHolder
@@ -63,7 +64,13 @@ object FastSync {
 
     sealed class F {
         object LoadCurrencyIds : F()
-        object ShowDisableFastSyncDialog : F()
+        object ShowDisableFastSyncDialog : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                messageResId = R.string.WalletConnectionSettings_confirmation,
+                positiveButtonResId = R.string.WalletConnectionSettings_turnOff,
+                negativeButtonResId = R.string.Button_cancel
+            )
+        }
 
         sealed class Nav(
             override val navigationEffect: NavigationEffect

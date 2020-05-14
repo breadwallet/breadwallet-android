@@ -26,7 +26,6 @@ package com.breadwallet.ui.recovery
 
 import android.app.ActivityManager
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.util.TypedValue
@@ -36,36 +35,35 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.customviews.BRDialogView
 import com.breadwallet.legacy.presenter.customviews.BREdit
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRClipboardManager
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
 import com.breadwallet.ui.recovery.RecoveryKey.M
 import com.breadwallet.util.DefaultTextWatcher
-import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_recovery_key.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 class RecoveryKeyController(
     args: Bundle? = null
-) : BaseMobiusController<M, E, F>(args) {
+) : BaseMobiusController<M, E, F>(args),
+    AlertDialogController.Listener {
 
     constructor(
         mode: RecoveryKey.Mode,
@@ -90,66 +88,12 @@ class RecoveryKeyController(
             phrase = launchPhrase
         )
     override val update = RecoveryKeyUpdate
-    override val effectHandler = CompositeEffectHandler.from<F, E>(
-        Connectable { output ->
-            val resources = resources!!
-            RecoveryKeyHandler(
-                output,
-                applicationContext as BreadApp,
-                direct.instance(),
-                direct.instance(),
-                viewCreatedScope,
-                { eventConsumer }, {
-                    // unlink
-                    BRDialog.showCustomDialog(
-                        activity!!,
-                        resources.getString(R.string.WipeWallet_alertTitle),
-                        resources.getString(R.string.WipeWallet_alertMessage),
-                        resources.getString(R.string.WipeWallet_wipe),
-                        resources.getString(R.string.Button_cancel),
-                        {
-                            it.context
-                                .getSystemService(ActivityManager::class.java)
-                                .clearApplicationUserData()
-                        },
-                        { brDialogView -> brDialogView.dismissWithAnimation() },
-                        { eventConsumer.accept(E.OnPhraseSaveFailed) },
-                        0
-                    )
-                },
-                {
-                    // error dialog
-                    BRDialog.showCustomDialog(
-                        activity!!,
-                        "",
-                        resources.getString(R.string.RecoverWallet_invalid),
-                        resources.getString(R.string.AccessibilityLabels_close),
-                        null,
-                        BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                        null,
-                        DialogInterface.OnDismissListener {
-                            eventConsumer.accept(E.OnPhraseSaveFailed)
-                        },
-                        0
-                    )
-                },
-                {
-                    SpringAnimator.failShakeAnimation(applicationContext, view)
-                })
-        },
-        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                F.GoToRecoveryKeyFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
-                F.SetPinForRecovery -> NavigationEffect.GoToSetPin(
-                    onboarding = true,
-                    skipWriteDownKey = true
-                )
-                F.GoToLoginForReset -> NavigationEffect.GoToLogin
-                F.SetPinForReset -> NavigationEffect.GoToSetPin()
-                else -> null
-            }
-        })
-    )
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createRecoveryKeyHandler(
+            applicationContext as BreadApp,
+            direct.instance(),
+            direct.instance()
+        )
 
     private val wordInputs: List<BREdit>
         get() = listOf(
@@ -282,6 +226,32 @@ class RecoveryKeyController(
                             input.setTextColor(normalTextColor)
                     }
                 }
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            is F.ErrorShake -> SpringAnimator.failShakeAnimation(applicationContext, view)
+            is F.WipeWallet ->
+                activity?.getSystemService<ActivityManager>()?.clearApplicationUserData()
+        }
+    }
+
+    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+        when (dialogId) {
+            RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletConfirmed)
+        }
+    }
+
+    override fun onNegativeClicked(dialogId: String, controller: AlertDialogController) {
+        when (dialogId) {
+            RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletCancelled)
+        }
+    }
+
+    override fun onDismissed(dialogId: String, controller: AlertDialogController) {
+        when (dialogId) {
+            RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletCancelled)
         }
     }
 

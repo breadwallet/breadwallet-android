@@ -32,30 +32,20 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
-import com.breadwallet.breadbox.BreadBoxEffect
-import com.breadwallet.breadbox.BreadBoxEffectHandler
-import com.breadwallet.breadbox.BreadBoxEvent
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
-import com.breadwallet.effecthandler.metadata.MetaDataEffect
-import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
-import com.breadwallet.effecthandler.metadata.MetaDataEvent
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.models.TransactionState
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
 import com.breadwallet.ui.view
-import com.spotify.mobius.Connectable
 import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.transaction_details.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -105,62 +95,11 @@ class TxDetailsController(
             BRSharedPrefs.isCryptoPreferred()
         )
 
-    override val effectHandler: Connectable<F, E> =
-        CompositeEffectHandler.from(
-            Connectable { output: Consumer<E> ->
-                TxDetailsHandler(output, checkNotNull(activity))
-            },
-            nestedConnectable({ output: Consumer<BreadBoxEvent> ->
-                BreadBoxEffectHandler(output, currencyCode, direct.instance())
-            }, { effect: F ->
-                when (effect) {
-                    is F.LoadTransaction ->
-                        BreadBoxEffect.LoadTransaction(transactionHash)
-                    else -> null
-                }
-            }, { event: BreadBoxEvent ->
-                when (event) {
-                    is BreadBoxEvent.OnTransactionUpdated ->
-                        E.OnTransactionUpdated(
-                            event.transaction,
-                            event.gasPrice,
-                            event.gasLimit
-                        )
-                    else -> null
-                } as? E
-            }),
-            nestedConnectable({ output: Consumer<MetaDataEvent> ->
-                MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }, { effect: F ->
-                when (effect) {
-                    is F.LoadTransactionMetaData ->
-                        MetaDataEffect.LoadTransactionMetaData(
-                            effect.currencyCode,
-                            effect.transactionHash
-                        )
-                    is F.UpdateMemo ->
-                        MetaDataEffect.UpdateTransactionComment(
-                            effect.currencyCode,
-                            effect.transactionHash,
-                            effect.memo
-                        )
-                    else -> null
-                }
-            }, { event: MetaDataEvent ->
-                when (event) {
-                    is MetaDataEvent.OnTransactionMetaDataUpdated ->
-                        E.OnMetaDataUpdated(event.txMetaData)
-                    else -> null
-                } as? E
-            }),
-            nestedConnectable({
-                direct.instance<RouterNavigationEffectHandler>()
-            }) { effect ->
-                when (effect) {
-                    F.Close -> NavigationEffect.GoBack
-                    else -> null
-                }
-            }
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createTxDetailsHandler(
+            checkNotNull(applicationContext),
+            direct.instance(),
+            direct.instance()
         )
 
     override fun onCreateView(view: View) {

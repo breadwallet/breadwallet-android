@@ -27,10 +27,9 @@ package com.breadwallet.ui.wallet
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
-import com.google.android.material.appbar.AppBarLayout
+import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.BuildConfig
@@ -38,10 +37,10 @@ import com.breadwallet.R
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.web.WebController
+import com.google.android.material.appbar.AppBarLayout
 import com.platform.HTTPServer
 import kotlinx.android.synthetic.main.controller_wallet.*
 import kotlinx.android.synthetic.main.rewards_announcement_view.*
-
 import java.io.File
 
 /**

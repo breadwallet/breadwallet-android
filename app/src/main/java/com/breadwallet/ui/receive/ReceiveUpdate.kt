@@ -46,14 +46,12 @@ object ReceiveUpdate : Update<M, E, F>, ReceiveScreenUpdateSpec {
         event: E
     ): Next<M, F> = patch(model, event)
 
-    override fun onReceiveAddressUpdated(
-        model: M,
-        event: E.OnReceiveAddressUpdated
-    ): Next<M, F> =
+    override fun onWalletInfoLoaded(model: M, event: E.OnWalletInfoLoaded): Next<M, F> =
         next(
             model.copy(
                 receiveAddress = event.address,
-                sanitizedAddress = event.sanitizedAddress
+                sanitizedAddress = event.sanitizedAddress,
+                walletName = event.walletName
             )
         )
 
@@ -64,11 +62,10 @@ object ReceiveUpdate : Update<M, E, F>, ReceiveScreenUpdateSpec {
         dispatch(setOf(F.GoToFaq(model.currencyCode)))
 
     override fun onCopyAddressClicked(model: M): Next<M, F> =
-        next(
-            model.copy(isDisplayingCopyMessage = true),
-            setOf(
+        dispatch(
+            setOf<F>(
                 F.CopyAddressToClipboard(model.receiveAddress),
-                F.ResetCopiedAfterDelay
+                F.ShowCopiedMessage
             )
         )
 
@@ -82,15 +79,6 @@ object ReceiveUpdate : Update<M, E, F>, ReceiveScreenUpdateSpec {
                 )
             )
         )
-
-    override fun onHideCopyMessage(model: M): Next<M, F> =
-        next(model.copy(isDisplayingCopyMessage = false))
-
-    override fun onWalletNameUpdated(
-        model: M,
-        event: E.OnWalletNameUpdated
-    ): Next<M, F> =
-        next(model.copy(walletName = event.walletName))
 
     override fun onAmountClicked(model: M): Next<M, F> {
         return next(

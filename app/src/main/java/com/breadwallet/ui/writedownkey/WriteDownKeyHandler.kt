@@ -26,44 +26,19 @@ package com.breadwallet.ui.writedownkey
 
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.writedownkey.WriteDownKey.E
-import com.breadwallet.util.errorHandler
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import com.breadwallet.ui.writedownkey.WriteDownKey.F
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class WriteDownKeyHandler(
-    private val output: Consumer<E>,
-    private val controllerScope: CoroutineScope,
-    private val userManager: BrdUserManager,
-    private val showBrdAuthPrompt: () -> Unit
-) : Connection<WriteDownKey.F>, CoroutineScope {
-
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    override fun accept(value: WriteDownKey.F) {
-        when (value) {
-            WriteDownKey.F.GetPhrase -> getPhrase()
-            WriteDownKey.F.ShowAuthPrompt -> launch(Dispatchers.Main) { showBrdAuthPrompt() }
-        }
-    }
-
-    override fun dispose() {
-        coroutineContext.cancel()
-    }
-
-    private fun getPhrase() {
-        controllerScope.launch {
-            val rawPhrase = userManager.getPhrase()
-            if (rawPhrase == null || rawPhrase.isEmpty()) {
-                output.accept(E.OnGetPhraseFailed)
-            } else {
-                val phrase = String(rawPhrase).split(" ")
-                output.accept(E.OnPhraseRecovered(phrase))
-            }
+fun createWriteDownKeyHandler(
+    userManager: BrdUserManager
+) = subtypeEffectHandler<F, E> {
+    addFunction<F.GetPhrase> {
+        val rawPhrase = userManager.getPhrase()
+        if (rawPhrase == null || rawPhrase.isEmpty()) {
+            E.OnGetPhraseFailed
+        } else {
+            val phrase = String(rawPhrase).split(" ")
+            E.OnPhraseRecovered(phrase)
         }
     }
 }

@@ -42,8 +42,8 @@ import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.auth.AuthenticationController
@@ -61,7 +61,6 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
@@ -117,7 +116,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
-            routerNavHandler = RouterNavigationEffectHandler(router)
+            routerNavHandler = RouterNavigationEffectHandler { router }
         })
 
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
@@ -132,7 +131,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             return
         }
 
-        BreadApp.applicationScope.launch(Dispatchers.Main) {
+        BreadApp.applicationScope.launch(Main) {
             if (userManager.isAccountInvalidated()) {
                 DialogActivity.startDialogActivity(
                     this@MainActivity,

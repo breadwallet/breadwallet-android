@@ -25,59 +25,63 @@
 package com.breadwallet.ui.txdetails
 
 import android.content.Context
-import com.breadwallet.logger.logError
+import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.isEthereum
+import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.ext.throttleLatest
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
-import com.breadwallet.util.CurrencyCode
-import com.breadwallet.util.errorHandler
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import com.platform.entities.TxMetaDataValue
+import com.platform.interfaces.AccountMetaDataProvider
+import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.transformLatest
 import java.math.BigDecimal
 
-class TxDetailsHandler(
-    private val output: Consumer<E>,
-    private val context: Context
-) : Connection<F>, CoroutineScope {
+private const val MEMO_THROTTLE_MS = 500L
+private const val RATE_UPDATE_MS = 60_000L
 
-    companion object {
-        private const val RATE_UPDATE_MS = 60_000L
+fun createTxDetailsHandler(
+    context: Context,
+    breadBox: BreadBox,
+    metaDataProvider: AccountMetaDataProvider
+) = subtypeEffectHandler<F, E> {
+    addTransformer<F.UpdateMemo> { effects ->
+        effects
+            .throttleLatest(MEMO_THROTTLE_MS)
+            .transformLatest { effect ->
+                metaDataProvider.putTxMetaData(
+                    breadBox.walletTransfer(effect.currencyCode, effect.transactionHash).first(),
+                    TxMetaDataValue(comment = effect.memo)
+                )
+            }
     }
 
-    override val coroutineContext =
-        SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    override fun accept(effect: F) {
-        when (effect) {
-            is F.LoadFiatAmountNow ->
-                loadFiatAmountNow(
-                    effect.cryptoTransferredAmount,
-                    effect.currencyCode,
-                    effect.preferredFiatIso
-                )
+    addTransformer<F.LoadTransactionMetaData> { effects ->
+        effects.flatMapLatest { effect ->
+            val transaction =
+                breadBox.walletTransfer(effect.currencyCode, effect.transactionHash).first()
+            metaDataProvider
+                .txMetaData(transaction)
+                .map { E.OnMetaDataUpdated(it) }
         }
     }
 
-    private fun loadFiatAmountNow(
-        cryptoAmount: BigDecimal,
-        currencyCode: CurrencyCode,
-        fiatIso: String
-    ) {
-        launch {
-            while (isActive) {
-                RatesRepository.getInstance(context).getFiatForCrypto(
-                    cryptoAmount,
-                    currencyCode,
-                    fiatIso
-                )?.run {
-                    output.accept(E.OnFiatAmountNowUpdated(this))
+    addTransformer<F.LoadFiatAmountNow> { effects ->
+        val rates = RatesRepository.getInstance(context)
+        effects.transformLatest { effect ->
+            while (true) {
+                rates.getFiatForCrypto(
+                    effect.cryptoTransferredAmount,
+                    effect.currencyCode,
+                    effect.preferredFiatIso
+                )?.let { amount ->
+                    emit(E.OnFiatAmountNowUpdated(amount))
                 }
 
                 delay(RATE_UPDATE_MS)
@@ -85,7 +89,33 @@ class TxDetailsHandler(
         }
     }
 
-    override fun dispose() {
-        coroutineContext.cancel()
+    addTransformer<F.LoadTransaction> { effects ->
+        effects.flatMapLatest { effect ->
+            breadBox.walletTransfer(effect.currencyCode, effect.transactionHash)
+                .mapLatest { transfer ->
+                    var gasPrice = BigDecimal.ZERO
+                    var gasLimit = BigDecimal.ZERO
+                    if (transfer.amount.currency.isEthereum()) {
+                        val feeBasis = transfer.run {
+                            confirmedFeeBasis.orNull() ?: estimatedFeeBasis.get()
+                        }
+
+                        gasPrice = feeBasis.pricePerCostFactor
+                            .convert(breadBox.gweiUnit())
+                            .get()
+                            .toBigDecimal()
+
+                        gasLimit = feeBasis.costFactor.toBigDecimal()
+                    }
+                    E.OnTransactionUpdated(transfer, gasPrice, gasLimit)
+                }
+        }
     }
 }
+
+private fun BreadBox.gweiUnit() =
+    getSystemUnsafe()!!
+        .networks
+        .first { it.currency.isEthereum() }
+        .run { unitsFor(currency).get() }
+        .first { it.symbol.contains("gwei", true) }

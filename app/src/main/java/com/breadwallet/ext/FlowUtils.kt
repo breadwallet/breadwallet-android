@@ -53,7 +53,7 @@ fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> {
     var lastEmissionMs = 0L
     return transform { value ->
         val currentMs = System.currentTimeMillis()
-        if (currentMs - lastEmissionMs > windowDuration) {
+        if (currentMs - lastEmissionMs >= windowDuration) {
             lastEmissionMs = currentMs
             emit(value)
         }

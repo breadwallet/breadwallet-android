@@ -24,10 +24,17 @@
  */
 package com.breadwallet.ui.recovery
 
+import com.breadwallet.R
+import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object RecoveryKey {
+
+    const val DIALOG_WIPE = "dialog_wipe_confirm"
 
     enum class Mode {
         RECOVER, WIPE, RESET_PIN
@@ -61,14 +68,12 @@ object RecoveryKey {
         companion object {
             const val RECOVERY_KEY_WORDS_COUNT = 12
 
-            fun createDefault(mode: Mode) =
-                M(mode = mode)
+            fun createDefault(mode: Mode) = M(mode = mode)
 
-            fun createWithOptionalPhrase(mode: Mode, phrase: String?) =
-                M(
-                    mode = mode,
-                    phrase = phrase?.split(" ") ?: List(RECOVERY_KEY_WORDS_COUNT) { "" }
-                )
+            fun createWithOptionalPhrase(mode: Mode, phrase: String?) = M(
+                mode = mode,
+                phrase = phrase?.split(" ") ?: List(RECOVERY_KEY_WORDS_COUNT) { "" }
+            )
         }
 
         init {
@@ -104,7 +109,9 @@ object RecoveryKey {
 
         data class OnPhraseValidated(val errors: List<Boolean>) : E() {
             init {
-                require(errors.size == M.RECOVERY_KEY_WORDS_COUNT) { "Errors size must be ${M.RECOVERY_KEY_WORDS_COUNT}" }
+                require(errors.size == M.RECOVERY_KEY_WORDS_COUNT) {
+                    "Errors size must be ${M.RECOVERY_KEY_WORDS_COUNT}"
+                }
             }
         }
 
@@ -122,22 +129,57 @@ object RecoveryKey {
         object OnPinCleared : E()
         object OnPinSet : E()
         object OnPinSetCancelled : E()
-        
+
         object OnShowPhraseFailed : E()
         object OnRecoveryComplete : E()
         object OnFaqClicked : E()
         object OnNextClicked : E()
+
+        object OnRequestWipeWallet : E()
+        object OnWipeWalletConfirmed : E()
+        object OnWipeWalletCancelled : E()
     }
 
     sealed class F {
 
-        object GoToRecoveryKeyFaq : F()
-        object SetPinForRecovery : F()
-        object GoToLoginForReset : F()
-        object SetPinForReset : F()
-        object GoToPhraseError : F()
+        object GoToRecoveryKeyFaq : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+        }
 
-        object ErrorShake : F()
+        object SetPinForRecovery : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToSetPin(
+                onboarding = true,
+                skipWriteDownKey = true
+            )
+        }
+
+        object GoToLoginForReset : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToLogin
+        }
+
+        object SetPinForReset : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToSetPin()
+        }
+
+        object GoToPhraseError : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                titleResId = R.string.RecoverWallet_invalid,
+                negativeButtonResId = R.string.AccessibilityLabels_close
+            )
+        }
+
+        object GoToWipeWallet : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                dialogId = DIALOG_WIPE,
+                titleResId = R.string.WipeWallet_alertTitle,
+                messageResId = R.string.WipeWallet_alertMessage,
+                positiveButtonResId = R.string.WipeWallet_wipe,
+                negativeButtonResId = R.string.Button_cancel
+            )
+        }
+
+        object WipeWallet : F(), ViewEffect
+        object ErrorShake : F(), ViewEffect
 
         data class ValidateWord(
             val index: Int,
