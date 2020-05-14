@@ -69,11 +69,7 @@ class OnBoardingController(
     override val update = OnBoardingUpdate
 
     override val flowEffectHandler
-        get() = createOnBoardingHandler(
-            applicationContext as BreadApp,
-            direct.instance(),
-            direct.instance()
-        )
+        get() = createOnBoardingHandler(direct.instance())
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)

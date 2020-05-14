@@ -84,6 +84,7 @@ class MigrateController(
     private suspend fun migrateAccount() {
         if (userManager.migrateKeystoreData()) {
             val context = (BreadApp.getBreadContext().applicationContext as BreadApp)
+            // The one case where we need to invoke this outside of BreadApp, need to set the migrate flag
             context.startWithInitializedWallet(direct.instance(), true)
 
             waitUntilAttached()

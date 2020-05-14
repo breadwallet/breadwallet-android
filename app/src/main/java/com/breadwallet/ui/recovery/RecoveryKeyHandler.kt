@@ -27,7 +27,6 @@ package com.breadwallet.ui.recovery
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.app.BreadApp
-import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
@@ -43,7 +42,6 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 
 fun createRecoveryKeyHandler(
     breadApp: BreadApp,
-    breadBox: BreadBox,
     userManager: BrdUserManager
 ) = subtypeEffectHandler<F, E> {
     addFunction<F.Unlink> { effect ->
@@ -98,7 +96,6 @@ fun createRecoveryKeyHandler(
                 SetupResult.Success -> {
                     logInfo("Wallet recovered.")
                     BRSharedPrefs.putPhraseWroteDown(check = true)
-                    breadApp.startWithInitializedWallet(breadBox, false)
                     E.OnRecoveryComplete
                 }
                 else -> {

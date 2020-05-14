@@ -24,8 +24,6 @@
  */
 package com.breadwallet.ui.onboarding
 
-import com.breadwallet.app.BreadApp
-import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.security.BrdUserManager
@@ -36,8 +34,6 @@ import com.breadwallet.ui.onboarding.OnBoarding.F
 import drewcarlson.mobius.flow.subtypeEffectHandler
 
 fun createOnBoardingHandler(
-    breadApp: BreadApp,
-    breadBox: BreadBox,
     userManager: BrdUserManager
 ) = subtypeEffectHandler<F, E> {
     addConsumer<F.TrackEvent> { effect ->
@@ -50,8 +46,6 @@ fun createOnBoardingHandler(
                 logInfo("Wallet created successfully.")
 
                 try {
-                    breadApp.startWithInitializedWallet(breadBox, false)
-
                     E.OnWalletCreated
                 } catch (e: IllegalStateException) {
                     logError("Error initializing crypto system", e)

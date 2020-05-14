@@ -218,8 +218,8 @@ class BdbAuthInterceptor(
         logDebug("Fetching client token from remote-config.")
         val remoteConfig = Firebase.remoteConfig
         var attempt = 1L
-        while (clientToken.isBlank()) {
-            val success = try {
+        do {
+            val changesActivated = try {
                 Tasks.await(remoteConfig.fetchAndActivate())
             } catch (e: ExecutionException) {
                 logError("Failed to fetch and activate remote-config data.", e)
@@ -227,9 +227,16 @@ class BdbAuthInterceptor(
             }
 
             when {
-                success -> {
-                    logDebug("remote-config synced successfully.")
-                    clientToken = remoteConfig.getString(BDB_TOKEN_KEY)
+                changesActivated -> {
+                    logDebug("remote-config synced and activated.")
+                    val newClientToken = remoteConfig.getString(BDB_TOKEN_KEY)
+                    if (clientToken != newClientToken) {
+                        userManager.putBdbJwt("", 0)
+                    }
+                    clientToken = newClientToken
+                }
+                clientToken.isNotBlank() -> {
+                    // No changes to remote config data and token is loaded, ignore.
                 }
                 attempt - 1 >= FIREBASE_MAX_RETRIES -> {
                     logDebug("Max remote-config attempts exhausted.")
@@ -241,7 +248,7 @@ class BdbAuthInterceptor(
                     attempt++
                 }
             }
-        }
+        } while (clientToken.isBlank())
         logDebug("Done fetching client token")
     }
 

@@ -30,6 +30,16 @@
     <string name="Account.exchangeRate">%1$s / %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">正在加载钱包</string>
+    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.body">仅当您打算在钱包中存储HBAR时，才创建一个Hedera帐户。</string>
+    <!-- Label for create Hedera account button -->
+    <string name="AccountCreation.create">创建帐号</string>
+    <!-- Error message for Hedera account creation failure  -->
+    <string name="AccountCreation.error">创建帐户期间发生错误。请稍后再试。</string>
+    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.notNow">现在不要</string>
+    <!-- Title for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.title">确认帐户创建</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">我的 BRD</string>
     <!-- Third party keyboard warning -->
@@ -180,6 +190,8 @@
     <string name="Confirmation.feeLabel">网络费：</string>
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">网络费 (ETH):</string>
+    <!-- Label for Hedera Memo field on transaction confirmation screen -->
+    <string name="Confirmation.hederaMemo">Hedera备忘</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">处理时间：预计此交易将在 %1$s 后完成。</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -787,6 +799,8 @@
     <string name="Send.legacyAddressWarning">警告：这是已停用的比特币地址。您确定要向这个地址发送比特币现金吗？</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">加载请求中</string>
+    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <string name="Send.memoTag_optional">Hedera备忘（可选）</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">资金不够支付交易费。</string>
     <!-- Empty address alert message -->
@@ -1050,6 +1064,8 @@
     <string name="TransactionDetails.gasLimitHeader">燃料上限</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">燃料价格</string>
+    <!-- Label for Hedera Memo field on transaction details screen -->
+    <string name="TransactionDetails.hederaMemo">Hedera备忘</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">隐藏详细信息</string>
     <!-- Label showing the transaction was started (initialized) -->
