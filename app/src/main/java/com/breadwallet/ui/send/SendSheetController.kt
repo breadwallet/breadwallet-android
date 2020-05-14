@@ -25,6 +25,7 @@
 package com.breadwallet.ui.send
 
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -116,9 +117,10 @@ class SendSheetController(args: Bundle? = null) :
         overridePopHandler(BottomSheetChangeHandler())
     }
 
+    private var isAtmConfigured = false
     private val currencyCode = arg<String>(CURRENCY_CODE)
     private val cryptoRequest =
-        arg<CryptoRequest>(CRYPTO_REQUEST,
+        arg(CRYPTO_REQUEST,
             CryptoRequest.Builder().setCurrencyCode(CURRENCY_CODE).build())
 
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
@@ -172,6 +174,7 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        Log.d("atm", "bindView")
         return merge(
             keyboard.bindInput(),
             textInputMemo.bindFocusChanged(),
@@ -182,25 +185,29 @@ class SendSheetController(args: Bundle? = null) :
             textInputAddress.clicks().map {
                 isAtmCashOutFlow()?.let {
                     E.ConsumeEvent
-                }?:run {
+                } ?: run {
                     E.OnAmountEditDismissed
                 }
             },
             textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
-            textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            textInputAddress.textChanges().map {
+                E.OnTargetAddressChanged(it)
+            },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
             },
             buttonFaq.clicks().map { E.OnFaqClicked },
             buttonScan.clicks().map { E.OnScanClicked },
             buttonSend.clicks().map { E.OnSendClicked },
-            buttonClose.clicks().map { E.OnCloseClicked },
+            buttonClose.clicks().map {
+                E.OnCloseClicked
+            },
             buttonPaste.clicks().map { E.OnPasteClicked },
             layoutBackground.clicks().map { E.OnCloseClicked },
             textInputAmount.clicks().map {
                 isAtmCashOutFlow()?.let {
                     E.ConsumeEvent
-                }?:run {
+                } ?: run {
                     E.OnAmountEditClicked
                 }
             },
@@ -254,6 +261,7 @@ class SendSheetController(args: Bundle? = null) :
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun M.render() {
+        Log.d("atm", "render")
         val res = checkNotNull(resources)
 
         ifChanged(M::targetInputError) {
@@ -296,7 +304,7 @@ class SendSheetController(args: Bundle? = null) :
             val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
             isAtmCashOutFlow()?.let{
                 labelTitle.text = "%s %s to the ATM".format(sendTitle, upperCaseCurrencyCode)
-            }?:run {
+            } ?: run {
                 labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
             }
             buttonCurrencySelect.text = when {
@@ -309,7 +317,6 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isAmountEditVisible, ::showKeyboard)
-
         ifChanged(
             M::rawAmount,
             M::isAmountCrypto,
@@ -448,17 +455,34 @@ class SendSheetController(args: Bundle? = null) :
             }
         }
 
-        isAtmCashOutFlow()?.amount?.let { it ->
-            textInputAddress.setText(cryptoRequest.address)
-            textInputAmount.setText(it.toString())
-            buttonEconomy.isEnabled = false
-            buttonRegular.isSelected = true
-            buttonRegular.isEnabled = false
-            buttonPriority.isEnabled = false
+        if (!isAtmConfigured) {
+            isAtmConfigured = true
+            isAtmCashOutFlow()?.amount?.let { it ->
+                // It requires the ui thread to propagate the text change event
+                textInputAddress.post {
+                    textInputAddress.setText(cryptoRequest.address)
+                }
+                buttonEconomy.isEnabled = false
+                buttonRegular.isSelected = true
+                buttonRegular.isEnabled = false
+                buttonPriority.isEnabled = false
+                fakeAmount(it.toString())
+                buttonPaste.visibility = View.GONE
+                buttonScan.visibility = View.GONE
+                buttonCurrencySelect.visibility = View.GONE
+            }
+        }
+    }
 
-            buttonPaste.visibility = View.GONE
-            buttonScan.visibility = View.GONE
-            buttonCurrencySelect.visibility = View.GONE
+    @Suppress("MagicNumber")
+    private fun fakeAmount(amount : String) {
+        amount.split("").subList(1, amount.length + 1).forEachIndexed {  index, key ->
+            // Hack Alert: if it is too quickly it misses keys
+            keyboard.postDelayed({
+                if (keyboard != null) {
+                    keyboard.fakeInput(key)
+                }
+            }, 5L*index)
         }
     }
 

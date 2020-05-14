@@ -51,6 +51,7 @@ class RequestCashCodeController(
     )
 
     companion object {
+        private const val INITIAL_ZOOM = 15f
         private const val HTTP_OK_CODE = 200
         private const val CLICKS_TO_START_ANIMATION = 3
         private const val atmMachine = "RequestCashCodeController.Atm"
@@ -87,7 +88,6 @@ class RequestCashCodeController(
         amount.helperText = "Min ${atm.min}$ max ${atm.max}$, multiple of ${atm.bills.toFloat().toInt()}$ bills"
 
         getAtmCode.setOnClickListener {
-            // dropView.startAnimation()
 
             if (!WacSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "Invalid session", Toast.LENGTH_SHORT).show()
@@ -103,7 +103,9 @@ class RequestCashCodeController(
                 val min = atm.min.toFloatOrNull()?.toInt()
                 val max = atm.max.toFloatOrNull()?.toInt()
                 if (min == null || max == null) {
-                    Toast.makeText(view.context, "Amount not valid, it has to be between ${atm.min.toFloatOrNull()?.toInt()} and ${atm.max.toFloatOrNull()?.toInt()}.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(view.context, "Amount not valid, " +
+                        "it has to be between ${atm.min.toFloatOrNull()?.toInt()} " +
+                        "and ${atm.max.toFloatOrNull()?.toInt()}.", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(view.context, "Amount not valid", Toast.LENGTH_LONG).show()
                 }
@@ -207,7 +209,6 @@ class RequestCashCodeController(
                         val code = response.body()!!.data.items[0].secureCode
                         proceedWithCashCode(context, code)
                     } else {
-
                         val errorBody = response.errorBody()
                         errorBody?.let {
                             it.parseError().error.server_message.let { message ->
@@ -327,7 +328,7 @@ class RequestCashCodeController(
 
         val cameraPosition: CameraPosition = CameraPosition.Builder()
             .target(markerOpt.position)
-            .zoom(15f)
+            .zoom(INITIAL_ZOOM)
             .build()
 
         val cameraUpdate: CameraUpdate = CameraUpdateFactory
@@ -335,6 +336,7 @@ class RequestCashCodeController(
         googleMap.moveCamera(cameraUpdate)
     }
 
+    @Suppress("ReturnCount")
     private fun checkAmount(atm : AtmMachine): Boolean {
         val amount = getAmount()?.toFloatOrNull() ?: return false
         val min = atm.min.toFloatOrNull()
