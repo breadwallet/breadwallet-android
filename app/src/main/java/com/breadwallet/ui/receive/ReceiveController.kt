@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.legacy.presenter.customviews.BRKeyboard
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
@@ -45,19 +46,20 @@ import com.breadwallet.ui.receive.ReceiveScreen.E
 import com.breadwallet.ui.receive.ReceiveScreen.F
 import com.breadwallet.ui.receive.ReceiveScreen.M
 import com.breadwallet.ui.send.formatFiatForInputUi
-import com.breadwallet.ui.view
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
-import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_receive.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -112,7 +114,6 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         title.setText(R.string.UnlockScreen_myAddress)
-        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
         signal_layout.removeView(copied_layout)
         signal_layout.layoutTransition = UiUtils.getDefaultTransition()
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button)
@@ -121,6 +122,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
         return merge(
             faq_button.clicks().map { E.OnFaqClicked },
             share_button.clicks().map { E.OnShareClicked },
@@ -129,13 +131,16 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
             textInputAmount.clicks().map { E.OnAmountClicked },
             background_layout.clicks().map { E.OnCloseClicked },
             address_text.clicks().map { E.OnCopyAddressClicked },
-            iso_button.clicks().map { E.OnToggleCurrencyClicked }
-        )
+            iso_button.clicks().map { E.OnToggleCurrencyClicked },
+            keyboard.bindInput()
+        ).onCompletion {
+            signal_layout.setOnTouchListener(null)
+        }
     }
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        keyboard.setOnInsertListener { key ->
-            output.accept(
+    private fun BRKeyboard.bindInput() = callbackFlow<E> {
+        setOnInsertListener { key ->
+            offer(
                 when {
                     key.isEmpty() -> E.OnAmountChange.Delete
                     key[0] == '.' -> E.OnAmountChange.AddDecimal
@@ -144,11 +149,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                 }
             )
         }
-
-        onDispose {
-            signal_layout.setOnTouchListener(null)
-            keyboard.setOnInsertListener(null)
-        }
+        awaitClose { setOnInsertListener(null) }
     }
 
     @Suppress("LongMethod", "ComplexMethod")

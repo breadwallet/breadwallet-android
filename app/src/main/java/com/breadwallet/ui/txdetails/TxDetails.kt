@@ -25,6 +25,7 @@
 package com.breadwallet.ui.txdetails
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -111,6 +112,8 @@ object TxDetails {
         data class OnFiatAmountNowUpdated(val fiatAmountNow: BigDecimal) : E()
         data class OnMetaDataUpdated(val metaData: TxMetaData) : E()
         data class OnMemoChanged(@Redacted val memo: String) : E()
+        object OnTransactionHashClicked : E()
+        object OnAddressClicked : E()
         object OnClosedClicked : E()
         object OnShowHideDetailsClicked : E()
     }
@@ -138,6 +141,10 @@ object TxDetails {
             @Redacted val transactionHash: String,
             @Redacted val memo: String
         ) : F()
+
+        data class CopyToClipboard(
+            @Redacted val text: String
+        ) : F(), ViewEffect
 
         object Close : F(), NavEffectHolder {
             override val navigationEffect = NavigationEffect.GoBack
