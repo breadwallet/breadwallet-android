@@ -49,7 +49,7 @@ import com.breadwallet.logger.logWarning
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
@@ -90,8 +90,6 @@ import java.math.BigDecimal
 
 private const val RATE_UPDATE_MS = 60_000L
 
-private const val XRP_DESTINATION_TAG = "DestinationTag"
-
 object SendSheetHandler {
 
     @Suppress("LongParameterList")
@@ -101,7 +99,7 @@ object SendSheetHandler {
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>,
         breadBox: BreadBox,
-        accountManager: BRAccountManager,
+        userManager: BrdUserManager,
         apiClient: APIClient,
         ratesRepository: RatesRepository,
         navEffectHandler: NavEffectTransformer,
@@ -115,7 +113,7 @@ object SendSheetHandler {
         addTransformer(
             handleSendTransaction(
                 breadBox,
-                accountManager,
+                userManager,
                 retainedScope,
                 outputProducer
             )
@@ -124,7 +122,7 @@ object SendSheetHandler {
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
         addTransformer(
             handleContinueWithPayment(
-                accountManager,
+                userManager,
                 breadBox,
                 retainedScope,
                 outputProducer
@@ -198,13 +196,15 @@ object SendSheetHandler {
         effects.map { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
-            val balanceBig = (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
+            val balanceBig =
+                (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
             val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance, rates)
             val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
                 balanceBig
             } else {
                 val feeWallet = breadBox.wallet(effect.feeCurrencyCode).first()
-                val feeBalanceMin = feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
+                val feeBalanceMin =
+                    feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
                 (feeWallet.balance.toBigDecimal() - feeBalanceMin).coerceAtLeast(BigDecimal.ZERO)
             }
             E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyBalance)
@@ -264,7 +264,8 @@ object SendSheetHandler {
             val wallet = breadBox.wallet(effect.currencyCode).first()
             val feeCurrencyCode = wallet.unitForFee.currency.code
             while (true) {
-                val fiatRate = rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
+                val fiatRate =
+                    rates.getFiatForCrypto(BigDecimal.ONE, effect.currencyCode, effect.fiatCode)
                 val fiatFeeRate = when {
                     !effect.currencyCode.equals(feeCurrencyCode, false) ->
                         rates.getFiatForCrypto(BigDecimal.ONE, feeCurrencyCode, effect.fiatCode)
@@ -332,7 +333,7 @@ object SendSheetHandler {
 
     private fun handleSendTransaction(
         breadBox: BreadBox,
-        accountManager: BRAccountManager,
+        userManager: BrdUserManager,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
     ) = flowTransformer<F.SendTransaction, E> { effects ->
@@ -361,7 +362,7 @@ object SendSheetHandler {
                 }
 
                 val phrase = try {
-                    checkNotNull(accountManager.getPhrase())
+                    checkNotNull(userManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed
@@ -440,7 +441,8 @@ object SendSheetHandler {
                 if (paymentProtocolRequest != null) {
                     E.PaymentProtocol.OnPaymentLoaded(
                         paymentProtocolRequest,
-                        paymentProtocolRequest.totalAmount.get().convert(wallet.unit).get().toBigDecimal()
+                        paymentProtocolRequest.totalAmount.get().convert(wallet.unit).get()
+                            .toBigDecimal()
                     )
                 } else {
                     E.PaymentProtocol.OnLoadFailed(
@@ -454,7 +456,7 @@ object SendSheetHandler {
     }
 
     private fun handleContinueWithPayment(
-        accountManager: BRAccountManager,
+        userManager: BrdUserManager,
         breadBox: BreadBox,
         retainedScope: CoroutineScope,
         outputProducer: () -> Consumer<E>
@@ -466,7 +468,7 @@ object SendSheetHandler {
                 checkNotNull(transfer) { "Failed to create transfer." }
 
                 val phrase = try {
-                    checkNotNull(accountManager.getPhrase())
+                    checkNotNull(userManager.getPhrase())
                 } catch (e: UserNotAuthenticatedException) {
                     logError("Failed to get phrase.", e)
                     return@mapLatest E.OnSendFailed

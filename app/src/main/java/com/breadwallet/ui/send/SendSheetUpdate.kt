@@ -712,13 +712,18 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             F.GetTransferFields(
                 nextModel.currencyCode,
                 nextModel.targetAddress
-            ),
-            F.ValidateTransferFields(
-                nextModel.currencyCode,
-                nextModel.targetAddress,
-                nextModel.transferFields
             )
         )
+
+        if (nextModel.transferFields.isNotEmpty()) {
+            effects.add(
+                F.ValidateTransferFields(
+                    nextModel.currencyCode,
+                    nextModel.targetAddress,
+                    nextModel.transferFields
+                )
+            )
+        }
 
         if (nextModel.targetAddress.isNotBlank() && !nextModel.amount.isZero()) {
             effects.add(
@@ -825,7 +830,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                         is E.TransferFieldUpdate.Validation ->
                             field.copy(invalid = event.invalid)
                         is E.TransferFieldUpdate.Value ->
-                            field.copy(value = event.value)
+                            field.copy(value = if (event.value.isBlank()) null else event.value)
                     }
                 } else field
             }

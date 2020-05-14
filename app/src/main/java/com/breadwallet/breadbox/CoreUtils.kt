@@ -27,6 +27,7 @@
 package com.breadwallet.breadbox
 
 import com.breadwallet.BuildConfig
+import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
@@ -45,6 +46,7 @@ import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.WalletSweeper
+import com.breadwallet.crypto.errors.AccountInitializationError
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
@@ -166,7 +168,7 @@ suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis 
     }
 
 private const val ECONOMY_FEE_HOURS = 10L
-private const val REGULAR_FEE_MINUTES = 40L
+private const val REGULAR_FEE_MINUTES = 30L
 
 enum class TransferSpeed(val targetTime: Long) {
     ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
@@ -266,6 +268,15 @@ fun Network.findCurrency(currencyId: String) =
         )
     }
 
+/** Returns true if the [Network] supports the given [currencyCode]. */
+fun Network.containsCurrencyCode(currencyCode: String) =
+    currencies.find { networkCurrency ->
+        networkCurrency.code.equals(
+            currencyCode,
+            true
+        )
+    } != null
+
 /** Returns the [Currency] code if the [Transfer] is a ETH fee transfer, blank otherwise. */
 fun Transfer.feeForToken(): String {
     val issuerCode = findIssuerCurrency()
@@ -316,36 +327,6 @@ val Wallet.urlSchemes: List<String>
         else -> urlScheme?.run(::listOf) ?: emptyList()
     }
 
-/** Creates a [WalletManager] using the appropriate address scheme and [WalletManagerMode]. */
-fun System.createWalletManager(
-    network: Network,
-    managerMode: WalletManagerMode?,
-    currencies: Set<Currency>,
-    addressScheme: AddressScheme? = getAddressScheme(network)
-) {
-    val wmMode = when {
-        network.currency.isBitcoinCash() -> WalletManagerMode.API_ONLY
-        managerMode == null -> network.defaultWalletManagerMode
-        network.supportsWalletManagerMode(managerMode) -> managerMode
-        else -> network.defaultWalletManagerMode
-    }
-    createWalletManager(network, wmMode, addressScheme, currencies)
-}
-
-/** Return the [AddressScheme] to be used by the given network */
-fun System.getAddressScheme(network: Network): AddressScheme {
-    return when {
-        network.currency.code.isBitcoin() -> {
-            if (BRSharedPrefs.getIsSegwitEnabled()) {
-                AddressScheme.BTC_SEGWIT
-            } else {
-                AddressScheme.BTC_LEGACY
-            }
-        }
-        else -> network.defaultAddressScheme
-    }
-}
-
 /** Return a [NetworkPeer] pointing to the given address */
 fun Network.getPeerOrNull(node: String): NetworkPeer? {
     val nodeInfo = node.split(":")
@@ -394,5 +375,20 @@ val Wallet.baseUnit: Unit
         .baseUnitFor(currency)
         .get()
 
+suspend fun System.accountInitialize(
+    account: Account,
+    network: Network,
+    create: Boolean
+): ByteArray = suspendCoroutine { continuation ->
+    val handler = object : CompletionHandler<ByteArray, AccountInitializationError> {
+        override fun handleData(data: ByteArray) {
+            continuation.resume(data)
+        }
 
+        override fun handleError(error: AccountInitializationError) {
+            continuation.resumeWithException(error)
+        }
+    }
+    accountInitialize(account, network, create, handler)
+}
 

@@ -415,10 +415,23 @@ class TxDetailsController(
             if (destinationTag != null) {
                 layoutDestinationTag.isVisible = true
                 destination_tag_divider.isVisible = true
-                if (destinationTag.value == null) {
+                if (destinationTag.value.isNullOrEmpty()) {
                     destination_tag_value.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
                 } else {
                     destination_tag_value.text = destinationTag.value
+                }
+            }
+        }
+
+        ifChanged(M::hederaMemo) {
+            val hederaMemo = hederaMemo
+            if (hederaMemo != null) {
+                layoutHederaMemo.isVisible = true
+                hedera_memo_divider.isVisible = true
+                if (hederaMemo.value.isNullOrEmpty()) {
+                    hedera_memo_value.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
+                } else {
+                    hedera_memo_value.text = hederaMemo.value
                 }
             }
         }

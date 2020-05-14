@@ -82,6 +82,7 @@ class LoginController(args: Bundle? = null) :
             LoginScreenHandler(
                 output,
                 direct.instance(),
+                direct.instance(),
                 shakeKeyboard = {
                     SpringAnimator.failShakeAnimation(
                         activity,

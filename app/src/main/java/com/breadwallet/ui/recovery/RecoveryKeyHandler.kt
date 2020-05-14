@@ -31,7 +31,8 @@ import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.SetupResult
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
@@ -48,7 +49,7 @@ class RecoveryKeyHandler(
     private val output: Consumer<E>,
     private val breadApp: BreadApp,
     private val breadBox: BreadBox,
-    private val accountManager: BRAccountManager,
+    private val userManager: BrdUserManager,
     private val retainedScope: CoroutineScope,
     private val retainedProducer: () -> Consumer<E>,
     val goToUnlink: () -> Unit,
@@ -91,7 +92,7 @@ class RecoveryKeyHandler(
         val phrase = effect.phrase.asNormalizedString()
         retainedProducer().accept(
             try {
-                accountManager.clearPinCode(phrase.toByteArray())
+                userManager.clearPinCode(phrase.toByteArray())
                 E.OnPinCleared
             } catch (e: Exception) {
                 E.OnPhraseInvalid
@@ -103,7 +104,7 @@ class RecoveryKeyHandler(
         val phrase = effect.phrase.asNormalizedString()
 
         val storedPhrase = try {
-            accountManager.getPhrase() ?: throw IllegalStateException("null phrase")
+            userManager.getPhrase() ?: throw IllegalStateException("null phrase")
         } catch (e: Exception) {
             logError("Error storing phrase", e)
             // TODO: BRAccountManager read error
@@ -129,9 +130,16 @@ class RecoveryKeyHandler(
 
         retainedScope.launch(Dispatchers.Main) {
             try {
-                accountManager.recoverAccount(phraseBytes)
+                when (val result = userManager.setupWithPhrase(phraseBytes)) {
+                    SetupResult.Success -> logInfo("Wallet recovered.")
+                    else -> {
+                        logError("Error recovering wallet from phrase: $result")
+                        retainedProducer().accept(E.OnPhraseInvalid)
+                        return@launch
+                    }
+                }
+
                 BRSharedPrefs.putPhraseWroteDown(check = true)
-                breadApp.startWithInitializedWallet(breadBox, false)
             } catch (e: Exception) {
                 logError("Error opening BreadBox", e)
                 // TODO: Define initialization error

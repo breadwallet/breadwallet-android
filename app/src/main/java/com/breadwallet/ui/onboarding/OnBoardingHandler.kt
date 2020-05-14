@@ -30,7 +30,9 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.logger.logInfo
+import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.SetupResult
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
@@ -47,7 +49,7 @@ class OnBoardingHandler(
     coroutineJob: Job,
     private val breadApp: BreadApp,
     private val breadBox: BreadBox,
-    private val accountManager: BRAccountManager,
+    private val userManager: BrdUserManager,
     private val outputProvider: () -> Consumer<E>,
     private val routerProvider: () -> Router
 ) : Connection<F>, CoroutineScope {
@@ -77,41 +79,26 @@ class OnBoardingHandler(
     }
 
     private suspend fun createWallet() {
-        val phrase = generatePhrase() ?: return
-
-        try {
-            accountManager.createAccount(phrase)
-        } catch (e: Exception) {
-            logError("Error storing wallet data.", e)
-            outputProvider().accept(E.SetupError.StoreWalletFailed)
-            return
+        when (val result = userManager.setupWithGeneratedPhrase()) {
+            SetupResult.Success -> logInfo("Wallet created successfully.")
+            is SetupResult.FailedToGeneratePhrase -> {
+                logError("Failed to generate phrase.", result.exception)
+                outputProvider().accept(E.SetupError.PhraseCreationFailed)
+                return
+            }
+            else -> {
+                // TODO: Handle specific errors, message possible recourse to the user
+                logError("Error creating wallet: $result")
+                outputProvider().accept(E.SetupError.StoreWalletFailed)
+                return
+            }
         }
 
         try {
-            breadApp.startWithInitializedWallet(breadBox, false)
-
             outputProvider().accept(E.OnWalletCreated)
         } catch (e: IllegalStateException) {
             logError("Error initializing crypto system", e)
             outputProvider().accept(E.SetupError.CryptoSystemBootError)
-        }
-    }
-
-    private suspend fun generatePhrase(): ByteArray? {
-        return withContext(Dispatchers.Default) {
-            val words = Key.getDefaultWordList()
-            try {
-                Account.generatePhrase(words)
-                    .also { phrase ->
-                        check(Account.validatePhrase(phrase, words)) {
-                            "Invalid phrase generated."
-                        }
-                    }
-            } catch (e: Exception) {
-                logError("Failed to generate phrase.", e)
-                outputProvider().accept(E.SetupError.PhraseCreationFailed)
-                null
-            }
         }
     }
 }

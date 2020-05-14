@@ -115,6 +115,8 @@ class BRApiManager private constructor() {
 
         //Update BTC/Fiat rates
         updateFiatRates(context)
+
+        fetchPriceChanges(context, codeList)
     }
 
     @WorkerThread

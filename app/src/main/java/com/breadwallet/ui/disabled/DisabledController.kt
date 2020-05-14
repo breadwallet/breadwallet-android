@@ -33,8 +33,8 @@ import com.breadwallet.R
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SpringAnimator
-import com.breadwallet.tools.security.AccountState
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserState
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
@@ -57,7 +57,7 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
 
     override val layoutId: Int = R.layout.controller_disabled
 
-    private val accountManager by instance<BRAccountManager>()
+    private val userManager by instance<BrdUserManager>()
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -84,10 +84,10 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
     override fun onAttach(view: View) {
         super.onAttach(view)
 
-        accountManager.accountStateChanges(disabledUpdates = true)
+        userManager.stateChanges(disabledUpdates = true)
             .onEach { state ->
                 when (state) {
-                    is AccountState.Disabled ->
+                    is BrdUserState.Disabled ->
                         walletDisabled(state.seconds)
                     else -> walletEnabled()
                 }
@@ -97,7 +97,7 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
     }
 
     override fun handleBack(): Boolean {
-        val isDisabled = accountManager.getAccountState() is AccountState.Disabled
+        val isDisabled = userManager.getState() is BrdUserState.Disabled
         if (isDisabled) {
             SpringAnimator.failShakeAnimation(activity, disabled)
         }
