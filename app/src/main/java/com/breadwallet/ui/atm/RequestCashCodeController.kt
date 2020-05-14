@@ -87,7 +87,6 @@ class RequestCashCodeController(
         amount.helperText = "Min ${atm.min}$ max ${atm.max}$, multiple of ${atm.bills.toFloat().toInt()}$ bills"
 
         getAtmCode.setOnClickListener {
-            // dropView.startAnimation()
 
             if (!WacSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "Invalid session", Toast.LENGTH_SHORT).show()
@@ -207,7 +206,6 @@ class RequestCashCodeController(
                         val code = response.body()!!.data.items[0].secureCode
                         proceedWithCashCode(context, code)
                     } else {
-
                         val errorBody = response.errorBody()
                         errorBody?.let {
                             it.parseError().error.server_message.let { message ->

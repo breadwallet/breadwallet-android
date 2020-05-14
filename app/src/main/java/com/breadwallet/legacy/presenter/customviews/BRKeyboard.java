@@ -187,6 +187,11 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
 
     }
 
+    public void fakeInput(String key){
+        if (mKeyInsertListener != null) {
+            mKeyInsertListener.onKeyInsert(key);
+        }
+    }
     public interface OnInsertListener {
         void onKeyInsert(String key);
     }
