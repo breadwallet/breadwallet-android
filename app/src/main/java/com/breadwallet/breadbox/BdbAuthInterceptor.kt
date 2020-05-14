@@ -143,7 +143,7 @@ class BdbAuthInterceptor(
         }
     }
 
-    @SuppressLint("MagicNumber")
+    @Suppress("MagicNumber")
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
         if (jwtString != null) return@withLock null to 0

@@ -185,13 +185,12 @@ class SendSheetController(args: Bundle? = null) :
             textInputAddress.clicks().map {
                 isAtmCashOutFlow()?.let {
                     E.ConsumeEvent
-                }?:run {
+                } ?: run {
                     E.OnAmountEditDismissed
                 }
             },
             textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
             textInputAddress.textChanges().map {
-                Log.i("ATM","on text changed")
                 E.OnTargetAddressChanged(it)
             },
             textInputDestinationTag.textChanges().map {
@@ -208,7 +207,7 @@ class SendSheetController(args: Bundle? = null) :
             textInputAmount.clicks().map {
                 isAtmCashOutFlow()?.let {
                     E.ConsumeEvent
-                }?:run {
+                } ?: run {
                     E.OnAmountEditClicked
                 }
             },
@@ -305,7 +304,7 @@ class SendSheetController(args: Bundle? = null) :
             val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
             isAtmCashOutFlow()?.let{
                 labelTitle.text = "%s %s to the ATM".format(sendTitle, upperCaseCurrencyCode)
-            }?:run {
+            } ?: run {
                 labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
             }
             buttonCurrencySelect.text = when {
@@ -475,8 +474,9 @@ class SendSheetController(args: Bundle? = null) :
         }
     }
 
+    @Suppress("MagicNumber")
     private fun fakeAmount(amount : String) {
-        amount.split("").subList(1,amount.length+1).forEachIndexed {  index, key ->
+        amount.split("").subList(1, amount.length + 1).forEachIndexed {  index, key ->
             // Hack Alert: if it is too quickly it misses keys
             keyboard.postDelayed({
                 if (keyboard != null) {
