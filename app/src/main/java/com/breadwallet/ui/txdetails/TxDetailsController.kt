@@ -28,7 +28,6 @@ import android.animation.LayoutTransition
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
@@ -37,16 +36,21 @@ import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
+import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
+import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
-import com.breadwallet.ui.view
-import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.transaction_details.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.math.BigDecimal
@@ -115,32 +119,26 @@ class TxDetailsController(
         }
     }
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        close_button.onClick(E.OnClosedClicked)
-        show_hide_details.onClick(E.OnShowHideDetailsClicked)
-        memo_input.onTextChanged(E::OnMemoChanged)
-
-        transaction_id.setOnClickListener {
-            transaction_id.text?.toString()?.run(::copyToClipboard)
-        }
-
-        tx_to_from_address.setOnClickListener {
-            tx_to_from_address.text?.toString()?.run(::copyToClipboard)
-        }
-
-        onDispose {
-            transaction_id.setOnClickListener(null)
-            tx_to_from_address.setOnClickListener(null)
-        }
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            close_button.clicks().map { E.OnClosedClicked },
+            show_hide_details.clicks().map { E.OnShowHideDetailsClicked },
+            memo_input.textChanges().map { E.OnMemoChanged(it) },
+            transaction_id.clicks().map { E.OnTransactionHashClicked },
+            tx_to_from_address.clicks().map { E.OnAddressClicked }
+        )
     }
 
     override fun onDetach(view: View) {
         super.onDetach(view)
         view.setOnClickListener(null)
+        Utils.hideKeyboard(activity)
+    }
 
-        // Hide softkeyboard if it's visible
-        val imm = view.context.getSystemService(InputMethodManager::class.java)
-        imm.hideSoftInputFromWindow(memo_input.windowToken, 0)
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            is F.CopyToClipboard -> BRClipboardManager.putClipboard(activity, effect.text)
+        }
     }
 
     @Suppress("LongMethod", "ComplexMethod")

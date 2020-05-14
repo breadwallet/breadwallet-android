@@ -41,14 +41,16 @@ import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
-import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_settings.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -104,9 +106,11 @@ class SettingsController(
         )
     }
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        close_button.onClick(E.OnCloseClicked)
-        back_button.onClick(E.OnBackClicked)
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            close_button.clicks().map { E.OnCloseClicked },
+            back_button.clicks().map { E.OnBackClicked }
+        )
     }
 
     override fun M.render() {

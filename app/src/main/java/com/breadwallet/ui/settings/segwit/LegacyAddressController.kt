@@ -36,14 +36,17 @@ import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.settings.segwit.LegacyAddress.E
 import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.ui.settings.segwit.LegacyAddress.M
-import com.breadwallet.ui.view
 import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_legacy_address.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -83,16 +86,16 @@ class LegacyAddressController(
         signal_layout.removeView(copiedLayout)
     }
 
-    override fun bindView(output: Consumer<E>) = output.view {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
-        background_layout.setOnClickListener { router.popCurrentController() }
-        close_button.onClick(E.OnCloseClicked)
-        share_button.onClick(E.OnShareClicked)
-        address_text.onClick(E.OnAddressClicked)
-        onDispose {
+        return merge(
+            close_button.clicks().map { E.OnCloseClicked },
+            background_layout.clicks().map { E.OnCloseClicked },
+            share_button.clicks().map { E.OnShareClicked },
+            address_text.clicks().map { E.OnAddressClicked }
+        ).onCompletion {
             copyHandler.removeCallbacksAndMessages(null)
             signal_layout.setOnTouchListener(null)
-            background_layout.setOnClickListener(null)
         }
     }
 
