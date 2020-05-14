@@ -34,55 +34,53 @@ import drewcarlson.switchboard.MobiusHandlerSpec
 import io.sweers.redacted.annotation.Redacted
 
 /**
- * [NavEffectHolder] can be applied to a screen specific
- * navigation effect to support [RouterNavigationEffectHandler]
- * without needing to map every effect to a [NavigationEffect].
- *
- * @see com.breadwallet.ui.BaseMobiusController.handleNavEffects
+ * [NavigationEffect] can be applied to a screen specific
+ * navigation effect to support [RouterNavigator]
+ * without needing to map every effect to a [NavigationTarget].
  */
-interface NavEffectHolder : ViewEffect {
-    val navigationEffect: NavigationEffect
+interface NavigationEffect : ViewEffect {
+    val navigationTarget: NavigationTarget
 }
 
 @MobiusHandlerSpec
-sealed class NavigationEffect {
-    data class GoToSend(
+sealed class NavigationTarget {
+    data class SendSheet(
         val currencyId: String,
         val cryptoRequest: CryptoRequest? = null,
         val cryptoRequestUrl: Link.CryptoRequestUrl? = null
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToReceive(val currencyCode: String) : NavigationEffect()
-    data class GoToTransaction(
+    data class ReceiveSheet(val currencyCode: String) : NavigationTarget()
+    data class ViewTransaction(
         val currencyId: String,
         val txHash: String
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    object GoBack : NavigationEffect()
-    object GoToBrdRewards : NavigationEffect()
-    object GoToReview : NavigationEffect()
-    object GoToQrScan : NavigationEffect()
+    object Back : NavigationTarget()
+    object BrdRewards : NavigationTarget()
+    object ReviewBrd : NavigationTarget()
+    object QRScanner : NavigationTarget()
 
-    data class GoToDeepLink(
+    data class DeepLink(
         val url: String? = null,
         val authenticated: Boolean,
         val link: Link? = null
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationEffect()
-    data class GoToWallet(val currencyCode: String) : NavigationEffect()
-    data class GoToFaq(
+    data class GoToInAppMessage(val inAppMessage: InAppMessage) : NavigationTarget()
+    data class Wallet(val currencyCode: String) : NavigationTarget()
+    data class SupportPage(
         val articleId: String,
         val currencyCode: String? = null
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToSetPin(
+    data class SetPin(
         val onboarding: Boolean = false,
         val skipWriteDownKey: Boolean = false,
         val onComplete: OnCompleteAction = OnCompleteAction.GO_HOME
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToDialog(
+    data class AlertDialog(
         val dialogId: String = "",
         val title: String? = null,
         val message: String? = null,
@@ -91,67 +89,66 @@ sealed class NavigationEffect {
         val messageArgs: List<Any> = emptyList(),
         val positiveButtonResId: Int? = null,
         val negativeButtonResId: Int? = null
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    object GoToLogin : NavigationEffect()
-    data class GoToAuthentication(
+    object BrdLogin : NavigationTarget()
+    data class Authentication(
         val mode: Mode = Mode.PIN_REQUIRED,
         val titleResId: Int? = null,
         val messageResId: Int? = null
-    ) : NavigationEffect()
-    object GoToHome : NavigationEffect()
-    object GoToBuy : NavigationEffect()
-    object GoToTrade : NavigationEffect()
-    object GoToAddWallet : NavigationEffect()
-    object GoToDisabledScreen : NavigationEffect()
-    object GoToNativeApiExplorer : NavigationEffect()
+    ) : NavigationTarget()
+    object Home : NavigationTarget()
+    object Buy : NavigationTarget()
+    object Trade : NavigationTarget()
+    object AddWallet : NavigationTarget()
+    object DisabledScreen : NavigationTarget()
+    object NativeApiExplorer : NavigationTarget()
 
-    data class GoToWriteDownKey(
+    data class WriteDownKey(
         val onComplete: OnCompleteAction,
         val requestAuth: Boolean = true
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToPaperKey(
+    data class PaperKey(
         @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction?
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToPaperKeyProve(
+    data class PaperKeyProve(
         @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToMenu(val settingsOption: SettingsSection) : NavigationEffect()
+    data class Menu(val settingsOption: SettingsSection) : NavigationTarget()
 
-    object GoToTransactionComplete : NavigationEffect()
-    object GoToGooglePlay : NavigationEffect()
-    object GoToAbout : NavigationEffect()
-    object GoToDisplayCurrency : NavigationEffect()
-    object GoToNotificationsSettings : NavigationEffect()
-    object GoToShareData : NavigationEffect()
-    object GoToFingerprintAuth : NavigationEffect()
-    object GoToWipeWallet : NavigationEffect()
-    object GoToOnboarding : NavigationEffect()
-    object GoToImportWallet : NavigationEffect()
-    object GoToBitcoinNodeSelector : NavigationEffect()
-    object GoToEnableSegWit : NavigationEffect()
-    object GoToLegacyAddress : NavigationEffect()
-    data class GoToSyncBlockchain(
+    object TransactionComplete : NavigationTarget()
+    object About : NavigationTarget()
+    object DisplayCurrency : NavigationTarget()
+    object NotificationsSettings : NavigationTarget()
+    object ShareDataSettings : NavigationTarget()
+    object FingerprintSettings : NavigationTarget()
+    object WipeWallet : NavigationTarget()
+    object OnBoarding : NavigationTarget()
+    object ImportWallet : NavigationTarget()
+    object BitcoinNodeSelector : NavigationTarget()
+    object EnableSegWit : NavigationTarget()
+    object LegacyAddress : NavigationTarget()
+    data class SyncBlockchain(
         val currencyCode: String
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToFastSync(
+    data class FastSync(
         val currencyCode: String
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToATMMap(
+    data class ATMMap(
         val url: String,
         val mapJson: String
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 
-    data class GoToSignal(
+    data class Signal(
         val titleResId: Int,
         val messageResId: Int,
         val iconResId: Int
-    ) : NavigationEffect()
+    ) : NavigationTarget()
 }

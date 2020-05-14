@@ -26,8 +26,8 @@ package com.breadwallet.ui.provekey
 
 import com.breadwallet.R
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.util.normalize
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -84,14 +84,14 @@ object PaperKeyProve {
     }
 
     sealed class F {
-        object GoToHome : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToHome
+        object GoToHome : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
-        object GoToBuy : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToBuy
+        object GoToBuy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Buy
         }
-        object ShowStoredSignal : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSignal(
+        object ShowStoredSignal : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Signal(
                 titleResId = R.string.Alerts_paperKeySet,
                 messageResId = R.string.Alerts_paperKeySetSubheader,
                 iconResId = R.drawable.ic_check_mark_white

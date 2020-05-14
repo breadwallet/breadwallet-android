@@ -50,9 +50,9 @@ import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.disabled.DisabledController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.navigation.RouterNavigator
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.
-    private var routerNavHandler: RouterNavigationEffectHandler? = null
+    private var routerNavigator: RouterNavigator? = null
 
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
-            routerNavHandler = RouterNavigationEffectHandler { router }
+            routerNavigator = RouterNavigator { router }
         })
 
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
-            routerNavHandler?.goToDeepLink(NavigationEffect.GoToDeepLink(data, isAuthenticated))
+            routerNavigator?.deepLink(NavigationTarget.DeepLink(data, isAuthenticated))
         }
     }
 

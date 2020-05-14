@@ -25,8 +25,8 @@
 package com.breadwallet.ui.settings.currency
 
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 
 object DisplayCurrency {
 
@@ -52,11 +52,11 @@ object DisplayCurrency {
         object LoadCurrencies : F()
         data class SetDisplayCurrency(val currencyCode: String) : F()
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
-            object GoBack : Nav(NavigationEffect.GoBack)
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
+            object GoBack : Nav(NavigationTarget.Back)
             object GoToFaq : Nav(
-                NavigationEffect.GoToFaq(BRConstants.FAQ_DISPLAY_CURRENCY)
+                NavigationTarget.SupportPage(BRConstants.FAQ_DISPLAY_CURRENCY)
             )
         }
     }

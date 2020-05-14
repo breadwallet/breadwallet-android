@@ -26,8 +26,8 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
@@ -124,38 +124,38 @@ object HomeScreen {
         object CheckInAppNotification : F()
         object CheckIfShowBuyAndSell : F()
 
-        data class GoToDeepLink(val url: String) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDeepLink(url, true)
+        data class GoToDeepLink(val url: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DeepLink(url, true)
         }
-        data class GoToInappMessage(val inAppMessage: InAppMessage) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToInAppMessage(inAppMessage)
+        data class GoToInappMessage(val inAppMessage: InAppMessage) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.GoToInAppMessage(inAppMessage)
         }
-        data class GoToWallet(val currencyCode: String) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToWallet(currencyCode)
+        data class GoToWallet(val currencyCode: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Wallet(currencyCode)
         }
-        object GoToAddWallet : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToAddWallet
+        object GoToAddWallet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AddWallet
         }
 
-        object GoToBuy : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToBuy
+        object GoToBuy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Buy
         }
-        object GoToTrade : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToTrade
+        object GoToTrade : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Trade
         }
-        object GoToMenu : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToMenu(SettingsSection.HOME)
+        object GoToMenu : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Menu(SettingsSection.HOME)
         }
-        object GoToFingerprintSettings : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFingerprintAuth
+        object GoToFingerprintSettings : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.FingerprintSettings
         }
-        object GoToWriteDownKey : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToWriteDownKey(
+        object GoToWriteDownKey : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.WriteDownKey(
                 OnCompleteAction.GO_HOME
             )
         }
-        object GoToUpgradePin : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin()
+        object GoToUpgradePin : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin()
         }
 
         data class RecordPushNotificationOpened(val campaignId: String) : F()

@@ -28,8 +28,8 @@ import com.breadwallet.R
 import com.breadwallet.crypto.Amount
 import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
@@ -140,41 +140,41 @@ object Import {
     sealed class F {
 
         object ShowPasswordInput : F(), ViewEffect
-        object ShowKeyInvalid : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowKeyInvalid : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 messageResId = R.string.Import_Error_notValid,
                 positiveButtonResId = R.string.Button_ok
             )
         }
-        object ShowPasswordInvalid : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowPasswordInvalid : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 messageResId = R.string.Import_wrongPassword,
                 positiveButtonResId = R.string.Button_ok
             )
         }
-        object ShowBalanceTooLow : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowBalanceTooLow : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Import_title,
                 messageResId = R.string.Import_Error_highFees,
                 positiveButtonResId = R.string.Button_ok
             )
         }
-        object ShowNoBalance : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowNoBalance : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Import_title,
                 messageResId = R.string.Import_Error_empty,
                 positiveButtonResId = R.string.Button_ok
             )
         }
-        object ShowImportFailed : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowImportFailed : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Import_title,
                 messageResId = R.string.Import_Error_signing,
                 positiveButtonResId = R.string.Button_ok
             )
         }
-        object ShowImportSuccess : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowImportSuccess : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Import_success,
                 messageResId = R.string.Import_SuccessBody,
                 positiveButtonResId = R.string.Button_ok,
@@ -185,8 +185,8 @@ object Import {
         data class ShowConfirmImport(
             val receiveAmount: String,
             val feeAmount: String
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Import_title,
                 messageResId = R.string.Import_confirm,
                 messageArgs = listOf(receiveAmount, feeAmount),
@@ -208,11 +208,11 @@ object Import {
         ) : F()
 
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
-            object GoBack : Nav(NavigationEffect.GoBack)
-            object GoToFaq : Nav(NavigationEffect.GoToFaq(FAQ_IMPORT_WALLET))
-            object GoToScan : Nav(NavigationEffect.GoToQrScan)
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
+            object GoBack : Nav(NavigationTarget.Back)
+            object GoToFaq : Nav(NavigationTarget.SupportPage(FAQ_IMPORT_WALLET))
+            object GoToScan : Nav(NavigationTarget.QRScanner)
         }
 
         sealed class EstimateImport : F() {

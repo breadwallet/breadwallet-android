@@ -54,7 +54,7 @@ import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.wallet.WalletScreen.DIALOG_CREATE_ACCOUNT
 import com.breadwallet.ui.wallet.WalletScreen.E
@@ -145,7 +145,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         updateUi()
 
         more_info_button.setOnClickListener {
-            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_UNSUPPORTED_TOKEN).asSupportUrl()
+            val url = NavigationTarget.SupportPage(BRConstants.FAQ_UNSUPPORTED_TOKEN).asSupportUrl()
             router.pushController(
                 RouterTransaction.with(
                     WebController(url)

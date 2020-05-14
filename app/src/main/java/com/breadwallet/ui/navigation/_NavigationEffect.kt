@@ -35,7 +35,7 @@ import com.platform.HTTPServer
 import java.util.Locale
 
 /** Returns the full support URL for the articleId and currencyCode. */
-fun NavigationEffect.GoToFaq.asSupportUrl() = buildString {
+fun NavigationTarget.SupportPage.asSupportUrl() = buildString {
     append(HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT))
     if (articleId.isNotBlank()) {
         append(UiUtils.ARTICLE_QUERY_STRING)

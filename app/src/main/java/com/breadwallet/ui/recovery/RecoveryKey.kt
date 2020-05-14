@@ -27,8 +27,8 @@ package com.breadwallet.ui.recovery
 import com.breadwallet.R
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -142,34 +142,34 @@ object RecoveryKey {
 
     sealed class F {
 
-        object GoToRecoveryKeyFaq : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+        object GoToRecoveryKeyFaq : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage(BRConstants.FAQ_PAPER_KEY)
         }
 
-        object SetPinForRecovery : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin(
+        object SetPinForRecovery : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(
                 onboarding = true,
                 skipWriteDownKey = true
             )
         }
 
-        object GoToLoginForReset : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToLogin
+        object GoToLoginForReset : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.BrdLogin
         }
 
-        object SetPinForReset : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin()
+        object SetPinForReset : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin()
         }
 
-        object GoToPhraseError : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object GoToPhraseError : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.RecoverWallet_invalid,
                 negativeButtonResId = R.string.AccessibilityLabels_close
             )
         }
 
-        object GoToWipeWallet : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object GoToWipeWallet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 dialogId = DIALOG_WIPE,
                 titleResId = R.string.WipeWallet_alertTitle,
                 messageResId = R.string.WipeWallet_alertMessage,

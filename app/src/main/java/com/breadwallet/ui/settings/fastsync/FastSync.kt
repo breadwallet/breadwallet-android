@@ -27,8 +27,8 @@ package com.breadwallet.ui.settings.fastsync
 import com.breadwallet.R
 import com.breadwallet.model.SyncMode
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import drewcarlson.switchboard.MobiusUpdateSpec
 
@@ -64,8 +64,8 @@ object FastSync {
 
     sealed class F {
         object LoadCurrencyIds : F()
-        object ShowDisableFastSyncDialog : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowDisableFastSyncDialog : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 messageResId = R.string.WalletConnectionSettings_confirmation,
                 positiveButtonResId = R.string.WalletConnectionSettings_turnOff,
                 negativeButtonResId = R.string.Button_cancel
@@ -73,11 +73,11 @@ object FastSync {
         }
 
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
-            object GoBack : Nav(NavigationEffect.GoBack)
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
+            object GoBack : Nav(NavigationTarget.Back)
 
-            object GoToFaq : Nav(NavigationEffect.GoToFaq(BRConstants.FAQ_FASTSYNC))
+            object GoToFaq : Nav(NavigationTarget.SupportPage(BRConstants.FAQ_FASTSYNC))
         }
 
         sealed class MetaData : F() {
