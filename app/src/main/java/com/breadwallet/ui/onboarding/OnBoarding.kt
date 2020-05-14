@@ -24,8 +24,8 @@
  */
 package com.breadwallet.ui.onboarding
 
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 
@@ -79,28 +79,28 @@ object OnBoarding {
 
         object CreateWallet : F()
 
-        data class ShowError(val message: String) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        data class ShowError(val message: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 title = "",
                 message = message
             )
         }
 
-        object Skip : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin(onboarding = true)
+        object Skip : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(onboarding = true)
         }
-        object Buy : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin(
+        object Buy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(
                 onboarding = true,
                 onComplete = OnCompleteAction.GO_TO_BUY
             )
         }
-        object Browse : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin(onboarding = true)
+        object Browse : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(onboarding = true)
         }
 
-        object Cancel : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object Cancel : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
     }
 }

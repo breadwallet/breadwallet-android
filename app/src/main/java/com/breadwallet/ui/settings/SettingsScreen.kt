@@ -26,8 +26,8 @@ package com.breadwallet.ui.settings
 
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -86,98 +86,98 @@ object SettingsScreen {
         data class SetTokenBundle(val bundle: String) : F()
         data class LoadOptions(val section: SettingsSection) : F()
 
-        data class GoToSection(val section: SettingsSection) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToMenu(section)
+        data class GoToSection(val section: SettingsSection) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Menu(section)
         }
 
-        object GoBack : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
-        object GoToSupport : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFaq("")
+        object GoToSupport : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage("")
         }
-        object GoToQrScan : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToQrScan
+        object GoToQrScan : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.QRScanner
         }
-        object GoToBrdRewards : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToBrdRewards
+        object GoToBrdRewards : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.BrdRewards
         }
-        object GoToGooglePlay : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToGooglePlay
+        object GoToGooglePlay : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ReviewBrd
         }
-        object GoToAbout : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToAbout
+        object GoToAbout : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.About
         }
-        object GoToDisplayCurrency : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDisplayCurrency
+        object GoToDisplayCurrency : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DisplayCurrency
         }
-        object GoToNotificationsSettings : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToNotificationsSettings
+        object GoToNotificationsSettings : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.NotificationsSettings
         }
-        object GoToShareData : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToShareData
+        object GoToShareData : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ShareDataSettings
         }
-        object GoToImportWallet : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToImportWallet
+        object GoToImportWallet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ImportWallet
         }
         data class GoToSyncBlockchain(
             val currencyCode: CurrencyCode
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSyncBlockchain(currencyCode)
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SyncBlockchain(currencyCode)
         }
 
-        object GoToNodeSelector : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToBitcoinNodeSelector
+        object GoToNodeSelector : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.BitcoinNodeSelector
         }
-        object GoToEnableSegWit : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToEnableSegWit
+        object GoToEnableSegWit : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.EnableSegWit
         }
-        object GoToLegacyAddress : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToLegacyAddress
+        object GoToLegacyAddress : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.LegacyAddress
         }
-        object GoToFingerprintAuth : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFingerprintAuth
+        object GoToFingerprintAuth : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.FingerprintSettings
         }
-        object GoToUpdatePin : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToSetPin()
+        object GoToUpdatePin : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin()
         }
-        object GoToWipeWallet : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToWipeWallet
+        object GoToWipeWallet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.WipeWallet
         }
-        object GoToOnboarding : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToOnboarding
+        object GoToOnboarding : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.OnBoarding
         }
-        object GoToNativeApiExplorer : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToNativeApiExplorer
+        object GoToNativeApiExplorer : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.NativeApiExplorer
         }
-        object GoToHomeScreen : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToHome
+        object GoToHomeScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
-        object GoToAuthentication : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToAuthentication()
+        object GoToAuthentication : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Authentication()
         }
         data class GoToPaperKey(
             @Redacted val phrase: List<String>
-        ) : F(), NavEffectHolder {
-            override val navigationEffect =
-                NavigationEffect.GoToPaperKey(phrase, null)
+        ) : F(), NavigationEffect {
+            override val navigationTarget =
+                NavigationTarget.PaperKey(phrase, null)
         }
 
         data class GoToFastSync(
             val currencyCode: CurrencyCode
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFastSync(currencyCode)
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.FastSync(currencyCode)
         }
 
-        data class GoToLink(val link: Link) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDeepLink(
+        data class GoToLink(val link: Link) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DeepLink(
                 link = link,
                 authenticated = true
             )
         }
 
-        data class GoToATMMap(val url: String, val mapJson: String) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToATMMap(url, mapJson)
+        data class GoToATMMap(val url: String, val mapJson: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ATMMap(url, mapJson)
         }
     }
 }

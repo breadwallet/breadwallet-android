@@ -27,8 +27,8 @@ package com.breadwallet.ui.txdetails
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.models.TransactionState
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
@@ -146,8 +146,8 @@ object TxDetails {
             @Redacted val text: String
         ) : F(), ViewEffect
 
-        object Close : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object Close : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
     }
 }

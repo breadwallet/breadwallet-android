@@ -27,8 +27,8 @@ package com.breadwallet.ui.login
 import com.breadwallet.R
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -76,30 +76,30 @@ object LoginScreen {
             val attributes: Map<String, String>? = null
         ) : F()
 
-        object GoBack : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
-        object GoToHome : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToHome
+        object GoToHome : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
-        object ShowFingerprintController : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToAuthentication(
+        object ShowFingerprintController : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Authentication(
                 mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
                 titleResId = R.string.UnlockScreen_touchIdTitle_android
             )
         }
-        object GoToDisableScreen : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDisabledScreen
+        object GoToDisableScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DisabledScreen
         }
         data class GoToDeepLink(
             @Redacted val url: String
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDeepLink(url, true)
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DeepLink(url, true)
         }
         data class GoToWallet(
             val currencyCode: String
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToWallet(currencyCode)
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Wallet(currencyCode)
         }
     }
 }

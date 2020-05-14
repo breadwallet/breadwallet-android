@@ -36,8 +36,8 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.eth
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -397,20 +397,20 @@ object SendSheet {
     sealed class F {
 
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
             data class GoToFaq(
                 val currencyCode: CurrencyCode
-            ) : Nav(NavigationEffect.GoToFaq(BRConstants.FAQ_SEND, currencyCode))
+            ) : Nav(NavigationTarget.SupportPage(BRConstants.FAQ_SEND, currencyCode))
 
             data class GoToReceive(
                 val currencyCode: CurrencyCode
-            ) : Nav(NavigationEffect.GoToReceive(currencyCode))
+            ) : Nav(NavigationTarget.ReceiveSheet(currencyCode))
 
-            object GoToScan : Nav(NavigationEffect.GoToQrScan)
-            object CloseSheet : Nav(NavigationEffect.GoBack)
-            object GoToEthWallet : Nav(NavigationEffect.GoToWallet(eth))
-            object GoToTransactionComplete : Nav(NavigationEffect.GoToTransactionComplete)
+            object GoToScan : Nav(NavigationTarget.QRScanner)
+            object CloseSheet : Nav(NavigationTarget.Back)
+            object GoToEthWallet : Nav(NavigationTarget.Wallet(eth))
+            object GoToTransactionComplete : Nav(NavigationTarget.TransactionComplete)
         }
 
         data class GetTransferFields(
@@ -432,8 +432,8 @@ object SendSheet {
         data class ShowEthTooLowForTokenFee(
             val currencyCode: CurrencyCode,
             val networkFee: BigDecimal
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
                 titleResId = R.string.Send_insufficientGasTitle,
                 messageResId = R.string.Send_insufficientGasMessage,
@@ -484,8 +484,8 @@ object SendSheet {
 
         data class ShowErrorDialog(
             val message: String
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
                 titleResId = R.string.Alert_error,
                 message = message,
@@ -493,8 +493,8 @@ object SendSheet {
             )
         }
 
-        object ShowTransferFailed : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowTransferFailed : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.Alert_error,
                 messageResId = R.string.Send_publishTransactionError,
                 positiveButtonResId = R.string.Button_ok

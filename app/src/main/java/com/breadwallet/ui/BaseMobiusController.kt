@@ -29,8 +29,8 @@ import android.view.View
 import com.breadwallet.ext.throttleFirst
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
-import com.breadwallet.ui.navigation.NavEffectHolder
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.RouterNavigator
 import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
@@ -70,9 +70,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
-import org.kodein.di.erased.bind
-import org.kodein.di.erased.instance
-import org.kodein.di.erased.provider
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface ViewEffect
@@ -88,17 +85,13 @@ abstract class BaseMobiusController<M, E, F>(
 
     override val kodein by Kodein.lazy {
         extend(super.kodein)
-
-        bind<RouterNavigationEffectHandler>() with provider {
-            RouterNavigationEffectHandler(::getRouter)
-        }
     }
 
     protected val uiBindScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Main + errorHandler("uiBindScope")
     )
 
-    private val navigationEffectHandler by instance<RouterNavigationEffectHandler>()
+    private val routerNavigator = RouterNavigator(::getRouter)
     private val viewEffectChannel = Channel<ViewEffect>(MAX_QUEUED_VIEW_EFFECTS)
 
     /** The default model used to construct [loopController]. */
@@ -284,16 +277,16 @@ abstract class BaseMobiusController<M, E, F>(
     private fun collectViewEffects() {
         viewEffectChannel.receiveAsFlow()
             .transform { effect ->
-                if (effect is NavEffectHolder) {
+                if (effect is NavigationEffect) {
                     emit(effect)
                 } else {
                     handleViewEffect(effect)
                 }
             }
-            .filterIsInstance<NavEffectHolder>()
+            .filterIsInstance<NavigationEffect>()
             .throttleFirst(500L)
             .onEach { effect ->
-                navigationEffectHandler.accept(effect.navigationEffect)
+                routerNavigator.navigateTo(effect.navigationTarget)
             }
             .flowOn(Dispatchers.Main)
             .launchIn(viewAttachScope)

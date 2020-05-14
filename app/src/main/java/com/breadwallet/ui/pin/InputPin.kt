@@ -26,8 +26,8 @@ package com.breadwallet.ui.pin
 
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -102,18 +102,18 @@ object InputPin {
         object ErrorShake : F(), ViewEffect
         object ShowPinError : F(), ViewEffect
 
-        object GoToHome : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToHome
+        object GoToHome : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
-        object GoToFaq : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
+        object GoToFaq : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage(BRConstants.FAQ_SET_PIN)
         }
-        object GoToDisabledScreen : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDisabledScreen
+        object GoToDisabledScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DisabledScreen
         }
 
-        data class GoToWriteDownKey(val onComplete: OnCompleteAction) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToWriteDownKey(onComplete, false)
+        data class GoToWriteDownKey(val onComplete: OnCompleteAction) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.WriteDownKey(onComplete, false)
         }
     }
 }

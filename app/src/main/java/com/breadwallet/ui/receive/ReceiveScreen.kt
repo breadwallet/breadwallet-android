@@ -27,8 +27,8 @@ package com.breadwallet.ui.receive
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.MAX_DIGITS
 import com.breadwallet.util.CurrencyCode
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -154,14 +154,14 @@ object ReceiveScreen {
             val currencyCode: CurrencyCode
         ) : F()
 
-        object CloseSheet : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object CloseSheet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
 
         data class GoToFaq(
             val currencyCode: CurrencyCode
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFaq(
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage(
                 BRConstants.FAQ_RECEIVE,
                 currencyCode
             )

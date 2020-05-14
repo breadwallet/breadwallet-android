@@ -30,8 +30,8 @@ import com.breadwallet.crypto.Transfer
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.platform.entities.TxMetaData
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -179,34 +179,34 @@ object WalletScreen {
     sealed class F {
         data class UpdateCryptoPreferred(val cryptoPreferred: Boolean) : F()
 
-        sealed class Nav : F(), NavEffectHolder {
+        sealed class Nav : F(), NavigationEffect {
             data class GoToSend(
                 val currencyId: String,
                 val cryptoRequest: CryptoRequest? = null
             ) : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToSend(currencyId, cryptoRequest)
+                override val navigationTarget =
+                    NavigationTarget.SendSheet(currencyId, cryptoRequest)
             }
 
             data class GoToReceive(val currencyId: String) : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToReceive(currencyId)
+                override val navigationTarget =
+                    NavigationTarget.ReceiveSheet(currencyId)
             }
 
             data class GoToTransaction(
                 val currencyId: String,
                 val txHash: String
             ) : Nav() {
-                override val navigationEffect =
-                    NavigationEffect.GoToTransaction(currencyId, txHash)
+                override val navigationTarget =
+                    NavigationTarget.ViewTransaction(currencyId, txHash)
             }
 
             object GoBack : Nav() {
-                override val navigationEffect = NavigationEffect.GoBack
+                override val navigationTarget = NavigationTarget.Back
             }
 
             object GoToBrdRewards : Nav() {
-                override val navigationEffect = NavigationEffect.GoToBrdRewards
+                override val navigationTarget = NavigationTarget.BrdRewards
             }
         }
 
@@ -253,8 +253,8 @@ object WalletScreen {
         ) : F()
 
         data class LoadWalletState(val currencyCode: String) : F()
-        object ShowCreateAccountDialog : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowCreateAccountDialog : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.AccountCreation_title,
                 messageResId = R.string.AccountCreation_body,
                 positiveButtonResId = R.string.AccountCreation_create,
@@ -262,8 +262,8 @@ object WalletScreen {
                 dialogId = DIALOG_CREATE_ACCOUNT
             )
         }
-        object ShowCreateAccountErrorDialog : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToDialog(
+        object ShowCreateAccountErrorDialog : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.AccountCreation_title,
                 messageResId = R.string.AccountCreation_error,
                 positiveButtonResId = R.string.AccessibilityLabels_close

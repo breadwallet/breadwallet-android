@@ -25,8 +25,8 @@
 package com.breadwallet.ui.writedownkey
 
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -61,31 +61,31 @@ object WriteDownKey {
     }
 
     sealed class F {
-        object GoToFaq : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+        object GoToFaq : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage(BRConstants.FAQ_PAPER_KEY)
         }
 
-        object GoToHome : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToHome
+        object GoToHome : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
 
-        object GoBack : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
 
-        object GoToBuy : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToBuy
+        object GoToBuy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Buy
         }
-        object ShowAuthPrompt : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToAuthentication()
+        object ShowAuthPrompt : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Authentication()
         }
         object GetPhrase : F()
 
         data class GoToPaperKey(
             @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction
-        ) : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoToPaperKey(
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.PaperKey(
                 phrase,
                 onComplete
             )

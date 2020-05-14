@@ -25,8 +25,8 @@
 package com.breadwallet.ui.settings.fingerprint
 
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import drewcarlson.switchboard.MobiusUpdateSpec
 
 object FingerprintSettings {
@@ -60,12 +60,12 @@ object FingerprintSettings {
             val sendMoney: Boolean
         ) : F()
 
-        object GoBack : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
-        object GoToFaq : F(), NavEffectHolder {
-            override val navigationEffect =
-                NavigationEffect.GoToFaq(BRConstants.FAQ_ENABLE_FINGERPRINT)
+        object GoToFaq : F(), NavigationEffect {
+            override val navigationTarget =
+                NavigationTarget.SupportPage(BRConstants.FAQ_ENABLE_FINGERPRINT)
         }
     }
 }
