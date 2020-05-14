@@ -30,6 +30,16 @@
     <string name="Account.exchangeRate">%1$s par %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Chargement du portefeuille</string>
+    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.body">Créez un compte Hedera uniquement si vous avez l\'intention de stocker HBAR dans votre portefeuille.</string>
+    <!-- Label for create Hedera account button -->
+    <string name="AccountCreation.create">Créer un compte</string>
+    <!-- Error message for Hedera account creation failure  -->
+    <string name="AccountCreation.error">Une erreur s\'est produite lors de la création du compte. Veuillez réessayer plus tard.</string>
+    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.notNow">Pas maintenant</string>
+    <!-- Title for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.title">Confirmer la création du compte</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mon BRD</string>
     <!-- Third party keyboard warning -->
@@ -180,6 +190,8 @@
     <string name="Confirmation.feeLabel">Frais de réseau :</string>
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">Frais de réseau (ETH):</string>
+    <!-- Label for Hedera Memo field on transaction confirmation screen -->
+    <string name="Confirmation.hederaMemo">Mémo Hedera</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Temps de traitement : cette opération devrait se conclure dans %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -787,6 +799,8 @@
     <string name="Send.legacyAddressWarning">Attention : il s\'agit d\'une ancienne adresse bitcoin. Etes-vous sûr de vouloir y envoyer des Bitcoins Cash ?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Chargement de la demande</string>
+    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <string name="Send.memoTag_optional">Mémo Hedera (facultatif)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Fonds insuffisants pour couvrir les frais de transaction.</string>
     <!-- Empty address alert message -->
@@ -1050,6 +1064,8 @@
     <string name="TransactionDetails.gasLimitHeader">Limite de gaz</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Prix du gaz</string>
+    <!-- Label for Hedera Memo field on transaction details screen -->
+    <string name="TransactionDetails.hederaMemo">Mémo Hedera</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">Masquer les détails</string>
     <!-- Label showing the transaction was started (initialized) -->
