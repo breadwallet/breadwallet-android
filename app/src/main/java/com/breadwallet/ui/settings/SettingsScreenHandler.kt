@@ -24,12 +24,12 @@
  */
 package com.breadwallet.ui.settings
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.model.Experiments
 import com.breadwallet.repository.ExperimentsRepository
@@ -40,16 +40,11 @@ import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.LogsUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.tools.util.bch
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.util.errorHandler
-import com.platform.APIClient
-import com.platform.HTTPServer
-import com.platform.buildSignedRequest
 import com.platform.interfaces.AccountMetaDataProvider
-import com.platform.middlewares.plugins.LinkPlugin
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -59,24 +54,17 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
-    private val retainedScope: CoroutineScope,
     private val context: Context,
-    private val activity: Activity,
     private val experimentsRepository: ExperimentsRepository,
-    private val showApiServerDialog: (String) -> Unit,
-    private val showPlatformDebugUrlDialog: (String) -> Unit,
-    private val showPlatformBundleDialog: (String) -> Unit,
-    private val showTokenBundleDialog: (String) -> Unit,
     private val metaDataManager: AccountMetaDataProvider,
-    private val userManager: BrdUserManager
+    private val userManager: BrdUserManager,
+    private val breadBox: BreadBox
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -87,32 +75,7 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                val d = (context.applicationContext as BreadApp).kodein.direct
-                LogsUtils.shareLogs(activity, d.instance(), d.instance())
-            }
-            F.ShowApiServerDialog -> launch(Dispatchers.Main) {
-                showApiServerDialog(BreadApp.host)
-            }
-            F.ShowPlatformDebugUrlDialog -> launch(Dispatchers.Main) {
-                showPlatformDebugUrlDialog(
-                    ServerBundlesHelper.getWebPlatformDebugURL(context)
-                )
-            }
-            F.ShowPlatformBundleDialog -> launch(Dispatchers.Main) {
-                showPlatformBundleDialog(
-                    ServerBundlesHelper.getBundle(
-                        context,
-                        ServerBundlesHelper.Type.WEB
-                    )
-                )
-            }
-            F.ShowTokenBundleDialog -> launch(Dispatchers.Main) {
-                showTokenBundleDialog(
-                    ServerBundlesHelper.getBundle(
-                        context,
-                        ServerBundlesHelper.Type.TOKEN
-                    )
-                )
+                LogsUtils.shareLogs(context, breadBox, userManager)
             }
             is F.SetApiServer -> {
                 BreadApp.setDebugHost(value.host)
@@ -143,10 +106,10 @@ class SettingsScreenHandler(
                 output.accept(E.OnWalletsUpdated)
             }
             F.WipeNoPrompt -> {
-                activity.getSystemService(ActivityManager::class.java)
+                context.getSystemService(ActivityManager::class.java)
                     ?.clearApplicationUserData()
             }
-            F.GetPaperKey -> retainedScope.launch {
+            F.GetPaperKey -> launch {
                 val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
                 output.accept(E.ShowPhrase(phrase.split(" ")))
             }
@@ -163,14 +126,8 @@ class SettingsScreenHandler(
             SettingsSection.PREFERENCES -> preferences
             SettingsSection.SECURITY -> securitySettings()
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
-            SettingsSection.BTC_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, btc)
-                btcOptions
-            }
-            SettingsSection.BCH_SETTINGS -> {
-                BRSharedPrefs.putCurrentWalletCurrencyCode(context, bch)
-                bchOptions
-            }
+            SettingsSection.BTC_SETTINGS -> btcOptions
+            SettingsSection.BCH_SETTINGS -> bchOptions
         }
         output.accept(E.OnOptionsLoaded(items))
     }

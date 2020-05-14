@@ -83,8 +83,10 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 Log.e(TAG, "putCurrencies: failed:$failed")
             }
             database!!.setTransactionSuccessful()
-            for (list in onDataChangedListeners) {
-                list.onChanged()
+            synchronized(this) {
+                for (list in onDataChangedListeners) {
+                    list.onChanged()
+                }
             }
             true
         } catch (ex: Exception) {
@@ -107,7 +109,11 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 BRSQLiteHelper.CURRENCY_ISO + " = ?",
                 arrayOf(iso.toUpperCase(Locale.ROOT))
             )
-            for (list in onDataChangedListeners) list.onChanged()
+            synchronized(this) {
+                for (list in onDataChangedListeners) {
+                    list.onChanged()
+                }
+            }
         } finally {
             closeDatabase()
         }
@@ -246,12 +252,14 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 
+    @Synchronized
     fun addOnDataChangedListener(list: OnDataChanged) {
         if (!onDataChangedListeners.contains(list)) {
             onDataChangedListeners.add(list)
         }
     }
 
+    @Synchronized
     fun removeOnDataChangedListener(listener: OnDataChanged) {
         if (onDataChangedListeners.contains(listener)) {
             onDataChangedListeners.remove(listener)

@@ -39,6 +39,7 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.util.TrustedNode
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.M
@@ -67,7 +68,7 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
 
     override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            NodeSelectorHandler(output, direct.instance(), ::showNodeDialog)
+            NodeSelectorHandler(output, direct.instance())
         })
 
     override fun bindView(output: Consumer<E>) = output.view {
@@ -98,6 +99,12 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
             } else {
                 res.getString(R.string.NodeSelector_notConnected)
             }
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            F.ShowNodeDialog -> showNodeDialog()
         }
     }
 

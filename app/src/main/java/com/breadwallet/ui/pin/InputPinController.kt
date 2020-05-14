@@ -28,22 +28,23 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import com.breadwallet.R
+import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.legacy.presenter.customviews.PinLayout.PinLayoutListener
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
 import com.breadwallet.ui.pin.InputPin.M
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_pin_input.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -73,28 +74,8 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     )
     override val init = InputPinInit
     override val update = InputPinUpdate
-
-    override val effectHandler = CompositeEffectHandler.from<F, E>(
-        Connectable { output ->
-            InputPinHandler(
-                output,
-                direct.instance(),
-                viewCreatedScope,
-                { eventConsumer },
-                { SpringAnimator.failShakeAnimation(applicationContext, pin_digits) },
-                { toastLong(R.string.UpdatePin_setPinError) }
-            )
-        },
-        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                F.GoToDisabledScreen -> NavigationEffect.GoToDisabledScreen
-                F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
-                F.GoToHome -> NavigationEffect.GoToHome
-                is F.GoToWriteDownKey -> NavigationEffect.GoToWriteDownKey(effect.onComplete, false)
-                else -> null
-            }
-        })
-    )
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createInputPinHandler(direct.instance())
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -103,22 +84,31 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
         brkeyboard.setShowDecimal(false)
     }
 
-    override fun bindView(output: Consumer<E>): Disposable {
-        faq_button.setOnClickListener {
-            output.accept(E.OnFaqClicked)
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            F.ErrorShake -> SpringAnimator.failShakeAnimation(applicationContext, pin_digits)
+            F.ShowPinError -> toastLong(R.string.UpdatePin_setPinError)
         }
-        pin_digits.setup(brkeyboard, object : PinLayoutListener {
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            faq_button.clicks().map { E.OnFaqClicked },
+            pin_digits.bindInput()
+        )
+    }
+
+    private fun PinLayout.bindInput() = callbackFlow<E> {
+        setup(brkeyboard, object : PinLayoutListener {
             override fun onPinInserted(pin: String, isPinCorrect: Boolean) {
-                output.accept(E.OnPinEntered(pin, isPinCorrect))
+                offer(E.OnPinEntered(pin, isPinCorrect))
             }
 
             override fun onPinLocked() {
-                output.accept(E.OnPinLocked)
+                offer(E.OnPinLocked)
             }
         })
-        return Disposable {
-            pin_digits.cleanUp()
-        }
+        awaitClose { cleanUp() }
     }
 
     override fun M.render() {

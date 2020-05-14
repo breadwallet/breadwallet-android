@@ -24,6 +24,9 @@
  */
 package com.breadwallet.ui.writedownkey
 
+import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -58,16 +61,34 @@ object WriteDownKey {
     }
 
     sealed class F {
-        object GoToFaq : F()
-        object GoToHome : F()
-        object GoBack : F()
-        object GoToBuy : F()
-        object ShowAuthPrompt : F()
+        object GoToFaq : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_PAPER_KEY)
+        }
+
+        object GoToHome : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToHome
+        }
+
+        object GoBack : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoBack
+        }
+
+        object GoToBuy : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToBuy
+        }
+        object ShowAuthPrompt : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToAuthentication()
+        }
         object GetPhrase : F()
 
         data class GoToPaperKey(
             @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction
-        ) : F()
+        ) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToPaperKey(
+                phrase,
+                onComplete
+            )
+        }
     }
 }

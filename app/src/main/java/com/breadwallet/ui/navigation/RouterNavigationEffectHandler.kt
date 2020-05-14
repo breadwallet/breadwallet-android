@@ -44,7 +44,6 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.auth.AuthenticationController
-import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
@@ -90,11 +89,13 @@ import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class RouterNavigationEffectHandler(
-    private val router: Router
+    private val routerProvider: () -> Router
 ) : Connection<NavigationEffect>,
     NavigationEffectHandlerSpec {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + errorHandler())
+
+    private val router get() = routerProvider()
 
     override fun accept(value: NavigationEffect) {
         scope.launch { patch(value) }
@@ -252,7 +253,10 @@ class RouterNavigationEffectHandler(
                 }
             }
             is Link.ImportWallet -> {
-                val controller = ImportController().asTransaction()
+                val controller = ImportController(
+                    privateKey = link.privateKey,
+                    isPasswordProtected = link.passwordProtected
+                ).asTransaction()
                 router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(
                         HomeController().asTransaction(),
@@ -364,31 +368,29 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToAuthentication() {
+    override fun goToAuthentication(effect: NavigationEffect.GoToAuthentication) {
         val res = checkNotNull(router.activity).resources
         val controller = AuthenticationController(
-            Mode.PIN_REQUIRED,
-            title = res.getString(R.string.VerifyPin_title),
-            message = res.getString(R.string.VerifyPin_continueBody)
+            mode = effect.mode,
+            title = res.getString(effect.titleResId ?: R.string.VerifyPin_title),
+            message = res.getString(effect.messageResId ?: R.string.VerifyPin_continueBody)
         )
-        val listener = router.backstack.lastOrNull()?.controller()
-        if (listener is AuthenticationController.Listener) {
-            controller.targetController = listener
-        }
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
+    override fun goToDialog(effect: NavigationEffect.GoToDialog) {
         val res = checkNotNull(router.activity).resources
-        router.pushController(
-            RouterTransaction.with(
-                AlertDialogController(
-                    effect.message,
-                    effect.title,
-                    negativeText = res.getString(R.string.AccessibilityLabels_close)
-                )
-            )
+        val message = effect.message ?: effect.messageResId?.let {
+            res.getString(it, *effect.messageArgs.toTypedArray())
+        } ?: ""
+        val controller = AlertDialogController(
+            dialogId = effect.dialogId,
+            message = message,
+            title = effect.title ?: effect.titleResId?.run(res::getString) ?: "",
+            positiveText = effect.positiveButtonResId?.run(res::getString),
+            negativeText = effect.negativeButtonResId?.run(res::getString)
         )
+        router.pushController(RouterTransaction.with(controller))
     }
 
     override fun goToDisabledScreen() {
@@ -567,6 +569,17 @@ class RouterNavigationEffectHandler(
                 VerticalChangeHandler(),
                 VerticalChangeHandler()
             )
+        )
+    }
+
+    override fun goToSignal(effect: NavigationEffect.GoToSignal) {
+        val res = checkNotNull(router.activity).resources
+        router.pushController(
+            SignalController(
+                title = res.getString(effect.titleResId),
+                description = res.getString(effect.messageResId),
+                iconResId = effect.iconResId
+            ).asTransaction()
         )
     }
 

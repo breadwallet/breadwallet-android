@@ -25,7 +25,9 @@
 package com.breadwallet.ui.send
 
 import android.os.Parcelable
+import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
@@ -430,7 +432,16 @@ object SendSheet {
         data class ShowEthTooLowForTokenFee(
             val currencyCode: CurrencyCode,
             val networkFee: BigDecimal
-        ) : F()
+        ) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
+                titleResId = R.string.Send_insufficientGasTitle,
+                messageResId = R.string.Send_insufficientGasMessage,
+                messageArgs = listOf(networkFee.formatCryptoForUi(currencyCode)),
+                positiveButtonResId = R.string.Button_continueAction,
+                negativeButtonResId = R.string.Button_cancel
+            )
+        }
 
         data class LoadBalance(
             val currencyCode: CurrencyCode,
@@ -473,9 +484,22 @@ object SendSheet {
 
         data class ShowErrorDialog(
             val message: String
-        ) : F()
+        ) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
+                titleResId = R.string.Alert_error,
+                message = message,
+                positiveButtonResId = R.string.Button_ok
+            )
+        }
 
-        object ShowTransferFailed : F()
+        object ShowTransferFailed : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDialog(
+                titleResId = R.string.Alert_error,
+                messageResId = R.string.Send_publishTransactionError,
+                positiveButtonResId = R.string.Button_ok
+            )
+        }
 
         sealed class PaymentProtocol : F() {
             data class LoadPaymentData(

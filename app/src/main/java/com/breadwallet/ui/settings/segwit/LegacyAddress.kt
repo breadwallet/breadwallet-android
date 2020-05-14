@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -60,7 +62,9 @@ object LegacyAddress {
 
     sealed class F {
         object LoadAddress : F()
-        object GoBack : F()
+        object GoBack : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoBack
+        }
 
         data class CopyAddressToClipboard(@Redacted val address: String) : F()
 

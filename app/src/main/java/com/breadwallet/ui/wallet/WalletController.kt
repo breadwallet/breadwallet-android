@@ -56,6 +56,7 @@ import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.asSupportUrl
+import com.breadwallet.ui.wallet.WalletScreen.DIALOG_CREATE_ACCOUNT
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
 import com.breadwallet.ui.wallet.WalletScreen.M
@@ -86,7 +87,6 @@ import org.kodein.di.erased.instance
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-private const val DIALOG_CREATE_ACCOUNT = "create_account_dialog"
 private const val EXTRA_CURRENCY_CODE = "currency_code"
 private const val MARKET_CHART_DATE_WITH_HOUR = "MMM d, h:mm"
 private const val MARKET_CHART_DATE_WITH_YEAR = "MMM d, yyyy"
@@ -114,32 +114,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         get() = WalletScreenHandler.createEffectHandler(
             checkNotNull(applicationContext),
             direct.instance(),
-            direct.instance(),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            },
-            { // Show create account dialog
-                val act = checkNotNull(activity)
-                val controller = AlertDialogController(
-                    dialogId = DIALOG_CREATE_ACCOUNT,
-                    title = act.getString(R.string.AccountCreation_title),
-                    message = act.getString(R.string.AccountCreation_body),
-                    positiveText = act.getString(R.string.AccountCreation_create),
-                    negativeText = act.getString(R.string.AccountCreation_notNow)
-                )
-                controller.targetController = this
-                router.pushController(RouterTransaction.with(controller))
             }
-        ) {
-            val act = checkNotNull(activity)
-            val controller = AlertDialogController(
-                title = act.getString(R.string.AccountCreation_title),
-                message = act.getString(R.string.AccountCreation_error),
-                positiveText = act.getString(R.string.AccessibilityLabels_close)
-            )
-            controller.targetController = this
-            router.pushController(RouterTransaction.with(controller))
-        }
+        )
 
     private var fastAdapter: GenericFastAdapter? = null
     private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
@@ -209,6 +187,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
     override fun onDestroyView(view: View) {
         txAdapter = null
         fastAdapter = null
+        mPriceDataAdapter = SparkAdapter()
         super.onDestroyView(view)
     }
 
@@ -376,18 +355,22 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
                     notification_bar.isVisible = false
                     // TODO revisit this animation with conductor
                     search_bar.onShow(true)
-                    val searchBarAnimation =
-                        AnimatorInflater.loadAnimator(applicationContext, R.animator.from_top)
-                    searchBarAnimation.setTarget(search_bar)
-                    searchBarAnimation.start()
+                    if (search_bar.y != 0f) {
+                        val searchBarAnimation =
+                            AnimatorInflater.loadAnimator(applicationContext, R.animator.from_top)
+                        searchBarAnimation.setTarget(search_bar)
+                        searchBarAnimation.start()
+                    }
                     search_bar.render(this)
                 }
                 hasInternet && !isShowingSearch -> {
                     notification_bar.isVisible = false
-                    val searchBarAnimation =
-                        AnimatorInflater.loadAnimator(applicationContext, R.animator.to_top)
-                    searchBarAnimation.setTarget(search_bar)
-                    searchBarAnimation.start()
+                    if (search_bar.y == 0f) {
+                        val searchBarAnimation =
+                            AnimatorInflater.loadAnimator(applicationContext, R.animator.to_top)
+                        searchBarAnimation.setTarget(search_bar)
+                        searchBarAnimation.start()
+                    }
                     search_bar.onShow(false)
                 }
                 else -> {

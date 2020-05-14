@@ -26,6 +26,10 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -120,17 +124,39 @@ object HomeScreen {
         object CheckInAppNotification : F()
         object CheckIfShowBuyAndSell : F()
 
-        data class GoToDeepLink(val url: String) : F()
-        data class GoToInappMessage(val inAppMessage: InAppMessage) : F()
-        data class GoToWallet(val currencyCode: String) : F()
-        object GoToAddWallet : F()
+        data class GoToDeepLink(val url: String) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDeepLink(url, true)
+        }
+        data class GoToInappMessage(val inAppMessage: InAppMessage) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToInAppMessage(inAppMessage)
+        }
+        data class GoToWallet(val currencyCode: String) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToWallet(currencyCode)
+        }
+        object GoToAddWallet : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToAddWallet
+        }
 
-        object GoToBuy : F()
-        object GoToTrade : F()
-        object GoToMenu : F()
-        object GoToFingerprintSettings : F()
-        object GoToWriteDownKey : F()
-        object GoToUpgradePin : F()
+        object GoToBuy : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToBuy
+        }
+        object GoToTrade : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToTrade
+        }
+        object GoToMenu : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToMenu(SettingsSection.HOME)
+        }
+        object GoToFingerprintSettings : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToFingerprintAuth
+        }
+        object GoToWriteDownKey : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToWriteDownKey(
+                OnCompleteAction.GO_HOME
+            )
+        }
+        object GoToUpgradePin : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToSetPin()
+        }
 
         data class RecordPushNotificationOpened(val campaignId: String) : F()
 

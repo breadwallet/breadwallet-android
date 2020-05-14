@@ -27,7 +27,7 @@ package com.breadwallet.ui.browser
 import android.webkit.JavascriptInterface
 import com.breadwallet.tools.util.Utils
 import java.security.MessageDigest
-import java.util.*
+import java.util.UUID
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 

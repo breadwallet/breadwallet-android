@@ -25,7 +25,6 @@
 package com.breadwallet.ui.wallet
 
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.breadwallet.R
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem

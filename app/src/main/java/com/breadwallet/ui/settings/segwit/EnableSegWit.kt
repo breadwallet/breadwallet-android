@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings.segwit
 
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import drewcarlson.switchboard.MobiusUpdateSpec
 
 object EnableSegWit {
@@ -48,8 +50,12 @@ object EnableSegWit {
     }
 
     sealed class F {
-        object GoBack : F()
-        object GoToHome : F()
+        object GoBack : F(),  NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoBack
+        }
+        object GoToHome : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToHome
+        }
         object EnableSegWit : F()
     }
 }

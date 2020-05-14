@@ -33,8 +33,8 @@ import com.breadwallet.R
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SpringAnimator
-import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController

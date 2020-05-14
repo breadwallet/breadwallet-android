@@ -24,6 +24,10 @@
  */
 package com.breadwallet.ui.pin
 
+import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -84,6 +88,7 @@ object InputPin {
 
     sealed class F {
 
+        object CheckIfPinExists : F()
         data class SetupPin(
             @Redacted val pin: String
         ) : F() {
@@ -94,12 +99,21 @@ object InputPin {
             }
         }
 
-        object GoToHome : F()
-        object GoToFaq : F()
-        object GoToDisabledScreen : F()
-        object ErrorShake : F()
-        object CheckIfPinExists : F()
+        object ErrorShake : F(), ViewEffect
+        object ShowPinError : F(), ViewEffect
 
-        data class GoToWriteDownKey(val onComplete: OnCompleteAction) : F()
+        object GoToHome : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToHome
+        }
+        object GoToFaq : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToFaq(BRConstants.FAQ_SET_PIN)
+        }
+        object GoToDisabledScreen : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToDisabledScreen
+        }
+
+        data class GoToWriteDownKey(val onComplete: OnCompleteAction) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToWriteDownKey(onComplete, false)
+        }
     }
 }

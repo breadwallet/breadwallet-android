@@ -94,8 +94,8 @@ import org.json.JSONObject
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.io.File
-import java.util.UUID
 import java.util.Locale
+import java.util.UUID
 
 private const val ARG_URL = "WebController.URL"
 private const val ARG_JSON_REQUEST = "WebController.JSON_REQUEST"
@@ -324,6 +324,7 @@ class WebController(
 
     override fun onDestroyView(view: View) {
         super.onDestroyView(view)
+        HTTPServer.setOnCloseListener(null)
         nativePromiseFactory.dispose()
     }
 

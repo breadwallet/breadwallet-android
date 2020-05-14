@@ -30,7 +30,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import androidx.core.os.bundleOf
-import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
@@ -41,7 +40,6 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.settings.fastsync.FastSync.E
 import com.breadwallet.ui.settings.fastsync.FastSync.F
 import com.breadwallet.ui.settings.fastsync.FastSync.M
@@ -51,7 +49,6 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
 import kotlinx.android.synthetic.main.controller_fast_sync.*
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -82,11 +79,6 @@ class FastSyncController(
     override val update = FastSyncUpdate
     override val flowEffectHandler
         get() = subtypeEffectHandler<F, E> {
-            addTransformer<F.Nav>(direct.instance<NavEffectTransformer>())
-            addActionSync<F.ShowDisableFastSyncDialog>(
-                Main,
-                ::showDisableFastSyncDialog
-            )
             addFunctionSync<F.LoadCurrencyIds>(Default) {
                 E.OnCurrencyIdsUpdated(
                     TokenUtil.getTokenItems(applicationContext)
@@ -152,17 +144,6 @@ class FastSyncController(
 
     override fun onDismissed(dialogId: String, controller: AlertDialogController) {
         eventConsumer.accept(E.OnDisableFastSyncCanceled)
-    }
-
-    private fun showDisableFastSyncDialog() {
-        val act = checkNotNull(activity)
-        val controller = AlertDialogController(
-            message = act.getString(R.string.WalletConnectionSettings_confirmation),
-            positiveText = act.getString(R.string.WalletConnectionSettings_turnOff),
-            negativeText = act.getString(R.string.Button_cancel)
-        )
-        controller.targetController = this
-        router.pushController(RouterTransaction.with(controller))
     }
 
     private fun bindLearnMoreLink() = callbackFlow<E> {

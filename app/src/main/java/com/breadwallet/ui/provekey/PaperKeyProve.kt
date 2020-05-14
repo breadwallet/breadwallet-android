@@ -24,6 +24,10 @@
  */
 package com.breadwallet.ui.provekey
 
+import com.breadwallet.R
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.util.normalize
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -80,10 +84,25 @@ object PaperKeyProve {
     }
 
     sealed class F {
-        object GoToHome : F()
-        object GoToBuy : F()
+        object GoToHome : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToHome
+        }
+        object GoToBuy : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToBuy
+        }
+        object ShowStoredSignal : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToSignal(
+                titleResId = R.string.Alerts_paperKeySet,
+                messageResId = R.string.Alerts_paperKeySetSubheader,
+                iconResId = R.drawable.ic_check_mark_white
+            )
+        }
+
         object StoreWroteDownPhrase : F()
 
-        data class ShakeWords(val first: Boolean, val second: Boolean) : F()
+        data class ShakeWords(
+            val first: Boolean,
+            val second: Boolean
+        ) : F(), ViewEffect
     }
 }

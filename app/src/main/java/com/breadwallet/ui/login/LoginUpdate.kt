@@ -46,6 +46,7 @@ object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
             model.copy(isUnlocked = true),
             setOf(
                 F.AuthenticationSuccess,
+                F.UnlockBrdUser,
                 F.TrackEvent(EventUtils.EVENT_LOGIN_SUCCESS)
             )
         )
@@ -66,22 +67,20 @@ object LoginUpdate : Update<M, E, F>, LoginScreenUpdateSpec {
             model.extraUrl.isNotBlank() ->
                 F.GoToDeepLink(model.extraUrl)
             model.showHomeScreen -> F.GoToHome
-            model.currentCurrencyCode.isNotBlank() ->
-                F.GoToWallet(model.currentCurrencyCode)
             else -> F.GoBack
-        }
+        } as F
         return dispatch(setOf(effect))
     }
 
     override fun onFingerprintEnabled(
         model: M,
         event: E.OnFingerprintEnabled
-    ): Next<M, F> =
-        next(model.copy(fingerprintEnable = event.enabled))
-
-    override fun onLoginPreferencesLoaded(
-        model: M,
-        event: E.OnLoginPreferencesLoaded
-    ): Next<M, F> =
-        next(model.copy(currentCurrencyCode = event.currentCurrencyCode))
+    ): Next<M, F> = next(
+        model.copy(fingerprintEnable = event.enabled),
+        if (event.enabled) {
+            setOf(F.ShowFingerprintController)
+        } else {
+            emptySet()
+        }
+    )
 }

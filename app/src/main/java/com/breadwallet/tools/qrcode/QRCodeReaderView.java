@@ -89,7 +89,7 @@ public class QRCodeReaderView extends SurfaceView
         }
 
         if (checkCameraHardware()) {
-            mCameraManager = new CameraManager(getContext());
+            mCameraManager = new CameraManager(getContext().getApplicationContext());
             mCameraManager.setPreviewCallback(this);
             getHolder().addCallback(this);
             setBackCamera();

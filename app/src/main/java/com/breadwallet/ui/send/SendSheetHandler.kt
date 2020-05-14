@@ -26,14 +26,11 @@ package com.breadwallet.ui.send
 
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.feeForSpeed
-import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Address
@@ -54,8 +51,6 @@ import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
-import com.breadwallet.ui.controllers.AlertDialogController
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.util.CurrencyCode
@@ -67,21 +62,16 @@ import com.breadwallet.util.getContentTypeHeader
 import com.breadwallet.util.getPaymentRequestHeader
 import com.platform.APIClient
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
@@ -96,46 +86,24 @@ object SendSheetHandler {
     @Suppress("LongParameterList")
     fun create(
         context: Context,
-        router: Router,
-        retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<E>,
         breadBox: BreadBox,
         userManager: BrdUserManager,
         apiClient: APIClient,
         ratesRepository: RatesRepository,
-        navEffectHandler: NavEffectTransformer,
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
         addTransformer(pollExchangeRate(breadBox, ratesRepository))
         addTransformer(handleLoadBalance(context, breadBox, ratesRepository))
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
-        addTransformer<F.Nav>(navEffectHandler)
-        addTransformer(
-            handleSendTransaction(
-                breadBox,
-                userManager,
-                retainedScope,
-                outputProducer
-            )
-        )
+        addTransformer(handleSendTransaction(breadBox, userManager))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
-        addTransformer(
-            handleContinueWithPayment(
-                userManager,
-                breadBox,
-                retainedScope,
-                outputProducer
-            )
-        )
+        addTransformer(handleContinueWithPayment(userManager, breadBox))
         addTransformer(handlePostPayment(apiClient))
         addFunction(parseClipboard(context, breadBox))
         addFunction(handleGetTransferFields(breadBox))
         addFunction(handleValidateTransferFields(breadBox))
-        addConsumerSync(Dispatchers.Main, showBalanceTooLowForFee(router))
-        addConsumerSync(Dispatchers.Main, showErrorDialog(router))
-        addConsumerSync(Dispatchers.Main, showTransferFailed(router))
 
         addFunctionSync<F.LoadAuthenticationSettings> {
             val isEnabled =
@@ -241,22 +209,6 @@ object SendSheetHandler {
         }
     }
 
-    private fun showBalanceTooLowForFee(
-        router: Router
-    ) = { effect: F.ShowEthTooLowForTokenFee ->
-        val res = checkNotNull(router.activity).resources
-        val controller = AlertDialogController(
-            dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
-            title = res.getString(R.string.Send_insufficientGasTitle),
-            message = res.getString(R.string.Send_insufficientGasMessage)
-                .format(effect.networkFee.formatCryptoForUi(effect.currencyCode)),
-            positiveText = res.getString(R.string.Button_continueAction),
-            negativeText = res.getString(R.string.Button_cancel)
-        )
-        controller.targetController = router.backstack.last().controller()
-        router.pushController(RouterTransaction.with(controller))
-    }
-
     private fun pollExchangeRate(
         breadBox: BreadBox,
         rates: RatesRepository
@@ -342,66 +294,54 @@ object SendSheetHandler {
 
     private fun handleSendTransaction(
         breadBox: BreadBox,
-        userManager: BrdUserManager,
-        retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<E>
+        userManager: BrdUserManager
     ) = flowTransformer<F.SendTransaction, E> { effects ->
-        effects
-            .mapLatest { effect ->
-                val wallet = breadBox.wallet(effect.currencyCode).first()
-                val address = wallet.addressFor(effect.address)
-                val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
-                val feeBasis = effect.transferFeeBasis
-                val fields = effect.transferFields
+        effects.mapLatest { effect ->
+            val wallet = breadBox.wallet(effect.currencyCode).first()
+            val address = wallet.addressFor(effect.address)
+            val amount = Amount.create(effect.amount.toDouble(), wallet.unit)
+            val feeBasis = effect.transferFeeBasis
+            val fields = effect.transferFields
 
-                if (address == null || wallet.containsAddress(address)) {
-                    return@mapLatest E.OnAddressValidated(effect.address, false)
-                }
-
-                val attributes = wallet.getTransferAttributesFor(address)
-                attributes.forEach { attribute ->
-                    fields.find { it.key == attribute.key }
-                        ?.let { field ->
-                            attribute.setValue(field.value)
-                        }
-                }
-
-                if (attributes.any { wallet.validateTransferAttribute(it).isPresent }) {
-                    return@mapLatest E.OnSendFailed
-                }
-
-                val phrase = try {
-                    checkNotNull(userManager.getPhrase())
-                } catch (e: UserNotAuthenticatedException) {
-                    logError("Failed to get phrase.", e)
-                    return@mapLatest E.OnSendFailed
-                }
-
-                val newTransfer =
-                    wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
-
-                if (newTransfer == null) {
-                    logError("Failed to create transfer.")
-                    E.OnSendFailed
-                } else {
-                    wallet.walletManager.submit(newTransfer, phrase)
-
-                    val hash = newTransfer.hashString()
-
-                    breadBox.walletTransfer(effect.currencyCode, hash)
-                        .mapToSendEvent()
-                        .first()
-                }
+            if (address == null || wallet.containsAddress(address)) {
+                return@mapLatest E.OnAddressValidated(effect.address, false)
             }
-            // outputProducer]must return a valid [Consumer] that
-            // can accept events even if the original loop has been
-            // disposed.
-            .onEach { outputProducer().accept(it) }
-            // This operation is launched in retainedScope which will
-            // not be cancelled when Connection.dispose is called.
-            .launchIn(retainedScope)
-        // This transformer is bound to a different lifecycle
-        emptyFlow()
+
+            val attributes = wallet.getTransferAttributesFor(address)
+            attributes.forEach { attribute ->
+                fields.find { it.key == attribute.key }
+                    ?.let { field ->
+                        attribute.setValue(field.value)
+                    }
+            }
+
+            if (attributes.any { wallet.validateTransferAttribute(it).isPresent }) {
+                return@mapLatest E.OnSendFailed
+            }
+
+            val phrase = try {
+                checkNotNull(userManager.getPhrase())
+            } catch (e: UserNotAuthenticatedException) {
+                logError("Failed to get phrase.", e)
+                return@mapLatest E.OnSendFailed
+            }
+
+            val newTransfer =
+                wallet.createTransfer(address, amount, feeBasis, attributes).orNull()
+
+            if (newTransfer == null) {
+                logError("Failed to create transfer.")
+                E.OnSendFailed
+            } else {
+                wallet.walletManager.submit(newTransfer, phrase)
+
+                val hash = newTransfer.hashString()
+
+                breadBox.walletTransfer(effect.currencyCode, hash)
+                    .mapToSendEvent()
+                    .first()
+            }
+        }
     }
 
     private fun handleAddTransactionMetadata(
@@ -466,45 +406,33 @@ object SendSheetHandler {
 
     private fun handleContinueWithPayment(
         userManager: BrdUserManager,
-        breadBox: BreadBox,
-        retainedScope: CoroutineScope,
-        outputProducer: () -> Consumer<E>
+        breadBox: BreadBox
     ) = flowTransformer<F.PaymentProtocol.ContinueWitPayment, E> { effects ->
-        effects
-            .mapLatest { effect ->
-                val paymentRequest = effect.paymentProtocolRequest
-                val transfer = paymentRequest.createTransfer(effect.transferFeeBasis).orNull()
-                checkNotNull(transfer) { "Failed to create transfer." }
+        effects.mapLatest { effect ->
+            val paymentRequest = effect.paymentProtocolRequest
+            val transfer = paymentRequest.createTransfer(effect.transferFeeBasis).orNull()
+            checkNotNull(transfer) { "Failed to create transfer." }
 
-                val phrase = try {
-                    checkNotNull(userManager.getPhrase())
-                } catch (e: UserNotAuthenticatedException) {
-                    logError("Failed to get phrase.", e)
-                    return@mapLatest E.OnSendFailed
-                }
-
-                check(paymentRequest.signTransfer(transfer, phrase)) {
-                    "Failed to sign transfer"
-                }
-
-                paymentRequest.submitTransfer(transfer)
-
-                val currencyCode = transfer.wallet.currency.code
-                val transferHash = transfer.hashString()
-
-                breadBox.walletTransfer(currencyCode, transferHash)
-                    .mapToSendEvent()
-                    .first()
+            val phrase = try {
+                checkNotNull(userManager.getPhrase())
+            } catch (e: UserNotAuthenticatedException) {
+                logError("Failed to get phrase.", e)
+                return@mapLatest E.OnSendFailed
             }
-            // outputProducer]must return a valid [Consumer] that
-            // can accept events even if the original loop has been
-            // disposed.
-            .onEach { outputProducer().accept(it) }
-            // This operation is launched in retainedScope which will
-            // not be cancelled when Connection.dispose is called.
-            .launchIn(retainedScope)
-        // This transformer is bound to a different lifecycle
-        emptyFlow()
+
+            check(paymentRequest.signTransfer(transfer, phrase)) {
+                "Failed to sign transfer"
+            }
+
+            paymentRequest.submitTransfer(transfer)
+
+            val currencyCode = transfer.wallet.currency.code
+            val transferHash = transfer.hashString()
+
+            breadBox.walletTransfer(currencyCode, transferHash)
+                .mapToSendEvent()
+                .first()
+        }
     }
 
     private fun handlePostPayment(
@@ -541,31 +469,6 @@ object SendSheetHandler {
                     E.PaymentProtocol.OnPostFailed
                 }
             }
-    }
-
-    private fun showErrorDialog(
-        router: Router
-    ) = { effect: F.ShowErrorDialog ->
-        val res = checkNotNull(router.activity).resources
-        val controller = AlertDialogController(
-            dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
-            title = res.getString(R.string.Alert_error),
-            message = effect.message,
-            positiveText = res.getString(R.string.Button_ok)
-        )
-        router.pushController(RouterTransaction.with(controller))
-    }
-
-    private fun showTransferFailed(
-        router: Router
-    ) = { _: F.ShowTransferFailed ->
-        val res = checkNotNull(router.activity).resources
-        val controller = AlertDialogController(
-            title = res.getString(R.string.Alert_error),
-            message = res.getString(R.string.Send_publishTransactionError),
-            positiveText = res.getString(R.string.Button_ok)
-        )
-        router.pushController(RouterTransaction.with(controller))
     }
 }
 

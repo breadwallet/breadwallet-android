@@ -85,15 +85,15 @@ abstract class BaseController(
     }
 
     override fun onDestroyView(view: View) {
-        super.onDestroyView(view)
         viewCreatedScope.coroutineContext.cancelChildren()
+        super.onDestroyView(view)
         clearFindViewByIdCache()
         containerView = null
     }
 
     override fun onDetach(view: View) {
-        super.onDetach(view)
         viewAttachScope.coroutineContext.cancelChildren()
+        super.onDetach(view)
     }
 
     override fun onDestroy() {
@@ -123,4 +123,9 @@ abstract class BaseController(
 
     /** Display a [Toast] message of [text] with a long duration. */
     fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG).show()
+
+    inline fun <reified T> findListener(): T? =
+        (targetController as? T)
+            ?: (parentController as? T)
+            ?: (router.backstack.dropLast(1).lastOrNull()?.controller() as? T)
 }

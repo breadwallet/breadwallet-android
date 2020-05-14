@@ -35,7 +35,7 @@ object SyncBlockchainUpdate : Update<M, E, F> {
     override fun update(model: M, event: E): Next<M, F> =
         when (event) {
             E.OnFaqClicked -> dispatch(setOf(F.Nav.GoToSyncFaq(model.currencyCode)))
-            E.OnSyncClicked -> dispatch(setOf(F.ShowSyncConfirmation))
+            E.OnSyncClicked -> dispatch(setOf(F.Nav.ShowSyncConfirmation))
             E.OnConfirmSyncClicked -> dispatch(setOf(F.SyncBlockchain(model.currencyCode)))
             E.OnSyncStarted -> dispatch(setOf(F.Nav.GoToHome))
         }

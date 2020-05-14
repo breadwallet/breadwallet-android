@@ -73,7 +73,6 @@ import java.text.NumberFormat
 import java.util.Locale
 
 private const val CURRENCY_CODE = "CURRENCY_CODE"
-private const val CRYPTO_REQUEST = "CRYPTO_REQUEST"
 private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
 
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
@@ -124,14 +123,10 @@ class SendSheetController(args: Bundle? = null) :
     override val flowEffectHandler
         get() = SendSheetHandler.create(
             checkNotNull(applicationContext),
-            router,
-            viewCreatedScope,
-            { eventConsumer },
             breadBox = direct.instance(),
             userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
-            navEffectHandler = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
             }
@@ -371,7 +366,8 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isConfirmingTx) {
-            if (isConfirmingTx) {
+            val isConfirmVisible = router.backstack.lastOrNull()?.controller() is ConfirmTxController
+            if (isConfirmingTx && !isConfirmVisible) {
                 val controller = ConfirmTxController(
                     currencyCode,
                     fiatCode,
@@ -390,7 +386,8 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isAuthenticating) {
-            if (isAuthenticating) {
+            val isAuthVisible = router.backstack.lastOrNull()?.controller() is AuthenticationController
+            if (isAuthenticating && !isAuthVisible) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
                     AuthenticationController.Mode.USER_PREFERRED
                 } else {

@@ -49,8 +49,7 @@ import java.util.Locale
 
 class NodeSelectorHandler(
     private val output: Consumer<E>,
-    private val breadBox: BreadBox,
-    private val showNodeDialog: () -> Unit
+    private val breadBox: BreadBox
 ) : Connection<F>,
     CoroutineScope {
 
@@ -68,7 +67,6 @@ class NodeSelectorHandler(
         when (effect) {
             F.LoadConnectionInfo -> loadConnectionInfo()
             F.SetToAutomatic -> setToAutomatic()
-            F.ShowNodeDialog -> launch(Dispatchers.Main) { showNodeDialog() }
             is F.SetCustomNode -> setToManual(effect)
         }
     }

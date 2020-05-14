@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.showkey
 
+import com.breadwallet.ui.navigation.NavEffectHolder
+import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
@@ -58,12 +60,23 @@ object ShowPaperKey {
 
     sealed class F {
 
-        object GoToHome : F()
-        object GoToBuy : F()
-        object GoBack : F()
+        object GoToHome : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToHome
+        }
+        object GoToBuy : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToBuy
+        }
+        object GoBack : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoBack
+        }
         data class GoToPaperKeyProve(
             @Redacted val phrase: List<String>,
             val onComplete: OnCompleteAction
-        ) : F()
+        ) : F(), NavEffectHolder {
+            override val navigationEffect = NavigationEffect.GoToPaperKeyProve(
+                phrase,
+                onComplete
+            )
+        }
     }
 }

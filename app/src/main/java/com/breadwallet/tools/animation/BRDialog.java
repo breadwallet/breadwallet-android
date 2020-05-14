@@ -38,7 +38,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
  */
 public class BRDialog {
     private static final String TAG = BRDialog.class.getName();
-    private static BRDialogView dialog;
 
     /**
      * Safe from any threads
@@ -58,7 +57,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -84,7 +83,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -120,7 +119,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setSpan(message);//setting Span instead of String
                 dialog.setPosButton(posButton);
@@ -156,7 +155,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -171,9 +170,5 @@ public class BRDialog {
             }
         });
 
-    }
-
-    public static void hideDialog() {
-        if (dialog != null) dialog.dismiss();
     }
 }
