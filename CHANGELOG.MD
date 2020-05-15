@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 - Add a badge for testnet app icon.
 
+## [4.2.4 (4024001)]
+- Fixing the issue with amount being same as min (added some unit tests)
+- Fixing the message about email / sms being sent.
+
 ## [4.2.3 (4023001)]
 - Adding the ability to choose TEST_NET vs MAIN_NET
 - Customizing the sendSheetController to be used in the cash out atm flow.
