@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 - Add a badge for testnet app icon.
 
+## [4.2.3 (4023001)]
+- Adding the ability to choose TEST_NET vs MAIN_NET
+- Customizing the sendSheetController to be used in the cash out atm flow.
+
 ## [4.2.1 (4021001)]
 - Removing third page of onboarding.
 - Adding a new asset / text for onboarding page.
