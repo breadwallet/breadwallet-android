@@ -9,8 +9,8 @@ import retrofit2.Call
 object WacSDK : Wac {
     private var wacImpl : Wac = WacImpl()
 
-    override fun createSession(listener: Wac.SessionCallback) {
-        wacImpl.createSession(listener)
+    override fun createSession(server: Wac.BtcSERVER, listener: Wac.SessionCallback) {
+        wacImpl.createSession(server, listener)
     }
 
     override fun isSessionCreated(): Boolean {

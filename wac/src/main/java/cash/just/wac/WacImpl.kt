@@ -1,5 +1,7 @@
 package cash.just.wac
 
+import cash.just.wac.Wac.BtcSERVER
+import cash.just.wac.Wac.BtcSERVER.MAIN_NET
 import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.CashCodeResponse
 import cash.just.wac.model.CashCodeStatusResponse
@@ -14,12 +16,22 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class WacImpl:Wac {
     private lateinit var sessionKey:String
-    private val retrofit: WacAPI = Retrofit.Builder()
-        .baseUrl("https://secure.just.cash/")
-        .addConverterFactory(MoshiConverterFactory.create())
-        .build().create(WacAPI::class.java)
+    private lateinit var retrofit: WacAPI
 
-    override fun createSession(listener: Wac.SessionCallback) {
+    override fun createSession(server: BtcSERVER, listener: Wac.SessionCallback) {
+        val serverUrl = when(server){
+            MAIN_NET -> {
+                "https://secure.just.cash/"
+            }
+            BtcSERVER.TEST_NET -> {
+                "https://secure.just.cash/"
+            }
+        }
+
+        retrofit = Retrofit.Builder().baseUrl(serverUrl)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build().create(WacAPI::class.java)
+
         retrofit.login().enqueue(object: Callback<LoginResponse> {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 listener.onError(t.message)
