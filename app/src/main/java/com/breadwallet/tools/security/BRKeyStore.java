@@ -208,7 +208,7 @@ public final class BRKeyStore {
         } catch (GeneralSecurityException | IOException e) {
             // We can safely ignore these exceptions, because we are only concerned with
             // KeyPermanentlyInvalidatedException here.
-            Log.e(TAG, "Error while checking if key store is still valid. Ignoring. ", e);
+            Log.d(TAG, "Error while checking if key store is still valid. Ignoring. ", e);
         }
 
         return KeyStoreStatus.VALID;
