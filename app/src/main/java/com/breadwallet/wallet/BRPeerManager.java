@@ -123,7 +123,6 @@ public class BRPeerManager {
                 updateLastBlockHeight(getCurrentBlockHeight());
             }
         });
-
     }
 
     public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {

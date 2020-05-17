@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">あなたが最後に紙の鍵を書き留めたのは %1$sです</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">最も安全にライトコインを使う手段。</string>
+  <string name="StartViewController.message">最も安全にリテコインを使う手段。</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">接続中</string>
   <!-- Syncing view header text -->

@@ -152,7 +152,9 @@ public class FragmentMenu extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeOnGlobalLayoutListener(this);
+                if (observer.isAlive()) {
+                    observer.removeOnGlobalLayoutListener(this);
+                }
                 BRAnimator.animateBackgroundDim(background, false);
                 BRAnimator.animateSignalSlide(signalLayout, false, null);
             }

@@ -523,7 +523,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">You last wrote down your paper key on %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">The easy and secure way to use Litecoin.</string>
+  <string name="StartViewController.message">The most secure and safest way to use Litecoin.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Connecting</string>
   <!-- Syncing view header text -->

@@ -29,8 +29,8 @@ android {
         applicationId = 'com.loafwallet'
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 607
-        versionName "v1.19.0"
+        versionCode 612
+        versionName "v1.19.3"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -70,14 +70,14 @@ android {
             applicationId "com.loafwallet"
             dimension "mode"
             resValue "string", "app_name", "Litewallet"
-            buildConfigField "boolean", "BITCOIN_TESTNET", "false"
+            buildConfigField "boolean", "LITECOIN_TESTNET", "false"
 
             externalNativeBuild {
                 cmake {
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=0"
+                    cFlags "-DLITECOIN_TESTNET=0"
                     targets "core-lib"
                 }
             }
@@ -87,20 +87,18 @@ android {
             applicationId "com.loafwallet.testnet"
             dimension "mode"
             resValue "string", "app_name", "Litewallet-testnet"
-            buildConfigField "boolean", "BITCOIN_TESTNET", "true"
+            buildConfigField "boolean", "LITECOIN_TESTNET", "true"
 
             externalNativeBuild {
                 cmake {
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=1"
+                    cFlags "-DLITECOIN_TESTNET=1"
                     targets "core-lib"
                 }
             }
-
         }
-
     }
     lintOptions {
         // set to true to turn off analysis progress reporting by lint

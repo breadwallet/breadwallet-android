@@ -62,7 +62,6 @@ public class IntroActivity extends BRActivity implements Serializable {
     public static IntroActivity introActivity;
     public static boolean appVisible = false;
     private static IntroActivity app;
-    private View splashScreen;
     private BRText versionText;
 
 
@@ -83,7 +82,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         setContentView(R.layout.activity_intro);
         newWalletButton = (Button) findViewById(R.id.button_new_wallet);
         recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
-        splashScreen = findViewById(R.id.splash_screen);
         versionText = findViewById(R.id.version_text);
         setListeners();
         updateBundles();
@@ -120,13 +118,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         }
 
         PostAuth.getInstance().onCanaryCheck(this, false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                splashScreen.setVisibility(View.GONE);
-            }
-        }, 1000);
-
     }
 
     private void updateBundles() {

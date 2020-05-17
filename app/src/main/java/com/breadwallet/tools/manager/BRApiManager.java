@@ -195,6 +195,7 @@ public class BRApiManager {
             long economyFee = obj.optLong("fee_per_kb_economy");
             long luxuryFee = obj.optLong("fee_per_kb_luxury");
             FeeManager.getInstance().setFees(luxuryFee, regularFee, economyFee);
+            BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
         } catch (JSONException e) {
             Timber.e(new IllegalArgumentException("updateFeePerKb: FAILED: " + jsonString, e));
         }
