@@ -22,6 +22,9 @@ detekt {
     input = files("src/main/java", "src/test/java")
     baseline = file("detekt-baseline.xml")
 }
+sonarqube {
+    androidVariant 'brdRelease'
+}
 
 android {
     compileSdkVersion = 29
