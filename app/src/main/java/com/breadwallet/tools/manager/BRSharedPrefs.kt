@@ -37,7 +37,6 @@ import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.tools.util.btc
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
@@ -395,11 +394,11 @@ object BRSharedPrefs {
         brdPrefs.edit { putBoolean(NEW_WALLET, newWallet) }
 
     @JvmStatic
-    fun getPromptDismissed(context: Context? = null, promptName: String): Boolean =
+    fun getPromptDismissed(promptName: String): Boolean =
         brdPrefs.getBoolean(PROMPT_PREFIX + promptName, false)
 
     @JvmStatic
-    fun putPromptDismissed(context: Context? = null, promptName: String, dismissed: Boolean) =
+    fun putPromptDismissed(promptName: String, dismissed: Boolean) =
         brdPrefs.edit { putBoolean(PROMPT_PREFIX + promptName, dismissed) }
 
     @JvmStatic
@@ -458,28 +457,22 @@ object BRSharedPrefs {
     fun getIsSegwitEnabled(context: Context? = null): Boolean =
         brdPrefs.getBoolean(SEGWIT, false)
 
-    @JvmStatic
-    fun putEmailOptIn(context: Context? = null, hasOpted: Boolean) =
+    fun putEmailOptIn(hasOpted: Boolean) =
         brdPrefs.edit { putBoolean(EMAIL_OPT_IN, hasOpted) }
 
-    @JvmStatic
-    fun getEmailOptIn(context: Context? = null): Boolean =
+    fun getEmailOptIn(): Boolean =
         brdPrefs.getBoolean(EMAIL_OPT_IN, false)
 
-    @JvmStatic
-    fun putRewardsAnimationShown(context: Context? = null, wasShown: Boolean) =
+    fun putRewardsAnimationShown(wasShown: Boolean) =
         brdPrefs.edit { putBoolean(REWARDS_ANIMATION_SHOWN, wasShown) }
 
-    @JvmStatic
-    fun getRewardsAnimationShown(context: Context? = null): Boolean =
+    fun getRewardsAnimationShown(): Boolean =
         brdPrefs.getBoolean(REWARDS_ANIMATION_SHOWN, false)
 
-    @JvmStatic
-    fun putEmailOptInDismissed(context: Context? = null, dismissed: Boolean) =
+    fun putEmailOptInDismissed(dismissed: Boolean) =
         brdPrefs.edit { putBoolean(EMAIL_OPT_IN_DISMISSED, dismissed) }
 
-    @JvmStatic
-    fun getEmailOptInDismissed(context: Context? = null): Boolean =
+    fun getEmailOptInDismissed(): Boolean =
         brdPrefs.getBoolean(EMAIL_OPT_IN_DISMISSED, false)
 
     /**

@@ -73,17 +73,6 @@ object HomeScreen {
         data class OnEnabledWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
 
         data class OnWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
-        data class OnWalletBalanceUpdated(
-            val currencyCode: String,
-            val balance: BigDecimal,
-            val fiatBalance: BigDecimal
-        ) : E()
-
-        data class OnUnitPriceChanged(
-            val currencyCode: String,
-            val fiatPricePerUnit: BigDecimal,
-            val priceChange: PriceChange? = null
-        ) : E()
 
         data class OnWalletDisplayOrderUpdated(@Redacted val displayOrder: List<String>) : E()
 
@@ -108,6 +97,7 @@ object HomeScreen {
 
         data class OnShowBuyAndSell(val showBuyAndSell: Boolean) : E()
 
+        object CheckForPrompt : E()
         data class OnPromptDismissed(val promptId: PromptItem) : E()
         object OnFingerprintPromptClicked : E()
         object OnPaperKeyPromptClicked : E()
@@ -119,6 +109,8 @@ object HomeScreen {
     sealed class F {
 
         object LoadWallets : F()
+        object LoadEnabledWallets : F()
+        object LoadSyncStates : F()
         object LoadIsBuyBellNeeded : F()
         object LoadPrompt : F()
         object CheckInAppNotification : F()

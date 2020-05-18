@@ -69,7 +69,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -78,14 +77,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
-private const val DEFAULT_THROTTLE_MS = 100L
-private const val AGGRESSIVE_THROTTLE_MS = 300L
+private const val DEFAULT_THROTTLE_MS = 500L
+private const val AGGRESSIVE_THROTTLE_MS = 800L
 
 @Suppress("TooManyFunctions")
 internal class CoreBreadBox(
@@ -117,7 +117,7 @@ internal class CoreBreadBox(
     private val walletsChannel = BroadcastChannel<Unit>(CONFLATED)
     private val walletSyncStateChannel = BroadcastChannel<WalletSyncState>(BUFFERED)
     private val walletTransfersChannelMap = BroadcastChannel<String>(BUFFERED)
-    private val transferUpdatedChannelMap = BroadcastChannel<String>(BUFFERED)
+    private val transferUpdatedChannelMap = BroadcastChannel<Transfer>(BUFFERED)
 
     private var networkManager: NetworkManager? = null
 
@@ -232,7 +232,7 @@ internal class CoreBreadBox(
     override fun wallets(filterByTracked: Boolean) =
         walletsChannel
             .asFlow()
-            .throttleLatest(DEFAULT_THROTTLE_MS)
+            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
             .mapNotNull {
                 val wallets = system?.wallets
                 when {
@@ -243,9 +243,6 @@ internal class CoreBreadBox(
                     }
                     else -> wallets
                 }
-            }
-            .distinctUntilChangedBy { wallets ->
-                wallets.map { it.currency.code }
             }
 
     override fun wallet(currencyCode: String) =
@@ -271,13 +268,14 @@ internal class CoreBreadBox(
                 }.values
                 .filterNotNull()
                 .toList()
-        }
+        }.throttleLatest(AGGRESSIVE_THROTTLE_MS)
+            .distinctUntilChanged()
 
     override fun walletSyncState(currencyCode: String) =
         walletSyncStateChannel
             .asFlow()
-            .throttleLatest(DEFAULT_THROTTLE_MS)
             .filter { it.currencyCode.equals(currencyCode, true) }
+            .throttleLatest(DEFAULT_THROTTLE_MS)
             .onStart {
                 // Dispatch initial sync state
                 val isSyncing = wallet(currencyCode)
@@ -297,9 +295,9 @@ internal class CoreBreadBox(
     override fun walletTransfers(currencyCode: String) =
         walletTransfersChannelMap
             .asFlow()
-            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
-            .onStart { emit(currencyCode.toLowerCase(Locale.ROOT)) }
+            .onStart { emit(currencyCode) }
             .filter { currencyCode.equals(it, true) }
+            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
             .mapNotNull {
                 system?.wallets
                     ?.find { it.currency.code.equals(currencyCode, true) }
@@ -307,17 +305,18 @@ internal class CoreBreadBox(
             }
 
     override fun walletTransfer(currencyCode: String, transferHash: String): Flow<Transfer> {
-        val key = "$currencyCode:$transferHash".toLowerCase(Locale.ROOT)
         return transferUpdatedChannelMap
             .asFlow()
-            .throttleLatest(AGGRESSIVE_THROTTLE_MS)
-            .onStart { emit(key) }
-            .filter { key.equals(it, true) }
-            .mapNotNull {
+            .filter { transfer ->
+                transfer.wallet.currency.code.equals(currencyCode, true) &&
+                    transfer.hashString().equals(transferHash, true)
+            }
+            .onStart {
                 system?.wallets
                     ?.find { it.currency.code.equals(currencyCode, true) }
                     ?.transfers
-                    ?.singleOrNull { it.hashString() == transferHash }
+                    ?.firstOrNull { it.hashString() == transferHash }
+                    ?.also { emit(it) }
             }
     }
 
@@ -335,21 +334,22 @@ internal class CoreBreadBox(
     }
 
     override fun walletState(currencyCode: String): Flow<WalletState> =
-        system().flatMapLatest { system ->
-            val network = system.networks.find { it.containsCurrencyCode(currencyCode) }
-            val uids = checkNotNull(
-                network?.currency?.uids
-                    ?: TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId
-            ) { "Currency Id not found for '$currencyCode'" }
-            checkNotNull(networkManager).networkState(uids).map { networkState ->
-                when (networkState) {
-                    is NetworkState.Initialized -> WalletState.Initialized
-                    is NetworkState.Loading -> WalletState.Loading
-                    is NetworkState.ActionNeeded -> WalletState.WaitingOnAction
-                    is NetworkState.Error -> WalletState.Error
+        system()
+            .map { system -> system.networks.find { it.containsCurrencyCode(currencyCode) } }
+            .mapNotNull { network ->
+                network?.currency?.uids ?: TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId
+            }
+            .take(1)
+            .flatMapLatest { uids ->
+                checkNotNull(networkManager).networkState(uids).map { networkState ->
+                    when (networkState) {
+                        is NetworkState.Initialized -> WalletState.Initialized
+                        is NetworkState.Loading -> WalletState.Loading
+                        is NetworkState.ActionNeeded -> WalletState.WaitingOnAction
+                        is NetworkState.Error -> WalletState.Error
+                    }
                 }
             }
-        }
 
     override fun getSystemUnsafe(): System? = system
 
@@ -362,7 +362,7 @@ internal class CoreBreadBox(
         walletsChannel.offer(Unit)
 
         fun updateTransfer(transfer: Transfer) {
-            transferUpdatedChannelMap.offer(transfer.eventKey())
+            transferUpdatedChannelMap.offer(transfer)
             walletTransfersChannelMap.offer(wallet.eventKey())
         }
 
@@ -448,6 +448,7 @@ internal class CoreBreadBox(
     override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) = Unit
 
     override fun handleSystemEvent(system: System, event: SystemEvent) {
+        systemChannel.offer(Unit)
         if (event is SystemNetworkAddedEvent) {
             logDebug("Network '${event.network.name}' added.")
             networkManager?.initializeNetwork(event.network)
@@ -461,12 +462,9 @@ internal class CoreBreadBox(
         transfer: Transfer,
         event: TranferEvent
     ) {
-        transferUpdatedChannelMap.offer(transfer.eventKey())
+        transferUpdatedChannelMap.offer(transfer)
         walletTransfersChannelMap.offer(wallet.eventKey())
     }
 
     private fun Wallet.eventKey() = currency.code.toLowerCase(Locale.ROOT)
-
-    private fun Transfer.eventKey() =
-        "${wallet.currency.code}:${hash.orNull() ?: ""}".toLowerCase(Locale.ROOT)
 }

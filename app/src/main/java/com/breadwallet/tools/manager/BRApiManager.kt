@@ -29,6 +29,7 @@ import android.os.NetworkOnMainThreadException
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
+import com.breadwallet.logger.logError
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs.getPreferredFiatIso
@@ -64,77 +65,56 @@ private const val TOKEN_RATES_URL_SUFFIX = "&tsyms="
 private const val FSYMS_CHAR_LIMIT = 300
 private const val CONTRACT_INITIAL_VALUE = "contract_initial_value"
 
-class BRApiManager private constructor() {
+object BRApiManager {
 
     @WorkerThread
-    fun updateFiatRates(context: Context) {
-        if (UiUtils.isMainThread()) {
-            throw NetworkOnMainThreadException()
-        }
-        val set: MutableSet<CurrencyEntity> = LinkedHashSet()
-        try {
-            val arr = fetchFiatRates(context)
-            if (arr != null) {
-                val length = arr.length()
-                for (i in 0 until length) {
-                    try {
-                        val tmpObj = arr[i] as JSONObject
-                        val code = tmpObj.getString(CODE)
-                        CurrencyEntity(
-                            name = tmpObj.getString(NAME),
-                            code = code,
-                            rate = tmpObj.getString(RATE).toFloat(),
-                            iso = btc.toUpperCase(Locale.ROOT)
-                        ).run(set::add)
-                    } catch (e: JSONException) {
-                        Log.e(TAG, "updateFiatRates: ", e)
-                    }
-                }
-            } else {
-                Log.e(TAG, "getCurrencies: failed to get currencies, response string: $arr")
+    private fun fetchFiatRates(context: Context): Set<CurrencyEntity> {
+        if (UiUtils.isMainThread()) throw NetworkOnMainThreadException()
+        val rates = fetchFiatRatesJson(context) ?: return emptySet()
+        return List(rates.length()) { i ->
+            try {
+                val tmpObj = rates.getJSONObject(i)
+                val code = tmpObj.getString(CODE)
+                CurrencyEntity(
+                    name = tmpObj.getString(NAME),
+                    code = code,
+                    rate = tmpObj.getString(RATE).toFloat(),
+                    iso = btc.toUpperCase(Locale.ROOT)
+                )
+            } catch (e: JSONException) {
+                logError("Failed parsing currency", e)
+                null
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "updateFiatRates: ", e)
-        }
-        val ratesRepository = RatesRepository.getInstance(context)
-
-        if (set.size > 0) {
-            ratesRepository.putCurrencyRates(set)
-        }
+        }.filterNotNull().toSet()
     }
 
-    /**
-     * Synchronously updates RateRepository data.
-     */
     @WorkerThread
-    fun updateRatesSync(context: Context) {
+    fun updateRates(context: Context, codes: List<String>? = null) {
+        val ratesRepo = RatesRepository.getInstance(context)
         Log.d(TAG, "Fetching rates")
-        //Update Crypto Rates
-        val codeList = RatesRepository.getInstance(context).allCurrencyCodesPossible
-        updateCryptoRates(context, codeList)
-
         //Update BTC/Fiat rates
-        updateFiatRates(context)
+        val fiatRates = fetchFiatRates(context)
+
+        //Update Crypto Rates
+        val codeList = codes ?: ratesRepo.allCurrencyCodesPossible
+        val cryptoRates = updateCryptoRates(context, codeList)
+
+        //Update new tokens rate (e.g. CCC)
+        val tokenRates = fetchNewTokensData(context)
+
+        val rates = fiatRates + cryptoRates + tokenRates
+        if (rates.isNotEmpty()) {
+            ratesRepo.putCurrencyRates(rates)
+        }
 
         fetchPriceChanges(context, codeList)
-    }
-
-    @WorkerThread
-    fun updateCryptoData(
-        context: Context,
-        currencyCodes: List<String>
-    ) {
-        //Update Crypto Rates
-        updateCryptoRates(context, currencyCodes)
-        //Update new tokens rate (e.g. CCC)
-        fetchNewTokensData(context)
     }
 
     @WorkerThread
     private fun updateCryptoRates(
         context: Context,
         currencyCodeList: List<String>
-    ) {
+    ): Set<CurrencyEntity> {
         val currencyCodeListChunks: MutableList<String> = ArrayList()
         var chunkStringBuilder = StringBuilder()
         for (currencyCode in currencyCodeList) {
@@ -149,9 +129,8 @@ class BRApiManager private constructor() {
             chunkStringBuilder.append(',')
         }
         currencyCodeListChunks.add(chunkStringBuilder.toString())
-        for (currencyCodeChunk in currencyCodeListChunks) {
-            fetchCryptoRates(context, currencyCodeChunk, btc)
-        }
+
+        return currencyCodeListChunks.flatMap { fetchCryptoRates(context, it, btc) }.toSet()
     }
 
     /**
@@ -164,7 +143,7 @@ class BRApiManager private constructor() {
         context: Context,
         codeListChunk: String,
         targetCurrencyCode: String
-    ) {
+    ): Set<CurrencyEntity> {
         val codeListChunkUppercase = codeListChunk.toUpperCase(Locale.ROOT)
         val targetCodeUppercase = targetCurrencyCode.toUpperCase(Locale.ROOT)
         val url = buildString {
@@ -174,15 +153,15 @@ class BRApiManager private constructor() {
             append(targetCodeUppercase)
         }
         val result = urlGET(context, url)
-        try {
+        return try {
             if (result.isNullOrBlank()) {
                 Log.e(TAG, "fetchCryptoRates: Failed to fetch")
-                return
+                return emptySet()
             }
             val ratesJsonObject = JSONObject(result)
             if (ratesJsonObject.length() == 0) {
                 Log.e(TAG, "fetchCryptoRates: empty json")
-                return
+                return emptySet()
             }
             val keys = ratesJsonObject.keys()
             val ratesList: MutableSet<CurrencyEntity> = LinkedHashSet()
@@ -197,14 +176,15 @@ class BRApiManager private constructor() {
                     iso = currencyCode
                 ).run(ratesList::add)
             }
-            RatesRepository.getInstance(context).putCurrencyRates(ratesList)
+            ratesList
         } catch (e: JSONException) {
             BRReportsManager.reportBug(e)
             Log.e(TAG, "fetchCryptoRates: ", e)
+            emptySet()
         }
     }
 
-    fun fetchPriceChanges(
+    private fun fetchPriceChanges(
         context: Context,
         tokenList: List<String>
     ) {
@@ -213,154 +193,138 @@ class BRApiManager private constructor() {
         RatesRepository.getInstance(context).updatePriceChanges(priceChanges)
     }
 
-    companion object {
-        @Volatile
-        private var mInstance: BRApiManager? = null
-
-        @Synchronized
-        fun getInstance(): BRApiManager {
-            if (mInstance == null) {
-                synchronized(BRApiManager::class.java) {
-                    if (mInstance == null) {
-                        mInstance = BRApiManager()
-                    }
-                }
-            }
-            return mInstance!!
-        }
-
-        @WorkerThread
-        private fun fetchFiatRates(app: Context): JSONArray? {
-            //Fetch the BTC-Fiat rates
-            val url = getBaseURL() + CURRENCY_QUERY_STRING + btc.toUpperCase(Locale.ROOT)
-            val jsonString = urlGET(app, url)
-            var jsonArray: JSONArray? = null
-            if (jsonString == null) {
-                Log.e(TAG, "fetchFiatRates: failed, response is null")
-                return null
-            }
-            try {
-                val obj = JSONObject(jsonString)
-                jsonArray = obj.getJSONArray(BRConstants.BODY)
-            } catch (ex: JSONException) {
-                Log.e(TAG, "fetchFiatRates: ", ex)
-            }
-            return jsonArray ?: backupFetchRates(app)
-        }
-
-        /**
-         * Fetches data from /currencies api meant for new icos and tokens with no public rates yet.
-         *
-         * @param context Context
-         */
-        @WorkerThread
-        private fun fetchNewTokensData(context: Context) {
-            val url = getBaseURL() + CURRENCIES_PATH
-            val tokenDataJsonString = urlGET(context, url)
-            if (tokenDataJsonString.isNullOrBlank()) {
-                Log.e(TAG, "fetchFiatRates: failed, response is null")
-                return
-            }
-            try {
-                val currencyEntities = mutableListOf<CurrencyEntity>()
-                val tokenDataArray = JSONArray(tokenDataJsonString)
-                for (i in 0 until tokenDataArray.length()) {
-                    val tokenDataJsonObject = tokenDataArray.getJSONObject(i)
-                    if (tokenDataJsonObject.has(CONTRACT_INITIAL_VALUE)) {
-                        val priceInEth =
-                            tokenDataJsonObject.getString(CONTRACT_INITIAL_VALUE)
-                                .replace(eth.toUpperCase(Locale.ROOT), "")
-                                .trim()
-                        val name = tokenDataJsonObject.getString(BRConstants.NAME)
-                        val code = tokenDataJsonObject.getString(BRConstants.CODE)
-                        val ethCurrencyEntity = CurrencyEntity(
-                            code = eth.toUpperCase(Locale.ROOT),
-                            name = name,
-                            rate = priceInEth.toFloat(),
-                            iso = code
-                        )
-                        convertEthRateToBtc(context, ethCurrencyEntity)?.run(currencyEntities::add)
-                    }
-                }
-                RatesRepository.getInstance(context).putCurrencyRates(currencyEntities)
-            } catch (ex: JSONException) {
-                Log.e(TAG, "fetchNewTokensData: ", ex)
-            } catch (ex: NumberFormatException) {
-                Log.e(TAG, "fetchNewTokensData: ", ex)
-            }
-        }
-
-        private fun convertEthRateToBtc(
-            context: Context,
-            currencyEntity: CurrencyEntity?
-        ): CurrencyEntity? {
-            if (currencyEntity == null) {
-                return null
-            }
-            val ethBtcExchangeRate = RatesRepository.getInstance(context)
-                .getCurrencyByCode(eth, btc)
-            if (ethBtcExchangeRate == null) {
-                Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null")
-                return null
-            }
-            val newRate = (currencyEntity.rate * ethBtcExchangeRate.rate).toBigDecimal().toFloat()
-            return CurrencyEntity(
-                btc.toUpperCase(Locale.ROOT),
-                currencyEntity.name,
-                newRate,
-                currencyEntity.iso
-            )
-        }
-
-        /**
-         * uses https://bitpay.com/rates to fetch the rates as a backup in case our api is down.
-         *
-         * @param context
-         * @return JSONArray with rates data.
-         */
-        @WorkerThread
-        private fun backupFetchRates(context: Context): JSONArray? {
-            val ratesJsonString = urlGET(context, BIT_PAY_URL)
-            var ratesJsonArray: JSONArray? = null
-            if (ratesJsonString != null) {
-                try {
-                    val ratesJsonObject = JSONObject(ratesJsonString)
-                    ratesJsonArray = ratesJsonObject.getJSONArray(BRConstants.DATA)
-                } catch (e: JSONException) {
-                    Log.e(TAG, "backupFetchRates: ", e)
-                }
-                return ratesJsonArray
-            }
+    @WorkerThread
+    private fun fetchFiatRatesJson(app: Context): JSONArray? {
+        //Fetch the BTC-Fiat rates
+        val url = getBaseURL() + CURRENCY_QUERY_STRING + btc.toUpperCase(Locale.ROOT)
+        val jsonString = urlGET(app, url)
+        var jsonArray: JSONArray? = null
+        if (jsonString == null) {
+            Log.e(TAG, "fetchFiatRates: failed, response is null")
             return null
         }
-
-        @WorkerThread
-        fun urlGET(app: Context, myURL: String): String? {
-            val builder = Request.Builder()
-                .url(myURL)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
-                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
-                .get()
-            val request = builder.build()
-            var bodyText: String? = null
-            val resp = APIClient.getInstance(app).sendRequest(request, false)
-            try {
-                bodyText = resp.bodyText
-                val strDate = resp.headers[DATE_HEADER]
-                if (strDate == null) {
-                    Log.e(TAG, "urlGET: strDate is null!")
-                    return bodyText
-                }
-                val formatter = SimpleDateFormat(DATE_FORMAT, Locale.US)
-                val date = formatter.parse(strDate)
-                if (date != null) {
-                    val timeStamp = date.time
-                    putSecureTime(app, timeStamp)
-                }
-            } catch (e: ParseException) {
-                Log.e(TAG, "urlGET: ", e)
-            }
-            return bodyText
+        try {
+            val obj = JSONObject(jsonString)
+            jsonArray = obj.getJSONArray(BRConstants.BODY)
+        } catch (ex: JSONException) {
+            Log.e(TAG, "fetchFiatRates: ", ex)
         }
+        return jsonArray ?: backupFetchRates(app)
+    }
+
+    /**
+     * Fetches data from /currencies api meant for new icos and tokens with no public rates yet.
+     *
+     * @param context Context
+     */
+    @WorkerThread
+    private fun fetchNewTokensData(context: Context): Set<CurrencyEntity> {
+        val url = getBaseURL() + CURRENCIES_PATH
+        val tokenDataJsonString = urlGET(context, url)
+        if (tokenDataJsonString.isNullOrBlank()) {
+            Log.e(TAG, "fetchFiatRates: failed, response is null")
+            return emptySet()
+        }
+        try {
+            val currencyEntities = mutableSetOf<CurrencyEntity>()
+            val tokenDataArray = JSONArray(tokenDataJsonString)
+            for (i in 0 until tokenDataArray.length()) {
+                val tokenDataJsonObject = tokenDataArray.getJSONObject(i)
+                if (tokenDataJsonObject.has(CONTRACT_INITIAL_VALUE)) {
+                    val priceInEth =
+                        tokenDataJsonObject.getString(CONTRACT_INITIAL_VALUE)
+                            .replace(eth.toUpperCase(Locale.ROOT), "")
+                            .trim()
+                    val name = tokenDataJsonObject.getString(BRConstants.NAME)
+                    val code = tokenDataJsonObject.getString(BRConstants.CODE)
+                    val ethCurrencyEntity = CurrencyEntity(
+                        code = eth.toUpperCase(Locale.ROOT),
+                        name = name,
+                        rate = priceInEth.toFloat(),
+                        iso = code
+                    )
+                    convertEthRateToBtc(context, ethCurrencyEntity)?.run(currencyEntities::add)
+                }
+            }
+            return currencyEntities
+        } catch (ex: JSONException) {
+            Log.e(TAG, "fetchNewTokensData: ", ex)
+        } catch (ex: NumberFormatException) {
+            Log.e(TAG, "fetchNewTokensData: ", ex)
+        }
+        return emptySet()
+    }
+
+    private fun convertEthRateToBtc(
+        context: Context,
+        currencyEntity: CurrencyEntity?
+    ): CurrencyEntity? {
+        if (currencyEntity == null) {
+            return null
+        }
+        val ethBtcExchangeRate = RatesRepository.getInstance(context)
+            .getCurrencyByCode(eth, btc)
+        if (ethBtcExchangeRate == null) {
+            Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null")
+            return null
+        }
+        val newRate = (currencyEntity.rate * ethBtcExchangeRate.rate).toBigDecimal().toFloat()
+        return CurrencyEntity(
+            btc.toUpperCase(Locale.ROOT),
+            currencyEntity.name,
+            newRate,
+            currencyEntity.iso
+        )
+    }
+
+    /**
+     * uses https://bitpay.com/rates to fetch the rates as a backup in case our api is down.
+     *
+     * @param context
+     * @return JSONArray with rates data.
+     */
+    @WorkerThread
+    private fun backupFetchRates(context: Context): JSONArray? {
+        val ratesJsonString = urlGET(context, BIT_PAY_URL)
+        var ratesJsonArray: JSONArray? = null
+        if (ratesJsonString != null) {
+            try {
+                val ratesJsonObject = JSONObject(ratesJsonString)
+                ratesJsonArray = ratesJsonObject.getJSONArray(BRConstants.DATA)
+            } catch (e: JSONException) {
+                Log.e(TAG, "backupFetchRates: ", e)
+            }
+            return ratesJsonArray
+        }
+        return null
+    }
+
+    @WorkerThread
+    fun urlGET(app: Context, myURL: String): String? {
+        val builder = Request.Builder()
+            .url(myURL)
+            .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+            .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8)
+            .get()
+        val request = builder.build()
+        var bodyText: String? = null
+        val resp = APIClient.getInstance(app).sendRequest(request, false)
+        try {
+            bodyText = resp.bodyText
+            val strDate = resp.headers[DATE_HEADER]
+            if (strDate == null) {
+                Log.e(TAG, "urlGET: strDate is null!")
+                return bodyText
+            }
+            val formatter = SimpleDateFormat(DATE_FORMAT, Locale.US)
+            val date = formatter.parse(strDate)
+            if (date != null) {
+                val timeStamp = date.time
+                putSecureTime(app, timeStamp)
+            }
+        } catch (e: ParseException) {
+            Log.e(TAG, "urlGET: ", e)
+        }
+        return bodyText
     }
 }

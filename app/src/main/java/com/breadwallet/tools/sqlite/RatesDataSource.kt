@@ -38,7 +38,6 @@ import java.util.ArrayList
 import java.util.Locale
 
 class RatesDataSource private constructor(context: Context) : BRDataSourceInterface {
-    private var onDataChangedListeners: MutableList<OnDataChanged> = ArrayList()
 
     // Database fields
     private var database: SQLiteDatabase? = null
@@ -50,11 +49,8 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
         BRSQLiteHelper.CURRENCY_ISO
     )
 
-    fun putCurrencies(
-        app: Context?,
-        currencyEntities: Collection<CurrencyEntity>?
-    ): Boolean {
-        if (currencyEntities == null || currencyEntities.isEmpty()) {
+    fun putCurrencies(currencyEntities: Collection<CurrencyEntity>): Boolean {
+        if (currencyEntities.isEmpty()) {
             Log.e(TAG, "putCurrencies: failed: $currencyEntities")
             return false
         }
@@ -83,11 +79,6 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 Log.e(TAG, "putCurrencies: failed:$failed")
             }
             database!!.setTransactionSuccessful()
-            synchronized(this) {
-                for (list in onDataChangedListeners) {
-                    list.onChanged()
-                }
-            }
             true
         } catch (ex: Exception) {
             Log.e(TAG, "putCurrencies: failed: ", ex)
@@ -109,11 +100,6 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 BRSQLiteHelper.CURRENCY_ISO + " = ?",
                 arrayOf(iso.toUpperCase(Locale.ROOT))
             )
-            synchronized(this) {
-                for (list in onDataChangedListeners) {
-                    list.onChanged()
-                }
-            }
         } finally {
             closeDatabase()
         }
@@ -250,31 +236,6 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
 //onChanged
 //        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
-    }
-
-    @Synchronized
-    fun addOnDataChangedListener(list: OnDataChanged) {
-        if (!onDataChangedListeners.contains(list)) {
-            onDataChangedListeners.add(list)
-        }
-    }
-
-    @Synchronized
-    fun removeOnDataChangedListener(listener: OnDataChanged) {
-        if (onDataChangedListeners.contains(listener)) {
-            onDataChangedListeners.remove(listener)
-        }
-    }
-
-    interface OnDataChanged {
-        companion object {
-            inline operator fun invoke(
-                crossinline onChangedFun: () -> Unit
-            ) = object : OnDataChanged {
-                override fun onChanged() = onChangedFun()
-            }
-        }
-        fun onChanged()
     }
 
     companion object {

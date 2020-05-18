@@ -50,7 +50,7 @@ fun Flow<List<String>>.updateRatesForCurrencies(
 ): Flow<Unit> =
     onStart {
         // Initial sync of rate data
-        BRApiManager.getInstance().updateRatesSync(context)
+        BRApiManager.updateRates(context)
         emitAll(callbackFlow {
             // Fetch an updated token list from the server
             TokenUtil.fetchTokensFromServer(context)
@@ -76,14 +76,9 @@ fun Flow<List<String>>.updateRatesForCurrencies(
             emit(codes)
             emitAll(BRSharedPrefs.preferredFiatIsoChanges().map { codes })
         }
-        // Load data in parallel
         .map { codes ->
             logDebug("Updating currency and rate data", codes)
-            BRApiManager.getInstance().apply {
-                updateFiatRates(context)
-                updateCryptoData(context, codes)
-                fetchPriceChanges(context, codes)
-            }
+            BRApiManager.updateRates(context, codes)
             Unit
         }
         // Log errors but do not stop collecting

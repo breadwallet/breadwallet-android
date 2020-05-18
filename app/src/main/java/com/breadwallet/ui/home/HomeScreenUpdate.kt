@@ -71,48 +71,25 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                             model.wallets[currencyCode] ?: wallet
                         },
                     displayOrder = event.wallets.map(Wallet::currencyId)
-                )
+                ),
+                if (model.wallets.isEmpty()) {
+                    setOf<F>(F.LoadWallets)
+                } else {
+                    emptySet()
+                }
             )
         }
         is E.OnWalletsUpdated -> {
             val wallets = model.wallets.toMutableMap()
             event.wallets.forEach { wallet ->
-                wallets[wallet.currencyCode] = wallet
-            }
-            next(
-                model.copy(
-                    wallets = wallets
+                val previousState = wallets[wallet.currencyCode]
+                wallets[wallet.currencyCode] = wallet.copy(
+                    syncingThroughMillis = previousState?.syncingThroughMillis ?: wallet.syncingThroughMillis,
+                    isSyncing = previousState?.isSyncing ?: wallet.isSyncing,
+                    syncProgress = previousState?.syncProgress ?: wallet.syncProgress
                 )
-            )
-        }
-        is E.OnUnitPriceChanged -> {
-            model.wallets[event.currencyCode]?.let { wallet ->
-                val wallets = model.wallets.toMutableMap()
-                wallets[event.currencyCode] = wallet.copy(
-                    fiatPricePerUnit = event.fiatPricePerUnit,
-                    priceChange = event.priceChange
-                )
-                next<M, F>(model.copy(wallets = wallets.toMap()))
-            } ?: noChange<M, F>()
-        }
-        is E.OnWalletBalanceUpdated -> {
-            when (val wallet = model.wallets[event.currencyCode]) {
-                null -> noChange<M, F>()
-                else -> {
-                    when (wallet.balance == event.balance && wallet.fiatBalance == event.fiatBalance) {
-                        true -> noChange<M, F>()
-                        else -> {
-                            val wallets = model.wallets.toMutableMap()
-                            wallets[event.currencyCode] = wallet.copy(
-                                balance = event.balance,
-                                fiatBalance = event.fiatBalance,
-                                state = Wallet.State.READY
-                            )
-                            next(model.copy(wallets = wallets))
-                        }
-                    }
-                }
             }
+            next(model.copy(wallets = wallets))
         }
         is E.OnConnectionUpdated -> next(model.copy(hasInternet = event.isConnected))
         is E.OnWalletClicked -> {
@@ -182,6 +159,7 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                 )
             )
         }
+        is E.CheckForPrompt -> dispatch(setOf<F>(F.LoadPrompt))
         E.OnFingerprintPromptClicked -> {
             val eventName = EventUtils.PROMPT_TOUCH_ID + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             next(
