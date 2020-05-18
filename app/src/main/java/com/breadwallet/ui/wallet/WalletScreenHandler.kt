@@ -41,7 +41,6 @@ import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.models.TransactionState
@@ -53,11 +52,8 @@ import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -154,24 +150,14 @@ object WalletScreenHandler {
         context: Context
     ) = flowTransformer<F.LoadFiatPricePerUnit, E> { effects ->
         val ratesRepository = RatesRepository.getInstance(context)
-        val ratesDataSource = RatesDataSource.getInstance(context)
         val fiatIso = BRSharedPrefs.getPreferredFiatIso(context)
         effects
-            .transformLatest { effect ->
-                // Emit effect and observe rate changes,
-                // dispatching the latest effect if needed
-                emit(effect)
-                emitAll(ratesDataSource
-                    .rateChangesFlow()
-                    .map { effect })
+            .flatMapLatest { effect ->
+                ratesRepository.changes().map { effect }
             }
             .mapLatest { effect ->
-                val exchangeRate: BigDecimal? = ratesRepository.getFiatForCrypto(
-                    BigDecimal.ONE,
-                    effect.currencyCode,
-                    BRSharedPrefs.getPreferredFiatIso(context)
-                )
-                val fiatPricePerUnit = exchangeRate?.formatFiatForUi(fiatIso).orEmpty()
+                val exchangeRate = ratesRepository.getFiatPerCryptoUnit(effect.currencyCode, fiatIso)
+                val fiatPricePerUnit = exchangeRate.formatFiatForUi(fiatIso)
                 val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyCode)
                 E.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange)
             }
@@ -282,15 +268,6 @@ object WalletScreenHandler {
                 E.OnTransactionMetaDataLoaded(event.metadata)
             }
     }
-
-    private fun RatesDataSource.rateChangesFlow() =
-        callbackFlow<Unit> {
-            val listener = RatesDataSource.OnDataChanged { offer(Unit) }
-            addOnDataChangedListener(listener)
-            awaitClose {
-                removeOnDataChangedListener(listener)
-            }
-        }
 
     private fun handleWalletState(breadBox: BreadBox) =
         flowTransformer<F.LoadWalletState, E> { effects ->

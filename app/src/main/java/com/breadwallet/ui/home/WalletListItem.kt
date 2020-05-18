@@ -47,7 +47,7 @@ class WalletListItem(
             val context = containerView.context
             val currencyCode = wallet.currencyCode
 
-            if (currencyCode.isBrd() && !BRSharedPrefs.getRewardsAnimationShown(context)) {
+            if (currencyCode.isBrd() && !BRSharedPrefs.getRewardsAnimationShown()) {
                 (containerView as ShimmerLayout).startShimmerAnimation()
             } else {
                 (containerView as ShimmerLayout).stopShimmerAnimation()

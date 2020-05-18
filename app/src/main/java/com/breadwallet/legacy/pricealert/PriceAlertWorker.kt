@@ -124,7 +124,7 @@ class PriceAlertWorker(
 
         if (inputData.getBoolean(INPUT_UPDATE_RATES, true)) {
             // Manually update RatesRepository data
-            BRApiManager.getInstance().updateRatesSync(applicationContext)
+            //BRApiManager.getInstance().updateRatesSync(applicationContext)
         }
 
         // List all alerts and their latest price

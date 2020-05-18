@@ -112,6 +112,7 @@ abstract class BaseMobiusController<M, E, F>(
 
     private var loop: MobiusLoop<M, E, F>? = null
     private val isLoopActive = AtomicBoolean(false)
+    private val logger = AndroidLogger.tag<M, E, F>(this::class.java.simpleName)
     private val loopFactory by lazy {
         val loopConnection = Connectable<F, E> { output ->
             val handler = checkNotNull(effectHandler ?: flowEffectHandler?.asConnectable()) {
@@ -140,7 +141,7 @@ abstract class BaseMobiusController<M, E, F>(
         Mobius.loop(update, loopConnection)
             .eventRunner { DispatcherWorkRunner(Dispatchers.Default) }
             .effectRunner { DispatcherWorkRunner(Dispatchers.Default) }
-            .logger(AndroidLogger.tag(this::class.java.simpleName))
+            .logger(logger)
             .eventSource(this)
     }
 
@@ -218,7 +219,9 @@ abstract class BaseMobiusController<M, E, F>(
     }
 
     private fun createLoop() {
+        logger.beforeInit(currentModel)
         val first = init.init(currentModel)
+        logger.afterInit(currentModel, first)
         val workRunner = MainThreadWorkRunner.create()
         loop = loopFactory.startFrom(first.model(), first.effects()).apply {
             observe { model ->

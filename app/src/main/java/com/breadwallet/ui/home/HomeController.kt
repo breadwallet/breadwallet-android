@@ -31,7 +31,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.BuildConfig
@@ -39,7 +38,7 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.BRButton
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
-import com.breadwallet.mobius.CompositeEffectHandler
+import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
@@ -56,12 +55,18 @@ import com.mikepenz.fastadapter.adapters.ModelAdapter
 import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.drag.SimpleDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.spotify.mobius.Connectable
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_home.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -78,20 +83,14 @@ class HomeController(
     override val defaultModel = M.createDefault()
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit
-    override val effectHandler: Connectable<F, E> =
-        CompositeEffectHandler.from(
-            Connectable { output ->
-                HomeScreenHandler(
-                    output,
-                    applicationContext!!,
-                    direct.instance(),
-                    direct.instance(),
-                    direct.instance()
-                )
-            },
-            Connectable { output ->
-                PromptEffectHandler(output, applicationContext!!, direct.instance())
-            }
+    override val flowEffectHandler
+        get() = createHomeScreenHandler(
+            checkNotNull(applicationContext),
+            direct.instance(),
+            RatesRepository.getInstance(applicationContext!!),
+            direct.instance(),
+            direct.instance(),
+            direct.instance()
         )
 
     private var fastAdapter: GenericFastAdapter? = null
@@ -133,7 +132,7 @@ class HomeController(
         touchHelper.attachToRecyclerView(rv_wallet_list)
 
         rv_wallet_list.adapter = fastAdapter
-        rv_wallet_list.itemAnimator = DefaultItemAnimator()
+        rv_wallet_list.itemAnimator = null
         rv_wallet_list.layoutManager = LinearLayoutManager(view.context)
 
         addWalletAdapter!!.add(AddWalletItem())
@@ -146,11 +145,15 @@ class HomeController(
         super.onDestroyView(view)
     }
 
-    override fun M.render() {
-        ifChanged(M::wallets) {
-            walletAdapter?.setNewList(wallets.values.toList())
-        }
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        modelFlow.distinctUntilChangedBy { it.wallets.values }
+            .flowOn(Dispatchers.Default)
+            .onEach { m -> walletAdapter?.setNewList(m.wallets.values.toList()) }
+            .launchIn(uiBindScope)
+        return emptyFlow()
+    }
 
+    override fun M.render() {
         ifChanged(M::aggregatedFiatBalance) {
             total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
                 BRSharedPrefs.getPreferredFiatIso(activity),
@@ -199,7 +202,7 @@ class HomeController(
     private fun getPromptView(promptItem: PromptItem): View {
         val act = checkNotNull(activity)
 
-        val baseLayout = act.layoutInflater.inflate(R.layout.base_prompt, prompt_container, false)
+        val baseLayout = act.layoutInflater.inflate(R.layout.base_prompt, null)
         val title = baseLayout.findViewById<BaseTextView>(R.id.prompt_title)
         val description = baseLayout.findViewById<BaseTextView>(R.id.prompt_description)
         val continueButton = baseLayout.findViewById<Button>(R.id.continue_button)

@@ -156,9 +156,8 @@ class MetaDataManager(
             ?.run(::putEnabledWallets)
     }
 
-    override fun reorderWallets(currencyIds: List<String>) = flow {
+    override fun reorderWallets(currencyIds: List<String>) {
         putEnabledWallets(currencyIds)
-        emit(Unit)
     }
 
     override fun walletModes(): Flow<Map<String, WalletManagerMode>> =
@@ -299,9 +298,7 @@ class MetaDataManager(
 
     private fun putEnabledWallets(enabledWallets: List<String>) =
         enabledWalletsToJSON(enabledWallets)
-            .also {
-                storeProvider.put(KEY_ASSET_INDEX, it)
-            }
+            .also { storeProvider.put(KEY_ASSET_INDEX, it) }
 
     private fun migrateTokenList() {
         if (storeProvider.get(KEY_ASSET_INDEX) != null) {
