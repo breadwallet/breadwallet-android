@@ -23,7 +23,7 @@ detekt {
     baseline = file("detekt-baseline.xml")
 }
 sonarqube {
-    androidVariant 'BrdTestnetRelease'
+    androidVariant 'brdTestnetRelease'
 }
 
 android {
