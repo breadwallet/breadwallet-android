@@ -186,4 +186,10 @@ workflows:
   commit:
     jobs:
       - build
-      - release
+      - release:
+          filters:
+            branches:
+              only:                 
+                - /release\/.*/
+          requires:
+            - build
