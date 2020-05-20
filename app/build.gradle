@@ -98,7 +98,7 @@ android {
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_tesnet"]
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_testnet"]
             applicationId = "cash.just.testnet"
             dimension "mode"
             resValue "string", "app_name", "Coinsquare Testnet"
