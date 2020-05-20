@@ -73,6 +73,13 @@ jobs:
           command: |
             ./gradlew --console=plain bundleRelease -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$store_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$key_password
 
+    # SONAR
+      - run:
+          name:  sonar check  
+          command: |
+                  echo SonarStart
+                  ./gradlew  --console=plain --stacktrace  --info sonarqube  -Dsonar.organization=$sonar_organization  -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=atmcoin_atm-wallet-android -Dsonar.login=$sonar_login 
+
       # save cache
       - save_cache:
           paths:
