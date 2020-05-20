@@ -35,6 +35,7 @@ import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
+import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
@@ -68,7 +69,8 @@ class MapController(
         prepareMap(view.context)
 
         if (!WacSDK.isSessionCreated()) {
-            WacSDK.createSession(object: Wac.SessionCallback {
+
+            WacSDK.createSession(BitcoinServer.getServer(), object: Wac.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     fetchAtms()
                 }

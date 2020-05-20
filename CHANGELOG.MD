@@ -3,8 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [TODO]
-- Add a badge for testnet app icon.
+## [4.2.5 (4025001)]
+- Add a gray badge for testNet app icon.
+- Changing package name and cert for MainNet App.
+## [4.2.4 (4024001)]
+- Fixing the issue with amount being same as min (added some unit tests)
+- Fixing the message about email / sms being sent.
+
+## [4.2.3 (4023001)]
+- Adding the ability to choose TEST_NET vs MAIN_NET
+- Customizing the sendSheetController to be used in the cash out atm flow.
 
 ## [4.2.1 (4021001)]
 - Removing third page of onboarding.

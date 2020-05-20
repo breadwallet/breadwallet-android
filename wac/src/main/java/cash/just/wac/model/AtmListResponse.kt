@@ -29,3 +29,15 @@ data class AtmMachine(
     @field:Json(name = "atm_max") val max: String,
     @field:Json(name = "atm_bills") val bills: String,
     @field:Json(name = "atm_currency") val currency: String):Serializable
+
+@Suppress("ReturnCount")
+fun AtmMachine.isValidAmount(amount:String?) : Boolean {
+    if (amount == null) return false
+    val amountFloat = amount.toFloatOrNull() ?: return false
+    val min = min.toFloatOrNull()
+    val max = max.toFloatOrNull()
+    if (min != null && max != null) {
+        return (amountFloat >= min && amountFloat <= max)
+    }
+    return false
+}

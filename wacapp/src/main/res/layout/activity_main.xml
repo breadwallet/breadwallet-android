@@ -11,12 +11,25 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-        <Button
-            android:id="@+id/loginButton"
-            android:text="Login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/loginButton"
+                android:text="Login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <androidx.appcompat.widget.AppCompatToggleButton
+                android:id="@+id/serverToggleButton"
+                android:textOff="TEST_NET"
+                android:textOn="MAIN_NET"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+"
         <EditText
             android:id="@+id/session"
             android:text="no session"
@@ -164,5 +177,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Switch" />
     </LinearLayout>
 </ScrollView>

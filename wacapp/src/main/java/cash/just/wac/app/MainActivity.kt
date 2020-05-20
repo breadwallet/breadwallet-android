@@ -23,7 +23,10 @@ class MainActivity : AppCompatActivity() {
         afterLoginPanel.visibility = View.GONE
 
         loginButton.setOnClickListener {
-            WacSDK.createSession(object: Wac.SessionCallback {
+            val server = if (serverToggleButton.isChecked) Wac.BtcSERVER.TEST_NET
+            else Wac.BtcSERVER.MAIN_NET
+
+            WacSDK.createSession(server, object: Wac.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     session.setText(sessionKey)
                     afterLoginPanel.visibility = View.VISIBLE

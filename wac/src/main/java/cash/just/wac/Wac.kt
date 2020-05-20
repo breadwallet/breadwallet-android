@@ -8,12 +8,17 @@ import retrofit2.Call
 
 interface Wac {
 
+    enum class BtcSERVER {
+        MAIN_NET,
+        TEST_NET
+    }
+
     interface SessionCallback {
         fun onSessionCreated(sessionKey:String)
         fun onError(errorMessage:String?)
     }
 
-    fun createSession(listener:SessionCallback)
+    fun createSession(server:BtcSERVER, listener:SessionCallback)
     fun isSessionCreated(): Boolean
     fun getAtmList(): Call<AtmListResponse>
     fun getAtmListByLocation(latitude:String, longitude:String): Call<AtmListResponse>

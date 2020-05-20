@@ -15,6 +15,7 @@ import cash.just.wac.model.CashCodeResponse
 import cash.just.wac.model.CashCodeStatusResponse
 import cash.just.wac.model.CashStatus
 import cash.just.wac.model.SendVerificationCodeResponse
+import cash.just.wac.model.isValidAmount
 import cash.just.wac.model.parseError
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -99,7 +100,7 @@ class RequestCashCodeController(
                 return@setOnClickListener
             }
 
-            if (checkAmount(atm)) {
+            if (!atm.isValidAmount(getAmount())) {
                 val min = atm.min.toFloatOrNull()?.toInt()
                 val max = atm.max.toFloatOrNull()?.toInt()
                 if (min == null || max == null) {
@@ -172,7 +173,7 @@ class RequestCashCodeController(
             ) {
                 if (response.code() == HTTP_OK_CODE) {
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
-                    if (getEmail() != null) {
+                    if (getEmail() != null && getEmail()!!.isNotEmpty()) {
                         confirmationMessage.text = "We've sent a confirmation token to your email."
                     } else {
                         confirmationMessage.text = "We've sent a confirmation token to your phone by SMS."
@@ -334,17 +335,6 @@ class RequestCashCodeController(
         val cameraUpdate: CameraUpdate = CameraUpdateFactory
             .newCameraPosition(cameraPosition)
         googleMap.moveCamera(cameraUpdate)
-    }
-
-    @Suppress("ReturnCount")
-    private fun checkAmount(atm : AtmMachine): Boolean {
-        val amount = getAmount()?.toFloatOrNull() ?: return false
-        val min = atm.min.toFloatOrNull()
-        val max = atm.min.toFloatOrNull()
-        if (min != null && max != null) {
-            return (amount >= min && amount <= max)
-        }
-        return true
     }
 
     private fun checkFields(): Boolean {
