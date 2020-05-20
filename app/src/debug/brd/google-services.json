@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:350203949267:android:48e8b2c1837bbe44",
         "android_client_info": {
-          "package_name": "cash.just.debug"
+          "package_name": "cash.just.wallet.debug"
         }
       },
       "oauth_client": [

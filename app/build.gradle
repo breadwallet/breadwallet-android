@@ -90,7 +90,7 @@ android {
     productFlavors {
         brd {
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
-            applicationId = "cash.just"
+            applicationId = "cash.just.wallet"
             dimension "mode"
             resValue "string", "app_name", "Coinsquare"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -98,7 +98,7 @@ android {
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_tesnet"]
             applicationId = "cash.just.testnet"
             dimension "mode"
             resValue "string", "app_name", "Coinsquare Testnet"
