@@ -37,7 +37,7 @@ jobs:
           name: check init Key
           command: |
             mkdir /home/circleci/key
-            echo $keystore > /home/circleci/key/base64
+            echo $test_keystore > /home/circleci/key/base64
             base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
             ls -la /home/circleci/key
 
@@ -71,7 +71,7 @@ jobs:
       - run:
           name: gradle assembleRelease
           command: |
-            ./gradlew --console=plain bundleRelease -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$store_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$key_password
+            ./gradlew --console=plain bundleRelease -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$test_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$test_password
 
     # SONAR
       - run:
