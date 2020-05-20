@@ -71,7 +71,7 @@ jobs:
       - run:
           name: gradle assembleRelease
           command: |
-            ./gradlew --stacktrace  --console=plain app:bundleBrdTestnetRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$test_password -Pandroid.injected.signing.key.alias='Key0' -Pandroid.injected.signing.key.password=$test_password
+            ./gradlew --stacktrace  --console=plain app:bundleBrdTestnetRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$test_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$test_sign_password
 
     # SONAR
       - run:
