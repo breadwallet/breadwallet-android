@@ -37,7 +37,7 @@ jobs:
           name: check init Key
           command: |
             mkdir /home/circleci/key
-            echo $keystore > /home/circleci/key/base64
+            echo $test_keystore > /home/circleci/key/base64
             base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
             ls -la /home/circleci/key
 
@@ -53,14 +53,6 @@ jobs:
           command: |
             ./gradlew --console=plain detekt
 
-
-
-      #gradle build
-      - run:
-          name: gradle testBrdReleaseUnitTest
-          command: |
-            ./gradlew  --console=plain testBrdReleaseUnitTest
-
       #gradle build
       - run:
           name: gradle testBrdTestnetReleaseUnitTest
@@ -71,7 +63,7 @@ jobs:
       - run:
           name: gradle assembleRelease
           command: |
-            ./gradlew --console=plain bundleRelease -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$store_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$key_password
+            ./gradlew --stacktrace  --console=plain app:bundleBrdTestnetRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$test_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$test_sign_password
 
     # SONAR
       - run:
@@ -79,6 +71,89 @@ jobs:
           command: |
                   echo SonarStart
                   ./gradlew  --console=plain --stacktrace  --info sonarqube  -Dsonar.organization=$sonar_organization  -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=atmcoin_atm-wallet-android -Dsonar.login=$sonar_login 
+
+      # save cache
+      - save_cache:
+          paths:
+            - ~/.gradle
+
+          key: v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+
+      # save tests!
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/atrifact
+            ls -l ./app/build
+            cp -r ./app/build/reports ~/atrifact;
+            cp -r ./app/build/test-results ~/atrifact;
+            cp -r ./app/build/outputs ~/atrifact;
+          when: always
+      - store_test_results:
+          path: ./app/build/test-results
+      - store_artifacts:
+          path: ~/atrifact
+  release:
+    docker:
+      - image: circleci/android:api-29-ndk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      SDK_FILENAME: sdk-tools-linux-4333796.zip
+      ANDROID_HOME: /opt/android/sdk
+
+
+    steps:
+      - checkout
+
+      #Check init
+      - run:
+          name: check init
+          command: |
+            echo $PWD
+            ls -la .
+            ls -la $ANDROID_HOME
+      # Download and cache dependencies gradle
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+      #Check init
+      - run:
+          name: check init Key
+          command: |
+            mkdir /home/circleci/key
+            echo $release_keystore > /home/circleci/key/base64
+            base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
+            ls -la /home/circleci/key
+
+      #Refresh gradle
+      - run:
+          name: Refresh gradle
+          command: |
+            ./gradlew   dependencies
+
+
+
+
+      #gradle build
+      - run:
+          name: gradle testBrdReleaseUnitTest
+          command: |
+            ./gradlew  --console=plain testBrdReleaseUnitTest
+
+
+      #gradle build
+      - run:
+          name: gradle assembleRelease
+          command: |
+            ./gradlew --stacktrace  --console=plain app:bundleBrdRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$release_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$release_sign_password
+
 
       # save cache
       - save_cache:
@@ -111,3 +186,10 @@ workflows:
   commit:
     jobs:
       - build
+      - release:
+          filters:
+            branches:
+              only:                 
+                - /release\/.*/
+          requires:
+            - build
