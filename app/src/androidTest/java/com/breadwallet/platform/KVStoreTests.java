@@ -320,7 +320,7 @@ public class KVStoreTests {
 
     @Test
     public void testBasicSyncGetAllObjects() {
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertEquals(true, success);
 
         List<KVItem> localKeys = store.getRawKVs();
@@ -332,7 +332,7 @@ public class KVStoreTests {
     public void testSyncTenTimes() {
         int n = 10;
         while (n > 0) {
-            boolean success = store.syncAllKeys(false, Collections.emptyList());
+            boolean success = store.syncAllKeys(Collections.emptyList());
             Assert.assertTrue(success);
             n--;
         }
@@ -343,7 +343,7 @@ public class KVStoreTests {
     public void testSyncAddsLocalKeysToRemote() {
         CompletionObject setObj = store.set(new KVItem(0, -1, "derp", "derp".getBytes(), System.currentTimeMillis(), 0));
         Assert.assertNull(setObj.err);
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
         Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
@@ -351,7 +351,7 @@ public class KVStoreTests {
 
     @Test
     public void testSyncSavesRemoteVersion() {
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         long ver = store.remoteVersion("hello");
         Assert.assertEquals(((MockUpAdapter) remote).remoteKVs.get("hello").version, 1);
@@ -377,12 +377,12 @@ public class KVStoreTests {
     public void testLocalDeleteReplicates() {
         CompletionObject setObj = store.set(new KVItem(0, 0, "goodbye_cruel_world", "goodbye_cruel_world".getBytes(), System.currentTimeMillis(), 0));
         Assert.assertNull(setObj.err);
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
         CompletionObject delObj = store.delete("goodbye_cruel_world", store.localVersion("goodbye_cruel_world").version);
         Assert.assertNull(delObj.err);
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
         KVItem kv = ((MockUpAdapter) remote).remoteKVs.get("goodbye_cruel_world");
@@ -393,31 +393,31 @@ public class KVStoreTests {
     @Test
     public void testLocalUpdateReplicates() {
         CompletionObject setObj = store.set(new KVItem(0, -1, "goodbye_cruel_world", "goodbye_cruel_world".getBytes(), System.currentTimeMillis(), 0));
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
         setObj = store.set(new KVItem(store.localVersion("goodbye_cruel_world").version, -1, "goodbye_cruel_world", "goodbye_cruel_world with some new info".getBytes(), System.currentTimeMillis(), 0));
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
-        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity(), ));
+        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), ReplicatedKVStore.decrypt(remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value, mActivityRule.getActivity()));
 
     }
 
     @Test
     public void testRemoteDeleteReplicates() {
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
         KVItem kv = ((MockUpAdapter) remote).remoteKVs.get("hello");
         ((MockUpAdapter) remote).remoteKVs.put("hello", new KVItem(kv.version + 1, -1, kv.key, kv.value, System.currentTimeMillis(), 1));
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
         CompletionObject getObj = store.get("hello", 0);
         Assert.assertNull(getObj.err);
         Assert.assertTrue(getObj.kv.deleted > 0);
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
 
@@ -425,20 +425,20 @@ public class KVStoreTests {
 
     @Test
     public void testRemoteUpdateReplicates() {
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
 
         KVItem kv = ((MockUpAdapter) remote).remoteKVs.get("hello");
         ((MockUpAdapter) remote).remoteKVs.put("hello", new KVItem(kv.version + 1, -1, kv.key, ReplicatedKVStore.encrypt("newVal".getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 0));
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
 
         CompletionObject getObj = store.get("hello", 0);
         Assert.assertNull(getObj.err);
         Assert.assertArrayEquals(getObj.kv.value, "newVal".getBytes());
-        success = store.syncAllKeys(false, Collections.emptyList());
+        success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
 
@@ -449,7 +449,7 @@ public class KVStoreTests {
         ((MockUpAdapter) remote).remoteKVs.clear();
         CompletionObject setObj = store.set(new KVItem(0, 0, "derp", "derp".getBytes(), System.currentTimeMillis(), 0));
         Assert.assertNull(setObj.err);
-        boolean success = store.syncAllKeys(false, Collections.emptyList());
+        boolean success = store.syncAllKeys(Collections.emptyList());
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
         Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
