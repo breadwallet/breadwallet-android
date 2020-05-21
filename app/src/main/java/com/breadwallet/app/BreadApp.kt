@@ -27,9 +27,9 @@ package com.breadwallet.app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
@@ -47,8 +47,6 @@ import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.installHooks
-import com.breadwallet.legacy.view.dialog.DialogActivity
-import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.repository.ExperimentsRepository
@@ -63,7 +61,6 @@ import com.breadwallet.tools.manager.updateRatesForCurrencies
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.CryptoUserManager
-import com.breadwallet.tools.security.KeyStoreStatus
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -102,14 +99,16 @@ import org.kodein.di.android.x.androidXModule
 import org.kodein.di.direct
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
-import org.kodein.di.erased.on
 import org.kodein.di.erased.singleton
 import java.io.File
+import java.io.IOException
 import java.io.UnsupportedEncodingException
+import java.security.GeneralSecurityException
 import java.util.Locale
 import java.util.regex.Pattern
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
+private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
 
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware {
@@ -259,29 +258,16 @@ class BreadApp : Application(), KodeinAware {
         /**
          * @return host or debug host if build is DEBUG
          */
-        @JvmStatic
         val host: String
             get() {
                 if (BuildConfig.DEBUG) {
-                    val host = BRSharedPrefs.getDebugHost(mInstance)
+                    val host = BRSharedPrefs.getDebugHost()
                     if (!host.isNullOrBlank()) {
                         return host
                     }
                 }
                 return HOST
             }
-
-        /**
-         * Sets the debug host into the shared preferences, only do that if the build is DEBUG.
-         *
-         * @param host
-         */
-        @JvmStatic
-        fun setDebugHost(host: String) {
-            if (BuildConfig.DEBUG) {
-                BRSharedPrefs.putDebugHost(mCurrentActivity, host)
-            }
-        }
 
         /** Provides access to [DKodein]. Meant only for Java compatibility. **/
         @JvmStatic
@@ -302,16 +288,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         bind<BrdUserManager>() with singleton {
-            CryptoUserManager(
-                EncryptedSharedPreferences.create(
-                    "crypto_shared_prefs",
-                    MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-                    instance(),
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                ),
-                instance()
-            )
+            CryptoUserManager(::createEncryptedPrefs, instance())
         }
 
         bind<KVStoreProvider>() with singleton {
@@ -358,42 +335,6 @@ class BreadApp : Application(), KodeinAware {
 
     private val userManager: BrdUserManager by instance()
     private val apiClient: APIClient by instance()
-
-    /**
-     * Returns true if the device state is valid. The device state is considered valid, if the device password
-     * is enabled and if the Android key store state is valid.  The Android key store can be invalided if the
-     * device password was removed or if fingerprints are added/removed.
-     *
-     * @return True, if the device state is valid; false, otherwise.
-     */
-    // TODO: This operation should be extracted to a new class
-    fun isDeviceStateValid(): Boolean {
-        val isDeviceStateValid: Boolean
-        var dialogType = DialogType.DEFAULT
-
-        if (!direct.on(this).instance<KeyguardManager>().isKeyguardSecure) {
-            isDeviceStateValid = false
-            dialogType = DialogType.ENABLE_DEVICE_PASSWORD
-        } else {
-            when (userManager.getKeyStoreStatus()) {
-                KeyStoreStatus.VALID -> isDeviceStateValid = true
-                KeyStoreStatus.INVALID_WIPE -> {
-                    isDeviceStateValid = false
-                    dialogType = DialogType.KEY_STORE_INVALID_WIPE
-                }
-                KeyStoreStatus.INVALID_UNINSTALL -> {
-                    isDeviceStateValid = false
-                    dialogType = DialogType.KEY_STORE_INVALID_UNINSTALL
-                }
-            }
-        }
-
-        if (dialogType != DialogType.DEFAULT) {
-            DialogActivity.startDialogActivity(this, dialogType)
-        }
-
-        return isDeviceStateValid
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -443,14 +384,12 @@ class BreadApp : Application(), KodeinAware {
         setDelayServerShutdown(false, -1)
 
         val breadBox = getBreadBox()
-        if (isDeviceStateValid()) {
-            startedScope.launch {
-                userManager
-                    .stateChanges()
-                    .first { it is BrdUserState.Enabled }
-                if (!userManager.isMigrationRequired()) {
-                    startWithInitializedWallet(breadBox)
-                }
+        startedScope.launch {
+            userManager
+                .stateChanges()
+                .first { it is BrdUserState.Enabled }
+            if (!userManager.isMigrationRequired()) {
+                startWithInitializedWallet(breadBox)
             }
         }
     }
@@ -573,6 +512,34 @@ class BreadApp : Application(), KodeinAware {
             if (!mDelayServerShutdown) {
                 mDelayServerShutdownCode = -1
             }
+        }
+    }
+
+    private fun createEncryptedPrefs(): SharedPreferences? {
+        val masterKeys = try {
+            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        } catch (e: GeneralSecurityException) {
+            BRReportsManager.error("Failed to create Master Keys", e)
+            return null
+        } catch (e: IOException) {
+            BRReportsManager.error("Failed to create Master Keys", e)
+            return null
+        }
+
+        return try {
+            EncryptedSharedPreferences.create(
+                ENCRYPTED_PREFS_FILE,
+                masterKeys,
+                this@BreadApp,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (e: GeneralSecurityException) {
+            BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
+            null
+        } catch (e: IOException) {
+            BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
+            null
         }
     }
 }

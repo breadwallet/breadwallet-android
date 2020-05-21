@@ -358,15 +358,12 @@ object BRSharedPrefs {
             }
         }
 
-    @JvmStatic
-    fun getDebugHost(context: Context? = null): String? =
+    fun getDebugHost(): String? =
         brdPrefs.getString(DEBUG_HOST, "")
 
-    @JvmStatic
-    fun putDebugHost(context: Context? = null, host: String) =
+    fun putDebugHost(host: String) =
         brdPrefs.edit { putString(DEBUG_HOST, host) }
 
-    @JvmStatic
     fun clearAllPrefs(context: Context? = null) = brdPrefs.edit { clear() }
 
     @JvmStatic

@@ -25,17 +25,21 @@
 package com.breadwallet.tools.security
 
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
 import androidx.core.content.edit
+import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
+import com.breadwallet.app.ApplicationLifecycleObserver
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logInfo
-import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
 import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
+import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +66,7 @@ import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.pow
 
 const val PIN_LENGTH = 6
@@ -76,14 +81,13 @@ interface BrdUserManager {
     suspend fun setupWithPhrase(phrase: ByteArray): SetupResult
     suspend fun migrateKeystoreData(): Boolean
 
-    suspend fun isAccountInvalidated(): Boolean
+    suspend fun checkAccountInvalidated()
 
     fun isInitialized(): Boolean
     fun getState(): BrdUserState
     fun stateChanges(disabledUpdates: Boolean = false): Flow<BrdUserState>
 
     fun isMigrationRequired(): Boolean
-    fun getKeyStoreStatus(): KeyStoreStatus
 
     suspend fun getPhrase(): ByteArray?
     fun getAccount(): Account?
@@ -127,18 +131,23 @@ private const val KEY_ETH_PUB_KEY = "ethPublicKey"
 
 @Suppress("TooManyFunctions")
 class CryptoUserManager(
-    private val store: SharedPreferences,
+    private val createStore: () -> SharedPreferences?,
     private val metaDataProvider: AccountMetaDataProvider
 ) : BrdUserManager {
 
+    private var store: SharedPreferences? = null
+
     // TODO: Remove this once BRKeyStore auth screen logic is refactored
     private val context get() = BreadApp.getBreadContext()
+    private val keyguard = checkNotNull(context.getSystemService<KeyguardManager>())
 
     private val mutex = Mutex()
 
     private val resultChannel = Channel<Int>()
     private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
+    private val invalidated = AtomicBoolean()
+    private val keyStoreStatus = AtomicReference<KeyStoreStatus>()
     private val locked = AtomicBoolean(false)
     private val disabledSeconds = AtomicInteger(0)
     private var token: String? = null
@@ -146,7 +155,33 @@ class CryptoUserManager(
     private var jwtExp: Long? = null
 
     init {
-        startDisabledTimer(getFailTimestamp())
+        val newStore = createStore()
+        val currentStatus = BRKeyStore.getValidityStatus()
+        keyStoreStatus.set(currentStatus)
+
+        if (newStore != null && currentStatus == KeyStoreStatus.VALID) {
+            store = newStore
+            startDisabledTimer(getFailTimestamp())
+        }
+        stateChangeChannel.offer(Unit)
+
+        ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
+            if (event == Lifecycle.Event.ON_START) {
+                val newStatus = BRKeyStore.getValidityStatus()
+                if (keyStoreStatus.get() != newStatus) {
+                    if (BRKeyStore.getValidityStatus() == KeyStoreStatus.VALID) {
+                        val nextStore = createStore()
+                        if (nextStore != null) {
+                            store = nextStore
+                        }
+                    } else {
+                        store = null
+                    }
+                    keyStoreStatus.set(newStatus)
+                    stateChangeChannel.offer(Unit)
+                }
+            }
+        }
     }
 
     override suspend fun setupWithGeneratedPhrase(): SetupResult {
@@ -169,7 +204,7 @@ class CryptoUserManager(
             Key.getDefaultWordList()
         ).orNull() ?: return SetupResult.FailedToCreateApiKey
 
-        store.edit {
+        checkNotNull(store).edit {
             putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
         }
         val creationDate = recoverCreationDate()
@@ -212,28 +247,37 @@ class CryptoUserManager(
         true
     }
 
-    override suspend fun isAccountInvalidated(): Boolean {
+    override suspend fun checkAccountInvalidated() {
         val deviceId = BRSharedPrefs.getDeviceId()
-        val invalidated = store.getBytes(KEY_ACCOUNT, null)?.let {
+        val invalidated = checkNotNull(store).getBytes(KEY_ACCOUNT, null)?.let {
             Account.createFromSerialization(it, deviceId).orNull() == null
         } ?: false
 
-        if (!invalidated) return false
-        val phrase = getPhrase() ?: return true
+        if (!invalidated) return
+        val phrase = getPhrase()
+        if (phrase == null) {
+            this.invalidated.set(true)
+            stateChangeChannel.offer(Unit)
+            return
+        }
 
         logInfo("Account needs to be re-created from phrase.")
 
-        val account =
-            Account.createFromPhrase(
-                phrase,
-                Date(getWalletCreationTime()),
-                deviceId
-            ).get() ?: return true
-        store.edit { putBytes(KEY_ACCOUNT, account.serialize()) }
+        val account = Account.createFromPhrase(
+            phrase,
+            Date(getWalletCreationTime()),
+            deviceId
+        ).orNull()
 
-        logInfo("Account re-created.")
-
-        return false
+        if (account == null) {
+            this.invalidated.set(true)
+            stateChangeChannel.offer(Unit)
+        } else {
+            logInfo("Account re-created.")
+            checkNotNull(store).edit {
+                putBytes(KEY_ACCOUNT, account.serialize())
+            }
+        }
     }
 
     override fun isInitialized() = getState() != BrdUserState.Uninitialized
@@ -242,9 +286,28 @@ class CryptoUserManager(
         !isInitialized() &&
             (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.getAccount(context) != null)
 
-    override fun getKeyStoreStatus(): KeyStoreStatus = BRKeyStore.getValidityStatus()
-
     override fun getState(): BrdUserState {
+        if (invalidated.get()) {
+            return BrdUserState.KeyStoreInvalid.Uninstall
+        }
+        if (!keyguard.isKeyguardSecure) {
+            return BrdUserState.KeyStoreInvalid.Lock
+        }
+        when (keyStoreStatus.get()) {
+            KeyStoreStatus.VALID -> Unit // Ignore
+            KeyStoreStatus.INVALID_UNINSTALL ->
+                return BrdUserState.KeyStoreInvalid.Uninstall
+            KeyStoreStatus.INVALID_WIPE ->
+                return BrdUserState.KeyStoreInvalid.Wipe
+            else -> if (store == null) {
+                return if (BRKeyStore.requiresUninstall()) {
+                    BrdUserState.KeyStoreInvalid.Uninstall
+                } else {
+                    BrdUserState.KeyStoreInvalid.Wipe
+                }
+            }
+        }
+
         if (getAccount() == null) return BrdUserState.Uninitialized
         return when {
             disabledSeconds.get() > 0 -> {
@@ -275,7 +338,7 @@ class CryptoUserManager(
         executeWithAuth { BRKeyStore.getPhrase(it, GET_PHRASE_RC) }
 
     override fun getAccount(): Account? =
-        store.getBytes(KEY_ACCOUNT, null)?.run {
+        checkNotNull(store).getBytes(KEY_ACCOUNT, null)?.run {
             Account.createFromSerialization(
                 this,
                 BRSharedPrefs.getDeviceId()
@@ -289,10 +352,10 @@ class CryptoUserManager(
                 BRSharedPrefs.getDeviceId()
             ).orNull()
         )
-        store.edit { putBytes(KEY_ACCOUNT, accountBytes) }
+        checkNotNull(store).edit { putBytes(KEY_ACCOUNT, accountBytes) }
     }
 
-    override fun getAuthKey() = store.getBytes(KEY_AUTH_KEY, null)
+    override fun getAuthKey() = checkNotNull(store).getBytes(KEY_AUTH_KEY, null)
 
     override suspend fun configurePinCode(pinCode: String) {
         checkNotNull(getPhrase()) { "Phrase is null, cannot set pin code." }
@@ -352,11 +415,11 @@ class CryptoUserManager(
     }
 
     @Synchronized
-    override fun getToken() = token ?: store.getString(KEY_TOKEN, null)
+    override fun getToken() = token ?: checkNotNull(store).getString(KEY_TOKEN, null)
 
     @Synchronized
     override fun putToken(token: String) {
-        store.edit { putString(KEY_TOKEN, token) }
+        checkNotNull(store).edit { putString(KEY_TOKEN, token) }
         this.token = token
     }
 
@@ -365,12 +428,12 @@ class CryptoUserManager(
         if ((getBdbJwtExp() - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
             null
         } else {
-            jwt ?: store.getString(KEY_BDB_JWT, null)
+            jwt ?: checkNotNull(store).getString(KEY_BDB_JWT, null)
         }
 
     @Synchronized
     override fun putBdbJwt(jwt: String, exp: Long) {
-        store.edit {
+        checkNotNull(store).edit {
             putString(KEY_BDB_JWT, jwt)
             putLong(KEY_BDB_JWT_EXP, exp)
         }
@@ -379,22 +442,23 @@ class CryptoUserManager(
     }
 
     @Synchronized
-    private fun getBdbJwtExp() = jwtExp ?: store.getLong(KEY_BDB_JWT_EXP, 0)
+    private fun getBdbJwtExp() =
+        jwtExp ?: checkNotNull(store).getLong(KEY_BDB_JWT_EXP, 0)
 
     /**
      * Used to determine address mismatch cases for tracking purposes, therefore exposed
      * as part of the implementation rather than the [BrdUserManager] interface.
      */
-    fun getEthPublicKey(): ByteArray? = store.getBytes(KEY_ETH_PUB_KEY, null)
+    fun getEthPublicKey(): ByteArray? =
+        checkNotNull(store).getBytes(KEY_ETH_PUB_KEY, null)
 
-    private suspend fun generatePhrase(): ByteArray {
+    private fun generatePhrase(): ByteArray {
         val words = Key.getDefaultWordList()
-        return Account.generatePhrase(words)
-            .also { phrase ->
-                check(Account.validatePhrase(phrase, words)) {
-                    "Invalid phrase generated."
-                }
+        return Account.generatePhrase(words).also { phrase ->
+            check(Account.validatePhrase(phrase, words)) {
+                "Invalid phrase generated."
             }
+        }
     }
 
     private suspend fun initAccount(phrase: ByteArray, creationDate: Date, apiKey: Key? = null) =
@@ -406,7 +470,7 @@ class CryptoUserManager(
                     BRKeyStore.putPhrase(phrase, context, PUT_PHRASE_RC)
                     BRKeyStore.getPhrase(context, GET_PHRASE_RC)
                 } ?: return@withLock SetupResult.FailedToPersistPhrase
-                
+
                 val account = Account.createFromPhrase(
                     storedPhrase,
                     creationDate,
@@ -439,12 +503,14 @@ class CryptoUserManager(
             }
         }
 
-    private fun getPinCode() = store.getString(KEY_PIN_CODE, "") ?: ""
+    private fun getPinCode() =
+        checkNotNull(store).getString(KEY_PIN_CODE, "") ?: ""
 
     private fun putEthPublicKey(ethPubKey: ByteArray) =
-        store.edit { putBytes(KEY_ETH_PUB_KEY, ethPubKey) }
+        checkNotNull(store).edit { putBytes(KEY_ETH_PUB_KEY, ethPubKey) }
 
-    private fun getWalletCreationTime() = store.getLong(KEY_CREATION_TIME, 0L)
+    private fun getWalletCreationTime() =
+        checkNotNull(store).getLong(KEY_CREATION_TIME, 0L)
 
     private fun disabledUntil(failCount: Int, failTimestamp: Long): Long {
         val pow =
@@ -454,17 +520,20 @@ class CryptoUserManager(
     }
 
     private fun putPinCode(pinCode: String) {
-        store.edit { putString(KEY_PIN_CODE, pinCode) }
+        checkNotNull(store).edit { putString(KEY_PIN_CODE, pinCode) }
     }
 
-    private fun getFailCount() = store.getInt(KEY_FAIL_COUNT, 0)
+    private fun getFailCount() =
+        checkNotNull(store).getInt(KEY_FAIL_COUNT, 0)
 
-    private fun putFailCount(count: Int) = store.edit { putInt(KEY_FAIL_COUNT, count) }
+    private fun putFailCount(count: Int) =
+        checkNotNull(store).edit { putInt(KEY_FAIL_COUNT, count) }
 
-    private fun getFailTimestamp(): Long = store.getLong(KEY_FAIL_TIMESTAMP, 0)
+    private fun getFailTimestamp(): Long =
+        checkNotNull(store).getLong(KEY_FAIL_TIMESTAMP, 0)
 
     private fun putFailTimestamp(timestamp: Long) =
-        store.edit { putLong(KEY_FAIL_TIMESTAMP, timestamp) }
+        checkNotNull(store).edit { putLong(KEY_FAIL_TIMESTAMP, timestamp) }
 
     private fun startDisabledTimer(failTimestamp: Long) {
         if (failTimestamp > 0) {
@@ -551,7 +620,7 @@ class CryptoUserManager(
         apiKey: Key,
         creationDate: Date
     ) {
-        store.edit {
+        checkNotNull(store).edit {
             putBytes(KEY_ACCOUNT, account.serialize())
             putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
             putLong(KEY_CREATION_TIME, creationDate.time)
@@ -572,7 +641,7 @@ class CryptoUserManager(
 
     private fun wipeAccount() {
         BRKeyStore.deletePhrase(context)
-        store.edit {
+        checkNotNull(store).edit {
             putString(KEY_ACCOUNT, null)
             putString(KEY_AUTH_KEY, null)
             putLong(KEY_CREATION_TIME, 0)

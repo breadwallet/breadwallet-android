@@ -194,14 +194,12 @@ public final class BRKeyStore {
             //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
             // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
 
-            boolean isGoogleDevice = MANUFACTURER_GOOGLE.equals(Build.MANUFACTURER);
-            if ((isGoogleDevice && android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.O_MR1)
-                    || (!isGoogleDevice && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)) {
-                Log.e(TAG, "The key store has been invalidated. Uninstall required. Manufacturer: "
+            if (requiresUninstall()) {
+                Log.w(TAG, "The key store has been invalidated. Uninstall required. Manufacturer: "
                         + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
                 return KeyStoreStatus.INVALID_UNINSTALL;
             } else {
-                Log.e(TAG, "The key store has been invalidated. Wipe required. Manufacturer: "
+                Log.w(TAG, "The key store has been invalidated. Wipe required. Manufacturer: "
                         + Build.MANUFACTURER + "OS Version: " + Build.VERSION.RELEASE, e);
                 return KeyStoreStatus.INVALID_WIPE;
             }
@@ -877,6 +875,13 @@ public final class BRKeyStore {
             }
         }
         return bytes;
+    }
+
+    public static boolean requiresUninstall() {
+        boolean isGoogleDevice = MANUFACTURER_GOOGLE.equals(Build.MANUFACTURER);
+        boolean isOmr1 = android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.O_MR1;
+        boolean isOorAbove = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O;
+        return (isGoogleDevice && isOmr1) || (!isGoogleDevice && isOorAbove);
     }
 
     public static class AliasObject {

@@ -54,6 +54,7 @@ class AlertDialogController(
         private const val KEY_NEGATIVE_TEXT = "negative_text"
         private const val KEY_ICON_RES_ID = "icon_res_id"
         private const val KEY_SHOW_HELP = "show_help"
+        private const val KEY_DISMISSIBLE = "dismissible"
     }
 
     constructor(
@@ -63,7 +64,8 @@ class AlertDialogController(
         negativeText: String? = null,
         iconResId: Int? = null,
         showHelp: Boolean = false,
-        dialogId: String = ""
+        dialogId: String = "",
+        dismissible: Boolean = false
     ) : this(
         bundleOf(
             KEY_DIALOG_ID to dialogId,
@@ -72,7 +74,8 @@ class AlertDialogController(
             KEY_POSITIVE_TEXT to positiveText,
             KEY_NEGATIVE_TEXT to negativeText,
             KEY_ICON_RES_ID to iconResId,
-            KEY_SHOW_HELP to showHelp
+            KEY_SHOW_HELP to showHelp,
+            KEY_DISMISSIBLE to dismissible
         )
     )
 
@@ -83,20 +86,28 @@ class AlertDialogController(
 
     override val layoutId = R.layout.controller_alert_dialog
 
+    val dialogId = arg<String>(KEY_DIALOG_ID)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        val dialogId = arg<String>(KEY_DIALOG_ID)
+        val dismissible = arg<Boolean>(KEY_DISMISSIBLE)
         layoutBackground.setOnClickListener {
-            findListener<Listener>()?.onDismissed(dialogId, this)
-            router.popCurrentController()
+            if (dismissible) {
+                findListener<Listener>()?.onDismissed(dialogId, this)
+                router.popCurrentController()
+            }
         }
         pos_button.setOnClickListener {
             findListener<Listener>()?.onPositiveClicked(dialogId, this)
-            router.popCurrentController()
+            if (dismissible) {
+                router.popCurrentController()
+            }
         }
         neg_button.setOnClickListener {
             findListener<Listener>()?.onNegativeClicked(dialogId, this)
-            router.popCurrentController()
+            if  (dismissible) {
+                router.popCurrentController()
+            }
         }
         help_icon.setOnClickListener {
             findListener<Listener>()?.onHelpClicked(dialogId, this)
@@ -119,7 +130,9 @@ class AlertDialogController(
     }
 
     override fun handleBack(): Boolean {
-        findListener<Listener>()?.onDismissed(arg(KEY_DIALOG_ID), this)
-        return super.handleBack()
+        return if (arg(KEY_DISMISSIBLE)) {
+            findListener<Listener>()?.onDismissed(arg(KEY_DIALOG_ID), this)
+            super.handleBack()
+        } else true
     }
 }
