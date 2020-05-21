@@ -36,4 +36,9 @@ sealed class BrdUserState {
     object Enabled : BrdUserState()
     object Locked : BrdUserState()
     object Uninitialized : BrdUserState()
+    sealed class KeyStoreInvalid : BrdUserState() {
+        object Wipe : KeyStoreInvalid()
+        object Uninstall : KeyStoreInvalid()
+        object Lock : KeyStoreInvalid()
+    }
 }

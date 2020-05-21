@@ -30,10 +30,9 @@ import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.view.dialog.DialogActivity
-import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType.KEY_STORE_INVALID_WIPE
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.keystore.KeyStoreController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.IntroController
 import kotlinx.coroutines.Dispatchers.Main
@@ -91,7 +90,7 @@ class MigrateController(
             router.replaceTopController(RouterTransaction.with(LoginController()))
         } else {
             waitUntilAttached()
-            DialogActivity.startDialogActivity(activity, KEY_STORE_INVALID_WIPE)
+            router.replaceTopController(RouterTransaction.with(KeyStoreController()))
         }
     }
 

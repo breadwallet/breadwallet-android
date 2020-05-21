@@ -114,7 +114,7 @@
                 android:background="@android:color/transparent"
                 android:textColor="@color/white"
                 android:fontFamily="@font/circular_pro_bold"
-                app:buttonType="4"
+                app:buttonType="1"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 

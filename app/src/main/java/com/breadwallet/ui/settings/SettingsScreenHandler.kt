@@ -78,7 +78,9 @@ class SettingsScreenHandler(
                 LogsUtils.shareLogs(context, breadBox, userManager)
             }
             is F.SetApiServer -> {
-                BreadApp.setDebugHost(value.host)
+                if (BuildConfig.DEBUG) {
+                    BRSharedPrefs.putDebugHost(value.host)
+                }
                 loadOptions(SettingsSection.DEVELOPER_OPTION)
             }
             is F.SetPlatformDebugUrl -> {
