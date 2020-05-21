@@ -188,7 +188,7 @@ object BRApiManager {
         context: Context,
         tokenList: List<String>
     ) {
-        val toCurrency = getPreferredFiatIso(context)
+        val toCurrency = getPreferredFiatIso()
         val priceChanges = fetch24HrsChange(context, tokenList, toCurrency)
         RatesRepository.getInstance(context).updatePriceChanges(priceChanges)
     }
@@ -320,7 +320,7 @@ object BRApiManager {
             val date = formatter.parse(strDate)
             if (date != null) {
                 val timeStamp = date.time
-                putSecureTime(app, timeStamp)
+                putSecureTime(timeStamp)
             }
         } catch (e: ParseException) {
             Log.e(TAG, "urlGET: ", e)

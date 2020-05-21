@@ -46,7 +46,7 @@ class InAppNotificationViewModel(val notification: InAppMessage) : ViewModel() {
      */
     fun markAsRead(actionButtonClicked: Boolean) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-            MessagesRepository.markAsRead(BreadApp.getBreadContext().applicationContext, notification.messageId)
+            MessagesRepository.markAsRead(notification.messageId)
 
             if (actionButtonClicked) {
                 EventUtils.pushEvent(EventUtils.EVENT_IN_APP_NOTIFICATION_CTA_BUTTON,

@@ -55,11 +55,6 @@ public class UiUtils {
     public static final String CURRENCY_QUERY_STRING = "&currency=";
     private static final String TAG = UiUtils.class.getName();
     private static long mLastClickTime = 0;
-    private static boolean mSupportIsShowing;
-
-    public static void setIsSupportFragmentShown(boolean isSupportFragmentShown) {
-        mSupportIsShowing = isSupportFragmentShown;
-    }
 
     public static LayoutTransition getDefaultTransition() {
         LayoutTransition itemLayoutTransition = new LayoutTransition();
@@ -90,50 +85,12 @@ public class UiUtils {
         return allow;
     }
 
-    public static void killAllFragments(Activity app) {
-        if (app != null && !app.isDestroyed()) {
-            app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-    }
-
-    public static void startBreadActivity(Activity from, boolean auth) {
-        if (from == null) {
-            return;
-        }
-        Class toStart = auth ? MainActivity.class : WalletController.class;
-
-        // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
-        if (toStart.equals(WalletController.class)) {
-
-            if (BRSharedPrefs.isNewWallet(from)) {
-                toStart = MainActivity.class;
-            }
-        }
-
-        Intent intent = new Intent(from, toStart);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        from.startActivity(intent);
-    }
-
     private static void setStatusBarColor(Activity app, int color) {
         if (app == null) return;
         Window window = app.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(app.getColor(color));
-    }
-
-    public static boolean isLast(Activity app) {
-        ActivityManager mngr = (ActivityManager) app.getSystemService(ACTIVITY_SERVICE);
-
-        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
-
-        if (taskList.get(0).numActivities == 1 &&
-                taskList.get(0).topActivity.getClassName().equals(app.getClass().getName())) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean isMainThread() {

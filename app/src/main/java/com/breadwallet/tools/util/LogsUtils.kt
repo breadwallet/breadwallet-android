@@ -81,7 +81,7 @@ object LogsUtils {
         appendln()
         addDeviceBlock()
         appendln()
-        addWalletBlock(context, breadBox, userManager)
+        addWalletBlock(breadBox, userManager)
     }
 
     private fun StringBuilder.addFeedbackBlock() {
@@ -102,8 +102,8 @@ object LogsUtils {
                 "Network: Mainnet"
             }
         )
-        for (bundleName in ServerBundlesHelper.getBundleNames(context)) {
-            appendln("Bundle '$bundleName' version: ${getBundleHash(context, bundleName)}")
+        for (bundleName in ServerBundlesHelper.getBundleNames()) {
+            appendln("Bundle '$bundleName' version: ${getBundleHash(bundleName)}")
         }
     }
 
@@ -117,14 +117,13 @@ object LogsUtils {
     }
 
     private fun StringBuilder.addWalletBlock(
-        context: Context,
         breadBox: BreadBox,
         userManager: BrdUserManager
     ) {
         appendln("Wallet")
         appendln("------------")
-        appendln("Wallet id: ${getWalletRewardId(context)}")
-        appendln("Device id: ${getDeviceId(context)}")
+        appendln("Wallet id: ${getWalletRewardId()}")
+        appendln("Device id: ${getDeviceId()}")
         breadBox.getSystemUnsafe()?.let { system ->
             system.walletManagers?.forEach { manager ->
                 append("${manager.currency.name}: ")
@@ -191,7 +190,7 @@ object LogsUtils {
             putExtra(Intent.EXTRA_EMAIL, arrayOf(DEFAULT_LOGS_EMAIL))
             putExtra(
                 Intent.EXTRA_SUBJECT,
-                String.format(LOGS_EMAIL_SUBJECT, getDeviceId(context))
+                String.format(LOGS_EMAIL_SUBJECT, getDeviceId())
             )
             putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, userManager))
         }

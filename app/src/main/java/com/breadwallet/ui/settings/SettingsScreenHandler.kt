@@ -84,7 +84,7 @@ class SettingsScreenHandler(
                 loadOptions(SettingsSection.DEVELOPER_OPTION)
             }
             is F.SetPlatformDebugUrl -> {
-                ServerBundlesHelper.setWebPlatformDebugURL(context, value.url)
+                ServerBundlesHelper.setWebPlatformDebugURL(value.url)
                 loadOptions(SettingsSection.DEVELOPER_OPTION)
             }
             is F.SetPlatformBundle -> {
@@ -248,7 +248,7 @@ class SettingsScreenHandler(
     }
 
     private fun getDeveloperOptions(): List<SettingsItem> {
-        val currentWebPlatformDebugURL = ServerBundlesHelper.getWebPlatformDebugURL(context)
+        val currentWebPlatformDebugURL = ServerBundlesHelper.getWebPlatformDebugURL()
         val webPlatformBundleAddOn = if (currentWebPlatformDebugURL.isNotEmpty()) {
             "(not used if debug URL specified)"
         } else {
@@ -271,18 +271,18 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Web Platform Debug URL",
                 SettingsOption.WEB_PLAT_DEBUG_URL,
-                subHeader = ServerBundlesHelper.getWebPlatformDebugURL(context)
+                subHeader = ServerBundlesHelper.getWebPlatformDebugURL()
             ),
             SettingsItem(
                 "Web Platform Bundle",
                 SettingsOption.WEB_PLAT_BUNDLE,
-                subHeader = ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.WEB),
+                subHeader = ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB),
                 addOn = webPlatformBundleAddOn
             ),
             SettingsItem(
                 "Token Bundle",
                 SettingsOption.TOKEN_BUNDLE,
-                subHeader = ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.TOKEN)
+                subHeader = ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN)
             ),
             SettingsItem(
                 "Native API Explorer",

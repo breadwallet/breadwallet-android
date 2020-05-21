@@ -140,19 +140,13 @@ class SettingsController(
         when (effect) {
             F.ShowApiServerDialog -> showApiServerDialog(BreadApp.host)
             F.ShowPlatformDebugUrlDialog -> showPlatformDebugUrlDialog(
-                ServerBundlesHelper.getWebPlatformDebugURL(applicationContext)
+                ServerBundlesHelper.getWebPlatformDebugURL()
             )
             F.ShowTokenBundleDialog -> showTokenBundleDialog(
-                ServerBundlesHelper.getBundle(
-                    applicationContext,
-                    ServerBundlesHelper.Type.TOKEN
-                )
+                ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN)
             )
             F.ShowPlatformBundleDialog -> showPlatformBundleDialog(
-                ServerBundlesHelper.getBundle(
-                    applicationContext,
-                    ServerBundlesHelper.Type.WEB
-                )
+                ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB)
             )
         }
     }

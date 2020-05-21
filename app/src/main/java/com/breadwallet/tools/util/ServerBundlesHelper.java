@@ -118,7 +118,7 @@ public final class ServerBundlesHelper {
                             // Update bundle version in shared preferences, this is used to check if we have latest version.
                             String currentBundleVersion = getCurrentBundleVersion(bundleFile);
                             if (!Utils.isNullOrEmpty(currentBundleVersion)) {
-                                BRSharedPrefs.putBundleHash(context, bundleName, currentBundleVersion);
+                                BRSharedPrefs.putBundleHash(bundleName, currentBundleVersion);
                             }
                         }
                     }
@@ -134,14 +134,13 @@ public final class ServerBundlesHelper {
     /**
      * Gets the names of the server bundles to be used.
      *
-     * @param context Execution context.
      * @return Server bundles to be used.
      */
-    public static String[] getBundleNames(Context context) {
+    public static String[] getBundleNames() {
         if (BuildConfig.DEBUG) {
             String[] debugBundles = {
-                    getBundle(context, Type.TOKEN),
-                    getBundle(context, Type.WEB)
+                    getBundle(Type.TOKEN),
+                    getBundle(Type.WEB)
             };
             return debugBundles;
         } else {
@@ -158,7 +157,7 @@ public final class ServerBundlesHelper {
      */
     public static void setDebugBundle(final Context context, Type type, String bundle) {
         if (BuildConfig.DEBUG) {
-            BRSharedPrefs.putDebugBundle(context, type, bundle);
+            BRSharedPrefs.putDebugBundle(type, bundle);
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
                     .execute(() -> updateBundles(context));
         }
@@ -167,12 +166,11 @@ public final class ServerBundlesHelper {
     /**
      * Get server bundle to use or the stored debug bundle if available and if build is DEBUG.
      *
-     * @param context Execution context.
      * @param type    Bundle type.
      * @return The bundle to be used.
      */
-    public static String getBundle(Context context, Type type) {
-        String debugBundle = BuildConfig.DEBUG ? BRSharedPrefs.getDebugBundle(context, type) : null;
+    public static String getBundle(Type type) {
+        String debugBundle = BuildConfig.DEBUG ? BRSharedPrefs.getDebugBundle(type) : null;
         String defaultBundle;
         switch (type) {
             case TOKEN:
@@ -190,23 +188,21 @@ public final class ServerBundlesHelper {
     /**
      * Saves the given web platform debug URL into the shared preferences, if build is DEBUG.
      *
-     * @param context Execution context.
      * @param webPlatformDebugURL The web platform debug URL.
      */
-    public static void setWebPlatformDebugURL(Context context, String webPlatformDebugURL) {
+    public static void setWebPlatformDebugURL(String webPlatformDebugURL) {
         if (BuildConfig.DEBUG) {
-            BRSharedPrefs.putWebPlatformDebugURL(context, webPlatformDebugURL);
+            BRSharedPrefs.putWebPlatformDebugURL(webPlatformDebugURL);
         }
     }
 
     /**
      * Returns the web platform debug URL from the shared preferences, if build is DEBUG.
      *
-     * @param context Execution context.
      * @return The web platform debug URL or empty.
      */
-    public static String getWebPlatformDebugURL(Context context) {
-        return BuildConfig.DEBUG ? BRSharedPrefs.getWebPlatformDebugURL(context) : "";
+    public static String getWebPlatformDebugURL() {
+        return BuildConfig.DEBUG ? BRSharedPrefs.getWebPlatformDebugURL() : "";
     }
 
     /**
@@ -214,9 +210,9 @@ public final class ServerBundlesHelper {
      * @param context Execution context.
      */
     public static synchronized void updateBundles(Context context) {
-        for (String bundleName : ServerBundlesHelper.getBundleNames(context)) {
+        for (String bundleName : ServerBundlesHelper.getBundleNames()) {
             File bundleFile = new File(getBundleResource(context, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
-            String currentTarVersion = BRSharedPrefs.getBundleHash(context, bundleName);
+            String currentTarVersion = BRSharedPrefs.getBundleHash(bundleName);
             if (bundleFile.exists()) {
                 Log.d(TAG, bundleFile + ": updateBundles: exists");
                 String latestVersion = fetchBundleVersion(context, bundleName);
@@ -230,7 +226,7 @@ public final class ServerBundlesHelper {
                         Log.d(TAG, bundleFile + ": updateBundles: don't have the most recent version, download diff");
                         downloadDiff(context, bundleName, currentTarVersion);
                         tryExtractTar(context, bundleName);
-                        BRSharedPrefs.putBundleHash(context, bundleName, latestVersion);
+                        BRSharedPrefs.putBundleHash(bundleName, latestVersion);
                     }
                 } else {
                     Log.d(TAG, bundleFile + ": updateBundles: latestVersion is null");
@@ -257,7 +253,7 @@ public final class ServerBundlesHelper {
                 } else {
                     String currentBundleVersion = getCurrentBundleVersion(bundleFile);
                     if (!Utils.isNullOrEmpty(currentBundleVersion)) {
-                        BRSharedPrefs.putBundleHash(context, bundleName, currentBundleVersion);
+                        BRSharedPrefs.putBundleHash(bundleName, currentBundleVersion);
                     }
                 }
 

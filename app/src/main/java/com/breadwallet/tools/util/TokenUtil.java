@@ -299,7 +299,7 @@ public final class TokenUtil {
 
     public static String getTokenIconPath(Context context, String currencyCode, boolean withBackground) {
         String bundleResource = ServerBundlesHelper
-                .getExtractedPath(context, ServerBundlesHelper.getBundle(context, ServerBundlesHelper.Type.TOKEN), null);
+                .getExtractedPath(context, ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN), null);
         String iconDirectoryName = withBackground
                 ? ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND : ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND;
         String iconFileName = String.format(ICON_FILE_NAME_FORMAT, currencyCode);

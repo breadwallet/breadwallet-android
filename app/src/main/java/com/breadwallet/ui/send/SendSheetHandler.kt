@@ -93,7 +93,7 @@ object SendSheetHandler {
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
         addTransformer(pollExchangeRate(breadBox, ratesRepository))
-        addTransformer(handleLoadBalance(context, breadBox, ratesRepository))
+        addTransformer(handleLoadBalance(breadBox, ratesRepository))
         addTransformer(validateAddress(breadBox))
         addTransformer(handleEstimateFee(breadBox))
         addTransformer(handleSendTransaction(breadBox, userManager))
@@ -158,7 +158,6 @@ object SendSheetHandler {
     }
 
     private fun handleLoadBalance(
-        context: Context,
         breadBox: BreadBox,
         rates: RatesRepository
     ) = flowTransformer<F.LoadBalance, E> { effects ->
@@ -167,7 +166,7 @@ object SendSheetHandler {
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
             val balanceBig =
                 (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
-            val fiatBig = getBalanceInFiat(context, balanceBig, wallet.balance, rates)
+            val fiatBig = getBalanceInFiat(balanceBig, wallet.balance, rates)
             val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
                 balanceBig
             } else {
@@ -361,14 +360,13 @@ object SendSheetHandler {
     }
 
     private fun getBalanceInFiat(
-        context: Context,
         balanceBig: BigDecimal,
         balanceAmt: Amount,
         rates: RatesRepository
     ) = rates.getFiatForCrypto(
         balanceBig,
         balanceAmt.currency.code,
-        BRSharedPrefs.getPreferredFiatIso(context)
+        BRSharedPrefs.getPreferredFiatIso()
     ) ?: BigDecimal.ZERO
 
     private fun handleLoadCryptoRequestData(

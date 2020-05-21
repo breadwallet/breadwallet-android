@@ -156,7 +156,7 @@ class HomeController(
     override fun M.render() {
         ifChanged(M::aggregatedFiatBalance) {
             total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
-                BRSharedPrefs.getPreferredFiatIso(activity),
+                BRSharedPrefs.getPreferredFiatIso(),
                 aggregatedFiatBalance
             )
         }
