@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.5 (4025001)]
 - Add a gray badge for testNet app icon.
 - Changing package name and cert for MainNet App.
+- Setting up Sonar.
+
 ## [4.2.4 (4024001)]
 - Fixing the issue with amount being same as min (added some unit tests)
 - Fixing the message about email / sms being sent.
