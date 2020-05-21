@@ -149,7 +149,7 @@ fun createHomeScreenHandler(
         walletProvider.enabledWallets().mapLatest { wallets ->
             val fiatIso = BRSharedPrefs.getPreferredFiatIso()
             val enabledWallets = wallets.mapNotNull { currencyId ->
-                val token = TokenUtil.getTokenItems(context)
+                val token = TokenUtil.getTokenItems()
                     .find { currencyId.equals(it.currencyId, true) }
                 if (token == null) {
                     null

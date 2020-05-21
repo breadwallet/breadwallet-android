@@ -160,7 +160,7 @@ class BreadApp : Application(), KodeinAware {
             BuildConfig.BITCOIN_TESTNET -> listOf(
                 "bitcoin-testnet:__native__",
                 "ethereum-ropsten:__native__",
-                "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6"
+                "ethereum-ropsten:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6"
             )
             else -> listOf(
                 "bitcoin-mainnet:__native__",
@@ -354,15 +354,9 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        if (!userManager.isInitialized()) {
-            // extract the bundles from the resources to be ready when the wallet is initialized
-            applicationScope.launch {
-                ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
-            }
-
-            applicationScope.launch(Dispatchers.Default) {
-                TokenUtil.initialize(mInstance, false)
-            }
+        applicationScope.launch {
+            ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
+            TokenUtil.initialize(mInstance, false)
         }
 
         registerReceiver(

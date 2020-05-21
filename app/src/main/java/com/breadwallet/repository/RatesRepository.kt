@@ -216,7 +216,7 @@ class RatesRepository private constructor(private val mContext: Context) {
     @get:Synchronized
     val allCurrencyCodesPossible: List<String>
         get() {
-            return TokenUtil.getTokenItems(mContext)
+            return TokenUtil.getTokenItems()
                 .map(TokenItem::exchangeRateCurrencyCode)
         }
 

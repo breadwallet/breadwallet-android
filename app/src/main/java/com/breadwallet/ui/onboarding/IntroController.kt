@@ -103,13 +103,13 @@ class IntroController : BaseController() {
 
     private fun startAnimations() {
         viewAttachScope.launch(Dispatchers.IO) {
-            val icons = TokenUtil.getTokenItems(applicationContext)
+            TokenUtil.waitUntilInitialized()
+            val icons = TokenUtil.getTokenItems()
                 .shuffled()
                 .take(ICONS_TO_SHOW)
-                .map { token ->
-                    TokenUtil.getTokenIconPath(applicationContext, token.symbol, false)
+                .mapNotNull { token ->
+                    TokenUtil.getTokenIconPath(token.symbol, false)
                 }
-                .filter { it.isNotBlank() }
 
             Main { loadViewsAndAnimate(icons) }
         }

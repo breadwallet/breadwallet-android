@@ -81,9 +81,9 @@ class FastSyncController(
         get() = subtypeEffectHandler<F, E> {
             addFunctionSync<F.LoadCurrencyIds>(Default) {
                 E.OnCurrencyIdsUpdated(
-                    TokenUtil.getTokenItems(applicationContext)
+                    TokenUtil.getTokenItems()
                         .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
-                        .mapValues { it.value.currencyId ?: "" }
+                        .mapValues { it.value.currencyId }
                 )
             }
             addTransformer<F.MetaData> { effects ->

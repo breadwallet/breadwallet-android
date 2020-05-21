@@ -106,8 +106,7 @@ class WalletListItem(
 
             // Get icon for currency
             val tokenIconPath =
-                TokenUtil.getTokenIconPath(
-                    context, currencyCode.toUpperCase(Locale.ROOT), false)
+                TokenUtil.getTokenIconPath(currencyCode.toUpperCase(Locale.ROOT), false)
 
             if (!Utils.isNullOrEmpty(tokenIconPath)) {
                 val iconFile = File(tokenIconPath)

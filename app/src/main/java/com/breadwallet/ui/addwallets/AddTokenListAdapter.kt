@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.File
+import java.util.Locale
 
 class AddTokenListAdapter(
     private val context: Context,
@@ -72,13 +73,13 @@ class AddTokenListAdapter(
 
     override fun onBindViewHolder(holder: TokenItemViewHolder, position: Int) {
         val token = tokens[position]
-        val currencyCode = token.currencyCode.toLowerCase()
-        val tokenIconPath = TokenUtil.getTokenIconPath(context, currencyCode, true)
+        val currencyCode = token.currencyCode.toLowerCase(Locale.ROOT)
+        val tokenIconPath = TokenUtil.getTokenIconPath(currencyCode, true)
 
         val iconDrawable = holder.iconParent.background as GradientDrawable
 
         when {
-            tokenIconPath.isNullOrEmpty() -> {
+            tokenIconPath == null -> {
                 // If no icon is present, then use the capital first letter of the token currency code instead.
                 holder.iconLetter.visibility = View.VISIBLE
                 iconDrawable.setColor(Color.parseColor(token.startColor))
