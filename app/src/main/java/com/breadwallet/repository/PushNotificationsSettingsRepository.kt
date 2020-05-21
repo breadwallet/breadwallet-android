@@ -67,24 +67,24 @@ object PushNotificationsSettingsRepositoryImpl : PushNotificationsSettingsReposi
     private val context: Context get() = BreadApp.getBreadContext()
 
     override fun togglePushNotifications(notificationsEnable: Boolean): Boolean {
-        val token = BRSharedPrefs.getFCMRegistrationToken(context)
+        val token = BRSharedPrefs.getFCMRegistrationToken()
         val remoteUpdated = when {
             token.isNullOrBlank() -> // We don't have a token yet, we will update or ignore once we receive one.
                 true
             notificationsEnable -> NotificationsSettingsClientImpl.registerToken(context, token)
             else -> NotificationsSettingsClientImpl.unregisterToken(context, token)
         }
-        if (remoteUpdated) BRSharedPrefs.putShowNotification(context, notificationsEnable)
+        if (remoteUpdated) BRSharedPrefs.putShowNotification(notificationsEnable)
         return remoteUpdated
     }
 
     override fun getNotificationsState(): NotificationsState {
-        val appPreferences = BRSharedPrefs.getShowNotification(context)
+        val appPreferences = BRSharedPrefs.getShowNotification()
         val systemPreferences = NotificationManagerCompat.from(context).areNotificationsEnabled()
         return when {
-            !systemPreferences -> NotificationsState.SYSTEM_DISABLED
-            appPreferences -> NotificationsState.APP_ENABLED
-            else -> NotificationsState.APP_DISABLED
+            !systemPreferences -> SYSTEM_DISABLED
+            appPreferences -> APP_ENABLED
+            else -> APP_DISABLED
         }
     }
 }

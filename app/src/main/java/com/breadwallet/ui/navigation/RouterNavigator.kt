@@ -260,7 +260,7 @@ class RouterNavigator(
             is Link.PlatformDebugUrl -> {
                 val context = router.activity!!.applicationContext
                 if (!link.webBundleUrl.isNullOrBlank()) {
-                    ServerBundlesHelper.setWebPlatformDebugURL(context, link.webBundleUrl)
+                    ServerBundlesHelper.setWebPlatformDebugURL(link.webBundleUrl)
                 } else if (!link.webBundle.isNullOrBlank()) {
                     ServerBundlesHelper.setDebugBundle(
                         context,

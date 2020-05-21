@@ -28,6 +28,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.browser.BrdNativeJs
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 /**
@@ -61,9 +62,9 @@ fun buildSignedRequest(
             .addHeader(BrdNativeJs.DATE_HEADER, requestDateString)
             .header("content-type", contentType)
     when (method) {
-        "POST" -> builder.post(RequestBody.create(null, body))
-        "PUT" -> builder.put(RequestBody.create(null, body))
-        "PATH" -> builder.patch(RequestBody.create(null, body))
+        "POST" -> builder.post(body.toRequestBody(null))
+        "PUT" -> builder.put(body.toRequestBody(null))
+        "PATH" -> builder.patch(body.toRequestBody(null))
     }
     return builder.build()
 }

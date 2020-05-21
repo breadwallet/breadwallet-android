@@ -279,7 +279,7 @@ public class HTTPServer extends AbstractLifeCycle {
      */
     private boolean doStartServer() {
         // Get the last port used in case we are restarting the server.
-        int port = BRSharedPrefs.getHttpServerPort(mContext);
+        int port = BRSharedPrefs.getHttpServerPort();
         if (port < MIN_PORT || port > MAX_PORT) {
             Random rand = new Random();
             port = rand.nextInt((MAX_PORT - MIN_PORT)) + MIN_PORT;
@@ -291,7 +291,7 @@ public class HTTPServer extends AbstractLifeCycle {
 
             // Save the port for future restarts.
             mPort = port;
-            BRSharedPrefs.putHttpServerPort(mContext, port);
+            BRSharedPrefs.putHttpServerPort(port);
 
             Log.d(TAG, "doStartServer: Server started in port " + mPort);
             mServer.join();
@@ -299,7 +299,7 @@ public class HTTPServer extends AbstractLifeCycle {
         } catch (Exception e) {
             Log.e(TAG, "doStart: Error starting the local server. Trying again on new port.", e);
             BRReportsManager.reportBug(e);
-            BRSharedPrefs.putHttpServerPort(mContext, 0);
+            BRSharedPrefs.putHttpServerPort(0);
             return false;
         }
     }

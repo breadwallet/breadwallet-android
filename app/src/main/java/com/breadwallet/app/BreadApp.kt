@@ -481,8 +481,8 @@ class BreadApp : Application(), KodeinAware {
 
     private fun incrementAppForegroundedCounter() {
         BRSharedPrefs.putInt(
-            this, BRSharedPrefs.APP_FOREGROUNDED_COUNT,
-            BRSharedPrefs.getInt(this, BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0) + 1
+            BRSharedPrefs.APP_FOREGROUNDED_COUNT,
+            BRSharedPrefs.getInt(BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0) + 1
         )
     }
 

@@ -55,7 +55,6 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
@@ -142,7 +141,7 @@ fun createHomeScreenHandler(
     addFunction<F.LoadIsBuyBellNeeded> {
         val isBuyBellNeeded =
             ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
-                CurrencyUtils.isBuyNotificationNeeded(context)
+                CurrencyUtils.isBuyNotificationNeeded()
         E.OnBuyBellNeededLoaded(isBuyBellNeeded)
     }
 

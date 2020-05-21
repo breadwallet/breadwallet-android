@@ -538,7 +538,7 @@ public final class BRKeyStore {
             if (accountBytes == null || accountBytes.length == 0) {
                 return null;
             }
-            return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId(context)).orNull();
+            return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId()).orNull();
         } catch (UserNotAuthenticatedException e) {
             Logger.Companion.error("Failed to get Account.", e);
         }
@@ -677,7 +677,7 @@ public final class BRKeyStore {
     public static boolean putFailCount(int failCount, Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
-            long time = BRSharedPrefs.getSecureTime(context);
+            long time = BRSharedPrefs.getSecureTime();
             putFailTimeStamp(time, context);
         }
         byte[] bytesToStore = TypesConverter.intToBytes(failCount);

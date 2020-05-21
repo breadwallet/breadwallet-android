@@ -25,7 +25,6 @@
 package com.platform.util
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.format.DateUtils
@@ -53,12 +52,12 @@ object AppReviewPromptManager {
      * - There is at least one transaction in the [transactionsList] from the [currencyCode] that
      * has been received and completed in the last 24 hours.
      */
-    fun showReview(context: Context, currencyCode: String, transactionsList: List<WalletTransaction>): Boolean {
-        val foregroundedTimes = BRSharedPrefs.getInt(context, BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0)
+    fun showReview(currencyCode: String, transactionsList: List<WalletTransaction>): Boolean {
+        val foregroundedTimes = BRSharedPrefs.getInt(BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0)
         return if (foregroundedTimes >= MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK
                 // check if we didn't already show the prompt
-                && !BRSharedPrefs.getBoolean(context, BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, false)
-                && !BRSharedPrefs.getBoolean(context, BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, false)) {
+                && !BRSharedPrefs.getBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, false)
+                && !BRSharedPrefs.getBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, false)) {
             // Check if it has received a transaction in the last 24 hours.
             val tx = transactionsList.firstOrNull {
                 it.isReceived && it.isComplete
@@ -73,14 +72,14 @@ object AppReviewPromptManager {
     /**
      * Save that the user dismissed the review prompt to avoid showing the prompt again.
      */
-    fun onReviewPromptDismissed(context: Context) =
-            BRSharedPrefs.putBoolean(context, BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, true)
+    fun onReviewPromptDismissed() =
+            BRSharedPrefs.putBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, true)
 
     /**
      * Open Google Play from [activity] for the user to submit a review of the app.
      */
     fun openGooglePlay(activity: Activity) {
-        BRSharedPrefs.putBoolean(activity, BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, true)
+        BRSharedPrefs.putBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, true)
         // Try to send an intent to google play and if that fails open google play in the browser.
         try {
             val googlePlayIntent = Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_APP_URI))

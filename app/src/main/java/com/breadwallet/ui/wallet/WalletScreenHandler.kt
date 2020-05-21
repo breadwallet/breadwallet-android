@@ -89,7 +89,7 @@ object WalletScreenHandler {
         addActionSync<F.RecordReviewPrompt>(Default, ::handleRecordReviewPrompt)
         addActionSync<F.RecordReviewPromptDismissed>(
             Default,
-            handleRecordReviewPromptDismissed(context)
+            ::handleRecordReviewPromptDismissed
         )
 
         addConsumerSync(Default, ::handleTrackEvent)
@@ -125,7 +125,7 @@ object WalletScreenHandler {
         context: Context
     ) = flowTransformer<F.CheckReviewPrompt, E> { effects ->
         effects.transformLatest { (currencyCode, transactions) ->
-            if (AppReviewPromptManager.showReview(context, currencyCode, transactions)) {
+            if (AppReviewPromptManager.showReview(currencyCode, transactions)) {
                 emit(E.OnShowReviewPrompt)
             }
         }
@@ -135,11 +135,9 @@ object WalletScreenHandler {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED)
     }
 
-    private fun handleRecordReviewPromptDismissed(
-        context: Context
-    ): () -> Unit = {
+    private fun handleRecordReviewPromptDismissed() {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED)
-        AppReviewPromptManager.onReviewPromptDismissed(context)
+        AppReviewPromptManager.onReviewPromptDismissed()
     }
 
     private fun handleTrackEvent(value: F.TrackEvent) {
@@ -150,7 +148,7 @@ object WalletScreenHandler {
         context: Context
     ) = flowTransformer<F.LoadFiatPricePerUnit, E> { effects ->
         val ratesRepository = RatesRepository.getInstance(context)
-        val fiatIso = BRSharedPrefs.getPreferredFiatIso(context)
+        val fiatIso = BRSharedPrefs.getPreferredFiatIso()
         effects
             .flatMapLatest { effect ->
                 ratesRepository.changes().map { effect }
@@ -289,7 +287,7 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
     return RatesRepository.getInstance(context).getFiatForCrypto(
         balanceAmt.toBigDecimal(),
         balanceAmt.currency.code,
-        BRSharedPrefs.getPreferredFiatIso(context)
+        BRSharedPrefs.getPreferredFiatIso()
     ) ?: BigDecimal.ZERO
 }
 

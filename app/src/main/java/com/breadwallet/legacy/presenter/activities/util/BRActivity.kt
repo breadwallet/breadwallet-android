@@ -98,13 +98,13 @@ abstract class BRActivity : AppCompatActivity() {
     }
 
     private fun saveScreenSizesIfNeeded() {
-        if (getScreenHeight(this) == 0) {
+        if (getScreenHeight() == 0) {
             Log.d(TAG, "saveScreenSizesIfNeeded: saving screen sizes.")
             val display = windowManager.defaultDisplay
             val size = Point()
             display.getSize(size)
-            putScreenHeight(this, size.y)
-            putScreenWidth(this, size.x)
+            putScreenHeight(size.y)
+            putScreenWidth(size.x)
         }
     }
 

@@ -54,7 +54,7 @@ class WalletListItem(
             }
 
             // Format numeric data
-            val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso(context)
+            val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso()
             val exchangeRate = wallet.fiatPricePerUnit.formatFiatForUi(preferredFiatIso)
             val fiatBalance = wallet.fiatBalance.formatFiatForUi(preferredFiatIso)
             val cryptoBalance = wallet.balance.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)

@@ -195,7 +195,7 @@ class WebController(
         val jsonRequest: String? = argOptional(ARG_JSON_REQUEST)
 
         val isPlatformUrl =
-            url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort(null))
+            url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort())
 
         nativePromiseFactory = NativePromiseFactory(web_view)
         if ((isPlatformUrl || url.startsWith("file:///"))) {

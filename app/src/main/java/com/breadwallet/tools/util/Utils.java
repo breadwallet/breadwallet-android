@@ -94,7 +94,7 @@ public class Utils {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + BRSharedPrefs.getScreenWidth(context) + " , screen Y: " + BRSharedPrefs.getScreenHeight(context));
+        Log.e(specsTag, "* screen X: " + BRSharedPrefs.getScreenWidth() + " , screen Y: " + BRSharedPrefs.getScreenHeight());
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();

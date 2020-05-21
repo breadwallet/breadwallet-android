@@ -136,8 +136,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-        BRSharedPrefs.putIsNewWallet(newWallet = false) // TODO: What does this do?
-
         // TODO: Add sell click event
         //  sell_button.setOnClickListener(
         //  UiUtils.startPlatformBrowser(WalletController.this, HTTPServer.getPlatformUrl(HTTPServer.URL_SELL)));

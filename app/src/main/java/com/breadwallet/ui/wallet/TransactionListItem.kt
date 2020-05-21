@@ -63,7 +63,7 @@ class TransactionListItem(
 
             val preferredCurrencyCode = when {
                 isCryptoPreferred -> transaction.currencyCode
-                else -> BRSharedPrefs.getPreferredFiatIso(mContext)
+                else -> BRSharedPrefs.getPreferredFiatIso()
             }
             var amount = when {
                 isCryptoPreferred -> transaction.amount

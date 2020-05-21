@@ -24,11 +24,11 @@ public class NotificationActivity extends BRActivity {
         setContentView(R.layout.activity_notification);
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggleButton.setChecked(BRSharedPrefs.getShowNotification(this));
+        toggleButton.setChecked(BRSharedPrefs.getShowNotification());
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                BRSharedPrefs.putShowNotification(NotificationActivity.this, isChecked);
+                BRSharedPrefs.putShowNotification(isChecked);
             }
         });
 

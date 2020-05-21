@@ -118,7 +118,7 @@ object BRSharedPrefs {
     private lateinit var brdPrefs: SharedPreferences
 
     @JvmStatic
-    fun getPreferredFiatIso(context: Context? = null): String =
+    fun getPreferredFiatIso(): String =
         brdPrefs.getString(
             CURRENT_CURRENCY, try {
                 Currency.getInstance(Locale.getDefault()).currencyCode
@@ -128,8 +128,7 @@ object BRSharedPrefs {
             }
         )!!
 
-    @JvmStatic
-    fun putPreferredFiatIso(context: Context? = null, iso: String) =
+    fun putPreferredFiatIso(iso: String) =
         brdPrefs.edit {
             val default = if (iso.equals(Locale.getDefault().isO3Language, ignoreCase = true)) {
                 null
@@ -143,211 +142,99 @@ object BRSharedPrefs {
     fun putPhraseWroteDown(check: Boolean) =
         brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
 
-    @JvmStatic
-    fun getPreferredFeeOption(context: Context, iso: String): String =
-        brdPrefs.getString(FEE_PREFERENCE + iso.toUpperCase(), FeeOption.REGULAR.toString())!!
-
-    @JvmStatic
-    fun putPreferredFeeOption(context: Context, iso: String, feeOption: FeeOption) =
-        brdPrefs.edit {
-            putString(FEE_PREFERENCE + iso.toUpperCase(), feeOption.toString())
-        }
-
-    @JvmStatic
-    fun getReceiveAddress(context: Context? = null, iso: String): String? =
+    fun getReceiveAddress(iso: String): String? =
         brdPrefs.getString(RECEIVE_ADDRESS + iso.toUpperCase(), "")
 
-    @JvmStatic
-    fun putReceiveAddress(context: Context? = null, tmpAddr: String, iso: String) =
+    fun putReceiveAddress(tmpAddr: String, iso: String) =
         brdPrefs.edit { putString(RECEIVE_ADDRESS + iso.toUpperCase(), tmpAddr) }
 
     @JvmStatic
-    fun getFeeRate(context: Context, iso: String, feeOption: FeeOption): BigDecimal =
-        BigDecimal(brdPrefs.getString(FEE_RATE + iso.toUpperCase() + feeOption.toString(), "0"))
-
-    @JvmStatic
-    fun putFeeRate(context: Context, iso: String, fee: BigDecimal, feeOption: FeeOption) =
-        brdPrefs.edit {
-            putString(FEE_RATE + iso.toUpperCase() + feeOption.toString(), fee.toPlainString())
-        }
-
-    @JvmStatic
-    fun getSecureTime(context: Context? = null) =
+    fun getSecureTime() =
         brdPrefs.getLong(SECURE_TIME, System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS)
 
     //secure time from the server
-    @JvmStatic
-    fun putSecureTime(context: Context? = null, date: Long) =
+    fun putSecureTime(date: Long) =
         brdPrefs.edit { putLong(SECURE_TIME, date) }
 
-    @JvmStatic
-    fun getLastSyncTime(context: Context? = null, iso: String) =
+    fun getLastSyncTime(iso: String) =
         brdPrefs.getLong(LAST_SYNC_TIME_PREFIX + iso.toUpperCase(), 0)
 
-    @JvmStatic
-    fun putLastSyncTime(context: Context? = null, iso: String, time: Long) =
+    fun putLastSyncTime(iso: String, time: Long) =
         brdPrefs.edit { putLong(LAST_SYNC_TIME_PREFIX + iso.toUpperCase(), time) }
 
-    @JvmStatic
-    fun getLastRescanModeUsed(context: Context? = null, iso: String): String? =
-        brdPrefs.getString(LAST_RESCAN_MODE_USED_PREFIX + iso.toUpperCase(), null)
-
-    @JvmStatic
-    fun putLastRescanModeUsed(context: Context? = null, iso: String, mode: String) =
-        brdPrefs.edit {
-            putString(LAST_RESCAN_MODE_USED_PREFIX + iso.toUpperCase(), mode)
-        }
-
-    @JvmStatic
-    fun getLastSendTransactionBlockheight(context: Context? = null, iso: String) =
+    fun getLastSendTransactionBlockheight(iso: String) =
         brdPrefs.getLong(LAST_SEND_TRANSACTION_BLOCK_HEIGHT_PREFIX + iso.toUpperCase(), 0)
 
-    @JvmStatic
     fun putLastSendTransactionBlockheight(
-        context: Context? = null,
         iso: String,
         blockHeight: Long
-    ) =
-        brdPrefs.edit {
-            putLong(LAST_SEND_TRANSACTION_BLOCK_HEIGHT_PREFIX + iso.toUpperCase(), blockHeight)
-        }
-
-    @JvmStatic
-    fun getFeeTime(context: Context? = null, iso: String): Long =
-        brdPrefs.getLong(FEE_TIME_PREFIX + iso.toUpperCase(), 0)
-
-    @JvmStatic
-    fun putFeeTime(context: Context? = null, iso: String, feeTime: Long) =
-        brdPrefs.edit { putLong(FEE_TIME_PREFIX + iso.toUpperCase(), feeTime) }
-
-    @JvmStatic
-    fun getBitIdNonces(context: Context? = null, key: String): List<Int> =
-        try {
-            val results = JSONArray(brdPrefs.getString(key, null))
-            List(results.length()) {
-                results.getInt(it).also { nonce ->
-                    Log.d(TAG, "found a nonce: $nonce")
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-
-    @JvmStatic
-    fun putBitIdNonces(context: Context? = null, nonces: List<Int>, key: String) =
-        brdPrefs.edit { putString(key, JSONArray().put(nonces).toString()) }
-
-    @JvmStatic
-    fun getAllowSpend(context: Context? = null, iso: String): Boolean =
-        brdPrefs.getBoolean(ALLOW_SPEND_PREFIX + iso.toUpperCase(), true)
-
-    @JvmStatic
-    fun putAllowSpend(context: Context? = null, iso: String, allow: Boolean) =
-        brdPrefs.edit { putBoolean(ALLOW_SPEND_PREFIX + iso.toUpperCase(), allow) }
+    ) = brdPrefs.edit {
+        putLong(LAST_SEND_TRANSACTION_BLOCK_HEIGHT_PREFIX + iso.toUpperCase(), blockHeight)
+    }
 
     //if the user prefers all in crypto units, not fiat currencies
-    @JvmStatic
     fun isCryptoPreferred(context: Context? = null): Boolean =
         brdPrefs.getBoolean(IS_CRYPTO_PREFERRED, false)
 
     //if the user prefers all in crypto units, not fiat currencies
-    @JvmStatic
-    fun setIsCryptoPreferred(context: Context? = null, b: Boolean) =
+    fun setIsCryptoPreferred(b: Boolean) =
         brdPrefs.edit { putBoolean(IS_CRYPTO_PREFERRED, b) }
 
-    @JvmStatic
-    fun getUseFingerprint(context: Context? = null): Boolean =
+    fun getUseFingerprint(): Boolean =
         brdPrefs.getBoolean(USE_FINGERPRINT, false)
 
-    @JvmStatic
-    fun putUseFingerprint(context: Context? = null, use: Boolean) =
+    fun putUseFingerprint(use: Boolean) =
         brdPrefs.edit { putBoolean(USE_FINGERPRINT, use) }
 
-    @JvmStatic
-    fun getFeatureEnabled(context: Context? = null, feature: String): Boolean =
+    fun getFeatureEnabled(feature: String): Boolean =
         brdPrefs.getBoolean(feature, false)
 
-    @JvmStatic
-    fun putFeatureEnabled(context: Context? = null, enabled: Boolean, feature: String) =
+    fun putFeatureEnabled(enabled: Boolean, feature: String) =
         brdPrefs.edit { putBoolean(feature, enabled) }
 
     @JvmStatic
-    fun getWalletRewardId(context: Context? = null): String? =
+    fun getWalletRewardId(): String? =
         brdPrefs.getString(WALLET_REWARD_ID, null)
 
-    @JvmStatic
-    fun putWalletRewardId(context: Context? = null, id: String) =
+    fun putWalletRewardId(id: String) =
         brdPrefs.edit { putString(WALLET_REWARD_ID, id) }
 
-    @JvmStatic
-    fun getGeoPermissionsRequested(context: Context? = null): Boolean =
+    fun getGeoPermissionsRequested(): Boolean =
         brdPrefs.getBoolean(GEO_PERMISSIONS_REQUESTED, false)
 
-    @JvmStatic
-    fun putGeoPermissionsRequested(context: Context? = null, requested: Boolean) =
+    fun putGeoPermissionsRequested(requested: Boolean) =
         brdPrefs.edit { putBoolean(GEO_PERMISSIONS_REQUESTED, requested) }
 
-    @JvmStatic
-    fun getStartHeight(context: Context? = null, iso: String): Long =
+    fun getStartHeight(iso: String): Long =
         brdPrefs.getLong(START_HEIGHT_PREFIX + iso.toUpperCase(), 0)
 
-    @JvmStatic
-    fun putStartHeight(context: Context? = null, iso: String, startHeight: Long) =
+    fun putStartHeight(iso: String, startHeight: Long) =
         brdPrefs.edit { putLong(START_HEIGHT_PREFIX + iso.toUpperCase(), startHeight) }
 
-    @JvmStatic
-    fun getLastRescanTime(context: Context? = null, iso: String): Long =
+    fun getLastRescanTime(iso: String): Long =
         brdPrefs.getLong(RESCAN_TIME_PREFIX + iso.toUpperCase(), 0)
 
-    @JvmStatic
-    fun putLastRescanTime(context: Context? = null, iso: String, time: Long) =
+    fun putLastRescanTime(iso: String, time: Long) =
         brdPrefs.edit { putLong(RESCAN_TIME_PREFIX + iso.toUpperCase(), time) }
 
-    @JvmStatic
     fun getLastBlockHeight(iso: String): Int =
         brdPrefs.getInt(LAST_BLOCK_HEIGHT_PREFIX + iso.toUpperCase(), 0)
 
-    @JvmStatic
-    fun putLastBlockHeight(context: Context? = null, iso: String, lastHeight: Int) =
+    fun putLastBlockHeight(iso: String, lastHeight: Int) =
         brdPrefs.edit {
             putInt(LAST_BLOCK_HEIGHT_PREFIX + iso.toUpperCase(), lastHeight)
         }
 
-    @JvmStatic
-    fun getScanRecommended(context: Context? = null, iso: String): Boolean =
+    fun getScanRecommended(iso: String): Boolean =
         brdPrefs.getBoolean(SCAN_RECOMMENDED_PREFIX + iso.toUpperCase(), false)
 
-    @JvmStatic
-    fun putScanRecommended(context: Context? = null, iso: String, recommended: Boolean) =
+    fun putScanRecommended(iso: String, recommended: Boolean) =
         brdPrefs.edit {
             putBoolean(SCAN_RECOMMENDED_PREFIX + iso.toUpperCase(), recommended)
         }
 
     @JvmStatic
-    fun getBchPreForkSynced(context: Context? = null): Boolean =
-        brdPrefs.getBoolean(PREFORK_SYNCED, false)
-
-    @JvmStatic
-    fun putBchPreForkSynced(context: Context? = null, synced: Boolean) =
-        brdPrefs.edit { putBoolean(PREFORK_SYNCED, synced) }
-
-    // BTC, mBTC, Bits
-    //ignore iso, using same denomination for both for now
-    @JvmStatic
-    @Deprecated("No longer supported, remove with old wallet manager implementations")
-    fun getCryptoDenomination(context: Context? = null, iso: String): Int =
-        brdPrefs.getInt(CURRENCY_UNIT, BRConstants.CURRENT_UNIT_BITCOINS)
-
-    // BTC, mBTC, Bits
-    //ignore iso, using same denomination for both for now
-    @JvmStatic
-    @Deprecated("No longer supported, remove with old wallet manager implementations")
-    fun putCryptoDenomination(context: Context? = null, iso: String, unit: Int) =
-        brdPrefs.edit { putInt(CURRENCY_UNIT, unit) }
-
-    @JvmStatic
-    fun getDeviceId(context: Context? = null): String =
+    fun getDeviceId(): String =
         brdPrefs.run {
             if (contains(USER_ID)) {
                 getString(USER_ID, "")!!
@@ -364,94 +251,72 @@ object BRSharedPrefs {
     fun putDebugHost(host: String) =
         brdPrefs.edit { putString(DEBUG_HOST, host) }
 
-    fun clearAllPrefs(context: Context? = null) = brdPrefs.edit { clear() }
+    fun clearAllPrefs() = brdPrefs.edit { clear() }
 
     @JvmStatic
-    fun getShowNotification(context: Context? = null): Boolean =
+    fun getShowNotification(): Boolean =
         brdPrefs.getBoolean(SHOW_NOTIFICATION, true)
 
     @JvmStatic
-    fun putShowNotification(context: Context? = null, show: Boolean) =
+    fun putShowNotification(show: Boolean) =
         brdPrefs.edit { putBoolean(SHOW_NOTIFICATION, show) }
 
-    @JvmStatic
     fun getShareData(): Boolean =
         brdPrefs.getBoolean(SHARE_DATA, true)
 
-    @JvmStatic
     fun putShareData(show: Boolean) =
         brdPrefs.edit { putBoolean(SHARE_DATA, show) }
 
-    @JvmStatic
-    fun isNewWallet(context: Context? = null): Boolean =
-        brdPrefs.getBoolean(NEW_WALLET, true)
-
-    @JvmStatic
-    fun putIsNewWallet(context: Context? = null, newWallet: Boolean) =
-        brdPrefs.edit { putBoolean(NEW_WALLET, newWallet) }
-
-    @JvmStatic
     fun getPromptDismissed(promptName: String): Boolean =
         brdPrefs.getBoolean(PROMPT_PREFIX + promptName, false)
 
-    @JvmStatic
     fun putPromptDismissed(promptName: String, dismissed: Boolean) =
         brdPrefs.edit { putBoolean(PROMPT_PREFIX + promptName, dismissed) }
 
-    @JvmStatic
-    fun getTrustNode(context: Context? = null, iso: String): String? =
+    fun getTrustNode(iso: String): String? =
         brdPrefs.getString(TRUST_NODE_PREFIX + iso.toUpperCase(), "")
 
-    @JvmStatic
-    fun putTrustNode(context: Context? = null, iso: String, trustNode: String) =
+    fun putTrustNode(iso: String, trustNode: String) =
         brdPrefs.edit { putString(TRUST_NODE_PREFIX + iso.toUpperCase(), trustNode) }
 
-    @JvmStatic
-    fun putFCMRegistrationToken(context: Context? = null, token: String) =
+    fun putFCMRegistrationToken(token: String) =
         brdPrefs.edit { putString(FCM_TOKEN, token) }
 
-    @JvmStatic
-    fun getFCMRegistrationToken(context: Context? = null): String? =
+    fun getFCMRegistrationToken(): String? =
         brdPrefs.getString(FCM_TOKEN, "")
 
-    @JvmStatic
-    fun putNotificationId(context: Context? = null, notificationId: Int) =
+    fun putNotificationId(notificationId: Int) =
         brdPrefs.edit { putInt(NOTIFICATION_ID, notificationId) }
 
-    @JvmStatic
-    fun getNotificationId(context: Context? = null): Int =
+    fun getNotificationId(): Int =
         brdPrefs.getInt(NOTIFICATION_ID, 0)
 
-    @JvmStatic
-    fun putScreenHeight(context: Context? = null, screenHeight: Int) =
+    fun putScreenHeight(screenHeight: Int) =
         brdPrefs.edit { putInt(SCREEN_HEIGHT, screenHeight) }
 
     @JvmStatic
-    fun getScreenHeight(context: Context? = null): Int =
+    fun getScreenHeight(): Int =
         brdPrefs.getInt(SCREEN_HEIGHT, 0)
 
-    @JvmStatic
-    fun putScreenWidth(context: Context? = null, screenWidth: Int) =
+    fun putScreenWidth(screenWidth: Int) =
         brdPrefs.edit { putInt(SCREEN_WIDTH, screenWidth) }
 
     @JvmStatic
-    fun getScreenWidth(context: Context? = null): Int =
+    fun getScreenWidth(): Int =
         brdPrefs.getInt(SCREEN_WIDTH, 0)
 
     @JvmStatic
-    fun putBundleHash(context: Context? = null, bundleName: String, bundleHash: String) =
+    fun putBundleHash(bundleName: String, bundleHash: String) =
         brdPrefs.edit { putString(BUNDLE_HASH_PREFIX + bundleName, bundleHash) }
 
     @JvmStatic
-    fun getBundleHash(context: Context? = null, bundleName: String): String? =
+    fun getBundleHash(bundleName: String): String? =
         brdPrefs.getString(BUNDLE_HASH_PREFIX + bundleName, null)
 
-    @JvmStatic
-    fun putIsSegwitEnabled(context: Context? = null, isEnabled: Boolean) =
+    fun putIsSegwitEnabled(isEnabled: Boolean) =
         brdPrefs.edit { putBoolean(SEGWIT, isEnabled) }
 
-    @JvmStatic
-    fun getIsSegwitEnabled(context: Context? = null): Boolean =
+    fun getIsSegwitEnabled(): Boolean =
         brdPrefs.getBoolean(SEGWIT, false)
 
     fun putEmailOptIn(hasOpted: Boolean) =
@@ -475,12 +340,11 @@ object BRSharedPrefs {
     /**
      * Get the debug bundle from shared preferences or empty if not available.
      *
-     * @param context    Execution context.
      * @param bundleType Bundle type.
      * @return Saved debug bundle or empty.
      */
     @JvmStatic
-    fun getDebugBundle(context: Context? = null, bundleType: ServerBundlesHelper.Type): String? =
+    fun getDebugBundle(bundleType: ServerBundlesHelper.Type): String? =
         brdPrefs.getString(DEBUG_SERVER_BUNDLE + bundleType.name, "")
 
     /**
@@ -492,11 +356,9 @@ object BRSharedPrefs {
      */
     @JvmStatic
     fun putDebugBundle(
-        context: Context? = null,
         bundleType: ServerBundlesHelper.Type,
         bundle: String
-    ) =
-        brdPrefs.edit { putString(DEBUG_SERVER_BUNDLE + bundleType.name, bundle) }
+    ) = brdPrefs.edit { putString(DEBUG_SERVER_BUNDLE + bundleType.name, bundle) }
 
     /**
      * Get the web platform debug URL from shared preferences or empty, if not available.
@@ -505,7 +367,7 @@ object BRSharedPrefs {
      * @return Returns the web platform debug URL or empty.
      */
     @JvmStatic
-    fun getWebPlatformDebugURL(context: Context? = null): String =
+    fun getWebPlatformDebugURL(): String =
         brdPrefs.getString(DEBUG_WEB_PLATFORM_URL, "")!!
 
     /**
@@ -515,7 +377,7 @@ object BRSharedPrefs {
      * @param webPlatformDebugURL The web platform debug URL to be persisted.
      */
     @JvmStatic
-    fun putWebPlatformDebugURL(context: Context? = null, webPlatformDebugURL: String) =
+    fun putWebPlatformDebugURL(webPlatformDebugURL: String) =
         brdPrefs.edit { putString(DEBUG_WEB_PLATFORM_URL, webPlatformDebugURL) }
 
     /**
@@ -525,7 +387,7 @@ object BRSharedPrefs {
      * @return The last port used to start the HTTPServer.
      */
     @JvmStatic
-    fun getHttpServerPort(context: Context? = null): Int =
+    fun getHttpServerPort(): Int =
         brdPrefs.getInt(HTTP_SERVER_PORT, 0)
 
     /**
@@ -535,7 +397,7 @@ object BRSharedPrefs {
      * @param port    Port used when starting the HTTPServer
      */
     @JvmStatic
-    fun putHttpServerPort(context: Context? = null, port: Int) =
+    fun putHttpServerPort(port: Int) =
         brdPrefs.edit { putInt(HTTP_SERVER_PORT, port) }
 
     /**
@@ -544,8 +406,7 @@ object BRSharedPrefs {
      * @param context        Execution context.
      * @param notificationId The id of the message that has been read.
      */
-    @JvmStatic
-    fun putReadInAppNotificationId(context: Context? = null, notificationId: String) {
+    fun putReadInAppNotificationId(notificationId: String) {
         val readIds = getReadInAppNotificationIds()
         brdPrefs.edit {
             if (!readIds.contains(notificationId)) {
@@ -560,8 +421,7 @@ object BRSharedPrefs {
      * @param context Execution context.
      * @return A set with the ids of the messages that has been read.
      */
-    @JvmStatic
-    fun getReadInAppNotificationIds(context: Context? = null): Set<String> =
+    fun getReadInAppNotificationIds(): Set<String> =
         brdPrefs.getStringSet(READ_IN_APP_NOTIFICATIONS, emptySet()) ?: emptySet()
 
     /**
@@ -571,8 +431,7 @@ object BRSharedPrefs {
      * @param key     The name of the preference.
      * @param value   The new value for the preference.
      */
-    @JvmStatic
-    fun putInt(context: Context? = null, key: String, value: Int) =
+    fun putInt(key: String, value: Int) =
         brdPrefs.edit { putInt(key, value) }
 
     /**
@@ -585,8 +444,7 @@ object BRSharedPrefs {
      * @param defaultValue The default value to return if not present.
      * @return Returns the preference value if it exists, or defValue.
      */
-    @JvmStatic
-    fun getInt(context: Context? = null, key: String, defaultValue: Int): Int =
+    fun getInt(key: String, defaultValue: Int): Int =
         brdPrefs.getInt(key, defaultValue)
 
     /**
@@ -596,8 +454,7 @@ object BRSharedPrefs {
      * @param key     The name of the preference.
      * @param value   The new value for the preference.
      */
-    @JvmStatic
-    fun putBoolean(context: Context? = null, key: String, value: Boolean) =
+    fun putBoolean(key: String, value: Boolean) =
         brdPrefs.edit { putBoolean(key, value) }
 
     /**
@@ -610,8 +467,7 @@ object BRSharedPrefs {
      * @param defaultValue The default value to return if not present.
      * @return Returns the preference value if it exists, or defValue.
      */
-    @JvmStatic
-    fun getBoolean(context: Context? = null, key: String, defaultValue: Boolean): Boolean =
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean =
         brdPrefs.getBoolean(key, defaultValue)
 
     /**
@@ -662,7 +518,6 @@ object BRSharedPrefs {
         }
 
     /** Preference to unlock the app using the fingerprint sensor */
-    @JvmStatic
     var unlockWithFingerprint: Boolean
         get() = brdPrefs.getBoolean(UNLOCK_WITH_FINGERPRINT, getUseFingerprint())
         set(value) = brdPrefs.edit {

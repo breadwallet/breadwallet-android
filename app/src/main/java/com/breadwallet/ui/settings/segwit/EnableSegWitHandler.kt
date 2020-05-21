@@ -40,7 +40,7 @@ fun createSegWitHandler(
     breadBox: BreadBox
 ) = subtypeEffectHandler<F, E> {
     addAction<F.EnableSegWit> {
-        BRSharedPrefs.putIsSegwitEnabled(context, true)
+        BRSharedPrefs.putIsSegwitEnabled(true)
         UserMetricsUtil.logSegwitEvent(context, UserMetricsUtil.ENABLE_SEG_WIT)
         breadBox.system()
             .first()

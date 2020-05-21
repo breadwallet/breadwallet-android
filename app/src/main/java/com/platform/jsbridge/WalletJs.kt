@@ -132,7 +132,7 @@ class WalletJs(
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val btcWallet = system.wallets.first { it.currency.isBitcoin() }
 
-        val preferredCode = BRSharedPrefs.getPreferredFiatIso(context)
+        val preferredCode = BRSharedPrefs.getPreferredFiatIso()
         val fiatCurrency = Currency.getInstance(preferredCode)
 
         JSONObject().apply {
@@ -456,7 +456,7 @@ class WalletJs(
         feeBasis: TransferFeeBasis,
         transferAttributes: Set<TransferAttribute>
     ): Transfer? {
-        val fiatCode = BRSharedPrefs.getPreferredFiatIso(context)
+        val fiatCode = BRSharedPrefs.getPreferredFiatIso()
         val fiatAmount = ratesRepository.getFiatForCrypto(
             amount.toBigDecimal(),
             wallet.currency.code,

@@ -32,6 +32,7 @@ import com.platform.APIClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -89,7 +90,7 @@ object NotificationsSettingsClientImpl : NotificationsSettingsClient {
 
             val json = BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8.toMediaTypeOrNull()
 
-            val requestBody = RequestBody.create(json, payload.toString())
+            val requestBody = payload.toString().toRequestBody(json)
 
             val request = Request.Builder()
                     .url(url)

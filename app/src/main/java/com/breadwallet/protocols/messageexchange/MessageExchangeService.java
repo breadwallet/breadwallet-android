@@ -191,7 +191,7 @@ public final class MessageExchangeService extends JobIntentService {
             openUrl(mPairingMetaData.getReturnUrl());
 
             // The user has approved, send a link message containing the local entity's public key and id.
-            message = createLink(ByteString.copyFrom(pairingKey.encodeAsPublic()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
+            message = createLink(ByteString.copyFrom(pairingKey.encodeAsPublic()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId().getBytes()));
 
             // Register our key with the server.
             MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.encodeAsPublic());
@@ -203,7 +203,7 @@ public final class MessageExchangeService extends JobIntentService {
         EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
         ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
         Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.encodeAsPublic()),
-                ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
+                ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(), ByteString.copyFrom(encryptedMessage.getNonce()));
         //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
 
         byte[] signature = SIGNER_COMPACT.sign(CryptoHelper.doubleSha256(envelope.toByteArray()), pairingKey).get();
