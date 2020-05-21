@@ -53,7 +53,7 @@ fun Flow<List<String>>.updateRatesForCurrencies(
         BRApiManager.updateRates(context)
         emitAll(callbackFlow {
             // Fetch an updated token list from the server
-            TokenUtil.fetchTokensFromServer(context)
+            TokenUtil.initialize(context, false)
             // Emit the current list again to ensure we update
             // the currency code for the given id. (DAI to SAI)
             offer(first())

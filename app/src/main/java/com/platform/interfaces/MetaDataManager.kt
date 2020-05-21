@@ -51,6 +51,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.Date
+import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class MetaDataManager(
@@ -316,22 +317,18 @@ class MetaDataManager(
             }
 
             TokenUtil.initialize(BreadApp.getBreadContext(), true)
-            val currencyCodeToToken =
-                TokenUtil.getTokenItems(BreadApp.getBreadContext())
-                    ?.associateBy { it.symbol.toLowerCase() } ?: emptyMap()
+            val currencyCodeToToken = TokenUtil.getTokenItems()
+                .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
 
             tokenListMetaData.enabledCurrencies
                 .filter { enabledToken ->
                     // Need to also ensure not in hidden currencies list
                     tokenListMetaData.hiddenCurrencies.find {
-                        it.symbol.equals(
-                            enabledToken.symbol,
-                            true
-                        )
+                        it.symbol.equals(enabledToken.symbol, true)
                     } == null
                 }
                 .mapNotNull {
-                    currencyCodeToToken[it.symbol.toLowerCase()]?.currencyId
+                    currencyCodeToToken[it.symbol.toLowerCase(Locale.ROOT)]?.currencyId
                 }
                 .apply {
                     if (isNotEmpty()) {

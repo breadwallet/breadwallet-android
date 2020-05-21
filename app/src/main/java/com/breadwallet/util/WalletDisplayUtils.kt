@@ -44,8 +44,8 @@ class WalletDisplayUtils {
         ): WalletUiConfiguration {
             // validate color here or return delisted
             return WalletUiConfiguration(
-                TokenUtil.getTokenStartColor(currencyCode, context),
-                TokenUtil.getTokenEndColor(currencyCode, context),
+                TokenUtil.getTokenStartColor(currencyCode) ?: "",
+                TokenUtil.getTokenEndColor(currencyCode),
                 false,
                 MAX_DECIMAL_PLACES_FOR_UI
             )

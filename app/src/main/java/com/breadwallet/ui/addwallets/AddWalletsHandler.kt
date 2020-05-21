@@ -78,7 +78,7 @@ private fun searchTokens(
             val system = breadBox.system().first()
             val networks = system.networks
             val availableWallets = system.wallets
-            TokenUtil.getTokenItems(context)
+            TokenUtil.getTokenItems()
                 .filter { token ->
                     val hasNetwork = networks.any { it.containsCurrency(token.currencyId) }
                     val isErc20 = token.type == "erc20"

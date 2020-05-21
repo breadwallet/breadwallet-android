@@ -24,13 +24,22 @@
  */
 package com.platform.util
 
+import org.json.JSONArray
 import org.json.JSONObject
 
-/**
- * Returns the value mapped by name of null if it doesn't exist.
- */
+fun JSONObject.getJSONObjectOrNull(name: String): JSONObject? =
+    if (has(name)) getJSONObject(name) else null
+
+fun JSONObject.getJSONArrayOrNull(name: String): JSONArray? =
+    if (has(name)) getJSONArray(name) else null
+
+/** Returns the value mapped by name of null if it doesn't exist. */
 fun JSONObject.getStringOrNull(name: String): String? =
-    if (this.has(name)) this.getString(name) else null
+    if (has(name)) getString(name) else null
+
+/** Returns the value mapped by name or [default] if it doesn't exist. */
+fun JSONObject.getBooleanOrDefault(name: String, default: Boolean) =
+    if (has(name)) getBoolean(name) else default
 
 /** Returns the value mapped by name or [default] if it doesn't exist. */
 fun JSONObject.getIntOrDefault(name: String, default: Int = 0) =
@@ -51,3 +60,7 @@ fun JSONObject.getDoubleOrDefaultSafe(name: String, default: Double = 0.0) =
     } catch (e: Exception) {
         default
     }
+
+/** Returns the value at [index] or null. */
+fun JSONArray.getStringOrNull(index: Int) =
+    if (index in 0 until length()) getString(index) else null

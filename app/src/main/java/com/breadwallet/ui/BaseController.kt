@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -123,6 +124,10 @@ abstract class BaseController(
 
     /** Display a [Toast] message of [text] with a long duration. */
     fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG).show()
+
+    fun requireContext(): Context = checkNotNull(applicationContext) {
+        "requireContext() cannot be called before onAttach(..)"
+    }
 
     inline fun <reified T> findListener(): T? =
         (targetController as? T)
