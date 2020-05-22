@@ -33,7 +33,6 @@ import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logDebug
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.util.isBitcoin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -105,6 +104,7 @@ class NetworkManager(
             .mapLatest { it.second }
             .onStart {
                 networkState[currencyId]?.let { emit(it) }
+                    ?: emit(NetworkState.Loading)
             }
 
     /**
