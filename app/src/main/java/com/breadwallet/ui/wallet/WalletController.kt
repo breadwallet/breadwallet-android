@@ -51,6 +51,7 @@ import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
+import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
@@ -64,7 +65,6 @@ import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
-import com.breadwallet.util.WalletDisplayUtils
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericFastAdapter
 import com.mikepenz.fastadapter.adapters.GenericModelAdapter
@@ -525,10 +525,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     private fun updateUi() {
         val resources = checkNotNull(resources)
-        val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, activity!!)
+        val token = TokenUtil.getTokenItemByCurrencyCode(currencyCode) ?: return
 
-        val startColor = uiConfiguration.startColor
-        val endColor = uiConfiguration.endColor
+        val startColor = token.startColor
+        val endColor = token.endColor
         val currentTheme = UiUtils.getThemeId(activity)
 
         if (currentTheme == R.style.AppTheme_Dark) {

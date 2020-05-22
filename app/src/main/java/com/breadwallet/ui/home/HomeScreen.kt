@@ -180,7 +180,10 @@ data class Wallet(
     val syncingThroughMillis: Long = 0L,
     val isSyncing: Boolean = false,
     val priceChange: PriceChange? = null,
-    val state: State = State.READY
+    val state: State = State.READY,
+    val startColor: String? = null,
+    val endColor: String? = null,
+    val isSupported: Boolean = true
 ) {
     enum class State {
         READY, LOADING, UNINITIALIZED
