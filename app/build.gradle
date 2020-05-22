@@ -190,9 +190,9 @@ static def getChangelog() {
 
 task downloadBundles {
     doLast {
-        def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
-        def stagingHost = "api.breadwallet.com"
-        def releaseHost = "stage2.breadwallet.com"
+        def bundles = ["brd-web-3", "brd-tokens", "brd-web-3-staging", "brd-tokens-staging"]
+        def stagingHost = "stage2.breadwallet.com"
+        def releaseHost = "api.breadwallet.com"
         for (String bundleName : bundles) {
             def fileUrl
             def resFolder

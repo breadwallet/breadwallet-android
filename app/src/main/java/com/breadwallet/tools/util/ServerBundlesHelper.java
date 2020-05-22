@@ -70,7 +70,7 @@ public final class ServerBundlesHelper {
     private static final String TAR_EXTENSION = ".tar";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    private static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
+    private static final String BRD_TOKEN_ASSETS = "brd-tokens";
     private static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
     private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
     private static final String BUNDLES_FORMAT = "%s/assets/bundles/%s/diff/%s";
