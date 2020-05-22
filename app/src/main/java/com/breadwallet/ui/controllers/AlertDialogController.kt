@@ -65,7 +65,7 @@ class AlertDialogController(
         iconResId: Int? = null,
         showHelp: Boolean = false,
         dialogId: String = "",
-        dismissible: Boolean = false
+        dismissible: Boolean = true
     ) : this(
         bundleOf(
             KEY_DIALOG_ID to dialogId,
