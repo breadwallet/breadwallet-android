@@ -84,7 +84,7 @@ class WalletListItem(
             wallet_balance_currency.text = cryptoBalance
             wallet_balance_currency.isGone = isSyncing || isLoading
             sync_progress.isVisible = isSyncing || isLoading
-            syncing_label.isVisible = isSyncing
+            syncing_label.isVisible = isSyncing || isLoading
             if (isSyncing) {
                 val syncProgress = wallet.syncProgress
                 var labelText = context.getString(R.string.SyncingView_syncing)
@@ -92,6 +92,8 @@ class WalletListItem(
                     labelText += " ${NumberFormat.getPercentInstance().format(syncProgress.toDouble())}"
                 }
                 syncing_label.text = labelText
+            } else if (isLoading) {
+                syncing_label.setText(R.string.Account_loadingMessage)
             }
 
             val priceChange = wallet.priceChange
@@ -117,7 +119,7 @@ class WalletListItem(
                 // If no icon is present, then use the capital first letter of the token currency code instead.
                 icon_letter.visibility = View.VISIBLE
                 currency_icon_white.visibility = View.GONE
-                icon_letter.text = currencyCode.substring(0, 1).toUpperCase(Locale.ROOT)
+                icon_letter.text = currencyCode.take(1).toUpperCase(Locale.ROOT)
             }
 
             val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, context)
