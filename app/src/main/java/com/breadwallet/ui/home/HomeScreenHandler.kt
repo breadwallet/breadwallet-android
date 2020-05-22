@@ -239,7 +239,9 @@ private fun TokenItem.asWallet(
         state = when (walletState) {
             WalletState.Loading -> Wallet.State.LOADING
             else -> Wallet.State.UNINITIALIZED
-        }
+        },
+        startColor = startColor,
+        endColor = endColor
     )
 }
 
@@ -247,6 +249,7 @@ private fun CryptoWallet.asWallet(
     fiatIso: String,
     ratesRepo: RatesRepository
 ): Wallet {
+    val tokenItem = TokenUtil.getTokenItemByCurrencyCode(currency.code)
     val balanceBig = balance.toBigDecimal()
     return Wallet(
         currencyId = currencyId,
@@ -259,6 +262,9 @@ private fun CryptoWallet.asWallet(
         syncingThroughMillis = 0L, // will update via sync events
         priceChange = ratesRepo.getPriceChange(currency.code),
         state = Wallet.State.READY,
-        isSyncing = walletManager.state == WalletManagerState.SYNCING()
+        isSyncing = walletManager.state == WalletManagerState.SYNCING(),
+        startColor = tokenItem?.startColor,
+        endColor = tokenItem?.endColor,
+        isSupported = tokenItem?.isSupported ?: true
     )
 }

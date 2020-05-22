@@ -44,7 +44,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
 import java.util.ArrayList
 import java.util.HashMap
@@ -107,6 +106,7 @@ object TokenUtil {
             }
         } else {
             fetchTokensFromServer()
+            initLock.unlock()
         }
     }
 
@@ -215,17 +215,15 @@ object TokenUtil {
     fun getTokenIconPath(currencyCode: String, withBackground: Boolean): String? {
         val bundleResource = ServerBundlesHelper
             .getExtractedPath(context, ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN), null)
-        val iconFileName = ICON_FILE_NAME_FORMAT.format(currencyCode)
+        val iconFileName = ICON_FILE_NAME_FORMAT.format(currencyCode.toLowerCase(Locale.ROOT))
         val iconDirectoryName = if (withBackground) {
             ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND
         } else {
             ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND
         }
-        return File(bundleResource).listFiles()
-            ?.filter { it.name.equals(iconDirectoryName, true) }
-            ?.flatMap { it.listFiles()?.asList() ?: emptyList() }
-            ?.firstOrNull { it.name.equals(iconFileName, true) }
-            ?.absolutePath
+        val iconDir = File(bundleResource, iconDirectoryName)
+        val iconFile = File(iconDir, iconFileName)
+        return if (iconFile.exists()) iconFile.absolutePath else null
     }
 
     fun getTokenStartColor(currencyCode: String): String? {

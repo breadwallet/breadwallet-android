@@ -1,5 +1,6 @@
 package com.breadwallet.ui.home
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
@@ -12,8 +13,6 @@ import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.legacy.presenter.customviews.ShimmerLayout
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.tools.util.Utils
-import com.breadwallet.util.WalletDisplayUtils
 import com.breadwallet.util.isBrd
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.drag.IDraggable
@@ -21,6 +20,14 @@ import com.mikepenz.fastadapter.items.ModelAbstractItem
 import com.squareup.picasso.Picasso
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.wallet_list_item.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.invoke
+import kotlinx.coroutines.launch
 import java.io.File
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -41,6 +48,8 @@ class WalletListItem(
         override val containerView: View
     ) : FastAdapter.ViewHolder<WalletListItem>(containerView),
         LayoutContainer {
+
+        private val boundScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
         override fun bindView(item: WalletListItem, payloads: MutableList<Any>) {
             val wallet = item.model
@@ -106,33 +115,47 @@ class WalletListItem(
                 return
             }
 
-            // Get icon for currency
-            val tokenIconPath =
-                TokenUtil.getTokenIconPath(currencyCode.toUpperCase(Locale.ROOT), false)
+            loadTokenIcon(currencyCode)
+            setBackground(wallet, context)
 
-            if (!Utils.isNullOrEmpty(tokenIconPath)) {
-                val iconFile = File(tokenIconPath)
-                Picasso.get().load(iconFile).into(currency_icon_white)
-                icon_letter.visibility = View.GONE
-                currency_icon_white.visibility = View.VISIBLE
-            } else {
-                // If no icon is present, then use the capital first letter of the token currency code instead.
-                icon_letter.visibility = View.VISIBLE
-                currency_icon_white.visibility = View.GONE
-                icon_letter.text = currencyCode.take(1).toUpperCase(Locale.ROOT)
+            item.tag = wallet.currencyCode
+        }
+
+        override fun unbindView(item: WalletListItem) {
+            item.tag = null
+            boundScope.coroutineContext.cancelChildren()
+        }
+
+        private fun loadTokenIcon(currencyCode: String) {
+            boundScope.launch {
+                // Get icon for currency
+                val tokenIconPath = Default {
+                    TokenUtil.getTokenIconPath(currencyCode, false)
+                }
+                ensureActive()
+
+                if (tokenIconPath.isNullOrBlank()) {
+                    icon_letter.visibility = View.VISIBLE
+                    currency_icon_white.visibility = View.GONE
+                    icon_letter.text = currencyCode.take(1).toUpperCase(Locale.ROOT)
+                } else {
+                    val iconFile = File(tokenIconPath)
+                    Picasso.get().load(iconFile).into(currency_icon_white)
+                    icon_letter.visibility = View.GONE
+                    currency_icon_white.visibility = View.VISIBLE
+                }
             }
+        }
 
-            val uiConfiguration = WalletDisplayUtils.getUIConfiguration(currencyCode, context)
-            val startColor = uiConfiguration.startColor
-            val endColor = uiConfiguration.endColor
-            val drawable =
-                context.resources.getDrawable(R.drawable.crypto_card_shape, null).mutate()
-
-            val isTokenSupported = TokenUtil.isTokenSupported(currencyCode)
-            if (isTokenSupported) {
+        private fun setBackground(wallet: Wallet, context: Context) {
+            val drawable = context.resources
+                .getDrawable(R.drawable.crypto_card_shape, null)
+                .mutate()
+            if (wallet.isSupported) {
                 // Create gradient if 2 colors exist.
-                (drawable as GradientDrawable).colors =
-                    intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor))
+                val startColor = Color.parseColor(wallet.startColor ?: return)
+                val endColor = Color.parseColor(wallet.endColor ?: return)
+                (drawable as GradientDrawable).colors = intArrayOf(startColor, endColor)
                 drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
                 wallet_card.background = drawable
                 setWalletItemColors(R.dimen.token_background_no_alpha)
@@ -146,12 +169,6 @@ class WalletListItem(
                 wallet_card.background = drawable
                 setWalletItemColors(R.dimen.token_background_with_alpha)
             }
-
-            item.tag = wallet.currencyCode
-        }
-
-        override fun unbindView(item: WalletListItem) {
-            item.tag = null
         }
 
         private fun setWalletItemColors(dimenRes: Int) {
