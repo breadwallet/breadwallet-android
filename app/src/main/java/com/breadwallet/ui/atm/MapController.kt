@@ -33,18 +33,24 @@ import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
+import cash.just.wac.model.CashStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
+import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
+import com.breadwallet.ui.send.SendSheetController
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.LatLngBounds.Builder
 import com.platform.PlatformTransactionBus
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -84,6 +90,52 @@ class MapController(
         }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
+
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                   showDialog()
+                }
+            }
+    }
+
+    private fun showDialog() {
+
+        BRDialog.showCustomDialog(
+            applicationContext!!, "Withdrawal requested",
+            "Please send the amount of 0.069 BTC to the ATM",
+            "Send", "Details", { dialog ->
+                val builder = CryptoRequest.Builder()
+                builder.address = "n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF "
+                builder.amount = 0.234f.toBigDecimal()
+                builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+                val request = builder.build()
+                router.pushController(RouterTransaction.with(
+                    SendSheetController(
+                        request //make it default
+                    )
+                ))
+                dialog.dismissWithAnimation()
+            },
+            { dialog ->
+                router.pushController(RouterTransaction.with(
+                    CashOutStatusController(
+                         //make it default
+                        getCashStatus2()
+                    )
+                ))
+                dialog.dismissWithAnimation()
+                dialog.dismissWithAnimation()
+            }, null)
+    }
+
+    private fun getCashStatus() : CashStatus {
+        return CashStatus("","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","","0.2345","",
+            "","","","","")
+    }
+
+    private fun getCashStatus2() : CashStatus {
+        return CashStatus("","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","","0.2345","",
+            "","","","","")
     }
 
     private fun fetchAtms(){

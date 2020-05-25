@@ -111,6 +111,32 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TableRow>
+                <LinearLayout
+                    android:id="@+id/trade_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_dashboard_black_24dp"
+                        android:tint="@color/white" />
+
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="bottom"
+                        android:text="Activity"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/circular_pro_book" />
+                </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/buy_layout"
@@ -163,34 +189,6 @@
                         app:layout_constraintStart_toStartOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <LinearLayout
-                    android:id="@+id/trade_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
-                    android:visibility="invisible"
-                    android:orientation="vertical"
-                    android:paddingBottom="4dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/ic_security_settings"
-                        android:tint="@color/white" />
-
-                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="bottom"
-                        android:text="Settings"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/menu_layout"

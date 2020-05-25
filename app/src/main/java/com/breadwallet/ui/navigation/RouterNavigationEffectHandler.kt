@@ -145,18 +145,11 @@ class RouterNavigationEffectHandler(
     }
 
     fun goToMap() {
-        val url = String.format(
-            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-            BITCOIN_CURRENCY_CODE
-        )
-        val atmMachine = AtmMachine("234", "sadf", "sdf",
-            "asdf", "asdf", "asdf", "asdf", "sdf",
-            "Asdf", "asdf", "Asdf", "asdf", "asdf")
-        // val mapTransaction = RequestCashCodeController(atmMachine).asTransaction(
-        //         VerticalChangeHandler(),
-        //         VerticalChangeHandler()
-        //     )
+        // val url = String.format(
+        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+        //     BITCOIN_CURRENCY_CODE
+        // )
 
         val mapTransaction = MapController(Bundle.EMPTY).asTransaction(
                 VerticalChangeHandler(),
@@ -204,13 +197,13 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToTrade() {
-        val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
-        router.pushController(
-            WebController(url).asTransaction(
-                VerticalChangeHandler(),
-                VerticalChangeHandler()
-            )
-        )
+        // val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
+        // router.pushController(
+        //     WebController(url).asTransaction(
+        //         VerticalChangeHandler(),
+        //         VerticalChangeHandler()
+        //     )
+        // )
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
@@ -231,7 +224,7 @@ class RouterNavigationEffectHandler(
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         val controller = when {
-            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest)
+            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest.currencyCode)
             effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl)
             else -> SendSheetController(effect.currencyId)
         }
