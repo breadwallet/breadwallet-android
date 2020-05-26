@@ -36,7 +36,6 @@ import cash.just.wac.model.AtmMachine
 import cash.just.wac.model.CashStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
-import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
@@ -92,10 +91,10 @@ class MapController(
         handlePlatformMessages().launchIn(viewCreatedScope)
 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                   showDialog()
-                }
+            if (hasFocus) {
+               showDialog()
             }
+        }
     }
 
     private fun showDialog() {
@@ -120,7 +119,7 @@ class MapController(
                 router.pushController(RouterTransaction.with(
                     CashOutStatusController(
                          //make it default
-                        getCashStatus2()
+                        getAwaitingState()
                     )
                 ))
                 dialog.dismissWithAnimation()
@@ -128,14 +127,14 @@ class MapController(
             }, null)
     }
 
-    private fun getCashStatus() : CashStatus {
-        return CashStatus("","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","","0.2345","",
-            "","","","","")
+    private fun getAwaitingState() : CashStatus {
+        return CashStatus("BTC","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","20.0","0.2345","",
+            "","","Mataró, cami de la Geganta","","")
     }
 
-    private fun getCashStatus2() : CashStatus {
-        return CashStatus("","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","","0.2345","",
-            "","","","","")
+    private fun getFundedState() : CashStatus {
+        return CashStatus("1234-1234","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","10","0.2345","",
+            "","","Mataró, cami de la Geganta","","")
     }
 
     private fun fetchAtms(){

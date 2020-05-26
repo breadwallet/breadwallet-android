@@ -39,7 +39,7 @@
             android:id="@+id/qr_image"
             android:padding="7dp"
             tools:src="@drawable/sample_qr"
-            android:layout_marginRight="7dp"
+            android:layout_marginEnd="7dp"
             android:layout_width="150dp"
             android:layout_height="150dp"/>
 
@@ -49,43 +49,47 @@
             android:layout_height="150dp">
 
             <TextView
-                android:text="Amount (USD):  $20"
+                android:id="@+id/awaitingUSDAmount"
+                tools:text="Amount (USD):  $20"
                 android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/awaitingLocationAddress"
                 android:layout_marginTop="7dp"
                 android:drawableEnd="@drawable/ic_map_marker"
-                android:text="Wells Fargo Bank, Tampa"
+                tools:text="Wells Fargo Bank, Tampa"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_marginTop="7dp"
-                android:text="Amount:"
+                tools:text="Amount:"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/awaitingBTCAmount"
                 android:drawableEnd="@drawable/ic_content_copy"
-                android:text="0.00254932 BTC"
+                tools:text="0.00254932 BTC"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_marginTop="7dp"
-                android:text="Address:"
+                tools:text="Address:"
                 android:textColor="@color/black"
                 android:singleLine="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
+                android:id="@+id/awaitingAddress"
+                tools:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:drawableEnd="@drawable/ic_content_copy"

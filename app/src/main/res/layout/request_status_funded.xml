@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="15dp">
 
     <TextView
-        android:id="@+id/fundedTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -32,22 +31,25 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/cashCode"
             android:drawableEnd="@drawable/ic_content_copy"
             android:textAlignment="center"
             android:textSize="25dp"
-            android:text="98299-3574"
+            tools:text="98299-3574"
             android:textColor="@color/green_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:id="@+id/amountFunded"
             android:layout_marginTop="7dp"
-            android:text="Amount (USD):  $20"
+            tools:text="Amount (USD):  $20"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:id="@+id/locationFunded"
             android:gravity="center_vertical"
             android:includeFontPadding="false"
             android:drawableEnd="@drawable/ic_map_marker"
