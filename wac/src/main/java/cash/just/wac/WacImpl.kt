@@ -21,7 +21,7 @@ class WacImpl:Wac {
     override fun createSession(server: BtcSERVER, listener: Wac.SessionCallback) {
         val serverUrl = when(server){
             MAIN_NET -> {
-                "https://api-prd.just.cash/atm/wac/"
+                "https://api-prd.just.cash/"
             }
             BtcSERVER.TEST_NET -> {
                 "https://secure.just.cash/"
