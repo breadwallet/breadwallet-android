@@ -86,7 +86,7 @@ class RequestCashCodeController(
         prepareMap(view.context, atm)
 
         atmTitle.text = atm.addressDesc
-        amount.helperText = "Min ${atm.min}$ max ${atm.max}$, multiple of ${atm.bills.toFloat().toInt()}$ bills"
+        amount.helperText = "Min $${atm.min} max $${atm.max}, multiple of $${atm.bills.toFloat().toInt()} bills"
 
         getAtmCode.setOnClickListener {
 
