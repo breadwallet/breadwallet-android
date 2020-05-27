@@ -46,6 +46,7 @@ import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.atm.MapController
+import com.breadwallet.ui.atm.StatusListController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
@@ -204,6 +205,11 @@ class RouterNavigationEffectHandler(
         //         VerticalChangeHandler()
         //     )
         // )
+        router.pushController(
+            RouterTransaction.with(StatusListController(Bundle.EMPTY))
+                .popChangeHandler(VerticalChangeHandler())
+                .pushChangeHandler(VerticalChangeHandler())
+        )
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {

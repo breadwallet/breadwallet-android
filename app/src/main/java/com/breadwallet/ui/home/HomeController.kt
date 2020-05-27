@@ -126,7 +126,7 @@ class HomeController(
     override fun bindView(output: Consumer<E>): Disposable {
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener {
-            // output.accept(E.OnTradeClicked)
+            output.accept(E.OnTradeClicked)
         }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 

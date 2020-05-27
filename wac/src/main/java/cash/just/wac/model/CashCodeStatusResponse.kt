@@ -43,7 +43,7 @@ enum class CodeStatus(private val statusCode:String){
 
     companion object {
         fun resolve(status:String) : CodeStatus {
-            CodeStatus.values().find { it.statusCode == status }?.let {
+            values().find { it.statusCode == status }?.let {
                 return it
             }?:run {
                 throw IllegalArgumentException("not valid code status {$status}")

@@ -168,7 +168,6 @@ class RequestCashCodeController(
             getEmail()
         ).enqueue(object: Callback<SendVerificationCodeResponse> {
             override fun onResponse(call: Call<SendVerificationCodeResponse>, response: Response<SendVerificationCodeResponse>) {
-
                 if (response.code() == HTTP_OK_CODE) {
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
@@ -182,7 +181,6 @@ class RequestCashCodeController(
                 } else {
                     Toast.makeText(context, "error" + response.code(), Toast.LENGTH_SHORT).show()
                 }
-
             }
 
             override fun onFailure(call: Call<SendVerificationCodeResponse>, t: Throwable) {
@@ -206,8 +204,8 @@ class RequestCashCodeController(
                     response: Response<CashCodeResponse>
                 ) {
                     if (response.code() == HTTP_OK_CODE) {
-                        val code = response.body()!!.data.items[0].secureCode
-                        proceedWithCashCode(context, code)
+                        val secureCode = response.body()!!.data.items[0].secureCode
+                        proceedWithCashCode(context, secureCode)
                     } else {
                         val errorBody = response.errorBody()
                         errorBody?.let {
@@ -229,16 +227,16 @@ class RequestCashCodeController(
             })
     }
 
-    private fun proceedWithCashCode(context: Context, code:String) {
-        AtmSharedPreferencesManager.setWithdrawalRequest(context, code)
+    private fun proceedWithCashCode(context: Context, secureCode:String) {
+        AtmSharedPreferencesManager.setWithdrawalRequest(context, secureCode)
 
-        WacSDK.checkCashCodeStatus(code).enqueue(object: Callback<CashCodeStatusResponse> {
+        WacSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(
                 call: Call<CashCodeStatusResponse>,
                 response: Response<CashCodeStatusResponse>
             ) {
                 val cashStatus = response.body()!!.data!!.items[0]
-                showDialog(context, code, cashStatus)
+                showDialog(context, secureCode, cashStatus)
             }
 
             override fun onFailure(call: Call<CashCodeStatusResponse>, t: Throwable) {
@@ -256,7 +254,7 @@ class RequestCashCodeController(
                 dialog.dismissWithAnimation()
             },
             { dialog ->
-                goToDetails(context, code)
+                goToDetails(code)
                 dialog.dismissWithAnimation()
             }, null)
     }
@@ -286,8 +284,8 @@ class RequestCashCodeController(
         })
     }
 
-    private fun goToDetails(context:Context, code:String){
-        Toast.makeText(context, "goToDetails $code", Toast.LENGTH_SHORT).show()
+    private fun goToDetails(code:String) {
+        router.pushController(RouterTransaction.with(CashOutStatusController(code)))
     }
 
     private fun goToSend(btc:String, address:String) {
