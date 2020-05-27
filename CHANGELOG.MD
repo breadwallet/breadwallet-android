@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cash out request list
 - Added empty states for cash out list
 
+## Fixed
+- Improved the experience in request form by using IME_ACTION_NEXT (reported by Todd)
+
 ## [4.2.6 (4026001)]
 ### Fixed
 - The wac atm server used for main net was wrong.
