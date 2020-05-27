@@ -36,7 +36,15 @@
                 android:text="ATM Cash Out Requests" />
 
 
+            <TextView
+                android:id="@+id/no_requests"
+                android:paddingTop="40dp"
+                android:paddingBottom="40dp"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You have no requests"
+                android:textColor="@color/black" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 </FrameLayout>

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.CashCodeStatusResponse
 import cash.just.wac.model.CashStatus
@@ -39,17 +40,39 @@ class StatusListController(args: Bundle) : BaseController(args) {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
+        no_requests.visibility = View.GONE
         size = 0
-        statusList = ArrayList<CashStatus>()
-        val requests = AtmSharedPreferencesManager.getWithdrawalRequests(view.context)
-        requests?.let {
-            size = it.size
-            it.forEach { string ->
-                loadRequest(view.context, string)
-            }
+        val context = view.context
+        if (!WacSDK.isSessionCreated()) {
+            WacSDK.createSession(BitcoinServer.getServer(), object: Wac.SessionCallback {
+                override fun onSessionCreated(sessionKey: String) {
+                    proceed(context)
+                }
+
+                override fun onError(errorMessage: String?) {
+                    Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            proceed(context)
         }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
+    }
+
+    private fun proceed(context: Context) {
+        statusList = ArrayList()
+        val requests = AtmSharedPreferencesManager.getWithdrawalRequests(context)
+        requests?.let {
+            size = it.size
+            it.forEach { string ->
+                loadRequest(context, string)
+            }
+        }
+
+        if(requests == null || requests.isEmpty()) {
+            no_requests.visibility = View.VISIBLE
+        }
     }
 
     private fun loadRequest(context: Context, secureCode:String) {
