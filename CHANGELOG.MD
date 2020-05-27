@@ -3,23 +3,42 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.2.6 (4026001)]
+### Fixed
+- The wac atm server used for main net was wrong.
+- I fixed the position of the $ sign in the request view.
+### Added
+- Moved the cash out tab button to the middle
+- Added activity tab button to the left.
+
 ## [4.2.5 (4025001)]
+### Added
 - Add a gray badge for testNet app icon.
 - Changing package name and cert for MainNet App.
 - Setting up Sonar.
 
 ## [4.2.4 (4024001)]
+### Fixed
 - Fixing the issue with amount being same as min (added some unit tests)
 - Fixing the message about email / sms being sent.
 
 ## [4.2.3 (4023001)]
+### Added
 - Adding the ability to choose TEST_NET vs MAIN_NET
 - Customizing the sendSheetController to be used in the cash out atm flow.
 
 ## [4.2.1 (4021001)]
+### Added
 - Removing third page of onboarding.
 - Adding a new asset / text for onboarding page.
 - Disabling email verification and making phone the only method (@kal feedback to improve KYC process).
+- Improved the style of the buttons in request verification code (color and rounded buttons).
+- Adding the ability to navigate from cash code creation to the sendController.
+- Filled the information on send controller, address and BTC value for cash out flow.
+- Disabling the fee selection and adding the regular one for cash out flow.
+- An easter egg was dropped in the requestCodeController.
+
+### Fixed
 - Fixed some issues provided by @anasoid about having brd urls in about, 
 atmcoin/comm/issues/720
 atmcoin/comm/issues/721
@@ -27,13 +46,10 @@ atmcoin/comm/issues/721
 atmcoin/comm/issues/723
 atmcoin/comm/issues/724
 - Fixed the request where email and phone number where misplaced.
-- Improved the style of the buttons in request verification code (color and rounded buttons).
-- Adding the ability to navigate from cash code creation to the sendController.
-- Filled the information on send controller, address and BTC value for cash out flow.
-- Disabling the fee selection and adding the regular one for cash out flow.
-- An easter egg was dropped in the requestCodeController.
+
 
 ## [4.1.4-preview (4014002)]
+### Added
 - Added new assets and messages for onboarding pages.
 - Fixed the verification code request email / phone.
 - Wired up the send controller to the last step of cash code.
