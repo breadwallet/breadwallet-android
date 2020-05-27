@@ -74,6 +74,7 @@ import java.util.Locale
 
 private const val CURRENCY_CODE = "CURRENCY_CODE"
 private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
+private const val RESOLVED_ADDRESS_CHARS = 10
 
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
@@ -129,7 +130,8 @@ class SendSheetController(args: Bundle? = null) :
             ratesRepository = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
-            }
+            },
+            payIdService = direct.instance()
         )
 
     override fun onCreateView(view: View) {
@@ -173,7 +175,7 @@ class SendSheetController(args: Bundle? = null) :
                 }
             },
             textInputAddress.clicks().map { E.OnAmountEditDismissed },
-            textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            textInputAddress.textChanges().map { E.OnTargetStringChanged(it) },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
             },
@@ -246,6 +248,21 @@ class SendSheetController(args: Bundle? = null) :
     override fun M.render() {
         val res = checkNotNull(resources)
 
+        ifChanged(M::isPayId, M::isResolvingAddress) {
+            addressProgressBar.isVisible = isResolvingAddress
+            if (isPayId) {
+                inputLayoutAddress.hint = res.getString(R.string.Send_payId_toLabel)
+                inputLayoutAddress.helperText = if (isResolvingAddress) null else {
+                    val first = targetAddress.take(RESOLVED_ADDRESS_CHARS)
+                    val last = targetAddress.takeLast(RESOLVED_ADDRESS_CHARS)
+                    "$first...$last"
+                }
+            } else {
+                inputLayoutAddress.helperText = null
+                inputLayoutAddress.hint = res.getString(R.string.Send_toLabel)
+            }
+        }
+
         ifChanged(M::targetInputError) {
             inputLayoutAddress.isErrorEnabled = targetInputError != null
             inputLayoutAddress.error = when (targetInputError) {
@@ -260,6 +277,16 @@ class SendSheetController(args: Bundle? = null) :
                     )
                 is M.InputError.ClipboardEmpty ->
                     res.getString(R.string.Send_emptyPasteboard)
+                is M.InputError.PayIdInvalid -> res.getString(R.string.Send_payId_invalid)
+                is M.InputError.PayIdNoAddress -> res.getString(
+                    R.string.Send_payId_noAddress,
+                    currencyCode.toUpperCase(Locale.ROOT)
+                )
+                is M.InputError.PayIdCurrencyNotSupported -> res.getString(
+                    R.string.Send_payId_currencyNotSupported,
+                    currencyCode.toUpperCase(Locale.ROOT)
+                )
+                is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
                 else -> null
             }
         }
@@ -340,9 +367,9 @@ class SendSheetController(args: Bundle? = null) :
             )
         }
 
-        ifChanged(M::targetAddress) {
-            if (textInputAddress.text.toString() != targetAddress) {
-                textInputAddress.setText(targetAddress, TextView.BufferType.EDITABLE)
+        ifChanged(M::targetString) {
+            if (textInputAddress.text.toString() != targetString) {
+                textInputAddress.setText(targetString, TextView.BufferType.EDITABLE)
             }
         }
 
@@ -366,7 +393,8 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isConfirmingTx) {
-            val isConfirmVisible = router.backstack.lastOrNull()?.controller() is ConfirmTxController
+            val isConfirmVisible =
+                router.backstack.lastOrNull()?.controller() is ConfirmTxController
             if (isConfirmingTx && !isConfirmVisible) {
                 val controller = ConfirmTxController(
                     currencyCode,
@@ -386,7 +414,8 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isAuthenticating) {
-            val isAuthVisible = router.backstack.lastOrNull()?.controller() is AuthenticationController
+            val isAuthVisible =
+                router.backstack.lastOrNull()?.controller() is AuthenticationController
             if (isAuthenticating && !isAuthVisible) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
                     AuthenticationController.Mode.USER_PREFERRED
@@ -429,7 +458,7 @@ class SendSheetController(args: Bundle? = null) :
                 )
 
                 if ((destinationTag.value.isNullOrBlank() &&
-                    !textInputDestinationTag.text.isNullOrBlank()) ||
+                        !textInputDestinationTag.text.isNullOrBlank()) ||
                     (!destinationTag.value.isNullOrBlank() &&
                         textInputDestinationTag.text.isNullOrBlank())
                 ) {

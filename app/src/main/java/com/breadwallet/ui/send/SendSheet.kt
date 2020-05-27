@@ -91,8 +91,12 @@ object SendSheet {
         /** True when [totalCost] is greater than [balance]. */
         val isTotalCostOverBalance: Boolean = false,
 
-        /** The user supplied address to send the [amount] of [currencyCode] to. */
-        @Redacted val targetAddress: String = "",
+        /** The user supplied address or PayID to send the [amount] of [currencyCode] to. */
+        val targetString: String = "",
+        /** The address to send the [amount] of [currencyCode] to. */
+        val targetAddress: String = "",
+        val isPayId: Boolean = false,
+        val isResolvingAddress: Boolean = false,
         /** The user supplied amount to send as a string. */
         val rawAmount: String = "",
         /** The user supplied amount as [BigDecimal]. */
@@ -155,6 +159,11 @@ object SendSheet {
 
             object ClipboardEmpty : InputError()
             object ClipboardInvalid : InputError()
+
+            object PayIdInvalid : InputError()
+            object PayIdNoAddress : InputError()
+            object PayIdCurrencyNotSupported : InputError()
+            object PayIdRetrievalError : InputError()
 
             object FailedToEstimateFee : InputError()
         }
@@ -323,11 +332,6 @@ object SendSheet {
             val transferSpeed: TransferSpeed
         ) : E()
 
-        data class OnAddressValidated(
-            @Redacted val address: String,
-            val isValid: Boolean
-        ) : E()
-
         sealed class OnAmountChange : E() {
             object AddDecimal : OnAmountChange()
             object Delete : OnAmountChange()
@@ -338,7 +342,7 @@ object SendSheet {
             ) : OnAmountChange()
         }
 
-        data class OnTargetAddressChanged(
+        data class OnTargetStringChanged(
             @Redacted val toAddress: String
         ) : E()
 
@@ -351,14 +355,29 @@ object SendSheet {
             object OnCancelClicked : ConfirmTx()
         }
 
-        sealed class OnAddressPasted : E() {
+        sealed class OnAddressValidated : E() {
 
-            data class ValidAddress(
-                @Redacted val address: String
-            ) : OnAddressPasted()
+            sealed class Address : OnAddressValidated() {
+                data class ValidAddress(
+                    @Redacted val address: String
+                ) : Address()
 
-            object NoAddress : OnAddressPasted()
-            object InvalidAddress : OnAddressPasted()
+                data class PayIdString(val payId: String) : Address()
+                data class InvalidAddress(val fromClipboard: Boolean = false) : Address()
+                data class NoAddress(val fromClipboard: Boolean = false) : Address()
+            }
+
+            sealed class PayId : OnAddressValidated() {
+                data class ValidAddress(
+                    val payId: String,
+                    @Redacted val address: String
+                ) : PayId()
+
+                object InvalidPayId : PayId()
+                object RetrievalError : PayId()
+                object NoAddress : PayId()
+                object CurrencyNotSupported : PayId()
+            }
         }
 
         object GoToEthWallet : E()
@@ -427,6 +446,11 @@ object SendSheet {
         data class ValidateAddress(
             val currencyCode: CurrencyCode,
             @Redacted val address: String
+        ) : F()
+
+        data class ResolvePayId(
+            val currencyCode: CurrencyCode,
+            @Redacted val payId: String
         ) : F()
 
         data class ShowEthTooLowForTokenFee(
@@ -527,6 +551,7 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         amount = amount ?: BigDecimal.ZERO,
         rawAmount = amount?.stripTrailingZeros()?.toPlainString() ?: "",
         targetAddress = address ?: "",
+        targetString = address ?: "",
         cryptoRequestUrl = this,
         memo = message,
         transferFields = when {
