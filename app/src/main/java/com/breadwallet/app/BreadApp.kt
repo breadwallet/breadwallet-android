@@ -66,6 +66,7 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.CryptoUriParser
+import com.breadwallet.util.PayIdService
 import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.trackAddressMismatch
@@ -301,14 +302,19 @@ class BreadApp : Application(), KodeinAware {
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
+        val httpClient = OkHttpClient()
+
         bind<BlockchainDb>() with singleton {
-            val httpClient = OkHttpClient()
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
                     .addInterceptor(authInterceptor)
                     .build()
             )
+        }
+
+        bind<PayIdService>() with singleton {
+            PayIdService(httpClient)
         }
 
         bind<BreadBox>() with singleton {

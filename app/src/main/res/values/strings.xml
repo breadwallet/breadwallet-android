@@ -1285,4 +1285,10 @@
     <string name="AccountCreation.title">Confirm Account Creation</string>
     <string name="AccountCreation.body">Only create a Hedera account if you intend on storing HBAR in your wallet.</string>
     <string name="AccountCreation.error">An error occurred during account creation. Please try again later.</string>
+
+    <string name="Send.payId_toLabel">PayID</string>
+    <string name="Send.payId_invalid">Invalid PayID.</string>
+    <string name="Send.payId_noAddress">There is no %1$s address associated with this PayID.</string>
+    <string name="Send.payId_currencyNotSupported">PayID is not supported for %1$s addresses.</string>
+    <string name="Send.payId_retrievalError">There was an error retrieving the address for this PayID. Please try again later.</string>
 </resources>

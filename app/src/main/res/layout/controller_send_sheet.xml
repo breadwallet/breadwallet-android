@@ -135,8 +135,20 @@
                 android:hint="@string/Send.toLabel"
                 android:imeOptions="flagNoPersonalizedLearning"
                 android:inputType="textNoSuggestions"
-                android:singleLine="true" />
+                android:singleLine="true"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <ProgressBar
+            android:id="@+id/addressProgressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="@dimen/bread_margin"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toBottomOf="@+id/inputLayoutAddress"
+            app:layout_constraintEnd_toEndOf="@+id/inputLayoutAddress"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/inputLayoutAddress"
+            app:layout_constraintTop_toTopOf="@+id/inputLayoutAddress"/>
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/buttonPaste"

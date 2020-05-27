@@ -27,10 +27,8 @@ package com.breadwallet.ui.send
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheet.E
-import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted
-import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.InvalidAddress
-import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.NoAddress
-import com.breadwallet.ui.send.SendSheet.E.OnAddressPasted.ValidAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.Address
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.PayId
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDecimal
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDigit
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
@@ -374,35 +372,20 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         }
     }
 
-    override fun onTargetAddressChanged(
+    override fun onTargetStringChanged(
         model: M,
-        event: E.OnTargetAddressChanged
+        event: E.OnTargetStringChanged
     ): Next<M, F> {
         return when {
             model.isConfirmingTx -> noChange()
-            model.targetAddress == event.toAddress -> noChange()
-            else -> {
-                val effects = mutableSetOf<F>(
-                    F.GetTransferFields(model.currencyCode, event.toAddress)
-                )
-                val newModel = model.copy(
-                    targetAddress = event.toAddress,
+            model.targetString == event.toAddress -> noChange()
+            else -> next(
+                model.copy(
+                    targetString = event.toAddress,
+                    targetAddress = "",
                     targetInputError = null
                 )
-
-                if (newModel.canEstimateFee) {
-                    effects.add(
-                        F.EstimateFee(
-                            newModel.currencyCode,
-                            newModel.targetAddress,
-                            newModel.amount,
-                            newModel.transferSpeed
-                        )
-                    )
-                }
-
-                next(newModel, effects)
-            }
+            )
         }
     }
 
@@ -449,49 +432,104 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             setOf(
                 F.ValidateAddress(
                     model.currencyCode,
-                    model.targetAddress
+                    model.targetString
                 )
             )
         )
 
-    override fun onAddressPasted(
+    override fun onAddressValidated(
         model: M,
-        event: OnAddressPasted
+        event: E.OnAddressValidated
     ): Next<M, F> {
-        val effects = mutableSetOf<F>()
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
-                is ValidAddress -> {
-                    if (model.canEstimateFee) {
-                        F.EstimateFee(
-                            model.currencyCode,
-                            event.address,
-                            model.amount,
-                            model.transferSpeed
-                        ).run(effects::add)
-                    }
-
-                    next(
-                        model.copy(
-                            targetAddress = event.address,
-                            targetInputError = null
-                        ),
-                        effects + F.GetTransferFields(model.currencyCode, event.address)
-                    )
+                is Address.ValidAddress -> {
+                    processValidAddress(model, event.address)
                 }
-                is InvalidAddress -> next(
+                is Address.PayIdString -> next(
                     model.copy(
-                        targetInputError = M.InputError.ClipboardInvalid
+                        targetString = event.payId,
+                        isPayId = true,
+                        isResolvingAddress = true
+                    ),
+                    setOf<F>(F.ResolvePayId(model.currencyCode, event.payId))
+                )
+                is Address.InvalidAddress -> next(
+                    model.copy(
+                        isPayId = false,
+                        isResolvingAddress = false,
+                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardInvalid else M.InputError.Invalid
                     )
                 )
-                is NoAddress -> next(
+                is Address.NoAddress -> next(
                     model.copy(
-                        targetInputError = M.InputError.ClipboardEmpty
+                        isPayId = false,
+                        isResolvingAddress = false,
+                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardEmpty else M.InputError.Empty
+                    )
+                )
+                is PayId.ValidAddress -> {
+                    processValidAddress(model, event.address, event.payId)
+                }
+                PayId.InvalidPayId -> next(
+                    model.copy(
+                        isPayId = true,
+                        isResolvingAddress = false,
+                        targetInputError = M.InputError.PayIdInvalid
+                    )
+                )
+                PayId.NoAddress -> next(
+                    model.copy(
+                        isPayId = true,
+                        isResolvingAddress = false,
+                        targetInputError = M.InputError.PayIdNoAddress
+                    )
+                )
+                PayId.CurrencyNotSupported -> next(
+                    model.copy(
+                        isPayId = true,
+                        isResolvingAddress = false,
+                        targetInputError = M.InputError.PayIdCurrencyNotSupported
+                    )
+                )
+                PayId.RetrievalError -> next(
+                    model.copy(
+                        isPayId = true,
+                        isResolvingAddress = false,
+                        targetInputError = M.InputError.PayIdRetrievalError
                     )
                 )
             }
+
         }
+    }
+
+    private fun processValidAddress(
+        model: M,
+        address: String,
+        payId: String? = null
+    ): Next<M, F> {
+        val effects = mutableSetOf<F>()
+        if (model.canEstimateFee) {
+            F.EstimateFee(
+                model.currencyCode,
+                address,
+                model.amount,
+                model.transferSpeed
+            ).run(effects::add)
+        }
+
+        return next(
+            model.copy(
+                targetAddress = address,
+                targetString = payId ?: address, // Handle paste
+                targetInputError = null,
+                isPayId = payId != null,
+                isResolvingAddress = false
+            ),
+            effects + F.GetTransferFields(model.currencyCode, address)
+        )
     }
 
     override fun confirmTx(
@@ -653,32 +691,6 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         }
     }
 
-    override fun onAddressValidated(
-        model: M,
-        event: E.OnAddressValidated
-    ): Next<M, F> {
-        if (model.targetAddress != event.address) return noChange()
-
-        val effects = mutableSetOf<F>()
-        val newModel = model.copy(
-            targetInputError = if (event.isValid) null
-            else M.InputError.Invalid
-        )
-
-        if (newModel.canEstimateFee) {
-            effects.add(
-                F.EstimateFee(
-                    currencyCode = newModel.currencyCode,
-                    address = newModel.targetAddress,
-                    amount = newModel.amount,
-                    transferSpeed = newModel.transferSpeed
-                )
-            )
-        }
-
-        return next(newModel, effects)
-    }
-
     override fun onAuthenticationSettingsUpdated(
         model: M,
         event: E.OnAuthenticationSettingsUpdated
@@ -759,8 +771,10 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             is E.PaymentProtocol.OnPaymentLoaded -> {
                 val paymentRequest = event.paymentRequest
                 val amount = event.cryptoAmount
+                val address = paymentRequest.primaryTarget.get().toString()
                 val newModel = model.copy(
-                    targetAddress = paymentRequest.primaryTarget.get().toString(),
+                    targetAddress = address,
+                    targetString = address,
                     memo = paymentRequest.memo.get(),
                     amount = amount,
                     paymentProtocolRequest = paymentRequest,
