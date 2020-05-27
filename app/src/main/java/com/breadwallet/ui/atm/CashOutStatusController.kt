@@ -76,16 +76,19 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         } ?:run {
             val safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
             WacSDK.checkCashCodeStatus(safeCode).enqueue(object: Callback<CashCodeStatusResponse> {
-                override fun onResponse(call: Call<CashCodeStatusResponse>, response: Response<CashCodeStatusResponse>) {
+                override fun onResponse(call: Call<CashCodeStatusResponse>,
+                    response: Response<CashCodeStatusResponse>) {
                     if (response.isSuccessful && response.code() == 200) {
 
                         response.body()?.let { it ->
                             val cashStatus = it.data!!.items[0]
 
                             if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
-                                populateAwaitingView(cashStatus.address, cashStatus.description, cashStatus.usdAmount, cashStatus.btc_amount)
+                                populateAwaitingView(cashStatus.address, cashStatus.description,
+                                    cashStatus.usdAmount, cashStatus.btc_amount)
                             } else if (CodeStatus.resolve(cashStatus.status) == CodeStatus.FUNDED) {
-                                populateFundedView(view.context, cashStatus.code!!, cashStatus.usdAmount, cashStatus.description)
+                                populateFundedView(view.context, cashStatus.code!!,
+                                    cashStatus.usdAmount, cashStatus.description)
                             }
                         }
                     }

@@ -36,6 +36,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
     companion object {
         const val SEVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         const val DISPLAY_TIME_FORMAT = "dd MMM, hh:mm"
+        const val HTTP_OK = 200
     }
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
@@ -78,7 +79,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
     private fun loadRequest(context: Context, secureCode:String) {
         WacSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(call: Call<CashCodeStatusResponse>, response: Response<CashCodeStatusResponse>) {
-                if (response.isSuccessful && response.code() == 200) {
+                if (response.isSuccessful && response.code() == HTTP_OK) {
                     statusList.add(response.body()?.data!!.items[0])
                 }
                 if (statusList.size == size) {
@@ -106,7 +107,8 @@ class StatusListController(args: Bundle) : BaseController(args) {
     }
 
     private fun populateCashCodeStatus(view:View, response: CashStatus) {
-        view.findViewById<TextView>(R.id.date).text = response.expiration.toDate(SEVER_TIME_FORMAT).formatTo(DISPLAY_TIME_FORMAT)
+        view.findViewById<TextView>(R.id.date).text =
+            response.expiration.toDate(SEVER_TIME_FORMAT).formatTo(DISPLAY_TIME_FORMAT)
         view.findViewById<TextView>(R.id.addressLocation).text = response.description
         val status = CodeStatus.resolve(response.status)
         val stateView = view.findViewById<TextView>(R.id.stateMessage)
