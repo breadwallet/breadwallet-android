@@ -33,7 +33,6 @@ import cash.just.wac.Wac
 import cash.just.wac.WacSDK
 import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
-import cash.just.wac.model.CashStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
