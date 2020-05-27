@@ -116,26 +116,26 @@ class MapController(
                 dialog.dismissWithAnimation()
             },
             { dialog ->
-                router.pushController(RouterTransaction.with(
-                    CashOutStatusController(
-                         //make it default
-                        getAwaitingState()
-                    )
-                ))
+                // router.pushController(RouterTransaction.with(
+                //     CashOutStatusController(
+                //          //make it default
+                //          getAwaitingState()
+                //     )
+                // ))
                 dialog.dismissWithAnimation()
                 dialog.dismissWithAnimation()
             }, null)
     }
 
-    private fun getAwaitingState() : CashStatus {
-        return CashStatus("BTC","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","20.0","0.2345","",
-            "","","Mataró, cami de la Geganta","","")
-    }
-
-    private fun getFundedState() : CashStatus {
-        return CashStatus("1234-1234","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","10","0.2345","",
-            "","","Mataró, cami de la Geganta","","")
-    }
+    // private fun getAwaitingState() : CashStatus {
+    //     return CashStatus("BTC","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","20.0","0.2345","",
+    //         "","","Mataró, Cami de la Geganta","","")
+    // }
+    //
+    // private fun getFundedState() : CashStatus {
+    //     return CashStatus("1234-1234","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","10","0.2345","",
+    //         "","","Mataró, Cami de la Geganta","","")
+    // }
 
     private fun fetchAtms(){
         WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {

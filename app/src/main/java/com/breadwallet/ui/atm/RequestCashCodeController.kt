@@ -167,10 +167,8 @@ class RequestCashCodeController(
             getPhone(),
             getEmail()
         ).enqueue(object: Callback<SendVerificationCodeResponse> {
-            override fun onResponse(
-                call: Call<SendVerificationCodeResponse>,
-                response: Response<SendVerificationCodeResponse>
-            ) {
+            override fun onResponse(call: Call<SendVerificationCodeResponse>, response: Response<SendVerificationCodeResponse>) {
+
                 if (response.code() == HTTP_OK_CODE) {
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
@@ -184,6 +182,7 @@ class RequestCashCodeController(
                 } else {
                     Toast.makeText(context, "error" + response.code(), Toast.LENGTH_SHORT).show()
                 }
+
             }
 
             override fun onFailure(call: Call<SendVerificationCodeResponse>, t: Throwable) {
