@@ -32,6 +32,7 @@ import org.kodein.di.erased.instance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpURLConnection.HTTP_OK
 
 class CashOutStatusController(args: Bundle) : BaseController(args) {
 
@@ -73,12 +74,12 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
             } else if (CodeStatus.resolve(it.status) == CodeStatus.FUNDED) {
                 populateFundedView(view.context, it.code!!, it.usdAmount, it.description)
             }
-        } ?:run {
+        } ?: run {
             val safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
             WacSDK.checkCashCodeStatus(safeCode).enqueue(object: Callback<CashCodeStatusResponse> {
                 override fun onResponse(call: Call<CashCodeStatusResponse>,
                     response: Response<CashCodeStatusResponse>) {
-                    if (response.isSuccessful && response.code() == 200) {
+                    if (response.isSuccessful && response.code() == HTTP_OK) {
 
                         response.body()?.let { it ->
                             val cashStatus = it.data!!.items[0]
@@ -102,7 +103,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
     }
 
     private fun changeUiState(state: ViewState){
-        when(state) {
+        when (state) {
             ViewState.LOADING -> {
                 loadingView.visibility = View.VISIBLE
                 fundedCard.visibility = View.GONE

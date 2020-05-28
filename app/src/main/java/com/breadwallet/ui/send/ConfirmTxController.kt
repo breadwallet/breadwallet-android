@@ -54,6 +54,7 @@ private val NOOP_LISTENER = object : ConfirmTxController.Listener {}
 /**
  * Transaction detail to be shown for user verification before requesting authentication.
  */
+@Suppress("ComplexMethod")
 class ConfirmTxController(
     args: Bundle? = null
 ) : BaseController(args) {

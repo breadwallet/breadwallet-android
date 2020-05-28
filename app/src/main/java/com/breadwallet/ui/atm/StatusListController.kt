@@ -71,7 +71,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
             }
         }
 
-        if(requests == null || requests.isEmpty()) {
+        if (requests == null || requests.isEmpty()) {
             no_requests.visibility = View.VISIBLE
         }
     }
