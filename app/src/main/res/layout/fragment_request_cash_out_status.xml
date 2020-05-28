@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"/>
 
-        <include android:id="@+id/fundedCard" android:visibility="invisible" layout="@layout/request_status_funded"/>
+        <include android:id="@+id/fundedCard" layout="@layout/request_status_funded"/>
 
         <include android:id="@+id/awaitingCard" layout="@layout/request_status_awaiting"/>
     </androidx.cardview.widget.CardView>

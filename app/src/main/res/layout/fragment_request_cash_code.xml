@@ -52,6 +52,7 @@
                 tools:text="Atm title" />
 
             <LinearLayout
+                android:layout_marginTop="7dp"
                 android:id="@+id/verificationGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,6 +69,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:imeOptions="actionNext"
                         android:maxLines="1"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -83,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
-                        android:hint="Enter the phone number"
+                        android:hint="Enter your phone number"
                         app:helperText="I agree to receive text messages specific to this transaction. Standard messaging rates may apply.">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -154,6 +156,7 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:imeOptions="actionNext"
+                            android:inputType="text"
                             android:maxLines="1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
@@ -185,7 +188,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="7dp"
                     android:textColor="@color/black"
-                    tools:text="We've sent a confirmation token..."/>
+                    tools:text="We've sent a confirmation number..."/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/token"

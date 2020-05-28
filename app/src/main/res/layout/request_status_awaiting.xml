@@ -65,7 +65,6 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:layout_marginTop="7dp"
                 tools:text="Amount:"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
@@ -88,13 +87,13 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:drawableEnd="@drawable/ic_content_copy"
                 android:id="@+id/awaitingAddress"
-                tools:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"
+                tools:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4dfdfxqX"
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
-                android:drawableEnd="@drawable/ic_content_copy"
                 android:singleLine="true"
-                android:ellipsize="end"
+                android:ellipsize="marquee"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

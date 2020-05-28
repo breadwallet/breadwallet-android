@@ -129,8 +129,9 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
 
     private fun populateAwaitingView(address:String, details:String, usdAmount:String, btcAmount:String) {
         changeUiState(ViewState.AWAITING)
-
         awaitingAddress.text = address
+        awaitingAddress.isSelected = true
+
         awaitingBTCAmount.text = "Amount: $btcAmount BTC"
         awaitingLocationAddress.text = "Location: $details"
         awaitingUSDAmount.text = "Amount (USD): $$usdAmount"
