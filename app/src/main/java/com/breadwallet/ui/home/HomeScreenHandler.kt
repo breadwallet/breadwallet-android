@@ -168,7 +168,10 @@ fun createHomeScreenHandler(
             .throttleLatest(WALLET_UPDATE_THROTTLE)
             .mapLatest { wallets ->
                 val fiatIso = BRSharedPrefs.getPreferredFiatIso()
-                E.OnWalletsUpdated(wallets.map { it.asWallet(fiatIso, ratesRepo) })
+                E.OnWalletsUpdated(wallets.map {
+                    val name = TokenUtil.getTokenItemByCurrencyCode(it.currency.code)?.name
+                    it.asWallet(name, fiatIso, ratesRepo)
+                })
             }
     }
 
@@ -246,6 +249,7 @@ private fun TokenItem.asWallet(
 }
 
 private fun CryptoWallet.asWallet(
+    name: String?,
     fiatIso: String,
     ratesRepo: RatesRepository
 ): Wallet {
@@ -253,11 +257,12 @@ private fun CryptoWallet.asWallet(
     val balanceBig = balance.toBigDecimal()
     return Wallet(
         currencyId = currencyId,
-        currencyName = currency.name,
+        currencyName = name ?: currency.name,
         currencyCode = currency.code,
         fiatPricePerUnit = ratesRepo.getFiatPerCryptoUnit(currency.code, fiatIso),
         balance = balanceBig,
-        fiatBalance = ratesRepo.getFiatForCrypto(balanceBig, currency.code, fiatIso) ?: BigDecimal.ZERO,
+        fiatBalance = ratesRepo.getFiatForCrypto(balanceBig, currency.code, fiatIso)
+            ?: BigDecimal.ZERO,
         syncProgress = 0f, // will update via sync events
         syncingThroughMillis = 0L, // will update via sync events
         priceChange = ratesRepo.getPriceChange(currency.code),
