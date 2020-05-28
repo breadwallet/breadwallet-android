@@ -32,6 +32,7 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
+@Suppress("TooManyFunctions")
 object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun update(
         model: M,

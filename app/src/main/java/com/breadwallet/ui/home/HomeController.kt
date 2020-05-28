@@ -25,6 +25,7 @@
 package com.breadwallet.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -69,8 +70,10 @@ import kotlinx.android.synthetic.main.controller_home.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableList
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+import java.util.Collections
 
 private const val EMAIL_SUCCESS_DELAY = 3_000L
 private const val NETWORK_TESTNET = "TESTNET"
@@ -126,7 +129,7 @@ class HomeController(
     override fun bindView(output: Consumer<E>): Disposable {
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener {
-            // output.accept(E.OnTradeClicked)
+            output.accept(E.OnTradeClicked)
         }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
@@ -152,7 +155,7 @@ class HomeController(
 
         walletAdapter = ModelAdapter(::WalletListItem)
         addWalletAdapter = ItemAdapter()
-
+        Log.d("df", walletAdapter!!.itemList.toString())
         fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
 
         val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter!!, eventConsumer))
@@ -173,7 +176,14 @@ class HomeController(
 
     override fun M.render() {
         ifChanged(M::wallets) {
-            walletAdapter?.setNewList(wallets.values.toList())
+            //Adding only BTC
+            wallets["btc"]?.let {
+                val list = Collections.unmodifiableList(
+                    ArrayList(Collections.singleton(it))).toImmutableList()
+                    as List<Wallet>
+                walletAdapter?.setNewList(list)
+            }
+            // walletAdapter?.setNewList(wallets.values.toList())
             if (addWalletAdapter?.itemList?.size() == 0 && wallets.isNotEmpty()) {
                 addWalletAdapter?.add(AddWalletItem())
             }

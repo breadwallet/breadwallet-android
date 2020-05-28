@@ -51,106 +51,118 @@
                 android:textSize="25dp"
                 tools:text="Atm title" />
 
-             <LinearLayout
+            <LinearLayout
+                android:layout_marginTop="7dp"
                 android:id="@+id/verificationGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Amount to withdraw"
-                app:helperText="Min 100$ max 800$">
-
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/amount"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-             </com.google.android.material.textfield.TextInputLayout>
-
-             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/phoneNumber"
-                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:hint="Enter the phone number"
-                    app:helperText="I agree to receive text messages specific to this transaction. Standard messaging rates may apply.">
+                    android:hint="Amount to withdraw"
+
+                    app:helperText="Min 100$ max 800$">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/email"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:hint="Email"
-                    android:visibility="gone">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-<!--                <androidx.appcompat.widget.AppCompatButton-->
-<!--                    android:padding="10dp"-->
-<!--                    android:id="@+id/noPhoneButton"-->
-<!--                    android:background="?attr/colorControlActivated"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center_vertical"-->
-<!--                    android:text="No Phone?" />-->
-
-             </LinearLayout>
-
-             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/firstName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:hint="First name">
-
-                    <com.google.android.material.textfield.TextInputEditText
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/lastName"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:hint="Last name">
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phoneNumber"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:hint="Enter your phone number"
+                        app:helperText="I agree to receive text messages specific to this transaction. Standard messaging rates may apply.">
 
-             </LinearLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/email"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:hint="Email"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!--                <androidx.appcompat.widget.AppCompatButton-->
+                    <!--                    android:padding="10dp"-->
+                    <!--                    android:id="@+id/noPhoneButton"-->
+                    <!--                    android:background="?attr/colorControlActivated"-->
+                    <!--                    android:textColor="@color/white"-->
+                    <!--                    android:layout_width="wrap_content"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:layout_gravity="center_vertical"-->
+                    <!--                    android:text="No Phone?" />-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/firstName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:hint="First name">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/lastName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:hint="Last name">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:padding="10dp"
@@ -163,47 +175,49 @@
                     android:layout_marginTop="30dp"
                     android:text="Get ATM code" />
             </LinearLayout>
-        <LinearLayout
-            android:id="@+id/confirmGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/confirmationMessage"
+            <LinearLayout
+                android:id="@+id/confirmGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="7dp"
-                android:textColor="@color/black"
-                tools:text="We've sent a confirmation token..."/>
+                android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/token"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:hint="Enter token"
-                app:helperText="Check your email for the confirmation token we sent you. It may take a couple of minutes.">
-
-                <com.google.android.material.textfield.TextInputEditText
+                <TextView
+                    android:id="@+id/confirmationMessage"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="7dp"
+                    android:textColor="@color/black"
+                    tools:text="We've sent a confirmation number..."/>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:background="@drawable/rounded_background"
-                android:textColor="@color/white"
-                android:id="@+id/confirmAction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:padding="10dp"
-                android:layout_marginTop="30dp"
-                android:text="Confirm" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/token"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="Enter token"
+                    app:helperText="Check your email for the confirmation token we sent you. It may take a couple of minutes.">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:background="@drawable/rounded_background"
+                    android:textColor="@color/white"
+                    android:id="@+id/confirmAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:padding="10dp"
+                    android:layout_marginTop="30dp"
+                    android:text="Confirm" />
+            </LinearLayout>
         </LinearLayout>
-      </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 </FrameLayout>

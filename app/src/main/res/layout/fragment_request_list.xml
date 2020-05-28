@@ -1,0 +1,50 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:filterTouchesWhenObscured="true"
+    android:isScrollContainer="false">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:animateLayoutChanges="true"
+        android:clickable="true"
+        android:isScrollContainer="false"
+        android:orientation="vertical"
+        android:padding="0dp"
+        app:cardCornerRadius="8dp">
+
+        <LinearLayout
+            android:id="@+id/requestGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/atmTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_marginBottom="15dp"
+                android:textSize="25dp"
+                android:text="ATM Cash Out Requests" />
+
+
+            <TextView
+                android:id="@+id/no_requests"
+                android:paddingTop="40dp"
+                android:paddingBottom="40dp"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You have no requests"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

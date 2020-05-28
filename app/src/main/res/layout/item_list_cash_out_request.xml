@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout tools:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_weight="0.6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12dp"
+        android:text="22 may, 2020" />
+
+    <TextView
+        android:ellipsize="end"
+        android:id="@+id/addressLocation"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12dp"
+        android:text="Calle 13, Miami" />
+
+    <TextView
+        android:id="@+id/stateMessage"
+        tools:drawableEnd="@drawable/ic_eye"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12dp"
+        android:text="Awaiting funds" />
+</LinearLayout>

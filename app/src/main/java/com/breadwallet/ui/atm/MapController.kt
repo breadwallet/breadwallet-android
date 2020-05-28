@@ -35,7 +35,6 @@ import cash.just.wac.model.AtmListResponse
 import cash.just.wac.model.AtmMachine
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
-import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
@@ -84,7 +83,53 @@ class MapController(
         }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
+
+        // searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+        //     if (hasFocus) {
+        //        showDialog()
+        //     }
+        // }
     }
+
+    // private fun showDialog() {
+    //
+    //     BRDialog.showCustomDialog(
+    //         applicationContext!!, "Withdrawal requested",
+    //         "Please send the amount of 0.069 BTC to the ATM",
+    //         "Send", "Details", { dialog ->
+    //             val builder = CryptoRequest.Builder()
+    //             builder.address = "n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF "
+    //             builder.amount = 0.234f.toBigDecimal()
+    //             builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+    //             val request = builder.build()
+    //             router.pushController(RouterTransaction.with(
+    //                 SendSheetController(
+    //                     request //make it default
+    //                 )
+    //             ))
+    //             dialog.dismissWithAnimation()
+    //         },
+    //         { dialog ->
+    //             // router.pushController(RouterTransaction.with(
+    //             //     CashOutStatusController(
+    //             //          //make it default
+    //             //          getAwaitingState()
+    //             //     )
+    //             // ))
+    //             dialog.dismissWithAnimation()
+    //             dialog.dismissWithAnimation()
+    //         }, null)
+    // }
+
+    // private fun getAwaitingState() : CashStatus {
+    //     return CashStatus("BTC","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","20.0","0.2345","",
+    //         "","","Mataró, Cami de la Geganta","","")
+    // }
+    //
+    // private fun getFundedState() : CashStatus {
+    //     return CashStatus("1234-1234","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","10","0.2345","",
+    //         "","","Mataró, Cami de la Geganta","","")
+    // }
 
     private fun fetchAtms(){
         WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {

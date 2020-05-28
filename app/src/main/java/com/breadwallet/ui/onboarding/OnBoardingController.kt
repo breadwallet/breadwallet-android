@@ -173,8 +173,8 @@ class PageOneController(args: Bundle? = null) : BaseController(args) {
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         primary_text.setText(R.string.OnboardingPageTwo_title)
-        secondary_text.setText("Join millions of people around the world who trust Coinsquare, " +
-            "our self custodian wallet is open source and fully compatible with any other wallet.")
+        secondary_text.text = "Our wallet is open source and " +
+            "fully compatible with any other wallet."
     }
 }
 

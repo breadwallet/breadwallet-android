@@ -21,7 +21,7 @@ class WacMarker {
 
             return MarkerOptions()
                 .position(marker)
-                .title("Atm")
+                .title("ATM")
                 .snippet(getDetails(atm))
                 .icon(bitmapDesc)
         }

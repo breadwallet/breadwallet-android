@@ -2,6 +2,7 @@ package cash.just.wac.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.io.Serializable
 import java.lang.IllegalArgumentException
 
 @JsonClass(generateAdapter = true)
@@ -26,7 +27,7 @@ data class CashStatus(
     @field:Json(name = "atm_id") val atmId: String,
     @field:Json(name = "loc_description") val description: String,
     @field:Json(name = "loc_lat") val latitude: String,
-    @field:Json(name = "loc_lon") val longitude: String) {
+    @field:Json(name = "loc_lon") val longitude: String): Serializable {
 
     fun getCodeStatus():CodeStatus {
         return CodeStatus.resolve(status)
@@ -42,7 +43,7 @@ enum class CodeStatus(private val statusCode:String){
 
     companion object {
         fun resolve(status:String) : CodeStatus {
-            CodeStatus.values().find { it.statusCode == status }?.let {
+            values().find { it.statusCode == status }?.let {
                 return it
             }?:run {
                 throw IllegalArgumentException("not valid code status {$status}")

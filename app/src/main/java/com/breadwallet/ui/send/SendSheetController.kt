@@ -24,11 +24,14 @@
  */
 package com.breadwallet.ui.send
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
@@ -119,10 +122,7 @@ class SendSheetController(args: Bundle? = null) :
 
     private var isAtmConfigured = false
     private val currencyCode = arg<String>(CURRENCY_CODE)
-    private val cryptoRequest =
-        arg(CRYPTO_REQUEST,
-            CryptoRequest.Builder().setCurrencyCode(CURRENCY_CODE).build())
-
+    private val cryptoRequest = argOptional<CryptoRequest>(CRYPTO_REQUEST)
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
@@ -457,16 +457,19 @@ class SendSheetController(args: Bundle? = null) :
 
         if (!isAtmConfigured) {
             isAtmConfigured = true
-            isAtmCashOutFlow()?.amount?.let { it ->
-                // It requires the ui thread to propagate the text change event
+            isAtmCashOutFlow()?.let { it ->
+                textInputAddress.isEnabled = false
                 textInputAddress.post {
-                    textInputAddress.setText(cryptoRequest.address)
+                    textInputAddress.setText(it.address)
+                    hideKeyboardFrom(textInputAddress)
                 }
+
+                it.amount?.let { amount -> fakeAmount(amount.toString()) }
+
                 buttonEconomy.isEnabled = false
                 buttonRegular.isSelected = true
                 buttonRegular.isEnabled = false
                 buttonPriority.isEnabled = false
-                fakeAmount(it.toString())
                 buttonPaste.visibility = View.GONE
                 buttonScan.visibility = View.GONE
                 buttonCurrencySelect.visibility = View.GONE
@@ -484,6 +487,12 @@ class SendSheetController(args: Bundle? = null) :
                 }
             }, 5L*index)
         }
+    }
+
+    private fun hideKeyboardFrom(view: View) {
+        val imm: InputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     // It returns CryptoRequest if it is atm cash out flow otherwise returns false
