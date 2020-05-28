@@ -196,7 +196,7 @@ class MapController(
             .popChangeHandler(FadeChangeHandler())
             .pushChangeHandler(FadeChangeHandler())
 
-        router.pushController(transaction)
+        router.replaceTopController(transaction)
     }
 
     private fun handlePlatformMessages() = PlatformTransactionBus.requests().onEach {

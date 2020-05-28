@@ -285,7 +285,7 @@ class RequestCashCodeController(
     }
 
     private fun goToDetails(code:String) {
-        router.pushController(RouterTransaction.with(CashOutStatusController(code)))
+        router.replaceTopController(RouterTransaction.with(CashOutStatusController(code)))
     }
 
     private fun goToSend(btc:String, address:String) {
@@ -294,7 +294,7 @@ class RequestCashCodeController(
         builder.amount = btc.toFloat().toBigDecimal()
         builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
         val request = builder.build()
-        router.pushController(RouterTransaction.with(SendSheetController(
+        router.replaceTopController(RouterTransaction.with(SendSheetController(
             request //make it default
         )))
     }
