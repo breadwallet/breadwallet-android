@@ -8,7 +8,6 @@
     android:isScrollContainer="false">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardAwaiting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
