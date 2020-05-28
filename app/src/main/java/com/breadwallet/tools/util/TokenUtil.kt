@@ -214,7 +214,11 @@ object TokenUtil {
 
     fun getTokenIconPath(currencyCode: String, withBackground: Boolean): String? {
         val bundleResource = ServerBundlesHelper
-            .getExtractedPath(context, ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN), null)
+            .getExtractedPath(
+                context,
+                ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN),
+                null
+            )
         val iconFileName = ICON_FILE_NAME_FORMAT.format(currencyCode.toLowerCase(Locale.ROOT))
         val iconDirectoryName = if (withBackground) {
             ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND
@@ -261,8 +265,10 @@ object TokenUtil {
     }
 
     private fun loadTokens(tokenItems: List<TokenItem>) {
-        this.tokenItems = tokenItems
-        tokenMap = tokenItems.associateBy { item ->
+        val native = tokenItems.filter(TokenItem::isNative).sortedBy { it.name }
+        val tokens = tokenItems.filterNot(TokenItem::isNative).sortedBy { it.symbol }
+        this.tokenItems = native + tokens
+        tokenMap = this.tokenItems.associateBy { item ->
             item.symbol.toLowerCase(Locale.ROOT)
         }
     }
