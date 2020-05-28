@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.2.8 (4028001)]
+### Fixed - Kal feedback
+- change onboarding title to Sell your Bitcoin and Receive Cash at an ATM!
+- change description to Our wallet is open source and fully compatible with any other wallet.
+- remove BRD token, now only BTC will be shown by default
+- capitalize Out in the Am Cash out action
+- position of coinsquare logo aligned with total assets 0.00
+- map bubbles info, change Atm to ATM
+- change enter the phone number to enter your phone number
+- change confirmation token to confirmation number, remove token word
+- awaiting funds screen is cut off a bit, the bitcoin address is cut off, can-t see it fully.
+
 ## [4.2.7 (4026001)]
 ### Added
 - Cash out status view checker
