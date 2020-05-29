@@ -240,7 +240,7 @@ class CryptoUserManager(
 
     override fun isMigrationRequired() =
         !isInitialized() &&
-            (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.getAccount(context) != null)
+            (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.hasAccountBytes(context))
 
     override fun getKeyStoreStatus(): KeyStoreStatus = BRKeyStore.getValidityStatus()
 
