@@ -531,18 +531,15 @@ public final class BRKeyStore {
         return null;
     }
 
-    public static Account getAccount(final Context context) {
+    public static Boolean hasAccountBytes(final Context context) {
         AliasObject obj = ALIAS_OBJECT_MAP.get(ACCOUNT_ALIAS);
         try {
             byte[] accountBytes = getData(context, obj.mAlias, obj.mDatafileName, obj.mIvFileName, 0);
-            if (accountBytes == null || accountBytes.length == 0) {
-                return null;
-            }
-            return Account.createFromSerialization(accountBytes, BRSharedPrefs.getDeviceId()).orNull();
+            return accountBytes != null && accountBytes.length > 0;
         } catch (UserNotAuthenticatedException e) {
             Logger.Companion.error("Failed to get Account.", e);
         }
-        return null;
+        return false;
     }
 
     public static byte[] getAuthKey(final Context context) {
