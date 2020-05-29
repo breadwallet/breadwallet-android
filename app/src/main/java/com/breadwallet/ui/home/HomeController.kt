@@ -36,7 +36,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.legacy.presenter.customviews.BRButton
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -161,6 +160,8 @@ class HomeController(
         rv_wallet_list.adapter = fastAdapter
         rv_wallet_list.itemAnimator = DefaultItemAnimator()
         rv_wallet_list.layoutManager = LinearLayoutManager(view.context)
+
+        addWalletAdapter!!.add(AddWalletItem())
     }
 
     override fun onDestroyView(view: View) {
@@ -173,9 +174,6 @@ class HomeController(
     override fun M.render() {
         ifChanged(M::wallets) {
             walletAdapter?.setNewList(wallets.values.toList())
-            if (addWalletAdapter?.itemList?.size() == 0 && wallets.isNotEmpty()) {
-                addWalletAdapter?.add(AddWalletItem())
-            }
         }
 
         ifChanged(M::aggregatedFiatBalance) {

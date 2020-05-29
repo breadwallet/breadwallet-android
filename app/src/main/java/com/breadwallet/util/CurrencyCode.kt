@@ -27,6 +27,7 @@ package com.breadwallet.util
 import com.breadwallet.tools.util.bch
 import com.breadwallet.tools.util.btc
 import com.breadwallet.tools.util.eth
+import com.breadwallet.tools.util.hbar
 
 typealias CurrencyCode = String
 
@@ -35,4 +36,5 @@ fun CurrencyCode.isBitcoinCash(): Boolean = equals(bch, true)
 fun CurrencyCode.isEthereum(): Boolean = equals(eth, true)
 fun CurrencyCode.isBrd(): Boolean = equals("brd", true)
 fun CurrencyCode.isRipple(): Boolean = equals("xrp", true)
+fun CurrencyCode.isHedera(): Boolean = equals(hbar, true)
 

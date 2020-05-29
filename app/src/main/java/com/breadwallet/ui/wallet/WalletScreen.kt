@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.breadbox.WalletState
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.PriceChange
@@ -63,16 +64,14 @@ object WalletScreen {
         val priceChartInterval: Interval = Interval.ONE_YEAR,
         @Redacted val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
         val selectedPriceDataPoint: PriceDataPoint? = null,
-        val priceChange: PriceChange? = null
+        val priceChange: PriceChange? = null,
+        val state: WalletState = WalletState.Loading
     ) {
 
         companion object {
             fun createDefault(currencyCode: String) =
                 M(currencyCode = currencyCode)
         }
-
-        val hasSyncTime: Boolean
-            get() = syncingThroughMillis != 0L
 
         val isFilterApplied: Boolean
             get() = filterQuery.isNotBlank() ||
@@ -167,6 +166,10 @@ object WalletScreen {
         object OnChartDataPointReleased : E()
 
         data class OnIsTokenSupportedUpdated(val isTokenSupported: Boolean) : E()
+
+        data class OnWalletStateUpdated(val walletState: WalletState) : E()
+        object OnCreateAccountClicked : E()
+        object OnCreateAccountConfirmationClicked : E()
     }
 
     sealed class F {
@@ -203,17 +206,20 @@ object WalletScreen {
             }
         }
 
-        data class LoadCurrencyName(val currencyId: String) : F()
-        data class LoadSyncState(val currencyId: String) : F()
-        data class LoadWalletBalance(val currencyId: String) : F()
-        data class LoadTransactions(val currencyId: String) : F()
-        data class LoadFiatPricePerUnit(val currencyId: String) : F()
+        data class LoadCurrencyName(val currencyCode: String) : F()
+        data class LoadSyncState(val currencyCode: String) : F()
+        data class LoadWalletBalance(val currencyCode: String) : F()
+        data class LoadTransactions(val currencyCode: String) : F()
+        data class LoadFiatPricePerUnit(val currencyCode: String) : F()
         data class LoadTransactionMetaData(
-            val currencyId: String,
+            val currencyCode: String,
             @Redacted val transactionHashes: List<String>
         ) : F()
 
-        data class LoadTransactionMetaDataSingle(val currencyId: String, @Redacted val transactionHashes: List<String>) :
+        data class LoadTransactionMetaDataSingle(
+            val currencyCode: String,
+            @Redacted val transactionHashes: List<String>
+        ) :
             F()
 
         data class LoadIsTokenSupported(val currencyCode: String) : F()
@@ -242,5 +248,10 @@ object WalletScreen {
             val eventName: String,
             val attributes: Map<String, String>? = null
         ) : F()
+
+        data class LoadWalletState(val currencyCode: String) : F()
+        object ShowCreateAccountDialog : F()
+        object ShowCreateAccountErrorDialog : F()
+        data class CreateAccount(val currencyCode: String) : F()
     }
 }

@@ -41,8 +41,8 @@ import com.breadwallet.crypto.errors.TransferSubmitPosixError
 import com.breadwallet.tools.manager.BRSharedPrefs.getBundleHash
 import com.breadwallet.tools.manager.BRSharedPrefs.getDeviceId
 import com.breadwallet.tools.manager.BRSharedPrefs.getWalletRewardId
-import com.breadwallet.tools.security.BRAccountManager
-import com.breadwallet.tools.security.CryptoAccountManager
+import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.util.pubKeyToEthAddress
 import org.apache.commons.io.IOUtils
 import java.io.IOException
@@ -57,7 +57,8 @@ object LogsUtils {
     private const val FAILED_ERROR_MESSAGE = "Failed to get logs."
     private const val DEFAULT_LOGS_EMAIL = "android@brd.com"
     private const val NO_EMAIL_APP_ERROR_MESSAGE = "No email app found."
-    private const val LOGS_EMAIL_SUBJECT = "BRD Android App Feedback [ID:%s]" // Placeholder is for a unique id.
+    private const val LOGS_EMAIL_SUBJECT =
+        "BRD Android App Feedback [ID:%s]" // Placeholder is for a unique id.
     private const val LOGS_FILE_NAME = "Logs.txt"
     private const val MIME_TYPE = "text/plain"
 
@@ -72,7 +73,7 @@ object LogsUtils {
     private fun buildInfoString(
         context: Context,
         breadBox: BreadBox,
-        accountManager: BRAccountManager
+        userManager: BrdUserManager
     ) = buildString {
         addFeedbackBlock()
         appendln()
@@ -80,7 +81,7 @@ object LogsUtils {
         appendln()
         addDeviceBlock()
         appendln()
-        addWalletBlock(context, breadBox, accountManager)
+        addWalletBlock(context, breadBox, userManager)
     }
 
     private fun StringBuilder.addFeedbackBlock() {
@@ -118,7 +119,7 @@ object LogsUtils {
     private fun StringBuilder.addWalletBlock(
         context: Context,
         breadBox: BreadBox,
-        accountManager: BRAccountManager
+        userManager: BrdUserManager
     ) {
         appendln("Wallet")
         appendln("------------")
@@ -151,21 +152,22 @@ object LogsUtils {
                 }
                 .forEach { transfer ->
                     val currencyCode = transfer.wallet.currency.code
-                    val errorMessage = when (val transferError = transfer.state.failedError.orNull()) {
-                        is TransferSubmitPosixError -> {
-                            "Posix Error: ${transferError.errnum}, ${transferError.message}"
+                    val errorMessage =
+                        when (val transferError = transfer.state.failedError.orNull()) {
+                            is TransferSubmitPosixError -> {
+                                "Posix Error: ${transferError.errnum}, ${transferError.message}"
+                            }
+                            else -> "Unknown Error ${transferError?.message ?: ""}"
                         }
-                        else -> "Unknown Error ${transferError?.message ?: ""}"
-                    }
                     appendln("Failed $currencyCode Transfer: error='$errorMessage'")
                 }
 
-            if (accountManager is CryptoAccountManager) {
+            if (userManager is CryptoUserManager) {
                 val ethWallet = system.wallets
                     .firstOrNull { wallet ->
                         wallet.currency.isEthereum()
                     }
-                val storedAddress = accountManager.getEthPublicKey().pubKeyToEthAddress()
+                val storedAddress = userManager.getEthPublicKey().pubKeyToEthAddress()
                 if (storedAddress != null && ethWallet != null) {
                     val network = ethWallet.walletManager.network
                     val coreAddress = Address.create(storedAddress, network).orNull()?.toString()
@@ -179,7 +181,7 @@ object LogsUtils {
         }
     }
 
-    fun shareLogs(context: Context, breadBox: BreadBox, accountManager: BRAccountManager) {
+    fun shareLogs(context: Context, breadBox: BreadBox, userManager: BrdUserManager) {
         val file = FileHelper.saveToExternalStorage(context, LOGS_FILE_NAME, getLogs(context))
         val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file)
         val emailIntent = Intent(Intent.ACTION_SEND).apply {
@@ -191,10 +193,15 @@ object LogsUtils {
                 Intent.EXTRA_SUBJECT,
                 String.format(LOGS_EMAIL_SUBJECT, getDeviceId(context))
             )
-            putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, accountManager))
+            putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, userManager))
         }
         try {
-            context.startActivity(Intent.createChooser(emailIntent, context.getString(R.string.Receive_share)))
+            context.startActivity(
+                Intent.createChooser(
+                    emailIntent,
+                    context.getString(R.string.Receive_share)
+                )
+            )
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(context, NO_EMAIL_APP_ERROR_MESSAGE, Toast.LENGTH_LONG).show()
         }

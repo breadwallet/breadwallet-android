@@ -26,6 +26,7 @@ package com.breadwallet.ui.home
 
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.WalletState
 import com.breadwallet.breadbox.applyDisplayOrder
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.toBigDecimal
@@ -58,12 +59,16 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.transform
 import java.math.BigDecimal
+import java.util.Locale
 import com.breadwallet.crypto.Wallet as CryptoWallet
 
 private const val DATA_THROTTLE_MS = 500L
@@ -119,11 +124,17 @@ class HomeScreenHandler(
                     if (token == null) {
                         null
                     } else {
+                        val currencyCode = token.symbol.toLowerCase(Locale.ROOT)
                         Wallet(
                             currencyId = currencyId,
-                            currencyCode = token.symbol.toLowerCase(),
+                            currencyCode = currencyCode,
                             currencyName = token.name,
-                            isInitialized = false
+                            fiatPricePerUnit = getFiatPerPriceUnit(currencyCode),
+                            priceChange = getPriceChange(currencyCode),
+                            state = when (breadBox.walletState(currencyCode).first()) {
+                                WalletState.Loading -> Wallet.State.LOADING
+                                else -> Wallet.State.UNINITIALIZED
+                            }
                         )
                     }
                 }
@@ -152,9 +163,7 @@ class HomeScreenHandler(
                 E.OnWalletBalanceUpdated(
                     currencyCode = it.currency.code,
                     balance = it.balance.toBigDecimal(),
-                    fiatBalance = getBalanceInFiat(it.balance),
-                    fiatPricePerUnit = getFiatPerPriceUnit(it.currency.code),
-                    priceChange = getPriceChange(it.currency.code)
+                    fiatBalance = getBalanceInFiat(it.balance)
                 )
             }
             .bindConsumerIn(output, this)
@@ -175,6 +184,8 @@ class HomeScreenHandler(
                 }.merge()
             }
             .bindConsumerIn(output, this)
+
+        updatePriceData()
     }
 
     private fun loadIsBuyBellNeeded() {
@@ -213,10 +224,28 @@ class HomeScreenHandler(
     }
 
     override fun onChanged() {
+        updatePriceData()
         val wallets = breadBox.getSystemUnsafe()?.wallets ?: emptyList()
         wallets.onEach { wallet ->
             updateBalance(wallet.currency.code, wallet.balance)
         }
+    }
+
+    private fun updatePriceData() {
+        breadBox.currencyCodes()
+            .take(1)
+            .transform { currencyCodes ->
+                currencyCodes.onEach { code ->
+                    emit(
+                        E.OnUnitPriceChanged(
+                            code,
+                            getFiatPerPriceUnit(code),
+                            getPriceChange(code)
+                        )
+                    )
+                }
+            }
+            .bindConsumerIn(output, this)
     }
 
     private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
@@ -231,16 +260,12 @@ class HomeScreenHandler(
 
     private fun updateBalance(currencyCode: String, balanceAmt: Amount) {
         val balanceInFiat = getBalanceInFiat(balanceAmt)
-        val fiatPricePerUnit = getFiatPerPriceUnit(currencyCode)
-        val priceChange = getPriceChange(currencyCode)
 
         output.accept(
             E.OnWalletBalanceUpdated(
                 currencyCode,
                 balanceAmt.toBigDecimal(),
-                balanceInFiat,
-                fiatPricePerUnit,
-                priceChange
+                balanceInFiat
             )
         )
     }
@@ -267,7 +292,7 @@ class HomeScreenHandler(
             syncProgress = 0f, // will update via sync events
             syncingThroughMillis = 0L, // will update via sync events
             priceChange = getPriceChange(currency.code),
-            isInitialized = true,
+            state = Wallet.State.READY,
             isSyncing = walletManager.state == WalletManagerState.SYNCING()
         )
     }

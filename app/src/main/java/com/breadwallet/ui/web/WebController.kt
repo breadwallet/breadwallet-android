@@ -65,8 +65,10 @@ import com.platform.HTTPServer
 import com.platform.LinkBus
 import com.platform.LinkResultMessage
 import com.platform.PlatformTransactionBus
+import com.platform.jsbridge.BrdApiJs
 import com.platform.jsbridge.CameraJs
 import com.platform.jsbridge.KVStoreJs
+import com.platform.jsbridge.LinkJs
 import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
@@ -173,9 +175,6 @@ class WebController(
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-        val res = checkNotNull(resources)
-        val theme = checkNotNull(activity).theme
-        web_view.setBackgroundColor(res.getColor(R.color.platform_webview_bg, theme))
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
@@ -189,6 +188,7 @@ class WebController(
         web_view.settings.apply {
             domStorageEnabled = true
             javaScriptEnabled = true
+            mediaPlaybackRequiresUserGesture = false
         }
 
         val url: String = arg(ARG_URL)
@@ -199,7 +199,9 @@ class WebController(
 
         nativePromiseFactory = NativePromiseFactory(web_view)
         if ((isPlatformUrl || url.startsWith("file:///"))) {
+            web_view.setBackgroundResource(R.color.platform_webview_bg)
             val locationManager = applicationContext!!.getSystemService<LocationManager>()
+            val brdApiJs = BrdApiJs(nativePromiseFactory, direct.instance())
             val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
             val locationJs =
                 LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
@@ -207,6 +209,7 @@ class WebController(
                 nativePromiseFactory,
                 direct.instance()
             )
+            val linkJs = LinkJs(nativePromiseFactory)
             val walletJs = WalletJs(
                 nativePromiseFactory,
                 direct.instance(),
@@ -216,9 +219,9 @@ class WebController(
                 direct.instance()
             )
             val nativeApis = if (BuildConfig.DEBUG) {
-                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, walletJs)
+                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, linkJs, walletJs, brdApiJs)
             } else {
-                NativeApisJs.with(walletJs)
+                NativeApisJs.with(walletJs, linkJs)
             }
 
             nativeApis.attachToWebView(web_view)
@@ -309,11 +312,14 @@ class WebController(
     }
 
     override fun handleBack() = when {
-        web_view.canGoBack() -> {
+        web_view?.canGoBack() == true -> {
             web_view.goBack()
             true
         }
-        else -> super.handleBack()
+        else -> {
+            LinkPlugin.hasBrowser = false
+            super.handleBack()
+        }
     }
 
     override fun onDestroyView(view: View) {

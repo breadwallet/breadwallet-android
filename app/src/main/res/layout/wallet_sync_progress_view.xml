@@ -9,7 +9,6 @@
     android:animateLayoutChanges="true"
     android:background="@color/sync_toolbar"
     android:orientation="vertical"
-    android:visibility="gone"
     tools:showIn="@layout/controller_wallet">
 
     <RelativeLayout

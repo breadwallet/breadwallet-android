@@ -24,7 +24,7 @@
  */
 package com.breadwallet.ui.writedownkey
 
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.writedownkey.WriteDownKey.E
 import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connection
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 class WriteDownKeyHandler(
     private val output: Consumer<E>,
     private val controllerScope: CoroutineScope,
-    private val accountManager: BRAccountManager,
+    private val userManager: BrdUserManager,
     private val showBrdAuthPrompt: () -> Unit
 ) : Connection<WriteDownKey.F>, CoroutineScope {
 
@@ -57,7 +57,7 @@ class WriteDownKeyHandler(
 
     private fun getPhrase() {
         controllerScope.launch {
-            val rawPhrase = accountManager.getPhrase()
+            val rawPhrase = userManager.getPhrase()
             if (rawPhrase == null || rawPhrase.isEmpty()) {
                 output.accept(E.OnGetPhraseFailed)
             } else {

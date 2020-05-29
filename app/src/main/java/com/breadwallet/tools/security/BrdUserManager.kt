@@ -71,19 +71,23 @@ private const val JWT_EXP_PADDING_MS = 10_000L
 
 /** Manages creation, recovery, and access to an [Account]. */
 @Suppress("TooManyFunctions")
-interface BRAccountManager {
-    suspend fun createAccount(phrase: ByteArray): Account
-    suspend fun recoverAccount(phrase: ByteArray): Account
-    suspend fun migrateAccount(): Boolean
+interface BrdUserManager {
+    suspend fun setupWithGeneratedPhrase(): SetupResult
+    suspend fun setupWithPhrase(phrase: ByteArray): SetupResult
+    suspend fun migrateKeystoreData(): Boolean
 
-    fun isAccountInitialized(): Boolean
+    suspend fun isAccountInvalidated(): Boolean
+
+    fun isInitialized(): Boolean
+    fun getState(): BrdUserState
+    fun stateChanges(disabledUpdates: Boolean = false): Flow<BrdUserState>
+
     fun isMigrationRequired(): Boolean
     fun getKeyStoreStatus(): KeyStoreStatus
-    fun getAccountState(): AccountState
-    fun accountStateChanges(disabledUpdates: Boolean = false): Flow<AccountState>
 
     suspend fun getPhrase(): ByteArray?
     fun getAccount(): Account?
+    fun updateAccount(accountBytes: ByteArray)
     fun getAuthKey(): ByteArray?
 
     suspend fun configurePinCode(pinCode: String)
@@ -92,7 +96,8 @@ interface BRAccountManager {
     fun hasPinCode(): Boolean
     fun pinCodeNeedsUpgrade(): Boolean
 
-    fun lockAccount()
+    fun lock()
+    fun unlock()
 
     fun getToken(): String?
     fun putToken(token: String)
@@ -121,10 +126,10 @@ private const val KEY_FAIL_TIMESTAMP = "failTimestamp"
 private const val KEY_ETH_PUB_KEY = "ethPublicKey"
 
 @Suppress("TooManyFunctions")
-class CryptoAccountManager(
+class CryptoUserManager(
     private val store: SharedPreferences,
     private val metaDataProvider: AccountMetaDataProvider
-) : BRAccountManager {
+) : BrdUserManager {
 
     // TODO: Remove this once BRKeyStore auth screen logic is refactored
     private val context get() = BreadApp.getBreadContext()
@@ -144,22 +149,25 @@ class CryptoAccountManager(
         startDisabledTimer(getFailTimestamp())
     }
 
-    override suspend fun createAccount(phrase: ByteArray): Account {
+    override suspend fun setupWithGeneratedPhrase(): SetupResult {
         val creationDate = Date()
-        val account = initAccount(phrase, creationDate)
-        withContext(Dispatchers.IO) {
-            metaDataProvider.create(creationDate)
+        val phrase = try {
+            generatePhrase()
+        } catch (e: Exception) {
+            return SetupResult.FailedToGeneratePhrase(e)
         }
-        return account
+        return initAccount(phrase, creationDate).also {
+            withContext(Dispatchers.IO) {
+                metaDataProvider.create(creationDate)
+            }
+        }
     }
 
-    override suspend fun recoverAccount(phrase: ByteArray): Account {
+    override suspend fun setupWithPhrase(phrase: ByteArray): SetupResult {
         val apiKey = Key.createForBIP32ApiAuth(
             phrase,
             Key.getDefaultWordList()
-        ).orNull()
-
-        checkNotNull(apiKey) { "Failed to generate Api Key." }
+        ).orNull() ?: return SetupResult.FailedToCreateApiKey
 
         store.edit {
             putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
@@ -168,13 +176,13 @@ class CryptoAccountManager(
         return initAccount(phrase, creationDate, apiKey)
     }
 
-    override suspend fun migrateAccount() = mutex.withLock {
+    override suspend fun migrateKeystoreData() = mutex.withLock {
         // Migrate fields required for Account
         val phrase = getPhrase() ?: return@withLock false
         try {
             val creationDate = Date(BRKeyStore.getWalletCreationTime(context))
             val account =
-                Account.createFromPhrase(phrase, creationDate, BRSharedPrefs.getDeviceId())
+                Account.createFromPhrase(phrase, creationDate, BRSharedPrefs.getDeviceId()).get()
             val apiKey = Key.createForBIP32ApiAuth(
                 phrase,
                 Key.getDefaultWordList()
@@ -204,31 +212,55 @@ class CryptoAccountManager(
         true
     }
 
-    override fun isAccountInitialized() = getAccountState() != AccountState.Uninitialized
+    override suspend fun isAccountInvalidated(): Boolean {
+        val deviceId = BRSharedPrefs.getDeviceId()
+        val invalidated = store.getBytes(KEY_ACCOUNT, null)?.let {
+            Account.createFromSerialization(it, deviceId).orNull() == null
+        } ?: false
+
+        if (!invalidated) return false
+        val phrase = getPhrase() ?: return true
+
+        logInfo("Account needs to be re-created from phrase.")
+
+        val account =
+            Account.createFromPhrase(
+                phrase,
+                Date(getWalletCreationTime()),
+                deviceId
+            ).get() ?: return true
+        store.edit { putBytes(KEY_ACCOUNT, account.serialize()) }
+
+        logInfo("Account re-created.")
+
+        return false
+    }
+
+    override fun isInitialized() = getState() != BrdUserState.Uninitialized
 
     override fun isMigrationRequired() =
-        !isAccountInitialized() &&
+        !isInitialized() &&
             (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.getAccount(context) != null)
 
     override fun getKeyStoreStatus(): KeyStoreStatus = BRKeyStore.getValidityStatus()
 
-    override fun getAccountState(): AccountState {
-        if (getAccount() == null) return AccountState.Uninitialized
+    override fun getState(): BrdUserState {
+        if (getAccount() == null) return BrdUserState.Uninitialized
         return when {
             disabledSeconds.get() > 0 -> {
-                AccountState.Disabled(disabledSeconds.get())
+                BrdUserState.Disabled(disabledSeconds.get())
             }
-            locked.get() -> AccountState.Locked
-            else -> AccountState.Enabled
+            locked.get() -> BrdUserState.Locked
+            else -> BrdUserState.Enabled
         }
     }
 
-    override fun accountStateChanges(disabledUpdates: Boolean): Flow<AccountState> =
+    override fun stateChanges(disabledUpdates: Boolean): Flow<BrdUserState> =
         stateChangeChannel.asFlow()
             .onStart { emit(Unit) }
-            .map { getAccountState() }
+            .map { getState() }
             .transformLatest { state ->
-                if (state is AccountState.Disabled && disabledUpdates) {
+                if (state is BrdUserState.Disabled && disabledUpdates) {
                     emit(state)
                     while (disabledSeconds.get() > 0) {
                         delay(1000)
@@ -249,6 +281,16 @@ class CryptoAccountManager(
                 BRSharedPrefs.getDeviceId()
             ).orNull()
         }
+
+    override fun updateAccount(accountBytes: ByteArray) {
+        checkNotNull(
+            Account.createFromSerialization(
+                accountBytes,
+                BRSharedPrefs.getDeviceId()
+            ).orNull()
+        )
+        store.edit { putBytes(KEY_ACCOUNT, accountBytes) }
+    }
 
     override fun getAuthKey() = store.getBytes(KEY_AUTH_KEY, null)
 
@@ -297,8 +339,14 @@ class CryptoAccountManager(
     override fun pinCodeNeedsUpgrade() =
         getPinCode().let { it.isNotBlank() && it.length != PIN_LENGTH }
 
-    override fun lockAccount() {
+    override fun lock() {
         if (!locked.getAndSet(true)) {
+            stateChangeChannel.offer(Unit)
+        }
+    }
+
+    override fun unlock() {
+        if (locked.getAndSet(false)) {
             stateChangeChannel.offer(Unit)
         }
     }
@@ -335,55 +383,59 @@ class CryptoAccountManager(
 
     /**
      * Used to determine address mismatch cases for tracking purposes, therefore exposed
-     * as part of the implementation rather than the [BRAccountManager] interface.
+     * as part of the implementation rather than the [BrdUserManager] interface.
      */
     fun getEthPublicKey(): ByteArray? = store.getBytes(KEY_ETH_PUB_KEY, null)
+
+    private suspend fun generatePhrase(): ByteArray {
+        val words = Key.getDefaultWordList()
+        return Account.generatePhrase(words)
+            .also { phrase ->
+                check(Account.validatePhrase(phrase, words)) {
+                    "Invalid phrase generated."
+                }
+            }
+    }
 
     private suspend fun initAccount(phrase: ByteArray, creationDate: Date, apiKey: Key? = null) =
         mutex.withLock {
             check(getPhrase() == null) { "Phrase already exists." }
 
             try {
-                val storedPhrase = executeWithAuth { ctx ->
-                    BRKeyStore.putPhrase(phrase, ctx, PUT_PHRASE_RC)
-                    BRKeyStore.getPhrase(ctx, GET_PHRASE_RC)
-                }
-
-                checkNotNull(storedPhrase) { "Phrase failed to persist." }
-
+                val storedPhrase = executeWithAuth {
+                    BRKeyStore.putPhrase(phrase, context, PUT_PHRASE_RC)
+                    BRKeyStore.getPhrase(context, GET_PHRASE_RC)
+                } ?: return@withLock SetupResult.FailedToPersistPhrase
+                
                 val account = Account.createFromPhrase(
                     storedPhrase,
                     creationDate,
                     BRSharedPrefs.getDeviceId()
-                )
-
-                checkNotNull(account) { "Failed to create Account." }
+                ).get() ?: return@withLock SetupResult.FailedToCreateAccount
 
                 val apiAuthKey = apiKey ?: Key.createForBIP32ApiAuth(
                     phrase,
                     Key.getDefaultWordList()
-                ).orNull()
-
-                checkNotNull(apiAuthKey) { "Failed to create Api Key." }
+                ).orNull() ?: return@withLock SetupResult.FailedToCreateApiKey
 
                 writeAccount(account, apiAuthKey, creationDate)
 
-                check(
-                    validateAccount(
+                if (
+                    !validateAccount(
                         storedPhrase,
                         account,
                         apiAuthKey,
                         creationDate.time
                     )
-                ) { "Invalid wallet." }
+                ) return@withLock SetupResult.FailedToCreateValidWallet
 
                 locked.set(false)
                 stateChangeChannel.offer(Unit)
                 logInfo("Account created.")
-                account
+                SetupResult.Success
             } catch (e: Exception) {
                 wipeAccount()
-                throw e
+                SetupResult.UnknownFailure(e)
             }
         }
 
@@ -396,7 +448,8 @@ class CryptoAccountManager(
 
     private fun disabledUntil(failCount: Int, failTimestamp: Long): Long {
         val pow =
-            PIN_LENGTH.toDouble().pow((failCount - MAX_UNLOCK_ATTEMPTS).toDouble()) * DateUtils.MINUTE_IN_MILLIS
+            PIN_LENGTH.toDouble()
+                .pow((failCount - MAX_UNLOCK_ATTEMPTS).toDouble()) * DateUtils.MINUTE_IN_MILLIS
         return (failTimestamp + pow).toLong()
     }
 

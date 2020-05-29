@@ -1,5 +1,6 @@
 package com.breadwallet.legacy.presenter.customviews;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -329,6 +330,7 @@ public class BRButton extends Button {
                 invalidate();
             }
         });
+        shadowAnim.addListener(new ClearAnimationListener());
 
         startAnimation(scaleAnim);
         shadowAnim.start();
@@ -357,8 +359,28 @@ public class BRButton extends Button {
                 invalidate();
             }
         });
+        shadowAnim.addListener(new ClearAnimationListener());
 
         startAnimation(scaleAnim);
         shadowAnim.start();
+    }
+
+    private class ClearAnimationListener implements Animator.AnimatorListener {
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            clearAnimation();
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
     }
 }

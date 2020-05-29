@@ -26,6 +26,7 @@ package com.breadwallet.ui.login
 
 import android.content.Context
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.login.LoginScreen.E
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
 class LoginScreenHandler(
     private val output: Consumer<E>,
     private val context: Context,
+    private val brdUserManager: BrdUserManager,
     private val shakeKeyboard: () -> Unit,
     private val unlockWalletAnimation: () -> Unit,
     private val showFingerprintPrompt: () -> Unit
@@ -54,7 +56,10 @@ class LoginScreenHandler(
             F.AuthenticationFailed -> launch(Dispatchers.Main) { shakeKeyboard() }
             F.CheckFingerprintEnable -> checkFingerprintEnable()
             F.LoadLoginPreferences -> loadLoginPreferences()
-            F.AuthenticationSuccess -> launch(Dispatchers.Main) { unlockWalletAnimation() }
+            F.AuthenticationSuccess -> launch(Dispatchers.Main) {
+                brdUserManager.unlock() // Required for biometric auth acceptance
+                unlockWalletAnimation()
+            }
             F.ShowFingerprintController -> launch(Dispatchers.Main) { showFingerprintPrompt() }
             is F.TrackEvent -> trackEvent(value)
         }

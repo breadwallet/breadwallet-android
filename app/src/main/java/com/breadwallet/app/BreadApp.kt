@@ -60,8 +60,9 @@ import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.tools.manager.updateRatesForCurrencies
-import com.breadwallet.tools.security.BRAccountManager
-import com.breadwallet.tools.security.CryptoAccountManager
+import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
+import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.tools.security.KeyStoreStatus
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.util.EventUtils
@@ -84,7 +85,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -301,8 +301,8 @@ class BreadApp : Application(), KodeinAware {
             APIClient(this@BreadApp, direct.instance())
         }
 
-        bind<BRAccountManager>() with singleton {
-            CryptoAccountManager(
+        bind<BrdUserManager>() with singleton {
+            CryptoUserManager(
                 EncryptedSharedPreferences.create(
                     "crypto_shared_prefs",
                     MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
@@ -339,6 +339,7 @@ class BreadApp : Application(), KodeinAware {
                 getStorageDir(this@BreadApp),
                 !BuildConfig.BITCOIN_TESTNET,
                 instance(),
+                instance(),
                 instance()
             )
         }
@@ -355,7 +356,7 @@ class BreadApp : Application(), KodeinAware {
 
     private var accountLockJob: Job? = null
 
-    private val accountManager: BRAccountManager by instance()
+    private val userManager: BrdUserManager by instance()
     private val apiClient: APIClient by instance()
 
     /**
@@ -374,7 +375,7 @@ class BreadApp : Application(), KodeinAware {
             isDeviceStateValid = false
             dialogType = DialogType.ENABLE_DEVICE_PASSWORD
         } else {
-            when (accountManager.getKeyStoreStatus()) {
+            when (userManager.getKeyStoreStatus()) {
                 KeyStoreStatus.VALID -> isDeviceStateValid = true
                 KeyStoreStatus.INVALID_WIPE -> {
                     isDeviceStateValid = false
@@ -412,7 +413,7 @@ class BreadApp : Application(), KodeinAware {
             }
         }
 
-        if (!accountManager.isAccountInitialized()) {
+        if (!userManager.isInitialized()) {
             // extract the bundles from the resources to be ready when the wallet is initialized
             applicationScope.launch {
                 ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
@@ -442,16 +443,23 @@ class BreadApp : Application(), KodeinAware {
         setDelayServerShutdown(false, -1)
 
         val breadBox = getBreadBox()
-        if (isDeviceStateValid() && accountManager.isAccountInitialized()) {
-            startWithInitializedWallet(breadBox)
+        if (isDeviceStateValid()) {
+            startedScope.launch {
+                userManager
+                    .stateChanges()
+                    .first { it is BrdUserState.Enabled }
+                if (!userManager.isMigrationRequired()) {
+                    startWithInitializedWallet(breadBox)
+                }
+            }
         }
     }
 
     private fun handleOnStop() {
-        if (accountManager.isAccountInitialized()) {
+        if (userManager.isInitialized()) {
             accountLockJob = applicationScope.launch {
                 delay(LOCK_TIMEOUT)
-                accountManager.lockAccount()
+                userManager.lock()
             }
             BreadBoxCloseWorker.enqueueWork()
             applicationScope.launch {
@@ -504,7 +512,7 @@ class BreadApp : Application(), KodeinAware {
         incrementAppForegroundedCounter()
 
         if (!breadBox.isOpen) {
-            val account = checkNotNull(accountManager.getAccount()) {
+            val account = checkNotNull(userManager.getAccount()) {
                 "Wallet is initialized but Account is null"
             }
 
@@ -519,12 +527,13 @@ class BreadApp : Application(), KodeinAware {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
 
-        getAccountMetaDataProvider().run {
-            recoverAll(migrate).launchIn(startedScope)
-            enabledWallets()
-                .updateRatesForCurrencies(context)
-                .launchIn(startedScope)
-        }
+        getAccountMetaDataProvider()
+            .recoverAll(migrate)
+            .launchIn(startedScope)
+
+        breadBox.currencyCodes()
+            .updateRatesForCurrencies(context)
+            .launchIn(startedScope)
 
         applicationScope.launch {
             trackAddressMismatch(breadBox)

@@ -30,6 +30,16 @@
     <string name="Account.exchangeRate">%2$sあたり%1$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">ウォレット読み込み中</string>
+    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.body">HBARをウォレットに保管する場合にのみ、Hederaアカウントを作成してください。</string>
+    <!-- Label for create Hedera account button -->
+    <string name="AccountCreation.create">アカウントを作成する</string>
+    <!-- Error message for Hedera account creation failure  -->
+    <string name="AccountCreation.error">アカウントの作成中にエラーが発生しました。後でもう一度やり直してください。</string>
+    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.notNow">今はやめろ</string>
+    <!-- Title for confirmation dialog for Hedera account creation -->
+    <string name="AccountCreation.title">アカウント作成の確認</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">マイブレッド</string>
     <!-- Third party keyboard warning -->
@@ -180,6 +190,8 @@
     <string name="Confirmation.feeLabel">ネットワーク手数料：</string>
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">ネットワーク料金（ETH）:</string>
+    <!-- Label for Hedera Memo field on transaction confirmation screen -->
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">処理時間: この取引は%1$sで完了する見込みです。</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -787,6 +799,8 @@
     <string name="Send.legacyAddressWarning">警告: これはレガシービットコインアドレスです。本当にビットコインキャッシュを送金しますか?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">リクエストをロード中</string>
+    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <string name="Send.memoTag_optional">Hedera Memo（オプション）</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">残高不足で取引手数料を支払うことができません。</string>
     <!-- Empty address alert message -->
@@ -1050,6 +1064,8 @@
     <string name="TransactionDetails.gasLimitHeader">ガソリン上限</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">ガソリン価格</string>
+    <!-- Label for Hedera Memo field on transaction details screen -->
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">詳細を隠す</string>
     <!-- Label showing the transaction was started (initialized) -->

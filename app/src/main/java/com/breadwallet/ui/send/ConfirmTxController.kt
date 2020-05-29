@@ -177,6 +177,14 @@ class ConfirmTxController(
                         destination_tag_value.text = field.value
                     }
                 }
+                TransferField.HEDERA_MEMO -> {
+                    groupHederaMemo.isVisible = true
+                    if (field.value.isNullOrEmpty()) {
+                        hedera_memo_value.setText(R.string.Confirmation_destinationTag_EmptyHint)
+                    } else {
+                        hedera_memo_value.text = field.value
+                    }
+                }
             }
         }
     }

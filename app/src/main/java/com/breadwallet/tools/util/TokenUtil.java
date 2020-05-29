@@ -31,6 +31,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.util.Preconditions;
+
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.model.TokenItem;
@@ -71,6 +72,7 @@ public final class TokenUtil {
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
     private static final String FIELD_CURRENCY_ID = "currency_id";
+    private static final String FIELD_TYPE = "type";
     private static final String FIELD_ALTERNATE_NAMES = "alternate_names";
     private static final String FIELD_CRYPTOCOMPARE = "cryptocompare";
     private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
@@ -206,6 +208,7 @@ public final class TokenUtil {
                 String address = "";
                 String name = "";
                 String symbol = "";
+                String type = "";
                 boolean isSupported = true;
                 String cryptocompareAlias = null;
 
@@ -232,10 +235,14 @@ public final class TokenUtil {
                     }
                 }
 
+                if (tokenObject.has(FIELD_TYPE)) {
+                    type = tokenObject.getString(FIELD_TYPE);
+                }
+
                 if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(symbol)) {
                     String startColor = null;
                     String endColor = null;
-                    String currencyId = null;
+                    String currencyId = "";
                     if (tokenObject.has(FIELD_COLORS)) {
                         JSONArray colorsArray = tokenObject.getJSONArray(FIELD_COLORS);
                         startColor = (String) colorsArray.get(START_COLOR_INDEX);
@@ -250,7 +257,7 @@ public final class TokenUtil {
                         }
                     }
 
-                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, startColor, endColor, currencyId, cryptocompareAlias);
+                    TokenItem item = new TokenItem(address, symbol, name, null, isSupported, currencyId, type, startColor, endColor, cryptocompareAlias);
 
                     tokenItems.add(item);
                 }

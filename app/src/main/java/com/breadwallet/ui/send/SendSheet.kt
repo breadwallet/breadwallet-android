@@ -52,6 +52,7 @@ data class TransferField(
 ) : Parcelable {
     companion object {
         const val DESTINATION_TAG = "DestinationTag"
+        const val HEDERA_MEMO = "Memo"
     }
 }
 
@@ -182,6 +183,9 @@ object SendSheet {
 
         val destinationTag: TransferField? =
             transferFields.find { it.key == TransferField.DESTINATION_TAG }
+
+        val hederaMemo: TransferField? =
+            transferFields.find { it.key == TransferField.HEDERA_MEMO }
 
         companion object {
 

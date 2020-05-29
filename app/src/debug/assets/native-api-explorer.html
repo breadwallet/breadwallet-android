@@ -19,6 +19,11 @@
             <input id="amount" type="text" value="1"/>
         </p>
         <p>
+            <label for="transferAttributes">Transfer Attributes</label>
+            <br/>
+            <textarea id="transferAttributes" style="width:100%;height:100px;">[ ]</textarea>
+        </p>
+        <p>
             <button onclick="submitTransaction(); return false;">Submit</button>
         </p>
         <p>
@@ -40,7 +45,7 @@
     <fieldset>
         <p>
             <label for="listAll">List all</label>
-            <input checked checked id="listAll" type="checkbox"/>
+            <input checked id="listAll" type="checkbox"/>
         </p>
         <p>
             <button onclick="listCurrencies(); return false;">Get currencies</button>
@@ -76,7 +81,7 @@
     <fieldset>
         <p>
             <button onclick="takePicture(); return false;">Take Picture</button>
-            <input type="file" id="fileInput" name="Choose Picture" onchange="processFiles();" />
+            <input id="fileInput" name="Choose Picture" onchange="processFiles();" type="file"/>
         </p>
         <p>
             <span id="pictureMessage"></span>
@@ -95,6 +100,43 @@
             <span id="kvGetOutput"></span>
         </p>
     </fieldset>
+    <fieldset>
+        <p>
+            <label for="linkUrl">Url</label>
+            <input id="linkUrl" type="text" value=""/>
+        </p>
+        <p>
+            <label for="linkJson">Json Request</label>
+            <input id="linkJson" type="text" value=""/>
+        </p>
+        <p>
+            <button onclick="openUrl(); return false;">Open in new Browser</button>
+        </p>
+    </fieldset>
+    <fieldset>
+        <p>
+            <label for="apiPath">API Path</label>
+            <input id="apiPath" type="text" value="/currencies"/>
+        </p>
+        <p>
+            <input type="radio" id="get" name="method" value="GET" checked/>
+            <label for="get">GET</label>
+            <input type="radio" id="post" name="method" value="POST"/>
+            <label for="post">POST</label>
+            <input type="radio" id="put" name="method" value="PUT"/>
+            <label for="put">PUT</label>
+            <input type="radio" id="delete" name="method" value="DELETE"/>
+            <label for="delete">DELETE</label>
+        </p>
+        <p>
+            <textarea id="apiBody" style="width: 100%;overflow-y: scroll;height: 75px;"
+                      placeholder="{ /* JSON request body */ }"></textarea>
+        </p>
+        <p>
+            <button onclick="submitApiRequest(); return false;">Submit Request</button>
+        </p>
+        <textarea id="apiOutput" style="width: 100%;overflow-y: scroll;height: 300px;"></textarea>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -106,6 +148,13 @@
             for (let [key, value] of Object.entries(window[nativeObjectName])) {
                 window[objectName][key] = function() {
                     let primaryArgs = arguments
+                    for (var i = 0; i < primaryArgs.length; i++) {
+                      let arg = primaryArgs[i]
+                      if (arg && arg.constructor === Object.constructor) {
+                          primaryArgs[i] = JSON.stringify(arg)
+                      }
+                    }
+
                     return new Promise(function(resolve, reject) {
                         let promiseBinder = value.apply(window[nativeObjectName], primaryArgs)
                         let callbackName = promiseBinder.getJsName()
@@ -126,6 +175,19 @@
 
     injectPromiseHooks()
 
+    let updateTransferAttrs = () => {
+        WalletJs.transferAttrsFor(currencyCode.value, toAddress.value)
+            .then((result) => {
+                transferAttributes.value = JSON.stringify(result, null, 4)
+            })
+            .catch((error) => {
+                transferAttributes.value = `{ /* ${error} */ }`
+            })
+    }
+
+    toAddress.onkeyup = updateTransferAttrs
+    currencyCode.onkeyup = updateTransferAttrs
+
     function submitTransaction() {
         let txOutput = document.getElementById("txOutput");
         txOutput.innerText = "";
@@ -134,8 +196,9 @@
         let currencyCode = document.getElementById("currencyCode").value;
         let amount = document.getElementById("amount").value;
         let amountStr = JSON.stringify({ "numerator" : amount, "denominator": "1" });
+        let transferAttrs = transferAttributes.value
 
-        WalletJs.transaction(toAddress, "", amountStr, currencyCode)
+        WalletJs.transaction(toAddress, "", amountStr, currencyCode, transferAttrs)
             .then((transaction) => {
                 txOutput.innerText = `Hash: ${transaction.hash}\n Transmitted: ${transaction.transmitted}`;
             })
@@ -210,8 +273,7 @@
 
         KVStoreJs.get(key)
             .then((result) => {
-                let output =
-                kvGetOutput.innerText = JSON.stringify(result)
+                kvGetOutput.innerText = jsonString(result)
             })
             .catch((error) => {
                 kvGetOutput.innerText = error
@@ -222,7 +284,7 @@
     function requestLocation() {
         LocationJs.getLocation()
             .then((data) => {
-                locationOutput.innerText = JSON.stringify(data)
+                locationOutput.innerText = jsonString(data)
             })
             .catch((error) => {
                 locationOutput.innerText = error
@@ -250,6 +312,54 @@
             pictureOutput.removeAttribute('src');
         }
     }
+
+    function openUrl() {
+        let url = document.getElementById("linkUrl").value
+        let json = document.getElementById("linkJson").value
+        if (json === "") {
+            json = null
+        } else {
+            json = JSON.parse(json)
+        }
+
+        LinkJs.openUrl(url, json)
+            .then((result) => {})
+    }
+
+    function submitApiRequest() {
+         let path = apiPath.value
+         let body = apiBody.value
+         let method = document.querySelector('input[name="method"]:checked').value
+
+         if (body === "") {
+             body = null
+         } else {
+             body = JSON.parse(body)
+         }
+
+         apiOutput.value = `Loading '${path}'...`
+
+         // The following named methods are available.
+         // BrdApiJs.get(path, [authenticated=true])
+         // BrdApiJs.post(path, body, [authenticated=true])
+         // BrdApiJs.put(path, body, [authenticated=true])
+         // BrdApiJs.delete(path, [authenticated=true])
+
+         // Or provide the method as a string.
+         BrdApiJs.request(method, path, body, true /* optional */)
+            .then((data) => {
+                apiOutput.value = jsonString(data)
+            })
+            .catch((error) => {
+                apiOutput.value = error
+            })
+    }
+
+    function jsonString(string) {
+        return JSON.stringify(string, undefined, 4)
+    }
+
+
 </script>
 </body>
 </html>

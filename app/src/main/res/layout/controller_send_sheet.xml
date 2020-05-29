@@ -205,6 +205,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            app:errorEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator">
@@ -221,12 +222,45 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
+            android:id="@+id/separator1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
+            app:layout_constraintBottom_toTopOf="@+id/inputLayoutHederaMemo"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutHederaMemo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:errorEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/separator1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputHederaMemo"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@android:color/transparent"
+                android:singleLine="true"
+                android:inputType="text|textNoSuggestions"
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:hint="@string/Send.memoTag_optional"
+                android:maxLength="100"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
             android:id="@+id/separator5"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintBottom_toTopOf="@+id/inputLayoutAmount"
-            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag" />
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutHederaMemo" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutAmount"
@@ -239,7 +273,7 @@
             app:layout_constraintBottom_toTopOf="@+id/labelBalance"
             app:layout_constraintEnd_toStartOf="@+id/buttonCurrencySelect"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag"
+            app:layout_constraintTop_toBottomOf="@+id/separator5"
             app:layout_constraintVertical_bias="0.0">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -304,7 +338,7 @@
             app:layout_constraintBottom_toTopOf="@+id/layoutFeeOption"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/inputLayoutAmount"
-            app:layout_constraintTop_toBottomOf="@+id/inputLayoutDestinationTag"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutHederaMemo"
             app:layout_constraintVertical_bias="0.0" app:layout_goneMarginBottom="8dp"
             tools:text="iso"/>
 
@@ -504,6 +538,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="separator5,inputLayoutDestinationTag"/>
+            app:constraint_referenced_ids="separator,inputLayoutDestinationTag"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupHederaMemo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="separator1,inputLayoutHederaMemo"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

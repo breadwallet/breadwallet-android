@@ -32,7 +32,7 @@ import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.view.dialog.DialogActivity
 import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType.KEY_STORE_INVALID_WIPE
-import com.breadwallet.tools.security.BRAccountManager
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.onboarding.IntroController
@@ -50,7 +50,7 @@ class MigrateController(
 
     override val layoutId: Int = R.layout.controller_login
 
-    private val accountManager: BRAccountManager by instance()
+    private val userManager: BrdUserManager by instance()
 
     private val mutex = Mutex()
 
@@ -58,7 +58,7 @@ class MigrateController(
         super.onAttach(view)
         BreadApp.applicationScope.launch(Main) {
             mutex.withLock<Unit> {
-                if (accountManager.isMigrationRequired()) {
+                if (userManager.isMigrationRequired()) {
                     try {
                         migrateAccount()
                     } catch (e: UserNotAuthenticatedException) {
@@ -73,7 +73,7 @@ class MigrateController(
     }
 
     private fun redirect() {
-        val target = if (accountManager.isAccountInitialized()) {
+        val target = if (userManager.isInitialized()) {
             LoginController()
         } else {
             IntroController()
@@ -82,8 +82,9 @@ class MigrateController(
     }
 
     private suspend fun migrateAccount() {
-        if (accountManager.migrateAccount()) {
+        if (userManager.migrateKeystoreData()) {
             val context = (BreadApp.getBreadContext().applicationContext as BreadApp)
+            // The one case where we need to invoke this outside of BreadApp, need to set the migrate flag
             context.startWithInitializedWallet(direct.instance(), true)
 
             waitUntilAttached()
